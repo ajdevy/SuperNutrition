@@ -251,3 +251,20 @@ identity, provider, and ownership decisions.
    assumptions.
 8. Make SM-1, SM-6, SM-9, and cost-per-accepted-result acceptance evidence
    explicit.
+
+## Follow-up resolution for PR #5 inline review
+
+The original reconciliation snapshot above predates the final inline-review
+follow-up. The four remaining planning gaps are now resolved in the binding
+artifacts:
+
+- AD-6, PRD FR-9/FR-10, and the orchestration story constrain post-local remote
+  escalation to local unavailability, Local Engine Abstention, or a Gate G-5
+  low-confidence result, with a typed eligibility reason.
+- AD-8, AR-21/AR-22, FR-4, and the photo-preparation story require EXIF/GPS and
+  non-essential metadata scrubbing before the consent/digest boundary.
+- AD-12, AD-20, AR-26, the country configuration section, and the UX flow keep
+  `CatalogCountry`, `MarketJurisdiction`, and `ProcessingRegion` independent.
+- `epics.md` now contains six real epics and 21 bounded stories; the BMAD
+  placeholder block has been replaced by a requirements coverage map and
+  delivery order.

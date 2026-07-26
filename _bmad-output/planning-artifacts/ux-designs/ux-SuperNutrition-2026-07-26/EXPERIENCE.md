@@ -43,7 +43,7 @@ Analysis Session after confirmation when data would be discarded.
 | Remote consent | Local Abstention/unavailable/low confidence | Explain upload and allow informed accept or decline |
 | Candidate review | Engine result or manual search | Confirm, remove, replace, or add visible foods |
 | Food search | Candidate review / no Engine path | Select a versioned Nutrition Source record |
-| Country and catalog | First use / Capture header / Food search | Confirm or change country-specific Nutrition Source configuration |
+| Country and catalog | First use / Capture header / Food search | Confirm or change the food catalog country while keeping market jurisdiction and processing region explicit |
 | Serving confirmation | Candidate review | Confirm amount, unit/range, recipe/oil/sauce assumptions |
 | Grounded result | Confirmation | Show estimated nutrition, provenance, uncertainty, Scan again |
 | Recovery | Any typed failure | Explain outcome-specific options without dead ends |
@@ -52,7 +52,10 @@ Analysis Session after confirmation when data would be discarded.
 There is no tab bar, drawer, account surface, diary, or settings hierarchy in the
 first release. Privacy detail and source detail open one modal/sheet level deep.
 Country and catalog is a contextual sheet reachable from Capture and Food search,
-not a general settings destination.
+not a general settings destination. It must distinguish `CatalogCountry` from
+`MarketJurisdiction` and `ProcessingRegion`: changing the food catalog cannot
+silently change the privacy jurisdiction or provider region used for a remote
+attempt.
 
 ## Voice and Tone
 
@@ -79,7 +82,7 @@ Microcopy is calm, direct, and nonjudgmental. Brand posture lives in `DESIGN.md`
 | Food search | Manual/correction | Search normalized country-aware catalog; source/version retained silently then visible in details |
 | Serving editor | Confirmation | Amount, unit, optional range; validate without erasing input; expose recipe/oil/sauce questions only when relevant |
 | Consent sheet | Remote escalation | Accept and Continue without upload have equal visual access; no preselected consent |
-| Country and catalog sheet | First use / contextual change | Suggest system region, require confirmation, persist locally, allow Not listed/manual selection |
+| Country and catalog sheet | First use / contextual change | Suggest a catalog country, require confirmation, show the separate market jurisdiction and processing-region policy, persist catalog choice locally, and allow Not listed/manual selection |
 | Privacy detail sheet | Consent | Explain purpose, data categories, retention, provider category/region, cancellation limits, and policy link |
 | Source detail sheet | Result / Food search | Nutrition Source name, version, country coverage, serving conversion, and estimate disclaimer |
 | Internal diagnostics panel | Debug builds | Redacted route/capability/version/timing/error only; copy action excludes photos and sensitive payloads |
@@ -119,11 +122,11 @@ their transitions.
 | Permission rationale | Continue | Platform permission pending | Invoke native permission once |
 | Permission pending | Granted | Capture | Start native preview |
 | Permission pending | Denied/restricted | Recovery | Stop preview; expose import/manual/settings route |
-| Capture | Photo captured/imported | Preparing | Freeze session input; normalize orientation/metadata |
+| Capture | Photo captured/imported | Preparing | Freeze session input; normalize orientation and scrub EXIF/GPS/non-essential metadata |
 | Preparing | Quality failed | Recovery | Preserve preview image for retake guidance |
 | Preparing | Ready | Analyzing local | Start Local Engine once |
 | Analyzing local | Candidate result | Candidate review | Suppress later result for same request ID |
-| Analyzing local | Abstention/unavailable | Remote offer | Map reason to user-safe copy |
+| Analyzing local | Abstention/unavailable/low confidence | Remote offer | Map the closed eligibility reason to user-safe copy; a successful high-confidence local result has no remote offer |
 | Remote offer | Continue without upload | Recovery/manual | Do not initialize transfer |
 | Remote offer | Consent | Remote ready | Record action-scoped consent only |
 | Remote ready | Transfer start | Analyzing remote | Mark bytes-may-leave boundary |

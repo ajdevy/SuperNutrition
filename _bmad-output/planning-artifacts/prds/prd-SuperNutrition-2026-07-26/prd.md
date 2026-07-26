@@ -205,7 +205,10 @@ retaining unnecessary metadata or resolution.
 **Consequences:**
 
 - Orientation is correct before inference.
-- EXIF and unrelated metadata are excluded from remote upload.
+- EXIF, GPS, and all unrelated/non-essential metadata are stripped during
+  normalization before the consent receipt and remote-payload digest are
+  created; the scrubbed normalized payload is the only image representation
+  eligible for remote upload.
 - Temporary image artifacts are removed when the Analysis Session ends.
 
 ### 4.2 Shared Inference Contract and Capability
@@ -283,6 +286,11 @@ policy-defined low-confidence outcome.
 **Consequences:**
 
 - The offer explains purpose, data sent, retention, and alternatives.
+- After a local attempt, the offer is permitted only for local unavailability,
+  Abstention, or a Gate G-5 low-confidence result. Gate G-5 may tune the named
+  threshold but cannot escalate a successful high-confidence local result.
+- A user may explicitly choose another permitted route before local analysis;
+  this is an explicit choice, not an unconstrained policy escalation.
 - Declining the offer preserves retake and manual recovery.
 - Consent is recorded for the action and can be revoked before transfer begins.
   After transfer begins, cancellation stops downstream processing and result

@@ -140,12 +140,12 @@ NFR-23: Product identity is exact and testable: installed app, launcher label, a
 - AR-18 (AD-7, AD-19): Inference emits identity evidence only. `mobile/domain/nutrition` owns canonical vocabulary and math contracts; `mobile/data/nutrition` is the SQLDelight adapter and sole numeric nutrition authority.
 - AR-19 (AD-7, AD-19): Nutrition packages are signed, checksummed, licensed, schema-compatible, staged, atomically activated, rollback-capable, and fixture-tested; each active country profile retains an approved bundled or cached offline-searchable package.
 - AR-20 (AD-19): Use namespace-qualified food/serving IDs, SI-normalized decimal conversion, defined source and calculation precision, display rounding, aggregation, and golden fixtures for units, ranges, boundaries, and partial items.
-- AR-21 (AD-8, AD-18): Scope image bytes to an attempt lease, encrypt unavoidable temporary persistence, log no image data, revoke and clean up idempotently on every terminal path, and prevent duplicate transfer-start effects with stable attempt/effect IDs.
-- AR-22 (AD-8): Bind remote consent to the photo digest, purpose, provider/region policy, retention version, configuration version, and transfer state. Cover deletion across device, gateway, provider, temporary files, caches, queues, logs, backups, and failure paths with honest limits and evidence.
+- AR-21 (AD-8, AD-18): Scope image bytes to an attempt lease, strip EXIF/GPS and non-essential metadata before creating a consent receipt or remote payload, encrypt unavoidable temporary persistence, log no image data, revoke and clean up idempotently on every terminal path, and prevent duplicate transfer-start effects with stable attempt/effect IDs.
+- AR-22 (AD-8): Bind remote consent to the digest of the scrubbed normalized photo payload, purpose, market jurisdiction, processing-region/provider policy, retention version, configuration version, and transfer state. Cover deletion across device, gateway, provider, temporary files, caches, queues, logs, backups, and failure paths with honest limits and evidence.
 - AR-23 (AD-9, AD-22): Identify every model/provider configuration by immutable version, checksum/deployment digest, compatibility predicates, activation time, and rollback target. Fix preprocessing, color space, dimensions, taxonomy, and golden pixel/output parity in the model manifest.
 - AR-24 (AD-10): Start Koin only in app roots, use constructor injection and explicit `localEngine`/`remoteEngine` qualifiers, and prohibit global Koin access in domain, feature, and Engine code.
 - AR-25 (AD-11): Every Engine and gateway adapter passes the same contract suite. Physical-device evidence is required for camera, performance, memory, energy, accessibility, and local-inference claims.
-- AR-26 (AD-12, AD-20): Treat country independently from language. A signed `ConfigurationSnapshot` resolves bundled safe default, global release, environment, then country override and remains atomic for one attempt.
+- AR-26 (AD-12, AD-20): Treat catalog country, market jurisdiction, processing region, and language as independent axes. A signed `ConfigurationSnapshot` resolves bundled safe default, global release, environment, then independent catalog/jurisdiction overrides and remains atomic for one attempt; a catalog choice cannot select a provider region.
 - AR-27 (AD-13, AD-21): Mobile clients call only the environment-bound first-party gateway. Use short-lived scoped authenticated sessions, request digests/nonces, one-time IDs, replay and abuse protection, key rotation/revocation, and no provider credentials or schemas in mobile code.
 - AR-28 (AD-14): Use a versioned telemetry allowlist only. Server-side correction telemetry remains disabled until G-6; filenames, paths, images, free-form labels, secrets, headers, and request/response bodies are forbidden.
 - AR-29 (AD-23): The Compose/native bridge contract includes lifecycle, disposal, permission, focus/zoom, rotation, spoken framing/quality cues, captured-image description, focus restoration, semantic roles, contrast, text expansion, bidi, localized values, reduced motion, and target sizes.
@@ -243,33 +243,360 @@ UX-DR36: Render `SuperNutrition` as the installed, launcher, accessibility-produ
 
 ### FR Coverage Map
 
-{{requirements_coverage_map}}
+| Epic | Primary requirements | Outcome |
+| --- | --- | --- |
+| E1 Foundation and product shell | FR-22, FR-25, NFR-17..NFR-23, AR-1..AR-7, AR-31..AR-46, UX-DR35..UX-DR36 | A bounded, identity-safe monorepo and reproducible KMP substrate |
+| E2 Capture and photo preparation | FR-1..FR-4, FR-19..FR-21, NFR-1..NFR-3, NFR-9..NFR-16, UX-DR1..UX-DR12, UX-DR26..UX-DR34 | A privacy-preserving camera/import session with deterministic recovery |
+| E3 Shared inference and local engines | FR-5..FR-7, FR-9, FR-12, FR-23..FR-24, NFR-2..NFR-3, NFR-7, NFR-9..NFR-12, AR-11..AR-23 | Interchangeable contract-v1 local inference on Android and iOS |
+| E4 Remote inference and consent | FR-8, FR-10..FR-12, FR-22, FR-25, NFR-4..NFR-8, NFR-11, AR-8..AR-14, UX-DR17, UX-DR25 | Explicit, bounded, region-aware remote analysis through the gateway |
+| E5 Confirmation and grounded nutrition | FR-13..FR-18, FR-20..FR-21, NFR-6, NFR-10, NFR-12, NFR-15..NFR-16, AR-19..AR-30, UX-DR13..UX-DR24 | User-confirmed foods and serving assumptions become sourced estimates |
+| E6 Journey evidence and evaluation | FR-22..FR-24, NFR-17, NFR-20..NFR-21, SM-1..SM-10, AR-38..AR-45, UX-DR26..UX-DR35 | Shared Android/iOS acceptance journeys and evidence gates |
 
-## Epic List
+### Delivery order
 
-{{epics_list}}
+E1 freezes the shared contract boundaries, toolchain, identity manifest, and
+quality policy. E2 can then deliver capture and photo preparation independently
+of model providers. E3 and E4 are parallel implementation tracks that integrate
+only through the E1 contract. E5 consumes candidate evidence and the approved
+catalog. E6 can build the fixture and journey harness alongside E2-E5, but its
+profile transition is only allowed when the production graph is present. Each
+story is one bounded agent slice and one pull request, as required by AR-31 and
+AR-33.
 
-<!-- Repeat for each epic in epics_list (N = 1, 2, 3...) -->
+## Epic E1: Foundation and product shell
 
-## Epic {{N}}: {{epic_title_N}}
+Create the fail-closed monorepo substrate, KMP toolchain, product identity, and
+quality policy that every later story must consume.
 
-{{epic_goal_N}}
+### Story E1.1: Activate the mobile KMP scaffold
 
-<!-- Repeat for each story (M = 1, 2, 3...) within epic N -->
-
-### Story {{N}}.{{M}}: {{story_title_N_M}}
-
-As a {{user_type}},
-I want {{capability}},
-So that {{value_benefit}}.
+As the mobile platform owner,
+I want a pinned Android/iOS KMP scaffold with independently owned module roots,
+so that feature agents can build against a reproducible substrate.
 
 **Acceptance Criteria:**
 
-<!-- for each AC on this story -->
+- **Given** the mobile lifecycle is `scaffold-pending`, **when** the scaffold
+  story is merged, **then** the AD-16 tuple, version catalog, convention
+  plugins, module-boundary inventory, and nonempty product inventory are added
+  atomically.
+- **Then** Android and iOS thin hosts, sharedKit, a non-product bootstrap
+  acceptance host, and read-only quality entrypoints produce same-SHA evidence.
+- **And** no production feature, store artifact, testing dependency, or web/
+  backend source is introduced by this story.
 
-**Given** {{precondition}}
-**When** {{action}}
-**Then** {{expected_outcome}}
-**And** {{additional_criteria}}
+### Story E1.2: Enforce monorepo boundaries and contracts
 
-<!-- End story repeat -->
+As a repository-policy owner,
+I want root product boundaries and immutable contract releases enforced,
+so that mobile, landing, and backend can be developed independently.
+
+**Acceptance Criteria:**
+
+- **Given** `mobile/`, `web/landing/`, `backend/mobile-api/`, and `contracts/`
+  are the only declared roots, **when** a forbidden source, workspace, cache,
+  build, artifact, deployment, or credential edge is added, **then** the root
+  boundary suite fails.
+- **Then** the released mobile-api compatibility matrix tests supported
+  producer/consumer version skew without importing another product's source.
+- **And** root executables are enumerated in the protected policy inventory.
+
+### Story E1.3: Establish product identity metadata
+
+As a release owner,
+I want one machine-readable identity manifest,
+so that visible app names and store metadata cannot drift between platforms.
+
+**Acceptance Criteria:**
+
+- **Given** AD-39, **when** `mobile/config/product-identity.toml` is added,
+  **then** installed/launcher/in-app identity is `SuperNutrition` and both
+  store listing titles are `SuperNutrition AI nutritionist`.
+- **Then** Android labels, iOS display metadata, acceptance identities, web
+  metadata, and store-delivery checks validate against the manifest.
+- **And** package/bundle identifiers remain separate technical values.
+
+### Story E1.4: Establish repository quality gates
+
+As a quality owner,
+I want read-only quality checks and every-push CI policy,
+so that missing, skipped, or under-covered work cannot appear green.
+
+**Acceptance Criteria:**
+
+- **Given** the six product jobs are declared, **when** a branch push or pull
+  request runs, **then** all six jobs and the unconditional aggregate execute
+  without path filters.
+- **Then** every compiled production source has one denominator, each module
+  and product aggregate meets 85% line and branch coverage, and changed code
+  meets 100% line and branch coverage.
+- **And** `qualityFormat` is the only mutating formatter entrypoint.
+
+## Epic E2: Capture and photo preparation
+
+Deliver the camera-first, import-capable session and normalized Photo Input
+without selecting a model provider.
+
+### Story E2.1: Implement camera and picker bridges
+
+As a user,
+I want to capture or import one meal photo with clear permission recovery,
+so that I can start analysis without navigating a diary or account flow.
+
+**Acceptance Criteria:**
+
+- **Given** the app opens, **when** camera permission is resolved, **then** one
+  labeled shutter and one system-import action are available with native
+  platform behavior.
+- **Then** denial, unavailable hardware, restricted access, and capture failure
+  each expose settings, import, or manual-search recovery.
+- **And** platform image objects stay inside the native bridge modules.
+
+### Story E2.2: Normalize and quality-check Photo Input
+
+As an inference engine,
+I want one orientation-normalized, size-bounded, metadata-scrubbed Photo Input,
+so that Android and iOS receive equivalent safe bytes.
+
+**Acceptance Criteria:**
+
+- **Given** a PhotoRef, **when** preparation runs, **then** orientation,
+  dimensions, color space, and metadata policy are deterministic and fixture-
+  tested.
+- **Then** EXIF, GPS, and all non-essential metadata are stripped before any
+  remote payload or consent digest is created.
+- **And** the attempt lease is encrypted when persistence is unavoidable and
+  deleted on every terminal path.
+
+### Story E2.3: Implement capture recovery and session cleanup
+
+As a user,
+I want retake, cancel, offline, and manual recovery,
+so that a failed photo analysis never leaves a dead end or stale result.
+
+**Acceptance Criteria:**
+
+- **Given** poor image, no-food, offline, cancellation, or replacement,
+  **when** the user chooses a recovery action, **then** the reducer clears or
+  preserves exactly the state defined by EXPERIENCE.md.
+- **Then** a stale engine callback cannot reopen a result after replacement or
+  cancellation.
+- **And** Scan again returns to Capture with no attempt photo bytes retained.
+
+## Epic E3: Shared inference and local engines
+
+Freeze the contract-v1 evidence vocabulary and deliver capability-aware local
+inference as independent Android and iOS tracks.
+
+### Story E3.1: Freeze contract-v1 inference ports
+
+As the contract owner,
+I want versioned request, capability, candidate, abstention, and failure types,
+so that local, remote, gateway, and evaluation implementations are replaceable.
+
+**Acceptance Criteria:**
+
+- **Given** the contract module is pure KMP, **when** contract-v1 is published,
+  **then** it contains no platform, UI, DI, provider, or nutrition-catalog
+  dependency.
+- **Then** canonical JSON, in-memory fixtures, unknown-field handling, and
+  compatibility tests are published under `contracts/`.
+- **And** no result shape contains numeric nutrition from an Engine.
+
+### Story E3.2: Implement local Android inference
+
+As an Android local-inference owner,
+I want an Android-specific Local Engine behind the shared contract,
+so that eligible devices can analyze without transmitting Photo Input.
+
+**Acceptance Criteria:**
+
+- **Given** a ready Android capability, **when** an attempt starts, **then** no
+  network attempt or image transfer occurs and the result includes model,
+  route, contract, confidence, and abstention provenance.
+- **Then** model package integrity, compatibility, resource budgets, cancellation,
+  and rollback are covered by focused tests and physical-device evidence.
+
+### Story E3.3: Implement local iOS inference
+
+As an iOS local-inference owner,
+I want an iOS-specific Local Engine behind the same contract,
+so that iOS devices receive the same user-facing evidence vocabulary.
+
+**Acceptance Criteria:**
+
+- **Given** a ready iOS capability, **when** an attempt starts, **then** the
+  engine has the same contract-v1 semantics and no remote transfer occurs.
+- **Then** preprocessing parity, lifecycle cancellation, resource budgets,
+  model rollback, and physical-device evidence are recorded separately.
+
+### Story E3.4: Integrate deterministic local-first routing
+
+As a product owner,
+I want local-first routing with bounded escalation,
+so that remote analysis is offered only when it can change the outcome.
+
+**Acceptance Criteria:**
+
+- **Given** a ready Local Engine, **when** the user has not explicitly selected
+  another permitted route, **then** local analysis runs before remote is offered.
+- **Then** post-local remote escalation is limited to local unavailability,
+  Abstention, or a Gate G-5 low-confidence threshold; a successful high-
+  confidence local result cannot be escalated by arbitrary configuration.
+- **And** every route decision exposes a typed eligibility reason.
+
+## Epic E4: Remote inference and consent
+
+Deliver the optional remote path through the first-party gateway with explicit
+consent, jurisdiction controls, and provider isolation.
+
+### Story E4.1: Implement remote consent and transfer states
+
+As a user,
+I want to understand and control every photo upload,
+so that remote analysis never happens by surprise.
+
+**Acceptance Criteria:**
+
+- **Given** a permitted remote trigger, **when** the consent sheet opens, **then**
+  purpose, data sent, provider category/region, retention, and offline/manual
+  alternatives are visible before either choice.
+- **Then** PreTransfer cancellation sends zero bytes; Transferring cancellation
+  aborts transport; Transferred cancellation requests downstream deletion
+  without claiming already-sent bytes were recalled.
+- **And** duplicate transfer effects are rejected by attempt/effect IDs.
+
+### Story E4.2: Implement the remote mobile adapter
+
+As a remote mobile owner,
+I want a Ktor adapter that knows only the first-party contract,
+so that provider changes do not require a mobile feature rewrite.
+
+**Acceptance Criteria:**
+
+- **Given** a valid consent receipt and scrubbed Photo Input, **when** the
+  adapter sends a request, **then** it uses the pinned gateway envelope and no
+  provider credentials or provider schema are present in mobile code.
+- **Then** retries are bounded, idempotent where applicable, and cancellation
+  invalidates the attempt token.
+
+### Story E4.3: Implement the first-party gateway boundary
+
+As a backend owner,
+I want provider adapters and secrets behind the gateway,
+so that mobile clients cannot bypass privacy, rate, or region policy.
+
+**Acceptance Criteria:**
+
+- **Given** a contract-v1 request, **when** the gateway validates it, **then**
+  size/type, authentication, nonce/replay, rate, processing-region, retention,
+  and deletion controls are enforced before provider invocation.
+- **Then** raw photos are not durably stored or logged by default and responses
+  are normalized to contract-v1 evidence.
+
+## Epic E5: Confirmation and grounded nutrition
+
+Turn model evidence into a user-confirmed, catalog-grounded result without
+letting inference fabricate nutrient values.
+
+### Story E5.1: Implement Candidate review and correction
+
+As a user,
+I want to inspect, remove, replace, or search candidates,
+so that I remain the authority over what the photo means.
+
+**Acceptance Criteria:**
+
+- **Given** candidates or abstention, **when** review opens, **then** confidence,
+  route, assumptions, alternatives, and recovery actions are visible.
+- **Then** manual search remains available when engines are unavailable and
+  numeric nutrition is withheld until a catalog record is selected.
+
+### Story E5.2: Implement country-aware nutrition catalog selection
+
+As a user,
+I want to choose a food catalog independently from processing jurisdiction,
+so that food lookup preferences never silently route my photo across borders.
+
+**Acceptance Criteria:**
+
+- **Given** a catalog selection and a separate market/jurisdiction policy,
+  **when** a ConfigurationSnapshot is created, **then** `CatalogCountry`,
+  `MarketJurisdiction`, and `ProcessingRegion` remain distinct values.
+- **Then** a catalog change invalidates the attempt's mapped result but does not
+  silently change the processing region or remote-consent policy.
+
+### Story E5.3: Implement serving confirmation and grounded result
+
+As a user,
+I want to confirm serving amount and assumptions before seeing nutrition,
+so that estimates are transparent and correctable.
+
+**Acceptance Criteria:**
+
+- **Given** a selected canonical item, **when** serving confirmation succeeds,
+  **then** deterministic catalog math produces calories/macros with source,
+  version, serving basis, assumptions, and estimate language.
+- **Then** unresolved matches remain partial/unknown and no model-generated
+  numeric value is displayed.
+
+## Epic E6: Journey evidence and evaluation
+
+Create the deterministic cross-platform journey catalog, policy oracles, and
+evaluation harness needed to make acceptance and model claims reproducible.
+
+### Story E6.1: Build the shared UI journey DSL
+
+As a UI-acceptance owner,
+I want one logical journey definition for Android and iOS,
+so that platform flows cannot silently drift.
+
+**Acceptance Criteria:**
+
+- **Given** UJ-1..UJ-4 and SM-9, **when** the positive-scenario catalog is
+  authored, **then** every qualifying main, alternative, and recovery path maps
+  exactly once to one logical fingerprint on both platforms.
+- **Then** shared Compose semantics are tested in common/JVM, Android, and iOS
+  suites, with platform locators as the only allowed difference.
+
+### Story E6.2: Add privacy/network and native-gap oracles
+
+As a QA owner,
+I want binary-bound transfer and platform evidence,
+so that a green UI assertion cannot hide an upload or native failure.
+
+**Acceptance Criteria:**
+
+- **Given** local, offline, declined-consent, and remote-consent fixtures,
+  **when** a journey runs, **then** attempted connections, bytes, photo digest,
+  consent/effect ID, and terminal transfer state are recorded.
+- **Then** camera, permission, accessibility, lifecycle, and performance claims
+  have platform-appropriate native or real-device evidence.
+
+### Story E6.3: Establish the evaluation corpus and route baselines
+
+As an evaluation owner,
+I want local-only, remote-only, hybrid, and manual baselines,
+so that routing and accuracy claims are evidence-based.
+
+**Acceptance Criteria:**
+
+- **Given** a consented, versioned, leakage-resistant corpus, **when** a route
+  is evaluated, **then** corrected accuracy, grounding error, latency, resource,
+  cost, and representative Tier-1 slices are reported.
+- **Then** Gate G-5 approves thresholds before confidence-based hybrid routing
+  becomes release-ready.
+
+### Story E6.4: Maintain the quality and release evidence gates
+
+As a release owner,
+I want CI to reject stale or incomplete evidence,
+so that planning claims remain enforceable when implementation begins.
+
+**Acceptance Criteria:**
+
+- **Given** a changed requirement, source, manifest, workflow, or contract,
+  **when** CI runs, **then** affected inventories, coverage, journeys, and
+  policy fingerprints are required at the same commit.
+- **Then** missing, skipped, neutral, stale, detached, zero-denominator, or
+  non-success evidence fails the aggregate.

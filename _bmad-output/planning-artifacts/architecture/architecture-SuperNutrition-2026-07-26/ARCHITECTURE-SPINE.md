@@ -89,7 +89,20 @@ flowchart LR
 
 - **Binds:** FR-6..FR-12, FR-20..FR-21, NFR-1..NFR-3, NFR-9..NFR-11, SM-7..SM-10
 - **Prevents:** silent uploads, fallback loops, late results overwriting cancellation, and two engines winning the same attempt
-- **Rule:** Routing is a pure decision from capability snapshot, policy, explicit per-attempt remote consent, and attempt token. A ready Local Engine runs first unless the user explicitly selects another permitted route. Remote transfer is modeled as `PreTransfer`, `Transferring`, then `Transferred`: cancellation before transfer sends no bytes; during transfer it aborts transport and downstream work; after transfer it suppresses results and requests downstream deletion without claiming to recall sent bytes. Each attempt has at most one active engine and exactly one terminal outcome; late emissions are discarded.
+- **Rule:** Routing is a pure decision from capability snapshot, the closed
+  route policy, explicit per-attempt remote consent, and attempt token. A ready
+  Local Engine runs first unless the user explicitly selects another permitted
+  route. Remote may be offered after a local attempt only for local
+  unavailability, Local Engine abstention, or a Gate G-5 low-confidence result;
+  G-5 may tune the threshold but cannot authorize escalation after a successful
+  high-confidence local result. A typed `RemoteEligibilityReason` records the
+  trigger, and configuration cannot invent another trigger. Remote transfer is
+  modeled as `PreTransfer`, `Transferring`, then `Transferred`: cancellation
+  before transfer sends no bytes; during transfer it aborts transport and
+  downstream work; after transfer it suppresses results and requests
+  downstream deletion without claiming to recall sent bytes. Each attempt has
+  at most one active engine and exactly one terminal outcome; late emissions
+  are discarded.
 
 ### AD-7 — Catalog-grounded nutrition authority
 
@@ -101,7 +114,17 @@ flowchart LR
 
 - **Binds:** FR-4, FR-8, FR-10..FR-12, FR-19, FR-22, NFR-4..NFR-8
 - **Prevents:** raw-photo retention, sensitive logs, and transfer without consent
-- **Rule:** Image bytes are scoped to an opaque attempt, encrypted by platform storage when persistence is unavoidable, never logged or placed in analytics, and deleted on success, error, cancellation, and expiry. Remote transfer begins only after an explicit consent receipt bound to photo digest, purpose, region/provider policy, retention version, configuration version, and transfer state. The deletion contract covers device, gateway, provider, temporary files, caches, queues, logs, backups, and failure paths, with auditable evidence and honest limits.
+- **Rule:** Image bytes are scoped to an opaque attempt, encrypted by platform
+  storage when persistence is unavoidable, never logged or placed in
+  analytics, and deleted on success, error, cancellation, and expiry. Photo
+  preparation strips EXIF, GPS, and all non-essential image metadata before a
+  remote payload or consent receipt is created; the receipt binds the digest of
+  the scrubbed normalized payload, not an unsanitized source file. Remote
+  transfer begins only after an explicit consent receipt bound to that digest,
+  purpose, market jurisdiction, processing region/provider policy, retention
+  version, configuration version, and transfer state. The deletion contract
+  covers device, gateway, provider, temporary files, caches, queues, logs,
+  backups, and failure paths, with auditable evidence and honest limits.
 
 ### AD-9 — Versioned model and provider configuration
 
@@ -124,8 +147,17 @@ flowchart LR
 ### AD-12 — Country is independent from language
 
 - **Binds:** Tier-1 reference cohort, FR-14..FR-18, FR-21, FR-25, NFR-6, NFR-10, NFR-15..NFR-16
-- **Prevents:** one English locale silently selecting the wrong catalog, units, consent, or provider region
-- **Rule:** A country profile independently selects nutrition data package, serving and measurement defaults, required consent copy, provider-region policy, and locale defaults. The launch-country allowlist is remotely distributable signed configuration with a bundled safe default; it is not compiled into feature logic.
+- **Prevents:** one English locale silently selecting the wrong catalog, units,
+  consent, market jurisdiction, or processing region
+- **Rule:** Food preference and legal data-flow policy are separate axes. A
+  `CatalogCountry` selects the nutrition data package and serving/measurement
+  defaults; a `MarketJurisdiction` selects applicable consent, privacy, and
+  user-rights policy; a `ProcessingRegion` selects the permitted gateway/provider
+  region. A catalog choice can differ from market jurisdiction and processing
+  region and must never change either as a side effect. Locale remains a
+  separate user-overridable axis. The launch-country allowlist is remotely
+  distributable signed configuration with a bundled safe default; it is not
+  compiled into feature logic.
 
 ### AD-13 — First-party remote boundary
 
@@ -173,7 +205,15 @@ flowchart LR
 
 - **Binds:** FR-6, FR-9..FR-10, FR-24..FR-25, Tier-1 country profiles
 - **Prevents:** one attempt combining incompatible country, route, model, provider, or consent policies
-- **Rule:** One signed `ConfigurationSnapshot` resolves precedence in this order: bundled safe default, global release, environment, then country override. It carries one monotonic version and compatibility matrix. An inference attempt captures one validated snapshot. A user country/catalog change during correction terminates that attempt, clears remote consent and mapped results, preserves only user-visible candidate text, and starts manual grounding under a new snapshot.
+- **Rule:** One signed `ConfigurationSnapshot` resolves precedence in this order:
+  bundled safe default, global release, environment, then independent
+  `CatalogCountry` and `MarketJurisdiction` overrides. It carries a distinct
+  `ProcessingRegion`, one monotonic version, and a compatibility matrix. An
+  inference attempt captures one validated snapshot. A user catalog or market-
+  jurisdiction change during correction terminates that attempt, clears remote
+  consent and mapped results, preserves only user-visible candidate text, and
+  starts manual grounding under a new snapshot; changing the catalog cannot
+  silently change the processing region.
 
 ### AD-21 — Bound environment, authenticated gateway, and telemetry schema
 
@@ -342,7 +382,7 @@ flowchart LR
 | --- | --- |
 | Contract naming | Ports are nouns ending in `Engine`, `Source`, `Catalog`, or `Policy`; immutable result types end in `Result`, failures in `Failure`, UI inputs in `Event`, one-time outputs in `Effect`. |
 | Product identity | `mobile/config/product-identity.toml` declares `SuperNutrition` as the installed and in-app name and `SuperNutrition AI nutritionist` as the exact Apple App Store and Google Play listing title. Store descriptors never become launcher or in-app identity. |
-| IDs and time | Attempt IDs are random opaque strings; persistent entity IDs are stable strings; timestamps are UTC instants; country uses ISO 3166-1 alpha-2; locale uses BCP 47. |
+| IDs and time | Attempt IDs are random opaque strings; persistent entity IDs are stable strings; timestamps are UTC instants; `CatalogCountry` and `MarketJurisdiction` use ISO 3166-1 alpha-2; `ProcessingRegion` uses the approved provider-region identifier; locale uses BCP 47. |
 | Serialization | Public mobile–gateway envelopes carry `contractVersion`, `requestId`, and a sealed success/failure payload; unknown fields are ignored, unknown enum values map to `Unknown`. |
 | Confidence | Confidence is calibrated within one engine/model version and is never compared across engines unless Gate G-5 supplies a validated calibration transform. |
 | Errors | Expected failures are typed. `CancellationException` is always rethrown. UI receives recoverability and next-action semantics, not platform exceptions. |

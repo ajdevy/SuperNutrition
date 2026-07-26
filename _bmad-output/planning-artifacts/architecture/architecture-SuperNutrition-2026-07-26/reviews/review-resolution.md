@@ -21,6 +21,22 @@ All critical and high-confidence findings were incorporated before finalization.
 - Added explicit blocked work and exit artifacts for every PRD and UX gate.
 - Added an atomic build-toolchain tuple and mandatory Android+iOS bootstrap proof.
 
+## Post-finalization inline-review follow-up
+
+Four additional inline review threads were resolved after the original gate:
+
+- `epics.md` now contains six concrete epics, 21 bounded stories, a delivery
+  order, and a populated requirements coverage map.
+- AD-8 and its implementation guidance require EXIF/GPS/non-essential metadata
+  scrubbing before the consent and remote-payload digest boundary.
+- AD-12 and AD-20 separate catalog country, market jurisdiction, and processing
+  region, including the corresponding UX and configuration contracts.
+- AD-6 and FR-10 make post-local remote escalation a closed trigger set and
+  record a typed eligibility reason; Gate G-5 cannot override the local-first
+  invariant.
+
+The follow-up spine lint remains at zero findings.
+
 ## Rejected with primary evidence
 
 - **Compose Multiplatform 1.11.1 unpublished:** rejected. JetBrains’ current compatibility page identifies 1.11.1 and its supported platforms.
