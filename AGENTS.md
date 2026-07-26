@@ -27,3 +27,10 @@ The skills are committed to this repository. On a fresh checkout, run `./scripts
 ## Claude Code agents
 
 The repository also vendors the pinned `AlexGladkov/claude-code-agents` marketplace under `vendor/claude-code-agents/`. `.claude/settings.json` enables its `ai-sdlc`, `ai-university`, and `project-coordinator` plugins at project scope so collaborators can use the same agents after trusting the checkout in Claude Code. Do not edit the vendored agent prompts without updating `vendor/claude-code-agents/UPSTREAM_COMMIT` and documenting the reason.
+
+## Shared agent memory and mobile work
+
+- This file is the canonical repository guide. `CLAUDE.md` imports it; do not duplicate its content between agent-specific files.
+- Store verified long-lived decisions in `docs/decisions/` and link detailed BLE protocol facts from there rather than growing this startup file.
+- Use the project-local `android-cli` skill for Android environment and device work, `$ble-kmp-hil` for BLE or physical-device work, and `$mobile-release` only when release work is explicitly requested.
+- Do not treat emulator or simulator results as Bluetooth proof. Never put signing credentials, store keys, pairing secrets, or raw sensitive BLE logs in repository guidance or skills.
