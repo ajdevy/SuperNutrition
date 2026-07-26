@@ -1,0 +1,64 @@
+field_categories:
+  - category: "identity"
+    fields:
+      - name: "classification"
+        description: "What is being evaluated and whether it is official, community-maintained, or a proposed custom skill."
+        detail_level: "moderate"
+        required: true
+      - name: "candidates"
+        description: "Relevant skill, CLI, repository, or workflow candidates, including an exact name or source when available."
+        detail_level: "detailed"
+        required: true
+  - category: "lifecycle_fit"
+    fields:
+      - name: "coverage"
+        description: "Lifecycle stages covered: create, build, run, debug, test, sign, release, publish, maintain."
+        detail_level: "detailed"
+        required: true
+      - name: "platform_support"
+        description: "Android, iOS, KMP/common code, macOS/Xcode, CI, physical-device support, and important constraints."
+        detail_level: "detailed"
+        required: true
+      - name: "bluetooth_relevance"
+        description: "Direct Bluetooth/BLE capability, or the exact missing parts and custom-skill requirements."
+        detail_level: "detailed"
+        required: true
+  - category: "operational_fit"
+    fields:
+      - name: "toolchain_and_prerequisites"
+        description: "Required CLIs, SDKs, hardware, accounts, permissions, signing assets, CI runners, and non-interactive limits."
+        detail_level: "detailed"
+        required: true
+      - name: "installation_or_adoption"
+        description: "Installation/use path and available adoption metrics such as installs, stars, forks, or release activity."
+        detail_level: "moderate"
+        required: true
+      - name: "evidence_of_maintenance"
+        description: "Evidence of official stewardship, recent updates, repository activity, or explicit uncertainty."
+        detail_level: "moderate"
+        required: true
+  - category: "trust"
+    fields:
+      - name: "public_user_feedback"
+        description: "Direct user reviews, issue/discussion feedback, or a clear statement that meaningful feedback was unavailable; never infer sentiment from installs alone."
+        detail_level: "detailed"
+        required: true
+      - name: "security_and_release_safety"
+        description: "Secret-handling and approval guardrails, especially for keystores, Apple credentials, Play/App Store releases, and real device access."
+        detail_level: "detailed"
+        required: true
+  - category: "decision"
+    fields:
+      - name: "limitations_and_gaps"
+        description: "Unsupported lifecycle work, stale guidance risk, platform gaps, or validation limitations."
+        detail_level: "detailed"
+        required: true
+      - name: "recommendation"
+        description: "Adopt, adapt, or avoid recommendation with priority and rationale."
+        detail_level: "detailed"
+        required: true
+      - name: "sources"
+        description: "Primary sources and directly relevant feedback links."
+        detail_level: "detailed"
+        required: true
+uncertain: []

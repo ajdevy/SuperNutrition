@@ -1,4 +1,6 @@
 .DS_Store
+__pycache__/
+*.py[cod]
 
 # Personal BMAD installer answers and local customizations.
 _bmad/config.user.toml
