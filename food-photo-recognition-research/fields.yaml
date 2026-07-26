@@ -1,0 +1,74 @@
+field_categories:
+  - category: Market and product
+    fields:
+      - name: product_scope
+        description: What the app claims to recognize and estimate from a food photo
+        detail_level: moderate
+      - name: supported_platforms
+        description: iOS, Android, web, or other supported clients
+        detail_level: brief
+      - name: pricing
+        description: Current plan or API pricing, currency, and source date
+        detail_level: detailed
+      - name: popularity_signal
+        description: Downloads, ratings, review volume, revenue, or other evidence of market use
+        detail_level: moderate
+  - category: Recognition pipeline
+    fields:
+      - name: recognition_behavior
+        description: Observed workflow from photo capture to food and nutrition result
+        detail_level: detailed
+      - name: identified_services
+        description: Named or strongly evidenced third-party APIs, SDKs, models, or vendors
+        detail_level: detailed
+      - name: model_or_provider_confidence
+        description: Evidence grade and reasoning for each provider/model attribution
+        detail_level: detailed
+      - name: local_inference_evidence
+        description: Evidence that inference is on-device, cloud-based, or hybrid
+        detail_level: detailed
+      - name: portion_and_nutrition_method
+        description: How portion size, ingredients, calories, and nutrients appear to be estimated
+        detail_level: detailed
+  - category: Static analysis
+    fields:
+      - name: artifact_source
+        description: Where the inspected APK or other public artifact came from and its version
+        detail_level: moderate
+      - name: static_findings
+        description: Manifest, SDK, URL, model asset, permissions, and string findings
+        detail_level: detailed
+      - name: reverse_engineering_limits
+        description: What static analysis cannot establish and what was not attempted
+        detail_level: detailed
+  - category: Mobile model evaluation
+    fields:
+      - name: candidate_models
+        description: Local models suitable for food-photo understanding, with licenses and modalities
+        detail_level: detailed
+      - name: mobile_runtime_support
+        description: iOS and Android runtime options and conversion/deployment requirements
+        detail_level: detailed
+      - name: device_requirements
+        description: Approximate RAM, accelerator, quantization, latency, and battery implications
+        detail_level: detailed
+      - name: expected_food_inference_quality
+        description: Evidence-backed strengths, weaknesses, and likely failure modes for food photos
+        detail_level: detailed
+  - category: Economics and recommendation
+    fields:
+      - name: unit_cost_estimate
+        description: Estimated inference cost per photo and per meal at relevant usage levels
+        detail_level: detailed
+      - name: privacy_and_compliance
+        description: Data retention, consent, health-data sensitivity, and platform-policy considerations
+        detail_level: detailed
+      - name: recommendation
+        description: Recommended architecture or next experiment for SuperNutrition
+        detail_level: detailed
+uncertain:
+  - popularity_signal
+  - identified_services
+  - model_or_provider_confidence
+  - local_inference_evidence
+  - unit_cost_estimate

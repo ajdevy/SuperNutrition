@@ -1,0 +1,22 @@
+{
+  "product_scope": "Cal AI is a photo-first calorie tracker that lets users snap a meal and receives an AI food/nutrition estimate; the user can edit the logged result. Its public privacy notice treats image logging and dietary data as collected food/activity data.",
+  "supported_platforms": "iOS and Android. The public Android artifact analyzed was package com.viraldevelopment.calai, version 26.28.0.",
+  "pricing": "Consumer subscription. No official public developer/API price or named recognition vendor was found. Source: https://www.calai.app/privacy",
+  "popularity_signal": "Google Play public metadata showed a 1M+ install class for the Android listing at the time of research. Source: https://play.google.com/store/apps/details?id=com.viraldevelopment.calai",
+  "recognition_behavior": "Photo capture/upload -> AI identifies meal items and estimates calories/nutrients -> user reviews and edits. Cal AI's privacy copy warns that blur, hidden portions, and mixed recipes can make results incomplete or inaccurate.",
+  "identified_services": "[uncertain] Cal AI states that photos are sent to its API and/or service providers used to identify foods and estimate nutrition, but it does not name the underlying model/API in the public privacy pages checked.",
+  "model_or_provider_confidence": "[uncertain] The existence of a server/API processing path is high-confidence from the privacy notice; the vendor, model, prompt, and server architecture are undisclosed.",
+  "local_inference_evidence": "The public privacy language says photos are sent to an API/service provider, a strong cloud-processing signal. The product homepage also markets phone depth-sensor volume estimation, which is not evidence that food recognition itself is local.",
+  "portion_and_nutrition_method": "AI estimates food and nutrition from the photo; the user is expected to correct the result. The public disclosure itself acknowledges hidden portions and mixed recipes as failure sources. Exact database and portion model are not public.",
+  "artifact_source": "Public XAPK for package com.viraldevelopment.calai, version 26.28.0, version code 258, min SDK 29, target SDK 36, total XAPK size 131,781,927 bytes, SHA-256 2fd7c96d0e1471eccdd3d7814b5601ba40cd626ebc8e25caee7665fc26d91534. Temporary files: /tmp/supernutrition-apk-analysis/calai-26.28.0.xapk and /tmp/supernutrition-apk-analysis/calai-26.28.0-jadx.",
+  "static_findings": "The base APK has CAMERA and INTERNET permissions, obfuscated assets, ML Kit barcode classes/remote-model plumbing, and no obvious food model files by standard model extensions in the XAPK tree. No named OpenAI/Gemini/Passio food endpoint was found in the static pass. This is consistent with API-backed recognition but does not prove the absence of dynamically delivered models.",
+  "reverse_engineering_limits": "No installation, execution, account login, network capture, or authentication bypass was attempted. Obfuscation and split delivery limit endpoint attribution.",
+  "candidate_models": "For a new app, keep a local compact food detector/classifier as a quality gate and candidate generator; use a cloud food API or multimodal model for difficult dishes, with a canonical nutrition database after confirmation.",
+  "mobile_runtime_support": "LiteRT/MediaPipe, ONNX Runtime Mobile, and ExecuTorch can host local models on Android/iOS; Core ML is preferred for an iOS-specific path.",
+  "device_requirements": "Depth/AR-assisted portion estimation should be evaluated separately from RGB recognition. A local classifier is much cheaper than a general VLM in memory and battery.",
+  "expected_food_inference_quality": "Expect difficulty with blur, hidden food, composite recipes, cooking oils, and portion scale. Treat AI output as a draft, not a nutrition measurement.",
+  "unit_cost_estimate": "[uncertain] Cal AI's internal per-photo cost and vendor contract are not public.",
+  "privacy_and_compliance": "Cal AI's notice says photo-logged dietary data and images may be processed by its API/service providers and may be stored/synced depending on settings. A nutrition app should document retention, training use, deletion, health-data handling, and cross-border transfers.",
+  "recommendation": "Cal AI is useful evidence for the cloud-photo plus correction UX, but not a source for vendor selection. Ask for an explicit subprocessor/model disclosure if using a comparable API.",
+  "uncertain": ["identified_services", "model_or_provider_confidence", "unit_cost_estimate"]
+}
