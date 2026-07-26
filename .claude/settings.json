@@ -1,0 +1,15 @@
+{
+  "enabledPlugins": {
+    "ai-sdlc@claude-code-agents": true,
+    "ai-university@claude-code-agents": true,
+    "project-coordinator@claude-code-agents": true
+  },
+  "extraKnownMarketplaces": {
+    "claude-code-agents": {
+      "source": {
+        "source": "directory",
+        "path": "./vendor/claude-code-agents"
+      }
+    }
+  }
+}
