@@ -23,3 +23,10 @@ This repository vendors the BMAD Method core and BMM skills under `.agents/skill
 ## Agent tooling setup
 
 The skills are committed to this repository. On a fresh checkout, run `./scripts/setup-agent-tools.sh` once to install the local graphify CLI used by the project hook. Node.js 20.12+, Python 3.10+, and `uv` are required by the current BMAD/graphify tooling.
+
+## Shared agent memory and mobile work
+
+- This file is the canonical repository guide. `CLAUDE.md` imports it; do not duplicate its content between agent-specific files.
+- Store verified long-lived decisions in `docs/decisions/` and link detailed BLE protocol facts from there rather than growing this startup file.
+- Use the project-local `android-cli` skill for Android environment and device work, `$ble-kmp-hil` for BLE or physical-device work, and `$mobile-release` only when release work is explicitly requested.
+- Do not treat emulator or simulator results as Bluetooth proof. Never put signing credentials, store keys, pairing secrets, or raw sensitive BLE logs in repository guidance or skills.

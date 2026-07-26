@@ -1,0 +1,4 @@
+interface:
+  display_name: "KMP BLE and HIL"
+  short_description: "Safe BLE workflows with real-device evidence"
+  default_prompt: "Use $ble-kmp-hil to plan or verify this Kotlin Multiplatform Bluetooth change."

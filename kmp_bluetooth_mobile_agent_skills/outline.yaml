@@ -1,0 +1,16 @@
+topic: "Minimal agent skill and workflow stack for Kotlin Multiplatform mobile development and efficient Codex/Claude use"
+research_scope: "All notable options, prioritizing current 2024-2026 maintenance, ecosystem fit, public feedback, and minimal context footprint"
+items:
+  - name: "KMP mobile implementation and execution skills"
+    category: "Android, Kotlin, iOS, and community development skills"
+    description: "Assess Android's official skill pack and CLI for setup, builds, emulators/devices, tests, performance debugging, and release-adjacent work; Kotlin's official skills for AGP, CocoaPods-to-SPM, and Kotlin/Native; and only high-signal community KMP/Compose/iOS execution skills. Include where they complement, rather than replace, KMP and real-device validation."
+  - name: "Bluetooth, device QA, signing, release, and publishing specialization"
+    category: "Bluetooth domain and mobile release operations"
+    description: "Determine whether dependable BLE/KMP and mobile release skills exist. Specify the smallest safe workflow set needed for Android BLE, CoreBluetooth, KMP expect/actual boundaries, permissions, scanning, connection lifecycle, reconnection, background behavior, hardware-in-the-loop validation, Android keystores/AAB/Play, and Apple certificates/profiles/TestFlight/App Store publishing."
+  - name: "Minimal cross-agent memory, coding, and context-management stack"
+    category: "Codex, Claude, and agent workflow efficiency"
+    description: "Research the smallest high-signal combination of AGENTS.md or CLAUDE.md, repo-local skills, plugins/MCP, durable memory/decision records, code-review/testing workflows, and token/context controls for Codex, Claude, and compatible agents. Explicitly compare context footprint, activation behavior, public user feedback, and when an item should not be installed."
+execution:
+  batch_size: 3
+  items_per_agent: 1
+  output_dir: "/Users/anastasia/workspace_ai/SuperNutrition/kmp_bluetooth_mobile_agent_skills/research_results"
