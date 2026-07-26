@@ -10,7 +10,7 @@ created: 2026-07-26
 updated: 2026-07-26
 binds:
   - FR-1..FR-25
-  - NFR-1..NFR-23
+  - NFR-1..NFR-24
   - SM-1..SM-10
 sources:
   - ../../prds/prd-SuperNutrition-2026-07-26/prd.md
@@ -140,7 +140,7 @@ flowchart LR
 
 ### AD-11 — Contract and evidence gates
 
-- **Binds:** all implementation stories, NFR-1..NFR-23, SM-7..SM-10
+- **Binds:** all implementation stories, NFR-1..NFR-24, SM-7..SM-10
 - **Prevents:** untested adapters and simulator-only platform claims
 - **Rule:** AD-33 supplies the measurable unit-coverage floors and changed-code rule. Every engine passes the same contract suite. AD-34 supplies positive-journey UI acceptance on both platforms. Route-by-platform acceptance evidence must cover Android and iOS on real devices; emulator or simulator evidence cannot establish camera, performance, memory, or local-inference support.
 
@@ -175,7 +175,7 @@ flowchart LR
 
 - **Binds:** all agent-authored implementation
 - **Prevents:** vendored prompts overriding project architecture, broad refactors, version churn, or skipped adapter tests
-- **Rule:** The current story and cited ADs are authoritative over vendored agent defaults. One invocation owns one story and exactly one named ownership slice from this closed set: one product module plus its colocated tests; one platform host/source-set plus its colocated tests; one AD-36 protected root-policy slice; or one explicitly enumerated infrastructure-policy slice below. The only mobile scaffold exceptions are `mobile-build-policy` (`mobile/settings.gradle.kts`, `mobile/build.gradle.kts`, `mobile/build-logic/**`, `mobile/gradle/**`), `mobile-quality-policy` (`mobile/config/**`), `mobile-ui-acceptance-policy` (`mobile/.maestro/**`), and `mobile-scaffold-activation` (`mobile/product-lifecycle.toml` only); each has one distinct owner, cannot own product source, and requires a separate invocation. No story-wide invocation is valid. Version-catalog changes require the owning story and `mobile-build-policy` slice. Coroutine cancellation is rethrown. Photo bodies are never logged. Generated adapter and data-source code requires tests.
+- **Rule:** The current story and cited ADs are authoritative over vendored agent defaults. One invocation owns one story and exactly one named ownership slice from this closed set: one product module plus its colocated tests; one platform host/source-set plus its colocated tests; one AD-36 protected root-policy slice; or one explicitly enumerated infrastructure-policy slice below. The only mobile scaffold exceptions are `mobile-build-policy` (`mobile/settings.gradle.kts`, `mobile/build.gradle.kts`, `mobile/build-logic/**`, `mobile/gradle/**`), `mobile-quality-policy` (`mobile/config/**`), `mobile-ui-acceptance-policy` (`mobile/.maestro/**`), `interaction-policy-contract` (`contracts/interaction-policy/v1/**`), and `mobile-scaffold-activation` (`mobile/product-lifecycle.toml` only); each has one distinct owner, cannot own product source, and requires a separate invocation. No story-wide invocation is valid. Version-catalog changes require the owning story and `mobile-build-policy` slice. Coroutine cancellation is rethrown. Photo bodies are never logged. Generated adapter and data-source code requires tests.
 
 ### AD-16 — Atomic toolchain tuple
 
@@ -207,13 +207,15 @@ flowchart LR
 - **Prevents:** one attempt combining incompatible country, route, model, provider, or consent policies
 - **Rule:** One signed `ConfigurationSnapshot` resolves precedence in this order:
   bundled safe default, global release, environment, then independent
-  `CatalogCountry` and `MarketJurisdiction` overrides. It carries a distinct
-  `ProcessingRegion`, one monotonic version, and a compatibility matrix. An
-  inference attempt captures one validated snapshot. A user catalog or market-
-  jurisdiction change during correction terminates that attempt, clears remote
-  consent and mapped results, preserves only user-visible candidate text, and
-  starts manual grounding under a new snapshot; changing the catalog cannot
-  silently change the processing region.
+  `CatalogCountry` and approved `MarketJurisdiction` policy overrides applied by
+  the single `MarketPolicyResolver`. It carries a distinct policy-resolved
+  `ProcessingRegion`, locale, measurement system,
+  device-capability tier/digest, one monotonic version, and a compatibility
+  matrix. An inference attempt captures one validated snapshot.
+  A catalog or approved market-policy profile change during correction
+  terminates that attempt, clears remote consent and mapped results, preserves
+  only user-visible candidate text, and starts manual grounding under a new
+  snapshot; changing the catalog cannot silently change the processing region.
 
 ### AD-21 — Bound environment, authenticated gateway, and telemetry schema
 
@@ -376,6 +378,98 @@ flowchart LR
   and package identifiers are selected by the scaffold story and recorded
   separately; they do not alter the visible naming contract.
 
+### AD-40 — Low-friction interaction and safe defaults
+
+- **Binds:** NFR-24, UX-DR37, all product screens and user-interaction-affecting
+  stories, agent guidance, journey/action-budget evidence
+- **Prevents:** choice-heavy happy paths, hidden assumptions, irreversible
+  auto-actions, and defaults that silently change privacy, jurisdiction, or
+  nutrition safety
+- **Rule:** Interaction budget is a first-class acceptance property. All product
+  policies conform to the immutable language-neutral
+  `contracts/interaction-policy/v1` schema, which is created and versioned by
+  the separately owned `interaction-policy-contract` slice. The mobile instance
+  is the protected `mobile/config/quality/interaction-policy.toml`.
+
+  The closed default allowlist contains only `defaultLocale`,
+  `measurementSystem`, `catalogProposal`, and one atomic
+  `standardServing` value (`unit` plus `amount`) after canonical-item
+  confirmation. Food identity, preparation, oil, sauce, recipe, remote consent,
+  provider-routing choice, and medical/allergen fields are never defaultable.
+  The immutable `ConfigurationSnapshot` is the automatic source for context
+  values and is materialized once per attempt. After canonical confirmation,
+  the `CatalogServingDefaultSource` port in `mobile/domain/nutrition` may return
+  an immutable catalog fact as an atomic serving proposal keyed to the current
+  snapshot; it never mutates the snapshot and Candidate, locale, device, or a
+  prior correction cannot create the proposal.
+
+  `InteractionDefaultPolicy`, `ConfigurationSnapshot`,
+  `DefaultResolutionInput`, `DefaultResolution`, `MarketPolicyResolver`, and
+  `DefaultResolver` are contract-neutral types owned by `mobile/core/config`.
+  `DefaultResolver` only returns `DefaultResolution`; it never imports or emits
+  domain types. `DefaultProposal`, `DefaultDecision`, and their lifecycle are
+  owned and mutated only by the `mobile/domain/photo-analysis` reducer. Compose
+  presenters render these results and never resolve policy or mutate decision
+  state.
+
+  Every proposal and decision carries a proposal/decision ID, monotonic revision,
+  expected snapshot and policy digests, canonical food/serving ID when present,
+  source identity, and monotonic event sequence. The reducer accepts an event
+  only when its ID, expected revision, and digests match the current attempt;
+  events are serialized and idempotent, and an invalidation wins any same-revision
+  race. The complete lifecycle is `Proposed -> Accepted | Overridden |
+  Invalidated`, `Accepted -> Overridden | Undone | Invalidated`,
+  `Overridden -> Overridden (new revision) | Accepted (Undo) | Invalidated`,
+  and `Undone -> Proposed` only for a new proposal ID. Undo never re-runs the
+  resolver. The atomic `standardServing` pair shares one proposal/decision ID
+  and one lifecycle outcome.
+
+  A first-use catalog proposal remains unaccepted until explicit confirmation and
+  cannot auto-advance into grounding or remote transfer. A confirmed
+  `CatalogCountry` may be persisted only as the next-attempt catalog context;
+  the next attempt creates a new snapshot, while changing it during an active
+  attempt invalidates that attempt and clears consent/mapped results. MVP food,
+  preparation, serving, and meal corrections remain session-scoped and are not
+  persisted as future defaults. Any future non-sensitive preference requires a
+  separate story with scope, expiry, revocation, deletion, and reset behavior.
+
+  Each happy path minimizes taps, scrolls, typing, and choice surfaces. Every
+  default is rendered inline with source and provenance, remains editable and
+  reversible, and is separate from measured/inferred facts. Auto-advance is
+  reversible only when it does not trigger grounding, remote transfer, a saved
+  result, or another irreversible data effect; serving confirmation remains the
+  explicit boundary before nutrition calculation. `MarketPolicyResolver` alone
+  resolves approved `MarketJurisdiction` and `ProcessingRegion` into the
+  snapshot; `DefaultResolver` does not resolve them. The app shows those values
+  in remote-consent detail and never derives or silently changes them from locale
+  or catalog; the user consents to the resulting transfer, not to a provider-
+  region picker. Medical/allergen conclusions are prohibited and cannot be
+  enabled by confirmation; materially uncertain food identity requires a
+  targeted question or Abstention.
+
+  `InteractionBudgetEvidence` records schema/policy/config versions and digests,
+  proposal/decision IDs, resolved value digest (never sensitive text), field ID,
+  source identity, scenario, platform, locale, accessibility mode, default
+  provenance, lifecycle outcome, event sequence, the required dimensions `tap`,
+  `scroll`, `field`, and `choice`, and bounded auxiliary counts for
+  `textEntryChars`, `choiceSurface`, `back`, `undo`, `cancel`, and
+  `permissionPrompt`. Each journey manifest supplies non-negative approved
+  maxima for every required and auxiliary dimension; CI fails on missing
+  dimensions, digest/value mismatch, stale proposal, forbidden default, or an
+  observed count above its approved maximum.
+
+  Counting semantics are stable across Compose, Maestro, Android, and iOS:
+  `tap` is one user activation of a semantic control; `scroll` is one user
+  scroll gesture crossing the declared 24dp threshold; `field` is one distinct
+  user-edited text/number field (default rendering is zero); `textEntryChars`
+  counts entered characters without recording content; `choice` is one selected
+  alternative or explicit consent decision; and `choiceSurface` counts distinct
+  decision surfaces presented. A choice activation contributes to both `tap`
+  and `choice` (the dimensions are cumulative, not mutually exclusive).
+  Programmatic auto-advance, reducer events, and accessibility focus traversal
+  are not taps; Back, Undo, cancellation, and system permission prompts are
+  separate bounded typed events.
+
 ## Consistency Conventions
 
 | Concern | Convention |
@@ -389,6 +483,7 @@ flowchart LR
 | State | Shared workflow state is immutable; only the reducer mutates it. Adapter callbacks enter through events tagged with the current attempt token. |
 | Logging | Structured and allowlisted; AD-14 applies before any logging interceptor is enabled. |
 | Configuration | AD-20 snapshot precedence; invalid, expired, incompatible, or unverifiable configuration fails closed for remote upload. |
+| Interaction budget | AD-40 governs shortest safe paths, visible/editable/reversible defaults, explicit sensitive decisions, atomic serving proposals, and per-journey required plus bounded auxiliary interaction evidence. |
 | DI | Constructor injection; app-root Koin modules; explicit engine qualifiers; no global lookups. |
 | Monorepo ownership | Product implementation lives only in `mobile/`, `web/landing/`, or `backend/mobile-api/`; `contracts/` contains independently owned immutable non-executable releases only. Every product has a distinct owner and independent dependency install, cache, artifact, runtime, quality, deployment, credentials, and rollback. Landing has no backend runtime edge. |
 | Gradle ownership | Mobile module scripts declare identity, targets, and dependencies only. `mobile/build-logic` convention plugins own source-set, compiler, SDK, Compose, lint, test, and packaging defaults. |
@@ -445,7 +540,9 @@ mobile/
     iosApp/                           # Thin Xcode host
   build-logic/convention/             # Included-build mobile convention plugins
   core/                               # Model, platform API, network, UI, navigation
+    config/                           # ConfigurationSnapshot and sole default-policy resolver
   domain/                             # Inference, photo-analysis, nutrition contracts
+    photo-analysis/                   # Sole reducer owner of default proposal/decision lifecycle
   data/nutrition/                     # SQLDelight catalog and grounded nutrition
   inference/                          # local-android, local-ios, remote client
   platform/                           # photo-android and photo-ios bridges
@@ -453,7 +550,8 @@ mobile/
   testing/                            # Mobile-only reusable test support
   evaluation/harness/                 # Corpus, route, and device evidence
   .maestro/                           # Profile-owned bootstrap or photo-analysis flows
-  config/                             # Mobile identity, architecture, quality, model/country policy
+  config/                             # Mobile identity, architecture, quality, interaction-default, model/country policy
+    quality/interaction-policy.toml   # Protected default allowlist and provenance/scope policy
   gradle/                             # Mobile versions and verification metadata
 web/
   landing/
@@ -473,6 +571,7 @@ backend/
     config/                           # Added with active runtime/deploy policy
 contracts/
   mobile-api/                         # Independent immutable data releases only
+  interaction-policy/v1/              # Shared language-neutral default/budget schema
 tooling/
   policy-tool-inventory.toml          # Protected allowlist of policy-only executables
   product-inventory.schema.json       # One inventory schema for every product
@@ -531,7 +630,7 @@ flowchart TB
 | Security and privacy — NFR-4..NFR-8 | app roots, gateway, telemetry, configuration | AD-8, AD-13, AD-14, AD-20, AD-21, AD-24 |
 | Platform and data reliability — NFR-9..NFR-12 | bridges, engines, catalog, convention build | AD-7, AD-11, AD-16, AD-17, AD-19, AD-22, AD-26 |
 | Accessibility and localization — NFR-13..NFR-16 | Compose feature, native bridges, country profiles | AD-4, AD-12, AD-23 |
-| Engineering quality, monorepo, and product identity — NFR-17..NFR-23 | all three product roots, `contracts/`, test/build policy, identity metadata, six-job GitHub Actions CI | AD-3, AD-11, AD-15, AD-16, AD-25..AD-39 |
+| Engineering quality, monorepo, product identity, and interaction policy — NFR-17..NFR-24 | all three product roots, `contracts/`, test/build policy, identity metadata, interaction/default policy, six-job GitHub Actions CI | AD-3, AD-11, AD-15, AD-16, AD-25..AD-40 |
 | Product evidence — SM-1..SM-10 | evaluation harness and redacted telemetry | AD-11, AD-14 |
 
 ## Deferred

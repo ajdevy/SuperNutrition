@@ -36,6 +36,17 @@ SuperNutrition succeeds by reducing effort while preserving honesty. It does not
 that a single image can reveal exact weight, hidden ingredients, allergens, or
 medical truth.
 
+The default interaction model is low-friction: the happy path should require the
+fewest safe taps, scrolls, fields, and choice surfaces possible. Only fields
+allowlisted by the protected interaction-default policy may be prefilled from
+the immutable configuration snapshot or the approved post-confirmation catalog
+serving source, shown with their provenance, and kept editable/reversible within
+scope. Approved policy
+resolves jurisdiction for display before remote consent; the user authorizes the
+resulting transfer rather than choosing provider routing. Privacy/remote upload
+is never silent, medical/allergen conclusions are prohibited, and materially
+uncertain food identity is never silently chosen for the user.
+
 ## 2. Target User
 
 ### 2.1 Jobs To Be Done
@@ -352,6 +363,11 @@ calculation.
 
 - The app exposes the unit, amount or range, and relevant recipe assumptions.
 - The app does not describe an inferred portion as measured fact.
+- After a canonical catalog item is confirmed, the approved catalog serving
+  source may provide an atomic standard serving unit-and-amount proposal for the
+  current immutable ConfigurationSnapshot. It is shown as a visible editable
+  default so the user can confirm it without opening a separate picker;
+  Candidate, locale, device, or user-correction context alone cannot create it.
 
 #### FR-16: Deterministic nutrition grounding
 
@@ -677,6 +693,38 @@ feature rewrite.
   metadata only and must not appear as the installed display name. A protected
   identity manifest and automated metadata assertions prevent platform, locale,
   build-profile, landing-page, and store-listing drift.
+- **NFR-24:** Product journeys minimize interaction while preserving safe user
+  control. Happy paths use the fewest practical taps, scrolls, fields, and choice
+  surfaces; only fields named by the protected
+  `mobile/config/quality/interaction-policy.toml` allowlist may be prefilled from
+  the immutable `ConfigurationSnapshot` or the approved post-confirmation
+  catalog serving source. The snapshot materializes locale, catalog, device
+  capability, and policy values before the reducer runs; the catalog source may
+  supply one atomic standard-serving unit/amount pair only after canonical
+  confirmation and never mutates the snapshot. The
+  policy defines source precedence, independent CatalogCountry/MarketJurisdiction/
+  ProcessingRegion/locale validity, provenance, and persistence scope. Every default is
+  visible, labeled with its source/provenance, editable, reversible, and
+  distinct from measured or inferred facts. Food/preparation/serving corrections
+  remain session-scoped in the MVP; no future persisted correction preference is
+  defined by this contract.
+  A first-use catalog value is an unaccepted proposal until the user confirms it
+  and cannot auto-advance into grounding or remote transfer.
+  The initial allowlist is limited to locale, measurement system, a first-use
+  catalog proposal, and standard serving unit/amount after canonical-item
+  confirmation; food identity, preparation, oil, sauce, recipe, remote consent,
+  provider-routing choice, and medical/allergen fields are not defaultable.
+  Auto-advance is limited to reversible local/UI steps. Approved policy may
+  resolve market jurisdiction and processing region, but the app must show those
+  values before transfer and must not derive or silently change them from locale
+  or catalog; the user consents to the resulting upload rather than selecting a
+  provider region. Medical/allergen conclusions are prohibited and cannot be
+  enabled by confirmation; materially uncertain food identity requires an honest
+  question or Abstention.
+  Journey tests record required interaction budgets, bounded text-entry/
+  choice-surface/recovery maxima, proposal/decision IDs, resolved-value
+  digests, default provenance, override/Undo paths, and negative cases for
+  forbidden defaults.
 
 ## 9. Constraints and Guardrails
 
@@ -686,6 +734,9 @@ feature rewrite.
 - Low-confidence, mixed-dish, hidden-ingredient, portion, and allergen-relevant
   ambiguity must support Abstention or an explicit user question.
 - A disclaimer does not replace correct uncertainty behavior.
+- Low-friction defaults may remove a choice only when the field is allowlisted,
+  policy-resolved, visible, editable, reversible, and non-sensitive; uncertainty
+  still requires a question, confirmation, or Abstention.
 
 ### Privacy
 

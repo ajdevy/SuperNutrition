@@ -33,6 +33,23 @@ Confirmation, result, error, and retry are states, not navigation destinations.
 Native Back/gesture behavior either returns to the last safe state or ends the
 Analysis Session after confirmation when data would be discarded.
 
+Low-friction interaction is the default behavior. The happy path uses the fewest
+safe taps, scrolls, fields, and choice surfaces practical for the context.
+Allowlisted locale, measurement system, catalog proposal, and (after canonical
+confirmation) one atomic standard serving pair may be prefilled when
+deterministic; each is shown inline as a labeled default with source/provenance,
+remains editable and reversible, and preserves the user's correction only within
+its approved scope. Meal-specific preparation,
+oil, sauce, and recipe values are never `DefaultProposal` values. When intrinsic
+to a user-confirmed canonical catalog item they are displayed as catalog facts or
+labeled assumptions; unresolved meal-specific values require an explicit
+confirmation or question.
+Remote upload/consent and materially uncertain food identity are never
+preselected or silently inferred. Medical/allergen conclusions are prohibited.
+Policy-resolved market
+jurisdiction and processing region are shown in the consent detail; the user
+consents to the resulting transfer rather than choosing provider routing.
+
 ## Information Architecture
 
 | Surface or state | Reached from | Purpose |
@@ -82,12 +99,43 @@ Microcopy is calm, direct, and nonjudgmental. Brand posture lives in `DESIGN.md`
 | Food search | Manual/correction | Search normalized country-aware catalog; source/version retained silently then visible in details |
 | Serving editor | Confirmation | Amount, unit, optional range; validate without erasing input; expose recipe/oil/sauce questions only when relevant |
 | Consent sheet | Remote escalation | Accept and Continue without upload have equal visual access; no preselected consent |
-| Country and catalog sheet | First use / contextual change | Suggest a catalog country, require confirmation, show the separate market jurisdiction and processing-region policy, persist catalog choice locally, and allow Not listed/manual selection |
+| Country and catalog sheet | First use / contextual change | Suggest a catalog country as an unaccepted proposal, require confirmation on first use, show the separate policy-resolved market jurisdiction and processing-region values, persist only the confirmed catalog choice locally, and allow Not listed/manual selection |
 | Privacy detail sheet | Consent | Explain purpose, data categories, retention, provider category/region, cancellation limits, and policy link |
 | Source detail sheet | Result / Food search | Nutrition Source name, version, country coverage, serving conversion, and estimate disclaimer |
 | Internal diagnostics panel | Debug builds | Redacted route/capability/version/timing/error only; copy action excludes photos and sensitive payloads |
 | Result summary | Grounded result | Estimate label, foods/servings first, nutrients second, provenance accessible |
 | Recovery panel | Typed failure | Maximum three relevant next actions; no generic Retry if state cannot change |
+
+### Interaction budget and safe defaults
+
+- Give every ordinary decision surface one obvious primary action and keep
+  routine values inline; do not make a user open a picker merely to accept an
+  allowlisted deterministic default after any required first-use confirmation.
+  Consent is the explicit exception: its remote-upload and no-upload actions
+  remain equal, unselected, and visually neutral as specified in DESIGN.md.
+- Prefer a visible default plus inline Edit/Undo over a choice-first sheet. Use
+  standard serving, a confirmed catalog, and localized units only when the
+  protected default policy and active snapshot make the value deterministic.
+  A confirmed canonical item may supply an atomic standard serving pair through
+  the catalog source; preparation, oil, sauce, and recipe values remain displayed
+  catalog facts or labeled assumptions, never interaction defaults. Unresolved
+  meal-specific values require explicit confirmation.
+- Label defaults as `Default` (or equivalent localized copy), expose their source,
+  and retain a reversible override. A user correction becomes authoritative for
+  the current session and must not be silently overwritten by a later refresh.
+  The MVP does not persist meal/preparation/serving corrections as future
+  defaults.
+- Auto-advance only through reversible local/UI steps such as preparing a photo
+  or opening the next review state. Never auto-advance into remote transfer,
+  consent, or uncertain food identity. Medical/allergen conclusions are
+  prohibited. Jurisdiction and
+  processing-region policy may be resolved by approved configuration, but must
+  be shown before consent and cannot be chosen or changed by catalog/locale.
+- Acceptance evidence records the four required tap/scroll/field/choice counts,
+  bounded text-entry/choice-surface/recovery events, proposal/decision IDs,
+  resolved-value digest, and default provenance for the default and override
+  paths. A lower count never excuses hidden data transfer or an unacknowledged
+  assumption.
 
 ## State Patterns
 
@@ -196,12 +244,16 @@ are not first-release scope.
 - The English-speaking reference cohort is United States, Canada, United Kingdom,
   Australia, and New Zealand under PRD Assumption A-1 until PRD Gate G-1 replaces
   it.
-- Do not infer country only from language. Country controls available Nutrition
-  Sources, serving units, disclosures, and remote-processing region.
-- On first use, suggest the system region but require confirmation. Persist the
-  selection locally. If the region is unavailable or unsupported, open Country
+- Do not infer country only from language. `CatalogCountry` controls available
+  Nutrition Sources and serving conventions; `MarketJurisdiction` controls
+  disclosures and user-rights policy; approved policy resolves
+  `ProcessingRegion`. A catalog or locale choice never changes the latter two
+  axes.
+- On first use, suggest the system region as a catalog proposal but require
+  confirmation. Persist only the confirmed catalog choice and approved local
+  display preferences. If the region is unavailable or unsupported, open Country
   and catalog with “Not listed” and manual recovery; never silently substitute
-  the United States.
+  the United States or persist a provider-routing choice.
 - Support metric weights in all reference markets and localized display units
   where product research requires them; store canonical quantities independently
   of display.
@@ -220,7 +272,8 @@ are not first-release scope.
 3. Capture becomes ready; she frames lunch and taps the shutter.
 4. Analyzing shows the frozen frame and `On this device`.
 5. The Local Engine returns Candidates.
-6. Maya confirms food and serving.
+6. The standard serving and configured unit are already visible as editable
+   defaults; Maya confirms food and serving in one surface.
 7. **Climax:** Grounded result shows the nutrition estimate, source, assumptions,
    and `On this device`.
 8. Maya taps Scan again; the prior Analysis Session is cleared.

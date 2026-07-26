@@ -143,6 +143,13 @@ is marked ready for development. The system should remain credible if that
 accent changes; layout, typography, and semantic state must not depend on brand
 color.
 
+**Low-friction interaction:** surfaces should feel immediate and quiet. Prefer a
+visible, editable default and one clear action over a choice-first sheet or a
+multi-step form. Defaults must be deterministic, reversible, and labeled with
+their provenance and come from the protected default policy; privacy and consent
+decisions remain explicit, medical/allergen conclusions are prohibited, and
+materially uncertain identity remains unresolved until honestly corrected.
+
 ## Colors
 
 - **Soft stone (`{colors.surface-base}`)** is the default canvas. It is warmer
@@ -235,11 +242,18 @@ metaphor; no other control copies it.
   weight, keyboard/focus access, and no preselection. “Continue without upload”
   is listed first in reading/focus order; “Send photo for remote analysis”
   follows. Neither uses the filled primary-action treatment.
-- **Country and catalog sheet** — Current catalog country, separate market
-  jurisdiction and processing-region policy, suggested system region, locally
-  persisted selection, and “Not listed” recovery. Catalog selection never
-  silently changes where a consented photo may be processed. It is contextual
-  configuration, not an account/settings hierarchy.
+- **Country and catalog sheet** — Current catalog country, separate
+  policy-resolved market jurisdiction and processing-region values, suggested
+  system region, confirmed `CatalogCountry` persisted for the next attempt, and
+  “Not listed” recovery. `MarketJurisdiction` and `ProcessingRegion` are never
+  persisted as user-selectable values. Catalog selection never silently changes
+  where a consented photo may be processed. It is contextual configuration, not
+  an account/settings hierarchy.
+- **Serving editor** — Keep the standard serving/common unit inline as a labeled
+  `Default` when the confirmed catalog and protected default policy support it.
+  Edit and Undo remain available without forcing a separate picker;
+  recipe/oil/sauce questions appear only when a canonical item leaves them
+  unresolved.
 
 ## Do's and Don'ts
 
@@ -251,3 +265,5 @@ metaphor; no other control copies it.
 | Use restrained motion and tonal hierarchy | Use confetti, streaks, rings, gradients, or pulsing urgency |
 | Preserve native camera and picker expectations | Recreate permission or media pickers inside custom UI |
 | Pair state color with text and semantics | Use green/red as correct/incorrect or healthy/unhealthy |
+| Prefill deterministic frequent values and show their source | Force a picker, scroll, or repeated typing for a safe default |
+| Keep defaults editable and reversible | Hide assumptions or auto-submit a sensitive/uncertain decision |

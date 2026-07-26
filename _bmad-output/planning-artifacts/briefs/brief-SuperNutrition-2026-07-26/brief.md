@@ -91,6 +91,8 @@ The private beta succeeds when:
 
 - a user can move from capture to a useful candidate result in at most two
   primary actions;
+- frequent choices are safely prefilled so the happy path reaches a useful
+  result without unnecessary picker screens, scrolling, or repeated typing;
 - the camera is ready within 2 seconds on supported test devices;
 - local-path feedback is available within 4 seconds and remote-path feedback
   within 10 seconds under the defined test network;
@@ -161,6 +163,18 @@ visible.
   metadata and is not part of the installed or in-app name.
 - **Beta posture:** no login or persisted meal history is required for the first
   internal release.
+- **Low-friction interaction:** the shortest safe path is the default product
+  behavior. Only fields allowlisted by the protected interaction-default policy
+  may be prefilled from the immutable configuration snapshot or an approved
+  post-confirmation catalog source. Defaults are visible, labeled as defaults,
+  editable, reversible, and retain provenance. Approved policy-resolved jurisdiction and
+  processing region are shown before remote consent; the user authorizes the
+  resulting transfer rather than choosing provider routing. Remote upload is
+  never silent; medical/allergen conclusions are prohibited under all
+  circumstances, and materially
+  uncertain food identity is never silently assumed; meal-specific preparation
+  corrections remain session-scoped
+  in the MVP and are not persisted as future defaults.
 
 ## Open Questions
 

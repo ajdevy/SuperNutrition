@@ -98,13 +98,56 @@ The following overrides address assumptions in the generic vendored prompt:
 - Module build files use convention plugins and catalog aliases. Agents do not add repositories, literal versions, or duplicate SDK/compiler settings.
 - Host quality tasks must leave the worktree unchanged. Agents do not enable Detekt autocorrect or formatting writes in checks or CI.
 - The source-set quality matrix and module-boundary manifest are authoritative; agents do not disable, skip, filter, rename, or omit their required tasks, source sets, packages, edges, evidence, or owners.
+- Low-friction interaction is mandatory for every user-interaction-affecting
+  story: before adding a picker,
+  field, scroll surface, or confirmation tap, determine whether an allowlisted
+  safe default or inline edit can remove it. The protected
+  `mobile/config/quality/interaction-policy.toml` defines defaultable fields,
+  sources, country validity, provenance, persistence scope, and invalidation
+  keys. Context defaults come from the immutable ConfigurationSnapshot;
+  `CatalogServingDefaultSource` may provide one atomic unit-and-amount serving
+  proposal only after canonical-item confirmation. Defaults are visible with
+  provenance, editable, reversible, and preserved only within their scope.
+  `MarketPolicyResolver` alone resolves and displays market jurisdiction and
+  processing region before remote consent; users do not select provider routing.
+  Never preselect remote consent/upload or materially uncertain food identity.
+  Medical/allergen conclusions are prohibited. Meal-specific preparation/oil/sauce/recipe
+  corrections remain session-scoped in the MVP and are not persisted as future
+  defaults. Story acceptance criteria and tests record the interaction budget,
+  proposal/decision IDs, revision/digest preconditions, bounded auxiliary events,
+  and default/override/forbidden-default paths; non-UI stories attest that they
+  do not alter the policy or interaction budget.
+- `contracts/interaction-policy/v1` is the shared language-neutral schema. The
+  mobile policy file and any product-equivalent policy must conform to it. The
+  `interaction-policy-contract` slice owns the schema, immutable fixtures,
+  compatibility metadata, release digest, and validator. `InteractionDefaultPolicy`,
+  `ConfigurationSnapshot`, `DefaultResolutionInput`, `DefaultResolution`,
+  `MarketPolicyResolver`, and `DefaultResolver` in `mobile/core/config` are
+  contract-neutral and never import domain types. `DefaultProposal`/
+  `DefaultDecision` and their complete reducer-owned lifecycle belong to
+  `mobile/domain/photo-analysis`; the reducer rejects stale revision/digest or
+  duplicate events and invalidation wins a same-revision race. Compose presenters
+  never resolve defaults or mutate the reducer. Evidence is
+  `InteractionBudgetEvidence`, bound to policy/config versions and digests,
+  proposal/decision IDs, resolved-value digest, field/source identity, scenario,
+  platform, locale, accessibility, provenance, lifecycle, event sequence, the
+  four tap/scroll/field/choice dimensions, and bounded text-entry,
+  choice-surface, Back, Undo, cancellation, and permission-prompt counts with
+  per-journey approved maxima. The policy also enumerates the closed
+  locale/accessibility evidence matrix and invalidation keys.
 - Detekt baselines, rule suppressions, test/coverage exclusions, and waivers require the exact independently approved expiring registry entry defined by AD-27/AD-29; safety-sensitive modules cannot add them.
 - Compose stability configuration accepts only reviewed exact fully qualified types backed by compiler evidence; wildcard entries are forbidden.
 - No distributable Android, iOS, framework, gateway, release, or internal-beta artifact may contain `testing` code, resources, manifests, fakes, or DI bindings. Only the two manifest-listed, unique-ID, non-distributable UI-acceptance executables may replace the AD-28 allowlisted ports, and they have no publish/archive/export path or production credentials.
 - Coverage must pass the 85% per-module and per-product aggregate floors plus the 100% changed-line/changed-branch rule; every compiled production source has one denominator or independently approved expiring executable-equivalent entry.
 - `mobile/config/quality/ui-evidence-profile.toml` selects a monotonic UI evidence profile. `bootstrap` requires only the non-product scaffold robot/smoke; the first photo-analysis product source atomically switches to `photo-analysis`, where `positive-scenarios.toml` derived from UJ-1 through UJ-4 and SM-9 plus its platform/native siblings defines completeness.
 - The bootstrap robot lives only in `mobile/testing/scaffold-probe`; product screen robots live with `mobile/feature/photo-analysis/src/commonTest`. `mobile/testing/compose-support` owns only the v2 base DSL/host/synchronization/reporting utilities. Maestro page objects under the profile-selected `mobile/.maestro/<profile>/` are JavaScript `output` locator dictionaries loaded through `runScript`; platform loaders cannot contain actions, assertions, waits, retries, fixtures, skips, or alternate outcomes.
-- Mobile agents cannot edit or depend on `web/landing/`, `backend/mobile-api/`, or `contracts/`. Cross-product work uses an independently owned immutable contract release and an explicit integration story that coordinates separate owner-scoped invocations and distinct approvals; it never widens one invocation across roots.
+- Mobile agents cannot edit or depend on `web/landing/`, `backend/mobile-api/`, or
+  another product's source/contracts. They may consume the independently owned,
+  immutable `contracts/interaction-policy/v1` schema through the dedicated
+  policy story. All other cross-product work uses an immutable contract release
+  and an explicit integration story that coordinates separate owner-scoped
+  invocations and distinct approvals; it never widens one invocation across
+  roots.
 - GitHub Actions workflows may not use path filters, commit-message skip directives, `pull_request_target`, floating action tags, or unnecessary token permissions.
 
 ## 5. Standard invocation envelope
@@ -121,6 +164,7 @@ Forbidden files: every path not listed above.
 Ownership: this invocation owns exactly one AD-15 slice; an integration or scaffold story still uses separate invocations for every slice and owner.
 Architecture: read ARCHITECTURE-SPINE.md and obey <AD ids>.
 Requirements: obey <FR/NFR/SM ids>.
+Interaction budget: obey AD-40/NFR-24/UX-DR37 and the protected interaction-default policy; minimize taps, scrolls, fields, and choice points, make allowlisted defaults visible/editable/reversible with provenance, show policy-resolved jurisdiction before consent, and keep sensitive or uncertain decisions explicit.
 UX: obey the cited DESIGN.md or EXPERIENCE.md states where applicable.
 Versions: use the checked-in version catalog; do not upgrade dependencies.
 Inference contract: version 1; candidates contain no numeric nutrition.
@@ -250,6 +294,23 @@ The final invocation proposes `active` on the story branch; that candidate
 causes all four mobile jobs to run their active paths. The scaffold story and
 Bootstrap proof remain incomplete, and the protected branch remains
 `scaffold-pending`, unless the final all-six-job aggregate succeeds and merges.
+
+### 7.0e Interaction-policy contract slice
+
+```text
+Use devops-orchestrator for the language-neutral contract and validator, then
+use a separate kotlin-multiplatform-developer invocation for the mobile policy
+consumer. The contract invocation owns only contracts/interaction-policy/v1/**
+and its schema fixtures/compatibility metadata; it may not edit mobile/config or
+any product source. Create the immutable v1 schema, release digest, field
+allowlist, source/provenance vocabulary, atomic standardServing pair, lifecycle
+event vocabulary, invalidation keys, four required dimensions, auxiliary
+interaction counts, locale/accessibility matrix, and negative fixtures. The
+validator must reject forbidden defaults, missing digests/values, stale or
+duplicate events, non-atomic serving pairs, unbounded auxiliary events, and
+schema drift. The mobile policy invocation consumes the released digest in
+mobile/config/quality/interaction-policy.toml and owns no replacement schema.
+```
 
 ### 7.1 Shared inference contract — separate invocations
 
@@ -444,6 +505,7 @@ An agent-authored story is not complete until:
 - Linux and macOS checks pass when the changed slice binds those lanes;
 - every affected production source has one denominator, its module and product aggregate meet 85% line/branch coverage, changed production lines/branches meet 100%, and required equivalent evidence executes;
 - every affected catalog journey passes through the same fingerprinted Maestro flow on Android and iOS, all linked non-visual oracles pass, affected common robot IDs execute on JVM/Android/iOS, and every applicable native-gap entry passes;
+- every affected journey records its tap/scroll/field/choice budget, bounded text-entry/choice-surface/recovery maxima, proposal/decision IDs, value/digests, and default provenance, and verifies the shortest safe default path, each user-override/Undo path, and negative cases for hidden/forbidden defaults;
 - every-push GitHub Actions jobs and the always-running same-SHA aggregate are present and fail closed; production work does not begin until AD-38 proves the externally enforced controls;
 - no required task is skipped, disabled, filtered to zero, ignored, or absent;
 - no new repository, literal/dynamic dependency version, broad suppression, wildcard stability entry, or production/shippable dependency on `testing` was introduced;
