@@ -1,0 +1,36 @@
+{
+  "name": "claude-code-agents",
+  "owner": {
+    "name": "Alex Gladkov"
+  },
+  "metadata": {
+    "description": "Marketplace for Kotlin development agents and AI University",
+    "version": "2.0.0"
+  },
+  "plugins": [
+    {
+      "name": "ai-sdlc",
+      "description": "AI-powered SDLC agents for Kotlin/Spring Boot backend and Compose Multiplatform development",
+      "version": "1.0.0",
+      "source": "./plugins/ai-sdlc",
+      "category": "development",
+      "tags": ["kotlin", "spring-boot", "compose", "android", "sdlc"]
+    },
+    {
+      "name": "ai-university",
+      "description": "AI University — virtual university with AI teaching agents for medicine, AI/ML, and more",
+      "version": "1.0.0",
+      "source": "./plugins/ai-university",
+      "category": "education",
+      "tags": ["education", "university", "ai-ml", "medicine", "teaching"]
+    },
+    {
+      "name": "project-coordinator",
+      "description": "Entry point for any project — routes requests to profiles, tracks per-project profile-usage stats and suggests new profiles, holds the vision, runs periodic pulses, plus an autonomous YOLO night mode that works safely in an isolated branch while you sleep",
+      "version": "1.2.1",
+      "source": "./plugins/project-coordinator",
+      "category": "productivity",
+      "tags": ["coordinator", "project-management", "steward", "pulse", "planning", "yolo", "autonomous", "router", "stats"]
+    }
+  ]
+}
