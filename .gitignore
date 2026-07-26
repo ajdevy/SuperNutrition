@@ -1,0 +1,9 @@
+.DS_Store
+
+# Personal BMAD installer answers and local customizations.
+_bmad/config.user.toml
+_bmad/custom/config.user.toml
+_bmad/custom/*.user.toml
+
+# Generated graphify data is machine-local and can be rebuilt from the repo.
+graphify-out/
