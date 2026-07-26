@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# The hook must remain usable across machines. The repository carries the
+# skill and this wrapper; each developer installs the graphify CLI locally.
+if command -v graphify >/dev/null 2>&1; then
+  exec graphify hook-check
+fi
+
+# A missing optional local CLI should not block normal agent work. The setup
+# script prints the remediation for fresh checkouts.
+exit 0
