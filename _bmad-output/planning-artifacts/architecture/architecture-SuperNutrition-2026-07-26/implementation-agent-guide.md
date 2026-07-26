@@ -89,7 +89,9 @@ The following overrides address assumptions in the generic vendored prompt:
 - `mobile/apps/androidApp` solely starts Android Koin; `mobile/apps/sharedKit` exports the one idempotent iOS bootstrap and the thin iOS host invokes it once.
 - Canonical Engine fixtures are immutable `mobile/domain/inference` artifacts; `mobile/testing/inference` owns only suite runners/fakes/builders, while adapter-specific fixtures stay with their adapter tests.
 - `PhotoRef` is an attempt lease. Transfer-start effects use stable IDs and at-most-once app-root execution.
-- Country, model, provider, and route policy come from one immutable `ConfigurationSnapshot` for the attempt.
+- `CatalogCountry`, `MarketJurisdiction`, `ProcessingRegion`, model, provider,
+  and route policy come from one immutable `ConfigurationSnapshot` for the
+  attempt; a catalog choice never selects a processing region.
 - System-managed models can be policy-disabled but are never described as app-rollback-capable.
 - `domain` is pure KMP: no Android, Apple framework, Compose, Koin, Ktor, or SQLDelight dependency.
 - Production source sets never depend on `testing` modules; reusable fixtures and hosts are test-only dependencies.
@@ -299,7 +301,10 @@ Use kotlin-multiplatform-developer.
 Owned slice: mobile/inference/remote and its common/platform tests.
 Obey AD-2, AD-3, AD-6, AD-8, AD-9, AD-11, AD-13, AD-14, AD-17, AD-18, AD-20, AD-21.
 Implement Ktor contract-v1 upload to the first-party gateway only.
-Require a consent receipt bound to photo digest, purpose, region/provider policy, retention version, configuration version, and transfer state.
+Require preprocessing to strip EXIF, GPS, and non-essential metadata before
+creating the scrubbed-payload digest. Bind the consent receipt to that digest,
+purpose, market jurisdiction, processing-region/provider policy, retention
+version, configuration version, and transfer state.
 Use Android OkHttp and iOS Darwin engines through core-network factories.
 Use MockEngine tests for at-most-once upload, the three transfer/cancellation states, timeout, redaction, token scope/expiry, replay, rotation/revocation, environment binding, version mismatch, rate limit, deletion request, and malformed responses.
 Do not add provider credentials or provider-specific mobile schemas.
@@ -314,7 +319,11 @@ Obey AD-2, AD-3, AD-5, AD-6, AD-8, AD-9, AD-11, AD-12, AD-14, AD-18, AD-20, AD-2
 Implement a pure route decision and cancellable attempt coordinator over injected localEngine and remoteEngine ports.
 Before G-5, support named conservative policies and fake thresholds only in test fixtures.
 Guarantee at most one active engine and one terminal outcome per attempt.
-Test late callbacks, at-most-once effects, photo-lease revocation, Back, background/restore, replacement, pre-transfer cancellation, transferring cancellation, transferred cancellation, fallback eligibility, consent decline/no-nag behavior, retry eligibility, country/catalog restart, and atomic configuration snapshots.
+Test late callbacks, at-most-once effects, photo-lease revocation, metadata
+scrubbing, Back, background/restore, replacement, pre-transfer cancellation,
+transferring cancellation, transferred cancellation, bounded fallback
+eligibility, consent decline/no-nag behavior, retry eligibility,
+catalog/jurisdiction restart, and atomic configuration snapshots.
 ```
 
 ### 7.6 Photo-analysis feature

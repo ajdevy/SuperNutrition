@@ -93,3 +93,12 @@ provider, configuration, catalog, telemetry, and incident operations.
    controls include gateway-enforced deny, provider credential revocation,
    immutable admin/config audit, regional response obligations, and evidence from
    periodic breach and deletion drills.
+
+## Follow-up resolution for PR #5 inline review
+
+The country/region conflation identified in finding 5 is resolved in the binding
+architecture: AD-12 and AD-20 now model `CatalogCountry`,
+`MarketJurisdiction`, and `ProcessingRegion` as separate immutable values. A
+catalog choice cannot select a provider region or silently change the privacy
+jurisdiction for a remote attempt. The implementation guide, UX experience
+contract, and AR-26 repeat the same boundary.

@@ -121,7 +121,8 @@ This is illustrative shape, not generated implementation. The definitive types a
 - `contractVersion` is `1`.
 - `attemptId` is opaque and unique.
 - `photo` is a platform-neutral `PhotoRef`.
-- `countryProfileId`, locale, and permitted route are immutable for the attempt.
+- `CatalogCountry`, `MarketJurisdiction`, `ProcessingRegion`, locale, and
+  permitted route are immutable for the attempt.
 - The adapter reads bytes only through `PhotoContentSource`.
 - The engine receives no nutrition catalog and cannot emit numeric nutrients.
 
@@ -166,7 +167,7 @@ sequenceDiagram
 
     User->>Native: Capture or select
     Native->>Store: Normalize and create opaque PhotoRef
-    Native-->>Feature: PhotoRef and safe metadata
+    Native-->>Feature: PhotoRef and allowlisted safe metadata
     Feature->>Feature: Quality and route decision
     Feature->>User: Request upload consent if remote
     User-->>Feature: Consent or stay offline
@@ -177,6 +178,13 @@ sequenceDiagram
 ```
 
 Android adapters use platform camera/photo APIs; iOS adapters use AVFoundation and PhotosUI. Compose renders product-owned screens on both platforms. UIKit or Android views may be embedded only where a native capture surface is required.
+
+Normalization is a privacy boundary, not just an image-format conversion. The
+platform adapter strips EXIF, GPS, and all non-essential metadata before it
+creates the normalized PhotoRef content and before any consent receipt or
+remote request digest is computed. `safe metadata` in the sequence diagram
+means only an explicit allowlist such as dimensions, orientation, color space,
+and contract version; it never means the source file's metadata map.
 
 `PhotoRef` is an opaque identifier, not a URI. It is a lease scoped to one attempt. Cleanup atomically revokes the lease, is idempotent, and runs on success, failure, cancellation, expiry, and app restoration. External effects carry stable effect and attempt IDs; the app-root runner records at-most-once execution for transfer-start effects so restoration cannot duplicate an upload. The platform session store may use a short-lived encrypted file when bytes cannot remain in memory. No shared state contains a platform image object.
 
@@ -219,13 +227,22 @@ Compose and native bridge presentation share an accessibility/localization contr
 The router evaluates:
 
 1. photo quality;
-2. installed country profile and policy version;
+2. the immutable catalog country, market jurisdiction, processing region, and
+   policy version;
 3. local-engine capability;
-4. remote availability and country/provider policy;
+4. remote availability and gateway/provider policy;
 5. explicit consent for this attempt;
 6. validated thresholds from Gate G-5.
 
 The initial router can be implemented with fake engines before thresholds exist. Before G-5, it must use conservative named policies such as `LocalOnly`, `RemoteOnlyWithConsent`, or `ManualConfirmation`, not invented confidence cutoffs.
+
+After a local attempt, the only remote-escalation triggers are local
+unavailability, Local Engine abstention, or a Gate G-5 low-confidence result.
+G-5 can tune a named low-confidence threshold but cannot turn an otherwise
+successful high-confidence local result into a remote prompt. A user may
+explicitly select another permitted route before local analysis; that is an
+explicit choice, not policy escalation. The reducer records a typed
+`RemoteEligibilityReason` for every remote offer.
 
 Hybrid routing is accepted only if the evaluation shows it improves corrected accuracy or time to a grounded result over both local-only and remote-only routes. It is not assumed superior.
 
@@ -252,15 +269,23 @@ Catalog sources, licensing, canonical IDs, unit conversion, country coverage, mi
 
 ## 11. Tier-1 country configuration
 
-Country and language are separate axes. A signed configuration snapshot resolves precedence from bundled safe default to global release to environment to country override. One inference attempt retains the same validated snapshot. If the user changes country/catalog during correction, the reducer terminates that attempt, clears remote consent and mapped results, preserves only visible candidate text, and starts manual grounding under a new snapshot.
+Catalog country, market jurisdiction, processing region, and language are
+separate axes. A signed configuration snapshot resolves precedence from bundled
+safe default to global release to environment to independent catalog and market-
+jurisdiction overrides. One inference attempt retains the same validated
+snapshot. If the user changes catalog or market jurisdiction during correction,
+the reducer terminates that attempt, clears remote consent and mapped results,
+preserves only visible candidate text, and starts manual grounding under a new
+snapshot. Choosing a catalog never silently changes the processing region.
 
 | Country-profile field | Example purpose |
 | --- | --- |
-| `countryCode` | product policy and catalog selection |
+| `catalogCountry` | nutrition package and food-catalog selection |
+| `marketJurisdiction` | consent, privacy, and user-rights policy |
 | `defaultLocale` | initial UI locale, user-overridable |
 | `nutritionPackageId` | approved local database package |
 | `measurementSystem` | display and serving defaults |
-| `remoteRegionPolicy` | permitted provider/gateway region |
+| `processingRegion` | permitted provider/gateway region, resolved from market policy |
 | `consentCopyVersion` | reviewed photo-transfer explanation |
 | `featurePolicyVersion` | route and availability controls |
 
@@ -326,6 +351,7 @@ The highest-risk data path is a user photo moving from capture to an inference e
 Controls include:
 
 - data minimization and an ephemeral attempt store;
+- EXIF, GPS, and non-essential image metadata scrubbing before consent/digest;
 - equal-prominence consent choices;
 - no remote transfer before consent;
 - TLS and server-side provider credentials;

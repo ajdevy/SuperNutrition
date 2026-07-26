@@ -235,9 +235,11 @@ metaphor; no other control copies it.
   weight, keyboard/focus access, and no preselection. “Continue without upload”
   is listed first in reading/focus order; “Send photo for remote analysis”
   follows. Neither uses the filled primary-action treatment.
-- **Country and catalog sheet** — Current country/catalog, suggested system
-  region, locally persisted selection, and “Not listed” recovery. It is
-  contextual configuration, not an account/settings hierarchy.
+- **Country and catalog sheet** — Current catalog country, separate market
+  jurisdiction and processing-region policy, suggested system region, locally
+  persisted selection, and “Not listed” recovery. Catalog selection never
+  silently changes where a consented photo may be processed. It is contextual
+  configuration, not an account/settings hierarchy.
 
 ## Do's and Don'ts
 
