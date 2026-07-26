@@ -57,6 +57,21 @@ updated: 2026-07-26
   separately enforced trusted policy audit and required aggregate are proven,
   not merely checked in.
 
+## Interaction Policy
+
+Every product agent and implementation story follows AD-40/NFR-24/UX-DR37 and
+the protected interaction-default policy: minimize taps, scrolls, fields, and
+choice surfaces on the safe happy path; prefill only allowlisted deterministic
+values from the immutable configuration snapshot;
+show each default with provenance; and keep it editable and reversible within
+scope. Policy-resolved jurisdiction and processing region are shown before
+remote consent; the user authorizes the resulting transfer rather than selecting
+provider routing. Remote upload/consent is never silent; medical/allergen
+conclusions are prohibited, and materially uncertain food identity is never
+silently preselected. Journey
+acceptance records the interaction budget and tests default, override, and
+forbidden-default paths.
+
 ## Implementation Agent Overrides
 
 When `kotlin-multiplatform-developer` is used:

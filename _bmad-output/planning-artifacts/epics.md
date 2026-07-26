@@ -118,6 +118,8 @@ NFR-22: The repository is a monorepo with separate root product boundaries at `m
 
 NFR-23: Product identity is exact and testable: installed app, launcher label, and in-app brand are `SuperNutrition`; the Apple App Store and Google Play listing title is `SuperNutrition AI nutritionist`. The descriptor is store metadata only. Protected identity metadata and CI assertions prevent platform, build-profile, locale, landing-page, and store-listing drift.
 
+NFR-24: Product journeys minimize interaction while preserving safe user control. Happy paths use the fewest practical taps, scrolls, fields, and choice surfaces; only fields named by the protected `mobile/config/quality/interaction-policy.toml` allowlist may be prefilled from the immutable `ConfigurationSnapshot` or the approved post-confirmation catalog serving source. The snapshot materializes locale, catalog, device capability, and policy values before the reducer runs; the catalog source may supply one atomic standard-serving unit/amount pair only after canonical confirmation and never mutates the snapshot. The policy defines source precedence, independent CatalogCountry/MarketJurisdiction/ProcessingRegion/locale validity, provenance, and persistence scope. Every default is visible, labeled with its source/provenance, editable, reversible, and distinct from measured or inferred facts. Food/preparation/serving corrections remain session-scoped in the MVP; no future persisted correction preference is defined by this contract. A first-use catalog value is an unaccepted proposal until the user confirms it and cannot auto-advance into grounding or remote transfer. Auto-advance is limited to reversible local/UI steps. Approved policy may resolve market jurisdiction and processing region, but the app must show those values before transfer and must not derive or silently change them from locale or catalog; the user consents to the resulting upload rather than selecting a provider region. Medical/allergen conclusions are prohibited and cannot be enabled by confirmation; materially uncertain food identity requires an honest question or Abstention. Journey tests record interaction budgets, default provenance, override paths, bounded auxiliary events, and negative cases for forbidden defaults.
+
 ### Additional Requirements
 
 - AR-1 (AD-16): The mobile scaffold story must create and prove the greenfield KMP scaffold as one atomic tuple: Kotlin/KMP 2.4.10, Compose Multiplatform 1.11.1, Gradle 9.5.0, AGP 9.1.0, JDK 21, Android compile/target SDK 36 with API 23 floor, Xcode 26.4.1 on macOS 26.2+, iOS 15 floor, Detekt/ktlint wrapper 2.0.0-alpha.5, and Kover 0.9.8. The story publishes exact common, Android, iOS, Xcode, lint, and coverage evidence; any tuple change is a dedicated compatibility change.
@@ -166,6 +168,7 @@ NFR-23: Product identity is exact and testable: installed app, launcher label, a
 - AR-44 (AD-37): Start mobile in protected `scaffold-pending` and web/backend in `preselection`. Every named job proves no production source, dependency installation/lock, runtime, deployable artifact, or deployment has appeared and emits same-SHA exact-state evidence without claiming build/test/coverage/UI. Mobile moves irreversibly and atomically to `active` through its reviewed scaffold story with a nonempty inventory and real non-product bootstrap host/device/app evidence under the AD-34 bootstrap profile; full product journeys become mandatory only with the irreversible feature-profile transition. Web/backend activate through reviewed pinned-toolchain stories adding frozen dependencies, nonempty inventories, real build/lint/test/coverage/artifact gates, owners, and deployment/rollback skeletons. All six jobs pass each transition.
 - AR-45 (AD-38): Treat private-repository enforcement as an infrastructure gate. Before production implementation, prove hosting support and active controls for private rulesets, distinct-owner approval, required `ci-required`, immutable `trusted-policy-audit`, and a blocked bypass; also prove `merge_group` if merge queue is enabled. Checked-in workflow YAML is evidence, not enforcement. If capabilities are not provisioned, require a new reviewed implementable governance decision.
 - AR-46 (AD-39): Add protected `mobile/config/product-identity.toml` with exact canonical installed/in-app name `SuperNutrition` and exact Apple App Store and Google Play listing title `SuperNutrition AI nutritionist`. Generate or validate Android labels, iOS display-name metadata, `SuperNutritionUIAcceptance`, web metadata, and store-delivery metadata from it; test all profiles/locales and reject independently hard-coded variants. Select package and bundle identifiers in the scaffold story without changing visible identity.
+- AR-47 (AD-40): Make interaction budget a protected cross-product contract. Every product conforms to immutable `contracts/interaction-policy/v1` and creates/validates its product policy (mobile: `mobile/config/quality/interaction-policy.toml`) with an allowlist of defaultable fields, source precedence, independent CatalogCountry/MarketJurisdiction/ProcessingRegion/locale validity, provenance types, persistence scope, invalidation keys, complete lifecycle and atomic serving rules, cumulative required dimensions, bounded auxiliary events, and locale/accessibility evidence matrix. Every user-interaction-affecting story records tap, scroll, field, choice, text-entry, choice-surface, recovery-event, and default/override budgets; non-UI stories attest that they do not alter the budget or default policy. Food/preparation/serving corrections are session-scoped in the MVP. Approved policy may resolve jurisdiction/processing values, which must be shown before consent, but locale/catalog cannot derive or silently change them and users do not select provider routing. Auto-advance is limited to reversible local/UI steps; medical/allergen conclusions are prohibited and materially uncertain identity requires an honest question or Abstention. Negative tests reject unallowlisted, stale, hidden, digest/value-mismatched, non-atomic, or persisted sensitive defaults.
 
 ### UX Design Requirements
 
@@ -203,7 +206,7 @@ UX-DR16: Implement Analyzing as a frozen photo, neutral low-opacity scrim, one a
 
 UX-DR17: Implement the Remote consent sheet with purpose, data sent, retention, provider category/region, alternatives, cancellation limits, and policy detail; “Continue without upload” precedes “Send photo for remote analysis,” both use equal unfilled visual/focus treatment, and neither is preselected.
 
-UX-DR18: Implement the Country and catalog sheet as contextual configuration available on first use, Capture, and Food search. Suggest system region, require confirmation, persist locally, show current catalog, and provide Not listed/manual recovery without silently choosing the United States.
+UX-DR18: Implement the Country and catalog sheet as contextual configuration available on first use, Capture, and Food search. Suggest a system-region catalog proposal, require confirmation, persist only the confirmed `CatalogCountry` for the next attempt, show current catalog, and provide Not listed/manual recovery without silently choosing the United States; never persist or let the user choose `MarketJurisdiction` or `ProcessingRegion`.
 
 UX-DR19: Implement country-aware Food search that retains source/version, supports correction and no-Engine recovery, exposes None of these/no-match paths, and withholds numeric nutrition until a record is selected.
 
@@ -241,16 +244,18 @@ UX-DR35: Before visual Compose implementation, approve responsive/accessibility-
 
 UX-DR36: Render `SuperNutrition` as the installed, launcher, accessibility-product, and in-app brand. Use `SuperNutrition AI nutritionist` only in Apple App Store and Google Play acquisition metadata; never repeat the store-only descriptor in app chrome or ordinary product copy.
 
+UX-DR37: Apply a low-friction interaction budget to every screen and positive journey. Prefer one clear primary action on ordinary decision surfaces, inline visible defaults, and Edit/Undo over choice-first sheets, unnecessary scrolling, or repeated typing. Sensitive consent surfaces are an explicit exception: remote consent actions remain equal and unselected as specified in DESIGN.md. Label allowlisted deterministic defaults with their source, preserve user overrides within approved scope, and auto-advance only reversible local/UI steps. A standard serving default is one atomic unit-and-amount proposal and is available only after canonical-item confirmation from the catalog source. Never preselect remote consent/upload or materially uncertain food identity; medical/allergen conclusions are prohibited; show policy-resolved processing jurisdiction before consent, never derive or silently change it from locale/catalog, and do not make users select provider routing. Test defaulted, override, and forbidden-default paths on Android/iOS with accessibility semantics intact.
+
 ### FR Coverage Map
 
 | Epic | Primary requirements | Outcome |
 | --- | --- | --- |
-| E1 Foundation and product shell | FR-22, FR-25, NFR-17..NFR-23, AR-1..AR-7, AR-31..AR-46, UX-DR35..UX-DR36 | A bounded, identity-safe monorepo and reproducible KMP substrate |
-| E2 Capture and photo preparation | FR-1..FR-4, FR-19..FR-21, NFR-1..NFR-3, NFR-9..NFR-16, UX-DR1..UX-DR12, UX-DR26..UX-DR34 | A privacy-preserving camera/import session with deterministic recovery |
-| E3 Shared inference and local engines | FR-5..FR-7, FR-9, FR-12, FR-23..FR-24, NFR-2..NFR-3, NFR-7, NFR-9..NFR-12, AR-11..AR-23 | Interchangeable contract-v1 local inference on Android and iOS |
-| E4 Remote inference and consent | FR-8, FR-10..FR-12, FR-22, FR-25, NFR-4..NFR-8, NFR-11, AR-8..AR-14, UX-DR17, UX-DR25 | Explicit, bounded, region-aware remote analysis through the gateway |
-| E5 Confirmation and grounded nutrition | FR-13..FR-18, FR-20..FR-21, NFR-6, NFR-10, NFR-12, NFR-15..NFR-16, AR-19..AR-30, UX-DR13..UX-DR24 | User-confirmed foods and serving assumptions become sourced estimates |
-| E6 Journey evidence and evaluation | FR-22..FR-24, NFR-17, NFR-20..NFR-21, SM-1..SM-10, AR-38..AR-45, UX-DR26..UX-DR35 | Shared Android/iOS acceptance journeys and evidence gates |
+| E1 Foundation and product shell | FR-22, FR-25, NFR-17..NFR-24, AR-1..AR-7, AR-31..AR-47, UX-DR35..UX-DR37 | A bounded, identity-safe monorepo and reproducible KMP substrate |
+| E2 Capture and photo preparation | FR-1..FR-4, FR-19..FR-21, NFR-1..NFR-3, NFR-9..NFR-16, NFR-24, AR-47, UX-DR1..UX-DR12, UX-DR26..UX-DR34, UX-DR37 | A privacy-preserving camera/import session with deterministic recovery |
+| E3 Shared inference and local engines | FR-5..FR-7, FR-9, FR-12, FR-23..FR-24, NFR-2..NFR-3, NFR-7, NFR-9..NFR-12, NFR-24, AR-11..AR-23, AR-47, UX-DR37 | Interchangeable contract-v1 local inference on Android and iOS |
+| E4 Remote inference and consent | FR-8, FR-10..FR-12, FR-22, FR-25, NFR-4..NFR-8, NFR-11, NFR-24, AR-8..AR-14, AR-47, UX-DR17, UX-DR25, UX-DR37 | Explicit, bounded, region-aware remote analysis through the gateway |
+| E5 Confirmation and grounded nutrition | FR-13..FR-18, FR-20..FR-21, NFR-6, NFR-10, NFR-12, NFR-15..NFR-16, NFR-24, AR-19..AR-30, AR-47, UX-DR13..UX-DR24, UX-DR37 | User-confirmed foods and serving assumptions become sourced estimates |
+| E6 Journey evidence and evaluation | FR-22..FR-24, NFR-17, NFR-20..NFR-21, NFR-24, SM-1..SM-10, AR-38..AR-47, UX-DR26..UX-DR37 | Shared Android/iOS acceptance journeys and evidence gates |
 
 ### Delivery order
 
@@ -332,6 +337,56 @@ so that missing, skipped, or under-covered work cannot appear green.
   meets 100% line and branch coverage.
 - **And** `qualityFormat` is the only mutating formatter entrypoint.
 
+### Story E1.5: Establish the low-friction interaction policy
+
+As a product and UX owner,
+I want every agent and screen to optimize the shortest safe path,
+so that common meal scans do not become form-filling workflows.
+
+**Acceptance Criteria:**
+
+- **Given** AD-40/NFR-24/UX-DR37, **when** a story adds a screen or choice,
+  **then** its acceptance criteria state tap, scroll, field, and choice budgets,
+  the safe defaults used, and the default provenance/override path.
+- **Then** `mobile/config/quality/interaction-policy.toml` defines the closed
+  allowlist, source precedence, independent CatalogCountry/MarketJurisdiction/
+  ProcessingRegion/locale validity, provenance types, and
+  session/persistence scope for every defaultable field.
+- **And** the initial allowlist is only `defaultLocale`, `measurementSystem`, a
+  `catalogProposal`, and one atomic `standardServing` (unit plus amount) after a
+  canonical item is confirmed; food identity, preparation, oil, sauce, recipe,
+  remote consent, provider-routing choice, and medical/allergen fields are
+  rejected as defaultable.
+- **And** the immutable `ConfigurationSnapshot` materializes context defaults;
+  the post-confirmation catalog serving source supplies only the atomic serving
+  proposal and never mutates the snapshot. All allowlisted values are visible
+  inline, labeled as defaults, editable, reversible, and retained only within
+  their approved scope after correction; a separate picker is not required to
+  accept them.
+- **And** auto-advance is limited to reversible local/UI work. Remote consent or
+  upload and materially uncertain identity remain explicit and have no
+  preselected value; medical/allergen conclusions are prohibited; policy-resolved jurisdiction and
+  processing region are shown before consent and cannot be derived or changed by
+  locale/catalog or selected through a provider-routing picker.
+- **And** the separately owned `interaction-policy-contract` invocation creates
+  and versions `contracts/interaction-policy/v1`, its immutable fixtures,
+  compatibility metadata, release digest, and validator; the mobile quality
+  invocation consumes that release in `mobile/config/quality/interaction-policy.toml`.
+- **And** core contract-neutral types (`ConfigurationSnapshot`,
+  `MarketPolicyResolver`, `DefaultResolutionInput`, `DefaultResolution`, and
+  `DefaultResolver`), domain lifecycle types (`DefaultProposal`,
+  `DefaultDecision`), the atomic serving source port, and
+  `InteractionBudgetEvidence` are delivered through separate AD-15 ownership
+  slices. Tests cover proposal IDs, revision/digest preconditions, idempotency,
+  invalidation precedence, complete lifecycle/Undo behavior, atomic serving,
+  allowlist, provenance, persistence scope, first-use catalog confirmation,
+  invalidation keys, cumulative counting taxonomy, bounded auxiliary events,
+  per-journey maxima, schema/policy/config/value digest binding, and
+  forbidden-default negative cases. The policy also closes the supported
+  locale/accessibility evidence matrix. Concrete Android/iOS defaulted and
+  override journey evidence is owned by affected feature/profile-transition
+  stories, not by the bootstrap scaffold story.
+
 ## Epic E2: Capture and photo preparation
 
 Deliver the camera-first, import-capable session and normalized Photo Input
@@ -351,6 +406,11 @@ so that I can start analysis without navigating a diary or account flow.
 - **Then** denial, unavailable hardware, restricted access, and capture failure
   each expose settings, import, or manual-search recovery.
 - **And** platform image objects stay inside the native bridge modules.
+- **And** the ready capture surface does not add a setup choice beyond any
+  required first-use catalog confirmation for deterministic locale/measurement/
+  catalog context; any suggested value is visible and editable with its source.
+- **And** this user-interaction-affecting story records its tap, scroll, field,
+  and choice budget, including the required first-use catalog confirmation.
 
 ### Story E2.2: Normalize and quality-check Photo Input
 
@@ -382,6 +442,10 @@ so that a failed photo analysis never leaves a dead end or stale result.
 - **Then** a stale engine callback cannot reopen a result after replacement or
   cancellation.
 - **And** Scan again returns to Capture with no attempt photo bytes retained.
+- **And** this user-interaction-affecting recovery story records the four
+  required dimensions plus bounded Back, Undo, cancellation, permission-prompt,
+  text-entry, and choice-surface counts for each positive recovery path; stale
+  proposal/decision IDs and snapshot/policy digests are rejected.
 
 ## Epic E3: Shared inference and local engines
 
@@ -465,6 +529,12 @@ so that remote analysis never happens by surprise.
   aborts transport; Transferred cancellation requests downstream deletion
   without claiming already-sent bytes were recalled.
 - **And** duplicate transfer effects are rejected by attempt/effect IDs.
+- **And** the consent surface records a zero-default interaction budget: upload
+  and no-upload actions are equal, unselected, and visually neutral; the
+  policy-resolved jurisdiction/processing region is visible before either choice,
+  and tap, scroll, field, choice, text-entry, choice-surface, cancellation, and
+  permission-prompt dimensions are recorded for both outcomes with proposal/
+  decision IDs and the applicable policy/configuration digests.
 
 ### Story E4.2: Implement the remote mobile adapter
 
@@ -511,6 +581,14 @@ so that I remain the authority over what the photo means.
   route, assumptions, alternatives, and recovery actions are visible.
 - **Then** manual search remains available when engines are unavailable and
   numeric nutrition is withheld until a catalog record is selected.
+- **And** only after a canonical catalog item is confirmed, the catalog serving
+  source may propose one atomic standard serving unit-and-amount pair for the
+  current snapshot; the user can edit or undo it inline without opening a
+  choice-first sheet. Candidate, locale, device, and prior correction context
+  alone cannot create the proposal.
+- **And** the story records tap, scroll, field, choice, text-entry,
+  choice-surface, and recovery-event budgets plus proposal/decision IDs and
+  default provenance for default, override, Undo, and forbidden-default paths.
 
 ### Story E5.2: Implement country-aware nutrition catalog selection
 
@@ -524,7 +602,13 @@ so that food lookup preferences never silently route my photo across borders.
   **when** a ConfigurationSnapshot is created, **then** `CatalogCountry`,
   `MarketJurisdiction`, and `ProcessingRegion` remain distinct values.
 - **Then** a catalog change invalidates the attempt's mapped result but does not
-  silently change the processing region or remote-consent policy.
+  silently change the processing region or remote-consent policy. A confirmed
+  `CatalogCountry` may be persisted only as the next-attempt catalog context;
+  the active attempt remains immutable and a new snapshot is created after
+  invalidation. `MarketJurisdiction` and `ProcessingRegion` remain
+  policy-resolved and are never persisted as user-selectable routing values.
+- **And** the story records the catalog-choice budget and no-provider-routing
+  path, with all four dimensions and choice-surface/recovery maxima.
 
 ### Story E5.3: Implement serving confirmation and grounded result
 
@@ -539,6 +623,9 @@ so that estimates are transparent and correctable.
   version, serving basis, assumptions, and estimate language.
 - **Then** unresolved matches remain partial/unknown and no model-generated
   numeric value is displayed.
+- **And** the defaulted serving path and an override/Undo path are both covered
+  by journey evidence with tap/scroll/field/choice counts, auxiliary maxima,
+  atomic proposal/decision IDs, resolved-value digest, and default provenance.
 
 ## Epic E6: Journey evidence and evaluation
 

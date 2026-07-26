@@ -28,6 +28,16 @@ store-listing descriptor, not part of the installed or in-app name.
 - The first beta is English-first for Tier 1 consumer markets. Domain models must
   not hard-code locale, serving units, decimal formats, nutrition source, privacy
   copy, or provider region.
+- The default UX is low-friction: the protected interaction-default policy may
+  prefill only allowlisted deterministic values such as locale, measurement
+  system, confirmed catalog, and standard serving. Show defaults with provenance
+  and keep them editable/reversible within their approved scope. Policy-resolved
+  jurisdiction and processing region are shown before remote consent; the user
+  authorizes the resulting transfer rather than selecting provider routing.
+  Remote consent/upload remains explicit; medical/allergen conclusions are
+  prohibited, and materially uncertain food identity remains an honest
+  question/abstention. Meal-specific preparation corrections remain
+  session-scoped in the MVP and are not persisted as future defaults.
 
 ## Inference Isolation and Orchestration
 

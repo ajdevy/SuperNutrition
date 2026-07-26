@@ -42,6 +42,11 @@ The main drivers are:
 - One testable identity contract: `SuperNutrition` in the installed app and
   product UI; `SuperNutrition AI nutritionist` only as the exact Apple App
   Store and Google Play listing title.
+- Minimal interaction with safe defaults: the shortest practical happy path,
+  allowlisted visible/editable/reversible defaults, and explicit decisions
+  wherever a shortcut could change privacy, safety, or truth. Approved policy
+  resolves legal/provider jurisdiction; the consent surface shows it before the
+  user authorizes transfer.
 - Agent-assisted implementation constrained by stories and architecture decisions.
 - GiphySearch-derived module, lint, build, and test practices adapted to KMP and strengthened with coverage, dependency, macOS, and real-device gates.
 
@@ -222,6 +227,26 @@ Remote transfer has explicit `PreTransfer`, `Transferring`, and `Transferred` st
 
 Compose and native bridge presentation share an accessibility/localization contract: semantic roles, contrast and non-color cues, dynamic type/font scaling, text expansion, bidi, localized numbers and units, reduced motion, target sizes, neutral externalized copy, spoken camera guidance, and focus restoration. Real-device VoiceOver and TalkBack tests cover the Compose-to-native handoff.
 
+Interaction budget is part of the state contract, not a visual afterthought. The
+reducer may auto-advance only reversible local/UI transitions. The immutable
+`contracts/interaction-policy/v1` schema is owned by its contract slice.
+`mobile/core/config` owns contract-neutral `ConfigurationSnapshot`,
+`MarketPolicyResolver`, `InteractionDefaultPolicy`, `DefaultResolutionInput`,
+`DefaultResolution`, and `DefaultResolver`; the resolver consumes a catalog
+serving input but never imports domain types. `mobile/domain/nutrition` owns the
+`CatalogServingDefaultSource` port, which can return an immutable atomic
+unit-and-amount serving fact only after canonical-item confirmation. The
+photo-analysis reducer maps the resolution to domain-owned
+`DefaultProposal`/`DefaultDecision` events, enforces proposal IDs, monotonic
+revisions, snapshot/policy digest preconditions, idempotency, and invalidation
+precedence, and owns the complete lifecycle. Compose presenters only render the
+result. Undo restores the prior accepted value or clears the proposal according
+to the event type; it never re-runs resolution. Policy-resolved jurisdiction is
+read from the attempt snapshot and shown in remote-consent detail; the user
+authorizes the resulting transfer rather than selecting a provider region.
+Uncertain food identity and prohibited medical/allergen conclusions remain
+explicit safe states and cannot be skipped by defaulting.
+
 ## 9. Routing
 
 The router evaluates:
@@ -290,6 +315,30 @@ snapshot. Choosing a catalog never silently changes the processing region.
 | `featurePolicyVersion` | route and availability controls |
 
 The signed profile is remotely distributable but has a bundled safe default. Invalid, expired, incompatible, or unverifiable policy disables remote upload and preserves offline/manual flows. The actual launch country list remains Gate G-1.
+
+The same snapshot carries default provenance for allowlisted locale, measurement
+system, and a catalog proposal. A confirmed canonical item may be passed to the
+nutrition-domain `CatalogServingDefaultSource`, which returns an immutable
+catalog serving fact keyed to the snapshot; it is not a snapshot mutation or a
+user preference. The protected
+`mobile/config/quality/interaction-policy.toml` conforms to the immutable
+`contracts/interaction-policy/v1` schema and defines each field's source
+precedence, independent CatalogCountry/MarketJurisdiction/ProcessingRegion and
+locale validity, provenance type, persistence scope, and invalidation keys. The
+UI may use those values to remove repetitive choices only when the value is
+deterministic for the active context; each value is labeled as a default,
+editable, reversible, and invalidated when any policy-defined key changes
+(policy/snapshot version or digest, CatalogCountry, nutrition package,
+MarketJurisdiction, ProcessingRegion, locale, measurement system, canonical
+food/serving ID, or attempt/session ID). A first-use catalog proposal is not
+accepted for grounding or remote transfer
+until the user confirms it. Food/preparation/serving corrections are session-
+scoped in the MVP. A confirmed CatalogCountry is persisted only as the next
+attempt's catalog context; changing it during an active attempt invalidates that
+attempt and creates a new snapshot, while market jurisdiction and processing
+region remain policy-resolved and non-user-selectable. The snapshot resolves approved market jurisdiction and
+processing region for policy, but the UI must show them before transfer and
+never derive or silently change them from locale/catalog.
 
 Evaluation must include food and device diversity within the target countries. English-language support does not justify an American-only corpus. The 300–500+ item research corpus is a minimum seed and must include weighed portions, recipes and brands, raw/cooked states, oils and sauces, device/lighting variety, and leakage-resistant splits.
 
@@ -422,6 +471,12 @@ The build and quality contract is centralized and fail-closed:
 - the Android UI job runs `connectedAndroidTest` and the same Maestro inventory as iOS. Jobs provision pinned devices, install unique UI-acceptance app IDs, checksum-pin and version-check Maestro 2.7.0, select the explicit device, and publish JUnit plus allowlisted short-retention artifacts. Platform files load only application identity and locator dictionaries; logical action/assertion sequences cannot diverge;
 - AD-38 blocks production implementation until the private repository has enforceable distinct-owner rules, required `ci-required`, and a trusted read-only policy auditor sourced from protected default-branch or immutable organization-controlled code; it validates candidate workflow files as data and never executes them;
 - mandatory fault/conformance scenarios prove cancellation, consent, logging, replay, cleanup, and deletion semantics beyond aggregate coverage;
+- journey evidence records schema/policy/config versions and digests,
+  proposal/decision IDs, resolved-value digest, tap/scroll/field/choice counts,
+  bounded text-entry/choice-surface/recovery events, default provenance,
+  lifecycle outcome, and override results; per-journey approved maxima are
+  enforced, and a low count cannot compensate for hidden consent, jurisdiction,
+  or uncertainty behavior;
 - negative Gradle TestKit fixtures prove that the build gate rejects forbidden repositories/dependencies/edges, missing tests/coverage, testing leakage, and hidden autocorrect;
 - real-device platform claims remain story-gated and cannot be replaced with simulator evidence.
 
