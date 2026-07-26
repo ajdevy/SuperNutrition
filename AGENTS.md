@@ -23,3 +23,7 @@ This repository vendors the BMAD Method core and BMM skills under `.agents/skill
 ## Agent tooling setup
 
 The skills are committed to this repository. On a fresh checkout, run `./scripts/setup-agent-tools.sh` once to install the local graphify CLI used by the project hook. Node.js 20.12+, Python 3.10+, and `uv` are required by the current BMAD/graphify tooling.
+
+## Claude Code agents
+
+The repository also vendors the pinned `AlexGladkov/claude-code-agents` marketplace under `vendor/claude-code-agents/`. `.claude/settings.json` enables its `ai-sdlc`, `ai-university`, and `project-coordinator` plugins at project scope so collaborators can use the same agents after trusting the checkout in Claude Code. Do not edit the vendored agent prompts without updating `vendor/claude-code-agents/UPSTREAM_COMMIT` and documenting the reason.
