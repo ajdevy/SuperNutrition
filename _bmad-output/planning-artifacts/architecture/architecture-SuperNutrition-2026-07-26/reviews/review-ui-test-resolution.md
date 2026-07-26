@@ -17,7 +17,7 @@ Deterministic spine lint passes with zero findings.
 
 | Prior finding | Status | Evidence |
 | --- | --- | --- |
-| C-1: deterministic packaged apps forbidden | **Partially resolved** | AD-28 now defines unique-ID, non-distributable Android `uiAcceptance` and iOS `NutriArchUIAcceptance` executables, an allowlist of replaceable ports, no publish/export path or credentials, distributable-artifact scans, and a real-composition smoke. AD-29/30 inventory the executables and replacement ports; AD-35 installs the exact executables. One topology contradiction remains below. |
+| C-1: deterministic packaged apps forbidden | **Partially resolved** | AD-28 now defines unique-ID, non-distributable Android `uiAcceptance` and iOS `SuperNutritionUIAcceptance` executables, an allowlist of replaceable ports, no publish/export path or credentials, distributable-artifact scans, and a real-composition smoke. AD-29/30 inventory the executables and replacement ports; AD-35 installs the exact executables. One topology contradiction remains below. |
 | H-1: no runnable common Compose target | **Resolved** | The API is fixed to `androidx.compose.ui.test.v2.runComposeUiTest`; the same `commonTest` IDs execute through `jvmTest`, `connectedAndroidTest`, and `iosSimulatorArm64Test`; AD-27/29/35 name their lanes and reconcile nonzero IDs/results. The guide now declares `jvmTest` and `androidDeviceTest` source roots. |
 | H-2: robot DSL lacks Kaspresso-equivalent behavior | **Resolved** | AD-28 now requires typed screen scopes, named steps, no raw selectors in test bodies, idling/clock synchronization, bounded waits, narrowly scoped reported retries, fixture lifecycle hooks, redacted failure artifacts, and negative DSL tests. |
 | H-3: selectors not exposed or owned | **Resolved** | AD-34 gives `core/ui` one locale-neutral `UiAutomationId` registry, separates localized accessibility semantics, enables Android `testTagsAsResourceId`, preserves iOS accessibility identifiers, and requires cross-platform discovery/uniqueness checks. |
@@ -57,7 +57,7 @@ disagree at the module boundary.
 3. Add negative boundary fixtures proving:
    - `implementation`, release, store, internal-beta, framework-export, and
      gateway graphs fail on any `testing` dependency;
-   - only Android `uiAcceptance` and iOS `NutriArchUIAcceptance` accept the
+   - only Android `uiAcceptance` and iOS `SuperNutritionUIAcceptance` accept the
      exact allowlisted test edges;
    - renaming or adding another acceptance configuration fails until the
      manifest is independently approved.

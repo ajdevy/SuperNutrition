@@ -1,5 +1,5 @@
 ---
-title: NutriArch PRD Addendum
+title: SuperNutrition PRD Addendum
 status: final
 created: 2026-07-26
 updated: 2026-07-26
@@ -98,7 +98,7 @@ When `kotlin-multiplatform-developer` is used:
 
 ## Historical Prototype Status
 
-The downloaded NutriArch prototype demonstrates a cloud-first
+The downloaded historical NutriArch prototype demonstrates a cloud-first
 camera-to-result loop using React Native/Expo, a Cloudflare Worker, OpenRouter,
 and a small TypeScript food table. It is evidence for UX behavior and API
 failure handling, not the selected production stack.

@@ -1,5 +1,5 @@
 ---
-title: NutriArch Product Brief
+title: SuperNutrition Product Brief
 status: final
 created: 2026-07-26
 updated: 2026-07-26
@@ -8,11 +8,11 @@ sources:
   - /Users/aj/Downloads/report.md
 ---
 
-# Product Brief: NutriArch
+# Product Brief: SuperNutrition
 
 ## Executive Summary
 
-NutriArch is an Android and iOS nutrition app that turns a meal photo into an
+SuperNutrition is an Android and iOS nutrition app that turns a meal photo into an
 editable, database-grounded nutrition estimate. Its product bet is that a fast,
 honest estimate that users can confirm is more useful than a tedious manual food
 log or an AI answer that presents uncertain calories as fact.
@@ -39,7 +39,7 @@ their device cannot run a larger model, or they do not want to upload a photo.
 
 ## The Solution
 
-NutriArch opens into a camera-first flow:
+SuperNutrition opens into a camera-first flow:
 
 1. The user takes or selects a meal photo.
 2. The app immediately checks image quality and whether food is visible.
@@ -48,7 +48,7 @@ NutriArch opens into a camera-first flow:
 4. The app presents food candidates, confidence, portion assumptions, and any
    questions needed to reduce uncertainty.
 5. The user confirms or corrects the result.
-6. NutriArch maps confirmed foods and servings to a versioned nutrition source
+6. SuperNutrition maps confirmed foods and servings to a versioned nutrition source
    and shows calories and macronutrients with visible assumptions or ranges.
 
 The app must always provide a recovery path: retake the photo, edit a candidate,
@@ -80,7 +80,7 @@ assuming one US-only experience.
 
 The first beta should also serve users with privacy or connectivity concerns who
 want to know what can be done on their device before agreeing to a cloud upload.
-NutriArch does not provide medical measurements or allergy detection and is not
+SuperNutrition does not provide medical measurements or allergy detection and is not
 a substitute for professional dietary advice.
 
 ## Success Criteria
@@ -146,7 +146,7 @@ correction quality, privacy, honest uncertainty, battery, or cloud cost.
 ## Vision
 
 If the first release proves the capture, correction, and grounding loop,
-NutriArch can grow into a low-friction nutrition companion with optional history,
+SuperNutrition can grow into a low-friction nutrition companion with optional history,
 daily totals, barcode and label recognition, regional food packs, and mindful
 logging modes. The durable advantage is not one model. It is the ability to
 evaluate and replace local and remote engines without changing the user contract,
@@ -155,8 +155,10 @@ visible.
 
 ## Current Assumptions
 
-- **Working name:** NutriArch is the product name; trademark and store-name checks
-  remain open.
+- **Product identity:** The product, installed app, launcher label, and in-app
+  brand are `SuperNutrition`. The exact Apple App Store and Google Play listing
+  title is `SuperNutrition AI nutritionist`. The descriptive suffix is store
+  metadata and is not part of the installed or in-app name.
 - **Beta posture:** no login or persisted meal history is required for the first
   internal release.
 

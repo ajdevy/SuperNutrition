@@ -1,4 +1,4 @@
-# Final CI and Cross-Platform UI Seam Review — NutriArch
+# Final CI and Cross-Platform UI Seam Review — SuperNutrition
 
 ## Verdict
 

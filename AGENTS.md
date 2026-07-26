@@ -28,9 +28,13 @@ The skills are committed to this repository. On a fresh checkout, run `./scripts
 
 The repository also vendors the pinned `AlexGladkov/claude-code-agents` marketplace under `vendor/claude-code-agents/`. `.claude/settings.json` enables its `ai-sdlc`, `ai-university`, and `project-coordinator` plugins at project scope so collaborators can use the same agents after trusting the checkout in Claude Code. Do not edit the vendored agent prompts without updating `vendor/claude-code-agents/UPSTREAM_COMMIT` and documenting the reason.
 
-## NutriArch monorepo and KMP engineering baseline
+## SuperNutrition monorepo and KMP engineering baseline
 
 - Treat `_bmad-output/planning-artifacts/architecture/architecture-SuperNutrition-2026-07-26/ARCHITECTURE-SPINE.md` as the source of truth for module dependencies, platform seams, and quality gates.
+- Keep product identity exact: installed/launcher/in-app name `SuperNutrition`;
+  Apple App Store and Google Play listing title
+  `SuperNutrition AI nutritionist`. Store-only descriptors must not leak into
+  the installed display name.
 - The only product implementation roots are `mobile/`, `web/landing/`, and `backend/mobile-api/`. Each independently owns its dependencies and installation, tests, quality entrypoint, caches, artifact, deployment, credentials, rollback, and distinct CODEOWNERS principal. Cross-product source, workspace/package-manager, generated-code, runtime, cache, build-task, and deployment dependencies are forbidden; integrate only through immutable, versioned, language-neutral releases independently owned under `contracts/`. `web/landing/` has no runtime dependency on `backend/mobile-api/`.
 - Inside `mobile/`, use the GiphySearch-derived groups `apps`, `core`, `domain`, `data`, `inference`, `platform`, `feature`, `testing`, and `evaluation`; keep mobile domain pure KMP, Android/iOS local inference separate, and native photo bridges out of app hosts.
 - Mobile begins in fail-closed `scaffold-pending`; its reviewed scaffold story atomically adds `mobile/gradle/libs.versions.toml`, `mobile/build-logic`, a nonempty inventory, real host/device/app evidence, and changes the lifecycle to `active`. Web and backend begin in `preselection`; their reviewed activation stories atomically add a central tool/dependency manifest, frozen lock state, nonempty product inventory, and read-only `quality-check`.

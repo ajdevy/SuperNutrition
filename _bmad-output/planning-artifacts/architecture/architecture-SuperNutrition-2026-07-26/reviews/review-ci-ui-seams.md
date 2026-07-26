@@ -1,4 +1,4 @@
-# Adversarial CI and Cross-Platform UI Seam Review — NutriArch
+# Adversarial CI and Cross-Platform UI Seam Review — SuperNutrition
 
 ## Verdict
 

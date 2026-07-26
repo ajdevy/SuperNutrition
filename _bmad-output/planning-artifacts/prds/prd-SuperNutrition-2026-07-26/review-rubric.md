@@ -1,4 +1,4 @@
-# PRD Quality Review — NutriArch
+# PRD Quality Review — SuperNutrition
 
 ## Overall Verdict
 

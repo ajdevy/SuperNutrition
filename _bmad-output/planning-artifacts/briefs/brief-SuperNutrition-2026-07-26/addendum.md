@@ -1,5 +1,5 @@
 ---
-title: NutriArch Product Brief Addendum
+title: SuperNutrition Product Brief Addendum
 status: final
 created: 2026-07-26
 updated: 2026-07-26
@@ -7,8 +7,10 @@ updated: 2026-07-26
 
 # Product Brief Addendum
 
-NutriArch is the product working name. SuperNutrition is the repository and BMAD
-project name, which is why generated artifact folders use `SuperNutrition`.
+`SuperNutrition` is the product, installed app, launcher, in-app brand,
+repository, and BMAD project name. The exact Apple App Store and Google Play
+listing title is `SuperNutrition AI nutritionist`; `AI nutritionist` is a
+store-listing descriptor, not part of the installed or in-app name.
 
 ## Nutrition Authority
 
@@ -60,7 +62,7 @@ constraint.
 
 ## Evidence Provenance — Non-Normative
 
-- `/Users/aj/Downloads/NutriArch/` — prior concept, prototype, and planning
+- `/Users/aj/Downloads/NutriArch/` — historical NutriArch concept, prototype, and planning
   material. React Native/Expo decisions are historical input, not the selected
   implementation stack.
 - `/Users/aj/Downloads/report.md` — food-photo recognition market, model,

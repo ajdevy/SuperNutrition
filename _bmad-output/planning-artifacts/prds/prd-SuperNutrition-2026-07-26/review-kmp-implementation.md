@@ -1,4 +1,4 @@
-# KMP Implementation Review — NutriArch PRD
+# KMP Implementation Review — SuperNutrition PRD
 
 ## Verdict
 

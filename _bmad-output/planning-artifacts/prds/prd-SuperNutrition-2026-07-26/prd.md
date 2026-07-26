@@ -1,5 +1,5 @@
 ---
-title: NutriArch Product Requirements Document
+title: SuperNutrition Product Requirements Document
 status: final
 created: 2026-07-26
 updated: 2026-07-26
@@ -10,11 +10,11 @@ sources:
   - /Users/aj/Downloads/report.md
 ---
 
-# PRD: NutriArch
+# PRD: SuperNutrition
 
 ## 0. Document Purpose
 
-This PRD defines the user and product contract for the first NutriArch internal
+This PRD defines the user and product contract for the first SuperNutrition internal
 beta. Product, UX, architecture, story, and implementation owners must use the
 Glossary terms and stable requirement IDs in this document. Technical mechanism
 belongs in the PRD addendum and architecture spine; this document defines
@@ -22,7 +22,7 @@ observable behavior and release boundaries.
 
 ## 1. Vision
 
-NutriArch helps a person understand a meal without performing a conventional
+SuperNutrition helps a person understand a meal without performing a conventional
 food-log workflow. The user takes or imports a photo, receives one or more food
 candidates, corrects what the image cannot prove, and receives a nutrition
 estimate grounded in controlled data.
@@ -32,7 +32,7 @@ device where possible and can offer remote analysis for ambiguous or complex
 photos. The user must know when a photo would leave the device and remain able to
 continue without uploading it.
 
-NutriArch succeeds by reducing effort while preserving honesty. It does not claim
+SuperNutrition succeeds by reducing effort while preserving honesty. It does not claim
 that a single image can reveal exact weight, hidden ingredients, allergens, or
 medical truth.
 
@@ -72,10 +72,10 @@ anchor, not the final legal launch list.]
 - **Persona and context:** Maya is a privacy-conscious professional checking a
   simple lunch before returning to work.
 - **Entry state:** Fresh internal-beta install with camera permission available.
-- **Path:** Maya opens NutriArch, grants camera access, frames the meal, and taps
+- **Path:** Maya opens SuperNutrition, grants camera access, frames the meal, and taps
   the shutter. The app runs local analysis and presents food candidates and a
   serving assumption. Maya confirms them.
-- **Climax:** NutriArch shows a Grounded Nutrition Result with source,
+- **Climax:** SuperNutrition shows a Grounded Nutrition Result with source,
   uncertainty, and `local` as the Inference Route.
 - **Resolution:** Maya can scan again without creating an account or saving meal
   history.
@@ -88,10 +88,10 @@ anchor, not the final legal launch list.]
   Engine cannot confidently separate.
 - **Entry state:** Network is available; no reusable Remote Upload Consent exists.
 - **Path:** Local analysis returns an Abstention with a plain-language reason.
-  NutriArch explains what remote analysis sends and does not retain, then asks
+  SuperNutrition explains what remote analysis sends and does not retain, then asks
   for consent. Liam agrees. The Remote Engine returns candidates and unresolved
   assumptions.
-- **Climax:** Liam edits the recipe type and serving before NutriArch computes a
+- **Climax:** Liam edits the recipe type and serving before SuperNutrition computes a
   Grounded Nutrition Result.
 - **Resolution:** The result shows `remote` as the Inference Route and does not
   imply that remote analysis was exact.
@@ -100,10 +100,10 @@ anchor, not the final legal launch list.]
 
 **UJ-3. Aisha corrects culturally specific food.**
 
-- **Persona and context:** Aisha is evaluating whether NutriArch works beyond
+- **Persona and context:** Aisha is evaluating whether SuperNutrition works beyond
   mainstream US meals.
 - **Entry state:** She imports a photo from the system photo picker.
-- **Path:** NutriArch returns an incorrect top Candidate and alternatives. Aisha
+- **Path:** SuperNutrition returns an incorrect top Candidate and alternatives. Aisha
   searches for the correct food, selects a regional Nutrition Source record, and
   adjusts the Serving Assumption.
 - **Climax:** The corrected Grounded Nutrition Result clearly identifies the
@@ -116,7 +116,7 @@ anchor, not the final legal launch list.]
 - **Persona and context:** Noah uses a supported OS on a lower-tier device while
   offline.
 - **Entry state:** The Local Engine reports unavailable and no network exists.
-- **Path:** NutriArch explains that photo identification is unavailable, preserves
+- **Path:** SuperNutrition explains that photo identification is unavailable, preserves
   the Photo Input only for the active session, and offers retake or manual search.
 - **Climax:** Noah can still reach a Grounded Nutrition Result through manual
   selection, or cancel without data leaving the device.
@@ -168,7 +168,7 @@ privacy-preserving. Realizes UJ-1 and UJ-3.
 
 #### FR-1: Camera-first entry
 
-The user can open NutriArch directly into the capture surface and take a still
+The user can open SuperNutrition directly into the capture surface and take a still
 photo with one primary action after permissions are resolved.
 
 **Consequences:**
@@ -662,6 +662,13 @@ feature rewrite.
   backend. Root policy and contract compatibility checks are unavoidable
   inputs to the six-job aggregate on every branch push, pull request, and
   enabled merge-queue commit.
+- **NFR-23:** Product identity is exact and testable: the installed application,
+  launcher label, and in-app brand are `SuperNutrition` on Android and iOS; the
+  Apple App Store and Google Play listing title is
+  `SuperNutrition AI nutritionist`. The `AI nutritionist` suffix is store
+  metadata only and must not appear as the installed display name. A protected
+  identity manifest and automated metadata assertions prevent platform, locale,
+  build-profile, landing-page, and store-listing drift.
 
 ## 9. Constraints and Guardrails
 
@@ -761,8 +768,9 @@ path cannot be release-ready until its corresponding gate closes.
    error, correction time, resource use, and cost follow from SM-6?
 6. Which correction events may be retained without an account, for how long, and
    under what beta consent?
-7. Is the working name NutriArch retained after trademark and store-listing
-   review?
+7. Which localized store descriptions, subtitles, keywords, and screenshots
+   accompany the fixed English listing title without changing the
+   `SuperNutrition` installed and in-app name?
 
 ## 13. Assumptions Index
 

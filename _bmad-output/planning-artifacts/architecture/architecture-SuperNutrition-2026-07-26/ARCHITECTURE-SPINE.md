@@ -1,16 +1,16 @@
 ---
-name: NutriArch
+name: SuperNutrition
 type: architecture-spine
 purpose: build-substrate
 altitude: feature
 paradigm: ports-and-adapters with unidirectional state
-scope: NutriArch monorepo with Kotlin Multiplatform mobile, web landing, and mobile backend
+scope: SuperNutrition monorepo with Kotlin Multiplatform mobile, web landing, and mobile backend
 status: final
 created: 2026-07-26
 updated: 2026-07-26
 binds:
   - FR-1..FR-25
-  - NFR-1..NFR-22
+  - NFR-1..NFR-23
   - SM-1..SM-10
 sources:
   - ../../prds/prd-SuperNutrition-2026-07-26/prd.md
@@ -23,7 +23,7 @@ companions:
   - giphysearch-practices-adoption.md
 ---
 
-# Architecture Spine — NutriArch
+# Architecture Spine — SuperNutrition
 
 ## Design Paradigm
 
@@ -117,7 +117,7 @@ flowchart LR
 
 ### AD-11 — Contract and evidence gates
 
-- **Binds:** all implementation stories, NFR-1..NFR-22, SM-7..SM-10
+- **Binds:** all implementation stories, NFR-1..NFR-23, SM-7..SM-10
 - **Prevents:** untested adapters and simulator-only platform claims
 - **Rule:** AD-33 supplies the measurable unit-coverage floors and changed-code rule. Every engine passes the same contract suite. AD-34 supplies positive-journey UI acceptance on both platforms. Route-by-platform acceptance evidence must cover Android and iOS on real devices; emulator or simulator evidence cannot establish camera, performance, memory, or local-inference support.
 
@@ -225,7 +225,7 @@ flowchart LR
 - **Prevents:** copied fakes, divergent fixtures, and inconsistent Koin/Compose platform test setup
 - **Rule:** `mobile/testing/inference` owns only the reusable contract-suite runner, fakes, and builders that consume immutable canonical fixtures published by `mobile/domain/inference`; adapter-specific fixtures remain in each adapter's test source sets. `mobile/testing/compose-support` owns the versioned base robot DSL, Compose test host, Koin test utilities, synchronization/reporting hooks, and privacy-safe artifact writer. The non-production `mobile/testing/scaffold-probe` may own one bootstrap-shell robot and contract used only while AD-34 selects the `bootstrap` profile. All product screen robots and contracts remain beside their UI; the first-release set lives in `mobile/feature/photo-analysis/src/commonTest` and becomes mandatory with the `photo-analysis` profile. The DSL binds `@OptIn(ExperimentalTestApi::class)` to `androidx.compose.ui.test.v2.runComposeUiTest` and requires typed screen scopes, named step IDs, no raw selector use in test bodies, Compose-clock/idling synchronization, bounded `waitUntil`/`awaitIdle` with no sleeps, fixture reset/cleanup hooks, and a redacted failure bundle containing step trace, semantics tree, platform/locale/configuration, and screenshot. Bounded polling is allowed only while waiting for a declared asynchronous state before its assertion deadline. Once a product assertion is evaluated and fails, it is final for that attempt and is never re-executed into success; lookup failures may repeat only inside the same bounded wait, never after an assertion result is emitted. Negative DSL tests cover timeout, assertion finality, redaction, and selector-scope escape.
 
-  UI acceptance uses two manifest-listed, non-distributable executables: an Android `uiAcceptance` application variant with a unique application ID and an iOS `NutriArchUIAcceptance` scheme/configuration with a unique bundle ID. In AD-34 `bootstrap` they contain only the thin hosts plus the non-production scaffold probe. In `photo-analysis` they build the production feature, domain, data, navigation, and app composition graph; only named Engine, gateway, catalog, configuration, and photo-input ports may be replaced at the app composition root. They contain no production credentials, permit only allowlisted fixture endpoints, have no publish/archive/export task, and are scanned for secrets and forbidden destinations. Every store, release, internal-beta, framework, and gateway artifact is scanned transitively and must contain no `testing` coordinate, package, resource, fake, test manifest, or test-only DI binding. A separate profile-appropriate release-composition smoke boots the real currently inventoried graph with external services disabled so fixture wiring cannot mask broken composition.
+  UI acceptance uses two manifest-listed, non-distributable executables: an Android `uiAcceptance` application variant with a unique application ID and an iOS `SuperNutritionUIAcceptance` scheme/configuration with a unique bundle ID. In AD-34 `bootstrap` they contain only the thin hosts plus the non-production scaffold probe. In `photo-analysis` they build the production feature, domain, data, navigation, and app composition graph; only named Engine, gateway, catalog, configuration, and photo-input ports may be replaced at the app composition root. They contain no production credentials, permit only allowlisted fixture endpoints, have no publish/archive/export task, and are scanned for secrets and forbidden destinations. Every store, release, internal-beta, framework, and gateway artifact is scanned transitively and must contain no `testing` coordinate, package, resource, fake, test manifest, or test-only DI binding. A separate profile-appropriate release-composition smoke boots the real currently inventoried graph with external services disabled so fixture wiring cannot mask broken composition.
 
 ### AD-29 — Fail-closed source-set quality matrix
 
@@ -317,11 +317,31 @@ flowchart LR
 - **Prevents:** documentation claiming tamper-resistant required checks that the current private-hosting plan cannot enforce
 - **Rule:** The repository is currently private under a GitHub Free organization, so private-repository rulesets, an organization-enforced required workflow, and a private merge queue are not treated as available or implemented. Before production implementation or release work begins, an infrastructure story must provision and verify a plan/capability set that supports private-repository rulesets and organization-required workflows; if private merge queue remains enabled, it must also support that feature. Exit evidence includes the active ruleset, distinct-owner protection, immutable source for `trusted-policy-audit`, required `ci-required` status, blocked bypass attempt, and, when merge queue is enabled, a successful `merge_group` run. If the organization does not provision those capabilities, a new reviewed architecture decision must define a concretely enforceable hosting/governance fallback; checked-in workflows alone are not equivalent.
 
+### AD-39 — Canonical product and store identity
+
+- **Binds:** NFR-23, Android and iOS app hosts, mobile acceptance executables,
+  web landing, release metadata, store-delivery stories
+- **Prevents:** different product names in launcher, in-app UI, acceptance
+  fixtures, landing content, and store metadata
+- **Rule:** `mobile/config/product-identity.toml` is the protected,
+  machine-readable identity source. Its canonical product, installed display,
+  launcher, in-app, and accessibility product name is exactly
+  `SuperNutrition`. Its Apple App Store and Google Play listing title is exactly
+  `SuperNutrition AI nutritionist`; `AI nutritionist` is store metadata only
+  and cannot become the installed display name or in-app brand. Android labels,
+  iOS display-name metadata, the `SuperNutritionUIAcceptance` scheme identity,
+  web product metadata, and store-delivery metadata are generated from or
+  validated against this manifest. CI tests every build profile and supported
+  locale for exact values and rejects independent hard-coded variants. Bundle
+  and package identifiers are selected by the scaffold story and recorded
+  separately; they do not alter the visible naming contract.
+
 ## Consistency Conventions
 
 | Concern | Convention |
 | --- | --- |
 | Contract naming | Ports are nouns ending in `Engine`, `Source`, `Catalog`, or `Policy`; immutable result types end in `Result`, failures in `Failure`, UI inputs in `Event`, one-time outputs in `Effect`. |
+| Product identity | `mobile/config/product-identity.toml` declares `SuperNutrition` as the installed and in-app name and `SuperNutrition AI nutritionist` as the exact Apple App Store and Google Play listing title. Store descriptors never become launcher or in-app identity. |
 | IDs and time | Attempt IDs are random opaque strings; persistent entity IDs are stable strings; timestamps are UTC instants; country uses ISO 3166-1 alpha-2; locale uses BCP 47. |
 | Serialization | Public mobile–gateway envelopes carry `contractVersion`, `requestId`, and a sealed success/failure payload; unknown fields are ignored, unknown enum values map to `Unknown`. |
 | Confidence | Confidence is calibrated within one engine/model version and is never compared across engines unless Gate G-5 supplies a validated calibration transform. |
@@ -393,7 +413,7 @@ mobile/
   testing/                            # Mobile-only reusable test support
   evaluation/harness/                 # Corpus, route, and device evidence
   .maestro/                           # Profile-owned bootstrap or photo-analysis flows
-  config/                             # Mobile architecture, quality, model/country policy
+  config/                             # Mobile identity, architecture, quality, model/country policy
   gradle/                             # Mobile versions and verification metadata
 web/
   landing/
@@ -471,7 +491,7 @@ flowchart TB
 | Security and privacy — NFR-4..NFR-8 | app roots, gateway, telemetry, configuration | AD-8, AD-13, AD-14, AD-20, AD-21, AD-24 |
 | Platform and data reliability — NFR-9..NFR-12 | bridges, engines, catalog, convention build | AD-7, AD-11, AD-16, AD-17, AD-19, AD-22, AD-26 |
 | Accessibility and localization — NFR-13..NFR-16 | Compose feature, native bridges, country profiles | AD-4, AD-12, AD-23 |
-| Engineering quality and monorepo — NFR-17..NFR-22 | all three product roots, `contracts/`, test/build policy, six-job GitHub Actions CI | AD-3, AD-11, AD-15, AD-16, AD-25..AD-38 |
+| Engineering quality, monorepo, and product identity — NFR-17..NFR-23 | all three product roots, `contracts/`, test/build policy, identity metadata, six-job GitHub Actions CI | AD-3, AD-11, AD-15, AD-16, AD-25..AD-39 |
 | Product evidence — SM-1..SM-10 | evaluation harness and redacted telemetry | AD-11, AD-14 |
 
 ## Deferred

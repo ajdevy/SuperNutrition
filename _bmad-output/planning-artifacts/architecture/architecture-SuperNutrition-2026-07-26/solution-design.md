@@ -1,5 +1,5 @@
 ---
-title: NutriArch Solution Design
+title: SuperNutrition Solution Design
 status: final
 date: 2026-07-26
 audience:
@@ -10,17 +10,17 @@ audience:
 source_of_truth: ARCHITECTURE-SPINE.md
 ---
 
-# NutriArch Solution Design
+# SuperNutrition Solution Design
 
 ## 1. Purpose
 
-This design turns the NutriArch product brief, PRD, and UX specification into an implementation boundary for a Kotlin Multiplatform Android and iOS app. It is intentionally specific about the seams that multiple developers must share, especially the contract between local and remote photo inference, while leaving model and provider selection to evidence gates.
+This design turns the SuperNutrition product brief, PRD, and UX specification into an implementation boundary for a Kotlin Multiplatform Android and iOS app. It is intentionally specific about the seams that multiple developers must share, especially the contract between local and remote photo inference, while leaving model and provider selection to evidence gates.
 
 The architecture spine is authoritative for implementation. This document explains the same decisions for team discussion and onboarding.
 
 ## 2. Product and technical context
 
-NutriArch helps a user photograph or import a meal, identify likely foods, confirm the interpretation, set the serving, and receive nutrition grounded in an approved database. It is not a diagnostic or fully automatic calorie-estimation product. The first release must preserve user control and show assumptions rather than manufacture certainty.
+SuperNutrition helps a user photograph or import a meal, identify likely foods, confirm the interpretation, set the serving, and receive nutrition grounded in an approved database. It is not a diagnostic or fully automatic calorie-estimation product. The first release must preserve user control and show assumptions rather than manufacture certainty.
 
 The commercial audience is a reversible Tier-1 reference cohort: the United States, Canada, the United Kingdom, Australia, and New Zealand. This is not a final legal launch list. It gives research and planning a concrete frame for food catalogs, measurement conventions, provider regions, privacy copy, pricing, and culturally representative evaluation. Gate G-1 freezes the actual launch countries.
 
@@ -39,6 +39,9 @@ The main drivers are:
 - Country-aware data and policy, independent of display language.
 - One monorepo with independently owned `mobile/`, `web/landing/`, and
   `backend/mobile-api/` products integrated only through `contracts/`.
+- One testable identity contract: `SuperNutrition` in the installed app and
+  product UI; `SuperNutrition AI nutritionist` only as the exact Apple App
+  Store and Google Play listing title.
 - Agent-assisted implementation constrained by stories and architecture decisions.
 - GiphySearch-derived module, lint, build, and test practices adapted to KMP and strengthened with coverage, dependency, macOS, and real-device gates.
 
@@ -47,7 +50,7 @@ The main drivers are:
 ```mermaid
 flowchart LR
     Visitor["Prospective user"] --> Landing["Public web landing"]
-    User["NutriArch user"] --> Mobile["KMP mobile app"]
+    User["SuperNutrition user"] --> Mobile["KMP mobile app"]
     Mobile --> Local["On-device inference"]
     Mobile --> Catalog["On-device nutrition catalog"]
     Mobile -->|consented photo| Gateway["First-party gateway"]
@@ -281,11 +284,11 @@ The selection process at Gate G-3 evaluates:
 
 The initial bundled path should be the smallest baseline supported by the evidence. Higher-capability paths are optional tiers. Platform convenience APIs such as system-provided models may become an additional tier, never the only supported contract.
 
-Each selected model freezes color space, dimensions, normalization, taxonomy, and golden pixel/output parity fixtures. App-managed model downloads use checksum-verified inactive slots and atomic activation/rollback. Platform-managed models report their capability and immutable version; NutriArch can policy-disable them but does not claim to roll back binaries controlled by the operating system.
+Each selected model freezes color space, dimensions, normalization, taxonomy, and golden pixel/output parity fixtures. App-managed model downloads use checksum-verified inactive slots and atomic activation/rollback. Platform-managed models report their capability and immutable version; SuperNutrition can policy-disable them but does not claim to roll back binaries controlled by the operating system.
 
 ## 13. Remote inference and gateway
 
-The KMP remote adapter uploads to a first-party gateway through Ktor using platform client engines. It knows the NutriArch envelope, not a provider schema. A signed build flavor fixes the gateway origin and trust-key set. An attested app installation exchanges for a short-lived token bound to environment, installation, request digest, and nonce; request IDs are one-time. The gateway supports rotation, revocation, replay detection, abuse throttling, and a compromise runbook. The design does not require an account before the first scan.
+The KMP remote adapter uploads to a first-party gateway through Ktor using platform client engines. It knows the SuperNutrition envelope, not a provider schema. A signed build flavor fixes the gateway origin and trust-key set. An attested app installation exchanges for a short-lived token bound to environment, installation, request digest, and nonce; request IDs are one-time. The gateway supports rotation, revocation, replay detection, abuse throttling, and a compromise runbook. The design does not require an account before the first scan.
 
 The gateway:
 

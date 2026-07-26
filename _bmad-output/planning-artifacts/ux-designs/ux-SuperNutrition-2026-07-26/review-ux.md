@@ -1,4 +1,4 @@
-# UX Review — NutriArch
+# UX Review — SuperNutrition
 
 ## Verdict
 

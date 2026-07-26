@@ -11,7 +11,7 @@ source_of_truth: ARCHITECTURE-SPINE.md
 
 ## Reference boundary
 
-NutriArch uses the pinned [GiphySearch repository snapshot](https://github.com/ajdevy/GiphySearch/tree/16bec3a193a2793db29e1f6f10f9a72e2b25656d) as an engineering-practices reference, not as a product template. The commit pin makes the comparison reproducible if GiphySearch later changes.
+SuperNutrition uses the pinned [GiphySearch repository snapshot](https://github.com/ajdevy/GiphySearch/tree/16bec3a193a2793db29e1f6f10f9a72e2b25656d) as an engineering-practices reference, not as a product template. The commit pin makes the comparison reproducible if GiphySearch later changes.
 
 The architecture spine remains authoritative. GiphySearch patterns apply inside
 `mobile/` and are adapted for KMP, iOS, privacy-sensitive photos, and the
@@ -20,7 +20,7 @@ line/branch floor while changed production code remains at 100%.
 
 ## Adopted patterns
 
-| GiphySearch practice | NutriArch application |
+| GiphySearch practice | SuperNutrition application |
 | --- | --- |
 | App as composition root | `mobile/apps/androidApp` and `mobile/apps/sharedKit` select concrete adapters and solely bootstrap Android/iOS respectively; the iOS app is a thin Xcode host. |
 | Layered module groups | Inside `mobile/`, use `apps`, `core`, `domain`, `data`, `inference`, `platform`, `feature`, `testing`, and `evaluation`, with dependencies pointing inward. |
@@ -52,7 +52,7 @@ The source comparison is grounded in GiphySearch's pinned [settings](https://git
 
 ## Strengthened quality contract
 
-GiphySearch supplies useful lint and testing structure but no checked-in CI workflow or coverage gate at the pinned commit. NutriArch therefore adds:
+GiphySearch supplies useful lint and testing structure but no checked-in CI workflow or coverage gate at the pinned commit. SuperNutrition therefore adds:
 
 - host-qualified read-only `qualityCheckJvmAndroid` and `qualityCheckApple` tasks, with the CI workflow as the cross-host aggregate;
 - `qualityFormat`, the only task permitted to apply formatter or Detekt autocorrections;
@@ -68,12 +68,12 @@ GiphySearch supplies useful lint and testing structure but no checked-in CI work
 - non-waivable cancellation/privacy conformance scenarios and negative TestKit policy fixtures;
 - non-distributable, unique-ID UI-acceptance executables with manifest-limited port substitutions, plus scans proving no distributable artifact contains test-support code.
 
-GiphySearch's Detekt 1.23.8 pattern is adopted, but its version is not: the official [Detekt compatibility table](https://detekt.dev/docs/introduction/compatibility/) places 1.23.8 on Kotlin 2.0.21 and Gradle 8.12.1. NutriArch therefore seeds Detekt and its ktlint-wrapper ruleset at 2.0.0-alpha.5, the line compiled against Kotlin 2.4 and Gradle 9.5. This is an explicit pre-release tool risk; the first compatible stable 2.x replaces it through an AD-16 tuple change. The current Kover baseline follows the official [Kover Gradle plugin documentation](https://kotlin.github.io/kotlinx-kover/gradle-plugin/).
+GiphySearch's Detekt 1.23.8 pattern is adopted, but its version is not: the official [Detekt compatibility table](https://detekt.dev/docs/introduction/compatibility/) places 1.23.8 on Kotlin 2.0.21 and Gradle 8.12.1. SuperNutrition therefore seeds Detekt and its ktlint-wrapper ruleset at 2.0.0-alpha.5, the line compiled against Kotlin 2.4 and Gradle 9.5. This is an explicit pre-release tool risk; the first compatible stable 2.x replaces it through an AD-16 tuple change. The current Kover baseline follows the official [Kover Gradle plugin documentation](https://kotlin.github.io/kotlinx-kover/gradle-plugin/).
 
 ## Deliberately not adopted
 
-- Giphy, Ktorfit, Paging, and Coil dependencies: they solve the reference product, not NutriArch's architecture.
-- Android-only navigation assumptions: NutriArch uses Decompose lifecycle/route boundaries and Compose Multiplatform screens.
+- Giphy, Ktorfit, Paging, and Coil dependencies: they solve the reference product, not SuperNutrition's architecture.
+- Android-only navigation assumptions: SuperNutrition uses Decompose lifecycle/route boundaries and Compose Multiplatform screens.
 - App-shipped API keys or provider credentials: all remote provider secrets remain behind the first-party gateway.
 - Detekt autocorrect in verification tasks: CI must detect a dirty result, never rewrite source.
 - A broad `TooGenericExceptionCaught` allowance: cancellation, privacy, and transport boundaries require typed handling.
