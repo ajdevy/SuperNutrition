@@ -10,17 +10,17 @@ inputDocuments:
   - ux-designs/ux-SuperNutrition-2026-07-26/EXPERIENCE.md
 ---
 
-# NutriArch - Epic Breakdown
+# SuperNutrition - Epic Breakdown
 
 ## Overview
 
-This document provides the complete epic and story breakdown for NutriArch, decomposing the requirements from the PRD, UX Design if it exists, and Architecture requirements into implementable stories.
+This document provides the complete epic and story breakdown for SuperNutrition, decomposing the requirements from the PRD, UX Design if it exists, and Architecture requirements into implementable stories.
 
 ## Requirements Inventory
 
 ### Functional Requirements
 
-FR-1: The user can open NutriArch directly into the capture surface and take a still photo with one primary action after permissions are resolved.
+FR-1: The user can open SuperNutrition directly into the capture surface and take a still photo with one primary action after permissions are resolved.
 
 FR-2: The user can select one image through the platform system picker without granting broader media access where the platform supports selected-only access.
 
@@ -116,6 +116,8 @@ NFR-21: Repository CI runs the complete host-compatible automated quality, unit,
 
 NFR-22: The repository is a monorepo with separate root product boundaries at `mobile/`, `web/landing/`, and `backend/mobile-api/`. Each product independently owns its source, tests, dependency installation and lock state, cache, quality entrypoint, artifact, deployment, credentials, rollback, and distinct CODEOWNERS principal; source, build, package-manager, generated-code, runtime, and deployment dependencies cannot cross product boundaries. Cross-product integration uses only immutable, versioned, language-neutral releases independently owned under `contracts/`; producers and consumers test every supported released-version combination rather than only repository HEAD. `web/landing/` has no runtime dependency on the mobile backend. Root policy and contract compatibility checks are unavoidable inputs to the six-job aggregate on every branch push, pull request, and enabled merge-queue commit.
 
+NFR-23: Product identity is exact and testable: installed app, launcher label, and in-app brand are `SuperNutrition`; the Apple App Store and Google Play listing title is `SuperNutrition AI nutritionist`. The descriptor is store metadata only. Protected identity metadata and CI assertions prevent platform, build-profile, locale, landing-page, and store-listing drift.
+
 ### Additional Requirements
 
 - AR-1 (AD-16): The mobile scaffold story must create and prove the greenfield KMP scaffold as one atomic tuple: Kotlin/KMP 2.4.10, Compose Multiplatform 1.11.1, Gradle 9.5.0, AGP 9.1.0, JDK 21, Android compile/target SDK 36 with API 23 floor, Xcode 26.4.1 on macOS 26.2+, iOS 15 floor, Detekt/ktlint wrapper 2.0.0-alpha.5, and Kover 0.9.8. The story publishes exact common, Android, iOS, Xcode, lint, and coverage evidence; any tuple change is a dedicated compatibility change.
@@ -163,6 +165,7 @@ NFR-22: The repository is a monorepo with separate root product boundaries at `m
 - AR-43 (AD-36): Enforce the only product roots as `mobile/`, `web/landing/`, and `backend/mobile-api/`, with independent dependency installs, locks, product-ID-scoped caches, artifacts, deployment workflows/environments/credentials, rollback, and distinct owners. `contracts/` is non-executable data authored and published only by an independent contract owner; mobile and backend consume the same immutable release and test the complete supported version-skew matrix. Reject cross-root source, workspace/package, generated-code, runtime/config, build, cache, artifact, and deployment edges. The landing has no backend runtime dependency. Root tooling is policy-only and inventoried; every executable is mapped and tested. Incompatible contracts require a major version, coexistence, server-first activation, minimum-version policy, rollback, and removal story.
 - AR-44 (AD-37): Start mobile in protected `scaffold-pending` and web/backend in `preselection`. Every named job proves no production source, dependency installation/lock, runtime, deployable artifact, or deployment has appeared and emits same-SHA exact-state evidence without claiming build/test/coverage/UI. Mobile moves irreversibly and atomically to `active` through its reviewed scaffold story with a nonempty inventory and real non-product bootstrap host/device/app evidence under the AD-34 bootstrap profile; full product journeys become mandatory only with the irreversible feature-profile transition. Web/backend activate through reviewed pinned-toolchain stories adding frozen dependencies, nonempty inventories, real build/lint/test/coverage/artifact gates, owners, and deployment/rollback skeletons. All six jobs pass each transition.
 - AR-45 (AD-38): Treat private-repository enforcement as an infrastructure gate. Before production implementation, prove hosting support and active controls for private rulesets, distinct-owner approval, required `ci-required`, immutable `trusted-policy-audit`, and a blocked bypass; also prove `merge_group` if merge queue is enabled. Checked-in workflow YAML is evidence, not enforcement. If capabilities are not provisioned, require a new reviewed implementable governance decision.
+- AR-46 (AD-39): Add protected `mobile/config/product-identity.toml` with exact canonical installed/in-app name `SuperNutrition` and exact Apple App Store and Google Play listing title `SuperNutrition AI nutritionist`. Generate or validate Android labels, iOS display-name metadata, `SuperNutritionUIAcceptance`, web metadata, and store-delivery metadata from it; test all profiles/locales and reject independently hard-coded variants. Select package and bundle identifiers in the scaffold story without changing visible identity.
 
 ### UX Design Requirements
 
@@ -235,6 +238,8 @@ UX-DR33: Keep phone portrait primary, but make landscape, tablet, and foldable l
 UX-DR34: Store canonical quantities separately from localized display units, support metric weights throughout the Tier 1 reference cohort, use configuration-backed jurisdictional privacy copy, and include regional foods in evaluation and empty-state examples.
 
 UX-DR35: Before visual Compose implementation, approve responsive/accessibility-annotated mocks for Capture, Remote consent, Candidate review, Serving confirmation, and Grounded result; DESIGN.md and EXPERIENCE.md remain authoritative if a mock conflicts.
+
+UX-DR36: Render `SuperNutrition` as the installed, launcher, accessibility-product, and in-app brand. Use `SuperNutrition AI nutritionist` only in Apple App Store and Google Play acquisition metadata; never repeat the store-only descriptor in app chrome or ordinary product copy.
 
 ### FR Coverage Map
 

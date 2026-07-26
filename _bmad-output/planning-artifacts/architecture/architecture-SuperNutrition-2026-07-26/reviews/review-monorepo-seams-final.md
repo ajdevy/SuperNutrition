@@ -5,7 +5,7 @@ reviewed: 2026-07-26
 scope: closure of the three Critical and eight High findings in review-monorepo-seams.md, regression-checked through the complete first-feature handoff
 ---
 
-# Final Adversarial Monorepo Seam Review — NutriArch
+# Final Adversarial Monorepo Seam Review — SuperNutrition
 
 ## Verdict
 

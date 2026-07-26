@@ -1,4 +1,4 @@
-# Adversarial Monorepo Seam Review — NutriArch
+# Adversarial Monorepo Seam Review — SuperNutrition
 
 ## Verdict
 

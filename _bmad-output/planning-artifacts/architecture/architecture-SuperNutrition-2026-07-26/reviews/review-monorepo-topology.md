@@ -1,4 +1,4 @@
-# Monorepo Topology Review — NutriArch Architecture Spine
+# Monorepo Topology Review — SuperNutrition Architecture Spine
 
 Reviewed: 2026-07-26
 Target: `../ARCHITECTURE-SPINE.md` and its implementation companions

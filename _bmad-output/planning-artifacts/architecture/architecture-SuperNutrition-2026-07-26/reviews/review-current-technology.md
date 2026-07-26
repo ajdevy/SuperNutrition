@@ -1,4 +1,4 @@
-# Current-Technology Reality Review — NutriArch Architecture Spine
+# Current-Technology Reality Review — SuperNutrition Architecture Spine
 
 - **Reviewed:** `ARCHITECTURE-SPINE.md`
 - **Lens:** Current versions, official compatibility, platform floors, adapter fit, and repository reality

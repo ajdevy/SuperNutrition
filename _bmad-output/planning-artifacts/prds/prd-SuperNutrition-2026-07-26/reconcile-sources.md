@@ -1,4 +1,4 @@
-# Source Reconciliation — NutriArch PRD
+# Source Reconciliation — SuperNutrition PRD
 
 ## Verdict
 

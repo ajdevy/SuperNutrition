@@ -1,4 +1,4 @@
-# Adversarial Seam Review — NutriArch Architecture Spine
+# Adversarial Seam Review — SuperNutrition Architecture Spine
 
 ## Verdict
 

@@ -1,5 +1,5 @@
 ---
-name: NutriArch
+name: SuperNutrition
 status: final
 created: 2026-07-26
 updated: 2026-07-26
@@ -8,15 +8,19 @@ sources:
 design: DESIGN.md
 ---
 
-# NutriArch — Experience Spine
+# SuperNutrition — Experience Spine
 
 ## Foundation
 
-NutriArch is a phone-first Android and iOS product. Compose Multiplatform owns
+SuperNutrition is a phone-first Android and iOS product. Compose Multiplatform owns
 shared capture controls, analysis states, consent, Candidate review, serving
 Confirmation, results, and recovery. Native platform views own live camera
 preview and system pickers; platform services own permissions and image capture.
 `DESIGN.md` is the visual identity authority.
+
+The installed and in-product name is `SuperNutrition`. The store-only title is
+`SuperNutrition AI nutritionist`; the descriptor is not repeated in app chrome,
+accessibility labels, launcher identity, or ordinary product copy.
 
 Compose Multiplatform owns the complete iOS and Android screen surface. UIKit/
 AVFoundation and PhotosUI on iOS, and CameraX/Photo Picker on Android, are
@@ -207,7 +211,7 @@ are not first-release scope.
 
 ### Flow 1 — Maya gets a local result
 
-1. Maya opens NutriArch.
+1. Maya opens SuperNutrition.
 2. On first use she reads the permission rationale, grants the platform camera
    permission, and confirms the suggested country/catalog.
 3. Capture becomes ready; she frames lunch and taps the shutter.

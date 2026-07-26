@@ -1,5 +1,5 @@
 ---
-title: NutriArch Implementation Agent Guide
+title: SuperNutrition Implementation Agent Guide
 status: final
 date: 2026-07-26
 authoritative_inputs:
@@ -13,7 +13,7 @@ vendor:
   primary_agent: agents/coding/kotlin/kotlin-multiplatform-developer.md
 ---
 
-# NutriArch Implementation Agent Guide
+# SuperNutrition Implementation Agent Guide
 
 ## 1. Authority order
 
@@ -44,7 +44,7 @@ Do not ask it to create the whole application in one invocation. One invocation 
 
 ## 3. Project answers to the agent's setup questions
 
-| Prompt topic | NutriArch answer |
+| Prompt topic | SuperNutrition answer |
 | --- | --- |
 | DI framework | Koin 4.2.2, constructor injection, app-root startup, explicit `localEngine` and `remoteEngine` qualifiers |
 | Shared UI | Compose Multiplatform for product screens on Android and iOS |
@@ -110,7 +110,8 @@ The following overrides address assumptions in the generic vendored prompt:
 Wrap every agent task with this context:
 
 ```text
-Project: NutriArch in the SuperNutrition repository.
+Project: SuperNutrition in the SuperNutrition repository.
+Identity: installed/launcher/in-app name is SuperNutrition; Apple App Store and Google Play listing title is SuperNutrition AI nutritionist; obey AD-39 and never put the store-only descriptor in the installed display name.
 Story: <story id and title>.
 Owned slice: <one exact AD-15 module, platform host/source-set, root-policy, or enumerated infrastructure-policy slice>.
 Allowed files: <explicit paths>.

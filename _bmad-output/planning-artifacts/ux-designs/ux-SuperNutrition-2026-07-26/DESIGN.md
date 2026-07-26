@@ -1,5 +1,5 @@
 ---
-name: NutriArch
+name: SuperNutrition
 description: Calm, evidence-aware nutrition estimation for Android and iOS.
 status: final
 created: 2026-07-26
@@ -122,14 +122,19 @@ components:
     radius: '{rounded.full}'
 ---
 
-# NutriArch — Design Spine
+# SuperNutrition — Design Spine
 
 ## Brand & Style
 
-NutriArch should feel like a quiet measuring companion, not a scorekeeper. The
+SuperNutrition should feel like a quiet measuring companion, not a scorekeeper. The
 visual posture is calm, natural, and precise without looking clinical. It gives
 the photo and the user's correction work visual priority, then presents
 nutrition as an estimate with provenance rather than a verdict.
+
+The visible product name is always `SuperNutrition`. The store-listing title
+`SuperNutrition AI nutritionist` may appear in store acquisition material, but
+the `AI nutritionist` descriptor must not replace or extend the installed app
+name, launcher label, navigation title, or in-product wordmark.
 
 **UX-A1 — Working palette assumption:** the muted natural-green accent is the
 working visual direction until the Product/Design owner validates it through
