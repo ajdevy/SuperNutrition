@@ -1,0 +1,37 @@
+topic: Food photo recognition in nutrition apps
+time_range: Current as of 2026-07-26, with historical evidence where needed
+items:
+  - name: MyFitnessPal Meal Scan
+    category: Consumer nutrition app
+    description: Investigate Meal Scan's image-recognition workflow, backend or model providers, subscription/product positioning, privacy disclosures, and evidence for or against on-device inference.
+  - name: Foodvisor
+    category: Consumer nutrition app
+    description: Investigate Foodvisor's photo food-recognition pipeline, proprietary versus third-party services, pricing, privacy disclosures, and mobile inference clues.
+  - name: YAZIO AI Food Scanner
+    category: Consumer nutrition app
+    description: Investigate YAZIO's AI Food Scanner, image and nutrition-data providers, plan pricing, privacy disclosures, and evidence for or against local inference.
+  - name: Lose It Snap It
+    category: Consumer nutrition app
+    description: Investigate Snap It recognition behavior, provider/model evidence, pricing, privacy disclosures, and mobile versus cloud processing.
+  - name: Cal AI and comparable photo-calorie apps
+    category: Consumer nutrition app
+    description: Investigate Cal AI, BiteSnap, and similar popular photo-calorie apps for model/provider signals, pricing, data handling, and user-reported strengths and failures.
+  - name: Recognition service and API cost landscape
+    category: Cloud/API economics
+    description: Compare credible image, multimodal LLM, food-classification, and nutrition-data services that could power the workflow, including current list prices, limits, and cost per analyzed meal.
+  - name: Public Android artifact static analysis
+    category: Reverse engineering evidence
+    description: Locate publicly obtainable Android APKs for selected apps, inspect manifests, embedded SDKs, URLs, model assets, and strings with static tools, and clearly separate observations from inference.
+  - name: On-device models and mobile runtimes
+    category: Mobile AI technology
+    description: Research local vision-language and food-recognition models plus Core ML, ML Kit, TensorFlow Lite, ONNX Runtime, ExecuTorch, MediaPipe, MLC, and related iOS/Android deployment constraints.
+  - name: Food recognition accuracy and safety
+    category: Product quality and risk
+    description: Research benchmark evidence, ambiguity classes, portion-size estimation limits, nutrition-database uncertainty, and safety requirements for a consumer nutrition app.
+  - name: Recommended hybrid architecture for SuperNutrition
+    category: Product architecture
+    description: Synthesize evidence into an implementation recommendation covering privacy, latency, fallback routing, model selection, observability, unit economics, and staged validation.
+execution:
+  batch_size: 4
+  items_per_agent: 1
+  output_dir: ./food-photo-recognition-research/results

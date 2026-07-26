@@ -1,0 +1,22 @@
+{
+  "product_scope": "Lose It! Snap It is a Premium photo-logging feature that returns detected foods and estimated serving sizes for user review and editing.",
+  "supported_platforms": "Mobile iOS and Android product; current public support documentation describes a mobile photo workflow. A current APK was not locally analyzed in this pass.",
+  "pricing": "Snap It is Premium-only. Lose It does not publish a separate developer/API price for Snap It. Source: https://loseit.zendesk.com/hc/en-us/articles/47771695186580-How-to-Use-Snap-It",
+  "popularity_signal": "Google's historical case study says Lose It had helped more than 30 million people by the time of publication; this is platform scale, not current Snap It usage. Source: https://developers.google.com/ml-kit/case-studies/lose-it",
+  "recognition_behavior": "The current support flow is photo/upload -> detected foods and estimated serving size -> user can edit, swap, or add items. Clear and bright photos improve results.",
+  "identified_services": "[uncertain] Current Snap It provider/model is not disclosed. Google published a historical case study describing a custom Snap It model deployed with ML Kit and compressed/quantized TensorFlow Lite; that is strong historical evidence for the 2019-era implementation, not confirmation of the current app.",
+  "model_or_provider_confidence": "[uncertain] Historical ML Kit/TFLite attribution is high-confidence for the cited case study; present-day architecture and model version are unknown.",
+  "local_inference_evidence": "Google's case study explicitly says Snap It moved from a GPU server to a quantized custom model running on-device, including offline real-time inference, with models hostable/updated through Firebase. Current behavior was not re-confirmed.",
+  "portion_and_nutrition_method": "The product exposes estimated serving size and maps the selected food to Lose It nutrition records; user editing is part of the workflow. No current public evidence shows measurement-grade portion or calorie estimation.",
+  "artifact_source": "No current official APK was locally decompiled for this item. Public package indexes were used only to identify the Android package boundary; no runtime testing was performed.",
+  "static_findings": "Historical official Google documentation is the strongest technical evidence: compressed/quantized TFLite custom model, ML Kit on-device deployment, Firebase model delivery, and offline real-time behavior. This is a documented product case study rather than fresh binary proof.",
+  "reverse_engineering_limits": "The historical case study cannot establish current model versions, cloud fallbacks, data retention, or feature flags. No current APK installation or traffic inspection was attempted.",
+  "candidate_models": "A compact food detector/classifier in Core ML or LiteRT is the closest local analogue. Use local inference for fast candidates and a cloud fallback for ambiguous multi-food or recipe cases.",
+  "mobile_runtime_support": "ML Kit/LiteRT is a natural Android path; Core ML is the native iOS equivalent. ONNX Runtime Mobile is a cross-platform alternative.",
+  "device_requirements": "Quantized small models can support broad device coverage; updateable model delivery is useful for drift but requires versioning, rollback, and privacy controls.",
+  "expected_food_inference_quality": "On-device latency/offline behavior is achievable, but food taxonomy drift and complex meals remain risks. Evaluate missed foods, top-k recall, serving error, and correction time rather than speed alone.",
+  "unit_cost_estimate": "A local model has no per-photo cloud charge; engineering, downloads, battery, and support are the main costs. Any current Lose It unit cost is not public.",
+  "privacy_and_compliance": "Historical on-device inference reduces image transfer for that path. If a cloud fallback exists today, the app must disclose it separately; do not infer privacy behavior from the historical case study.",
+  "recommendation": "Use the historical Snap It pattern as evidence that a small quantized local food model is viable for fast candidate generation, then measure a modern hybrid fallback on current devices.",
+  "uncertain": ["identified_services", "model_or_provider_confidence", "artifact_source"]
+}
