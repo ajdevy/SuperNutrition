@@ -1,5 +1,9 @@
 ---
-stepsCompleted: []
+stepsCompleted:
+  - 1
+  - 2
+  - 3
+  - 4
 inputDocuments:
   - prds/prd-SuperNutrition-2026-07-26/prd.md
   - architecture/architecture-SuperNutrition-2026-07-26/ARCHITECTURE-SPINE.md
@@ -8,6 +12,9 @@ inputDocuments:
   - architecture/architecture-SuperNutrition-2026-07-26/giphysearch-practices-adoption.md
   - ux-designs/ux-SuperNutrition-2026-07-26/DESIGN.md
   - ux-designs/ux-SuperNutrition-2026-07-26/EXPERIENCE.md
+  - docs/food-photo-recognition-report.md
+  - /Users/aj/Downloads/NutriArch
+  - /Users/aj/Downloads/report.md
 ---
 
 # SuperNutrition - Epic Breakdown
@@ -279,6 +286,9 @@ As the mobile platform owner,
 I want a pinned Android/iOS KMP scaffold with independently owned module roots,
 so that feature agents can build against a reproducible substrate.
 
+**Traceability:** NFR-9..NFR-10, NFR-17..NFR-21, AR-1, AR-15..AR-16,
+AR-31, AR-35, AR-44.
+
 **Acceptance Criteria:**
 
 - **Given** the mobile lifecycle is `scaffold-pending`, **when** the scaffold
@@ -296,6 +306,9 @@ As a repository-policy owner,
 I want root product boundaries and immutable contract releases enforced,
 so that mobile, landing, and backend can be developed independently.
 
+**Traceability:** FR-22, FR-25, NFR-17..NFR-18, NFR-22, AR-3, AR-15,
+AR-36..AR-38, AR-43..AR-46, UX-DR35..UX-DR36.
+
 **Acceptance Criteria:**
 
 - **Given** `mobile/`, `web/landing/`, `backend/mobile-api/`, and `contracts/`
@@ -312,6 +325,8 @@ As a release owner,
 I want one machine-readable identity manifest,
 so that visible app names and store metadata cannot drift between platforms.
 
+**Traceability:** FR-25, NFR-23, AR-39, UX-DR36.
+
 **Acceptance Criteria:**
 
 - **Given** AD-39, **when** `mobile/config/product-identity.toml` is added,
@@ -326,6 +341,9 @@ so that visible app names and store metadata cannot drift between platforms.
 As a quality owner,
 I want read-only quality checks and every-push CI policy,
 so that missing, skipped, or under-covered work cannot appear green.
+
+**Traceability:** FR-22..FR-24, NFR-17..NFR-21, AR-10..AR-11, AR-27..AR-42,
+UX-DR4..UX-DR12, UX-DR37.
 
 **Acceptance Criteria:**
 
@@ -342,6 +360,8 @@ so that missing, skipped, or under-covered work cannot appear green.
 As a product and UX owner,
 I want every agent and screen to optimize the shortest safe path,
 so that common meal scans do not become form-filling workflows.
+
+**Traceability:** NFR-24, AR-47, UX-DR37.
 
 **Acceptance Criteria:**
 
@@ -398,6 +418,9 @@ As a user,
 I want to capture or import one meal photo with clear permission recovery,
 so that I can start analysis without navigating a diary or account flow.
 
+**Traceability:** FR-1, FR-2, FR-3, NFR-13..NFR-16, AR-4, AR-23, UX-DR1..UX-DR3,
+UX-DR4, UX-DR9, UX-DR11..UX-DR12, UX-DR26..UX-DR34.
+
 **Acceptance Criteria:**
 
 - **Given** the app opens, **when** camera permission is resolved, **then** one
@@ -418,6 +441,9 @@ As an inference engine,
 I want one orientation-normalized, size-bounded, metadata-scrubbed Photo Input,
 so that Android and iOS receive equivalent safe bytes.
 
+**Traceability:** FR-4, NFR-4..NFR-5, AR-8, AR-18, AR-21..AR-22,
+UX-DR4, UX-DR8, UX-DR10, UX-DR30..UX-DR32.
+
 **Acceptance Criteria:**
 
 - **Given** a PhotoRef, **when** preparation runs, **then** orientation,
@@ -433,6 +459,9 @@ so that Android and iOS receive equivalent safe bytes.
 As a user,
 I want retake, cancel, offline, and manual recovery,
 so that a failed photo analysis never leaves a dead end or stale result.
+
+**Traceability:** FR-11, FR-19..FR-21, NFR-2, AR-5, AR-18, UX-DR3,
+UX-DR10..UX-DR11, UX-DR19..UX-DR20, UX-DR23..UX-DR24.
 
 **Acceptance Criteria:**
 
@@ -458,6 +487,9 @@ As the contract owner,
 I want versioned request, capability, candidate, abstention, and failure types,
 so that local, remote, gateway, and evaluation implementations are replaceable.
 
+**Traceability:** FR-5..FR-6, FR-12, FR-24..FR-25, NFR-9..NFR-12, AR-2,
+AR-3, AR-9, AR-11, AR-17, AR-33.
+
 **Acceptance Criteria:**
 
 - **Given** the contract module is pure KMP, **when** contract-v1 is published,
@@ -473,6 +505,9 @@ As an Android local-inference owner,
 I want an Android-specific Local Engine behind the shared contract,
 so that eligible devices can analyze without transmitting Photo Input.
 
+**Traceability:** FR-6..FR-7, FR-12, FR-24, NFR-2..NFR-3, NFR-7,
+NFR-9..NFR-12, AR-2..AR-3, AR-7, AR-9, AR-17.
+
 **Acceptance Criteria:**
 
 - **Given** a ready Android capability, **when** an attempt starts, **then** no
@@ -487,6 +522,9 @@ As an iOS local-inference owner,
 I want an iOS-specific Local Engine behind the same contract,
 so that iOS devices receive the same user-facing evidence vocabulary.
 
+**Traceability:** FR-6..FR-7, FR-12, FR-24, NFR-2..NFR-3, NFR-7,
+NFR-9..NFR-12, AR-2..AR-3, AR-7, AR-9, AR-17.
+
 **Acceptance Criteria:**
 
 - **Given** a ready iOS capability, **when** an attempt starts, **then** the
@@ -499,6 +537,9 @@ so that iOS devices receive the same user-facing evidence vocabulary.
 As a product owner,
 I want local-first routing with bounded escalation,
 so that remote analysis is offered only when it can change the outcome.
+
+**Traceability:** FR-9..FR-10, FR-12, NFR-2, NFR-5, NFR-11, AR-6, AR-13,
+AR-20, AR-25, UX-DR15..UX-DR16, UX-DR37.
 
 **Acceptance Criteria:**
 
@@ -519,6 +560,10 @@ consent, jurisdiction controls, and provider isolation.
 As a user,
 I want to understand and control every photo upload,
 so that remote analysis never happens by surprise.
+
+**Traceability:** FR-8, FR-10..FR-12, FR-22, FR-25, NFR-4..NFR-8,
+NFR-11, AR-6, AR-8, AR-13, AR-18, AR-20..AR-22, AR-24, UX-DR17,
+UX-DR25, UX-DR37.
 
 **Acceptance Criteria:**
 
@@ -542,6 +587,9 @@ As a remote mobile owner,
 I want a Ktor adapter that knows only the first-party contract,
 so that provider changes do not require a mobile feature rewrite.
 
+**Traceability:** FR-8, FR-12, FR-25, NFR-4..NFR-5, NFR-8, NFR-11, AR-2,
+AR-13, AR-21, UX-DR17, UX-DR25.
+
 **Acceptance Criteria:**
 
 - **Given** a valid consent receipt and scrubbed Photo Input, **when** the
@@ -555,6 +603,9 @@ so that provider changes do not require a mobile feature rewrite.
 As a backend owner,
 I want provider adapters and secrets behind the gateway,
 so that mobile clients cannot bypass privacy, rate, or region policy.
+
+**Traceability:** FR-8, FR-10, FR-12, FR-22, FR-25, NFR-4..NFR-8,
+NFR-11, AR-13, AR-21, AR-24, UX-DR17, UX-DR25.
 
 **Acceptance Criteria:**
 
@@ -574,6 +625,9 @@ letting inference fabricate nutrient values.
 As a user,
 I want to inspect, remove, replace, or search candidates,
 so that I remain the authority over what the photo means.
+
+**Traceability:** FR-13..FR-15, FR-17..FR-18, FR-20..FR-21, NFR-12,
+NFR-15..NFR-16, AR-7, AR-19, UX-DR13..UX-DR20, UX-DR37.
 
 **Acceptance Criteria:**
 
@@ -596,6 +650,9 @@ As a user,
 I want to choose a food catalog independently from processing jurisdiction,
 so that food lookup preferences never silently route my photo across borders.
 
+**Traceability:** FR-14, FR-25, NFR-6, NFR-14..NFR-16, AR-12, AR-20,
+AR-26, UX-DR18..UX-DR19, UX-DR34, UX-DR37.
+
 **Acceptance Criteria:**
 
 - **Given** a catalog selection and a separate market/jurisdiction policy,
@@ -615,6 +672,9 @@ so that food lookup preferences never silently route my photo across borders.
 As a user,
 I want to confirm serving amount and assumptions before seeing nutrition,
 so that estimates are transparent and correctable.
+
+**Traceability:** FR-15, FR-16, FR-17, FR-18, NFR-12, NFR-15..NFR-16, AR-7, AR-19,
+AR-29, UX-DR14, UX-DR20..UX-DR21, UX-DR37.
 
 **Acceptance Criteria:**
 
@@ -638,6 +698,9 @@ As a UI-acceptance owner,
 I want one logical journey definition for Android and iOS,
 so that platform flows cannot silently drift.
 
+**Traceability:** FR-19, FR-22..FR-24, NFR-13..NFR-21, AR-11, AR-28,
+AR-34, AR-38, AR-41, UX-DR26..UX-DR33, UX-DR37.
+
 **Acceptance Criteria:**
 
 - **Given** UJ-1..UJ-4 and SM-9, **when** the positive-scenario catalog is
@@ -651,6 +714,10 @@ so that platform flows cannot silently drift.
 As a QA owner,
 I want binary-bound transfer and platform evidence,
 so that a green UI assertion cannot hide an upload or native failure.
+
+**Traceability:** FR-4, FR-8, FR-11, FR-22..FR-23, NFR-2, NFR-4..NFR-6,
+NFR-13..NFR-16, AR-8, AR-14, AR-18, AR-21, AR-23..AR-24, UX-DR17,
+UX-DR25, UX-DR29, UX-DR32.
 
 **Acceptance Criteria:**
 
@@ -666,6 +733,9 @@ As an evaluation owner,
 I want local-only, remote-only, hybrid, and manual baselines,
 so that routing and accuracy claims are evidence-based.
 
+**Traceability:** FR-23..FR-24, NFR-1..NFR-3, NFR-7, NFR-9..NFR-12,
+AR-2, AR-7, AR-9, AR-17, AR-19, AR-26, UX-DR34.
+
 **Acceptance Criteria:**
 
 - **Given** a consented, versioned, leakage-resistant corpus, **when** a route
@@ -679,6 +749,9 @@ so that routing and accuracy claims are evidence-based.
 As a release owner,
 I want CI to reject stale or incomplete evidence,
 so that planning claims remain enforceable when implementation begins.
+
+**Traceability:** FR-22..FR-24, NFR-17..NFR-21, AR-10..AR-11, AR-27..AR-43,
+UX-DR22..UX-DR37.
 
 **Acceptance Criteria:**
 
