@@ -31,8 +31,8 @@ fixture evidence for both platforms.
   lane and the approved Intel `iosX64` simulator lane.
 - [x] Re-run the physical Android binary fixture after the CameraX bridge
   hardening invalidated the previous `platform/photo-android` attestation.
-- [ ] Complete physical iOS fixture evidence; the current simulator lane is
-  not a physical-device claim.
+- [x] Complete physical iOS fixture evidence with the arm64 Kotlin/Native
+  binary runner on a real iPhone; the simulator lane remains compatibility-only.
 
 ## Dev Agent Record
 
@@ -101,6 +101,12 @@ fixture evidence for both platforms.
   normalization native-gap IDs instead of sharing one broad bridge record;
   iOS evidence explicitly requires a physical device while retaining the x64
   fixture as compatibility-only.
+- 2026-07-28: The physical iPhone 14 Pro (iOS 26.5.2, arm64) ran the exact
+  `iosArm64TestBinaries` Kotlin/Native binary in a temporary signed app. The
+  bridge contract passed 2/2 and the binary normalization fixture passed 3/3,
+  including the canonical source digest, 4x6 upright sRGB output, and removal
+  of JPEG application metadata. The runner now emits the XML consumed by the
+  physical evidence emitter; no simulator result was substituted.
 - 2026-07-28: Rebuilt the shared iOS x64 framework with the complete Intel
   compatibility flag pair and reran the Xcode acceptance scheme with
   `ARCHS=x86_64`; the compatibility result reports 4 passed, 0 failed, and 0
