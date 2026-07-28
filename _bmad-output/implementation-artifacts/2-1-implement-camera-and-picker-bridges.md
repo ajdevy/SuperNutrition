@@ -42,6 +42,17 @@ Requires E1.1 scaffold activation, E1.5 interaction contract, and the separate
 
 ## Dev Agent Record
 
+### 2026-07-28 verification note
+
+The connected iPhone 14 Pro was paired, in Developer Mode, and had a connected
+CoreDevice tunnel. A fresh arm64 fixture build succeeded, but the signed
+temporary runner was rejected before execution because no valid provisioning
+profile was available for the local Apple Development team (`0xe8008015`). A
+fresh Xcode physical acceptance attempt was likewise stopped before tests by
+`No Account for Team` and missing profiles for the acceptance app/test bundle
+IDs. No new physical evidence binding was emitted; the checked-in records
+remain pending.
+
 ### Debug Log References
 
 - 2026-07-27: JVM tests pass for core config, photo-analysis domain, Android/iOS

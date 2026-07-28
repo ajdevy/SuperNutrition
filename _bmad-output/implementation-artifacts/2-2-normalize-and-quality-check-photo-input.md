@@ -36,6 +36,15 @@ fixture evidence for both platforms.
 
 ## Dev Agent Record
 
+### 2026-07-28 verification note
+
+The connected iPhone 14 Pro was paired, in Developer Mode, and had a connected
+CoreDevice tunnel. The fresh `iosArm64TestBinaries` build succeeded, but the
+temporary signed runner could not be installed because no valid provisioning
+profile was available for the local Apple Development team (`0xe8008015`). The
+physical binary fixture therefore did not execute and no new evidence binding
+was emitted; the checked-in iOS record remains pending.
+
 - 2026-07-27: JVM normalization tests pass for rotation, dimensions, sRGB,
   empty metadata output, and SHA-256 digest shape.
 - 2026-07-27: Android native normalizer added; it re-encodes pixels after the

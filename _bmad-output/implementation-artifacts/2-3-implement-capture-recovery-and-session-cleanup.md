@@ -35,6 +35,15 @@ device lifecycle/accessibility evidence.
 
 ## Dev Agent Record
 
+### 2026-07-28 verification note
+
+The connected iPhone 14 Pro was paired, in Developer Mode, and had a connected
+CoreDevice tunnel. A fresh physical Xcode acceptance attempt stopped before
+tests because the local Apple Development team had no Xcode account and no
+provisioning profiles for the acceptance app/test bundle IDs. No new physical
+iOS lifecycle evidence binding was emitted; the native-gap records remain
+pending.
+
 - 2026-07-27: JVM tests pass for stale callback rejection, replacement, and
   Scan again cleanup. Cancellation and replacement do not retain PhotoRef
   session content.
