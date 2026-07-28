@@ -40,9 +40,9 @@ development_status:
   epic-1-retrospective: optional
 
   epic-2: in-progress
-  2-1-implement-camera-and-picker-bridges: in-progress
-  2-2-normalize-and-quality-check-photo-input: in-progress
-  2-3-implement-capture-recovery-and-session-cleanup: in-progress
+  2-1-implement-camera-and-picker-bridges: review
+  2-2-normalize-and-quality-check-photo-input: review
+  2-3-implement-capture-recovery-and-session-cleanup: review
   epic-2-retrospective: optional
 
   epic-3: backlog

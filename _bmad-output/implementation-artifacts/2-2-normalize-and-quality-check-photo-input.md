@@ -1,6 +1,6 @@
 # Story 2.2: Normalize and quality-check Photo Input
 
-Status: in-progress
+Status: review
 
 ## Story
 

@@ -1,6 +1,6 @@
 # Story 2.3: Implement capture recovery and session cleanup
 
-Status: in-progress
+Status: review
 
 ## Story
 
