@@ -470,6 +470,38 @@ flowchart LR
   are not taps; Back, Undo, cancellation, and system permission prompts are
   separate bounded typed events.
 
+### AD-41 — Fail-closed market processing policy
+
+- **Binds:** NFR-27, AD-8, AD-12, AD-13, AD-21, AD-40, every remote transfer of
+  user content, `MarketPolicyResolver`
+- **Prevents:** a market being served by a provider region its law does not
+  permit, permission for one payload type implying another, and language support
+  being mistaken for a market position
+- **Rule:** `MarketPolicyResolver` resolves against signed policy data conforming
+  to the immutable language-neutral `contracts/market-policy/v1` schema, created
+  and versioned by a separately owned `market-policy-contract` slice. The mobile
+  instance is the protected `mobile/config/quality/market-policy.toml`. Each
+  market entry declares jurisdiction, `residencyPosture`, permitted processing
+  regions, per-modality remote permission and consent-copy version, accepted
+  input languages, and a named legal review with an approver and expiry.
+
+  Every market defaults to `unresolved` and permits no remote inference of any
+  modality; absence, `unresolved`, and expiry are equivalent at resolution time,
+  and no posture is inferred from a neighbouring market, shared language,
+  currency, or region grouping. A posture is set only by the named review and
+  never widened as a side effect of a story, configuration change, or provider
+  migration. Photo and text permissions are decided independently, each carrying
+  its own reviewed consent copy, and a transfer presenting another modality's
+  copy fails closed. Accepted input languages are independent of posture,
+  jurisdiction, and permitted regions in both directions. Catalog choice cannot
+  derive, widen, or silently change any of these values, and the resolved
+  jurisdiction and processing region are displayed before every consent
+  decision. Policy changes are isolated, provenance-recorded, and independently
+  approved; CI never writes policy state. The deterministic catalog search floor
+  and on-device identification do not depend on a posture, so fail-closed leaves
+  every market usable. Full schema, market states, and evidence requirements are
+  in `market-processing-policy.md`.
+
 ## Consistency Conventions
 
 | Concern | Convention |

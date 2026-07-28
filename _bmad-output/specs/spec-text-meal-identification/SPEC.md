@@ -106,15 +106,19 @@ The specific number nobody currently owns: **how often is it acceptable for the 
 
 **Suggested starting point, to be confirmed or replaced:** the evaluation harness already runs local-only, remote-only, hybrid, and manual baselines against a fixed corpus, so measure the "not sure" rate there per market language before picking a number rather than guessing one now. Owner should be the same pairing that owns accuracy claims today — product plus the evaluation owner — since this is the same kind of judgement.
 
-**OQ-5 — Can we send Russian users' typed text out of Russia, and does Russia change our market model?**
+**OQ-5 — resolved structurally; the remaining question belongs to G-1 and G-4.**
 
-This follows directly from answering yes to remote text and adding Russia. Two parts, both needing someone with legal standing rather than an engineering call:
+The original question was whether Russian users' typed text may be processed outside Russia. That is not a question this spec can answer, and it turned out not to be a question this spec needs to answer.
 
-*Data.* Russian law on personal data (commonly cited as Federal Law 242-FZ) is generally understood to require personal data of Russian citizens to be stored on servers located in Russia. A typed meal description may or may not count as personal data, and I am not in a position to judge that. If it does, `processingRegion` for the Russian market cannot simply point at an existing EU or US provider region, and remote text for Russia either needs in-country processing or has to stay on-device.
+The mechanism now lives in `contracts/market-policy/v1`, specified in `market-processing-policy.md` and bound by AD-41, AR-53, NFR-27, and story E1.6. Every market defaults to `unresolved` and permits no remote transfer of any modality. Russia enters as `unresolved` like everywhere else, so nothing here blocks on it, and the deterministic floor plus on-device identification keep the market usable in that state.
 
-*Market.* The corpus frames Tier 1 as high-income markets with the beta cohort as US, Canada, UK, Australia, New Zealand. Russia sits outside that framing, and app-store availability and payment there are their own question. This spec does not need those answered to proceed — but Gate G-1 owns the launch list, and it should hear about this.
+Two things this separated out:
 
-*Answer changes:* whether Russian remote text is on-device-only, and what `processingRegion` resolves to for that market.
+*Language is not a market position.* Supporting Russian is a product capability that costs synonyms, inflection handling, and fixtures. Operating in Russia is a legal position. NFR-26 and AD-41 make these independent in both directions, so Russian-language support ships in story E7.3 without waiting on any residency determination.
+
+*The question predates typed identification.* The product already transfers photos to a first-party gateway under AD-13, so any market with residency constraints constrains remote photo exactly as it constrains remote text. This was never an E7 question; typing surfaced it. It belongs to G-1, which owns the launch list and privacy jurisdictions, and G-4, which owns provider regions and DPA terms.
+
+What remains for counsel, if Russia is pursued as a market: whether an account-free typed description or photo, carrying an opaque attempt ID and a short-lived device attestation token, constitutes personal data of a Russian citizen such that in-country primary storage is required. That determination sets one market's posture. It changes no rule here.
 
 **OQ-6 — Exactly which languages, per market?**
 

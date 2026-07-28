@@ -145,7 +145,9 @@ NFR-24: Product journeys minimize interaction while preserving safe user control
 
 NFR-25: Deterministic catalog search is reproducible and bounded. The same query against the same package version returns byte-identical result ordering across platforms and runs, with no personalization, history, or learned component; a declared latency budget is met on the lowest supported device tier with network disabled and every Engine reporting unavailable. Golden query fixtures pin expected canonical IDs and order per package version.
 
-NFR-26: Language support is a per-market matrix, not a global switch. Each supported market declares catalog language, accepted input languages, script, morphological normalization, and synonym data as versioned package data rather than search-code conditionals, and ships its own query fixtures. English-only behaviour is not a valid default for a market whose catalog is not in English, and a market added without fixtures is treated as untested.
+NFR-26: Language support is a per-market matrix, not a global switch. Each supported market declares catalog language, accepted input languages, script, morphological normalization, and synonym data as versioned package data rather than search-code conditionals, and ships its own query fixtures. English-only behaviour is not a valid default for a market whose catalog is not in English, and a market added without fixtures is treated as untested. Accepted input languages are independent of market processing position in both directions: supporting a language is a product capability, operating in a market is a legal position, and neither implies the other.
+
+NFR-27: Remote processing of user content is permitted only where a named, approved, expiring legal position says it is. Every market defaults to unresolved and permits no remote transfer of any modality; absence, unresolved, and expiry are equivalent at resolution time. Photo and text permissions are independent, each bound to its own reviewed consent copy. Catalog choice cannot derive or change jurisdiction, posture, permitted regions, or permissions, and the resolved jurisdiction and processing region are shown before every consent decision. The deterministic search floor and on-device identification never depend on a market posture, so a fail-closed market remains usable.
 
 ### Additional Requirements
 
@@ -202,6 +204,8 @@ NFR-26: Language support is a per-market matrix, not a global switch. Each suppo
 - AR-50 (AD-12, AD-19): Own the per-market language matrix as signed package data. Each market declares catalog language, accepted input languages, script, morphology, and synonyms; normalization is applied identically at index build and query time; markets with inflected catalog languages declare full morphological normalization because synonym enumeration per inflected form is not maintainable. Cross-script entry feeds the fuzzy tier only and never outranks an exact match in the record's own script.
 - AR-51 (AD-8, AD-12, AD-21): Bind text transfer to text-specific consent copy. `consentCopyVersion` currently denotes the reviewed photo-transfer explanation, whose approved copy states a smaller copy of the photo is sent; that disclosure cannot authorize sending a description. A text transfer presents its own reviewed copy version and fails closed on mismatch. Processing region resolves from market policy and never from the catalog; where a market's data-residency position is unresolved, remote text is disabled for that market rather than defaulting to the nearest provider region.
 - AR-52 (AD-8, AD-14, AD-31): Treat user-authored text on the photo lifecycle. A description is attempt-scoped, cleared with the attempt, never logged, never placed in analytics, and never sent remotely without the AR-51 consent receipt. Redacted-artifact and forbidden-log capture tests extend to the text field.
+
+- AR-53 (AD-41): Own market processing position as a protected cross-product contract. `MarketPolicyResolver` resolves only against signed data conforming to immutable `contracts/market-policy/v1`, created by a separately owned `market-policy-contract` slice, with the mobile instance at protected `mobile/config/quality/market-policy.toml`. Each market declares jurisdiction, residency posture, permitted processing regions, per-modality remote permission and consent-copy version, accepted input languages, and a named legal review with approver and expiry. Unresolved is the default and equivalent to absent and expired; no posture is inferred from a neighbouring market, shared language, currency, or region grouping, and none is widened as a side effect of a story, configuration change, or provider migration. Negative tests prove an absent, unresolved, or expired market cannot reach transfer for either modality; that a photo-permitted, text-prohibited market rejects text transfer; that presenting one modality's consent copy for another fails closed; that catalog change leaves posture and regions unchanged; and that input languages resolve identically regardless of posture. CI never writes policy state.
 
 ### UX Design Requirements
 
@@ -291,13 +295,13 @@ UX-DR41: Give remote text transfer its own reviewed consent copy naming what a d
 
 | Epic | Primary requirements | Outcome |
 | --- | --- | --- |
-| E1 Foundation and product shell | FR-22, FR-25, NFR-17..NFR-24, AR-1..AR-7, AR-31..AR-47, UX-DR35..UX-DR37 | A bounded, identity-safe monorepo and reproducible KMP substrate |
+| E1 Foundation and product shell | FR-8, FR-22, FR-25, FR-30, NFR-17..NFR-24, NFR-26..NFR-27, AR-1..AR-7, AR-31..AR-47, AR-51, AR-53, UX-DR35..UX-DR37, UX-DR41 | A bounded, identity-safe monorepo, reproducible KMP substrate, and fail-closed market policy |
 | E2 Capture and photo preparation | FR-1..FR-4, FR-19..FR-21, NFR-1..NFR-3, NFR-9..NFR-16, NFR-24, AR-47, UX-DR1..UX-DR12, UX-DR26..UX-DR34, UX-DR37 | A privacy-preserving camera/import session with deterministic recovery |
 | E3 Shared inference and local engines | FR-5..FR-7, FR-9, FR-12, FR-23..FR-24, NFR-2..NFR-3, NFR-7, NFR-9..NFR-12, NFR-24, AR-11..AR-23, AR-47, UX-DR37 | Interchangeable contract-v1 local inference on Android and iOS |
 | E4 Remote inference and consent | FR-8, FR-10..FR-12, FR-22, FR-25, NFR-4..NFR-8, NFR-11, NFR-24, AR-8..AR-14, AR-47, UX-DR17, UX-DR25, UX-DR37 | Explicit, bounded, region-aware remote analysis through the gateway |
 | E5 Confirmation and grounded nutrition | FR-13..FR-18, FR-20..FR-21, NFR-6, NFR-10, NFR-12, NFR-15..NFR-16, NFR-24, AR-19..AR-30, AR-47, UX-DR13..UX-DR24, UX-DR37 | User-confirmed foods and serving assumptions become sourced estimates |
 | E6 Journey evidence and evaluation | FR-22..FR-24, NFR-17, NFR-20..NFR-21, NFR-24, SM-1..SM-10, AR-38..AR-47, UX-DR26..UX-DR37 | Shared Android/iOS acceptance journeys and evidence gates |
-| E7 Typed meal identification | FR-3, FR-14, FR-20..FR-21, FR-26..FR-31, NFR-24..NFR-26, AR-48..AR-52, UX-DR19, UX-DR38..UX-DR41 | A specified manual-search floor on every device, with optional on-device and remote typed identification above it |
+| E7 Typed meal identification | FR-3, FR-14, FR-20..FR-21, FR-26..FR-31, NFR-24..NFR-27, AR-48..AR-53, UX-DR19, UX-DR38..UX-DR41 | A specified manual-search floor on every device, with optional on-device and remote typed identification above it |
 
 ### Delivery order
 
@@ -450,6 +454,32 @@ so that common meal scans do not become form-filling workflows.
   locale/accessibility evidence matrix. Concrete Android/iOS defaulted and
   override journey evidence is owned by affected feature/profile-transition
   stories, not by the bootstrap scaffold story.
+
+### Story E1.6: Establish the market processing policy
+
+As a privacy and market owner,
+I want each market's remote processing position declared, approved, and expiring,
+so that no user's content is processed somewhere their market does not permit.
+
+**Traceability:** FR-8, FR-30, NFR-26..NFR-27, AR-51, AR-53, UX-DR41.
+
+**Acceptance Criteria:**
+
+- **Given** the policy contract, **when** it is created, **then** it conforms to
+  immutable `contracts/market-policy/v1`, is owned by a principal independent of
+  the products consuming it, and the mobile instance is protected.
+- **Given** a market that is absent, `unresolved`, or past `expiresAt`, **when**
+  a remote transfer is attempted for either modality, **then** it fails closed at
+  the transfer path, not merely in the interface.
+- **Given** a market permitting photo but not text, **when** a text transfer is
+  attempted, **then** it is rejected; and presenting one modality's consent copy
+  for the other fails closed.
+- **Given** a catalog country change, **then** jurisdiction, posture, permitted
+  regions, and per-modality permissions are unchanged.
+- **Given** any posture, **then** accepted input languages resolve identically,
+  and deterministic search and on-device identification remain fully available.
+- **And** the resolved jurisdiction and processing region are displayed before
+  every consent decision, and CI never writes policy state.
 
 ## Epic E2: Capture and photo preparation
 
@@ -882,6 +912,9 @@ so that the catalog is usable in every market we support.
   never outranks an exact match in the record's own script.
 - **And** each declared market language ships its own query fixtures; a market
   added without fixtures fails the inventory as untested.
+- **Given** any market processing posture, **when** input languages resolve,
+  **then** they resolve identically; declaring a language grants no market
+  position and an unresolved market still supports every language it declares.
 
 ### Story E7.4: Add on-device typed identification
 
@@ -934,8 +967,8 @@ As a user whose phone cannot identify a described meal,
 I want the option to send the description for remote identification,
 so that a weak device is not the end of the journey.
 
-**Traceability:** FR-8, FR-10..FR-11, FR-22, FR-30, NFR-4..NFR-8, AR-51,
-AR-52, UX-DR41.
+**Traceability:** FR-8, FR-10..FR-11, FR-22, FR-30, NFR-4..NFR-8, NFR-27,
+AR-51, AR-52, AR-53, UX-DR41.
 
 **Acceptance Criteria:**
 
