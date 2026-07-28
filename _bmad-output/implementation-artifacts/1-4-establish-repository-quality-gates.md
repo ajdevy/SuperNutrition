@@ -1,0 +1,133 @@
+# Story 1.4: Establish repository quality gates
+
+Status: in-progress
+
+## Story
+
+As a quality owner, I want every push and pull request to run the canonical
+quality matrix with an unconditional aggregate.
+
+## Acceptance Criteria
+
+1. The canonical workflow declares four mobile jobs, web quality, backend
+   quality, and `ci-required` with direct needs on exactly those six jobs.
+2. Scaffold-pending jobs make no production build, coverage, or UI claim.
+3. Read-only quality tasks never autocorrect repository files.
+
+## Tasks
+
+- [x] Add every-push/pull-request workflow without path filters.
+- [x] Add unconditional aggregate result checks.
+- [x] Add machine validation for the exact canonical jobs, direct aggregate
+  dependencies, SHA-pinned checkout, and merge-group trigger.
+- [x] Keep mobile policy checks read-only and fail-closed.
+- [ ] Add full active-state inventory, coverage, device, and trusted-policy
+  evidence before activation.
+
+## Evidence
+
+- `.github/workflows/ci-required.yml`
+- `scripts/verify-ci-policy.sh`
+- `scripts/ci-policy-negative-fixtures.sh`
+- `mobile/build-logic/**`
+
+The workflow is checked in, but GitHub ruleset enforcement and physical-device
+evidence are intentionally not claimed by this story.
+
+## Dev Agent Record
+
+- Implemented a bounded local/CI Gradle profile for the 32 GB Intel host: a
+  256 MB initial / 4 GB maximum Gradle heap, a 256 MB initial / 2 GB maximum
+  Kotlin daemon, four workers, daemon reuse, build/configuration caches, VFS
+  watching, synchronized 30-minute daemon expiry, and fail-closed Kotlin
+  daemon fallback.
+- Wired Detekt 2 and Kover 0.9.8 through the included build. `qualityFormat`
+  is the only autocorrect entrypoint; `qualityCheckJvmAndroid` and
+  `qualityCheckApple` remain read-only. Kover verification is skipped while
+  the lifecycle is `scaffold-pending`.
+- Replaced the unreliable mixed-KMP root Kover variant with explicit
+  per-production-module `reportJvm.xml` aggregation. Secure report-level
+  counters, duplicate/empty/missing inventory guards, Long totals, and
+  configuration-cache-safe task wiring fail closed without claiming native or
+  device coverage. An active-path audit now fails closed on the empty `BRANCH`
+  denominator in `:platform:photo-android` (the earlier mixed-root audit was
+  62.80% branch coverage), so the lifecycle stays `scaffold-pending`.
+- Verification: `:build-logic:test verifyMobilePolicy` strict;
+  `qualityCheckJvmAndroid` strict with configuration-cache reuse;
+  focused JVM tests for domain, presenter, and photo-analysis; and a clean
+  Kotlin compilation with the 2 GB daemon profile. Physical Android
+  acceptance also passed 10/10 on `DNY-NX9 - 16`.
+
+## File List
+
+- `mobile/gradle.properties`
+- `mobile/gradle/libs.versions.toml`
+- `mobile/gradle/verification-metadata.xml`
+- `mobile/build-logic/gradle.properties`
+- `mobile/build-logic/build.gradle.kts`
+- `mobile/build-logic/settings.gradle.kts`
+- `mobile/build-logic/gradle.lockfile`
+- `mobile/build-logic/src/main/kotlin/com/supernutrition/buildlogic/MobilePolicyValidator.kt`
+- `mobile/build-logic/src/test/kotlin/com/supernutrition/buildlogic/MobilePolicyValidatorTest.kt`
+- `mobile/build-logic/src/main/kotlin/com/supernutrition/buildlogic/QualityPlugin.kt`
+- `mobile/build-logic/src/test/kotlin/com/supernutrition/buildlogic/JvmCoverageVerifierTest.kt`
+- `mobile/build-logic/src/test/kotlin/com/supernutrition/buildlogic/NativeEquivalentEvidenceVerifierTest.kt`
+- `mobile/config/detekt/detekt.yml`
+- `mobile/domain/photo-analysis/src/commonMain/kotlin/com/supernutrition/domain/photoanalysis/PhotoAnalysisDomain.kt`
+- `mobile/domain/photo-analysis/src/commonMain/kotlin/com/supernutrition/domain/photoanalysis/PhotoAnalysisReducer.kt`
+- `mobile/domain/photo-analysis/src/commonMain/kotlin/com/supernutrition/domain/photoanalysis/PhotoAnalysisReducerLifecycle.kt`
+- `mobile/domain/photo-analysis/src/commonMain/kotlin/com/supernutrition/domain/photoanalysis/PhotoAnalysisReducerTransitions.kt`
+- `mobile/feature/photo-analysis/src/androidMain/kotlin/com/supernutrition/feature/photoanalysis/PhotoAnalysisSnapshotBundleCodec.kt`
+- `mobile/platform/photo-android/src/androidMain/kotlin/com/supernutrition/platform/photoandroid/AndroidExifOrientation.kt`
+- `mobile/platform/photo-android/src/androidMain/kotlin/com/supernutrition/platform/photoandroid/AndroidImageNormalizer.kt`
+- `mobile/testing/scaffold-probe/src/commonMain/kotlin/com/supernutrition/testing/scaffoldprobe/ScaffoldDependencyProbe.kt`
+- `mobile/testing/scaffold-probe/src/commonTest/kotlin/com/supernutrition/testing/scaffoldprobe/ScaffoldDependencyProbeTest.kt`
+- `mobile/apps/androidApp/src/androidTest/java/com/supernutrition/android/ScaffoldDependencyProbeInstrumentationTest.java`
+- `mobile/REAL_DEVICE_TESTING.md`
+
+## Change Log
+
+- 2026-07-28: Added temporary same-SHA fingerprint artifacts to all six
+  canonical jobs and made `ci-required` download and validate one shared commit,
+  lifecycle, root-boundary, contract, product-identity, inventory, and flow
+  fingerprint set. Added producer/aggregate negative fixtures; active-state and
+  trusted-policy evidence remain fail-closed.
+- 2026-07-28: Added the real Detekt/Kover quality wiring, the bounded 6 GB /
+  3 GB Gradle/Kotlin memory profile, strict verification metadata, and
+  read-only configuration-cache validation. The lifecycle remains
+  `scaffold-pending` so the active coverage threshold is not claimed.
+- 2026-07-28: Detekt/KMP quality configuration exhausted the previous 1 GiB
+  Gradle Metaspace ceiling during a full read-only quality run, so the bounded
+  Intel 32 GB profile now uses `1536m`; heap ceilings remain unchanged and the
+  product worker cap is four. Strict policy/build-logic/quality checks and
+  configuration-cache store/reuse pass without the daemon-expiry warning.
+  Host-slice Kover configuration now filters absent projects without weakening
+  the full inventory or active thresholds.
+- 2026-07-28: Revalidated the bounded Intel 32 GB startup profile with a
+  256 MB / 4 GB Gradle heap and a 256 MB / 2 GB Kotlin daemon. The full
+  rerun matrix covering policy, read-only quality, JVM suites, Android-host
+  suites, iOS x64 suites, and the shared framework link passed 156/156 tasks;
+  the separate build-logic profile remains 1 GB / 768 MB.
+- 2026-07-28: Re-ran the same profile against the physical Honor DNY-NX9
+  Android lane; the connected acceptance suite passed 10/10 and Gradle stored
+  the configuration-cache entry successfully.
+- 2026-07-28: Made the JVM host coverage denominator executable through
+  per-module Kover JVM reports, with secure XML parsing, strict report-level
+  counter selection, fail-closed inventory/report validation, and
+  configuration-cache-safe task actions. The Android physical-device lane
+  remains green; the active audit exposes the empty host branch denominator
+  in `:platform:photo-android`. Apple ARM64, exact Xcode, trusted ruleset, and
+  active 85% coverage evidence remain activation blockers.
+- 2026-07-28: Classified the five measurable common/JVM units separately from
+  platform/Compose/native-equivalent units, added fail-closed native evidence
+  freshness checks, and expanded coverage tests. Temporary local active audit:
+  97.87% line / 93.09% branch across five JVM denominators; lifecycle remains
+  `scaffold-pending` with all external evidence pending.
+- 2026-07-28: Added `scripts/emit-physical-android-evidence.sh`, a fail-closed
+  emitter that binds clean SHA, APK/test-APK digest, fixture and policy
+  digests, device/API, Gradle task version, timestamp, and passing XML result.
+  Dirty output is explicitly `local-only` and cannot satisfy activation.
+- 2026-07-28: Added the symmetric `scripts/emit-physical-ios-evidence.sh`;
+  it rejects simulator UDIDs and requires a passing physical xcresult,
+  `Debug-iphoneos` app, and `iosArm64` framework before emitting four bound
+  native-gap records.

@@ -2,6 +2,9 @@
 __pycache__/
 *.py[cod]
 
+# Machine-local Android/Gradle SDK location.
+mobile/local.properties
+
 # Personal BMAD installer answers and local customizations.
 _bmad/config.user.toml
 _bmad/custom/config.user.toml
@@ -9,3 +12,14 @@ _bmad/custom/*.user.toml
 
 # Generated graphify data is machine-local and can be rebuilt from the repo.
 graphify-out/
+
+# Gradle/Kotlin and Xcode outputs are reproducible machine-local artifacts.
+**/.gradle/
+**/.kotlin/
+**/build/
+**/DerivedData/
+*.xcresult/
+
+# IDE metadata is machine-local; checked-in run configuration belongs in CI or
+# the repository's documented command entrypoints.
+**/.idea/

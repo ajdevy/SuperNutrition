@@ -63,7 +63,8 @@ Evidence: spine lines 11–14, 64, 82, 88, 94, 100, 106, 118, 124, 130, 136,
 
 The official Compose Multiplatform release feed reports `1.11.0` as the current
 stable release, not `1.11.1`. Koin's official releases page reports `4.2.1` as
-stable, not `4.2.2`. Kotlin 2.4.10, Gradle 9.5.0, Ktor 3.5.1, SQLDelight 2.3.2,
+stable, not `4.2.2`. Kotlin 2.4.10, Gradle 9.5.0, Ktor 3.5.1, Ktorfit 2.7.4,
+SQLDelight 2.3.2,
 and Decompose 3.5.0 do have official releases. AGP 9.1.0 exists, although 9.1.1
 is the current patch in that line. Xcode 26.4 exists, but Apple currently lists a
 newer stable Xcode 26.6; an older baseline can be deliberate, but must be stated
@@ -83,6 +84,7 @@ Official evidence:
 - [Gradle 9.5.0 release notes](https://docs.gradle.org/9.5.0/release-notes.html)
 - [AGP 9.1 release notes](https://developer.android.com/build/releases/agp-9-1-0-release-notes)
 - [Ktor releases](https://ktor.io/docs/releases.html)
+- [Ktorfit compatibility and installation](https://foso.github.io/Ktorfit/)
 - [SQLDelight releases](https://github.com/sqldelight/sqldelight/releases)
 - [Koin releases](https://insert-koin.io/docs/support/releases/)
 - [Decompose releases](https://github.com/arkivanov/Decompose/releases)

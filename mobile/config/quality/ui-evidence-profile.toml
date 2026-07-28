@@ -1,0 +1,41 @@
+schema = "supernutrition.mobile.ui-evidence-profile.v1"
+schema_version = 1
+product = "mobile"
+lifecycle = "scaffold-pending"
+profile = "photo-analysis"
+monotonic = true
+downgrade_allowed = false
+source_digest = "pending"
+
+[bootstrap]
+robot_owner = "mobile/testing/scaffold-probe"
+robot_ids = ["bootstrap-shell-launch-di"]
+maestro_owner = "mobile/.maestro/bootstrap"
+maestro_flow_ids = ["bootstrap-launch-di"]
+platforms = ["android", "ios"]
+claims = ["packaged-launch", "dependency-injection-bootstrap"]
+forbidden_claims = [
+  "UJ-1", "UJ-2", "UJ-3", "UJ-4", "SM-9",
+  "photo-analysis", "inference", "nutrition", "privacy-route", "release",
+]
+
+[transition]
+first_product_source = "photo-analysis"
+requires_atomic_profile_transition = true
+requires_feature_source = true
+requires_common_compose_tests = true
+requires_android_device_tests = true
+requires_ios_simulator_tests = true
+ios_simulator_task = "iosSimulatorArm64Test"
+local_compatibility_task = "iosX64Test"
+local_compatibility_only = true
+local_compatibility_claims = ["presenter", "normalization", "bridge-contract"]
+ios_architecture_exception = "docs/decisions/2026-07-27-intel-ios-x64-acceptance-lane.md"
+
+[photo-analysis]
+robot_owner = "mobile/feature/photo-analysis"
+robot_ids = ["photo-analysis-capture-recovery"]
+maestro_owner = "mobile/.maestro/photo-analysis"
+maestro_flow_ids = ["photo-analysis-capture-recovery"]
+platforms = ["android", "ios"]
+claims = ["capture-surface", "photo-lease", "recovery-state-machine"]

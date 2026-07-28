@@ -1,0 +1,95 @@
+schema = "supernutrition.mobile.platform-contracts.v1"
+schema_version = 1
+product = "mobile"
+lifecycle = "scaffold-pending"
+source_digest = "pending"
+contract_count = 10
+supported_locales = ["en-US"]
+accessibility_modes = ["talkback", "voiceover"]
+
+[[contract]]
+id = "bootstrap.android.package-launch"
+requirement = "packaged-launch"
+platform = "android"
+evidence_kind = "instrumentation"
+status = "pending"
+native_gap_id = "bootstrap-android-host"
+
+[[contract]]
+id = "bootstrap.ios.package-launch"
+requirement = "packaged-launch"
+platform = "ios"
+evidence_kind = "xctest"
+status = "pending"
+native_gap_id = "bootstrap-ios-host"
+
+[[contract]]
+id = "photo.android.bridge"
+requirement = "camera-picker-permission-recovery"
+platform = "android"
+evidence_kind = "physical-device-instrumentation"
+status = "pending"
+native_gap_id = "photo-android-camera-picker"
+
+[[contract]]
+id = "photo.ios.bridge"
+requirement = "camera-picker-permission-recovery"
+platform = "ios"
+evidence_kind = "physical-device-camera-picker"
+status = "pending"
+native_gap_id = "photo-ios-camera-picker"
+required_capability = "physical-ios-device"
+
+[[contract]]
+id = "photo.android.lifecycle"
+requirement = "background-foreground-restoration"
+platform = "android"
+evidence_kind = "physical-device-lifecycle"
+status = "pending"
+native_gap_id = "photo-android-lifecycle"
+
+[[contract]]
+id = "photo.ios.lifecycle"
+requirement = "background-foreground-restoration"
+platform = "ios"
+evidence_kind = "physical-device-lifecycle"
+status = "pending"
+native_gap_id = "photo-ios-lifecycle"
+required_capability = "physical-ios-device"
+
+[[contract]]
+id = "photo.android.accessibility"
+requirement = "semantic-role-and-permission-recovery"
+platform = "android"
+evidence_kind = "talkback-device"
+status = "pending"
+native_gap_id = "photo-android-accessibility"
+
+[[contract]]
+id = "photo.ios.accessibility"
+requirement = "semantic-role-and-permission-recovery"
+platform = "ios"
+evidence_kind = "voiceover-device"
+status = "pending"
+native_gap_id = "photo-ios-accessibility"
+required_capability = "physical-ios-device"
+
+[[contract]]
+id = "photo.android.normalization"
+requirement = "orientation-color-space-metadata-scrub"
+platform = "android"
+evidence_kind = "binary-fixture"
+status = "pending"
+native_gap_id = "photo-android-normalization"
+
+[[contract]]
+id = "photo.ios.normalization"
+requirement = "orientation-color-space-metadata-scrub"
+platform = "ios"
+evidence_kind = "binary-fixture"
+status = "pending"
+native_gap_id = "photo-ios-normalization"
+required_capability = "physical-ios-device"
+
+# Every applicable platform-sensitive requirement must map to common, Maestro,
+# or native-gap evidence before active-state claims are allowed.

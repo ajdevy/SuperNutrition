@@ -1,0 +1,12 @@
+appId: ${APP_ID}
+
+---
+
+# Non-product bootstrap proof only. The app host slice supplies APP_ID and the
+# launch marker. This flow must never be used for a store, release, or feature
+# claim.
+- runScript:
+    file: ./bootstrap-locators.js
+- launchApp
+- assertVisible:
+    id: ${output.bootstrap_launch_marker}

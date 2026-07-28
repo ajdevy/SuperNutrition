@@ -1,0 +1,493 @@
+package com.supernutrition.domain.photoanalysis
+
+import kotlin.test.Test
+import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
+import kotlin.test.assertIs
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
+
+class PhotoAnalysisDomainTest {
+    private val attempt = AttemptId("attempt-1")
+    private val leases = PhotoLeaseStore()
+    private val sessions = PhotoSessionStore()
+    private val reducer = PhotoAnalysisReducer(leases, sessions, attempt)
+
+    private fun normalized(ref: PhotoRef) = PhotoInputNormalizer(digest = { "a".repeat(64) }).normalize(
+        RawPhoto(
+            ref = ref,
+            bytes = byteArrayOf(1, 2, 3),
+            width = 100,
+            height = 200,
+            orientation = ImageOrientation.UP,
+            colorSpace = "sRGB",
+            metadataKeys = emptySet(),
+        ),
+    )
+
+    @Test
+    fun `normalizer accepts only the platform normalized contract`() {
+        val ref = leases.issue(attempt, "photo-1")
+        val output = normalized(ref)
+
+        assertEquals(100, output.width)
+        assertEquals(200, output.height)
+        assertEquals(ImageOrientation.UP, output.orientation)
+        assertEquals("sRGB", output.colorSpace)
+        assertTrue(output.metadataKeys.isEmpty())
+    }
+
+    @Test
+    fun `normalizer rejects unsanitized platform input`() {
+        val ref = leases.issue(attempt, "photo-unsanitized-input")
+        fun raw(
+            orientation: ImageOrientation = ImageOrientation.UP,
+            colorSpace: String = "sRGB",
+            metadataKeys: Set<String> = emptySet(),
+        ) = RawPhoto(ref, byteArrayOf(1, 2, 3), 7, 11, orientation, colorSpace, metadataKeys)
+
+        assertFailsWith<IllegalArgumentException> {
+            PhotoInputNormalizer(digest = { "a".repeat(64) }).normalize(raw(ImageOrientation.RIGHT))
+        }
+        assertFailsWith<IllegalArgumentException> {
+            PhotoInputNormalizer(digest = { "a".repeat(64) }).normalize(raw(colorSpace = "Display-P3"))
+        }
+        assertFailsWith<IllegalArgumentException> {
+            PhotoInputNormalizer(digest = { "a".repeat(64) }).normalize(raw(metadataKeys = setOf("EXIF")))
+        }
+
+        val output = PhotoInputNormalizer(digest = { "a".repeat(64) }).normalize(raw())
+        assertEquals(7, output.width)
+        assertEquals(11, output.height)
+    }
+
+    @Test
+    fun `normalizer rejects empty oversized malformed and undigestible input`() {
+        val ref = leases.issue(attempt, "photo-invalid-input")
+        fun raw(bytes: ByteArray = byteArrayOf(1), width: Int = 1, height: Int = 1) = RawPhoto(
+            ref = ref,
+            bytes = bytes,
+            width = width,
+            height = height,
+            orientation = ImageOrientation.UP,
+            colorSpace = "sRGB",
+            metadataKeys = emptySet(),
+        )
+
+        assertFailsWith<IllegalArgumentException> {
+            PhotoInputNormalizer(digest = { "a".repeat(64) }).normalize(raw(ByteArray(0)))
+        }
+        assertFailsWith<IllegalArgumentException> {
+            PhotoInputNormalizer(maxBytes = 1, digest = { "a".repeat(64) }).normalize(raw(byteArrayOf(1, 2)))
+        }
+        assertFailsWith<IllegalArgumentException> {
+            PhotoInputNormalizer(digest = { "a".repeat(64) }).normalize(raw(width = 0))
+        }
+        assertFailsWith<IllegalArgumentException> {
+            PhotoInputNormalizer(digest = { "a".repeat(64) }).normalize(raw(height = 0))
+        }
+        assertFailsWith<IllegalArgumentException> {
+            PhotoInputNormalizer(maxDimension = 2, digest = { "a".repeat(64) }).normalize(raw(width = 3))
+        }
+        assertFailsWith<IllegalArgumentException> {
+            PhotoInputNormalizer(digest = { "not-a-digest" }).normalize(raw())
+        }
+    }
+
+    @Test
+    fun `revoke attempt reports every revoked lease`() {
+        val first = leases.issue(attempt, "photo-revoke-1")
+        val second = leases.issue(attempt, "photo-revoke-2")
+        val otherAttempt = leases.issue(AttemptId("attempt-2"), "photo-revoke-other")
+
+        assertEquals(2, leases.revokeAttempt(attempt))
+        assertFalse(leases.isActive(first))
+        assertFalse(leases.isActive(second))
+        assertTrue(leases.isActive(otherAttempt))
+        assertFalse(leases.revoke(first))
+        assertEquals(0, leases.revokeAttempt(attempt))
+    }
+
+    @Test
+    fun `photo ref string never exposes its opaque identity`() {
+        val ref = PhotoRef.issue(attempt, "private-photo-token")
+
+        assertEquals("PhotoRef(redacted)", ref.toString())
+        assertFalse(ref.toString().contains("private-photo-token"))
+    }
+
+    @Test
+    fun `photo ref rejects uri shaped identities`() {
+        assertFailsWith<IllegalArgumentException> {
+            PhotoRef.issue(attempt, "content://photos/private/meal-1")
+        }
+    }
+
+    @Test
+    fun `unleased photo ref cannot enter the reducer`() {
+        val unleased = PhotoRef.issue(attempt, "photo-without-lease")
+
+        assertFailsWith<IllegalStateException> {
+            reducer.dispatch(PhotoAnalysisEvent.PhotoCaptured(unleased))
+        }
+        assertEquals(PhotoAnalysisState.Capture, reducer.state)
+    }
+
+    @Test
+    fun `capture rejects a photo from another attempt and permission denial is typed`() {
+        val foreign = PhotoRef.issue(AttemptId("attempt-foreign"), "foreign")
+        assertFailsWith<IllegalStateException> {
+            reducer.dispatch(PhotoAnalysisEvent.PhotoCaptured(foreign))
+        }
+
+        reducer.dispatch(PhotoAnalysisEvent.PermissionDenied)
+        assertEquals(
+            PhotoAnalysisState.Recovery(RecoveryReason.PERMISSION_DENIED),
+            reducer.state,
+        )
+        reducer.dispatch(PhotoAnalysisEvent.AnalysisStarted(RequestId("ignored")))
+        assertEquals(PhotoAnalysisState.Recovery(RecoveryReason.PERMISSION_DENIED), reducer.state)
+    }
+
+    @Test
+    fun `unleased replacement cannot revoke the current photo`() {
+        val current = leases.issue(attempt, "photo-current")
+        val unleasedReplacement = PhotoRef.issue(attempt, "photo-without-lease")
+        reducer.dispatch(PhotoAnalysisEvent.PhotoCaptured(current))
+
+        assertFailsWith<IllegalStateException> {
+            reducer.dispatch(PhotoAnalysisEvent.ReplacePhoto(unleasedReplacement))
+        }
+        assertEquals(PhotoAnalysisState.Preparing(current), reducer.state)
+        assertTrue(leases.isActive(current))
+    }
+
+    @Test
+    fun `replacement cannot reuse the current photo lease`() {
+        val current = leases.issue(attempt, "photo-current-only")
+        reducer.dispatch(PhotoAnalysisEvent.PhotoCaptured(current))
+
+        assertFailsWith<IllegalStateException> {
+            reducer.dispatch(PhotoAnalysisEvent.ReplacePhoto(current))
+        }
+        assertEquals(PhotoAnalysisState.Preparing(current), reducer.state)
+        assertTrue(leases.isActive(current))
+    }
+
+    @Test
+    fun `preparation completion is ignored after the photo lease expires`() {
+        val ref = leases.issue(attempt, "photo-expired-before-preparation")
+        reducer.dispatch(PhotoAnalysisEvent.PhotoCaptured(ref))
+        leases.revoke(ref)
+
+        reducer.dispatch(PhotoAnalysisEvent.PreparationSucceeded(normalized(ref)))
+
+        assertEquals(PhotoAnalysisState.Preparing(ref), reducer.state)
+        assertNull(sessions.read(ref))
+    }
+
+    @Test
+    fun `preparation ignores a result for a different lease`() {
+        val current = leases.issue(attempt, "photo-preparing-current")
+        val other = leases.issue(attempt, "photo-preparing-other")
+        reducer.dispatch(PhotoAnalysisEvent.PhotoCaptured(current))
+
+        reducer.dispatch(PhotoAnalysisEvent.PreparationSucceeded(normalized(other)))
+
+        assertEquals(PhotoAnalysisState.Preparing(current), reducer.state)
+        assertNull(sessions.read(other))
+    }
+
+    @Test
+    fun `normalizer owns a stable copy of input bytes`() {
+        val ref = leases.issue(attempt, "photo-copy-boundary")
+        val source = byteArrayOf(1, 2, 3)
+        val output = PhotoInputNormalizer(digest = { "a".repeat(64) }).normalize(
+            RawPhoto(
+                ref = ref,
+                bytes = source,
+                width = 3,
+                height = 2,
+                orientation = ImageOrientation.UP,
+                colorSpace = "sRGB",
+                metadataKeys = emptySet(),
+            ),
+        )
+        val expected = source.copyOf()
+
+        source[0] = 99
+
+        assertContentEquals(expected, output.bytes)
+    }
+
+    @Test
+    fun `late analysis callback cannot reopen a replaced photo`() {
+        val old = leases.issue(attempt, "old")
+        val replacement = leases.issue(attempt, "replacement")
+        reducer.dispatch(PhotoAnalysisEvent.PhotoCaptured(old))
+        reducer.dispatch(PhotoAnalysisEvent.AnalysisStarted(RequestId("request-old")))
+        reducer.dispatch(PhotoAnalysisEvent.ReplacePhoto(replacement))
+        reducer.dispatch(PhotoAnalysisEvent.AnalysisSucceeded(RequestId("request-old")))
+
+        assertEquals(PhotoAnalysisState.Preparing(replacement), reducer.state)
+        assertFalse(leases.isActive(old))
+        assertTrue(leases.isActive(replacement))
+    }
+
+    @Test
+    fun `scan again clears the attempt lease and session`() {
+        val ref = leases.issue(attempt, "photo-1")
+        val input = normalized(ref)
+        reducer.dispatch(PhotoAnalysisEvent.PhotoCaptured(ref))
+        reducer.dispatch(PhotoAnalysisEvent.PreparationSucceeded(input))
+        reducer.dispatch(PhotoAnalysisEvent.AnalysisStarted(RequestId("request-1")))
+        reducer.dispatch(PhotoAnalysisEvent.AnalysisSucceeded(RequestId("request-1")))
+        reducer.dispatch(PhotoAnalysisEvent.ScanAgain)
+
+        assertEquals(PhotoAnalysisState.Capture, reducer.state)
+        assertFalse(leases.isActive(ref))
+        assertEquals(null, sessions.read(ref))
+    }
+
+    @Test
+    fun `capture failure from capture state enters typed recovery`() {
+        reducer.dispatch(PhotoAnalysisEvent.PreparationFailed(RecoveryReason.CAMERA_UNAVAILABLE))
+
+        assertEquals(
+            PhotoAnalysisState.Recovery(RecoveryReason.CAMERA_UNAVAILABLE),
+            reducer.state,
+        )
+    }
+
+    @Test
+    fun `no food is a distinct recoverable reason`() {
+        val ref = leases.issue(attempt, "no-food-photo")
+        reducer.dispatch(PhotoAnalysisEvent.PhotoCaptured(ref))
+        reducer.dispatch(PhotoAnalysisEvent.PreparationFailed(RecoveryReason.NO_FOOD))
+
+        assertEquals(PhotoAnalysisState.Recovery(RecoveryReason.NO_FOOD), reducer.state)
+        assertFalse(leases.isActive(ref))
+        assertNull(sessions.read(ref))
+    }
+
+    @Test
+    fun `preparation failure clears any attempt content and remains idempotent`() {
+        val ref = leases.issue(attempt, "failed-preparation")
+        val input = normalized(ref)
+        sessions.put(input)
+        reducer.dispatch(PhotoAnalysisEvent.PhotoCaptured(ref))
+
+        reducer.dispatch(PhotoAnalysisEvent.PreparationFailed(RecoveryReason.POOR_IMAGE))
+        reducer.dispatch(PhotoAnalysisEvent.ScanAgain)
+        reducer.dispatch(PhotoAnalysisEvent.ScanAgain)
+
+        assertEquals(PhotoAnalysisState.Capture, reducer.state)
+        assertFalse(leases.isActive(ref))
+        assertNull(sessions.read(ref))
+        assertContentEquals(byteArrayOf(0, 0, 0), input.bytes)
+    }
+
+    @Test
+    fun `expired ready session cannot start a new analysis`() {
+        val ref = leases.issue(attempt, "expired-ready")
+        val input = normalized(ref)
+        reducer.dispatch(PhotoAnalysisEvent.PhotoCaptured(ref))
+        reducer.dispatch(PhotoAnalysisEvent.PreparationSucceeded(input))
+        leases.revoke(ref)
+
+        reducer.dispatch(PhotoAnalysisEvent.AnalysisStarted(RequestId("expired-request")))
+
+        assertEquals(
+            PhotoAnalysisState.Recovery(RecoveryReason.CAPTURE_FAILED),
+            reducer.state,
+        )
+        assertNull(sessions.read(ref))
+    }
+
+    @Test
+    fun `ready and analyzing states clean up when their live lease disappears`() {
+        val readyRef = leases.issue(attempt, "ready-missing-session")
+        reducer.dispatch(PhotoAnalysisEvent.PhotoCaptured(readyRef))
+        reducer.dispatch(PhotoAnalysisEvent.PreparationSucceeded(normalized(readyRef)))
+        sessions.clearAttempt(attempt)
+        reducer.dispatch(PhotoAnalysisEvent.AnalysisStarted(RequestId("missing-session")))
+        assertEquals(
+            PhotoAnalysisState.Recovery(RecoveryReason.CAPTURE_FAILED),
+            reducer.state,
+        )
+
+        val analyzingRef = leases.issue(attempt, "analyzing-expired")
+        reducer.dispatch(PhotoAnalysisEvent.ReplacePhoto(analyzingRef))
+        reducer.dispatch(PhotoAnalysisEvent.PreparationSucceeded(normalized(analyzingRef)))
+        reducer.dispatch(PhotoAnalysisEvent.AnalysisStarted(RequestId("expired-analysis")))
+        leases.revoke(analyzingRef)
+        reducer.dispatch(PhotoAnalysisEvent.AnalysisSucceeded(RequestId("expired-analysis")))
+        assertEquals(
+            PhotoAnalysisState.Recovery(RecoveryReason.CAPTURE_FAILED),
+            reducer.state,
+        )
+    }
+
+    @Test
+    fun `background and restore keeps a prepared photo when the lease is alive`() {
+        val ref = leases.issue(attempt, "photo-background-ready")
+        val input = normalized(ref)
+        reducer.dispatch(PhotoAnalysisEvent.PhotoCaptured(ref))
+        reducer.dispatch(PhotoAnalysisEvent.PreparationSucceeded(input))
+
+        reducer.dispatch(PhotoAnalysisEvent.Backgrounded)
+        assertEquals(
+            PhotoAnalysisState.Backgrounded(
+                PhotoAnalysisBackgroundSnapshot.Ready(ref),
+            ),
+            reducer.state,
+        )
+
+        reducer.dispatch(PhotoAnalysisEvent.Restored)
+
+        assertEquals(PhotoAnalysisState.Ready(input), reducer.state)
+        assertTrue(leases.isActive(ref))
+        assertEquals(input, sessions.read(ref))
+    }
+
+    @Test
+    fun `restore from analyzing returns to ready and rejects the old callback`() {
+        val ref = leases.issue(attempt, "photo-background-analysis")
+        val input = normalized(ref)
+        reducer.dispatch(PhotoAnalysisEvent.PhotoCaptured(ref))
+        reducer.dispatch(PhotoAnalysisEvent.PreparationSucceeded(input))
+        reducer.dispatch(PhotoAnalysisEvent.AnalysisStarted(RequestId("request-background")))
+
+        reducer.dispatch(PhotoAnalysisEvent.Backgrounded)
+        reducer.dispatch(PhotoAnalysisEvent.Restored)
+        reducer.dispatch(PhotoAnalysisEvent.AnalysisSucceeded(RequestId("request-background")))
+
+        assertEquals(PhotoAnalysisState.Ready(input), reducer.state)
+    }
+
+    @Test
+    fun `background snapshot covers every live state and is idempotent`() {
+        val captureSnapshot = PhotoAnalysisReducer(
+            PhotoLeaseStore(),
+            PhotoSessionStore(),
+            AttemptId("snapshot-capture"),
+        ).snapshotForPersistence()
+        assertEquals(PhotoAnalysisBackgroundSnapshot.Capture, captureSnapshot)
+
+        val preparingRef = leases.issue(attempt, "snapshot-preparing")
+        reducer.dispatch(PhotoAnalysisEvent.PhotoCaptured(preparingRef))
+        reducer.dispatch(PhotoAnalysisEvent.Backgrounded)
+        assertEquals(
+            PhotoAnalysisBackgroundSnapshot.Preparing(preparingRef),
+            reducer.snapshotForPersistence(),
+        )
+        reducer.dispatch(PhotoAnalysisEvent.Backgrounded)
+        reducer.dispatch(PhotoAnalysisEvent.Restored)
+        assertEquals(PhotoAnalysisState.Preparing(preparingRef), reducer.state)
+
+        val readyRef = leases.issue(attempt, "snapshot-ready")
+        reducer.dispatch(PhotoAnalysisEvent.ReplacePhoto(readyRef))
+        reducer.dispatch(PhotoAnalysisEvent.PreparationSucceeded(normalized(readyRef)))
+        reducer.dispatch(PhotoAnalysisEvent.Backgrounded)
+        assertEquals(
+            PhotoAnalysisBackgroundSnapshot.Ready(readyRef),
+            reducer.snapshotForPersistence(),
+        )
+        reducer.dispatch(PhotoAnalysisEvent.Restored)
+        reducer.dispatch(PhotoAnalysisEvent.AnalysisStarted(RequestId("snapshot-request")))
+        reducer.dispatch(PhotoAnalysisEvent.AnalysisSucceeded(RequestId("snapshot-request")))
+        reducer.dispatch(PhotoAnalysisEvent.Backgrounded)
+        assertEquals(
+            PhotoAnalysisBackgroundSnapshot.CandidateReview(readyRef, RequestId("snapshot-request")),
+            reducer.snapshotForPersistence(),
+        )
+        reducer.dispatch(PhotoAnalysisEvent.Restored)
+        assertEquals(
+            PhotoAnalysisState.CandidateReview(readyRef, RequestId("snapshot-request")),
+            reducer.state,
+        )
+
+        reducer.dispatch(PhotoAnalysisEvent.Cancel)
+        reducer.dispatch(PhotoAnalysisEvent.Backgrounded)
+        assertEquals(
+            PhotoAnalysisBackgroundSnapshot.Recovery(RecoveryReason.CANCELLED, null),
+            reducer.snapshotForPersistence(),
+        )
+        reducer.dispatch(PhotoAnalysisEvent.Restored)
+        assertEquals(PhotoAnalysisState.Recovery(RecoveryReason.CANCELLED), reducer.state)
+    }
+
+    @Test
+    fun `late analysis callback after cancellation cannot reopen a result`() {
+        val ref = leases.issue(attempt, "cancelled-photo")
+        val input = normalized(ref)
+        reducer.dispatch(PhotoAnalysisEvent.PhotoCaptured(ref))
+        reducer.dispatch(PhotoAnalysisEvent.PreparationSucceeded(input))
+        reducer.dispatch(PhotoAnalysisEvent.AnalysisStarted(RequestId("cancelled-request")))
+        reducer.dispatch(PhotoAnalysisEvent.Cancel)
+        reducer.dispatch(PhotoAnalysisEvent.AnalysisSucceeded(RequestId("cancelled-request")))
+
+        assertEquals(PhotoAnalysisState.Recovery(RecoveryReason.CANCELLED), reducer.state)
+        assertFalse(leases.isActive(ref))
+        assertNull(sessions.read(ref))
+    }
+
+    @Test
+    fun `process recreation with an expired lease cannot resurrect photo bytes`() {
+        val ref = leases.issue(attempt, "photo-expired-background")
+        val input = normalized(ref)
+        reducer.dispatch(PhotoAnalysisEvent.PhotoCaptured(ref))
+        reducer.dispatch(PhotoAnalysisEvent.PreparationSucceeded(input))
+        reducer.dispatch(PhotoAnalysisEvent.Backgrounded)
+        val snapshot = assertIs<PhotoAnalysisState.Backgrounded>(reducer.state).snapshot
+
+        leases.revoke(ref)
+        sessions.clearAttempt(attempt)
+        val recreated = PhotoAnalysisReducer(
+            leases = leases,
+            sessions = sessions,
+            attemptId = attempt,
+        )
+        recreated.dispatch(PhotoAnalysisEvent.RestoreFromSnapshot(snapshot))
+
+        assertEquals(
+            PhotoAnalysisState.Recovery(RecoveryReason.CAPTURE_FAILED, ref),
+            recreated.state,
+        )
+        assertEquals(null, sessions.read(ref))
+    }
+
+    @Test
+    fun `recovery and candidate review support replacement cancellation and empty scan`() {
+        val ref = leases.issue(attempt, "review-photo")
+        reducer.dispatch(PhotoAnalysisEvent.PhotoCaptured(ref))
+        reducer.dispatch(PhotoAnalysisEvent.PreparationSucceeded(normalized(ref)))
+        reducer.dispatch(PhotoAnalysisEvent.AnalysisStarted(RequestId("review-request")))
+        reducer.dispatch(PhotoAnalysisEvent.AnalysisSucceeded(RequestId("review-request")))
+        val reviewReplacement = leases.issue(attempt, "review-replacement")
+        reducer.dispatch(PhotoAnalysisEvent.ReplacePhoto(reviewReplacement))
+        assertEquals(PhotoAnalysisState.Preparing(reviewReplacement), reducer.state)
+        reducer.dispatch(PhotoAnalysisEvent.Cancel)
+        assertEquals(PhotoAnalysisState.Recovery(RecoveryReason.CANCELLED), reducer.state)
+
+        reducer.dispatch(PhotoAnalysisEvent.ScanAgain)
+        assertEquals(PhotoAnalysisState.Capture, reducer.state)
+        reducer.dispatch(PhotoAnalysisEvent.ScanAgain)
+        assertEquals(PhotoAnalysisState.Capture, reducer.state)
+
+        val recoveryRef = leases.issue(attempt, "recovery-photo")
+        val recoveryReducer = PhotoAnalysisReducer(leases, sessions, attempt)
+        recoveryReducer.dispatch(
+            PhotoAnalysisEvent.RestoreFromSnapshot(
+                PhotoAnalysisBackgroundSnapshot.Recovery(RecoveryReason.CAPTURE_FAILED, recoveryRef),
+            ),
+        )
+        val replacement = leases.issue(attempt, "recovery-replacement")
+        recoveryReducer.dispatch(PhotoAnalysisEvent.ReplacePhoto(replacement))
+        assertEquals(PhotoAnalysisState.Preparing(replacement), recoveryReducer.state)
+        recoveryReducer.dispatch(PhotoAnalysisEvent.Cancel)
+        assertEquals(PhotoAnalysisState.Recovery(RecoveryReason.CANCELLED), recoveryReducer.state)
+    }
+}

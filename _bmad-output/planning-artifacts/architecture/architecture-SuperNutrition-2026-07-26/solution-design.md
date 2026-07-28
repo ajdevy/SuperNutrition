@@ -362,7 +362,7 @@ Each selected model freezes color space, dimensions, normalization, taxonomy, an
 
 ## 13. Remote inference and gateway
 
-The KMP remote adapter uploads to a first-party gateway through Ktor using platform client engines. It knows the SuperNutrition envelope, not a provider schema. A signed build flavor fixes the gateway origin and trust-key set. An attested app installation exchanges for a short-lived token bound to environment, installation, request digest, and nonce; request IDs are one-time. The gateway supports rotation, revocation, replay detection, abuse throttling, and a compromise runbook. The design does not require an account before the first scan.
+The KMP remote adapter uploads to a first-party gateway through a typed Ktorfit API over Ktor using platform client engines. Ktorfit owns the generated endpoint declarations and Ktor owns transport, engine, authentication, and pipeline configuration. The adapter knows the SuperNutrition envelope, not a provider schema. A signed build flavor fixes the gateway origin and trust-key set. An attested app installation exchanges for a short-lived token bound to environment, installation, request digest, and nonce; request IDs are one-time. The gateway supports rotation, revocation, replay detection, abuse throttling, and a compromise runbook. The design does not require an account before the first scan.
 
 The gateway:
 
@@ -436,7 +436,7 @@ The testing pyramid is contract-first:
 1. Common unit tests for reducer, router, serving math, configuration precedence/atomicity, and typed error mapping.
 2. One shared `PhotoInferenceEngine` contract suite and canonical serialization fixtures applied to fake, Android local, iOS local, remote, and gateway adapters.
 3. SQLDelight query and migration tests with approved fixture packages.
-4. Ktor `MockEngine` tests for upload, cancellation, error envelopes, redacted logging, and version compatibility.
+4. Ktor `MockEngine` plus Ktorfit generated-client tests for upload, cancellation, error envelopes, redacted logging, and version compatibility.
 5. Platform integration tests for leased `PhotoRef`, at-most-once effects, cleanup, lifecycle, camera/picker bridges, and accessibility services.
 6. Gateway contract, authentication, environment binding, security, retention, provider-adapter, kill-switch, and rollback tests.
 7. Shared Compose UI contracts use the versioned robot DSL over `androidx.compose.ui.test.v2.runComposeUiTest` in `commonTest`; the same authored semantic, state, and bounded-layout contracts execute through `jvmTest`, `connectedAndroidTest`, and `iosSimulatorArm64Test`.
@@ -516,7 +516,7 @@ This sequence permits scaffolding, shared contracts, fakes, and evaluation tools
 
 ## 20. Verified stack seed
 
-The initial mobile version catalog is seeded with Kotlin/KMP 2.4.10, Compose Multiplatform 1.11.1 and `org.jetbrains.compose.ui:ui-test:1.11.1`, AndroidX Compose device-test artifacts 1.11.2, Gradle 9.5.0, Android Gradle Plugin 9.1.0, JDK 21, Android compile/target SDK 36, Android Build Tools 36.0.0, Ktor 3.5.1, SQLDelight 2.3.2, Koin 4.2.2, Decompose 3.5.0, Detekt/ktlint-wrapper 2.0.0-alpha.5, Kover 0.9.8, and checksum-pinned Maestro CLI 2.7.0. The install floor starts at Android API 23. Xcode 26.4.1 on macOS 26.2 or newer, its XCTest/XCUIAutomation stack for native gaps, and an iOS 15 deployment target complete the bootstrap tuple.
+The initial mobile version catalog is seeded with Kotlin/KMP 2.4.10, Compose Multiplatform 1.11.1 and `org.jetbrains.compose.ui:ui-test:1.11.1`, AndroidX Compose device-test artifacts 1.11.2, Gradle 9.5.0, Android Gradle Plugin 9.1.0, JDK 21, Android compile/target SDK 36, Android Build Tools 36.0.0, Ktor 3.5.1, Ktorfit 2.7.4, SQLDelight 2.3.2, Koin 4.2.2, Decompose 3.5.0, Detekt/ktlint-wrapper 2.0.0-alpha.5, Kover 0.9.8, and checksum-pinned Maestro CLI 2.7.0. The install floor starts at Android API 23. Xcode 26.4.1 on macOS 26.2 or newer, its XCTest/XCUIAutomation stack for native gaps, and an iOS 15 deployment target complete the bootstrap tuple.
 
 These are cold-start mobile pins, not proof that `mobile/` builds. The mobile
 scaffold story must compile common, Android, and iOS targets and record CI
@@ -530,6 +530,8 @@ Primary verification sources:
 - [Kotlin Multiplatform compatibility guide](https://kotlinlang.org/docs/multiplatform/multiplatform-compatibility-guide.html)
 - [Compose Multiplatform compatibility and versions](https://kotlinlang.org/docs/multiplatform/compose-compatibility-and-versioning.html)
 - [Ktor releases](https://ktor.io/docs/releases.html)
+- [Ktorfit documentation and compatibility](https://foso.github.io/Ktorfit/)
+- [Ktorfit source and package modules](https://github.com/Foso/Ktorfit)
 - [SQLDelight 2.3.2](https://github.com/lysine-dev/sqldelight/releases/tag/2.3.2)
 - [Koin 4.2.2](https://github.com/InsertKoinIO/koin/releases/tag/4.2.2)
 - [Decompose 3.5.0](https://github.com/arkivanov/Decompose/releases/tag/3.5.0)

@@ -1,0 +1,11 @@
+schema = "supernutrition.root-policy.v1"
+schema_version = 1
+release = "v1"
+language_neutral = true
+executable = false
+
+product_roots = ["mobile", "web/landing", "backend/mobile-api"]
+contract_root = "contracts"
+tooling_roots = ["scripts", "_bmad", ".agents"]
+forbidden_cross_product_edges = true
+forbidden_contract_executable_sources = true

@@ -99,6 +99,7 @@ Sources: [Decompose 3.5.0 release](https://github.com/arkivanov/Decompose/releas
 | AGP 9.1.0 | Within Kotlin 2.4.10's supported range; requires JDK 17. A newer patch exists but is not the exact version in the KMP table. | Verified compatible pin |
 | Xcode 26.4 | Official Kotlin-supported baseline; requires macOS 26.2+. | Verified; host/test caveat above |
 | Ktor 3.5.1 | Current official release with Kotlin 2.4 compatibility fixes; OkHttp on Android and Darwin/NSURLSession on iOS are supported client engines. | Verified current and fit |
+| Ktorfit 2.7.4 | KMP HTTP client/KSP generator over Ktor; the initial candidate pin for typed generated gateway APIs. Compatibility with the full Kotlin/KSP tuple still requires scaffold and remote-adapter compile proof. | Candidate pin; proof required |
 | SQLDelight 2.3.2 | Current stable release supports Android and Kotlin/Native/iOS. The published Android driver AAR declares minSdk 23. | Verified current; Deferred floor statement is correct |
 | Koin 4.2.2 | Published current Maven release; 4.2.x supports Kotlin 2.3+ and KMP/Compose. Official narrative release pages lag at 4.2.1. | Artifact verified; compile proof still required |
 | Decompose 3.5.0 | Current stable; supports Android, iOS, and Compose. | Verified stable; tuple proof required |
@@ -110,6 +111,8 @@ Primary sources:
 - [Compose compatibility and platform floors](https://kotlinlang.org/docs/multiplatform/compose-compatibility-and-versioning.html)
 - [Ktor releases](https://ktor.io/docs/releases.html)
 - [Ktor client engines](https://ktor.io/docs/client-engines.html)
+- [Ktorfit compatibility and installation](https://foso.github.io/Ktorfit/)
+- [Ktorfit source](https://github.com/Foso/Ktorfit)
 - [SQLDelight official repository](https://github.com/sqldelight/sqldelight)
 - [SQLDelight Android driver 2.3.2 artifact](https://repo1.maven.org/maven2/app/cash/sqldelight/android-driver/2.3.2/android-driver-2.3.2.aar)
 - [Koin setup and compatibility](https://insert-koin.io/docs/setup/)

@@ -1,0 +1,25 @@
+schema = "supernutrition.mobile.product-lifecycle.v1"
+schema_version = 1
+product = "mobile"
+lifecycle = "scaffold-pending"
+source_digest = "pending"
+quality_claim = false
+transition = "blocked"
+quality_entrypoint = "gradlew"
+executable_inventory = ["gradlew"]
+
+[activation]
+reviewed_scaffold_story = "1.1"
+all_six_jobs_success = false
+trusted_ruleset_audit = false
+canonical_ios_simulator_arm64 = false
+exact_xcode_toolchain = false
+active_inventory_and_denominators = false
+production_compose_host = true
+
+[blockers]
+items = [
+  "trusted CI/ruleset audit and same-SHA six-job evidence are not proven",
+  "canonical iosSimulatorArm64 and exact Xcode tuple are not available on this Intel host",
+  "active inventory and production coverage denominators are not frozen",
+]

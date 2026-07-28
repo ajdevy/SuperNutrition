@@ -1,0 +1,148 @@
+schema = "supernutrition.mobile.coverage-inventory.v1"
+schema_version = 1
+product = "mobile"
+lifecycle = "scaffold-pending"
+source_digest = "pending"
+quality_claim = false
+production_source_count = 9
+denominator_count = 9
+minimum_line_percent = 85
+minimum_branch_percent = 85
+changed_line_percent = 100
+changed_branch_percent = 100
+native_equivalent_evidence_required = true
+empty_or_zero_denominator = "fail"
+status = "pending"
+
+# Every compiled production unit has exactly one denominator even while the
+# scaffold remains fail-closed. Observed percentages stay pending until the
+# trusted active-state quality matrix is available.
+[[denominator]]
+id = "core-config"
+unit_id = "core-config"
+source_path = "mobile/core/config"
+coverage_kind = "jvm"
+test_task = ":core:config:jvmTest"
+line_minimum_percent = 85
+branch_minimum_percent = 85
+changed_line_minimum_percent = 100
+changed_branch_minimum_percent = 100
+observed_line_percent = "pending"
+observed_branch_percent = "pending"
+status = "pending"
+
+[[denominator]]
+id = "domain-photo-analysis"
+unit_id = "domain-photo-analysis"
+source_path = "mobile/domain/photo-analysis"
+coverage_kind = "jvm"
+test_task = ":domain:photo-analysis:jvmTest"
+line_minimum_percent = 85
+branch_minimum_percent = 85
+changed_line_minimum_percent = 100
+changed_branch_minimum_percent = 100
+observed_line_percent = "pending"
+observed_branch_percent = "pending"
+status = "pending"
+
+[[denominator]]
+id = "core-ui"
+unit_id = "core-ui"
+source_path = "mobile/core/ui"
+coverage_kind = "jvm"
+test_task = ":core:ui:jvmTest"
+line_minimum_percent = 85
+branch_minimum_percent = 85
+changed_line_minimum_percent = 100
+changed_branch_minimum_percent = 100
+observed_line_percent = "pending"
+observed_branch_percent = "pending"
+status = "pending"
+
+[[denominator]]
+id = "platform-photo-android"
+unit_id = "platform-photo-android"
+source_path = "mobile/platform/photo-android"
+coverage_kind = "native-equivalent"
+evidence_ids = ["photo-android-normalization"]
+test_task = ":platform:photo-android:jvmTest"
+line_minimum_percent = 85
+branch_minimum_percent = 85
+changed_line_minimum_percent = 100
+changed_branch_minimum_percent = 100
+observed_line_percent = "pending"
+observed_branch_percent = "pending"
+status = "pending"
+
+[[denominator]]
+id = "platform-photo-ios"
+unit_id = "platform-photo-ios"
+source_path = "mobile/platform/photo-ios"
+coverage_kind = "native-equivalent"
+evidence_ids = ["photo-ios-normalization"]
+test_task = ":platform:photo-ios:jvmTest"
+line_minimum_percent = 85
+branch_minimum_percent = 85
+changed_line_minimum_percent = 100
+changed_branch_minimum_percent = 100
+observed_line_percent = "pending"
+observed_branch_percent = "pending"
+status = "pending"
+
+[[denominator]]
+id = "feature-photo-analysis-ui"
+unit_id = "feature-photo-analysis-ui"
+source_path = "mobile/feature/photo-analysis-ui"
+coverage_kind = "native-equivalent"
+evidence_ids = ["photo-android-camera-picker", "photo-ios-camera-picker"]
+test_task = ":feature:photo-analysis-ui:jvmTest"
+line_minimum_percent = 85
+branch_minimum_percent = 85
+changed_line_minimum_percent = 100
+changed_branch_minimum_percent = 100
+observed_line_percent = "pending"
+observed_branch_percent = "pending"
+status = "pending"
+
+[[denominator]]
+id = "feature-photo-analysis-presenter"
+unit_id = "feature-photo-analysis-presenter"
+source_path = "mobile/feature/photo-analysis-presenter"
+coverage_kind = "jvm"
+test_task = ":feature:photo-analysis-presenter:jvmTest"
+line_minimum_percent = 85
+branch_minimum_percent = 85
+changed_line_minimum_percent = 100
+changed_branch_minimum_percent = 100
+observed_line_percent = "pending"
+observed_branch_percent = "pending"
+status = "pending"
+
+[[denominator]]
+id = "feature-photo-analysis"
+unit_id = "feature-photo-analysis"
+source_path = "mobile/feature/photo-analysis"
+coverage_kind = "native-equivalent"
+evidence_ids = ["photo-android-lifecycle", "photo-ios-lifecycle"]
+test_task = ":feature:photo-analysis:jvmTest"
+line_minimum_percent = 85
+branch_minimum_percent = 85
+changed_line_minimum_percent = 100
+changed_branch_minimum_percent = 100
+observed_line_percent = "pending"
+observed_branch_percent = "pending"
+status = "pending"
+
+[[denominator]]
+id = "domain-nutrition"
+unit_id = "domain-nutrition"
+source_path = "mobile/domain/nutrition"
+coverage_kind = "jvm"
+test_task = ":domain:nutrition:jvmTest"
+line_minimum_percent = 85
+branch_minimum_percent = 85
+changed_line_minimum_percent = 100
+changed_branch_minimum_percent = 100
+observed_line_percent = "pending"
+observed_branch_percent = "pending"
+status = "pending"
