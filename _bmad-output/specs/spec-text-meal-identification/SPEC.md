@@ -2,7 +2,7 @@
 id: SPEC-text-meal-identification
 companions:
   - search-mechanics.md
-  - contract-v2.md
+  - contract-modality.md
   - failure-modes.md
   - ../../planning-artifacts/architecture/architecture-SuperNutrition-2026-07-26/ARCHITECTURE-SPINE.md
   - ../../planning-artifacts/prds/prd-SuperNutrition-2026-07-26/prd.md
@@ -36,7 +36,7 @@ Typing what you ate is also a better interaction than paging a result list, and 
 
 - id: CAP-4
   intent: Inference engines can accept either a photo or a text description through one versioned contract, so identification modality is a contract property rather than a parallel subsystem.
-  success: Photo and text engines both implement contract v2; v1 canonical fixtures still pass unchanged under the compatibility matrix; a request carrying neither or both modality payloads fails closed.
+  success: Photo and text engines both implement one modality-aware contract; every canonical fixture authored before the amendment passes unchanged under the compatibility matrix; a request carrying neither or both modality payloads fails closed.
 
 - id: CAP-5
   intent: A text-derived candidate binds to a canonical catalog record only through explicit user confirmation, never automatically.
@@ -62,7 +62,7 @@ Typing what you ate is also a better interaction than paging a result list, and 
 
 - Engines return identification evidence only. The text path emits no calories, macros, or micronutrients; every displayed number continues to come from the versioned catalog through the AD-7/AD-19 confirmation and calculation chain (FR-17).
 - The deterministic floor (CAP-1) must function with zero models installed, zero network, and the lowest supported device tier. UJ-4 places Noah on a lower-tier device while offline, so the scenario that needs this path most is the one least able to run a model. The floor cannot depend on CAP-3.
-- Contract v1 is frozen photo-only by epic story E3.1. Adding a modality is a contract-breaking change, so it requires contract v2 plus a migration story under AR-33, not an in-place edit of v1.
+- Modality is added before the inference ports freeze. Story E3.1 freezes a photo-only contract and has not run — mobile is still `scaffold-pending`, so no engine, gateway mapping, or evaluation consumer exists to migrate. Story E7.1 therefore amends the contract ahead of E3.1, and the AR-33 version-plus-migration path applies only if freezing happens first.
 - Food identity is never defaultable and never preselected. AD-40 forbids defaulting food identity, preparation, recipe, and materially uncertain values; a text description does not relax this because the user typed it.
 - Segmentation is a proposal, never a commitment. The engine's split of a description into items is editable before any item is confirmed, and a meal is never silently reduced to fewer items than the user described.
 - On-device model resources are governed by NFR-3 and gated by G-3. Storage, download, memory, thermal, and battery budgets are measured per device tier before activation, and parameter count is not accepted as a resource proxy.

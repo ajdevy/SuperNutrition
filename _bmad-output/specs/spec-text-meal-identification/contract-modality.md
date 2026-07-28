@@ -1,23 +1,29 @@
-# Inference contract v2 — modality
+# Inference contract — identification modality
 
-Serves CAP-4. Contract v1 is photo-only by construction and cannot carry a text engine, so this is a versioned migration under AR-33, not an edit.
+Serves CAP-4. The contract as designed is photo-only and cannot carry a text engine. **No engine implements it yet**, so the fix is an amendment before the ports freeze, not a version migration.
 
-## What v1 fixes
+## What the contract currently fixes
 
-AD-2 states every engine implements `PhotoInferenceEngine` contract version `1`, with input "a `PhotoRef` plus immutable attempt context". The solution-design request invariants make `photo` a required field and require adapters to read bytes only through `PhotoContentSource`. There is no modality discriminator and no optional-payload path. A text engine cannot satisfy v1 without lying about a photo it does not have.
+AD-2 states every engine implements `PhotoInferenceEngine` contract version `1`, with input "a `PhotoRef` plus immutable attempt context". The solution-design request invariants make `photo` a required field and require adapters to read bytes only through `PhotoContentSource`. There is no modality discriminator and no optional-payload path. A text engine cannot satisfy that shape without claiming a photo it does not have.
 
-Story E3.1 freezes these ports. The migration cost rises once concrete engines are built against v1, so the modality decision is worth settling before that story lands.
+## Amendment, not migration
 
-## v2 shape
+Story E3.1 — "Freeze contract-v1 inference ports" — has not run. Mobile is still `scaffold-pending`; there is no local engine, no remote adapter, no gateway mapping, and no evaluation consumer built against the contract. Nothing exists to migrate.
+
+So modality is added to contract v1 **before** E3.1 freezes it, and story E7.1 is sequenced ahead of E3.1 for exactly this reason. The cost is editing an unimplemented type rather than versioning a live one, and the migration sequence below is the fallback that applies only if freezing has already happened.
+
+This is worth stating plainly because the opposite reading is easy to reach: "contract v1 is frozen photo-only, therefore text needs v2." That inference is correct in structure and wrong in timing — v1 is *specified*, not *frozen*, and the difference is an entire story.
+
+## Shape
 
 **Modality discriminator.** The request carries exactly one identification payload, selected by a closed, sealed modality field:
 
-- `photo` — a `PhotoRef`, as in v1.
+- `photo` — a `PhotoRef`, as originally specified.
 - `text` — a user-authored description plus the locale it was entered in.
 
 Exactly one. A request carrying neither or both fails closed as a typed contract error rather than defaulting to a modality — an ambiguous request is a bug, not an input.
 
-**Unchanged from v1.** Everything that makes the contract safe is preserved verbatim:
+**Unchanged.** Everything that makes the contract safe is preserved verbatim:
 
 - Output is identification evidence — ranked candidates, per-engine calibrated confidence, assumptions, provenance — and contains no calories, macros, or micronutrients.
 - The engine receives no nutrition catalog and cannot emit numeric nutrients.
@@ -26,7 +32,7 @@ Exactly one. A request carrying neither or both fails closed as a typed contract
 
 The safety properties are modality-independent, which is the reason this belongs in the shared contract rather than in a parallel subsystem.
 
-**Naming.** `PhotoInferenceEngine` becomes modality-neutral under v2. The rename is part of the migration, not a separate refactor.
+**Naming.** `PhotoInferenceEngine` becomes modality-neutral. Since no engine implements it, this is a rename of an unreferenced type rather than a refactor.
 
 ## Text payload
 
@@ -46,15 +52,27 @@ Each group also carries the span of the description it was derived from, so the 
 
 An engine that cannot segment abstains for the whole request rather than returning a confident subset. Partial segmentation presented as complete is the FM-6 failure.
 
-## Migration
+## Delivery — amendment path
 
-1. Publish v2 alongside v1 in `mobile/domain/inference`, with the compatibility matrix declaring both.
-2. Extend AD-17's canonical fixtures with modality-aware cases. Existing v1 fixtures must pass unchanged — that is the migration's correctness test.
-3. Migrate photo engines to v2 with the `photo` modality, behavior identical.
+The expected path, while no engine implements the contract:
+
+1. Add the modality discriminator and text payload to contract v1 in `mobile/domain/inference`, in story E7.1, before E3.1 freezes the ports.
+2. Extend AD-17's canonical fixtures with modality-aware cases. Every fixture authored before the amendment passes unchanged — that is the correctness test either way.
+3. E3.1 then freezes a modality-aware contract, and the photo engines in E3.2 and E3.3 are built against it directly.
+
+Per AR-33 this remains its own story landed before the concrete engine work that depends on it. It simply amends rather than versions.
+
+## Fallback — migration path
+
+Applies **only** if E3.1 has already frozen the ports photo-only before E7.1 lands. Then modality becomes a contract-breaking change and AR-33 requires a version:
+
+1. Publish v2 alongside v1, with the compatibility matrix declaring both.
+2. Extend fixtures with modality-aware cases; existing v1 fixtures pass unchanged.
+3. Migrate photo engines to v2 with the `photo` modality, behaviour identical.
 4. Introduce the text engine against v2.
 5. Retire v1 only when no engine implements it, as a separate change.
 
-Per AR-33, this is its own story landed before the concrete engine work that depends on it, and the contract lands before either engine.
+The cost difference is the reason for the sequencing constraint in E7.1: the amendment edits an unimplemented type, while the migration touches every engine, the gateway mapping, and the evaluation consumer.
 
 ## Routing and remote text
 
