@@ -49,6 +49,22 @@ test -n "$device_line" || {
   exit 1
 }
 
+# xctrace can briefly report a paired phone as "Connecting" while the
+# CoreDevice tunnel is already usable. Prefer the authoritative devicectl
+# details when available and require an actually connected tunnel.
+device_details="$(xcrun devicectl device info details --device "$ios_udid" 2>/dev/null || true)"
+if test -n "$device_details"; then
+  tunnel_state="$(printf '%s\n' "$device_details" | sed -n 's/.*tunnelState: //p' | head -n 1)"
+  test "$tunnel_state" = "connected" || {
+    printf 'physical iOS device tunnel is not connected: %s (%s)\n' "$ios_udid" "${tunnel_state:-unknown}" >&2
+    exit 1
+  }
+  marketing_name="$(printf '%s\n' "$device_details" | sed -n 's/.*marketingName: //p' | head -n 1)"
+  os_version="$(printf '%s\n' "$device_details" | sed -n 's/.*osVersionNumber: //p' | head -n 1)"
+  cpu_type="$(printf '%s\n' "$device_details" | sed -n 's/.*cpuType: //p' | head -n 1 | awk '{print $1}')"
+  device_line="${marketing_name:-physical iOS device} / iOS ${os_version:-unknown} / ${cpu_type:-unknown} / tunnel=${tunnel_state} (${ios_udid})"
+fi
+
 latest_result="$(python3 - "$derived_data_root/Logs/Test" <<'PY'
 from pathlib import Path
 import sys
