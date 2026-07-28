@@ -68,6 +68,7 @@ variables:
 
 quality-linux:
   stage: quality
+  resource_group: supernutrition-mobile-gradle
   script:
     - scripts/verify-root-boundaries.sh
     - scripts/root-boundary-negative-fixtures.sh
@@ -87,6 +88,7 @@ quality-linux:
 
 ui-journeys-android:
   stage: quality
+  resource_group: supernutrition-mobile-gradle
   script:
     - scripts/run-ui-journeys-android.sh
     - mkdir -p ci-fingerprints
@@ -96,6 +98,7 @@ ui-journeys-android:
 
 quality-apple:
   stage: quality
+  resource_group: supernutrition-mobile-gradle
   script:
     - ./mobile/gradlew -p mobile qualityCheckApple --dependency-verification=strict --no-daemon --no-configuration-cache
     - mkdir -p ci-fingerprints
@@ -105,6 +108,7 @@ quality-apple:
 
 ui-journeys-ios:
   stage: quality
+  resource_group: supernutrition-mobile-gradle
   script:
     - scripts/run-ui-journeys-ios.sh
     - mkdir -p ci-fingerprints
