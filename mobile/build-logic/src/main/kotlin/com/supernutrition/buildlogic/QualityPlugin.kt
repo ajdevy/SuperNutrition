@@ -36,6 +36,11 @@ class QualityPlugin : Plugin<Project> {
         val formattingRequested = project.gradle.startParameter.taskNames.any { taskName ->
             taskName == "qualityFormat" || taskName.endsWith(":qualityFormat")
         }
+        val explicitJvmCoverageRequested = project.providers
+            .gradleProperty("supernutrition.runJvmCoverage")
+            .map(String::toBoolean)
+            .orElse(false)
+            .get()
         val qualityCheckJvmAndroid = project.tasks.register("qualityCheckJvmAndroid") {
             group = "verification"
             description = "Runs the read-only JVM/Android-host quality gate."
@@ -64,8 +69,25 @@ class QualityPlugin : Plugin<Project> {
             group = "verification"
             description = "Verifies the JVM/Android-host Kover denominator when mobile is active."
             onlyIf {
-                lifecycle(mobileRoot) == "active"
+                lifecycle(mobileRoot) == "active" || explicitJvmCoverageRequested
             }
+        }
+
+        val mobileUnitCoverage = project.tasks.register("mobileUnitCoverage") {
+            group = "verification"
+            description = "Runs mobile JVM unit tests and enforces the temporary coverage gate."
+            dependsOn(qualityCoverageJvm)
+            doFirst {
+                require(explicitJvmCoverageRequested) {
+                    "mobileUnitCoverage requires -Psupernutrition.runJvmCoverage=true"
+                }
+            }
+        }
+        project.gradle.projectsEvaluated {
+            val jvmUnitTestTasks = project.subprojects.flatMap { subproject ->
+                subproject.tasks.matching { it.name == "jvmTest" }.toList()
+            }
+            mobileUnitCoverage.configure { dependsOn(jvmUnitTestTasks) }
         }
 
         val qualityFormat = project.tasks.register("qualityFormat") {
@@ -97,7 +119,12 @@ class QualityPlugin : Plugin<Project> {
             }
         }
 
-        configureJvmCoverageAggregation(project, mobileRoot, qualityCoverageJvm)
+        configureJvmCoverageAggregation(
+            project,
+            mobileRoot,
+            qualityCoverageJvm,
+            explicitJvmCoverageRequested,
+        )
 
         qualityCheckJvmAndroid.configure { dependsOn(qualityCoverageJvm) }
     }
@@ -133,6 +160,7 @@ class QualityPlugin : Plugin<Project> {
         rootProject: Project,
         mobileRoot: Path,
         qualityCoverageJvm: org.gradle.api.tasks.TaskProvider<Task>,
+        explicitJvmCoverage: Boolean,
     ) {
         // Host slices intentionally include only the projects needed to build
         // a local framework. Do not resolve absent inventory entries through
@@ -157,7 +185,7 @@ class QualityPlugin : Plugin<Project> {
             dependsOn(productionProjects.map { "$it:koverXmlReportJvm" })
             inputs.files(lifecycleFile, coverageFile, reportFiles)
             doLast {
-                require(coverageClaimAllowed(mobileRoot)) {
+                require(coverageClaimAllowed(mobileRoot, explicitJvmCoverage)) {
                     "JVM coverage claim is not authorized by the active lifecycle and activation gates"
                 }
                 require(unresolvedInventoryProjects.isEmpty()) {
@@ -177,7 +205,7 @@ class QualityPlugin : Plugin<Project> {
             rootProject.findProject(path)?.tasks
                 ?.matching { it.name == "koverXmlReportJvm" }
                 ?.configureEach {
-                    onlyIf { coverageClaimAllowed(mobileRoot) }
+                    onlyIf { coverageClaimAllowed(mobileRoot, explicitJvmCoverage) }
                     inputs.files(lifecycleFile, coverageFile)
                 }
         }
@@ -191,7 +219,9 @@ class QualityPlugin : Plugin<Project> {
      */
     private fun formatCoverage(value: Double): String = String.format(Locale.ROOT, "%.2f", value)
 
-    private fun coverageClaimAllowed(mobileRoot: Path): Boolean {
+    private fun coverageClaimAllowed(mobileRoot: Path, explicitJvmCoverage: Boolean = false): Boolean {
+        if (explicitJvmCoverage) return true
+
         val lifecycleText = Files.readString(mobileRoot.resolve("product-lifecycle.toml"))
         val coverageText = Files.readString(mobileRoot.resolve("config/quality/coverage.toml"))
         return lifecycle(mobileRoot) == "active" &&
