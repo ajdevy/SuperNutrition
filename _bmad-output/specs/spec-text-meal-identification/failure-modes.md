@@ -24,7 +24,9 @@ Serves CAP-5 and the safety half of CAP-2/CAP-3. Each entry names the failure, w
 
 **Why existing rules miss it.** The Abstention shape exists in the contract, but nothing currently obliges a *text* engine to use it, and the incentive runs the other way — a text box that often answers "I'm not sure" reads as failure.
 
-**Control.** Abstention is a first-class outcome with a plain-language reason, identical in shape to the photo engines' (FR-5). An abstention routes to the deterministic floor, which is a real answer, not a dead end. Abstention rate is measurable against the evaluation corpus and belongs in the route baselines alongside local, remote, hybrid, and manual (FR-23).
+**Control.** Abstention is a first-class outcome with a plain-language reason, identical in shape to the photo engines' (FR-5). An abstention routes to the deterministic floor, which is a real answer, not a dead end.
+
+The enforcement is the fixture set, not a threshold. Identification fixtures declare an expected outcome in **both** directions: entries that must resolve to a named canonical ID, and entries that must abstain. A fixture set holding only should-resolve cases rewards guessing and quietly pressures the engine toward this failure; adding should-abstain cases makes over-confidence a test failure. Abstention rate is reported against the evaluation corpus alongside the local, remote, hybrid, and manual baselines (FR-23) as a measurement, not a gate — nothing blocks on it, because the deterministic floor always answers.
 
 ## FM-4 — The fallback unavailable where it is needed most
 

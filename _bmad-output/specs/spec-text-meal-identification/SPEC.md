@@ -56,7 +56,7 @@ Typing what you ate is also a better interaction than paging a result list, and 
 
 - id: CAP-9
   intent: A user can search and describe food in the languages of the supported markets, including where the app's language differs from the food database's language and where the two use different scripts.
-  success: For each supported market language, a documented query set resolves to expected canonical IDs across inflected forms, alternate spellings, and cross-script entry; the Russian set specifically passes for inflected noun forms and for Latin-script entry of Cyrillic-script records.
+  success: English, Spanish, and Russian each pass a documented query set keyed to the catalog they are searching, covering inflected forms, regional name variants, and cross-script entry; Spanish resolves regional variants of one food to one canonical ID, and Russian resolves inflected noun forms and Latin-script entry of Cyrillic records.
 
 ## Constraints
 
@@ -96,15 +96,7 @@ Noah — offline, on a lower-tier device, with no local vision engine available 
 
 ## Open Questions
 
-**OQ-3 — Who decides the typed feature is good enough to ship, and what's the bar?**
-
-There are already two checkpoints: one for whether a model runs acceptably on real devices, one for accuracy claims. Typed identification could just use those, or it might need its own.
-
-The specific number nobody currently owns: **how often is it acceptable for the app to say "I'm not sure" instead of giving an answer?** Saying "not sure" is the safe behaviour — it's much better than a confident wrong guess — but a feature that says it constantly is a feature nobody uses. Someone has to pick that threshold and own it.
-
-*Answer changes:* who signs off before release, and whether we need a new checkpoint.
-
-**Suggested starting point, to be confirmed or replaced:** the evaluation harness already runs local-only, remote-only, hybrid, and manual baselines against a fixed corpus, so measure the "not sure" rate there per market language before picking a number rather than guessing one now. Owner should be the same pairing that owns accuracy claims today — product plus the evaluation owner — since this is the same kind of judgement.
+<!-- OQ-1, OQ-2, OQ-4 answered; OQ-3 and OQ-6 closed. See .decision-log.md. -->
 
 **OQ-5 — resolved structurally; the remaining question belongs to G-1 and G-4.**
 
@@ -119,11 +111,3 @@ Two things this separated out:
 *The question predates typed identification.* The product already transfers photos to a first-party gateway under AD-13, so any market with residency constraints constrains remote photo exactly as it constrains remote text. This was never an E7 question; typing surfaced it. It belongs to G-1, which owns the launch list and privacy jurisdictions, and G-4, which owns provider regions and DPA terms.
 
 What remains for counsel, if Russia is pursued as a market: whether an account-free typed description or photo, carrying an opaque attempt ID and a short-lived device attestation token, constitutes personal data of a Russian citizen such that in-country primary storage is required. That determination sets one market's posture. It changes no rule here.
-
-**OQ-6 — Exactly which languages, per market?**
-
-"Multilingual for Tier 1 and Russia" fixes the requirement but not the list. The Tier 1 cohort is nominally English-speaking, so the real content is the second language in each: French for Canada is the clear one, Spanish in the United States is a judgement call, and te reo Māori in New Zealand is another. Russia adds Russian and Cyrillic.
-
-Each language added is not just translated interface text — it is a set of food-name synonyms, inflected forms, and query fixtures per catalog, which is the actual cost.
-
-*Answer changes:* the size of the search work, directly and roughly linearly per language.

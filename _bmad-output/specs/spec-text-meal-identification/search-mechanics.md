@@ -80,6 +80,34 @@ Each supported market declares a row in a language matrix. The matrix is data, v
 
 English-only behaviour is not a valid default for a market whose catalog is not in English.
 
+### First three languages
+
+English, Spanish, and Russian. They were chosen as the first targets and they happen to exercise every branch of the matrix, so shipping all three proves the design rather than one path through it:
+
+| Language | Script | Morphology | Dominant cost |
+| --- | --- | --- | --- |
+| English | Latin | None beyond plurals; synonyms suffice | Baseline |
+| Spanish | Latin with diacritics | Light stemming for gender and number | Regional naming variance |
+| Russian | Cyrillic | Full lemmatization across cases | Inflection plus cross-script entry |
+
+A fourth language that fits one of these three profiles is incremental. One that does not — an unwritten tonal language, a language without whitespace word boundaries — is a new profile and a new decision.
+
+### Input language is not catalog language
+
+This is the cost most easily underestimated. An accepted input language does not imply a catalog in that language: a Spanish speaker in the United States searches Spanish against English USDA records, and a Russian speaker there searches Cyrillic against the same English records.
+
+So the synonym layer is keyed per **(catalog, input language)** pair, not per language. Adding Spanish input to the US catalog means mapping Spanish food names onto that catalog's canonical IDs; it does not mean shipping a Spanish catalog. Fixtures are keyed the same way — a language proven against one catalog is not proven against another.
+
+Display always uses the catalog record's own name, so a user who searches in one language and reads results in another sees exactly what the record says rather than a translation the catalog cannot vouch for.
+
+### Regional naming
+
+Spanish is where this bites hardest, and it costs more than Spanish grammar does. Avocado is *palta* across much of South America and *aguacate* in Mexico and Spain. Beans are *frijoles*, *judías*, *porotos*, or *habichuelas* depending on where the speaker is from. None of these is a spelling variant or an inflected form; they are different words for the same food.
+
+The resolution is to accept every regional variant as a synonym onto the same canonical ID rather than selecting a regional dialect per market. Search exists to find things, and inclusiveness costs nothing at query time — a Chilean and a Mexican typing different words reach the same record. Regional preference belongs to display, which already uses the catalog's own name.
+
+The same pattern covers English (*aubergine* and *eggplant*, *coriander* and *cilantro*) and Russian regional and Soviet-era food names.
+
 ### Inflection
 
 This is the change Russian forces. English gets by on plurals, so a synonym list covers it. Russian nouns inflect across cases — *курица*, *курицы*, *курицу*, *курицей* are all the same chicken — and enumerating every form of every food as a synonym is not maintainable.
