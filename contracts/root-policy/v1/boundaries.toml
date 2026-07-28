@@ -117,6 +117,12 @@ mutates_repository = false
 test_entrypoint = "scripts/run-ui-journeys-ios.sh"
 
 [[executable]]
+path = "scripts/run-physical-ios-fixtures.sh"
+purpose = "physical iOS arm64 Kotlin/Native fixture runner and evidence producer"
+mutates_repository = false
+test_entrypoint = "scripts/run-physical-ios-fixtures.sh"
+
+[[executable]]
 path = "mobile/gradlew"
 purpose = "mobile-owned pinned Gradle entrypoint"
 mutates_repository = false

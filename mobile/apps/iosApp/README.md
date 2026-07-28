@@ -74,15 +74,17 @@ xcodebuild test -quiet \
   CODE_SIGN_IDENTITY="Apple Development" \
   -allowProvisioningUpdates -allowProvisioningDeviceRegistration
 
-./mobile/gradlew -p mobile :platform:photo-ios:iosArm64Test \
-  -Psupernutrition.hostSlice=sharedKit \
-  -Psupernutrition.enableIosDeviceTarget=true \
-  --dependency-verification=strict --no-configuration-cache
+scripts/run-physical-ios-fixtures.sh
 ```
 
-The Gradle device test executes the binary-bound iOS normalization fixtures;
-the Xcode run covers the packaged host, native camera/picker, lifecycle, and
-accessibility surface. After both complete successfully, emit the
+Kotlin 2.4.10 exposes the physical target as `iosArm64TestBinaries`, not as an
+executable Gradle `iosArm64Test` task. The checked-in runner packages that
+exact arm64 Kotlin/Native test binary into a temporary signed `.app`, installs
+it with `devicectl`, runs it on the iPhone, and writes the JUnit XML consumed
+by the evidence emitter. The runner executes the binary-bound iOS
+normalization fixtures; the Xcode run covers the packaged host, native
+camera/picker, lifecycle, and accessibility surface. After both complete
+successfully, emit the
 physical-device evidence record:
 
 ```text

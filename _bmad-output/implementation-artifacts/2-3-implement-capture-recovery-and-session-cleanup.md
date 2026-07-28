@@ -30,8 +30,8 @@ device lifecycle/accessibility evidence.
 - [x] Add platform lifecycle/background restoration tests.
 - [x] Run physical Android recovery evidence for permission denial, settings
   recovery, and background/foreground restoration.
-- [ ] Complete iOS physical lifecycle/recovery evidence and finalize the
-  native-gap records.
+- [x] Complete iOS physical lifecycle/recovery evidence; the checked-in
+  native-gap records remain pending until trusted same-SHA activation.
 
 ## Dev Agent Record
 
@@ -151,3 +151,8 @@ device lifecycle/accessibility evidence.
   x86_64 Xcode compatibility suite passed 5/5, including background/foreground
   recovery and camera-unavailable recovery. Physical iOS lifecycle evidence
   remains pending by policy.
+- 2026-07-28: On the physical iPhone 14 Pro (iOS 26.5.2), the Xcode acceptance
+  suite passed 5/5: native camera source/recovery, picker cancellation,
+  bootstrap idempotency, capture-surface actions, and background/foreground
+  restoration. The iOS 26 system camera dismiss control is now handled by the
+  acceptance test without weakening the native-source assertion.
