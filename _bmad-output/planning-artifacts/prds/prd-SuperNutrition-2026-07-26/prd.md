@@ -654,7 +654,11 @@ feature rewrite.
   explicit executable equivalent evidence and documented physical-device
   acceptance rather than an optional exclusion.
 - **NFR-18:** Local, remote, and orchestration modules can build and run their own
-  tests without compiling or editing another Engine implementation.
+  tests without compiling or editing another Engine implementation. The remote
+  mobile adapter uses Ktorfit for typed, generated KMP endpoint declarations over
+  Ktor; Ktor remains the transport/client-engine layer. Generated API code is
+  isolated to the remote adapter, carries only the first-party contract, and is
+  covered by MockEngine and contract-compatibility tests.
 - **NFR-19:** Dependency and tool versions are pinned centrally within each
   monorepo product boundary; repository-root pins are limited to policy and CI
   tooling and cannot become a shared product dependency graph. Implementation

@@ -1,0 +1,6 @@
+schema = "supernutrition.product-identity-contract.v1"
+schema_version = 1
+contract_id = "product-identity"
+release = "v1"
+language_neutral = true
+executable = false

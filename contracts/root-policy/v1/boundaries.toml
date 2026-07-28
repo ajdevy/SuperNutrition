@@ -1,0 +1,154 @@
+schema = "supernutrition.root-boundary-inventory.v1"
+release = "v1"
+validator = "scripts/verify-root-boundaries.sh"
+
+[[executable]]
+path = "scripts/verify-root-boundaries.sh"
+purpose = "read-only root and contract boundary validation"
+mutates_repository = false
+test_entrypoint = "scripts/verify-root-boundaries.sh"
+
+[[executable]]
+path = "scripts/root-boundary-negative-fixtures.sh"
+purpose = "negative fixtures for forbidden root and contract edges"
+mutates_repository = false
+test_entrypoint = "scripts/root-boundary-negative-fixtures.sh"
+
+[[executable]]
+path = "scripts/verify-ci-policy.sh"
+purpose = "read-only canonical CI trigger and aggregate validation"
+mutates_repository = false
+test_entrypoint = "scripts/verify-ci-policy.sh"
+
+[[executable]]
+path = "scripts/emit-ci-fingerprint.sh"
+purpose = "read-only same-SHA CI fingerprint producer for temporary job evidence"
+mutates_repository = false
+test_entrypoint = "scripts/ci-fingerprint-negative-fixtures.sh"
+
+[[executable]]
+path = "scripts/emit-physical-android-evidence.sh"
+purpose = "fail-closed physical Android native-evidence emitter"
+mutates_repository = false
+test_entrypoint = "scripts/emit-physical-android-evidence.sh"
+
+[[executable]]
+path = "scripts/emit-physical-ios-evidence.sh"
+purpose = "fail-closed physical iOS native-evidence emitter"
+mutates_repository = false
+test_entrypoint = "scripts/emit-physical-ios-evidence.sh"
+
+[[executable]]
+path = "scripts/verify-ci-fingerprints.sh"
+purpose = "read-only same-SHA CI fingerprint aggregate validation"
+mutates_repository = false
+test_entrypoint = "scripts/ci-fingerprint-negative-fixtures.sh"
+
+[[executable]]
+path = "scripts/ci-fingerprint-negative-fixtures.sh"
+purpose = "negative fixtures for same-SHA CI fingerprint drift"
+mutates_repository = false
+test_entrypoint = "scripts/ci-fingerprint-negative-fixtures.sh"
+
+[[executable]]
+path = "scripts/ci-policy-negative-fixtures.sh"
+purpose = "negative fixtures for forbidden CI policy drift"
+mutates_repository = false
+test_entrypoint = "scripts/ci-policy-negative-fixtures.sh"
+
+[[executable]]
+path = "scripts/setup-agent-tools.sh"
+purpose = "project-local graphify and BMAD tool bootstrap"
+mutates_repository = false
+test_entrypoint = "scripts/setup-agent-tools.sh"
+
+[[executable]]
+path = "scripts/graphify-hook-check"
+purpose = "read-only graphify hook health check"
+mutates_repository = false
+test_entrypoint = "scripts/graphify-hook-check"
+
+[[executable]]
+path = "scripts/verify-product-identity.sh"
+purpose = "read-only cross-platform identity contract validation"
+mutates_repository = false
+test_entrypoint = "scripts/verify-product-identity.sh"
+
+[[executable]]
+path = "scripts/product-identity-negative-fixtures.sh"
+purpose = "negative fixtures for visible identity and store-title drift"
+mutates_repository = false
+test_entrypoint = "scripts/product-identity-negative-fixtures.sh"
+
+[[executable]]
+path = "scripts/verify-mobile-api-contract.sh"
+purpose = "read-only mobile-api v1 schema and compatibility validation"
+mutates_repository = false
+test_entrypoint = "scripts/verify-mobile-api-contract.sh"
+
+[[executable]]
+path = "scripts/mobile-api-contract-negative-fixtures.sh"
+purpose = "negative fixtures for mobile-api compatibility drift"
+mutates_repository = false
+test_entrypoint = "scripts/mobile-api-contract-negative-fixtures.sh"
+
+[[executable]]
+path = "scripts/verify-interaction-policy-contract.sh"
+purpose = "read-only interaction-policy v1 schema and forbidden-default validation"
+mutates_repository = false
+test_entrypoint = "scripts/verify-interaction-policy-contract.sh"
+
+[[executable]]
+path = "scripts/interaction-policy-contract-negative-fixtures.sh"
+purpose = "negative fixtures for interaction-policy default drift"
+mutates_repository = false
+test_entrypoint = "scripts/interaction-policy-contract-negative-fixtures.sh"
+
+[[executable]]
+path = "scripts/run-ui-journeys-android.sh"
+purpose = "lifecycle-aware Android acceptance host and Maestro lane"
+mutates_repository = false
+test_entrypoint = "scripts/run-ui-journeys-android.sh"
+
+[[executable]]
+path = "scripts/run-ui-journeys-ios.sh"
+purpose = "lifecycle-aware iOS acceptance host and Maestro lane"
+mutates_repository = false
+test_entrypoint = "scripts/run-ui-journeys-ios.sh"
+
+[[executable]]
+path = "mobile/gradlew"
+purpose = "mobile-owned pinned Gradle entrypoint"
+mutates_repository = false
+test_entrypoint = "mobile/gradlew --version"
+
+[[executable]]
+path = "web/landing/quality-check"
+purpose = "web landing lifecycle-aware quality entrypoint"
+mutates_repository = false
+test_entrypoint = "web/landing/quality-check"
+
+[[executable]]
+path = "backend/mobile-api/quality-check"
+purpose = "mobile API lifecycle-aware quality entrypoint"
+mutates_repository = false
+test_entrypoint = "backend/mobile-api/quality-check"
+
+[[root]]
+path = "mobile"
+owner = "mobile"
+
+[[root]]
+path = "web/landing"
+owner = "web"
+initial_lifecycle = "preselection"
+
+[[root]]
+path = "backend/mobile-api"
+owner = "backend"
+initial_lifecycle = "preselection"
+
+[[root]]
+path = "contracts"
+owner = "contract"
+content = "immutable-language-neutral-data-only"

@@ -1,0 +1,5 @@
+<resources>
+    <item name="bootstrap_shell_launch_di" type="id" />
+    <item name="capture_shutter" type="id" />
+    <item name="capture_import" type="id" />
+</resources>

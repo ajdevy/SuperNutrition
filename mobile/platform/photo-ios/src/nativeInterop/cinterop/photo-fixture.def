@@ -1,0 +1,4 @@
+headers = PhotoFixtureData.h
+language = Objective-C
+package = com.supernutrition.platform.photoios.fixtureinterop
+linkerOpts = -framework Foundation

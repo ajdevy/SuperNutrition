@@ -181,7 +181,7 @@ flowchart LR
 
 - **Binds:** scaffold, CI, version catalog, NFR-9..NFR-10, NFR-19
 - **Prevents:** independently current versions forming an unbuildable Android/iOS toolchain
-- **Rule:** Kotlin, Compose, Gradle, AGP, JDK, Xcode, macOS host, Android SDK, deployment floors, Detekt generation, and coverage tool are one reviewed mobile tuple. The mobile scaffold story proves the tuple and convention-plugin build by compiling and testing common, Android, and iOS targets with Koin, Decompose, Ktor, and SQLDelight integrated; it also proves mobile repository enforcement, strict dependency verification/locks, Linux `qualityCheckJvmAndroid`, and macOS `qualityCheckApple`. Both task requests run twice with configuration cache enabled and `problems=fail`: the first stores and the second reuses the entry without opt-outs. Any tuple member upgrade is a dedicated compatibility change that updates the evidence report.
+- **Rule:** Kotlin, Compose, Gradle, AGP, JDK, Xcode, macOS host, Android SDK, deployment floors, Detekt generation, and coverage tool are one reviewed mobile tuple. The mobile scaffold story proves the tuple and convention-plugin build by compiling and testing common, Android, and iOS targets with Koin, Decompose, Ktor, Ktorfit, and SQLDelight integrated; it also proves mobile repository enforcement, strict dependency verification/locks, Linux `qualityCheckJvmAndroid`, and macOS `qualityCheckApple`. Both task requests run twice with configuration cache enabled and `problems=fail`: the first stores and the second reuses the entry without opt-outs. Any tuple member upgrade is a dedicated compatibility change that updates the evidence report.
 
 ### AD-17 — Canonical schemas and compatibility fixtures
 
@@ -245,7 +245,7 @@ flowchart LR
 
 - **Binds:** all Gradle and Xcode modules, NFR-18
 - **Prevents:** app or feature modules absorbing domain, adapter, and reusable test responsibilities
-- **Rule:** Inside `mobile/`, module groups are `apps`, `core`, `domain`, `data`, `inference`, `platform`, `feature`, `testing`, and `evaluation`. `domain` is pure KMP with no Android, Apple framework, Compose, Koin, Ktor, or SQLDelight dependency. `apps` are thin hosts/composition roots; `feature` depends inward on domain/core; platform, inference, and data adapters implement domain/core ports. The mobile backend is not a Gradle module group: it lives at `backend/mobile-api/` behind the versioned `contracts/mobile-api/` boundary. Distributable production source sets and configurations never depend on `testing`. The only app-to-testing edges are the two manifest-listed AD-28 non-distributable UI-acceptance configurations and their exact replacement-port allowlists; configuration-level negative graph fixtures prove those edges cannot resolve from any store, release, framework, gateway, or internal-beta configuration.
+- **Rule:** Inside `mobile/`, module groups are `apps`, `core`, `domain`, `data`, `inference`, `platform`, `feature`, `testing`, and `evaluation`. `domain` is pure KMP with no Android, Apple framework, Compose, Koin, Ktor, Ktorfit, or SQLDelight dependency. `apps` are thin hosts/composition roots; `feature` depends inward on domain/core; platform, inference, and data adapters implement domain/core ports. The mobile backend is not a Gradle module group: it lives at `backend/mobile-api/` behind the versioned `contracts/mobile-api/` boundary. Distributable production source sets and configurations never depend on `testing`. The only app-to-testing edges are the two manifest-listed AD-28 non-distributable UI-acceptance configurations and their exact replacement-port allowlists; configuration-level negative graph fixtures prove those edges cannot resolve from any store, release, framework, gateway, or internal-beta configuration.
 
 ### AD-26 — Central build and dependency policy
 
@@ -513,6 +513,7 @@ flowchart LR
 | macOS build host floor | 26.2 |
 | iOS deployment floor | 15.0 |
 | Ktor | 3.5.1 |
+| Ktorfit | 2.7.4 |
 | SQLDelight | 2.3.2 |
 | Koin | 4.2.2 |
 | Decompose | 3.5.0 |
@@ -588,7 +589,7 @@ flowchart TB
         UI["Compose photo-analysis UI"]
         Router["Shared orchestrator"]
         LocalEngine["Platform local engine"]
-        RemoteClient["Ktor remote engine"]
+        RemoteClient["Ktorfit API over Ktor"]
         Catalog["Versioned nutrition catalog"]
         UI --> Router
         Router --> LocalEngine

@@ -1,0 +1,90 @@
+schema = "supernutrition.mobile.interaction-policy.v1"
+schema_version = 1
+product = "mobile"
+lifecycle = "scaffold-pending"
+source_digest = "pending"
+contract_release = "contracts/interaction-policy/v1"
+contract_digest = "64f99de0fd3c109f4480e6d2c4c0aef2ef452dab6e6fc18cb011ff1a345f2a64"
+status = "pending-until-scaffold-activation"
+
+[budgets]
+required_taps = "bounded-per-journey"
+required_scrolls = "bounded-per-journey"
+required_fields = "bounded-per-journey"
+required_choices = "bounded-per-journey"
+auxiliary_events = "bounded-and-explicit"
+
+[defaults]
+allowlist = ["defaultLocale", "measurementSystem", "catalogProposal", "standardServing"]
+source_precedence = ["immutableConfigurationSnapshot", "confirmedCatalogServing"]
+visible = true
+editable = true
+reversible = true
+correction_scope = "current-session"
+snapshot_scope = "one-analysis-attempt"
+
+[defaults.standardServing]
+atomic_pair = true
+requires = "canonical-item-confirmed"
+source = "confirmedCatalogServing"
+mutates_snapshot = false
+
+[[default_field]]
+field = "defaultLocale"
+source = "immutableConfigurationSnapshot"
+allowed_provenance = ["bundled-safe-default", "global-release"]
+context_axes = ["locale"]
+override_path = "inline-edit"
+undo_path = "session-undo"
+persistence_scope = "one-analysis-attempt"
+
+[[default_field]]
+field = "measurementSystem"
+source = "immutableConfigurationSnapshot"
+allowed_provenance = ["bundled-safe-default", "global-release"]
+context_axes = ["locale"]
+override_path = "inline-edit"
+undo_path = "session-undo"
+persistence_scope = "one-analysis-attempt"
+
+[[default_field]]
+field = "catalogProposal"
+source = "confirmedCatalogServing"
+allowed_provenance = ["catalog-confirmed"]
+context_axes = ["catalog_country", "market_jurisdiction", "processing_region", "locale"]
+requires = "canonical-item-confirmed"
+override_path = "inline-edit"
+undo_path = "session-undo"
+persistence_scope = "current-session"
+
+[[default_field]]
+field = "standardServing"
+source = "confirmedCatalogServing"
+allowed_provenance = ["catalog-confirmed"]
+context_axes = ["catalog_country", "market_jurisdiction", "processing_region", "locale"]
+requires = "canonical-item-confirmed"
+override_path = "inline-edit"
+undo_path = "session-undo"
+persistence_scope = "current-session"
+
+[context]
+catalog_country = "independent"
+market_jurisdiction = "policy-resolved-independent"
+processing_region = "policy-resolved-independent"
+locale = "independent-validity-check"
+provider_routing_choice = "forbidden"
+
+[forbidden_defaults]
+fields = [
+  "foodIdentity",
+  "preparation",
+  "oil",
+  "sauce",
+  "recipe",
+  "remoteConsent",
+  "providerRouting",
+  "medicalConclusion",
+  "allergenConclusion",
+]
+remote_upload = "never-preselected"
+materially_uncertain_identity = "explicit-question-or-abstention"

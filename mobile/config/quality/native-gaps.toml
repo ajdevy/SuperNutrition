@@ -1,0 +1,120 @@
+schema = "supernutrition.mobile.native-gaps.v1"
+schema_version = 1
+product = "mobile"
+lifecycle = "scaffold-pending"
+source_digest = "pending"
+
+[[gap]]
+id = "bootstrap-android-host"
+platform = "android"
+owner = "mobile/apps/androidApp"
+evidence_task = "connectedAndroidTest"
+status = "pending"
+max_age_days = 30
+invalidated_by = ["mobile/apps/androidApp/**", "mobile/config/quality/ui-evidence-profile.toml"]
+
+[[gap]]
+id = "bootstrap-ios-host"
+platform = "ios"
+owner = "mobile/apps/iosApp"
+evidence_task = "iosX64Test"
+status = "pending"
+max_age_days = 30
+temporary_lane = "docs/decisions/2026-07-27-intel-ios-x64-acceptance-lane.md"
+compatibility_only = true
+invalidated_by = ["mobile/apps/iosApp/**", "mobile/config/quality/ui-evidence-profile.toml"]
+
+# Pending is not success. Evidence must bind commit, binary/framework digest,
+# fixture/config digest, device/OS, task version, and execution time.
+
+[[gap]]
+id = "photo-android-camera-picker"
+platform = "android"
+owner = "mobile/platform/photo-android"
+evidence_task = "connectedUiAcceptanceDebugAndroidTest"
+status = "pending"
+max_age_days = 30
+required_capability = "physical-android-device"
+invalidated_by = ["mobile/platform/photo-android/**", "mobile/feature/photo-analysis/**"]
+
+[[gap]]
+id = "photo-android-normalization"
+platform = "android"
+owner = "mobile/platform/photo-android"
+evidence_task = "connectedUiAcceptanceDebugAndroidTest"
+status = "pending"
+max_age_days = 30
+required_capability = "physical-android-device"
+invalidated_by = ["mobile/platform/photo-android/**", "mobile/domain/photo-analysis/**"]
+
+[[gap]]
+id = "photo-android-lifecycle"
+platform = "android"
+owner = "mobile/feature/photo-analysis"
+evidence_task = "connectedUiAcceptanceDebugAndroidTest"
+status = "pending"
+max_age_days = 30
+required_capability = "physical-android-device"
+invalidated_by = ["mobile/feature/photo-analysis/**", "mobile/domain/photo-analysis/**"]
+
+[[gap]]
+id = "photo-android-accessibility"
+platform = "android"
+owner = "mobile/apps/androidApp"
+evidence_task = "connectedUiAcceptanceDebugAndroidTest"
+status = "pending"
+max_age_days = 30
+required_capability = "physical-android-device"
+invalidated_by = ["mobile/apps/androidApp/**", "mobile/core/ui/**"]
+
+[[gap]]
+id = "photo-ios-camera-picker"
+platform = "ios"
+owner = "mobile/platform/photo-ios"
+evidence_task = "xcodebuild-test-iosX64"
+status = "pending"
+max_age_days = 30
+temporary_lane = "docs/decisions/2026-07-27-intel-ios-x64-acceptance-lane.md"
+compatibility_task = "iosX64Test"
+compatibility_only = true
+required_capability = "physical-ios-device"
+invalidated_by = ["mobile/platform/photo-ios/**", "mobile/apps/iosApp/**"]
+
+[[gap]]
+id = "photo-ios-normalization"
+platform = "ios"
+owner = "mobile/platform/photo-ios"
+evidence_task = "xcodebuild-test-iosArm64"
+status = "pending"
+max_age_days = 30
+temporary_lane = "docs/decisions/2026-07-27-intel-ios-x64-acceptance-lane.md"
+compatibility_task = "iosX64Test"
+compatibility_only = true
+required_capability = "physical-ios-device"
+invalidated_by = ["mobile/platform/photo-ios/**", "mobile/domain/photo-analysis/**"]
+
+[[gap]]
+id = "photo-ios-lifecycle"
+platform = "ios"
+owner = "mobile/feature/photo-analysis"
+evidence_task = "xcodebuild-test-iosArm64"
+status = "pending"
+max_age_days = 30
+temporary_lane = "docs/decisions/2026-07-27-intel-ios-x64-acceptance-lane.md"
+compatibility_task = "xcodebuild-test-iosX64"
+compatibility_only = true
+required_capability = "physical-ios-device"
+invalidated_by = ["mobile/feature/photo-analysis/**", "mobile/apps/iosApp/**"]
+
+[[gap]]
+id = "photo-ios-accessibility"
+platform = "ios"
+owner = "mobile/apps/iosApp"
+evidence_task = "xcodebuild-test-iosArm64"
+status = "pending"
+max_age_days = 30
+temporary_lane = "docs/decisions/2026-07-27-intel-ios-x64-acceptance-lane.md"
+compatibility_task = "xcodebuild-test-iosX64"
+compatibility_only = true
+required_capability = "physical-ios-device"
+invalidated_by = ["mobile/apps/iosApp/**", "mobile/core/ui/**"]

@@ -1,0 +1,477 @@
+package com.supernutrition.buildlogic
+
+import dev.detekt.gradle.Detekt
+import dev.detekt.gradle.extensions.DetektExtension
+import dev.detekt.gradle.plugin.DetektPlugin
+import java.io.StringReader
+import java.nio.file.Files
+import java.nio.file.Path
+import java.time.Instant
+import java.time.temporal.ChronoUnit
+import java.util.Locale
+import javax.xml.XMLConstants
+import javax.xml.parsers.DocumentBuilderFactory
+import kotlinx.kover.gradle.plugin.KoverGradlePlugin
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+import org.gradle.api.Task
+import org.gradle.api.artifacts.VersionCatalogsExtension
+import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.withType
+import org.w3c.dom.Element
+import org.w3c.dom.Node
+import org.xml.sax.InputSource
+
+/**
+ * Central, read-only quality entrypoints for the mobile product.
+ *
+ * Detekt is applied to every Kotlin production/test project through this
+ * included build. Kover is applied only to the production modules declared by
+ * the coverage inventory and is aggregated at the mobile root. Native and
+ * device tests are deliberately not part of the Kover denominator.
+ */
+class QualityPlugin : Plugin<Project> {
+    override fun apply(project: Project) {
+        val mobileRoot = project.rootProject.projectDir.toPath()
+        val formattingRequested = project.gradle.startParameter.taskNames.any { taskName ->
+            taskName == "qualityFormat" || taskName.endsWith(":qualityFormat")
+        }
+        val qualityCheckJvmAndroid = project.tasks.register("qualityCheckJvmAndroid") {
+            group = "verification"
+            description = "Runs the read-only JVM/Android-host quality gate."
+            doLast {
+                MobilePolicyValidator.validate(mobileRoot)
+                logger.lifecycle(
+                    "qualityCheckJvmAndroid validated the scaffold policy; " +
+                        "static analysis ran without emitting a production claim.",
+                )
+            }
+        }
+
+        val qualityCheckApple = project.tasks.register("qualityCheckApple") {
+            group = "verification"
+            description = "Runs the read-only Apple quality gate."
+            doLast {
+                MobilePolicyValidator.validate(mobileRoot)
+                logger.lifecycle(
+                    "qualityCheckApple validated the scaffold policy; " +
+                        "Apple evidence remains host-dependent.",
+                )
+            }
+        }
+
+        val qualityCoverageJvm = project.tasks.register("qualityCoverageJvm") {
+            group = "verification"
+            description = "Verifies the JVM/Android-host Kover denominator when mobile is active."
+            onlyIf {
+                lifecycle(mobileRoot) == "active"
+            }
+        }
+
+        val qualityFormat = project.tasks.register("qualityFormat") {
+            group = "formatting"
+            description = "The only explicitly mutating formatting entrypoint."
+            doLast {
+                logger.lifecycle(
+                    "Detekt/ktlint-wrapper formatting completed through the explicit qualityFormat entrypoint.",
+                )
+            }
+        }
+
+        val detektTaskPaths = project.subprojects
+            .filter { hasKotlinMultiplatformPlugin(it) }
+            .flatMap { detektTaskNames(it).map { taskName -> "${it.path}:$taskName" } }
+        qualityCheckJvmAndroid.configure { dependsOn(detektTaskPaths) }
+        qualityCheckApple.configure { dependsOn(detektTaskPaths) }
+        qualityFormat.configure { dependsOn(detektTaskPaths) }
+
+        val productionPaths = productionModulePaths(mobileRoot)
+        project.subprojects.forEach { subproject ->
+            if (productionPaths.contains(subproject.path)) {
+                subproject.pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
+                    subproject.pluginManager.apply(KoverGradlePlugin::class.java)
+                }
+            }
+            subproject.pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
+                configureDetekt(subproject, project.rootProject, formattingRequested)
+            }
+        }
+
+        configureJvmCoverageAggregation(project, mobileRoot, qualityCoverageJvm)
+
+        qualityCheckJvmAndroid.configure { dependsOn(qualityCoverageJvm) }
+    }
+
+    private fun configureDetekt(target: Project, rootProject: Project, autocorrectRequested: Boolean) {
+        target.pluginManager.apply(DetektPlugin::class.java)
+
+        val catalogs = rootProject.extensions.getByType(VersionCatalogsExtension::class.java)
+        val detektFormatting = catalogs.named("libs")
+            .findLibrary("detekt-ktlint-wrapper")
+            .orElseThrow { IllegalStateException("Missing libs.detekt.ktlint.wrapper catalog alias") }
+            .get()
+        target.dependencies.add("detektPlugins", detektFormatting)
+
+        val configFile = rootProject.file("config/detekt/detekt.yml")
+        target.extensions.configure<DetektExtension> {
+            config.from(configFile)
+            buildUponDefaultConfig.set(true)
+            ignoreFailures.set(false)
+            parallel.set(true)
+            autoCorrect.set(autocorrectRequested)
+        }
+        target.tasks.withType<Detekt>().configureEach {
+            config.from(configFile)
+            buildUponDefaultConfig.set(true)
+            ignoreFailures.set(false)
+            parallel.set(true)
+            autoCorrect.set(autocorrectRequested)
+        }
+    }
+
+    private fun configureJvmCoverageAggregation(
+        rootProject: Project,
+        mobileRoot: Path,
+        qualityCoverageJvm: org.gradle.api.tasks.TaskProvider<Task>,
+    ) {
+        // Host slices intentionally include only the projects needed to build
+        // a local framework. Do not resolve absent inventory entries through
+        // Project.project(path): that would make the documented Intel/iOS
+        // compatibility lane fail during configuration before its host task
+        // can run. The full product build still sees every inventory entry.
+        val inventoryProjects = jvmCoverageModulePaths(mobileRoot)
+        val productionProjects = inventoryProjects
+            .filter { rootProject.findProject(it) != null }
+        val unresolvedInventoryProjects = inventoryProjects - productionProjects.toSet()
+        val reportRoot = rootProject.projectDir.toPath()
+        val lifecycleFile = mobileRoot.resolve("product-lifecycle.toml").toFile()
+        val coverageFile = mobileRoot.resolve("config/quality/coverage.toml").toFile()
+        val reportFiles = productionProjects.map { path ->
+            JvmCoverageVerifier.reportPath(reportRoot, path).toFile()
+        }
+
+        qualityCoverageJvm.configure {
+            // Keep lifecycle/inventory changes in the configuration-cache
+            // input model. Report tasks are always wired, but the reports
+            // themselves are skipped until the active claim is authorized.
+            dependsOn(productionProjects.map { "$it:koverXmlReportJvm" })
+            inputs.files(lifecycleFile, coverageFile, reportFiles)
+            doLast {
+                require(coverageClaimAllowed(mobileRoot)) {
+                    "JVM coverage claim is not authorized by the active lifecycle and activation gates"
+                }
+                require(unresolvedInventoryProjects.isEmpty()) {
+                    "Active JVM coverage inventory contains unresolved projects: " +
+                        unresolvedInventoryProjects.joinToString()
+                }
+                val result = JvmCoverageVerifier.verify(reportRoot, inventoryProjects)
+                logger.lifecycle(
+                    "JVM host coverage: line=${formatCoverage(result.linePercent)}%, " +
+                        "branch=${formatCoverage(result.branchPercent)}% across " +
+                        "${result.moduleCount} production modules.",
+                )
+            }
+        }
+
+        productionProjects.forEach { path ->
+            rootProject.findProject(path)?.tasks
+                ?.matching { it.name == "koverXmlReportJvm" }
+                ?.configureEach {
+                    onlyIf { coverageClaimAllowed(mobileRoot) }
+                    inputs.files(lifecycleFile, coverageFile)
+                }
+        }
+    }
+
+    /**
+     * Kover's root merge variant cannot represent this mixed KMP graph
+     * reliably during Gradle configuration. Aggregate only the explicit JVM
+     * host reports instead; Android/iOS/native/device evidence remains in its
+     * own executable gates and never enters this denominator.
+     */
+    private fun formatCoverage(value: Double): String = String.format(Locale.ROOT, "%.2f", value)
+
+    private fun coverageClaimAllowed(mobileRoot: Path): Boolean {
+        val lifecycleText = Files.readString(mobileRoot.resolve("product-lifecycle.toml"))
+        val coverageText = Files.readString(mobileRoot.resolve("config/quality/coverage.toml"))
+        return lifecycle(mobileRoot) == "active" &&
+            coverageText.contains("quality_claim = true") &&
+            nativeEquivalentEvidenceAllowed(mobileRoot) &&
+            listOf(
+                "all_six_jobs_success = true",
+                "trusted_ruleset_audit = true",
+                "canonical_ios_simulator_arm64 = true",
+                "exact_xcode_toolchain = true",
+                "active_inventory_and_denominators = true",
+                "production_compose_host = true",
+            ).all(lifecycleText::contains)
+    }
+
+    private fun productionModulePaths(mobileRoot: Path): List<String> {
+        val denominators = coverageDenominators(mobileRoot)
+        val matches = denominators.map { it.sourcePath }
+        require(matches.isNotEmpty()) { "Coverage inventory contains no source_path entries" }
+        require(matches.all { it.startsWith("mobile/") }) {
+            "Coverage source_path must remain inside mobile/: ${matches.filterNot { it.startsWith("mobile/") }}"
+        }
+        val paths = matches.map { ":" + it.removePrefix("mobile/").replace('/', ':') }
+        require(paths.distinct().size == paths.size) {
+            "Coverage inventory contains duplicate source_path entries"
+        }
+        return paths
+    }
+
+    private fun jvmCoverageModulePaths(mobileRoot: Path): List<String> = coverageDenominators(mobileRoot)
+        .filter { it.coverageKind == "jvm" }
+        .map { ":" + it.sourcePath.removePrefix("mobile/").replace('/', ':') }
+        .also { require(it.isNotEmpty()) { "Coverage inventory contains no JVM denominators" } }
+
+    private fun coverageDenominators(mobileRoot: Path): List<CoverageDenominator> {
+        val coverage = mobileRoot.resolve("config/quality/coverage.toml")
+        require(Files.isRegularFile(coverage)) {
+            "Coverage inventory is missing: $coverage"
+        }
+        return blocks(Files.readString(coverage), "denominator").map { block ->
+            CoverageDenominator(
+                sourcePath = extractString(block, "source_path")
+                    ?: error("Coverage denominator is missing source_path"),
+                coverageKind = extractString(block, "coverage_kind")
+                    ?: error("Coverage denominator is missing coverage_kind"),
+            )
+        }
+    }
+
+    private fun nativeEquivalentEvidenceAllowed(mobileRoot: Path): Boolean {
+        return NativeEquivalentEvidenceVerifier.allowed(
+            coverageText = Files.readString(mobileRoot.resolve("config/quality/coverage.toml")),
+            nativeGapsText = Files.readString(mobileRoot.resolve("config/quality/native-gaps.toml")),
+            evidenceText = Files.readString(mobileRoot.resolve("config/quality/evidence-bindings.toml")),
+        )
+    }
+
+    private fun blocks(text: String, name: String): List<String> =
+        Regex("(?ms)^\\[\\[$name]]\\s*\\n(.*?)(?=^\\[\\[|\\z)")
+            .findAll(text)
+            .map { it.groupValues[1] }
+            .toList()
+
+    private fun extractString(text: String, key: String): String? =
+        Regex("(?m)^${Regex.escape(key)}\\s*=\\s*\\\"([^\\\"]*)\\\"\\s*$")
+            .find(text)
+            ?.groupValues
+            ?.get(1)
+
+    private fun hasKotlinMultiplatformPlugin(project: Project): Boolean {
+        val buildFile = project.buildFile.toPath()
+        return Files.isRegularFile(buildFile) &&
+            Files.readString(buildFile).contains("libs.plugins.kotlin.multiplatform")
+    }
+
+    private fun detektTaskNames(project: Project): List<String> {
+        val buildFile = project.buildFile.toPath()
+        val buildScript = Files.readString(buildFile)
+        return buildList {
+            add("detektCommonMainSourceSet")
+            add("detektCommonTestSourceSet")
+            add("detektJvmMainSourceSet")
+            add("detektJvmTestSourceSet")
+            if (buildScript.contains("libs.plugins.android.kotlin.multiplatform.library")) {
+                add("detektAndroidMainSourceSet")
+                add("detektMainAndroid")
+            }
+            if (buildScript.contains("libs.plugins.compose")) {
+                add("detektJvmDevSourceSet")
+                add("detektDevJvm")
+            }
+        }
+    }
+
+    private fun lifecycle(mobileRoot: Path): String =
+        Regex("(?m)^lifecycle\\s*=\\s*\\\"([^\\\"]+)\\\"$")
+            .find(Files.readString(mobileRoot.resolve("product-lifecycle.toml")))
+            ?.groupValues
+            ?.get(1)
+            ?: error("Mobile lifecycle is missing")
+}
+
+private data class CoverageDenominator(
+    val sourcePath: String,
+    val coverageKind: String,
+)
+
+internal object NativeEquivalentEvidenceVerifier {
+    fun allowed(
+        coverageText: String,
+        nativeGapsText: String,
+        evidenceText: String,
+        now: Instant = Instant.now(),
+    ): Boolean {
+        val requiredIds = blocks(coverageText, "denominator")
+            .filter { extractString(it, "coverage_kind") == "native-equivalent" }
+            .flatMap { extractStringList(it, "evidence_ids") }
+            .toSet()
+        if (requiredIds.isEmpty()) return true
+        if (extractString(nativeGapsText, "lifecycle") != "active" ||
+            extractString(evidenceText, "lifecycle") != "active"
+        ) return false
+
+        val gapBlocks = blocks(nativeGapsText, "gap")
+        val evidenceBlocks = blocks(evidenceText, "evidence")
+        return requiredIds.all { id ->
+            val gap = gapBlocks.firstOrNull { extractString(it, "id") == id } ?: return@all false
+            val evidence = evidenceBlocks.firstOrNull { extractString(it, "id") == id } ?: return@all false
+            if (extractString(evidence, "status") != "success") return@all false
+            if (!Regex("[0-9a-f]{40}").matches(extractString(evidence, "commit_sha").orEmpty())) return@all false
+            if (!Regex("[0-9a-f]{64}").matches(extractString(evidence, "artifact_digest").orEmpty())) return@all false
+            if (!Regex("[0-9a-f]{64}").matches(extractString(evidence, "fixture_digest").orEmpty())) return@all false
+            if (extractString(evidence, "device_os").isNullOrBlank() ||
+                extractString(evidence, "task_version").isNullOrBlank()
+            ) return@all false
+            val executedAt = runCatching { Instant.parse(extractString(evidence, "executed_at")) }
+                .getOrNull() ?: return@all false
+            val maxAge = extractInt(gap, "max_age_days") ?: return@all false
+            executedAt.isAfter(now.minus(maxAge.toLong(), ChronoUnit.DAYS))
+        }
+    }
+
+    private fun blocks(text: String, name: String): List<String> =
+        Regex("(?ms)^\\[\\[$name]]\\s*\\n(.*?)(?=^\\[\\[|\\z)")
+            .findAll(text)
+            .map { it.groupValues[1] }
+            .toList()
+
+    private fun extractString(text: String, key: String): String? =
+        Regex("(?m)^${Regex.escape(key)}\\s*=\\s*\\\"([^\\\"]*)\\\"\\s*$")
+            .find(text)
+            ?.groupValues
+            ?.get(1)
+
+    private fun extractInt(text: String, key: String): Int? =
+        Regex("(?m)^${Regex.escape(key)}\\s*=\\s*(\\d+)\\s*$")
+            .find(text)
+            ?.groupValues
+            ?.get(1)
+            ?.toInt()
+
+    private fun extractStringList(text: String, key: String): List<String> =
+        Regex("(?m)^${Regex.escape(key)}\\s*=\\s*\\[([^]]*)]")
+            .find(text)
+            ?.groupValues
+            ?.get(1)
+            ?.let { values ->
+                Regex("\\\"([^\\\"]+)\\\"").findAll(values).map { it.groupValues[1] }.toList()
+            }
+            ?: emptyList()
+}
+
+internal data class JvmCoverageSummary(
+    val linePercent: Double,
+    val branchPercent: Double,
+    val moduleCount: Int,
+)
+
+internal object JvmCoverageVerifier {
+    fun reportPath(reportRoot: Path, projectPath: String): Path = reportRoot
+        .resolve(projectPath.removePrefix(":").replace(':', '/'))
+        .resolve("build/reports/kover/reportJvm.xml")
+
+    fun verify(reportRoot: Path, productionProjects: List<String>): JvmCoverageSummary {
+        require(productionProjects.isNotEmpty()) {
+            "JVM host coverage has no production modules"
+        }
+
+        var lineMissed = 0L
+        var lineCovered = 0L
+        var branchMissed = 0L
+        var branchCovered = 0L
+
+        productionProjects.forEach { path ->
+            val report = reportPath(reportRoot, path)
+            require(Files.isRegularFile(report)) {
+                "Missing JVM Kover report for $path: $report"
+            }
+            val text = try {
+                Files.readString(report)
+            } catch (error: Exception) {
+                throw IllegalArgumentException("Unable to read JVM Kover report for $path: $report", error)
+            }
+            val line = counter(text, "LINE", path)
+            val branch = counter(text, "BRANCH", path)
+            lineMissed += line.first
+            lineCovered += line.second
+            branchMissed += branch.first
+            branchCovered += branch.second
+        }
+
+        val linePercent = percentage(lineCovered, lineMissed, "line")
+        val branchPercent = percentage(branchCovered, branchMissed, "branch")
+        require(linePercent >= 85.0) {
+            "JVM host line coverage is ${formatCoverage(linePercent)}%; minimum is 85%"
+        }
+        require(branchPercent >= 85.0) {
+            "JVM host branch coverage is ${formatCoverage(branchPercent)}%; minimum is 85%"
+        }
+        return JvmCoverageSummary(linePercent, branchPercent, productionProjects.size)
+    }
+
+    fun counter(text: String, type: String, projectPath: String): Pair<Long, Long> {
+        val report = parseReport(text, projectPath)
+        val rootCounters = (0 until report.childNodes.length)
+            .map(report.childNodes::item)
+            .filter { node ->
+                node.nodeType == Node.ELEMENT_NODE &&
+                    (node as Element).tagName == "counter" &&
+                    node.getAttribute("type") == type
+            }
+        require(rootCounters.size == 1) {
+            "JVM Kover report for $projectPath must have exactly one report-level $type counter"
+        }
+        val match = rootCounters.single() as Element
+
+        val missed = counterValue(match, "missed", type, projectPath)
+        val covered = counterValue(match, "covered", type, projectPath)
+        require(missed + covered > 0) {
+            "JVM Kover report for $projectPath has an empty $type denominator"
+        }
+        return missed to covered
+    }
+
+    fun percentage(covered: Long, missed: Long, kind: String): Double {
+        val total = covered + missed
+        require(total > 0) { "JVM host $kind coverage has an empty denominator" }
+        return covered.toDouble() * 100.0 / total.toDouble()
+    }
+
+    private fun parseReport(text: String, projectPath: String): Element {
+        try {
+            val factory = DocumentBuilderFactory.newInstance().apply {
+                setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true)
+                setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)
+                setFeature("http://xml.org/sax/features/external-general-entities", false)
+                setFeature("http://xml.org/sax/features/external-parameter-entities", false)
+                isXIncludeAware = false
+                isExpandEntityReferences = false
+            }
+            val document = factory.newDocumentBuilder().parse(InputSource(StringReader(text)))
+            require(document.documentElement?.tagName == "report") {
+                "root element is not <report>"
+            }
+            return document.documentElement
+        } catch (error: IllegalArgumentException) {
+            throw IllegalArgumentException("Malformed JVM Kover report for $projectPath: ${error.message}", error)
+        } catch (error: Exception) {
+            throw IllegalArgumentException("Malformed JVM Kover report for $projectPath", error)
+        }
+    }
+
+    private fun counterValue(element: Element, name: String, type: String, projectPath: String): Long =
+        element.getAttribute(name).toLongOrNull()?.also { value ->
+            require(value >= 0) {
+                "JVM Kover report for $projectPath has a negative $type $name counter"
+            }
+        } ?: throw IllegalArgumentException(
+            "JVM Kover report for $projectPath has an invalid $type $name counter",
+        )
+
+    private fun formatCoverage(value: Double): String = String.format(Locale.ROOT, "%.2f", value)
+}

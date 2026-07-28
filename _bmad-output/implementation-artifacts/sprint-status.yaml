@@ -1,0 +1,72 @@
+# generated: 2026-07-27
+# last_updated: 2026-07-27
+# project: SuperNutrition
+# project_key: NOKEY
+# tracking_system: file-system
+# story_location: _bmad-output/implementation-artifacts
+
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created
+#   - in-progress: Developer actively working on story
+#   - review: Story implementation is ready for code review
+#   - done: Story completed
+#
+# Retrospective Status:
+#   - optional: Can be completed but is not required
+#   - done: Retrospective has been completed
+
+generated: 2026-07-27
+last_updated: 2026-07-28
+project: SuperNutrition
+project_key: NOKEY
+tracking_system: file-system
+story_location: _bmad-output/implementation-artifacts
+
+development_status:
+  epic-1: in-progress
+  1-1-activate-mobile-kmp-scaffold: in-progress
+  1-2-enforce-monorepo-boundaries-and-contracts: in-progress
+  1-3-establish-product-identity-metadata: review
+  1-4-establish-repository-quality-gates: in-progress
+  1-5-establish-the-low-friction-interaction-policy: review
+  epic-1-retrospective: optional
+
+  epic-2: in-progress
+  2-1-implement-camera-and-picker-bridges: in-progress
+  2-2-normalize-and-quality-check-photo-input: in-progress
+  2-3-implement-capture-recovery-and-session-cleanup: in-progress
+  epic-2-retrospective: optional
+
+  epic-3: backlog
+  3-1-freeze-contract-v1-inference-ports: backlog
+  3-2-implement-local-android-inference: backlog
+  3-3-implement-local-ios-inference: backlog
+  3-4-integrate-deterministic-local-first-routing: backlog
+  epic-3-retrospective: optional
+
+  epic-4: backlog
+  4-1-implement-remote-consent-and-transfer-states: backlog
+  4-2-implement-the-remote-mobile-adapter: backlog
+  4-3-implement-the-first-party-gateway-boundary: backlog
+  epic-4-retrospective: optional
+
+  epic-5: backlog
+  5-1-implement-candidate-review-and-correction: backlog
+  5-2-implement-country-aware-nutrition-catalog-selection: backlog
+  5-3-implement-serving-confirmation-and-grounded-result: backlog
+  epic-5-retrospective: optional
+
+  epic-6: backlog
+  6-1-build-the-shared-ui-journey-dsl: backlog
+  6-2-add-privacy-network-and-native-gap-oracles: backlog
+  6-3-establish-the-evaluation-corpus-and-route-baselines: backlog
+  6-4-maintain-the-quality-and-release-evidence-gates: backlog
+  epic-6-retrospective: optional
