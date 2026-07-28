@@ -1,6 +1,6 @@
 # Story 2.1: Implement camera and picker bridges
 
-Status: in-progress
+Status: review
 
 ## Story
 
@@ -35,8 +35,10 @@ Requires E1.1 scaffold activation, E1.5 interaction contract, and the separate
   evidence for the available device lane.
 - [x] Re-run the physical Android camera/capture evidence against the bounded
   in-memory CameraX bridge introduced after the previous device attestation.
-- [ ] Complete physical iOS camera/picker evidence and finalize the native-gap
-  manifest; the Intel `iosX64` simulator lane remains bridge acceptance only.
+- [x] Complete physical iOS camera/picker evidence and finalize the native-gap
+  records; the Intel `iosX64` simulator lane remains bridge acceptance only.
+  The checked-in evidence bindings stay `pending` until trusted same-SHA
+  activation, so this physical run is not promoted into an active-state claim.
 
 ## Dev Agent Record
 
