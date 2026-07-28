@@ -1,0 +1,16 @@
+schema = "supernutrition.mobile-api-compatibility-matrix.v1"
+contract_id = "mobile-api"
+release = "v1"
+digest = "ebda0f5151acb5478489e6a9c32f8e778f9eee2416455a0aed7dc2238f627594"
+
+[[supported_pair]]
+producer = "mobile-v1"
+consumer = "backend-v1"
+direction = "forward"
+expected = "accepted"
+
+[[supported_pair]]
+producer = "backend-v1"
+consumer = "mobile-v1"
+direction = "backward"
+expected = "accepted"

@@ -1,0 +1,40 @@
+schema = "supernutrition.mobile.journeys.v1"
+schema_version = 1
+product = "mobile"
+lifecycle = "scaffold-pending"
+profile = "photo-analysis"
+source_digest = "pending"
+journey_count = 1
+catalog_state = "transitioned-photo-analysis"
+
+# The photo-analysis transition must map each positive scenario exactly once
+# to a Maestro CLI 2.7.0 flow on Android and iOS. Orphans and duplicates fail.
+
+[[journey]]
+id = "photo-analysis-capture-recovery"
+scenario_id = "photo-analysis-capture-recovery"
+maestro_flow_id = "photo-analysis-capture-recovery"
+android_task = "connectedUiAcceptanceDebugAndroidTest"
+ios_task = "xcodebuild-test-iosX64"
+fixture_id = "photo-fixture-neutral"
+oracle_ids = ["no-remote-transfer", "attempt-lease-cleanup"]
+terminal_state_id = "capture-or-privacy-preserving-cancellation"
+tap_budget = 2
+scroll_budget = 0
+field_budget = 0
+choice_budget = 0
+auxiliary_text_entry_chars_budget = 0
+auxiliary_choice_surface_budget = 0
+auxiliary_back_budget = 1
+auxiliary_undo_budget = 0
+auxiliary_cancel_budget = 1
+auxiliary_permission_prompt_budget = 1
+accessibility_contract_ids = ["photo.android.accessibility", "photo.ios.accessibility"]
+locale_ids = ["en-US"]
+proposal_ids = ["proposal-capture-default-locale"]
+decision_ids = ["decision-capture-default-locale"]
+default_provenance = "immutableConfigurationSnapshot"
+override_path = "inline-edit"
+undo_path = "session-undo"
+resolved_value_digest = "pending"
+forbidden_default_tests = ["remote-consent", "provider-routing", "uncertain-food-identity"]

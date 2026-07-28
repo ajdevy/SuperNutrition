@@ -1,0 +1,4 @@
+headers = PhotoPermissionData.h
+language = Objective-C
+package = com.supernutrition.platform.photoios.permissioninterop
+linkerOpts = -framework AVFoundation -framework PhotosUI

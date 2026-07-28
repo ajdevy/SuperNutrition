@@ -1,0 +1,28 @@
+schema = "supernutrition.interaction-policy-contract.v1"
+schema_version = 1
+contract_id = "interaction-policy"
+release = "v1"
+language_neutral = true
+executable = false
+
+[default_allowlist]
+fields = ["defaultLocale", "measurementSystem", "catalogProposal", "standardServing"]
+standard_serving_shape = ["unit", "amount"]
+standard_serving_requires = "canonical-item-confirmed"
+
+[provenance]
+values = ["bundled-safe-default", "global-release", "environment", "catalog-confirmed"]
+required_for_every_default = true
+
+[lifecycle]
+proposal_states = ["Proposed", "Accepted", "Overridden", "Invalidated"]
+decision_states = ["Accepted", "Overridden", "Undone", "Invalidated"]
+requires_monotonic_revision = true
+requires_snapshot_digest = true
+requires_policy_digest = true
+idempotency_key = "proposal-or-decision-id-plus-revision"
+
+[persistence]
+catalog_country = "next-attempt-only-after-confirmation"
+food_preparation_serving_corrections = "current-session-only"
+remote_consent = "attempt-scoped"

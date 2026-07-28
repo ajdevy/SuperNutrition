@@ -1,0 +1,30 @@
+schema = "supernutrition.root-ownership.v1"
+schema_version = 1
+status = "pending-hosting-provisioning"
+external_gate = "AD-38"
+distinct_principals_required = true
+
+[[principal]]
+id = "mobile"
+path_prefixes = ["mobile/"]
+codeowner = "@flexsent-labs/supernutrition-mobile"
+
+[[principal]]
+id = "web"
+path_prefixes = ["web/landing/"]
+codeowner = "@flexsent-labs/supernutrition-web"
+
+[[principal]]
+id = "backend"
+path_prefixes = ["backend/mobile-api/"]
+codeowner = "@flexsent-labs/supernutrition-backend"
+
+[[principal]]
+id = "contract"
+path_prefixes = ["contracts/"]
+codeowner = "@flexsent-labs/supernutrition-contracts"
+
+[[principal]]
+id = "repository-policy"
+path_prefixes = [".github/", "scripts/"]
+codeowner = "@flexsent-labs/supernutrition-policy"

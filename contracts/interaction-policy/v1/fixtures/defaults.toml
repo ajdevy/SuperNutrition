@@ -1,0 +1,28 @@
+schema = "supernutrition.interaction-policy-fixture.v1"
+fixture_id = "interaction-policy-defaults-v1"
+contract_release = "interaction-policy/v1"
+
+[[case]]
+id = "locale-from-snapshot"
+field = "defaultLocale"
+source = "immutableConfigurationSnapshot"
+editable = true
+reversible = true
+
+[[case]]
+id = "standard-serving-after-confirmation"
+field = "standardServing"
+source = "confirmedCatalogServing"
+requires = "canonical-item-confirmed"
+atomic = true
+mutates_snapshot = false
+
+[[forbidden_case]]
+id = "remote-consent-not-defaultable"
+field = "remoteConsent"
+expected = "rejected"
+
+[[forbidden_case]]
+id = "uncertain-food-not-defaultable"
+field = "foodIdentity"
+expected = "rejected"

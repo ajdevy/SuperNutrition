@@ -1,0 +1,13 @@
+schema = "supernutrition.mobile.suppression-registry.v1"
+schema_version = 1
+product = "mobile"
+lifecycle = "scaffold-pending"
+source_digest = "pending"
+entry_count = 0
+wildcards_allowed = false
+package_wide_entries_allowed = false
+expired_entries_fail = true
+status = "pending"
+
+# Future entries must name an exact rule and file/symbol, owner, independent
+# approval, issue, creation/expiry dates, maximum count, and removal condition.

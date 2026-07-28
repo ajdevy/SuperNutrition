@@ -1,0 +1,17 @@
+schema = "supernutrition.mobile-api-contract.v1"
+schema_version = 1
+release = "v1"
+language_neutral = true
+executable = false
+
+[envelope]
+contract_id = "mobile-api"
+photo_payload = "normalized-scrubbed-bytes-only"
+attempt_id_required = true
+effect_id_required = true
+consent_receipt_required_before_remote = true
+
+[compatibility]
+unknown_fields = "ignore"
+missing_required_fields = "reject"
+incompatible_change = "new-major-release"

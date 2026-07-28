@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+root_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+manifest="$root_dir/product-lifecycle.toml"
+test -f "$manifest"
+grep -q '^lifecycle = "preselection"$' "$manifest"
+grep -q '^quality_claim = false$' "$manifest"
+grep -q '^production_source_count = 0$' "$manifest"
+grep -q '^dependency_manifest = "absent"$' "$manifest"
+grep -q '^lock_state = "absent"$' "$manifest"
+grep -q '^runtime = "unselected"$' "$manifest"
+grep -q '^deployable_artifact = "absent"$' "$manifest"
+grep -q '^quality_entrypoint = "quality-check"$' "$manifest"
+grep -q '^executable_inventory = \["quality-check"\]$' "$manifest"
+
+if find "$root_dir" -mindepth 1 -type f ! -name product-lifecycle.toml ! -name quality-check -print -quit | grep -q .; then
+  printf '%s\n' 'web landing preselection contains undeclared product material' >&2
+  exit 1
+fi
+
+printf '%s\n' 'web-landing: preselection verified (no production material)'

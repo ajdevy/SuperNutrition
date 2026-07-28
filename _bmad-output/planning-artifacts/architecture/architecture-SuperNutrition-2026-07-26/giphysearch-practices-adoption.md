@@ -41,7 +41,7 @@ The source comparison is grounded in GiphySearch's pinned [settings](https://git
   `backend/mobile-api/` products; neither imports or depends at runtime on
   mobile or one another. All cross-product API integration uses independently
   owned, immutable, versioned releases under `contracts/`.
-- `domain` is stricter than the reference: it is pure common Kotlin and cannot depend on Android, Apple frameworks, Compose, Koin, Ktor, or SQLDelight. `domain/inference` owns only Engine contracts/evidence; `domain/photo-analysis` owns routing and orchestration through a one-way dependency.
+- `domain` is stricter than the reference: it is pure common Kotlin and cannot depend on Android, Apple frameworks, Compose, Koin, Ktor, Ktorfit, or SQLDelight. `domain/inference` owns only Engine contracts/evidence; `domain/photo-analysis` owns routing and orchestration through a one-way dependency.
 - Local inference is split into `mobile/inference/local-android` and `mobile/inference/local-ios`. This gives the independent developers requested by the product one Gradle ownership boundary per platform.
 - Native capture is split into independently tested `mobile/platform/photo-android` and `mobile/platform/photo-ios` adapters instead of accumulating in app hosts.
 - `mobile/feature/photo-analysis` owns Compose Multiplatform UI and the Decompose component; `mobile/domain/photo-analysis` owns the reducer, policies, and ports.
@@ -72,7 +72,7 @@ GiphySearch's Detekt 1.23.8 pattern is adopted, but its version is not: the offi
 
 ## Deliberately not adopted
 
-- Giphy, Ktorfit, Paging, and Coil dependencies: they solve the reference product, not SuperNutrition's architecture.
+- Giphy, Paging, and Coil dependencies: they solve the reference product, not SuperNutrition's architecture. Ktorfit is intentionally adopted for the remote adapter's typed, generated KMP API surface over Ktor.
 - Android-only navigation assumptions: SuperNutrition uses Decompose lifecycle/route boundaries and Compose Multiplatform screens.
 - App-shipped API keys or provider credentials: all remote provider secrets remain behind the first-party gateway.
 - Detekt autocorrect in verification tasks: CI must detect a dirty result, never rewrite source.

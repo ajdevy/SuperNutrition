@@ -1,0 +1,115 @@
+schema = "supernutrition.mobile.module-boundaries.v1"
+schema_version = 1
+product = "mobile"
+lifecycle = "scaffold-pending"
+owner = "mobile-platform"
+source_digest = "pending"
+
+# This inventory is intentionally explicit before production modules exist.
+# Any undeclared module, package prefix, source set, or dependency edge fails
+# the later root-policy validator.
+
+[[module]]
+id = "mobile-build-policy"
+path = "mobile/build-logic"
+kind = "policy"
+source_sets = ["main", "test"]
+production = false
+
+[[module]]
+id = "apps"
+path = "mobile/apps"
+kind = "host-group"
+source_sets = ["commonMain", "androidMain", "iosMain"]
+production = false
+
+[[module]]
+id = "core"
+path = "mobile/core"
+kind = "library-group"
+source_sets = ["commonMain", "commonTest"]
+production = false
+
+[[module]]
+id = "domain"
+path = "mobile/domain"
+kind = "pure-kmp-group"
+source_sets = ["commonMain", "commonTest"]
+production = false
+
+[[module]]
+id = "data"
+path = "mobile/data"
+kind = "adapter-group"
+source_sets = ["commonMain", "commonTest", "androidMain", "iosMain"]
+production = false
+
+[[module]]
+id = "inference"
+path = "mobile/inference"
+kind = "adapter-group"
+source_sets = ["commonMain", "commonTest", "androidMain", "iosMain"]
+production = false
+
+[[module]]
+id = "platform"
+path = "mobile/platform"
+kind = "adapter-group"
+source_sets = ["commonMain", "commonTest", "androidMain", "iosMain"]
+production = false
+
+[[module]]
+id = "feature"
+path = "mobile/feature"
+kind = "compose-feature-group"
+source_sets = ["commonMain", "commonTest", "jvmTest", "androidDeviceTest", "iosSimulatorArm64Test", "iosX64Test"]
+production = false
+
+[[module]]
+id = "testing"
+path = "mobile/testing"
+kind = "test-support-group"
+source_sets = ["commonMain", "commonTest", "jvmTest", "androidDeviceTest", "iosSimulatorArm64Test", "iosX64Test"]
+production = false
+
+[[module]]
+id = "evaluation"
+path = "mobile/evaluation"
+kind = "evidence-group"
+source_sets = ["jvmTest", "androidDeviceTest", "iosSimulatorArm64Test", "iosX64Test"]
+production = false
+
+[[allowed_edge]]
+from = "apps"
+to = "feature|platform|inference|data|core"
+scope = "production"
+
+[[allowed_edge]]
+from = "feature"
+to = "domain|core"
+scope = "production"
+
+[[allowed_edge]]
+from = "platform|inference|data"
+to = "domain|core"
+scope = "production"
+
+[[allowed_edge]]
+from = "domain"
+to = "domain|core"
+scope = "production"
+
+[[allowed_edge]]
+from = "testing|evaluation"
+to = "declared-tested-module"
+scope = "test-only"
+
+forbidden_imports = [
+  "android.* in mobile/domain/**",
+  "platform.* in mobile/domain/**",
+  "androidx.compose.* in mobile/domain/**",
+  "org.koin.* in mobile/domain/**",
+  "io.ktor.* in mobile/domain/**",
+  "app.cash.sqldelight.* in mobile/domain/**",
+  "mobile.testing.* in distributable configurations",
+]

@@ -1,0 +1,73 @@
+[versions]
+kotlin = "2.4.10"
+compose = "1.11.1"
+composeMaterial3 = "1.9.0"
+gradle = "9.5.0"
+agp = "9.1.0"
+jdk = "21"
+compileSdk = "36"
+minSdk = "23"
+targetSdk = "36"
+detekt = "2.0.0-alpha.5"
+kover = "0.9.8"
+koin = "4.2.2"
+decompose = "3.5.0"
+ktor = "3.5.1"
+ktorfit = "2.7.4"
+sqldelight = "2.3.2"
+androidxComposeTest = "1.11.2"
+androidxTest = "1.6.1"
+uiautomator = "2.3.0"
+androidxActivity = "1.8.2"
+maestro = "2.7.0"
+skiko = "0.144.6"
+camerax = "1.6.1"
+
+[libraries]
+android-gradle = { module = "com.android.tools.build:gradle", version.ref = "agp" }
+kotlin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+compose-gradle = { module = "org.jetbrains.compose:compose-gradle-plugin", version.ref = "compose" }
+kotlin-compose-compiler = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
+kotlin-serialization = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
+detekt-gradle = { module = "dev.detekt:detekt-gradle-plugin", version.ref = "detekt" }
+detekt-ktlint-wrapper = { module = "dev.detekt:detekt-rules-ktlint-wrapper", version.ref = "detekt" }
+kover-gradle = { module = "org.jetbrains.kotlinx:kover-gradle-plugin", version.ref = "kover" }
+sqldelight-gradle = { module = "app.cash.sqldelight:gradle-plugin", version.ref = "sqldelight" }
+
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+ktorfit = { module = "de.jensklingenberg.ktorfit:ktorfit-lib", version.ref = "ktorfit" }
+sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sqldelight" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.9.0" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version = "1.10.2" }
+compose-ui-test = { module = "org.jetbrains.compose.ui:ui-test", version.ref = "compose" }
+skiko-awt-runtime-macos-x64 = { module = "org.jetbrains.skiko:skiko-awt-runtime-macos-x64", version.ref = "skiko" }
+skiko-awt-runtime-macos-arm64 = { module = "org.jetbrains.skiko:skiko-awt-runtime-macos-arm64", version.ref = "skiko" }
+skiko-awt-runtime-linux-x64 = { module = "org.jetbrains.skiko:skiko-awt-runtime-linux-x64", version.ref = "skiko" }
+compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose" }
+compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose" }
+compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "composeMaterial3" }
+compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose" }
+androidx-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4-android", version.ref = "androidxComposeTest" }
+androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "androidxComposeTest" }
+androidx-activity = { module = "androidx.activity:activity", version.ref = "androidxActivity" }
+camerax-core = { module = "androidx.camera:camera-core", version.ref = "camerax" }
+camerax-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "camerax" }
+camerax-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "camerax" }
+camerax-view = { module = "androidx.camera:camera-view", version.ref = "camerax" }
+androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidxTest" }
+androidx-test-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiautomator" }
+
+[plugins]
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
+compose = { id = "org.jetbrains.compose", version.ref = "compose" }
+detekt = { id = "dev.detekt", version.ref = "detekt" }
+kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
+sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }

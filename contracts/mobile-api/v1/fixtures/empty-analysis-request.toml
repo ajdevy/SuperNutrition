@@ -1,0 +1,4 @@
+schema = "supernutrition.mobile-api-fixture.v1"
+fixture_id = "empty-analysis-request"
+expected = "rejected"
+reason = "missing-normalized-photo-payload"

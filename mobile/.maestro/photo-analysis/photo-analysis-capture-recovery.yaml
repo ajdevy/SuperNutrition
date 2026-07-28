@@ -1,0 +1,12 @@
+appId: ${APP_ID}
+---
+
+- runScript:
+    file: ./photo-analysis-locators.js
+- launchApp
+- assertVisible:
+    id: ${output.photo_analysis_title}
+- assertVisible:
+    id: ${output.capture_shutter}
+- assertVisible:
+    id: ${output.capture_import}

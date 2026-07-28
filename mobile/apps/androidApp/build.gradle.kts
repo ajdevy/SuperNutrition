@@ -1,0 +1,46 @@
+plugins {
+    alias(libs.plugins.android.application)
+}
+
+android {
+    namespace = "com.supernutrition.android"
+    compileSdk = libs.versions.compileSdk.get().toInt()
+
+    defaultConfig {
+        applicationId = "com.supernutrition.android"
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
+        versionCode = 1
+        versionName = "0.0.0-scaffold"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    flavorDimensions += "distribution"
+    productFlavors {
+        create("uiAcceptance") {
+            dimension = "distribution"
+            applicationIdSuffix = ".uiAcceptance"
+        }
+    }
+
+    buildTypes {
+        getByName("debug") {
+            isMinifyEnabled = false
+        }
+        getByName("release") {
+            isMinifyEnabled = false
+        }
+    }
+
+}
+
+dependencies {
+    implementation(libs.koin.core)
+    implementation(project(":feature:photo-analysis"))
+    implementation(project(":platform:photo-android"))
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.uiautomator)
+    androidTestImplementation(project(":domain:photo-analysis"))
+    androidTestImplementation(project(":platform:photo-android"))
+    androidTestImplementation(project(":testing:scaffold-probe"))
+}

@@ -131,7 +131,7 @@ NFR-24: Product journeys minimize interaction while preserving safe user control
 
 - AR-1 (AD-16): The mobile scaffold story must create and prove the greenfield KMP scaffold as one atomic tuple: Kotlin/KMP 2.4.10, Compose Multiplatform 1.11.1, Gradle 9.5.0, AGP 9.1.0, JDK 21, Android compile/target SDK 36 with API 23 floor, Xcode 26.4.1 on macOS 26.2+, iOS 15 floor, Detekt/ktlint wrapper 2.0.0-alpha.5, and Kover 0.9.8. The story publishes exact common, Android, iOS, Xcode, lint, and coverage evidence; any tuple change is a dedicated compatibility change.
 - AR-2 (AD-25): Inside `mobile/`, create `apps`, `core`, `domain`, `data`, `inference`, `platform`, `feature`, `testing`, and `evaluation`, plus mobile `build-logic`, `config`, and `gradle`, using the exact structural seed in the architecture spine. The mobile backend is `backend/mobile-api/`, not a mobile Gradle group.
-- AR-3 (AD-1, AD-25): Enforce inward mobile dependencies. `mobile/domain` is pure KMP and cannot depend on Android, Apple frameworks, Compose, Koin, Ktor, or SQLDelight; distributable production configurations cannot depend on `mobile/testing`. Only the two manifest-listed UI-acceptance configurations may resolve exact allowlisted test-support edges.
+- AR-3 (AD-1, AD-25): Enforce inward mobile dependencies. `mobile/domain` is pure KMP and cannot depend on Android, Apple frameworks, Compose, Koin, Ktor, Ktorfit, or SQLDelight; distributable production configurations cannot depend on `mobile/testing`. Only the two manifest-listed UI-acceptance configurations may resolve exact allowlisted test-support edges.
 - AR-4 (AD-26): Centralize mobile versions and SDK/JVM floors in `mobile/gradle/libs.versions.toml`; use `mobile/build-logic` convention plugins so module scripts declare only identity, targets, and dependencies. Each monorepo product owns one central dependency/tool manifest, frozen install, lock/verification state, and product-local resolution tree; no root workspace, lockfile, virtual environment, or hoisted dependency tree may span products.
 - AR-5 (AD-26): Settings reject project repositories and enforce strict dependency verification and per-project/configuration lock state across Gradle, included builds, native/Xcode, gateway/container, model, and catalog inputs. CI never writes metadata; dynamic/range/snapshot/file/URL dependencies are forbidden.
 - AR-6 (AD-27): Provide read-only mobile `qualityCheckJvmAndroid` and `qualityCheckApple`, plus lifecycle-aware `web/landing/quality-check` and `backend/mobile-api/quality-check` entrypoints. Active products own complete compile/build, lint, unit, coverage, dependency, artifact, and inventory evidence; preselection products prove no production material exists. `quality-linux` unconditionally owns the same-SHA root-boundary/catalog result and mobile released-contract matrix; backend quality owns its matching released-contract matrix.
@@ -584,7 +584,7 @@ UX-DR25, UX-DR37.
 ### Story E4.2: Implement the remote mobile adapter
 
 As a remote mobile owner,
-I want a Ktor adapter that knows only the first-party contract,
+I want a typed Ktorfit API over a Ktor adapter that knows only the first-party contract,
 so that provider changes do not require a mobile feature rewrite.
 
 **Traceability:** FR-8, FR-12, FR-25, NFR-4..NFR-5, NFR-8, NFR-11, AR-2,
@@ -593,10 +593,14 @@ AR-13, AR-21, UX-DR17, UX-DR25.
 **Acceptance Criteria:**
 
 - **Given** a valid consent receipt and scrubbed Photo Input, **when** the
-  adapter sends a request, **then** it uses the pinned gateway envelope and no
-  provider credentials or provider schema are present in mobile code.
+  adapter sends a request, **then** the Ktorfit-generated API uses the pinned
+  gateway envelope over Ktor and no provider credentials or provider schema are
+  present in mobile code.
 - **Then** retries are bounded, idempotent where applicable, and cancellation
   invalidates the attempt token.
+- **And** Ktor MockEngine and Ktorfit generated-client contract tests cover
+  upload, cancellation, timeout, redaction, version mismatch, rate limiting,
+  malformed responses, and at-most-once effect behavior.
 
 ### Story E4.3: Implement the first-party gateway boundary
 
