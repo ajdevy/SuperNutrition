@@ -20,6 +20,10 @@ kotlin {
         iosArm64 {
             compilations.getByName("main") {
                 cinterops {
+                    create("photoFixture") {
+                        defFile(project.file("src/nativeInterop/cinterop/photo-fixture.def"))
+                        compilerOpts("-I${project.file("src/nativeInterop/cinterop").absolutePath}")
+                    }
                     create("photoPermission") {
                         defFile(project.file("src/nativeInterop/cinterop/photo-permission.def"))
                         compilerOpts("-I${project.file("src/nativeInterop/cinterop").absolutePath}")
@@ -31,6 +35,10 @@ kotlin {
             iosSimulatorArm64 {
                 compilations.getByName("main") {
                     cinterops {
+                        create("photoFixture") {
+                            defFile(project.file("src/nativeInterop/cinterop/photo-fixture.def"))
+                            compilerOpts("-I${project.file("src/nativeInterop/cinterop").absolutePath}")
+                        }
                         create("photoPermission") {
                             defFile(project.file("src/nativeInterop/cinterop/photo-permission.def"))
                             compilerOpts("-I${project.file("src/nativeInterop/cinterop").absolutePath}")
