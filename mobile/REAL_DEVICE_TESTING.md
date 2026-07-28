@@ -106,8 +106,6 @@ cannot accidentally close the normalization gap:
 APPLE_TEAM_ID="<local-team-id>" \
 IOS_CODE_SIGN_IDENTITY="Apple Development: <name> (<certificate-id>)" \
 IOS_UDID="<physical-iphone-udid>" \
-  scripts/run-physical-ios-fixtures.sh
-
 xcodebuild test -quiet \
   -project mobile/apps/iosApp/SuperNutritionUIAcceptance.xcodeproj \
   -scheme SuperNutritionUIAcceptance \
@@ -118,6 +116,11 @@ xcodebuild test -quiet \
   CODE_SIGN_STYLE=Automatic \
   CODE_SIGN_IDENTITY="Apple Development" \
   -allowProvisioningUpdates -allowProvisioningDeviceRegistration
+
+APPLE_TEAM_ID="<local-team-id>" \
+IOS_CODE_SIGN_IDENTITY="Apple Development: <name> (<certificate-id>)" \
+IOS_UDID="<physical-iphone-udid>" \
+  scripts/run-physical-ios-fixtures.sh
 ```
 
 Then emit the native-evidence bundle with the real iPhone UDID:
@@ -126,6 +129,10 @@ Then emit the native-evidence bundle with the real iPhone UDID:
 IOS_UDID=<physical-iphone-udid> \
   scripts/emit-physical-ios-evidence.sh "$RUNNER_TEMP/supernutrition-ios-evidence"
 ```
+
+The fixture runner reuses the valid development profile embedded by the
+physical Xcode acceptance build. If the profile is stored elsewhere, pass it
+explicitly with `IOS_PROVISIONING_PROFILE="<path-to-mobileprovision>"`.
 
 The runner builds the `iosArm64TestBinaries` output, executes its exact
 Kotlin/Native binary inside a temporary signed app on the iPhone, and converts
