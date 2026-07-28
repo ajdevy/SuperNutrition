@@ -99,7 +99,7 @@ print(files[0] if files else "")
 PY
 )"
 test -n "$fixture_result" || {
-  printf 'iosArm64 normalization fixture XML is missing; run :platform:photo-ios:iosArm64Test first\n' >&2
+  printf 'iosArm64 normalization fixture XML is missing; run scripts/run-physical-ios-fixtures.sh first\n' >&2
   exit 1
 }
 
@@ -234,7 +234,7 @@ test_count=$test_count
 passed=$passed
 failed=$failed
 skipped=$skipped
-fixture_task_version=$(toml_string "iosArm64Test-gradle-$gradle_version")
+fixture_task_version=$(toml_string "iosArm64TestBinaries-devicectl-gradle-$gradle_version")
 fixture_test_result=$(toml_string "$fixture_result")
 fixture_test_count=$fixture_test_count
 fixture_failures=$fixture_failures

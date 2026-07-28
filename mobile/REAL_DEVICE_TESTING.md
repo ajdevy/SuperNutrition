@@ -103,10 +103,10 @@ requires the fixture XML as well as the physical xcresult, so a UI-only run
 cannot accidentally close the normalization gap:
 
 ```bash
-./mobile/gradlew -p mobile :platform:photo-ios:iosArm64Test \
-  -Psupernutrition.hostSlice=sharedKit \
-  -Psupernutrition.enableIosDeviceTarget=true \
-  --dependency-verification=strict --no-configuration-cache
+APPLE_TEAM_ID="<local-team-id>" \
+IOS_CODE_SIGN_IDENTITY="Apple Development: <name> (<certificate-id>)" \
+IOS_UDID="<physical-iphone-udid>" \
+  scripts/run-physical-ios-fixtures.sh
 
 xcodebuild test -quiet \
   -project mobile/apps/iosApp/SuperNutritionUIAcceptance.xcodeproj \
@@ -127,9 +127,12 @@ IOS_UDID=<physical-iphone-udid> \
   scripts/emit-physical-ios-evidence.sh "$RUNNER_TEMP/supernutrition-ios-evidence"
 ```
 
-The emitter rejects simulator UDIDs, requires a passing physical xcresult,
-passing `iosArm64Test` normalization XML, `Debug-iphoneos` app, and `iosArm64`
-framework, and binds their paths and counts with the clean commit, device
+The runner builds the `iosArm64TestBinaries` output, executes its exact
+Kotlin/Native binary inside a temporary signed app on the iPhone, and converts
+the TeamCity stream into the `iosArm64Test` normalization XML expected by the
+evidence schema. The emitter rejects simulator UDIDs, requires a passing
+physical xcresult, passing binary-bound normalization XML, `Debug-iphoneos`
+app, and `iosArm64` framework, and binds their paths and counts with the clean commit, device
 line, Xcode/Gradle versions, fixture/policy digests, and UTC execution time.
 Dirty output is explicitly `local-only` and cannot satisfy activation.
 
