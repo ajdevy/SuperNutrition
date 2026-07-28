@@ -1,0 +1,27 @@
+# One pinned Detekt 2.x rule source is shared by every mobile module.
+# The ktlint-compatible formatting rules are provided by the wrapper dependency
+# declared in build-logic; autocorrect remains opt-in through qualityFormat.
+config:
+  validation: true
+
+ktlint:
+  active: true
+
+style:
+  MagicNumber:
+    active: false
+  ReturnCount:
+    active: false
+  NewLineAtEndOfFile:
+    active: true
+
+naming:
+  FunctionNaming:
+    ignoreAnnotated:
+      - Composable
+
+comments:
+  UndocumentedPublicClass:
+    active: false
+  UndocumentedPublicFunction:
+    active: false

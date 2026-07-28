@@ -35,7 +35,7 @@ Use the vendored `kotlin-multiplatform-developer` for bounded Kotlin Multiplatfo
 - shared contracts and Kotlin models;
 - common state machines and orchestration;
 - platform `actual` adapters;
-- Ktor remote clients;
+- Ktor/Ktorfit remote clients;
 - SQLDelight-backed KMP repositories;
 - Koin module definitions;
 - common and platform tests.
@@ -50,7 +50,7 @@ Do not ask it to create the whole application in one invocation. One invocation 
 | Shared UI | Compose Multiplatform for product screens on Android and iOS |
 | Native UI | Only camera/photo bridges and platform hosting surfaces |
 | Navigation | Decompose 3.5.0 for lifecycle and screen boundaries; photo workflow remains one reducer |
-| Networking | Ktor 3.5.1; OkHttp engine on Android and Darwin engine on iOS |
+| Networking | Ktor 3.5.1 transport/client engines with Ktorfit 2.7.4 typed generated APIs; OkHttp engine on Android and Darwin engine on iOS |
 | Persistence | SQLDelight 2.3.2 for nutrition catalog and provenance |
 | Remote data source | Yes only in the remote inference story/module |
 | Local inference data source | A platform service/engine adapter, not a repository pretending a model is remote data |
@@ -93,7 +93,7 @@ The following overrides address assumptions in the generic vendored prompt:
   and route policy come from one immutable `ConfigurationSnapshot` for the
   attempt; a catalog choice never selects a processing region.
 - System-managed models can be policy-disabled but are never described as app-rollback-capable.
-- `domain` is pure KMP: no Android, Apple framework, Compose, Koin, Ktor, or SQLDelight dependency.
+- `domain` is pure KMP: no Android, Apple framework, Compose, Koin, Ktor, Ktorfit, or SQLDelight dependency.
 - Production source sets never depend on `testing` modules; reusable fixtures and hosts are test-only dependencies.
 - Module build files use convention plugins and catalog aliases. Agents do not add repositories, literal versions, or duplicate SDK/compiler settings.
 - Host quality tasks must leave the worktree unchanged. Agents do not enable Detekt autocorrect or formatting writes in checks or CI.
@@ -268,7 +268,7 @@ allowed path shown; no invocation may absorb another row.
 | 1 | `mobile-build-policy` — paths in 7.0b | pinned tuple, conventions, locks, TestKit proof, host task topology |
 | 2 | `mobile-quality-policy` — `mobile/config/**` | schema-valid nonempty bootstrap inventories and policy manifests |
 | 3 | `mobile-ui-acceptance-policy` — `mobile/.maestro/**` | bootstrap-only cross-platform launch/DI smoke flow and locator dictionaries |
-| 4 | module `mobile/testing/scaffold-probe/**` | common/Android/iOS compile-and-test probe for Koin, Decompose, Ktor engines, SQLDelight plugin/runtime, serialization, coroutines, and the concrete bootstrap-shell robot; no production API |
+| 4 | module `mobile/testing/scaffold-probe/**` | common/Android/iOS compile-and-test probe for Koin, Decompose, Ktor/Ktorfit clients and engines, SQLDelight plugin/runtime, serialization, coroutines, and the concrete bootstrap-shell robot; no production API |
 | 5 | module `mobile/testing/compose-support/**` | v2 robot DSL/host/synchronization tests with nonzero JVM, Android-device, and iOS-simulator probe IDs |
 | 6 | platform host `mobile/apps/sharedKit/**` | idempotent Koin bootstrap, KMP framework export/link, and Swift bridge tests |
 | 7 | platform host `mobile/apps/androidApp/**` | thin Android host, fake-only non-distributable acceptance app, launch/DI/release-composition smoke, `connectedAndroidTest` |
@@ -282,7 +282,7 @@ The story-level evidence matrix has exactly one owning invocation per proof:
 | Kotlin/Compose/Gradle/AGP/JDK tuple, repository policy, locks, Detekt, Kover, configuration-cache store/reuse | `mobile-build-policy` |
 | Complete module/source/evidence inventories, `bootstrap` UI profile, and stability/quality policy | `mobile-quality-policy` |
 | Cross-platform non-product bootstrap launch/DI smoke flow | `mobile-ui-acceptance-policy` |
-| Common, Android, and iOS KMP compilation with Koin, Decompose, Ktor, SQLDelight, and the bootstrap-shell robot | `mobile/testing/scaffold-probe` |
+| Common, Android, and iOS KMP compilation with Koin, Decompose, Ktor/Ktorfit, SQLDelight, and the bootstrap-shell robot | `mobile/testing/scaffold-probe` |
 | Compose v2 robot execution substrate on JVM, Android device, and iOS simulator | `mobile/testing/compose-support` |
 | iOS framework export/link and native bootstrap bridge | `mobile/apps/sharedKit` |
 | Android app/package/device and non-distributable acceptance evidence | `mobile/apps/androidApp` |
@@ -320,7 +320,7 @@ Use kotlin-multiplatform-developer.
 Owned slice: mobile/domain/inference and its own tests only.
 Obey AD-1, AD-2, AD-4, AD-8, AD-9, AD-11, AD-14, AD-17, AD-21, AD-25, AD-28.
 Create contract v1 immutable Kotlin types, engine port, capability states, candidate evidence, typed failures, canonical identifiers, versioned telemetry schema, and canonical Engine fixtures.
-Do not add Ktor, SQLDelight, camera APIs, provider schemas, or nutrition values.
+Do not add Ktor, Ktorfit, SQLDelight, camera APIs, provider schemas, or nutrition values.
 
 Invocation B, only after Invocation A is committed:
 Use kotlin-multiplatform-developer.
@@ -361,13 +361,19 @@ Include cancellation, cleanup, preprocessing parity, incompatible-model, resourc
 Use kotlin-multiplatform-developer.
 Owned slice: mobile/inference/remote and its common/platform tests.
 Obey AD-2, AD-3, AD-6, AD-8, AD-9, AD-11, AD-13, AD-14, AD-17, AD-18, AD-20, AD-21.
-Implement Ktor contract-v1 upload to the first-party gateway only.
+Implement the typed Ktorfit contract-v1 API over Ktor for first-party gateway
+upload only. Ktorfit-generated code must know only the mobile gateway contract;
+Ktor remains responsible for transport, platform engines, and request pipeline
+configuration.
 Require preprocessing to strip EXIF, GPS, and non-essential metadata before
 creating the scrubbed-payload digest. Bind the consent receipt to that digest,
 purpose, market jurisdiction, processing-region/provider policy, retention
 version, configuration version, and transfer state.
 Use Android OkHttp and iOS Darwin engines through core-network factories.
-Use MockEngine tests for at-most-once upload, the three transfer/cancellation states, timeout, redaction, token scope/expiry, replay, rotation/revocation, environment binding, version mismatch, rate limit, deletion request, and malformed responses.
+Use Ktor MockEngine and Ktorfit generated-client tests for at-most-once upload,
+the three transfer/cancellation states, timeout, redaction, token scope/expiry,
+replay, rotation/revocation, environment binding, version mismatch, rate limit,
+deletion request, and malformed responses.
 Do not add provider credentials or provider-specific mobile schemas.
 ```
 

@@ -1,0 +1,9 @@
+# Role principals are intentionally distinct. The private-repository hosting
+# gate must provision and verify these teams before ownership enforcement is
+# claimed; checked-in CODEOWNERS is configuration, not enforcement evidence.
+/mobile/ @flexsent-labs/supernutrition-mobile
+/web/landing/ @flexsent-labs/supernutrition-web
+/backend/mobile-api/ @flexsent-labs/supernutrition-backend
+/contracts/ @flexsent-labs/supernutrition-contracts
+/.github/ @flexsent-labs/supernutrition-policy
+/scripts/ @flexsent-labs/supernutrition-policy

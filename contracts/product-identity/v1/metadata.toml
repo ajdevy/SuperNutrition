@@ -1,0 +1,27 @@
+schema = "supernutrition.product-identity-metadata.v1"
+schema_version = 1
+contract_release = "product-identity/v1"
+source_manifest = "mobile/config/product-identity.toml"
+
+canonical_name = "SuperNutrition"
+installed_display_name = "SuperNutrition"
+launcher_name = "SuperNutrition"
+in_app_name = "SuperNutrition"
+accessibility_name = "SuperNutrition"
+
+[web_landing]
+display_name = "SuperNutrition"
+meta_title = "SuperNutrition"
+accessibility_name = "SuperNutrition"
+
+[store.apple]
+listing_title = "SuperNutrition AI nutritionist"
+
+[store.google]
+listing_title = "SuperNutrition AI nutritionist"
+
+[technical]
+android_application_id = "com.supernutrition.android"
+ios_bundle_identifier = "com.supernutrition.ios"
+acceptance_android_application_id = "com.supernutrition.android.uiAcceptance"
+acceptance_ios_bundle_identifier = "com.supernutrition.ios.uiacceptance"

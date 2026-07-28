@@ -27,8 +27,12 @@ updated: 2026-07-26
   concrete repositories.
 - SQLDelight is the planned shared database mechanism for versioned nutrition
   data and future local correction state.
-- Ktor is the planned common remote client; platform engines are provided by the
-  application composition root.
+- Ktor 3.5.1 is the planned common HTTP transport/client-engine layer and Ktorfit
+  2.7.4 is the initial compatibility pin for typed, generated KMP endpoint APIs.
+  Ktorfit declarations are isolated to the remote adapter and know only the
+  first-party contract; platform engines are provided by the application
+  composition root. Any Ktorfit/KSP upgrade is a dedicated compatibility change
+  with common, Android, and iOS compile proof.
 - Koin is the selected DI framework for implementation consistency.
 - Decompose may own component lifecycle and true screen navigation. Capture,
   analyzing, consent, confirmation, result, and retry are one Photo Analysis
