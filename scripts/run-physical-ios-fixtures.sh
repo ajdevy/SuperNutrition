@@ -8,6 +8,7 @@ team_id="${IOS_DEVELOPMENT_TEAM:-${APPLE_TEAM_ID:-}}"
 code_sign_identity="${IOS_CODE_SIGN_IDENTITY:-Apple Development}"
 bundle_id="${IOS_FIXTURE_BUNDLE_ID:-}"
 provisioning_profile="${IOS_PROVISIONING_PROFILE:-}"
+derived_data_root="${IOS_DERIVED_DATA_ROOT:-$repo_root/mobile/apps/iosApp/build/DerivedData}"
 results_root="${IOS_ARM64_TEST_RESULTS_ROOT:-$repo_root/mobile/platform/photo-ios/build/test-results/iosArm64Test}"
 fixture_binary="$repo_root/mobile/platform/photo-ios/build/bin/iosArm64/debugTest/test.kexe"
 
