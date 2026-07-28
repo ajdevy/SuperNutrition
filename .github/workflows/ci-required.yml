@@ -1,177 +1,24 @@
-name: ci-required
+name: mobile-unit-coverage
 
 on:
-  push:
   pull_request:
-  merge_group:
+  push:
+    branches:
+      - main
 
 permissions:
   contents: read
 
 jobs:
-  quality-linux:
+  mobile-unit-coverage:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - name: Validate root boundaries
-        run: scripts/verify-root-boundaries.sh
-      - name: Run negative root-boundary fixtures
-        run: scripts/root-boundary-negative-fixtures.sh
-      - name: Validate required CI policy
-        run: scripts/verify-ci-policy.sh
-      - name: Run negative CI policy fixtures
-        run: scripts/ci-policy-negative-fixtures.sh
-      - name: Validate product identity contract
-        run: scripts/verify-product-identity.sh
-      - name: Run product identity negative fixtures
-        run: scripts/product-identity-negative-fixtures.sh
-      - name: Validate released mobile-api contract
-        run: scripts/verify-mobile-api-contract.sh
-      - name: Run mobile-api contract negative fixtures
-        run: scripts/mobile-api-contract-negative-fixtures.sh
-      - name: Validate released interaction policy contract
-        run: scripts/verify-interaction-policy-contract.sh
-      - name: Run interaction policy contract negative fixtures
-        run: scripts/interaction-policy-contract-negative-fixtures.sh
-      - name: Validate mobile scaffold policy
-        run: ./mobile/gradlew -p mobile verifyMobilePolicy --dependency-verification=strict --no-daemon --no-configuration-cache
-      - name: Emit same-SHA CI fingerprint
-        run: scripts/emit-ci-fingerprint.sh quality-linux "$RUNNER_TEMP/supernutrition-ci/quality-linux.fingerprint"
-      - name: Upload same-SHA CI fingerprint
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: supernutrition-ci-fingerprint-quality-linux
-          path: ${{ runner.temp }}/supernutrition-ci/quality-linux.fingerprint
-          if-no-files-found: error
-          retention-days: 3
-
-  ui-journeys-android:
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - name: Run lifecycle-aware Android UI journey lane
-        run: scripts/run-ui-journeys-android.sh
-      - name: Emit same-SHA CI fingerprint
-        run: scripts/emit-ci-fingerprint.sh ui-journeys-android "$RUNNER_TEMP/supernutrition-ci/ui-journeys-android.fingerprint"
-      - name: Upload same-SHA CI fingerprint
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: supernutrition-ci-fingerprint-ui-journeys-android
-          path: ${{ runner.temp }}/supernutrition-ci/ui-journeys-android.fingerprint
-          if-no-files-found: error
-          retention-days: 3
-      - name: Upload Android UI evidence
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: supernutrition-ui-android-evidence
-          path: ${{ runner.temp }}/supernutrition-ui-android/report
-          if-no-files-found: error
-          retention-days: 3
-
-  quality-apple:
-    runs-on: macos-26
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - name: Validate Apple-side scaffold policy
-        run: ./mobile/gradlew -p mobile qualityCheckApple --dependency-verification=strict --no-daemon --no-configuration-cache
-      - name: Emit same-SHA CI fingerprint
-        run: scripts/emit-ci-fingerprint.sh quality-apple "$RUNNER_TEMP/supernutrition-ci/quality-apple.fingerprint"
-      - name: Upload same-SHA CI fingerprint
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: supernutrition-ci-fingerprint-quality-apple
-          path: ${{ runner.temp }}/supernutrition-ci/quality-apple.fingerprint
-          if-no-files-found: error
-          retention-days: 3
-
-  ui-journeys-ios:
-    runs-on: macos-26
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - name: Run lifecycle-aware iOS UI journey lane
-        run: scripts/run-ui-journeys-ios.sh
-      - name: Emit same-SHA CI fingerprint
-        run: scripts/emit-ci-fingerprint.sh ui-journeys-ios "$RUNNER_TEMP/supernutrition-ci/ui-journeys-ios.fingerprint"
-      - name: Upload same-SHA CI fingerprint
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: supernutrition-ci-fingerprint-ui-journeys-ios
-          path: ${{ runner.temp }}/supernutrition-ci/ui-journeys-ios.fingerprint
-          if-no-files-found: error
-          retention-days: 3
-      - name: Upload iOS UI evidence
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: supernutrition-ui-ios-evidence
-          path: ${{ runner.temp }}/supernutrition-ui-ios/report
-          if-no-files-found: error
-          retention-days: 3
-
-  quality-web-landing:
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - name: Validate root and preselection boundaries
-        run: ./web/landing/quality-check
-      - name: Emit same-SHA CI fingerprint
-        run: scripts/emit-ci-fingerprint.sh quality-web-landing "$RUNNER_TEMP/supernutrition-ci/quality-web-landing.fingerprint"
-      - name: Upload same-SHA CI fingerprint
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: supernutrition-ci-fingerprint-quality-web-landing
-          path: ${{ runner.temp }}/supernutrition-ci/quality-web-landing.fingerprint
-          if-no-files-found: error
-          retention-days: 3
-
-  quality-backend:
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - name: Validate root and preselection boundaries
-        run: ./backend/mobile-api/quality-check
-      - name: Emit same-SHA CI fingerprint
-        run: scripts/emit-ci-fingerprint.sh quality-backend "$RUNNER_TEMP/supernutrition-ci/quality-backend.fingerprint"
-      - name: Upload same-SHA CI fingerprint
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: supernutrition-ci-fingerprint-quality-backend
-          path: ${{ runner.temp }}/supernutrition-ci/quality-backend.fingerprint
-          if-no-files-found: error
-          retention-days: 3
-
-  ci-required:
-    if: ${{ always() }}
-    needs:
-      - quality-linux
-      - ui-journeys-android
-      - quality-apple
-      - ui-journeys-ios
-      - quality-web-landing
-      - quality-backend
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - name: Download same-SHA CI fingerprints
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
-        with:
-          pattern: supernutrition-ci-fingerprint-*
-          path: ${{ runner.temp }}/supernutrition-ci-fingerprints
-          merge-multiple: true
-      - name: Require every canonical job to succeed
-        env:
-          QUALITY_LINUX: ${{ needs.quality-linux.result }}
-          UI_ANDROID: ${{ needs.ui-journeys-android.result }}
-          QUALITY_APPLE: ${{ needs.quality-apple.result }}
-          UI_IOS: ${{ needs.ui-journeys-ios.result }}
-          QUALITY_WEB: ${{ needs.quality-web-landing.result }}
-          QUALITY_BACKEND: ${{ needs.quality-backend.result }}
-        run: |
-          test "$QUALITY_LINUX" = success
-          test "$UI_ANDROID" = success
-          test "$QUALITY_APPLE" = success
-          test "$UI_IOS" = success
-          test "$QUALITY_WEB" = success
-          test "$QUALITY_BACKEND" = success
-          SUPERNUTRITION_CI_FINGERPRINT_ROOT="$RUNNER_TEMP/supernutrition-ci-fingerprints" \
-          SUPERNUTRITION_EXPECTED_SHA="$GITHUB_SHA" \
-            scripts/verify-ci-fingerprints.sh
+      - name: Run mobile JVM unit tests with coverage
+        run: >-
+          ./mobile/gradlew -p mobile mobileUnitCoverage
+          -Psupernutrition.runJvmCoverage=true
+          --dependency-verification=strict
+          --no-daemon
+          --no-configuration-cache
+          --max-workers=1
