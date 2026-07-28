@@ -11,7 +11,7 @@ standard_serving_shape = ["unit", "amount"]
 standard_serving_requires = "canonical-item-confirmed"
 
 [provenance]
-values = ["bundled-safe-default", "global-release", "environment", "catalog-confirmed"]
+values = ["bundled-safe-default", "global-release", "catalog-confirmed"]
 required_for_every_default = true
 
 [lifecycle]

@@ -36,6 +36,11 @@ class QualityPlugin : Plugin<Project> {
         val formattingRequested = project.gradle.startParameter.taskNames.any { taskName ->
             taskName == "qualityFormat" || taskName.endsWith(":qualityFormat")
         }
+        val explicitJvmCoverageRequested = project.providers
+            .gradleProperty("supernutrition.runJvmCoverage")
+            .map(String::toBoolean)
+            .orElse(false)
+            .get()
         val qualityCheckJvmAndroid = project.tasks.register("qualityCheckJvmAndroid") {
             group = "verification"
             description = "Runs the read-only JVM/Android-host quality gate."
@@ -68,6 +73,28 @@ class QualityPlugin : Plugin<Project> {
             }
         }
 
+        val mobileUnitCoverage = project.tasks.register("mobileUnitCoverage") {
+            group = "verification"
+            description = "Runs mobile JVM unit tests and enforces the temporary coverage gate."
+            dependsOn(qualityCoverageJvm)
+            doFirst {
+                require(explicitJvmCoverageRequested) {
+                    "mobileUnitCoverage requires -Psupernutrition.runJvmCoverage=true"
+                }
+            }
+        }
+        val mobileUnitTests = project.tasks.register("mobileUnitTests") {
+            group = "verification"
+            description = "Runs every declared mobile JVM unit-test task without emitting a coverage claim."
+        }
+        project.gradle.projectsEvaluated {
+            val jvmUnitTestTasks = project.subprojects.flatMap { subproject ->
+                subproject.tasks.matching { it.name == "jvmTest" }.toList()
+            }
+            mobileUnitTests.configure { dependsOn(jvmUnitTestTasks) }
+            mobileUnitCoverage.configure { dependsOn(jvmUnitTestTasks) }
+        }
+
         val qualityFormat = project.tasks.register("qualityFormat") {
             group = "formatting"
             description = "The only explicitly mutating formatting entrypoint."
@@ -97,7 +124,13 @@ class QualityPlugin : Plugin<Project> {
             }
         }
 
-        configureJvmCoverageAggregation(project, mobileRoot, qualityCoverageJvm)
+        configureJvmCoverageAggregation(
+            project,
+            mobileRoot,
+            qualityCoverageJvm,
+            mobileUnitCoverage,
+            explicitJvmCoverageRequested,
+        )
 
         qualityCheckJvmAndroid.configure { dependsOn(qualityCoverageJvm) }
     }
@@ -133,6 +166,8 @@ class QualityPlugin : Plugin<Project> {
         rootProject: Project,
         mobileRoot: Path,
         qualityCoverageJvm: org.gradle.api.tasks.TaskProvider<Task>,
+        mobileUnitCoverage: org.gradle.api.tasks.TaskProvider<Task>,
+        localCoverageRequested: Boolean,
     ) {
         // Host slices intentionally include only the projects needed to build
         // a local framework. Do not resolve absent inventory entries through
@@ -173,11 +208,33 @@ class QualityPlugin : Plugin<Project> {
             }
         }
 
+        mobileUnitCoverage.configure {
+            dependsOn(productionProjects.map { "$it:koverXmlReportJvm" })
+            inputs.files(lifecycleFile, coverageFile, reportFiles)
+            doLast {
+                require(localCoverageRequested) {
+                    "mobileUnitCoverage requires -Psupernutrition.runJvmCoverage=true"
+                }
+                require(unresolvedInventoryProjects.isEmpty()) {
+                    "Local JVM coverage inventory contains unresolved projects: " +
+                        unresolvedInventoryProjects.joinToString()
+                }
+                val result = JvmCoverageVerifier.verify(reportRoot, inventoryProjects)
+                logger.lifecycle(
+                    "JVM host coverage (local-only): line=${formatCoverage(result.linePercent)}%, " +
+                        "branch=${formatCoverage(result.branchPercent)}% across " +
+                        "${result.moduleCount} production modules; no active quality claim emitted.",
+                )
+            }
+        }
+
         productionProjects.forEach { path ->
             rootProject.findProject(path)?.tasks
                 ?.matching { it.name == "koverXmlReportJvm" }
                 ?.configureEach {
-                    onlyIf { coverageClaimAllowed(mobileRoot) }
+                    onlyIf {
+                        lifecycle(mobileRoot) == "active" || localCoverageRequested
+                    }
                     inputs.files(lifecycleFile, coverageFile)
                 }
         }

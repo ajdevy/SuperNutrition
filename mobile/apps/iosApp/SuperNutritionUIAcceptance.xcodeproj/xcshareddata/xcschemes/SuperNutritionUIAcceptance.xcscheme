@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "A50000010000000000000001"
-               BuildableName = "SuperNutrition.app"
+               BuildableName = "SuperNutritionUIAcceptance.app"
                BlueprintName = "SuperNutritionUIAcceptance"
                ReferencedContainer = "container:SuperNutritionUIAcceptance.xcodeproj">
             </BuildableReference>
@@ -54,7 +54,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A50000010000000000000001"
-            BuildableName = "SuperNutrition.app"
+            BuildableName = "SuperNutritionUIAcceptance.app"
             BlueprintName = "SuperNutritionUIAcceptance"
             ReferencedContainer = "container:SuperNutritionUIAcceptance.xcodeproj">
          </BuildableReference>
@@ -71,7 +71,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A50000010000000000000001"
-            BuildableName = "SuperNutrition.app"
+            BuildableName = "SuperNutritionUIAcceptance.app"
             BlueprintName = "SuperNutritionUIAcceptance"
             ReferencedContainer = "container:SuperNutritionUIAcceptance.xcodeproj">
          </BuildableReference>

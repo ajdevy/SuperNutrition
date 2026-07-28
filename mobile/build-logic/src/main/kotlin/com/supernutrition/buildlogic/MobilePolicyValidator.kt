@@ -142,6 +142,19 @@ object MobilePolicyValidator {
         require(identity.contains("store_listing_title = \"SuperNutrition AI nutritionist\"")) {
             "Store listing title must be SuperNutrition AI nutritionist"
         }
+        val forbiddenVisibleVariants = identity.substringAfter("[forbidden_visible_variants]", "")
+        require(extractStringList(forbiddenVisibleVariants, "values").toSet() ==
+            setOf("SuperNutrition AI nutritionist", "AI nutritionist")) {
+            "Product identity must declare the closed forbidden visible variants"
+        }
+        require(extractStringList(forbiddenVisibleVariants, "applies_to").toSet() == setOf(
+            "installed_display_name",
+            "launcher_name",
+            "in_app_name",
+            "accessibility_name",
+        )) {
+            "Product identity forbidden variants must cover every visible identity field"
+        }
         require(identity.contains("acceptance_android_application_id = \"com.supernutrition.android.uiAcceptance\"")) {
             "Android acceptance identity must remain unique"
         }
@@ -149,11 +162,15 @@ object MobilePolicyValidator {
             "iOS acceptance identity must remain unique"
         }
         val androidStrings = mobileRoot.resolve("apps/androidApp/src/main/res/values/strings.xml")
-        require(Files.isRegularFile(androidStrings) && Files.readString(androidStrings).contains(">SuperNutrition<")) {
+        require(Files.isRegularFile(androidStrings) && Regex(
+            "<string\\s+name=\"app_name\"\\s*>SuperNutrition</string>",
+        ).containsMatchIn(Files.readString(androidStrings))) {
             "Android visible identity must match the canonical manifest"
         }
         val iosInfo = mobileRoot.resolve("apps/iosApp/Info.plist")
-        require(Files.isRegularFile(iosInfo) && Files.readString(iosInfo).contains("<string>SuperNutrition</string>")) {
+        require(Files.isRegularFile(iosInfo) && Regex(
+            "<key>CFBundleDisplayName</key>\\s*<string>SuperNutrition</string>",
+        ).containsMatchIn(Files.readString(iosInfo))) {
             "iOS visible identity must match the canonical manifest"
         }
 
@@ -166,6 +183,23 @@ object MobilePolicyValidator {
         }
         require(interaction.contains("remote_upload = \"never-preselected\"")) {
             "Remote consent must never be a defaultable interaction field"
+        }
+        val forbiddenDefaults = extractStringList(
+            interaction.substringAfter("[forbidden_defaults]", ""),
+            "fields",
+        ).toSet()
+        require(forbiddenDefaults == setOf(
+            "foodIdentity",
+            "preparation",
+            "oil",
+            "sauce",
+            "recipe",
+            "remoteConsent",
+            "providerRouting",
+            "medicalConclusion",
+            "allergenConclusion",
+        )) {
+            "Interaction policy forbidden-default inventory must remain closed"
         }
 
         validateManifestGraph(mobileRoot, files)
@@ -515,8 +549,12 @@ object MobilePolicyValidator {
                 require(extractStringList(block, "decision_ids").isNotEmpty()) {
                     "$blockName must bind decision IDs"
                 }
-                require(!extractString(block, "default_provenance").isNullOrBlank()) {
-                    "$blockName must declare default provenance"
+                require(extractString(block, "default_provenance") in setOf(
+                    "bundled-safe-default",
+                    "global-release",
+                    "catalog-confirmed",
+                )) {
+                    "$blockName must use the released interaction-policy provenance vocabulary"
                 }
                 require(!extractString(block, "override_path").isNullOrBlank()) {
                     "$blockName must declare an override path"
@@ -528,8 +566,18 @@ object MobilePolicyValidator {
                 require(resolvedDigest == "pending" || resolvedDigest?.matches(DIGEST_PATTERN) == true) {
                     "$blockName must bind a resolved-value digest or explicit pending state"
                 }
-                require(extractStringList(block, "forbidden_default_tests").isNotEmpty()) {
-                    "$blockName must declare forbidden-default tests"
+                require(extractStringList(block, "forbidden_default_tests").toSet() == setOf(
+                    "remote-consent",
+                    "uncertain-food-identity",
+                    "preparation",
+                    "oil",
+                    "sauce",
+                    "recipe",
+                    "provider-routing",
+                    "medical-conclusion",
+                    "allergen-conclusion",
+                )) {
+                    "$blockName must declare the complete forbidden-default test inventory"
                 }
             }
         }

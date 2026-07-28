@@ -1,0 +1,10 @@
+schema = "supernutrition.product-identity-compatibility.v1"
+contract_id = "product-identity"
+release = "v1"
+digest = "bd2e3f4d73c70f28afd9c27cb9d286f11949fe0e142477ec4e9b86fa51377070"
+source_manifest = "mobile/config/product-identity.toml"
+
+[compatibility]
+breaking_change_policy = "new-major-release"
+visible_name = "SuperNutrition"
+store_listing_title = "SuperNutrition AI nutritionist"

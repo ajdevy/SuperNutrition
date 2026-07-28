@@ -17,6 +17,13 @@ requires = "canonical-item-confirmed"
 atomic = true
 mutates_snapshot = false
 
+[[case]]
+id = "catalog-proposal-after-confirmation"
+field = "catalogProposal"
+source = "confirmedCatalogServing"
+requires = "canonical-item-confirmed"
+mutates_snapshot = false
+
 [[forbidden_case]]
 id = "remote-consent-not-defaultable"
 field = "remoteConsent"
@@ -25,4 +32,39 @@ expected = "rejected"
 [[forbidden_case]]
 id = "uncertain-food-not-defaultable"
 field = "foodIdentity"
+expected = "rejected"
+
+[[forbidden_case]]
+id = "preparation-not-defaultable"
+field = "preparation"
+expected = "rejected"
+
+[[forbidden_case]]
+id = "oil-not-defaultable"
+field = "oil"
+expected = "rejected"
+
+[[forbidden_case]]
+id = "sauce-not-defaultable"
+field = "sauce"
+expected = "rejected"
+
+[[forbidden_case]]
+id = "recipe-not-defaultable"
+field = "recipe"
+expected = "rejected"
+
+[[forbidden_case]]
+id = "provider-routing-not-defaultable"
+field = "providerRouting"
+expected = "rejected"
+
+[[forbidden_case]]
+id = "medical-conclusion-not-defaultable"
+field = "medicalConclusion"
+expected = "rejected"
+
+[[forbidden_case]]
+id = "allergen-conclusion-not-defaultable"
+field = "allergenConclusion"
 expected = "rejected"

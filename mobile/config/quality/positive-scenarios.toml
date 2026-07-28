@@ -31,8 +31,18 @@ accessibility_contract_ids = ["photo.android.accessibility", "photo.ios.accessib
 locale_ids = ["en-US"]
 proposal_ids = ["proposal-capture-default-locale"]
 decision_ids = ["decision-capture-default-locale"]
-default_provenance = "immutableConfigurationSnapshot"
+default_provenance = "bundled-safe-default"
 override_path = "inline-edit"
 undo_path = "session-undo"
 resolved_value_digest = "pending"
-forbidden_default_tests = ["remote-consent", "provider-routing", "uncertain-food-identity"]
+forbidden_default_tests = [
+  "remote-consent",
+  "uncertain-food-identity",
+  "preparation",
+  "oil",
+  "sauce",
+  "recipe",
+  "provider-routing",
+  "medical-conclusion",
+  "allergen-conclusion",
+]

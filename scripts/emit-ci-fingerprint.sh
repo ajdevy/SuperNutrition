@@ -96,8 +96,12 @@ contract_catalog_digest="$(digest_paths \
   contracts/interaction-policy/v1/compatibility.toml \
   contracts/interaction-policy/v1/fixtures/defaults.toml)"
 product_identity_digest="$(digest_paths \
-  contracts/product-identity/v1/metadata.toml \
-  mobile/config/product-identity.toml)"
+	contracts/product-identity/v1/schema.toml \
+	contracts/product-identity/v1/compatibility.toml \
+	contracts/product-identity/v1/fixtures/identities.toml \
+	contracts/product-identity/v1/RELEASE.md \
+	contracts/product-identity/v1/metadata.toml \
+	mobile/config/product-identity.toml)"
 inventory_digest="$(digest_paths \
   mobile/config/architecture/module-boundaries.toml \
   mobile/config/quality/module-matrix.toml \

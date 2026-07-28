@@ -59,7 +59,7 @@ class InteractionDefaultsTest {
             ),
         )
         assertEquals("en-US", locale.value)
-        assertEquals(DefaultProvenance.ENVIRONMENT, locale.provenance)
+        assertEquals(DefaultProvenance.BUNDLED_SAFE_DEFAULT, locale.provenance)
 
         val measurement = assertIs<DefaultResolution.Accepted>(
             resolver.resolve(
@@ -67,9 +67,14 @@ class InteractionDefaultsTest {
             ),
         )
         assertEquals("metric", measurement.value)
+        assertEquals(DefaultProvenance.BUNDLED_SAFE_DEFAULT, measurement.provenance)
 
         val missingCatalog = resolver.resolve(
-            DefaultResolutionInput(DefaultableField.CATALOG_PROPOSAL, snapshot),
+            DefaultResolutionInput(
+                field = DefaultableField.CATALOG_PROPOSAL,
+                snapshot = snapshot,
+                canonicalItemConfirmed = true,
+            ),
         )
         assertEquals(
             RejectionReason.MISSING_CATALOG_PROPOSAL,
@@ -81,6 +86,7 @@ class InteractionDefaultsTest {
                 DefaultResolutionInput(
                     field = DefaultableField.CATALOG_PROPOSAL,
                     snapshot = snapshot,
+                    canonicalItemConfirmed = true,
                     catalogProposal = CatalogServingProposal(
                         canonicalItemId = "food:apple",
                         serving = AtomicServing("g", "100"),
@@ -102,6 +108,26 @@ class InteractionDefaultsTest {
         assertEquals(
             RejectionReason.MISSING_CATALOG_PROPOSAL,
             assertIs<DefaultResolution.Rejected>(missingServing).reason,
+        )
+    }
+
+    @Test
+    fun `catalog proposal is rejected until canonical item is confirmed`() {
+        val resolution = DefaultResolver().resolve(
+            DefaultResolutionInput(
+                field = DefaultableField.CATALOG_PROPOSAL,
+                snapshot = snapshot,
+                catalogProposal = CatalogServingProposal(
+                    canonicalItemId = "food:apple",
+                    serving = AtomicServing("g", "100"),
+                    sourceId = "catalog-v1",
+                ),
+            ),
+        )
+
+        assertEquals(
+            RejectionReason.CATALOG_ITEM_NOT_CONFIRMED,
+            assertIs<DefaultResolution.Rejected>(resolution).reason,
         )
     }
 
@@ -158,7 +184,7 @@ class InteractionDefaultsTest {
             proposalId = "proposal-1",
             field = DefaultableField.MEASUREMENT_SYSTEM,
             value = "metric",
-            provenance = DefaultProvenance.ENVIRONMENT,
+            provenance = DefaultProvenance.BUNDLED_SAFE_DEFAULT,
             snapshotDigest = snapshot.digest,
             policyDigest = "b".repeat(64),
             revision = 1,
@@ -173,6 +199,9 @@ class InteractionDefaultsTest {
             ledger.override(overrideProposal, "decision-2", "imperial"),
         )
         assertEquals("imperial", overridden.value)
+        assertFailsWith<IllegalArgumentException> {
+            ledger.override(overrideProposal, "decision-2", "metric")
+        }
 
         val undoProposal = overrideProposal.copy(revision = 3)
         val undone = assertIs<DefaultDecision.Undone>(
@@ -189,7 +218,7 @@ class InteractionDefaultsTest {
             proposalId = "proposal-2",
             field = DefaultableField.DEFAULT_LOCALE,
             value = "en-US",
-            provenance = DefaultProvenance.ENVIRONMENT,
+            provenance = DefaultProvenance.BUNDLED_SAFE_DEFAULT,
             snapshotDigest = snapshot.digest,
             policyDigest = "b".repeat(64),
             revision = 1,
@@ -220,7 +249,7 @@ class InteractionDefaultsTest {
             proposalId = "proposal-invalid-ops",
             field = DefaultableField.DEFAULT_LOCALE,
             value = "en-US",
-            provenance = DefaultProvenance.ENVIRONMENT,
+            provenance = DefaultProvenance.BUNDLED_SAFE_DEFAULT,
             snapshotDigest = snapshot.digest,
             policyDigest = "b".repeat(64),
             revision = 1,
@@ -239,10 +268,17 @@ class InteractionDefaultsTest {
         assertFailsWith<IllegalArgumentException> {
             ledger.accept(otherProposal, "decision-identity")
         }
+        ledger.accept(otherProposal, "foreign-decision")
+        assertFailsWith<IllegalArgumentException> {
+            ledger.undo(proposal.copy(revision = 2), "undo-foreign", "foreign-decision")
+        }
         assertFailsWith<IllegalArgumentException> {
             ledger.accept(proposal.copy(policyDigest = "c".repeat(64), revision = 2), "policy-mismatch")
         }
         assertEquals(accepted, ledger.accept(proposal, "decision-identity"))
+        assertFailsWith<IllegalArgumentException> {
+            ledger.accept(proposal.copy(revision = 2), "decision-identity")
+        }
     }
 
     @Test
@@ -251,7 +287,7 @@ class InteractionDefaultsTest {
             proposalId = "proposal-valid",
             field = DefaultableField.DEFAULT_LOCALE,
             value = "en-US",
-            provenance = DefaultProvenance.ENVIRONMENT,
+            provenance = DefaultProvenance.BUNDLED_SAFE_DEFAULT,
             snapshotDigest = snapshot.digest,
             policyDigest = "b".repeat(64),
             revision = 0,

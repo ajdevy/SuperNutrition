@@ -33,3 +33,15 @@ delivery remain separate activation work while those roots are unselected.
 The read-only identity check also reconciles the real Android application ID
 and acceptance suffix, Android visible label, iOS display name and acceptance
 bundle configurations, plus the web/backend preselection lifecycle records.
+
+The production identity is now executable as well: Android exposes a
+`production` flavor with `com.supernutrition.android`, while the acceptance
+flavor remains isolated at `com.supernutrition.android.uiAcceptance`. The iOS
+host project exposes both `SuperNutrition` (`com.supernutrition.ios`) and
+`SuperNutritionUIAcceptance` (`com.supernutrition.ios.uiacceptance`) targets.
+The product-identity contract is a versioned release with compatibility digest
+and immutable fixtures; CI fingerprints include the complete release.
+The acceptance and production iOS targets have distinct product references,
+build phases, and committed shared schemes. The local strict gate compiled
+`:apps:androidApp:assembleProductionDebug`; the canonical Linux CI job repeats
+that production-target compilation when Actions is enabled.

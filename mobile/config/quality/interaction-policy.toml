@@ -4,7 +4,7 @@ product = "mobile"
 lifecycle = "scaffold-pending"
 source_digest = "pending"
 contract_release = "contracts/interaction-policy/v1"
-contract_digest = "64f99de0fd3c109f4480e6d2c4c0aef2ef452dab6e6fc18cb011ff1a345f2a64"
+contract_digest = "39536784162e9877a46ba274215f870b3a721b04e2a222ac84a37e7f63c0935a"
 status = "pending-until-scaffold-activation"
 
 [budgets]

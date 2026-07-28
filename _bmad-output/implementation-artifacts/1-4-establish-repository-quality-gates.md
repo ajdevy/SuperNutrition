@@ -1,6 +1,6 @@
 # Story 1.4: Establish repository quality gates
 
-Status: in-progress
+Status: review
 
 ## Story
 
@@ -21,6 +21,8 @@ quality matrix with an unconditional aggregate.
 - [x] Add machine validation for the exact canonical jobs, direct aggregate
   dependencies, SHA-pinned checkout, and merge-group trigger.
 - [x] Keep mobile policy checks read-only and fail-closed.
+- [x] Exclude the zero-branch Android-native implementation from the JVM
+  denominator and bind it to explicit native-equivalent evidence.
 - [ ] Add full active-state inventory, coverage, device, and trusted-policy
   evidence before activation.
 
@@ -49,14 +51,22 @@ evidence are intentionally not claimed by this story.
   per-production-module `reportJvm.xml` aggregation. Secure report-level
   counters, duplicate/empty/missing inventory guards, Long totals, and
   configuration-cache-safe task wiring fail closed without claiming native or
-  device coverage. An active-path audit now fails closed on the empty `BRANCH`
-  denominator in `:platform:photo-android` (the earlier mixed-root audit was
-  62.80% branch coverage), so the lifecycle stays `scaffold-pending`.
+  device coverage. `:platform:photo-android` is classified as
+  `native-equivalent`, so its Android-only implementation no longer creates a
+  false zero-branch JVM denominator; its physical fixture remains a separate
+  required evidence binding.
 - Verification: `:build-logic:test verifyMobilePolicy` strict;
   `qualityCheckJvmAndroid` strict with configuration-cache reuse;
   focused JVM tests for domain, presenter, and photo-analysis; and a clean
   Kotlin compilation with the 2 GB daemon profile. Physical Android
   acceptance also passed 10/10 on `DNY-NX9 - 16`.
+- Local explicit coverage verification on the current checkout:
+  `mobileUnitCoverage -Psupernutrition.runJvmCoverage=true` passed with
+  97.91% line / 93.43% branch across five JVM production modules. This is a
+  local measurement, not trusted active-state evidence.
+- `mobileUnitTests` now runs every declared JVM unit-test task in the Linux
+  quality job, and `:apps:androidApp:assembleProductionDebug` compiles the
+  production identity flavor under strict dependency verification.
 
 ## File List
 
@@ -114,14 +124,15 @@ evidence are intentionally not claimed by this story.
 - 2026-07-28: Made the JVM host coverage denominator executable through
   per-module Kover JVM reports, with secure XML parsing, strict report-level
   counter selection, fail-closed inventory/report validation, and
-  configuration-cache-safe task actions. The Android physical-device lane
-  remains green; the active audit exposes the empty host branch denominator
-  in `:platform:photo-android`. Apple ARM64, exact Xcode, trusted ruleset, and
-  active 85% coverage evidence remain activation blockers.
+  configuration-cache-safe task actions. The previous zero-branch
+  `:platform:photo-android` mixed-root entry is now excluded as a
+  `native-equivalent` denominator with explicit physical evidence. Apple
+  ARM64, exact Xcode, trusted ruleset, and active 85% coverage evidence remain
+  activation blockers.
 - 2026-07-28: Classified the five measurable common/JVM units separately from
   platform/Compose/native-equivalent units, added fail-closed native evidence
   freshness checks, and expanded coverage tests. Temporary local active audit:
-  97.87% line / 93.09% branch across five JVM denominators; lifecycle remains
+  97.91% line / 93.43% branch across five JVM denominators; lifecycle remains
   `scaffold-pending` with all external evidence pending.
 - 2026-07-28: Added `scripts/emit-physical-android-evidence.sh`, a fail-closed
   emitter that binds clean SHA, APK/test-APK digest, fixture and policy

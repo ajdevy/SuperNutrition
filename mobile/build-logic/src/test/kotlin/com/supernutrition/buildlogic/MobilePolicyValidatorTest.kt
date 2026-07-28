@@ -117,6 +117,70 @@ class MobilePolicyValidatorTest {
     }
 
     @Test
+    fun `validator rejects a reduced forbidden-default inventory`() {
+        val root = fixtureRoot("supernutrition-policy-forbidden-defaults-test")
+        copyPolicyFixtures(root)
+        val interaction = root.resolve("config/quality/interaction-policy.toml")
+        Files.writeString(
+            interaction,
+            Files.readString(interaction).replace(
+                "  \"allergenConclusion\",\n",
+                "",
+            ),
+        )
+
+        assertFailsWith<IllegalArgumentException> {
+            MobilePolicyValidator.validate(root)
+        }
+    }
+
+    @Test
+    fun `validator rejects a noncanonical Android label hidden in another string`() {
+        val root = fixtureRoot("supernutrition-policy-android-identity-test")
+        copyPolicyFixtures(root)
+        val strings = root.resolve("apps/androidApp/src/main/res/values/strings.xml")
+        Files.writeString(
+            strings,
+            Files.readString(strings)
+                .replace(
+                    "<string name=\"app_name\">SuperNutrition</string>",
+                    "<string name=\"app_name\">AI nutritionist</string>",
+                )
+                .replace(
+                    "</resources>",
+                    "<string name=\"unrelated\">SuperNutrition</string></resources>",
+                ),
+        )
+
+        assertFailsWith<IllegalArgumentException> {
+            MobilePolicyValidator.validate(root)
+        }
+    }
+
+    @Test
+    fun `validator rejects a noncanonical iOS display name hidden in another key`() {
+        val root = fixtureRoot("supernutrition-policy-ios-identity-test")
+        copyPolicyFixtures(root)
+        val info = root.resolve("apps/iosApp/Info.plist")
+        Files.writeString(
+            info,
+            Files.readString(info)
+                .replace(
+                    "<key>CFBundleDisplayName</key>\n\t<string>SuperNutrition</string>",
+                    "<key>CFBundleDisplayName</key>\n\t<string>AI nutritionist</string>",
+                )
+                .replace(
+                    "</dict>",
+                    "\t<key>CFBundleName</key>\n\t<string>SuperNutrition</string>\n</dict>",
+                ),
+        )
+
+        assertFailsWith<IllegalArgumentException> {
+            MobilePolicyValidator.validate(root)
+        }
+    }
+
+    @Test
     fun `validator rejects an oversized product Gradle heap`() {
         val root = fixtureRoot("supernutrition-policy-memory-test")
         copyPolicyFixtures(root)
