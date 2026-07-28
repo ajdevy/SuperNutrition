@@ -1,8 +1,12 @@
-# Private hosting governance fallback
+# Private hosting governance fallback (retired)
 
-Status: proposed
+Status: retired; not adopted
 Decision date: 2026-07-28
-Review/expiry date: 2026-08-28
+Retired date: 2026-07-28
+
+This proposal is retained only as a historical record. GitHub remains the
+canonical repository, merge host, and CI source of truth. GitLab projects,
+branches, merge requests, and pipelines are not part of the product workflow.
 
 ## Context
 
@@ -12,7 +16,7 @@ checked-in GitHub Actions workflow therefore provides bootstrap evidence only;
 it cannot prove tamper-resistant merge enforcement. GitHub Team is not an
 available project constraint.
 
-## Decision
+## Historical proposal (not adopted)
 
 Use a private GitLab mirror as the merge authority, with a separate private
 governance project owning the trusted audit and merge bot:
