@@ -9,11 +9,42 @@ stages:
   - aggregate
 
 default:
+  tags:
+    - supernutrition-local
   image: ubuntu:24.04
   before_script:
-    - export DEBIAN_FRONTEND=noninteractive
-    - apt-get update -qq
-    - apt-get install -y -qq --no-install-recommends ca-certificates curl git openjdk-21-jdk python3 unzip
+    - |
+      if [ "$(uname -s)" = "Darwin" ]; then
+        export ANDROID_SDK_ROOT="${HOME}/Library/Android/sdk"
+        export ANDROID_HOME="$ANDROID_SDK_ROOT"
+      else
+        export DEBIAN_FRONTEND=noninteractive
+        apt-get update -qq
+        apt-get install -y -qq --no-install-recommends ca-certificates curl git openjdk-21-jdk python3 unzip
+      fi
+    - |
+      if [ "$(uname -s)" = "Darwin" ]; then
+        test -x "$ANDROID_SDK_ROOT/platform-tools/adb"
+        test -x "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
+      else
+        mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools"
+        if ! test -x "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"; then
+          curl --fail --location --silent --show-error \
+            "https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_CMDLINE_TOOLS_VERSION}_latest.zip" \
+            --output "$CI_PROJECT_DIR/android-commandline-tools.zip"
+          unzip -q "$CI_PROJECT_DIR/android-commandline-tools.zip" -d "$ANDROID_SDK_ROOT/cmdline-tools"
+          mv "$ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools" "$ANDROID_SDK_ROOT/cmdline-tools/latest"
+        fi
+      fi
+    - |
+      if [ "$(uname -s)" = "Linux" ]; then
+        set +e
+        yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_SDK_ROOT" --licenses >/dev/null
+        sdkmanager_status="${PIPESTATUS[1]}"
+        set -e
+        test "$sdkmanager_status" -eq 0
+        "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_SDK_ROOT" --install "platform-tools" "platforms;android-36" "build-tools;36.0.0"
+      fi
     - chmod +x mobile/gradlew web/landing/quality-check backend/mobile-api/quality-check scripts/*.sh
   cache:
     key: "gradle-${CI_COMMIT_REF_SLUG}"
@@ -22,8 +53,12 @@ default:
       - .gradle/wrapper/
 
 variables:
-  GIT_DEPTH: "0"
+  GIT_DEPTH: "1"
+  GIT_FETCH_EXTRA_FLAGS: "--no-tags"
   GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
+  ANDROID_SDK_ROOT: "$CI_PROJECT_DIR/.android-sdk"
+  ANDROID_HOME: "$CI_PROJECT_DIR/.android-sdk"
+  ANDROID_CMDLINE_TOOLS_VERSION: "13114758"
 
 .fingerprint_artifact: &fingerprint_artifact
   when: always
@@ -125,14 +160,18 @@ ci-required:
 
 governance-audit:
   stage: aggregate
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
   needs:
     - job: ci-required
       artifacts: true
-  trigger:
-    project: flexsentlabs/supernutrition-governance
-    branch: main
-    strategy: depend
-  variables:
-    SOURCE_PROJECT_ID: "84888824"
-    SOURCE_PIPELINE_ID: "$CI_PIPELINE_ID"
-    SOURCE_SHA: "$CI_COMMIT_SHA"
+  script:
+    - governance_root="$CI_PROJECT_DIR/.governance-policy"
+    - git clone --depth=1 "https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com/flexsentlabs/supernutrition-governance.git" "$governance_root"
+    - chmod +x "$governance_root/trusted-policy-audit.sh"
+    - SOURCE_PROJECT_ID="84888824" SOURCE_PIPELINE_ID="$CI_PIPELINE_ID" SOURCE_SHA="$CI_COMMIT_SHA" CI_JOB_TOKEN="$CI_JOB_TOKEN" "$governance_root/trusted-policy-audit.sh"
+  artifacts:
+    when: always
+    expire_in: 30 days
+    paths:
+      - governance-attestation/
