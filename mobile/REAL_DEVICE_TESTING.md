@@ -97,19 +97,41 @@ Intel fallback is an executable x64 simulator compatibility lane for shared
 presenter/reducer and bridge acceptance; it is never substituted for iPhone
 camera, lifecycle, or hardware evidence.
 
-After a physical `iosArm64` Xcode test, emit the native-evidence bundle with
-the real iPhone UDID:
+Run both the binary-bound Kotlin fixture and the physical `iosArm64` Xcode
+acceptance suite before emitting the native-evidence bundle. The emitter
+requires the fixture XML as well as the physical xcresult, so a UI-only run
+cannot accidentally close the normalization gap:
+
+```bash
+./mobile/gradlew -p mobile :platform:photo-ios:iosArm64Test \
+  -Psupernutrition.hostSlice=sharedKit \
+  -Psupernutrition.enableIosDeviceTarget=true \
+  --dependency-verification=strict --no-configuration-cache
+
+xcodebuild test -quiet \
+  -project mobile/apps/iosApp/SuperNutritionUIAcceptance.xcodeproj \
+  -scheme SuperNutritionUIAcceptance \
+  -destination "id=<physical-iphone-udid>" \
+  -derivedDataPath mobile/apps/iosApp/build/DerivedData \
+  SHARED_KIT_FRAMEWORK_DIR="$PWD/mobile/apps/sharedKit/build/bin/iosArm64/debugFramework" \
+  DEVELOPMENT_TEAM="<local-team-id>" \
+  CODE_SIGN_STYLE=Automatic \
+  CODE_SIGN_IDENTITY="Apple Development" \
+  -allowProvisioningUpdates -allowProvisioningDeviceRegistration
+```
+
+Then emit the native-evidence bundle with the real iPhone UDID:
 
 ```bash
 IOS_UDID=<physical-iphone-udid> \
   scripts/emit-physical-ios-evidence.sh "$RUNNER_TEMP/supernutrition-ios-evidence"
 ```
 
-The emitter rejects simulator UDIDs, requires a passing physical xcresult and
-`Debug-iphoneos` app plus `iosArm64` framework, and binds their digests with
-the clean commit, device line, Xcode version, fixture/policy digests, and UTC
-execution time. Dirty output is explicitly `local-only` and cannot satisfy
-activation.
+The emitter rejects simulator UDIDs, requires a passing physical xcresult,
+passing `iosArm64Test` normalization XML, `Debug-iphoneos` app, and `iosArm64`
+framework, and binds their paths and counts with the clean commit, device
+line, Xcode/Gradle versions, fixture/policy digests, and UTC execution time.
+Dirty output is explicitly `local-only` and cannot satisfy activation.
 
 On this Intel host, select the matching architecture explicitly for that
 compatibility lane:
