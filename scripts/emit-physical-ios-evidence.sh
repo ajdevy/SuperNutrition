@@ -11,6 +11,7 @@ repo_root="$(cd "$script_dir/.." && pwd)"
 output_root="$1"
 ios_udid="${IOS_UDID:-}"
 derived_data_root="${IOS_DERIVED_DATA_ROOT:-$repo_root/mobile/apps/iosApp/build/DerivedData}"
+ios_arm64_test_results_root="${IOS_ARM64_TEST_RESULTS_ROOT:-$repo_root/mobile/platform/photo-ios/build/test-results/iosArm64Test}"
 framework_binary="$repo_root/mobile/apps/sharedKit/build/bin/iosArm64/debugFramework/SharedKit.framework/SharedKit"
 
 command -v xcrun >/dev/null 2>&1 || {
@@ -25,6 +26,10 @@ command -v python3 >/dev/null 2>&1 || {
   printf 'missing python3\n' >&2
   exit 1
 }
+test -x "$repo_root/mobile/gradlew" || {
+  printf 'missing mobile Gradle wrapper: %s\n' "$repo_root/mobile/gradlew" >&2
+  exit 1
+}
 test -n "$ios_udid" || {
   printf 'IOS_UDID must name a physical iPhone\n' >&2
   exit 2
@@ -34,7 +39,11 @@ if xcrun simctl list devices 2>/dev/null | grep -Fq "$ios_udid"; then
   printf 'simulator UDID cannot emit physical iOS evidence: %s\n' "$ios_udid" >&2
   exit 1
 fi
-device_line="$(xcrun xctrace list devices 2>/dev/null | grep -F "$ios_udid" | grep -v 'Simulator' | head -n 1 || true)"
+device_line="$(xcrun xctrace list devices 2>/dev/null | awk -v udid="$ios_udid" '
+  /^== Devices ==$/ { online = 1; next }
+  /^== / { online = 0 }
+  online && index($0, udid) { print; exit }
+' || true)"
 test -n "$device_line" || {
   printf 'UDID is not an attached physical iOS device: %s\n' "$ios_udid" >&2
   exit 1
@@ -73,6 +82,45 @@ print(
 test "$test_count" -gt 0 && test "$passed" -gt 0 && test "$failed" = 0 && test "$skipped" = 0 || {
   printf 'physical iOS xcresult is not a complete passing run: total=%s passed=%s failed=%s skipped=%s\n' \
     "$test_count" "$passed" "$failed" "$skipped" >&2
+  exit 1
+}
+
+fixture_result="$(python3 - "$ios_arm64_test_results_root" <<'PY'
+from pathlib import Path
+import sys
+
+root = Path(sys.argv[1])
+files = sorted(
+    root.rglob("*IosImageNormalizerFixtureTest.xml"),
+    key=lambda path: path.stat().st_mtime,
+    reverse=True,
+)
+print(files[0] if files else "")
+PY
+)"
+test -n "$fixture_result" || {
+  printf 'iosArm64 normalization fixture XML is missing; run :platform:photo-ios:iosArm64Test first\n' >&2
+  exit 1
+}
+
+read -r fixture_test_count fixture_failures fixture_errors fixture_skipped < <(
+  python3 - "$fixture_result" <<'PY'
+from xml.etree import ElementTree
+import sys
+
+root = ElementTree.parse(sys.argv[1]).getroot()
+print(
+    root.attrib.get("tests", "0"),
+    root.attrib.get("failures", "0"),
+    root.attrib.get("errors", "0"),
+    root.attrib.get("skipped", "0"),
+)
+PY
+)
+test "$fixture_test_count" -eq 3 && test "$fixture_failures" = 0 && \
+  test "$fixture_errors" = 0 && test "$fixture_skipped" = 0 || {
+  printf 'iosArm64 normalization fixture is not a complete passing run: tests=%s failures=%s errors=%s skipped=%s\n' \
+    "$fixture_test_count" "$fixture_failures" "$fixture_errors" "$fixture_skipped" >&2
   exit 1
 }
 
@@ -142,6 +190,7 @@ if test -n "$(git -C "$repo_root" status --porcelain)"; then
   worktree_state="dirty"
 fi
 xcode_version="$(xcodebuild -version | sed -n '1p')"
+gradle_version="$("$repo_root/mobile/gradlew" --version | sed -n 's/^Gradle \([0-9][0-9.]*\)$/\1/p' | head -n 1)"
 executed_at="$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
 
 # A dirty checkout can produce useful local diagnostics but cannot become
@@ -185,6 +234,12 @@ test_count=$test_count
 passed=$passed
 failed=$failed
 skipped=$skipped
+fixture_task_version=$(toml_string "iosArm64Test-gradle-$gradle_version")
+fixture_test_result=$(toml_string "$fixture_result")
+fixture_test_count=$fixture_test_count
+fixture_failures=$fixture_failures
+fixture_errors=$fixture_errors
+fixture_skipped=$fixture_skipped
 EOF
 done
 mv "$temporary_root"/* "$output_root/"
