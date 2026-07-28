@@ -38,3 +38,55 @@ physical camera or hardware behavior. For a physical iPhone, build the
 `-Psupernutrition.enableIosDeviceTarget=true` and point Xcode's framework
 search path at that device output. Device evidence must be collected on the
 connected iPhone; no simulator result is accepted as device evidence.
+
+## Physical iPhone acceptance run
+
+Before launching a physical run, pair the iPhone in Xcode, enable Developer
+Mode, keep it unlocked, and trust the developer certificate in
+`Settings > General > VPN & Device Management` if iOS reports that the
+developer app is untrusted. Confirm that the device is listed outside the
+simulator section:
+
+```text
+xcrun xctrace list devices
+```
+
+The local signing team is intentionally not committed to this project. Set
+`APPLE_TEAM_ID` to a team available in the local Xcode account, then run:
+
+```text
+export IOS_UDID="<physical-udid>"
+export APPLE_TEAM_ID="<local-team-id>"
+
+./mobile/gradlew -p mobile :apps:sharedKit:linkDebugFrameworkIosArm64 \
+  -Psupernutrition.enableIosDeviceTarget=true \
+  -Psupernutrition.enableSharedKitFramework=true \
+  --dependency-verification=strict --no-configuration-cache
+
+xcodebuild test -quiet \
+  -project mobile/apps/iosApp/SuperNutritionUIAcceptance.xcodeproj \
+  -scheme SuperNutritionUIAcceptance \
+  -destination "id=$IOS_UDID" \
+  -derivedDataPath mobile/apps/iosApp/build/DerivedData \
+  SHARED_KIT_FRAMEWORK_DIR="$PWD/mobile/apps/sharedKit/build/bin/iosArm64/debugFramework" \
+  DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
+  CODE_SIGN_STYLE=Automatic \
+  CODE_SIGN_IDENTITY="Apple Development" \
+  -allowProvisioningUpdates -allowProvisioningDeviceRegistration
+
+./mobile/gradlew -p mobile :platform:photo-ios:iosArm64Test \
+  -Psupernutrition.hostSlice=sharedKit \
+  -Psupernutrition.enableIosDeviceTarget=true \
+  --dependency-verification=strict --no-configuration-cache
+```
+
+The Gradle device test executes the binary-bound iOS normalization fixtures;
+the Xcode run covers the packaged host, native camera/picker, lifecycle, and
+accessibility surface. After both complete successfully, emit the
+physical-device evidence record:
+
+```text
+IOS_UDID="<physical-udid>" \
+IOS_DERIVED_DATA_ROOT="$PWD/mobile/apps/iosApp/build/DerivedData" \
+  scripts/emit-physical-ios-evidence.sh "/tmp/supernutrition-ios-evidence"
+```
