@@ -15,6 +15,10 @@ inputDocuments:
   - docs/food-photo-recognition-report.md
   - /Users/aj/Downloads/NutriArch
   - /Users/aj/Downloads/report.md
+  - ../specs/spec-text-meal-identification/SPEC.md
+  - ../specs/spec-text-meal-identification/search-mechanics.md
+  - ../specs/spec-text-meal-identification/contract-v2.md
+  - ../specs/spec-text-meal-identification/failure-modes.md
 ---
 
 # SuperNutrition - Epic Breakdown
@@ -77,6 +81,18 @@ FR-24: The team can compare Android and iOS model exports or adapters against go
 
 FR-25: Authorized operators can select versioned, allow-listed, observable Engine configurations without a mobile feature rewrite or weakening consent, retention, grounding, or contract requirements.
 
+FR-26: The user can find a canonical Nutrition Source record by typing food text, on the lowest supported device tier, while offline, with no inference model present, and can build a multi-item meal by adding records one at a time into the same Analysis Session.
+
+FR-27: The user can describe a whole meal in natural language and receive one ranked Candidate group per detected food item, in the same Candidate, Abstention, provenance, and typed-error shapes the photo path returns and containing no numeric nutrition.
+
+FR-28: The system can run an on-device text identification engine where device capability permits, report the same capability states as other Engines, and leave manual search reachable in one action whenever that engine is not ready.
+
+FR-29: The user can correct how a description was split into items — merging, splitting, removing, or adding one — before confirming any item, without restarting the Analysis Session or discarding already-confirmed items.
+
+FR-30: The user can send a typed description for remote identification after local identification is unavailable, abstains, or returns a policy-defined low-confidence result, and only after consenting to a disclosure written for text rather than photos.
+
+FR-31: The user can search and describe food in the declared languages of each supported market, including where the app language differs from the catalog language, where the catalog language is inflected, and where entry uses a different script from the records.
+
 ### NonFunctional Requirements
 
 NFR-1: Evaluate the provisional camera-ready and capture-to-Candidate hypotheses on named physical-device and network conditions and replace them with Gate G-3 release budgets; simulator or emulator results are not performance proof.
@@ -127,6 +143,12 @@ NFR-23: Product identity is exact and testable: installed app, launcher label, a
 
 NFR-24: Product journeys minimize interaction while preserving safe user control. Happy paths use the fewest practical taps, scrolls, fields, and choice surfaces; only fields named by the protected `mobile/config/quality/interaction-policy.toml` allowlist may be prefilled from the immutable `ConfigurationSnapshot` or the approved post-confirmation catalog serving source. The snapshot materializes locale, catalog, device capability, and policy values before the reducer runs; the catalog source may supply one atomic standard-serving unit/amount pair only after canonical confirmation and never mutates the snapshot. The policy defines source precedence, independent CatalogCountry/MarketJurisdiction/ProcessingRegion/locale validity, provenance, and persistence scope. Every default is visible, labeled with its source/provenance, editable, reversible, and distinct from measured or inferred facts. Food/preparation/serving corrections remain session-scoped in the MVP; no future persisted correction preference is defined by this contract. A first-use catalog value is an unaccepted proposal until the user confirms it and cannot auto-advance into grounding or remote transfer. Auto-advance is limited to reversible local/UI steps. Approved policy may resolve market jurisdiction and processing region, but the app must show those values before transfer and must not derive or silently change them from locale or catalog; the user consents to the resulting upload rather than selecting a provider region. Medical/allergen conclusions are prohibited and cannot be enabled by confirmation; materially uncertain food identity requires an honest question or Abstention. Journey tests record interaction budgets, default provenance, override paths, bounded auxiliary events, and negative cases for forbidden defaults.
 
+NFR-25: Deterministic catalog search is reproducible and bounded. The same query against the same package version returns byte-identical result ordering across platforms and runs, with no personalization, history, or learned component; a declared latency budget is met on the lowest supported device tier with network disabled and every Engine reporting unavailable. Golden query fixtures pin expected canonical IDs and order per package version.
+
+NFR-26: Language support is a per-market matrix, not a global switch. The first three targets are English, Spanish, and Russian, which between them exercise every normalization profile: none beyond plurals, light stemming with diacritics, and full lemmatization with cross-script entry. Each supported market declares catalog language, accepted input languages, script, morphological normalization, and synonym data as versioned package data rather than search-code conditionals, and ships its own query fixtures keyed per catalog-and-input-language pair, because an accepted input language does not imply a catalog written in it. Regional name variants of one food resolve to one canonical ID rather than selecting a dialect per market. English-only behaviour is not a valid default for a market whose catalog is not in English, and a market added without fixtures is treated as untested. Accepted input languages are independent of market processing position in both directions: supporting a language is a product capability, operating in a market is a legal position, and neither implies the other.
+
+NFR-27: Remote processing of user content is permitted only where a named, approved, expiring legal position says it is. Every market defaults to unresolved and permits no remote transfer of any modality; absence, unresolved, and expiry are equivalent at resolution time. Photo and text permissions are independent, each bound to its own reviewed consent copy. Catalog choice cannot derive or change jurisdiction, posture, permitted regions, or permissions, and the resolved jurisdiction and processing region are shown before every consent decision. The deterministic search floor and on-device identification never depend on a market posture, so a fail-closed market remains usable.
+
 ### Additional Requirements
 
 - AR-1 (AD-16): The mobile scaffold story must create and prove the greenfield KMP scaffold as one atomic tuple: Kotlin/KMP 2.4.10, Compose Multiplatform 1.11.1, Gradle 9.5.0, AGP 9.1.0, JDK 21, Android compile/target SDK 36 with API 23 floor, Xcode 26.4.1 on macOS 26.2+, iOS 15 floor, Detekt/ktlint wrapper 2.0.0-alpha.5, and Kover 0.9.8. The story publishes exact common, Android, iOS, Xcode, lint, and coverage evidence; any tuple change is a dedicated compatibility change.
@@ -176,6 +198,14 @@ NFR-24: Product journeys minimize interaction while preserving safe user control
 - AR-45 (AD-38): Treat private-repository enforcement as an infrastructure gate. Before production implementation, prove hosting support and active controls for private rulesets, distinct-owner approval, required `ci-required`, immutable `trusted-policy-audit`, and a blocked bypass; also prove `merge_group` if merge queue is enabled. Checked-in workflow YAML is evidence, not enforcement. If capabilities are not provisioned, require a new reviewed implementable governance decision.
 - AR-46 (AD-39): Add protected `mobile/config/product-identity.toml` with exact canonical installed/in-app name `SuperNutrition` and exact Apple App Store and Google Play listing title `SuperNutrition AI nutritionist`. Generate or validate Android labels, iOS display-name metadata, `SuperNutritionUIAcceptance`, web metadata, and store-delivery metadata from it; test all profiles/locales and reject independently hard-coded variants. Select package and bundle identifiers in the scaffold story without changing visible identity.
 - AR-47 (AD-40): Make interaction budget a protected cross-product contract. Every product conforms to immutable `contracts/interaction-policy/v1` and creates/validates its product policy (mobile: `mobile/config/quality/interaction-policy.toml`) with an allowlist of defaultable fields, source precedence, independent CatalogCountry/MarketJurisdiction/ProcessingRegion/locale validity, provenance types, persistence scope, invalidation keys, complete lifecycle and atomic serving rules, cumulative required dimensions, bounded auxiliary events, and locale/accessibility evidence matrix. Every user-interaction-affecting story records tap, scroll, field, choice, text-entry, choice-surface, recovery-event, and default/override budgets; non-UI stories attest that they do not alter the budget or default policy. Food/preparation/serving corrections are session-scoped in the MVP. Approved policy may resolve jurisdiction/processing values, which must be shown before consent, but locale/catalog cannot derive or silently change them and users do not select provider routing. Auto-advance is limited to reversible local/UI steps; medical/allergen conclusions are prohibited and materially uncertain identity requires an honest question or Abstention. Negative tests reject unallowlisted, stale, hidden, digest/value-mismatched, non-atomic, or persisted sensitive defaults.
+
+- AR-48 (AD-2, AD-17): Carry identification modality in the inference contract. Input is exactly one of a `PhotoRef` or a text description plus its input locale, selected by a closed sealed discriminator; neither-nor-both fails closed as a typed contract error. Output shapes, capability states, abstention, provenance, and the no-numeric-nutrition rule are identical across modalities. Because no Engine implements the contract yet, modality is added before the ports freeze rather than as a later version; if freezing has already occurred, the change becomes a new contract version with a migration story under AR-33 and unchanged prior fixtures.
+- AR-49 (AD-7, AD-19): No Engine binds a canonical catalog record. Text and photo Engines alike return identification evidence only; mapping evidence to a canonical record requires an explicit user confirmation event, including at maximum confidence. Negative tests prove no path reaches a Grounded Nutrition Result from Engine output alone, and that a description the Engine cannot segment abstains rather than returning a confident subset as a whole meal.
+- AR-50 (AD-12, AD-19): Own the per-market language matrix as signed package data. Each market declares catalog language, accepted input languages, script, morphology, and synonyms; normalization is applied identically at index build and query time; markets with inflected catalog languages declare full morphological normalization because synonym enumeration per inflected form is not maintainable. Cross-script entry feeds the fuzzy tier only and never outranks an exact match in the record's own script.
+- AR-51 (AD-8, AD-12, AD-21): Bind text transfer to text-specific consent copy. `consentCopyVersion` currently denotes the reviewed photo-transfer explanation, whose approved copy states a smaller copy of the photo is sent; that disclosure cannot authorize sending a description. A text transfer presents its own reviewed copy version and fails closed on mismatch. Processing region resolves from market policy and never from the catalog; where a market's data-residency position is unresolved, remote text is disabled for that market rather than defaulting to the nearest provider region.
+- AR-52 (AD-8, AD-14, AD-31): Treat user-authored text on the photo lifecycle. A description is attempt-scoped, cleared with the attempt, never logged, never placed in analytics, and never sent remotely without the AR-51 consent receipt. Redacted-artifact and forbidden-log capture tests extend to the text field.
+
+- AR-53 (AD-41): Own market processing position as a protected cross-product contract. `MarketPolicyResolver` resolves only against signed data conforming to immutable `contracts/market-policy/v1`, created by a separately owned `market-policy-contract` slice, with the mobile instance at protected `mobile/config/quality/market-policy.toml`. Each market declares jurisdiction, residency posture, permitted processing regions, per-modality remote permission and consent-copy version, accepted input languages, and a named legal review with approver and expiry. Unresolved is the default and equivalent to absent and expired; no posture is inferred from a neighbouring market, shared language, currency, or region grouping, and none is widened as a side effect of a story, configuration change, or provider migration. Negative tests prove an absent, unresolved, or expired market cannot reach transfer for either modality; that a photo-permitted, text-prohibited market rejects text transfer; that presenting one modality's consent copy for another fails closed; that catalog change leaves posture and regions unchanged; and that input languages resolve identically regardless of posture. CI never writes policy state.
 
 ### UX Design Requirements
 
@@ -253,16 +283,25 @@ UX-DR36: Render `SuperNutrition` as the installed, launcher, accessibility-produ
 
 UX-DR37: Apply a low-friction interaction budget to every screen and positive journey. Prefer one clear primary action on ordinary decision surfaces, inline visible defaults, and Edit/Undo over choice-first sheets, unnecessary scrolling, or repeated typing. Sensitive consent surfaces are an explicit exception: remote consent actions remain equal and unselected as specified in DESIGN.md. Label allowlisted deterministic defaults with their source, preserve user overrides within approved scope, and auto-advance only reversible local/UI steps. A standard serving default is one atomic unit-and-amount proposal and is available only after canonical-item confirmation from the catalog source. Never preselect remote consent/upload or materially uncertain food identity; medical/allergen conclusions are prohibited; show policy-resolved processing jurisdiction before consent, never derive or silently change it from locale/catalog, and do not make users select provider routing. Test defaulted, override, and forbidden-default paths on Android/iOS with accessibility semantics intact.
 
+UX-DR38: Implement a text-entry path into identification from Capture, Candidate review, and every Recovery surface that currently offers manual search. Show which language the catalog is being searched in rather than implying it follows the app language, and keep entry reachable in one action whenever an Engine is unavailable, abstains, or is declined.
+
+UX-DR39: Present search results with a stated maximum count rather than infinite scroll, showing for each result the qualifier that distinguishes it from its near-neighbours. On no match, withhold numbers and offer at most three next actions — refine, change country/catalog, or end — and never a nearest guess or a Retry that cannot change the outcome.
+
+UX-DR40: Present a proposed multi-item split as an editable review, showing which words produced which item, with merge, split, remove, and add available before any item is confirmed. A dropped or invented item must be visibly correctable; silent reduction of a described meal is forbidden.
+
+UX-DR41: Give remote text transfer its own reviewed consent copy naming what a description is and where it is processed; the photo-transfer copy must not appear on a text transfer. Consent stays per-attempt, unselected, and equal-prominence with continue-without-upload, and the resolved processing jurisdiction is shown before transfer.
+
 ### FR Coverage Map
 
 | Epic | Primary requirements | Outcome |
 | --- | --- | --- |
-| E1 Foundation and product shell | FR-22, FR-25, NFR-17..NFR-24, AR-1..AR-7, AR-31..AR-47, UX-DR35..UX-DR37 | A bounded, identity-safe monorepo and reproducible KMP substrate |
+| E1 Foundation and product shell | FR-8, FR-22, FR-25, FR-30, NFR-17..NFR-24, NFR-26..NFR-27, AR-1..AR-7, AR-31..AR-47, AR-51, AR-53, UX-DR35..UX-DR37, UX-DR41 | A bounded, identity-safe monorepo, reproducible KMP substrate, and fail-closed market policy |
 | E2 Capture and photo preparation | FR-1..FR-4, FR-19..FR-21, NFR-1..NFR-3, NFR-9..NFR-16, NFR-24, AR-47, UX-DR1..UX-DR12, UX-DR26..UX-DR34, UX-DR37 | A privacy-preserving camera/import session with deterministic recovery |
 | E3 Shared inference and local engines | FR-5..FR-7, FR-9, FR-12, FR-23..FR-24, NFR-2..NFR-3, NFR-7, NFR-9..NFR-12, NFR-24, AR-11..AR-23, AR-47, UX-DR37 | Interchangeable contract-v1 local inference on Android and iOS |
 | E4 Remote inference and consent | FR-8, FR-10..FR-12, FR-22, FR-25, NFR-4..NFR-8, NFR-11, NFR-24, AR-8..AR-14, AR-47, UX-DR17, UX-DR25, UX-DR37 | Explicit, bounded, region-aware remote analysis through the gateway |
 | E5 Confirmation and grounded nutrition | FR-13..FR-18, FR-20..FR-21, NFR-6, NFR-10, NFR-12, NFR-15..NFR-16, NFR-24, AR-19..AR-30, AR-47, UX-DR13..UX-DR24, UX-DR37 | User-confirmed foods and serving assumptions become sourced estimates |
 | E6 Journey evidence and evaluation | FR-22..FR-24, NFR-17, NFR-20..NFR-21, NFR-24, SM-1..SM-10, AR-38..AR-47, UX-DR26..UX-DR37 | Shared Android/iOS acceptance journeys and evidence gates |
+| E7 Typed meal identification | FR-3, FR-14, FR-20..FR-21, FR-26..FR-31, NFR-24..NFR-27, AR-48..AR-53, UX-DR19, UX-DR38..UX-DR41 | A specified manual-search floor on every device, with optional on-device and remote typed identification above it |
 
 ### Delivery order
 
@@ -274,6 +313,15 @@ catalog. E6 can build the fixture and journey harness alongside E2-E5, but its
 profile transition is only allowed when the production graph is present. Each
 story is one bounded agent slice and one pull request, as required by AR-31 and
 AR-33.
+
+E7 is sequenced around one hard constraint and one product decision. The
+constraint: E7.1 adds identification modality to the inference contract and must
+land before E3.1 freezes the ports, because no Engine implements the contract
+yet and adding modality now costs an amendment rather than a version migration.
+The decision: E7.2 delivers the deterministic search floor first and depends on
+the catalog rather than on any Engine, so it can proceed in parallel with E3 and
+E4 and ships before the model path. E7.3 through E7.6 build above the floor and
+degrade to it whenever an Engine is unavailable, abstains, or is declined.
 
 ## Epic E1: Foundation and product shell
 
@@ -406,6 +454,32 @@ so that common meal scans do not become form-filling workflows.
   locale/accessibility evidence matrix. Concrete Android/iOS defaulted and
   override journey evidence is owned by affected feature/profile-transition
   stories, not by the bootstrap scaffold story.
+
+### Story E1.6: Establish the market processing policy
+
+As a privacy and market owner,
+I want each market's remote processing position declared, approved, and expiring,
+so that no user's content is processed somewhere their market does not permit.
+
+**Traceability:** FR-8, FR-30, NFR-26..NFR-27, AR-51, AR-53, UX-DR41.
+
+**Acceptance Criteria:**
+
+- **Given** the policy contract, **when** it is created, **then** it conforms to
+  immutable `contracts/market-policy/v1`, is owned by a principal independent of
+  the products consuming it, and the mobile instance is protected.
+- **Given** a market that is absent, `unresolved`, or past `expiresAt`, **when**
+  a remote transfer is attempted for either modality, **then** it fails closed at
+  the transfer path, not merely in the interface.
+- **Given** a market permitting photo but not text, **when** a text transfer is
+  attempted, **then** it is rejected; and presenting one modality's consent copy
+  for the other fails closed.
+- **Given** a catalog country change, **then** jurisdiction, posture, permitted
+  regions, and per-modality permissions are unchanged.
+- **Given** any posture, **then** accepted input languages resolve identically,
+  and deterministic search and on-device identification remain fully available.
+- **And** the resolved jurisdiction and processing region are displayed before
+  every consent decision, and CI never writes policy state.
 
 ## Epic E2: Capture and photo preparation
 
@@ -764,3 +838,168 @@ UX-DR22..UX-DR37.
   policy fingerprints are required at the same commit.
 - **Then** missing, skipped, neutral, stale, detached, zero-denominator, or
   non-success evidence fails the aggregate.
+
+## Epic E7: Typed meal identification
+
+Specify the manual-search fallback that every failure path already depends on,
+then add typed identification above it. Manual search is the terminal recovery
+for a wrong Candidate, an unavailable Engine, a permanently denied camera, and a
+declined upload, yet FR-14 and UX-DR19 describe only the surface. This epic
+defines the behaviour, guarantees it on every supported device, and makes typing
+a meal an identification modality rather than a parallel subsystem.
+
+### Story E7.1: Carry identification modality in the inference contract
+
+As the contract owner,
+I want the inference contract to accept either a photo or a text description,
+so that typed identification is a modality rather than a second contract.
+
+**Traceability:** FR-5, FR-27, FR-31, NFR-9..NFR-12, AR-48, AR-49, AR-33.
+
+**Acceptance Criteria:**
+
+- **Given** no Engine implements the contract yet, **when** modality is added,
+  **then** it lands as an amendment before E3.1 freezes the ports, and the
+  version-migration path in AR-48 applies only if freezing already occurred.
+- **Given** a request, **when** it carries neither or both of a `PhotoRef` and a
+  text payload, **then** it fails closed as a typed contract error rather than
+  defaulting to a modality.
+- **Then** capability states, Candidate, Abstention, provenance, and typed-error
+  shapes are identical across modalities, and no modality returns numeric
+  nutrition.
+- **And** canonical fixtures cover both modalities, and every fixture that
+  existed before the amendment passes unchanged.
+
+### Story E7.2: Deliver the deterministic catalog search floor
+
+As a user whose Engines cannot help,
+I want to find a food by typing its name and add several to one meal,
+so that I can still reach a grounded result offline on any supported phone.
+
+**Traceability:** FR-3, FR-14, FR-16, FR-20..FR-21, FR-26, NFR-25, AR-49,
+UX-DR19, UX-DR38..UX-DR39.
+
+**Acceptance Criteria:**
+
+- **Given** the bundled country package, no network, and every Engine reporting
+  unavailable, **when** the golden query set runs on the lowest supported device
+  tier, **then** each query resolves to its expected canonical ID within the
+  declared latency budget.
+- **Given** the same query and package version, **when** search runs on Android
+  and iOS and repeatedly, **then** result ordering is byte-identical, with no
+  personalization, history, or learned component.
+- **Given** a multi-item meal, **when** records are added one at a time, **then**
+  already-confirmed items are preserved and per-item and aggregate provenance
+  match the photo path.
+- **Given** no match, **then** numbers are withheld, at most three next actions
+  are offered, and no nearest guess or unchangeable Retry is presented.
+
+### Story E7.3: Add the per-market language matrix
+
+As a user whose food is not named in English,
+I want to search in my own language, spelling, and script,
+so that the catalog is usable in every market we support.
+
+**Traceability:** FR-14, FR-31, NFR-26, AR-50, UX-DR38.
+
+**Acceptance Criteria:**
+
+- **Given** a supported market, **when** its package activates, **then** it
+  declares catalog language, accepted input languages, script, morphological
+  normalization, and synonyms as signed package data rather than search-code
+  conditionals.
+- **Given** an inflected catalog language, **when** a user types any declared
+  inflected form, **then** the record resolves, and normalization is applied
+  identically at index build and query time.
+- **Given** a market declaring cross-script entry, **when** a record is typed in
+  the other script, **then** it is reachable through the fuzzy tier only and
+  never outranks an exact match in the record's own script.
+- **Given** English, Spanish, and Russian as the first three targets, **when**
+  their fixtures run, **then** each passes against the catalog it searches:
+  Spanish resolves regional variants of one food to one canonical ID, and
+  Russian resolves inflected noun forms and Latin-script entry of Cyrillic
+  records.
+- **Given** an accepted input language, **when** its fixtures are authored,
+  **then** they are keyed per catalog-and-input-language pair, because an input
+  language does not imply a catalog written in it; a language proven against one
+  catalog is not proven against another, and a pair without fixtures fails the
+  inventory as untested.
+- **Given** any market processing posture, **when** input languages resolve,
+  **then** they resolve identically; declaring a language grants no market
+  position and an unresolved market still supports every language it declares.
+
+### Story E7.4: Add on-device typed identification
+
+As a user who would rather describe a meal than search for each part,
+I want to type what I ate and get food suggestions per item,
+so that correcting or replacing photo identification is faster.
+
+**Traceability:** FR-6, FR-12, FR-17, FR-27..FR-28, NFR-2..NFR-3, AR-48,
+AR-49, AR-52, UX-DR38.
+
+**Acceptance Criteria:**
+
+- **Given** a multi-item description, **when** identification succeeds, **then**
+  one Candidate group is returned per detected item, each carrying the span of
+  the description it came from and no numeric nutrition.
+- **Given** a description the engine cannot segment, **then** it abstains with a
+  plain-language reason rather than returning a confident subset as a whole meal.
+- **Given** the identification fixture set, **then** it declares expected
+  outcomes in both directions — entries that must resolve to a named canonical
+  ID and entries that must abstain — so over-confidence fails a test rather than
+  passing a suite built only from resolvable cases. Abstention rate is reported
+  against the evaluation corpus as a measurement, not a release gate.
+- **Given** the text engine is not `ready` for any reason, **then** the E7.2
+  floor is reachable in one action and no journey dead-ends.
+- **Given** a completed identification, **then** the result records a text
+  Inference Route distinct from `local` and `remote`, preserved through
+  confirmation and redacted telemetry.
+- **And** model storage, memory, thermal, and battery budgets are measured per
+  device tier, with parameter count not accepted as a proxy.
+
+### Story E7.5: Add segmentation review and correction
+
+As a user whose meal was split wrongly,
+I want to merge, split, remove, or add items before confirming,
+so that a bad split is visible and repairable rather than silent.
+
+**Traceability:** FR-13, FR-17, FR-29, NFR-24, AR-49, UX-DR40.
+
+**Acceptance Criteria:**
+
+- **Given** a proposed split, **when** it is presented, **then** each item shows
+  the words it came from and merge, split, remove, and add are available before
+  any item is confirmed.
+- **Given** an item the engine missed, **when** the user adds it, **then** the
+  Analysis Session is not restarted and already-confirmed items are not
+  discarded.
+- **Given** any confidence level, **then** no item binds a canonical record
+  without an explicit confirmation event.
+- **And** food identity, preparation, and recipe remain outside the defaultable
+  allowlist; user-authored text does not move them into it.
+
+### Story E7.6: Add remote typed identification
+
+As a user whose phone cannot identify a described meal,
+I want the option to send the description for remote identification,
+so that a weak device is not the end of the journey.
+
+**Traceability:** FR-8, FR-10..FR-11, FR-22, FR-30, NFR-4..NFR-8, NFR-27,
+AR-51, AR-52, AR-53, UX-DR41.
+
+**Acceptance Criteria:**
+
+- **Given** an attempt, **when** remote text is offered, **then** it is offered
+  only on local unavailability, local abstention, or a policy-defined
+  low-confidence result, and adds no new eligibility reason.
+- **Given** a text transfer, **when** consent is requested, **then** it presents
+  reviewed text-specific copy; the photo-transfer copy cannot authorize it and a
+  mismatch fails closed.
+- **Given** consent, **then** the receipt binds purpose, resolved processing
+  region and provider policy, retention version, configuration version, and
+  transfer state, and the resolved jurisdiction is shown before transfer.
+- **Given** a market whose data-residency position is unresolved, **then**
+  remote text is disabled for that market rather than defaulting to the nearest
+  provider region.
+- **And** the description is attempt-scoped, never logged, never placed in
+  analytics, and reaches the gateway on no other path.
