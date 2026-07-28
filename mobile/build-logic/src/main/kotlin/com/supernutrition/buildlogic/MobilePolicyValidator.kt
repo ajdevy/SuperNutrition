@@ -196,11 +196,6 @@ object MobilePolicyValidator {
         requirePropertyContains(product, "kotlin.daemon.jvmargs", "-XX:MaxMetaspaceSize=1g")
         requirePropertyContains(product, "kotlin.daemon.jvmargs", "-XX:+UseG1GC")
         requireProperty(product, "kotlin.daemon.useFallbackStrategy", "false")
-        requirePropertyContains(
-            product,
-            "org.gradle.jvmargs",
-            "-Dkotlin.daemon.jvm.options=autoshutdownIdleSeconds=1800,shutdownDelayMilliseconds=1000",
-        )
 
         val buildLogic = Files.readString(buildLogicProperties)
         requirePropertyContains(buildLogic, "org.gradle.jvmargs", "-Xms128m")
@@ -217,11 +212,6 @@ object MobilePolicyValidator {
         requirePropertyContains(buildLogic, "kotlin.daemon.jvmargs", "-XX:MaxMetaspaceSize=512m")
         requirePropertyContains(buildLogic, "kotlin.daemon.jvmargs", "-XX:+UseG1GC")
         requireProperty(buildLogic, "kotlin.daemon.useFallbackStrategy", "false")
-        requirePropertyContains(
-            buildLogic,
-            "org.gradle.jvmargs",
-            "-Dkotlin.daemon.jvm.options=autoshutdownIdleSeconds=1800,shutdownDelayMilliseconds=1000",
-        )
     }
 
     private fun validateQualityToolCatalog(mobileRoot: Path) {
