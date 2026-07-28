@@ -59,7 +59,7 @@ xcodebuild clean test -quiet \
   SHARED_KIT_FRAMEWORK_DIR="$repo_root/mobile/apps/sharedKit/build/bin/iosSimulatorArm64/debugFramework" \
   CODE_SIGNING_ALLOWED=NO
 
-ios_app="$(find "$derived_data" -type d -path '*/Debug-iphonesimulator/SuperNutrition.app' -print -quit)"
+ios_app="$(find "$derived_data" -type d -path '*/Debug-iphonesimulator/SuperNutritionUIAcceptance.app' -print -quit)"
 test -n "$ios_app" || {
   printf 'iOS UI acceptance app was not produced\n' >&2
   exit 1

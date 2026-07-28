@@ -30,16 +30,47 @@ if default_allowlist.get("standard_serving_shape") != ["unit", "amount"]:
     raise SystemExit("standard serving must remain one atomic unit/amount pair")
 if default_allowlist.get("standard_serving_requires") != "canonical-item-confirmed":
     raise SystemExit("standard serving confirmation precondition drifted")
+required_cases = {
+    ("catalogProposal", "confirmedCatalogServing", "canonical-item-confirmed"),
+    ("standardServing", "confirmedCatalogServing", "canonical-item-confirmed"),
+}
+actual_cases = {
+    (
+        case.get("field"),
+        case.get("source"),
+        case.get("requires"),
+    )
+    for case in fixture.get("case", [])
+}
+if not required_cases.issubset(actual_cases):
+    raise SystemExit("interaction-policy positive confirmation fixtures drifted")
 if compatibility.get("contract_id") != "interaction-policy" or compatibility.get("release") != "v1":
     raise SystemExit("interaction-policy compatibility metadata is invalid")
 
-required_provenance = {"bundled-safe-default", "global-release", "environment", "catalog-confirmed"}
+required_provenance = {"bundled-safe-default", "global-release", "catalog-confirmed"}
 if set(schema.get("provenance", {}).get("values", [])) != required_provenance:
     raise SystemExit("interaction-policy provenance vocabulary drifted")
 for case in fixture.get("forbidden_case", []):
     if case.get("expected") != "rejected":
         raise SystemExit(f"forbidden default is not rejected: {case.get('field')}")
-for required in ("remoteConsent", "foodIdentity"):
+required_forbidden = {
+    "foodIdentity",
+    "preparation",
+    "oil",
+    "sauce",
+    "recipe",
+    "remoteConsent",
+    "providerRouting",
+    "medicalConclusion",
+    "allergenConclusion",
+}
+actual_forbidden = {
+    case.get("field") for case in fixture.get("forbidden_case", [])
+    if case.get("expected") == "rejected"
+}
+if actual_forbidden != required_forbidden:
+    raise SystemExit("forbidden default fixture inventory drifted")
+for required in required_forbidden:
     if not any(case.get("field") == required for case in fixture.get("forbidden_case", [])):
         raise SystemExit(f"missing forbidden default fixture: {required}")
 

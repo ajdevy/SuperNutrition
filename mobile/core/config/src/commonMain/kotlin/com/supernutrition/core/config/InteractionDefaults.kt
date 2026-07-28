@@ -39,7 +39,6 @@ enum class DefaultableField {
 enum class DefaultProvenance {
     BUNDLED_SAFE_DEFAULT,
     GLOBAL_RELEASE,
-    ENVIRONMENT,
     CATALOG_CONFIRMED,
 }
 
@@ -105,9 +104,15 @@ class DefaultResolver {
 
         DefaultableField.MEASUREMENT_SYSTEM -> accepted(input, input.snapshot.measurementSystem)
 
-        DefaultableField.CATALOG_PROPOSAL -> input.catalogProposal?.let {
-            accepted(input, it.canonicalItemId, DefaultProvenance.CATALOG_CONFIRMED)
-        } ?: DefaultResolution.Rejected(input.field, RejectionReason.MISSING_CATALOG_PROPOSAL)
+        DefaultableField.CATALOG_PROPOSAL -> when {
+            !input.canonicalItemConfirmed ->
+                DefaultResolution.Rejected(input.field, RejectionReason.CATALOG_ITEM_NOT_CONFIRMED)
+
+            input.catalogProposal == null ->
+                DefaultResolution.Rejected(input.field, RejectionReason.MISSING_CATALOG_PROPOSAL)
+
+            else -> accepted(input, input.catalogProposal.canonicalItemId, DefaultProvenance.CATALOG_CONFIRMED)
+        }
 
         DefaultableField.STANDARD_SERVING -> when {
             !input.canonicalItemConfirmed ->
@@ -127,7 +132,7 @@ class DefaultResolver {
     private fun accepted(
         input: DefaultResolutionInput,
         value: String,
-        provenance: DefaultProvenance = DefaultProvenance.ENVIRONMENT,
+        provenance: DefaultProvenance = DefaultProvenance.BUNDLED_SAFE_DEFAULT,
     ) = DefaultResolution.Accepted(
         field = input.field,
         value = value,

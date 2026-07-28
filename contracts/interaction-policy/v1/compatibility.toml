@@ -4,4 +4,4 @@ release = "v1"
 previous_release = "none"
 compatibility = "initial"
 fixtures = ["fixtures/defaults.toml"]
-digest = "64f99de0fd3c109f4480e6d2c4c0aef2ef452dab6e6fc18cb011ff1a345f2a64"
+digest = "39536784162e9877a46ba274215f870b3a721b04e2a222ac84a37e7f63c0935a"

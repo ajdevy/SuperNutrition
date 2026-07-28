@@ -105,8 +105,12 @@ class DefaultDecisionLedger(private val snapshotDigest: String, private val poli
     }
 
     fun undo(proposal: DefaultProposal, decisionId: String, undoneDecisionId: String): DefaultDecision {
-        require(decisionsById[undoneDecisionId] != null) {
+        val undone = decisionsById[undoneDecisionId]
+        require(undone != null) {
             "Cannot undo an unknown default decision"
+        }
+        require(undone.proposalId == proposal.proposalId) {
+            "Cannot undo a decision belonging to another proposal"
         }
         return record(proposal, decisionId) {
             DefaultDecision.Undone(
@@ -128,7 +132,6 @@ class DefaultDecisionLedger(private val snapshotDigest: String, private val poli
                 reason = reason,
             )
         }
-        invalidatedProposals += proposal.proposalId
         return decision
     }
 
@@ -140,17 +143,23 @@ class DefaultDecisionLedger(private val snapshotDigest: String, private val poli
         factory: () -> DefaultDecision,
     ): DefaultDecision {
         require(decisionId.isNotBlank())
-        decisionsById[decisionId]?.let { existing ->
-            require(existing.proposalId == proposal.proposalId) {
-                "Decision ID cannot be reused for another proposal"
-            }
-            return existing
-        }
         require(proposal.snapshotDigest == snapshotDigest) {
             "Default proposal is bound to a different configuration snapshot"
         }
         require(proposal.policyDigest == policyDigest) {
             "Default proposal is bound to a different interaction policy"
+        }
+        decisionsById[decisionId]?.let { existing ->
+            require(existing.proposalId == proposal.proposalId) {
+                "Decision ID cannot be reused for another proposal"
+            }
+            require(existing.revision == proposal.revision) {
+                "Decision ID cannot be reused for another proposal revision"
+            }
+            require(existing == factory()) {
+                "Decision ID replay payload does not match the original decision"
+            }
+            return existing
         }
         require(proposal.proposalId !in invalidatedProposals) {
             "Invalidated default proposals cannot be decided"

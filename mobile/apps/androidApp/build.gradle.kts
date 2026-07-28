@@ -17,6 +17,9 @@ android {
 
     flavorDimensions += "distribution"
     productFlavors {
+        create("production") {
+            dimension = "distribution"
+        }
         create("uiAcceptance") {
             dimension = "distribution"
             applicationIdSuffix = ".uiAcceptance"

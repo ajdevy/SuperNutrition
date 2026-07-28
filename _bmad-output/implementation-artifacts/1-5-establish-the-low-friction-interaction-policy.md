@@ -46,3 +46,11 @@ The mobile manifest now declares provenance, independent context axes,
 inline-override and session-undo paths, persistence scope, and forbidden
 default tests for each allowlisted field. Journey evidence binds proposal and
 decision IDs plus an explicit resolved-value-digest state.
+
+The resolver now binds snapshot defaults to `bundled-safe-default`, requires
+canonical-item confirmation before resolving either catalog proposal or atomic
+standard serving, and the decision ledger rejects reuse of a decision ID with
+a new revision. The contract fixture inventory and mobile validator cover the
+complete forbidden-default set. The released provenance vocabulary no longer
+contains an environment default path; CI executes the mobile JVM unit-test
+task that covers the resolver and ledger.

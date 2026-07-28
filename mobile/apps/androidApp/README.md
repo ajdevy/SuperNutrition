@@ -1,10 +1,11 @@
 # androidApp
 
-This is the thin Android acceptance host for the production Compose-owned
+This is the thin Android host for the production Compose-owned
 photo-analysis surface. `BootstrapApplication` is the sole Android Koin
-bootstrap owner. The `uiAcceptance` product flavor over the debuggable host is
-a non-distributable acceptance variant with the unique application ID
-`com.supernutrition.android.uiAcceptance`; the Compose root exposes the stable
+bootstrap owner. The `production` flavor uses the canonical application ID
+`com.supernutrition.android`; the `uiAcceptance` product flavor is a
+non-distributable acceptance variant with the unique application ID
+`com.supernutrition.android.uiAcceptance`. The Compose root exposes the stable
 `bootstrap_shell_launch_di` substrate marker alongside the photo-analysis
 semantics. Its device smoke is `uiAcceptanceDebugAndroidTest`.
 

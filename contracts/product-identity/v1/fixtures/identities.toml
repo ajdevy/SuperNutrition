@@ -1,0 +1,23 @@
+schema = "supernutrition.product-identity-fixture.v1"
+fixture_id = "product-identity-v1"
+contract_release = "product-identity/v1"
+
+[[case]]
+id = "canonical-visible-name"
+field = "visible_identity"
+expected = "SuperNutrition"
+
+[[case]]
+id = "store-only-title"
+field = "store_listing_title"
+expected = "SuperNutrition AI nutritionist"
+
+[[case]]
+id = "production-android-id"
+field = "android_application_id"
+expected = "com.supernutrition.android"
+
+[[case]]
+id = "production-ios-id"
+field = "ios_bundle_identifier"
+expected = "com.supernutrition.ios"

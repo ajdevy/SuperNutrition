@@ -35,6 +35,10 @@ jobs:
         run: scripts/interaction-policy-contract-negative-fixtures.sh
       - name: Validate mobile scaffold policy
         run: ./mobile/gradlew -p mobile verifyMobilePolicy --dependency-verification=strict --no-daemon --no-configuration-cache
+      - name: Run mobile JVM unit tests
+        run: ./mobile/gradlew -p mobile mobileUnitTests --dependency-verification=strict --no-daemon --no-configuration-cache
+      - name: Compile Android production identity target
+        run: ./mobile/gradlew -p mobile :apps:androidApp:assembleProductionDebug --dependency-verification=strict --no-daemon --no-configuration-cache
       - name: Emit same-SHA CI fingerprint
         run: scripts/emit-ci-fingerprint.sh quality-linux "$RUNNER_TEMP/supernutrition-ci/quality-linux.fingerprint"
       - name: Upload same-SHA CI fingerprint
