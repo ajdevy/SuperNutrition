@@ -174,10 +174,10 @@ production_scheme_path = scheme_root / "SuperNutrition.xcscheme"
 if not production_scheme_path.is_file():
     fail("iOS production shared scheme is missing")
 production_scheme = production_scheme_path.read_text(encoding="utf-8")
-if 'BlueprintIdentifier = "A50000010000000000000001"' not in acceptance_scheme or \
+if 'BlueprintIdentifier = "T50000010000000000000001"' not in acceptance_scheme or \
         'BuildableName = "SuperNutritionUIAcceptance.app"' not in acceptance_scheme:
     fail("iOS acceptance scheme does not build the acceptance product")
-if 'BlueprintIdentifier = "A50000010000000000000003"' not in production_scheme or \
+if 'BlueprintIdentifier = "T50000010000000000000003"' not in production_scheme or \
         'BuildableName = "SuperNutrition.app"' not in production_scheme:
     fail("iOS production scheme does not build the production product")
 

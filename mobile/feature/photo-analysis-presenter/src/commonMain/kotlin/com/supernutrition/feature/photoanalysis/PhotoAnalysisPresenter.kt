@@ -24,20 +24,12 @@ enum class PhotoAnalysisPresenterAction {
 }
 
 data class PhotoAnalysisPresenterModel(
-    val title: String,
     val statusLabel: String,
-    val shutterLabel: String,
-    val importLabel: String,
-    val shutterAutomationId: String,
-    val importAutomationId: String,
     val state: PhotoAnalysisPresenterState,
     val actions: List<PhotoAnalysisPresenterAction>,
 ) {
     companion object {
-        fun from(
-            state: PhotoAnalysisState,
-            surface: CaptureSurfaceUi = CaptureSurfaceUi(),
-        ): PhotoAnalysisPresenterModel {
+        fun from(state: PhotoAnalysisState): PhotoAnalysisPresenterModel {
             val presenterState = when (state) {
                 PhotoAnalysisState.Capture -> PhotoAnalysisPresenterState.CAPTURE
                 is PhotoAnalysisState.Preparing -> PhotoAnalysisPresenterState.PREPARING
@@ -48,12 +40,7 @@ data class PhotoAnalysisPresenterModel(
                 is PhotoAnalysisState.Backgrounded -> PhotoAnalysisPresenterState.BACKGROUNDED
             }
             return PhotoAnalysisPresenterModel(
-                title = surface.title,
                 statusLabel = statusLabel(state),
-                shutterLabel = surface.shutterLabel,
-                importLabel = surface.importLabel,
-                shutterAutomationId = surface.shutterAutomationId,
-                importAutomationId = surface.importAutomationId,
                 state = presenterState,
                 actions = actions(state),
             )

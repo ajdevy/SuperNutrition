@@ -4,7 +4,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertIs
-import kotlin.test.assertNotEquals
 
 class InteractionDefaultsTest {
     private val snapshot = ConfigurationSnapshot(
@@ -26,7 +25,7 @@ class InteractionDefaultsTest {
         assertEquals("US", context.catalogCountry)
         assertEquals("US", context.marketJurisdiction)
         assertEquals("us-east", context.processingRegion)
-        assertNotEquals(context.locale, context.processingRegion)
+        assertEquals("en-US", context.locale)
     }
 
     @Test
@@ -50,7 +49,7 @@ class InteractionDefaultsTest {
     }
 
     @Test
-    fun `allowlisted snapshot defaults and catalog proposal resolve with provenance`() {
+    fun `allowlisted snapshot defaults resolve with provenance`() {
         val resolver = DefaultResolver()
 
         val locale = assertIs<DefaultResolution.Accepted>(
@@ -68,46 +67,57 @@ class InteractionDefaultsTest {
         )
         assertEquals("metric", measurement.value)
         assertEquals(DefaultProvenance.BUNDLED_SAFE_DEFAULT, measurement.provenance)
+    }
 
-        val missingCatalog = resolver.resolve(
+    @Test
+    fun `catalog proposal is rejected when the proposal is missing`() {
+        val resolution = DefaultResolver().resolve(
             DefaultResolutionInput(
                 field = DefaultableField.CATALOG_PROPOSAL,
                 snapshot = snapshot,
                 canonicalItemConfirmed = true,
             ),
         )
+
         assertEquals(
             RejectionReason.MISSING_CATALOG_PROPOSAL,
-            assertIs<DefaultResolution.Rejected>(missingCatalog).reason,
+            assertIs<DefaultResolution.Rejected>(resolution).reason,
         )
+    }
 
-        val catalog = assertIs<DefaultResolution.Accepted>(
-            resolver.resolve(
-                DefaultResolutionInput(
-                    field = DefaultableField.CATALOG_PROPOSAL,
-                    snapshot = snapshot,
-                    canonicalItemConfirmed = true,
-                    catalogProposal = CatalogServingProposal(
-                        canonicalItemId = "food:apple",
-                        serving = AtomicServing("g", "100"),
-                        sourceId = "catalog-v1",
-                    ),
+    @Test
+    fun `confirmed catalog proposal resolves with provenance`() {
+        val resolution = DefaultResolver().resolve(
+            DefaultResolutionInput(
+                field = DefaultableField.CATALOG_PROPOSAL,
+                snapshot = snapshot,
+                canonicalItemConfirmed = true,
+                catalogProposal = CatalogServingProposal(
+                    canonicalItemId = "food:apple",
+                    serving = AtomicServing("g", "100"),
+                    sourceId = "catalog-v1",
                 ),
             ),
         )
-        assertEquals("food:apple", catalog.value)
-        assertEquals(DefaultProvenance.CATALOG_CONFIRMED, catalog.provenance)
 
-        val missingServing = resolver.resolve(
+        val accepted = assertIs<DefaultResolution.Accepted>(resolution)
+        assertEquals("food:apple", accepted.value)
+        assertEquals(DefaultProvenance.CATALOG_CONFIRMED, accepted.provenance)
+    }
+
+    @Test
+    fun `standard serving is rejected when the confirmed catalog serving is missing`() {
+        val resolution = DefaultResolver().resolve(
             DefaultResolutionInput(
                 field = DefaultableField.STANDARD_SERVING,
                 snapshot = snapshot,
                 canonicalItemConfirmed = true,
             ),
         )
+
         assertEquals(
             RejectionReason.MISSING_CATALOG_PROPOSAL,
-            assertIs<DefaultResolution.Rejected>(missingServing).reason,
+            assertIs<DefaultResolution.Rejected>(resolution).reason,
         )
     }
 
@@ -133,19 +143,19 @@ class InteractionDefaultsTest {
 
     @Test
     fun `configuration and catalog value objects reject malformed inputs`() {
-        val invalidSnapshots = listOf<() -> Unit>(
-            { snapshot.copy(snapshotId = "") },
-            { snapshot.copy(revision = -1) },
-            { snapshot.copy(defaultLocale = "") },
-            { snapshot.copy(measurementSystem = "") },
-            { snapshot.copy(catalogCountry = "") },
-            { snapshot.copy(marketJurisdiction = "") },
-            { snapshot.copy(processingRegion = "") },
-            { snapshot.copy(policyVersion = "") },
-            { snapshot.copy(digest = "invalid") },
+        val invalidSnapshots = listOf(
+            "snapshotId" to { snapshot.copy(snapshotId = "") },
+            "revision" to { snapshot.copy(revision = -1) },
+            "defaultLocale" to { snapshot.copy(defaultLocale = "") },
+            "measurementSystem" to { snapshot.copy(measurementSystem = "") },
+            "catalogCountry" to { snapshot.copy(catalogCountry = "") },
+            "marketJurisdiction" to { snapshot.copy(marketJurisdiction = "") },
+            "processingRegion" to { snapshot.copy(processingRegion = "") },
+            "policyVersion" to { snapshot.copy(policyVersion = "") },
+            "digest" to { snapshot.copy(digest = "invalid") },
         )
-        invalidSnapshots.forEach { createInvalid ->
-            assertFailsWith<IllegalArgumentException> { createInvalid() }
+        invalidSnapshots.forEach { (field, createInvalid) ->
+            assertFailsWith<IllegalArgumentException>("Invalid $field must be rejected") { createInvalid() }
         }
         assertFailsWith<IllegalArgumentException> { AtomicServing("", "100") }
         assertFailsWith<IllegalArgumentException> { AtomicServing("g", "") }
@@ -292,10 +302,10 @@ class InteractionDefaultsTest {
             policyDigest = "b".repeat(64),
             revision = 0,
         )
-        assertFailsWith<IllegalArgumentException> { valid.copy(proposalId = "").hashCode() }
-        assertFailsWith<IllegalArgumentException> { valid.copy(value = "").hashCode() }
-        assertFailsWith<IllegalArgumentException> { valid.copy(snapshotDigest = "invalid").hashCode() }
-        assertFailsWith<IllegalArgumentException> { valid.copy(policyDigest = "invalid").hashCode() }
-        assertFailsWith<IllegalArgumentException> { valid.copy(revision = -1).hashCode() }
+        assertFailsWith<IllegalArgumentException> { valid.copy(proposalId = "") }
+        assertFailsWith<IllegalArgumentException> { valid.copy(value = "") }
+        assertFailsWith<IllegalArgumentException> { valid.copy(snapshotDigest = "invalid") }
+        assertFailsWith<IllegalArgumentException> { valid.copy(policyDigest = "invalid") }
+        assertFailsWith<IllegalArgumentException> { valid.copy(revision = -1) }
     }
 }

@@ -259,7 +259,11 @@ matrix_bytes = re.sub(
     matrix_path.read_bytes(),
 )
 hash_value = sha256()
-release_files = [("compatibility-matrix.toml", matrix_bytes), ("schema.toml", schema_path.read_bytes())]
+release_files = [
+    ("RELEASE.md", (root / "RELEASE.md").read_bytes()),
+    ("compatibility-matrix.toml", matrix_bytes),
+    ("schema.toml", schema_path.read_bytes()),
+]
 release_files.extend(
     (str(path.relative_to(root)), path.read_bytes()) for path in fixture_paths
 )

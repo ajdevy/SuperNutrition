@@ -3,17 +3,15 @@ plugins {
 }
 
 val hostIsIntelMac =
-    System.getProperty("os.name") == "Mac OS X" &&
-        System.getProperty("os.arch") == "x86_64"
+    providers.systemProperty("os.name").orNull == "Mac OS X" &&
+        providers.systemProperty("os.arch").orNull == "x86_64"
 
 kotlin {
     jvm()
-    val isIntelMac =
-        System.getProperty("os.name") == "Mac OS X" &&
-            System.getProperty("os.arch") == "x86_64"
+    val isIntelMac = hostIsIntelMac
     val enableFrameworkExport = providers.gradleProperty("supernutrition.enableSharedKitFramework").orNull == "true"
     val enableIosDeviceTarget =
-        System.getProperty("os.arch") != "x86_64" ||
+        providers.systemProperty("os.arch").orNull != "x86_64" ||
             providers.gradleProperty("supernutrition.enableIosDeviceTarget").orNull == "true"
     val enableAppleTargets = enableIosDeviceTarget || !isIntelMac
     if (enableAppleTargets) {
@@ -60,7 +58,7 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.koin.core)
             implementation(project(":core:ui"))
-            implementation(project(":feature:photo-analysis-presenter"))
+            api(project(":feature:photo-analysis-presenter"))
             if (!hostIsIntelMac || enableIosDeviceTarget) {
                 implementation(project(":feature:photo-analysis-ui"))
             }

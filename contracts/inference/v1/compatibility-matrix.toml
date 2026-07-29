@@ -1,7 +1,7 @@
 schema = "supernutrition.photo-inference-engine-compatibility-matrix.v1"
 contract_id = "photo-inference-engine"
 release = "v1"
-digest = "3634abd47f88682cc0953cab229d932f4be26e7f0f76419877dcfe1ce229cba3"
+digest = "b63de2850e1213815c8949fdfec82acb54903ca1b149b8bd6bdc748718b64179"
 
 [[supported_pair]]
 producer = "domain-inference-v1"

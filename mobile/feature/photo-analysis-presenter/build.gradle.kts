@@ -6,8 +6,8 @@ kotlin {
     jvm()
 
     val isIntelMac =
-        System.getProperty("os.name") == "Mac OS X" &&
-            System.getProperty("os.arch") == "x86_64"
+        providers.systemProperty("os.name").orNull == "Mac OS X" &&
+            providers.systemProperty("os.arch").orNull == "x86_64"
     val enableIosDeviceTarget =
         !isIntelMac ||
             providers.gradleProperty("supernutrition.enableIosDeviceTarget").orNull == "true"
@@ -31,6 +31,7 @@ kotlin {
             implementation(project(":core:config"))
             implementation(project(":core:ui"))
             implementation(project(":domain:photo-analysis"))
+            implementation(libs.kotlinx.coroutines.core)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))

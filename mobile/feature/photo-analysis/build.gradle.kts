@@ -7,7 +7,7 @@ plugins {
 
 composeCompiler {
     stabilityConfigurationFiles.add(
-        layout.projectDirectory.file("../../config/compose-stability.conf"),
+        rootProject.layout.projectDirectory.file("config/compose-stability.conf"),
     )
 }
 
@@ -36,9 +36,10 @@ kotlin {
         }
         androidMain.dependencies {
             implementation(project(":core:config"))
+            implementation(project(":core:ui"))
             implementation(project(":domain:photo-analysis"))
-            implementation(project(":feature:photo-analysis-ui"))
             implementation(libs.androidx.activity)
+            implementation(libs.androidx.activity.compose)
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)

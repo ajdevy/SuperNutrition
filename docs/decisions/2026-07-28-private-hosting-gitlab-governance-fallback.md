@@ -21,7 +21,7 @@ available project constraint.
 Use a private GitLab mirror as the merge authority, with a separate private
 governance project owning the trusted audit and merge bot:
 
-1. `flexsentlabs/SuperNutrition` is the private canonical source project.
+1. `flexsent-labs/SuperNutrition` is the private canonical source project.
    GitHub remains a read-only issue/PR mirror until the migration is verified.
 2. `flexsentlabs/supernutrition-governance` is a separate private project whose
    protected default branch contains the pinned trusted-policy-audit pipeline.
@@ -80,13 +80,6 @@ Repository-policy owner, with independent source and governance principals.
 
 ## Provisioning exit checklist
 
-- [ ] Create both private GitLab projects and record their immutable IDs.
-- [ ] Protect both default branches; remove developer push/merge permissions
-  from the source `main` branch.
-- [ ] Add the governance bot as the only source merge principal and store its
-  token only as a protected governance-project variable.
-- [ ] Pin the governance audit source and runner image by digest.
-- [ ] Verify blocked bypass, modified-policy rejection, clean merge, and
-  same-SHA attestation on a disposable test merge request.
-- [ ] Attach the live URLs, IDs, logs, and SHA to this decision, change
-  `Status` to `accepted`, and then revisit AD-38/lifecycle atomically.
+Not applicable: this proposal is retired and was never adopted. No GitLab
+projects, credentials, provisioning steps, or acceptance evidence are pending
+under this decision record.

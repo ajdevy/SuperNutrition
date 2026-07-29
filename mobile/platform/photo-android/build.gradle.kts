@@ -4,7 +4,6 @@ plugins {
 }
 
 kotlin {
-    jvm()
     android {
         namespace = "com.supernutrition.platform.photoandroid"
         compileSdk = libs.versions.compileSdk.get().toInt()
@@ -13,11 +12,13 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            implementation(project(":core:config"))
             implementation(project(":core:ui"))
             implementation(project(":domain:photo-analysis"))
         }
         androidMain.dependencies {
             implementation(libs.androidx.activity)
+            implementation(libs.androidx.exifinterface)
             implementation(libs.camerax.core)
             implementation(libs.camerax.camera2)
             implementation(libs.camerax.lifecycle)

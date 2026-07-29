@@ -27,8 +27,7 @@ dependencies {
     implementation(libs.detekt.gradle)
     implementation(libs.detekt.ktlint.wrapper)
     implementation(libs.kover.gradle)
-    testImplementation(kotlin("test"))
-    testImplementation(gradleTestKit())
+    testImplementation(kotlin("test-junit5"))
 }
 
 tasks.withType<Test>().configureEach {

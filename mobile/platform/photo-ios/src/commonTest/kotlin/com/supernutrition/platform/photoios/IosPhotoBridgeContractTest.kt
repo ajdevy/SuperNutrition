@@ -11,7 +11,7 @@ class IosPhotoBridgeContractTest {
 
         assertEquals("capture_shutter", contract.shutterAutomationId)
         assertEquals("capture_import", contract.importAutomationId)
-        assertEquals("capture_permission_rationale", contract.permissionRationaleAutomationId)
+        assertEquals("capture_permission_rationale", contract.cameraPermissionAutomationId)
     }
 
     @Test
@@ -19,7 +19,7 @@ class IosPhotoBridgeContractTest {
         assertEquals(
             listOf(
                 IosCameraPermissionState.NOT_DETERMINED,
-                IosCameraPermissionState.AUTHORIZED,
+                IosCameraPermissionState.GRANTED,
                 IosCameraPermissionState.DENIED,
                 IosCameraPermissionState.RESTRICTED,
             ),

@@ -1,18 +1,16 @@
 package com.supernutrition.core.ui
 
+internal val UI_AUTOMATION_ID_PATTERN = Regex("[a-z][a-z0-9]*(?:_[a-z0-9]+)*")
+
 /**
  * Stable, locale-neutral automation identifiers shared by Compose and native
  * platform hosts. Labels remain localized; these values are an API contract.
  */
 data class UiAutomationId(val value: String) {
     init {
-        require(value.matches(IDENTIFIER_PATTERN)) {
+        require(value.matches(UI_AUTOMATION_ID_PATTERN)) {
             "Automation IDs must use lowercase snake_case: $value"
         }
-    }
-
-    private companion object {
-        val IDENTIFIER_PATTERN = Regex("[a-z][a-z0-9]*(?:_[a-z0-9]+)*")
     }
 }
 

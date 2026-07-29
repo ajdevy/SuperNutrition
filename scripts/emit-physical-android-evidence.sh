@@ -8,6 +8,7 @@ fi
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="$(cd "$script_dir/.." && pwd)"
+source "$script_dir/lib/quality-common.sh"
 output_root="$1"
 android_bin="${ANDROID_ADB:-adb}"
 gradle_bin="$repo_root/mobile/gradlew"
@@ -30,59 +31,6 @@ device_state="$($android_bin -s "$android_serial" get-state 2>/dev/null | tr -d 
 test "$device_state" = "device" || {
   printf 'Android serial is not online: %s (%s)\n' "$android_serial" "$device_state" >&2
   exit 1
-}
-
-hash_stream() {
-  if command -v sha256sum >/dev/null 2>&1; then
-    sha256sum | awk '{print $1}'
-  else
-    shasum --algorithm 256 | awk '{print $1}'
-  fi
-}
-
-hash_file() {
-  local path="$1"
-  if command -v sha256sum >/dev/null 2>&1; then
-    sha256sum "$path" | awk '{print $1}'
-  else
-    shasum --algorithm 256 "$path" | awk '{print $1}'
-  fi
-}
-
-digest_files() {
-  {
-    local path
-    for path in "$@"; do
-      test -f "$repo_root/$path" || {
-        printf 'missing evidence input: %s\n' "$path" >&2
-        exit 1
-      }
-      printf '%s\0%s\0' "$path" "$(hash_file "$repo_root/$path")"
-    done
-  } | hash_stream
-}
-
-digest_tree() {
-  local root_relative="$1"
-  test -d "$repo_root/$root_relative" || {
-    printf 'missing evidence directory: %s\n' "$root_relative" >&2
-    exit 1
-  }
-  {
-    local absolute relative
-    while IFS= read -r absolute; do
-      relative="${absolute#"$repo_root/"}"
-      printf '%s\0%s\0' "$relative" "$(hash_file "$absolute")"
-    done < <(find "$repo_root/$root_relative" -type f -print | LC_ALL=C sort)
-  } | hash_stream
-}
-
-toml_string() {
-  local value="$1"
-  value="${value//\\/\\\\}"
-  value="${value//\"/\\\"}"
-  value="${value//$'\n'/\\n}"
-  printf '"%s"' "$value"
 }
 
 apk_path="$(find "$repo_root/mobile/apps/androidApp/build/outputs/apk" -type f \
@@ -133,11 +81,11 @@ if test -n "$(git -C "$repo_root" status --porcelain)"; then
   worktree_state="dirty"
 fi
 
-artifact_digest="$(digest_files \
-  "mobile/apps/androidApp/build/outputs/apk/uiAcceptance/debug/androidApp-uiAcceptance-debug.apk" \
-  "mobile/apps/androidApp/build/outputs/apk/androidTest/uiAcceptance/debug/androidApp-uiAcceptance-debug-androidTest.apk")"
-fixture_digest="$(digest_tree mobile/apps/androidApp/src/androidTest/resources/fixtures)"
-policy_digest="$(digest_tree mobile/config/quality)"
+artifact_digest="$(digest_files "$repo_root" \
+  "${apk_path#"$repo_root/"}" \
+  "${test_apk_path#"$repo_root/"}")"
+fixture_digest="$(digest_tree "$repo_root" mobile/apps/androidApp/src/androidTest/resources/fixtures)"
+policy_digest="$(digest_tree "$repo_root" mobile/config/quality)"
 gradle_version="$("$gradle_bin" --version | sed -n 's/^Gradle \([0-9][0-9.]*\)$/\1/p' | head -n 1)"
 android_model="$($android_bin -s "$android_serial" shell getprop ro.product.model | tr -d '\r')"
 android_manufacturer="$($android_bin -s "$android_serial" shell getprop ro.product.manufacturer | tr -d '\r')"

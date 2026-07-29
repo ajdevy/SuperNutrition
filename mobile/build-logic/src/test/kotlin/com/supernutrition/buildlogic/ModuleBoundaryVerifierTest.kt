@@ -1,0 +1,69 @@
+package com.supernutrition.buildlogic
+
+import java.nio.file.Files
+import kotlin.test.Test
+import kotlin.test.assertFailsWith
+
+class ModuleBoundaryVerifierTest {
+    @Test
+    fun `declared production edge is accepted`() {
+        val root = fixture("feature")
+        try {
+            Files.writeString(
+                root.resolve("feature/photo/build.gradle.kts"),
+                "implementation(project(\":domain:photo\"))",
+            )
+            ModuleBoundaryVerifier.validate(root)
+        } finally {
+            root.toFile().deleteRecursively()
+        }
+    }
+
+    @Test
+    fun `undeclared edge fails with source and target`() {
+        val root = fixture("feature")
+        try {
+            Files.writeString(
+                root.resolve("feature/photo/build.gradle.kts"),
+                "implementation(project(\":platform:photo\"))",
+            )
+            val failure = assertFailsWith<IllegalArgumentException> {
+                ModuleBoundaryVerifier.validate(root)
+            }
+            check(failure.message.orEmpty().contains("feature -> platform"))
+        } finally {
+            root.toFile().deleteRecursively()
+        }
+    }
+
+    private fun fixture(source: String): java.nio.file.Path {
+        val root = Files.createTempDirectory("module-boundaries")
+        Files.createDirectories(root.resolve("config/architecture"))
+        Files.createDirectories(root.resolve("feature/photo"))
+        Files.createDirectories(root.resolve("domain/photo"))
+        Files.createDirectories(root.resolve("platform/photo"))
+        Files.writeString(
+            root.resolve("config/architecture/module-boundaries.toml"),
+            """
+                [[module]]
+                id = "feature"
+                path = "feature"
+
+                [[module]]
+                id = "domain"
+                path = "domain"
+
+                [[module]]
+                id = "platform"
+                path = "platform"
+
+                [[allowed_edge]]
+                from = "feature"
+                to = "domain"
+                scope = "production"
+            """.trimIndent(),
+        )
+        Files.createFile(root.resolve("${source}/photo/placeholder.txt"))
+        return root
+    }
+}
