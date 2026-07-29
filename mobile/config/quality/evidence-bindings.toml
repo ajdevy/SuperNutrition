@@ -4,7 +4,7 @@ product = "mobile"
 lifecycle = "active"
 source_digest = "local-only"
 manifest_count = 13
-manifest_digest = "9b08533746c623bf5259f5c2f83de2a2174c9ade7ba9f2731915828c1cca797b"
+manifest_digest = "e67e77f420595fd2fd2f6a04463b0480013fd612e39454dc7746f00685622420"
 profile = "photo-analysis"
 status = "active-local"
 
