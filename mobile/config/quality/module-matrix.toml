@@ -4,7 +4,7 @@ product = "mobile"
 lifecycle = "active"
 inventory_state = "local-verified"
 source_digest = "local-only"
-quality_claim = false
+quality_claim = true
 production_source_count = 9
 coverage_denominator_count = 9
 undeclared_executable_policy = "fail"
@@ -19,7 +19,7 @@ path = "mobile/build-logic"
 kind = "policy"
 production = false
 quality_task = "verifyMobilePolicy"
-status = "pending"
+status = "active"
 
 [[unit]]
 id = "mobile-quality-policy"

@@ -99,16 +99,22 @@ object MobilePolicyValidator {
             else -> error("Unknown mobile UI evidence profile")
         }
 
+        val lifecycle = files.single { it.first == "product-lifecycle.toml" }.second
+        val lifecycleValue = extractString(lifecycle, "lifecycle")
         val coverage = files.single { it.first == "config/quality/coverage.toml" }.second
-        require(coverage.contains("quality_claim = false")) {
-            "Scaffold coverage must not make a product quality claim"
+        if (lifecycleValue == "scaffold-pending") {
+            require(coverage.contains("quality_claim = false")) {
+                "Scaffold coverage must not make a product quality claim"
+            }
+        } else {
+            require(coverage.contains("quality_claim = true")) {
+                "An active lifecycle must declare an active quality claim"
+            }
         }
         require(coverage.contains("empty_or_zero_denominator = \"fail\"")) {
             "Zero coverage denominators must fail closed"
         }
 
-        val lifecycle = files.single { it.first == "product-lifecycle.toml" }.second
-        val lifecycleValue = extractString(lifecycle, "lifecycle")
         require(lifecycleValue in setOf("scaffold-pending", "active")) {
             "The mobile lifecycle must be scaffold-pending or active"
         }
