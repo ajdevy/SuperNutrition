@@ -1,6 +1,7 @@
 package com.supernutrition.buildlogic
 
 import java.nio.file.Files
+import java.security.MessageDigest
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertFailsWith
@@ -21,6 +22,53 @@ class MobilePolicyValidatorTest {
 
         assertFalse(lifecycle.contains("all_six_jobs_success"))
         assertFalse(lifecycle.contains("trusted_ruleset_audit"))
+        MobilePolicyValidator.validate(root)
+    }
+
+    @Test
+    fun `validator accepts active local policy with optional Apple evidence`() {
+        val root = fixtureRoot("supernutrition-policy-optional-apple-test")
+        copyPolicyFixtures(root)
+        Files.walk(root).use { paths ->
+            paths.filter { Files.isRegularFile(it) }.forEach { path ->
+                val text = Files.readString(path)
+                Files.writeString(
+                    path,
+                    text.replace("lifecycle = \"scaffold-pending\"", "lifecycle = \"active\"")
+                        .replace("source_digest = \"pending\"", "source_digest = \"local-only\"")
+                        .replace("transition = \"blocked\"", "transition = \"active\"")
+                        .replace("active_inventory_and_denominators = false", "active_inventory_and_denominators = true"),
+                )
+            }
+        }
+        val manifestPaths = listOf(
+            "config/architecture/module-boundaries.toml",
+            "config/quality/module-matrix.toml",
+            "config/quality/ui-evidence-profile.toml",
+            "config/quality/positive-scenarios.toml",
+            "config/quality/journeys.toml",
+            "config/quality/platform-contracts.toml",
+            "config/quality/native-gaps.toml",
+            "config/quality/coverage.toml",
+            "config/quality/suppression-registry.toml",
+            "config/quality/interaction-policy.toml",
+            "config/product-identity.toml",
+            "config/compose-stability.conf",
+            "product-lifecycle.toml",
+        ).sorted()
+        val digest = MessageDigest.getInstance("SHA-256").apply {
+            manifestPaths.forEach { relative ->
+                update(relative.toByteArray())
+                update(0)
+                update(Files.readAllBytes(root.resolve(relative)))
+            }
+        }.digest().joinToString("") { "%02x".format(it) }
+        val evidence = root.resolve("config/quality/evidence-bindings.toml")
+        Files.writeString(
+            evidence,
+            Files.readString(evidence).replace(Regex("manifest_digest = \"[^\"]+\""), "manifest_digest = \"$digest\""),
+        )
+
         MobilePolicyValidator.validate(root)
     }
 

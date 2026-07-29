@@ -21,6 +21,28 @@ class NativeEquivalentEvidenceVerifierTest {
     }
 
     @Test
+    fun `optional Apple native evidence does not gate local coverage`() {
+        assertTrue(
+            NativeEquivalentEvidenceVerifier.allowed(
+                coverageText = """
+                    [[denominator]]
+                    coverage_kind = "native-equivalent"
+                    evidence_ids = ["native-ios"]
+                """.trimIndent(),
+                nativeGapsText = """
+                    lifecycle = "scaffold-pending"
+                    [[gap]]
+                    id = "native-ios"
+                    optional = true
+                    max_age_days = 30
+                """.trimIndent(),
+                evidenceText = "",
+                now = now,
+            ),
+        )
+    }
+
+    @Test
     fun `fresh successful native evidence satisfies the gate`() {
         assertTrue(
             NativeEquivalentEvidenceVerifier.allowed(

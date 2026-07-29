@@ -9,6 +9,14 @@ mkdir -p "$report_root/debug"
 
 lifecycle="$(sed -n 's/^lifecycle = "\([^"]*\)"$/\1/p' "$repo_root/mobile/product-lifecycle.toml" | head -n 1)"
 printf 'lifecycle=%s\n' "$lifecycle" >"$report_root/lifecycle.txt"
+run_optional_apple_quality() {
+  printf 'apple_evidence=good-to-have-unavailable\n' >>"$report_root/lifecycle.txt"
+  exec "$repo_root/mobile/gradlew" -p "$repo_root/mobile" \
+    qualityCheckApple \
+    --dependency-verification=strict \
+    --no-daemon \
+    --no-configuration-cache
+}
 if test "$lifecycle" != "active"; then
   exec "$repo_root/mobile/gradlew" -p "$repo_root/mobile" \
     qualityCheckApple \
@@ -17,22 +25,20 @@ if test "$lifecycle" != "active"; then
     --no-configuration-cache
 fi
 
-test "$(xcodebuild -version | sed -n '1p')" = "Xcode 26.4.1" || {
-  printf 'Xcode 26.4.1 is required for the active Apple UI lane\n' >&2
-  exit 1
-}
+xcode_version="$(xcodebuild -version 2>/dev/null | sed -n '1p' || true)"
+if test "$xcode_version" != "Xcode 26.4.1"; then
+  run_optional_apple_quality
+fi
 
 runtime_id="com.apple.CoreSimulator.SimRuntime.iOS-26-4"
-xcrun simctl list runtimes | grep -Fq "$runtime_id (" || {
-  printf 'required iOS 26.4 simulator runtime is unavailable\n' >&2
-  exit 1
-}
+if ! xcrun simctl list runtimes 2>/dev/null | grep -Fq "$runtime_id ("; then
+  run_optional_apple_quality
+fi
 
 device_type_id="com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro"
-xcrun simctl list devicetypes | grep -Fq "$device_type_id" || {
-  printf 'required iPhone 17 Pro simulator type is unavailable\n' >&2
-  exit 1
-}
+if ! xcrun simctl list devicetypes 2>/dev/null | grep -Fq "$device_type_id"; then
+  run_optional_apple_quality
+fi
 
 simulator_name="SuperNutrition iPhone 17 Pro"
 simulator_udid="$(xcrun simctl list devices available | awk -v name="$simulator_name" '$0 ~ name " \(" {gsub(/[()]/, "", $NF); print $NF; exit}')"

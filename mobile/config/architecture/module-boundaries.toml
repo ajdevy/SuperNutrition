@@ -1,9 +1,9 @@
 schema = "supernutrition.mobile.module-boundaries.v1"
 schema_version = 1
 product = "mobile"
-lifecycle = "scaffold-pending"
+lifecycle = "active"
 owner = "mobile-platform"
-source_digest = "pending"
+source_digest = "local-only"
 
 # This inventory is intentionally explicit before production modules exist.
 # Any undeclared module, package prefix, source set, or dependency edge fails

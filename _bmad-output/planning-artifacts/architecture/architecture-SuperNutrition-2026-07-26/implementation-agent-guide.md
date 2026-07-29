@@ -15,6 +15,11 @@ vendor:
 
 # SuperNutrition Implementation Agent Guide
 
+> Current delivery-policy amendment (2026-07-29): Apple Silicon, exact
+> Xcode, canonical iOS simulator, and physical-iOS evidence are good-to-have
+> compatibility evidence, not local activation blockers. Required local and
+> Android gates remain authoritative; pending Apple evidence is never success.
+
 ## 1. Authority order
 
 Every implementation session follows this order:

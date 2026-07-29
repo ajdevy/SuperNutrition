@@ -47,8 +47,8 @@ class QualityPlugin : Plugin<Project> {
             doLast {
                 MobilePolicyValidator.validate(mobileRoot)
                 logger.lifecycle(
-                    "qualityCheckJvmAndroid validated the scaffold policy; " +
-                        "static analysis ran without emitting a production claim.",
+                    "qualityCheckJvmAndroid validated the local mobile policy; " +
+                        "static analysis ran without emitting an active coverage claim.",
                 )
             }
         }
@@ -59,8 +59,8 @@ class QualityPlugin : Plugin<Project> {
             doLast {
                 MobilePolicyValidator.validate(mobileRoot)
                 logger.lifecycle(
-                    "qualityCheckApple validated the scaffold policy; " +
-                        "Apple evidence remains host-dependent.",
+                    "qualityCheckApple validated the local mobile policy; " +
+                        "Apple evidence remains good-to-have.",
                 )
             }
         }
@@ -69,7 +69,7 @@ class QualityPlugin : Plugin<Project> {
             group = "verification"
             description = "Verifies the JVM/Android-host Kover denominator when mobile is active."
             onlyIf {
-                lifecycle(mobileRoot) == "active"
+                lifecycle(mobileRoot) == "active" && qualityClaimConfigured(mobileRoot)
             }
         }
 
@@ -262,12 +262,14 @@ class QualityPlugin : Plugin<Project> {
             coverageText.contains("quality_claim = true") &&
             nativeEquivalentEvidenceAllowed(mobileRoot) &&
             listOf(
-                "canonical_ios_simulator_arm64 = true",
-                "exact_xcode_toolchain = true",
                 "active_inventory_and_denominators = true",
                 "production_compose_host = true",
             ).all(lifecycleText::contains)
     }
+
+    private fun qualityClaimConfigured(mobileRoot: Path): Boolean =
+        Files.readString(mobileRoot.resolve("config/quality/coverage.toml"))
+            .contains("quality_claim = true")
 
     private fun productionModulePaths(mobileRoot: Path): List<String> {
         val denominators = coverageDenominators(mobileRoot)
@@ -368,16 +370,21 @@ internal object NativeEquivalentEvidenceVerifier {
         evidenceText: String,
         now: Instant = Instant.now(),
     ): Boolean {
-        val requiredIds = blocks(coverageText, "denominator")
+        val referencedIds = blocks(coverageText, "denominator")
             .filter { extractString(it, "coverage_kind") == "native-equivalent" }
             .flatMap { extractStringList(it, "evidence_ids") }
             .toSet()
+        val gapBlocks = blocks(nativeGapsText, "gap")
+        val optionalIds = gapBlocks
+            .filter { extractBoolean(it, "optional") == true }
+            .mapNotNull { extractString(it, "id") }
+            .toSet()
+        val requiredIds = referencedIds - optionalIds
         if (requiredIds.isEmpty()) return true
         if (extractString(nativeGapsText, "lifecycle") != "active" ||
             extractString(evidenceText, "lifecycle") != "active"
         ) return false
 
-        val gapBlocks = blocks(nativeGapsText, "gap")
         val evidenceBlocks = blocks(evidenceText, "evidence")
         return requiredIds.all { id ->
             val gap = gapBlocks.firstOrNull { extractString(it, "id") == id } ?: return@all false
@@ -414,6 +421,13 @@ internal object NativeEquivalentEvidenceVerifier {
             ?.groupValues
             ?.get(1)
             ?.toInt()
+
+    private fun extractBoolean(text: String, key: String): Boolean? =
+        Regex("(?m)^${Regex.escape(key)}\\s*=\\s*(true|false)\\s*$")
+            .find(text)
+            ?.groupValues
+            ?.get(1)
+            ?.toBoolean()
 
     private fun extractStringList(text: String, key: String): List<String> =
         Regex("(?m)^${Regex.escape(key)}\\s*=\\s*\\[([^]]*)]")

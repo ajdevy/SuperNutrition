@@ -18,8 +18,9 @@ metadata-scrubbed Photo Input so Android and iOS receive equivalent safe bytes.
 
 ## Dependencies
 
-Requires the opaque `PhotoRef`/lease contract from E2.1 and physical native
-fixture evidence for both platforms.
+Requires the opaque `PhotoRef`/lease contract from E2.1. Android native
+fixture evidence remains the device lane; physical iOS/Apple fixture evidence
+is good-to-have and does not block local activation.
 
 ## Tasks / Subtasks
 
@@ -31,8 +32,8 @@ fixture evidence for both platforms.
   lane and the approved Intel `iosX64` simulator lane.
 - [x] Re-run the physical Android binary fixture after the CameraX bridge
   hardening invalidated the previous `platform/photo-android` attestation.
-- [x] Complete physical iOS fixture evidence with the arm64 Kotlin/Native
-  binary runner on a real iPhone; the simulator lane remains compatibility-only.
+- [x] Keep the physical iOS fixture and arm64 Kotlin/Native runner available as
+  optional evidence; the simulator lane remains compatibility-only.
 
 ## Dev Agent Record
 

@@ -280,6 +280,14 @@ AR-33.
 Create the fail-closed monorepo substrate, KMP toolchain, product identity, and
 quality policy that every later story must consume.
 
+#### 2026-07-29 delivery-policy amendment
+
+The Apple Silicon runner, exact Xcode tuple, iOS simulator execution, and
+physical-iOS native gaps are good-to-have evidence rather than activation
+requirements. Local policy, inventory, JVM coverage, and required Android
+device evidence remain authoritative; optional Apple records stay explicit and
+never count as successful evidence while pending.
+
 ### Story E1.1: Activate the mobile KMP scaffold
 
 As the mobile platform owner,

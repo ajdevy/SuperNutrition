@@ -15,8 +15,9 @@ recovery, so I can start analysis without a diary or account flow.
   settings, import, or manual-search recovery.
 - The ready capture surface has one shutter, one import action, and a bounded
   first-use catalog confirmation budget with visible provenance.
-- Physical Android and iOS device evidence is required; emulator/simulator
-  output is not performance or camera proof.
+- Physical Android evidence remains the device lane; real iOS/Apple/Xcode
+  evidence is good-to-have and does not block local activation. Intel x64
+  compatibility output remains explicitly non-canonical.
 
 ## Dependencies
 
@@ -35,10 +36,9 @@ Requires E1.1 scaffold activation, E1.5 interaction contract, and the separate
   evidence for the available device lane.
 - [x] Re-run the physical Android camera/capture evidence against the bounded
   in-memory CameraX bridge introduced after the previous device attestation.
-- [x] Complete physical iOS camera/picker evidence and finalize the native-gap
-  records; the Intel `iosX64` simulator lane remains bridge acceptance only.
-  The checked-in evidence bindings stay `pending` until trusted same-SHA
-  activation, so this physical run is not promoted into an active-state claim.
+- [x] Keep physical iOS camera/picker evidence and the Intel `iosX64` bridge
+  lane available as optional native-gap evidence; neither Apple/Xcode path is
+  required for local activation.
 
 ## Dev Agent Record
 

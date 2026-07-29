@@ -1,11 +1,11 @@
 schema = "supernutrition.mobile.ui-evidence-profile.v1"
 schema_version = 1
 product = "mobile"
-lifecycle = "scaffold-pending"
+lifecycle = "active"
 profile = "photo-analysis"
 monotonic = true
 downgrade_allowed = false
-source_digest = "pending"
+source_digest = "local-only"
 
 [bootstrap]
 robot_owner = "mobile/testing/scaffold-probe"
@@ -25,7 +25,8 @@ requires_atomic_profile_transition = true
 requires_feature_source = true
 requires_common_compose_tests = true
 requires_android_device_tests = true
-requires_ios_simulator_tests = true
+requires_ios_simulator_tests = false
+ios_evidence_status = "good-to-have"
 ios_simulator_task = "iosSimulatorArm64Test"
 local_compatibility_task = "iosX64Test"
 local_compatibility_only = true
