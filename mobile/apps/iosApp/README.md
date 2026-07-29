@@ -92,3 +92,9 @@ IOS_UDID="<physical-udid>" \
 IOS_DERIVED_DATA_ROOT="$PWD/mobile/apps/iosApp/build/DerivedData" \
   scripts/emit-physical-ios-evidence.sh "/tmp/supernutrition-ios-evidence"
 ```
+
+The fixture runner must use a valid development provisioning profile for the
+same acceptance bundle ID. After the physical Xcode test, it discovers the
+profile from `IOS_APP_PATH/embedded.mobileprovision`; otherwise pass an
+explicit `IOS_PROVISIONING_PROFILE` path. A signing certificate and matching
+entitlements alone are not installable on a real iPhone.
