@@ -9,10 +9,71 @@ const val PHOTO_INFERENCE_CONTRACT_V1 = "photo-inference-engine/v1"
 private val DIGEST_PATTERN = Regex("[a-f0-9]{64}")
 private val OPAQUE_ID_PATTERN = Regex("[A-Za-z0-9._:-]{1,128}")
 
+private fun requireNonBlank(value: String, message: String) {
+    if (value.isBlank()) {
+        throw IllegalArgumentException(message)
+    }
+}
+
+private fun requireContractV1(value: String, message: String) {
+    if (value != PHOTO_INFERENCE_CONTRACT_V1) {
+        throw IllegalArgumentException(message)
+    }
+}
+
+private fun invalidContract(message: String): Nothing = throw IllegalArgumentException(message)
+
+private fun requireReadyCapability(reason: CapabilityReason, modelVersion: String?) {
+    if (reason != CapabilityReason.NONE) {
+        throw IllegalArgumentException("Ready capability must not report an unavailable reason")
+    }
+    if (modelVersion.isNullOrBlank()) {
+        throw IllegalArgumentException("Ready capability must identify its model version")
+    }
+}
+
+private fun validateCandidates(candidates: List<InferenceCandidate>) {
+    if (candidates.isEmpty()) {
+        invalidContract("Candidate outcome must not be empty")
+    }
+    if (candidates.asSequence().map(InferenceCandidate::rank).toSet().size != candidates.size) {
+        invalidContract("Candidate ranks must be unique")
+    }
+    if (candidates.asSequence().map(InferenceCandidate::rank).sorted().toList() !=
+        (1..candidates.size).toList()
+    ) {
+        invalidContract("Candidate ranks must be contiguous and start at one")
+    }
+    if (candidates.asSequence().map(InferenceCandidate::candidateId).toSet().size != candidates.size) {
+        invalidContract("Candidate IDs must be unique")
+    }
+}
+
+private fun requireFiniteScore(score: Double) {
+    if (!score.isFinite()) {
+        throw IllegalArgumentException("Confidence score must be finite")
+    }
+}
+
+private fun requireScoreInRange(score: Double) {
+    if (score < 0.0) {
+        throw IllegalArgumentException("Confidence score must be between zero and one")
+    }
+    if (score > 1.0) {
+        throw IllegalArgumentException("Confidence score must be between zero and one")
+    }
+}
+
+private fun requirePositiveRank(rank: Int) {
+    if (rank <= 0) {
+        throw IllegalArgumentException("Candidate rank must be positive")
+    }
+}
+
 /** Attempt identity shared by photo preparation and every Engine adapter. */
 data class AttemptId(val value: String) {
     init {
-        require(value.isNotBlank()) { "AttemptId must not be blank" }
+        requireNonBlank(value, "AttemptId must not be blank")
     }
 }
 
@@ -45,8 +106,8 @@ data class InferenceAttemptContext(
     val configurationDigest: String,
 ) {
     init {
-        require(requestId.isNotBlank()) { "Inference request ID must not be blank" }
-        require(configurationVersion.isNotBlank()) { "Configuration version must not be blank" }
+        requireNonBlank(requestId, "Inference request ID must not be blank")
+        requireNonBlank(configurationVersion, "Configuration version must not be blank")
         require(DIGEST_PATTERN.matches(configurationDigest)) {
             "Configuration digest must be a lowercase SHA-256 digest"
         }
@@ -56,8 +117,10 @@ data class InferenceAttemptContext(
 /** In-memory Engine input. Photo bytes remain behind the lease/content port. */
 data class PhotoInferenceRequest(val photoRef: PhotoRef, val attemptContext: InferenceAttemptContext) {
     init {
-        require(photoRef.attemptId == attemptContext.attemptId) {
-            "PhotoRef and inference context must belong to the same attempt"
+        if (photoRef.attemptId != attemptContext.attemptId) {
+            throw IllegalArgumentException(
+                "PhotoRef and inference context must belong to the same attempt",
+            )
         }
     }
 }
@@ -81,18 +144,11 @@ data class EngineCapability(
     val modelVersion: String? = null,
 ) {
     init {
-        require(contractVersion == PHOTO_INFERENCE_CONTRACT_V1) {
-            "Capability must use contract-v1"
-        }
-        require(userMessageKey.isNotBlank()) { "Capability user message key must not be blank" }
-        require(engineId.isNotBlank()) { "Capability engine ID must not be blank" }
+        requireContractV1(contractVersion, "Capability must use contract-v1")
+        requireNonBlank(userMessageKey, "Capability user message key must not be blank")
+        requireNonBlank(engineId, "Capability engine ID must not be blank")
         if (state == CapabilityState.READY) {
-            require(reason == CapabilityReason.NONE) {
-                "Ready capability must not report an unavailable reason"
-            }
-            require(!modelVersion.isNullOrBlank()) {
-                "Ready capability must identify its model version"
-            }
+            requireReadyCapability(reason, modelVersion)
         }
     }
 }
@@ -142,9 +198,7 @@ enum class CapabilityReason {
 @Serializable
 data class PhotoInferenceResult(val contractVersion: String, val outcome: InferenceOutcome) {
     init {
-        require(contractVersion == PHOTO_INFERENCE_CONTRACT_V1) {
-            "Inference result must use contract-v1"
-        }
+        requireContractV1(contractVersion, "Inference result must use contract-v1")
     }
 }
 
@@ -154,16 +208,7 @@ sealed class InferenceOutcome {
     @SerialName("candidates")
     data class Candidates(val candidates: List<InferenceCandidate>) : InferenceOutcome() {
         init {
-            require(candidates.isNotEmpty()) { "Candidate outcome must not be empty" }
-            require(candidates.map(InferenceCandidate::rank).toSet().size == candidates.size) {
-                "Candidate ranks must be unique"
-            }
-            require(candidates.map(InferenceCandidate::rank).sorted() == (1..candidates.size).toList()) {
-                "Candidate ranks must be contiguous and start at one"
-            }
-            require(candidates.map(InferenceCandidate::candidateId).toSet().size == candidates.size) {
-                "Candidate IDs must be unique"
-            }
+            validateCandidates(candidates)
         }
     }
 
@@ -175,7 +220,7 @@ sealed class InferenceOutcome {
         val provenance: InferenceProvenance,
     ) : InferenceOutcome() {
         init {
-            require(userMessageKey.isNotBlank()) { "Abstention message key must not be blank" }
+            requireNonBlank(userMessageKey, "Abstention message key must not be blank")
         }
     }
 
@@ -188,7 +233,7 @@ sealed class InferenceOutcome {
         val provenance: InferenceProvenance,
     ) : InferenceOutcome() {
         init {
-            require(userMessageKey.isNotBlank()) { "Failure message key must not be blank" }
+            requireNonBlank(userMessageKey, "Failure message key must not be blank")
         }
     }
 }
@@ -203,17 +248,17 @@ data class InferenceCandidate(
     val provenance: InferenceProvenance,
 ) {
     init {
-        require(candidateId.isNotBlank()) { "Candidate ID must not be blank" }
-        require(label.isNotBlank()) { "Candidate label must not be blank" }
-        require(rank > 0) { "Candidate rank must be positive" }
+        requireNonBlank(candidateId, "Candidate ID must not be blank")
+        requireNonBlank(label, "Candidate label must not be blank")
+        requirePositiveRank(rank)
     }
 }
 
 @Serializable
 data class Confidence(val score: Double, val band: ConfidenceBand) {
     init {
-        require(score.isFinite()) { "Confidence score must be finite" }
-        require(score in 0.0..1.0) { "Confidence score must be between zero and one" }
+        requireFiniteScore(score)
+        requireScoreInRange(score)
     }
 }
 
@@ -232,7 +277,7 @@ enum class ConfidenceBand {
 @Serializable
 data class InferenceAssumption(val code: AssumptionCode, val userMessageKey: String) {
     init {
-        require(userMessageKey.isNotBlank()) { "Assumption message key must not be blank" }
+        requireNonBlank(userMessageKey, "Assumption message key must not be blank")
     }
 }
 
@@ -260,14 +305,10 @@ data class InferenceProvenance(
     val contractVersion: String,
 ) {
     init {
-        require(engineId.isNotBlank()) { "Provenance engine ID must not be blank" }
-        require(modelVersion.isNotBlank()) { "Provenance model version must not be blank" }
-        require(calibrationVersion.isNotBlank()) {
-            "Provenance calibration version must not be blank"
-        }
-        require(contractVersion == PHOTO_INFERENCE_CONTRACT_V1) {
-            "Provenance must use contract-v1"
-        }
+        requireNonBlank(engineId, "Provenance engine ID must not be blank")
+        requireNonBlank(modelVersion, "Provenance model version must not be blank")
+        requireNonBlank(calibrationVersion, "Provenance calibration version must not be blank")
+        requireContractV1(contractVersion, "Provenance must use contract-v1")
     }
 }
 
@@ -325,9 +366,7 @@ data class InferenceTelemetryEvent(
     val resourceBucket: TelemetryResourceBucket,
 ) {
     init {
-        require(contractVersion == PHOTO_INFERENCE_CONTRACT_V1) {
-            "Telemetry must use contract-v1"
-        }
+        requireContractV1(contractVersion, "Telemetry must use contract-v1")
     }
 }
 
@@ -392,30 +431,15 @@ object InferenceContractJson {
     fun encodeCapability(capability: EngineCapability): String =
         json.encodeToString(EngineCapability.serializer(), capability)
 
-    fun decodeCapability(payload: String): EngineCapability = json
-        .decodeFromString(EngineCapability.serializer(), payload)
-        .also { capability ->
-            require(capability.contractVersion == PHOTO_INFERENCE_CONTRACT_V1) {
-                "Unsupported inference capability version: ${capability.contractVersion}"
-            }
-        }
+    fun decodeCapability(payload: String): EngineCapability =
+        json.decodeFromString(EngineCapability.serializer(), payload)
 
-    fun decode(payload: String): PhotoInferenceResult = json
-        .decodeFromString(PhotoInferenceResult.serializer(), payload)
-        .also { result ->
-            require(result.contractVersion == PHOTO_INFERENCE_CONTRACT_V1) {
-                "Unsupported inference contract version: ${result.contractVersion}"
-            }
-        }
+    fun decode(payload: String): PhotoInferenceResult =
+        json.decodeFromString(PhotoInferenceResult.serializer(), payload)
 
     fun encodeTelemetry(event: InferenceTelemetryEvent): String =
         json.encodeToString(InferenceTelemetryEvent.serializer(), event)
 
     fun decodeTelemetry(payload: String): InferenceTelemetryEvent =
         json.decodeFromString(InferenceTelemetryEvent.serializer(), payload)
-            .also { event ->
-                require(event.contractVersion == PHOTO_INFERENCE_CONTRACT_V1) {
-                    "Unsupported inference telemetry contract version: ${event.contractVersion}"
-                }
-            }
 }

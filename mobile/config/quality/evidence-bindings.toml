@@ -4,6 +4,8 @@ product = "mobile"
 lifecycle = "scaffold-pending"
 source_digest = "pending"
 manifest_count = 13
+# This counts the bound policy manifests (excluding this file), not the native
+# evidence records below.
 manifest_digest = "42ff8ed1bc4801efd0a44a58883eaa745fbae6e32b355986db99b8c109b32e33"
 profile = "photo-analysis"
 status = "pending"

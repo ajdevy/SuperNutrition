@@ -37,4 +37,103 @@ if SUPERNUTRITION_INFERENCE_CONTRACT="$fixture_root/nutrition" "${repo_root}/scr
     exit 1
 fi
 
+expect_rejected() {
+    local label="$1"
+    local root="$2"
+    if SUPERNUTRITION_INFERENCE_CONTRACT="$root" "${repo_root}/scripts/verify-inference-contract.sh" >/dev/null 2>&1; then
+        echo "negative fixture unexpectedly passed: $label" >&2
+        exit 1
+    fi
+}
+
+cp -R "${repo_root}/contracts/inference/v1" "$fixture_root/duplicate-keys"
+python3 - "$fixture_root/duplicate-keys/fixtures/candidate-result.json" <<'PY'
+from pathlib import Path
+import sys
+
+path = Path(sys.argv[1])
+text = path.read_text()
+needle = '"contractVersion":"photo-inference-engine/v1",'
+path.write_text(text.replace(needle, needle + '"contractVersion":"photo-inference-engine/v1",', 1))
+PY
+expect_rejected "duplicate JSON keys" "$fixture_root/duplicate-keys"
+
+cp -R "${repo_root}/contracts/inference/v1" "$fixture_root/nonfinite"
+python3 - "$fixture_root/nonfinite/fixtures/candidate-result.json" <<'PY'
+from pathlib import Path
+import sys
+
+path = Path(sys.argv[1])
+path.write_text(path.read_text().replace('"score":0.93', '"score":NaN', 1))
+PY
+expect_rejected "non-finite confidence" "$fixture_root/nonfinite"
+
+cp -R "${repo_root}/contracts/inference/v1" "$fixture_root/unknown-outcome"
+python3 - "$fixture_root/unknown-outcome/fixtures/candidate-result.json" <<'PY'
+from pathlib import Path
+import json
+import sys
+
+path = Path(sys.argv[1])
+data = json.loads(path.read_text())
+data["outcome"]["outcomeType"] = "unsupported"
+path.write_text(json.dumps(data, separators=(",", ":")) + "\n")
+PY
+expect_rejected "unknown outcome type" "$fixture_root/unknown-outcome"
+
+cp -R "${repo_root}/contracts/inference/v1" "$fixture_root/noncontiguous-rank"
+python3 - "$fixture_root/noncontiguous-rank/fixtures/candidate-result.json" <<'PY'
+from pathlib import Path
+import json
+import sys
+
+path = Path(sys.argv[1])
+data = json.loads(path.read_text())
+data["outcome"]["candidates"][0]["rank"] = 2
+path.write_text(json.dumps(data, separators=(",", ":")) + "\n")
+PY
+expect_rejected "non-contiguous candidate rank" "$fixture_root/noncontiguous-rank"
+
+cp -R "${repo_root}/contracts/inference/v1" "$fixture_root/duplicate-candidate-id"
+python3 - "$fixture_root/duplicate-candidate-id/fixtures/candidate-result.json" <<'PY'
+from pathlib import Path
+import copy
+import json
+import sys
+
+path = Path(sys.argv[1])
+data = json.loads(path.read_text())
+candidate = copy.deepcopy(data["outcome"]["candidates"][0])
+candidate["rank"] = 2
+data["outcome"]["candidates"].append(candidate)
+path.write_text(json.dumps(data, separators=(",", ":")) + "\n")
+PY
+expect_rejected "duplicate candidate ID" "$fixture_root/duplicate-candidate-id"
+
+cp -R "${repo_root}/contracts/inference/v1" "$fixture_root/blank-message-key"
+python3 - "$fixture_root/blank-message-key/fixtures/abstention-result.json" <<'PY'
+from pathlib import Path
+import json
+import sys
+
+path = Path(sys.argv[1])
+data = json.loads(path.read_text())
+data["outcome"]["userMessageKey"] = " "
+path.write_text(json.dumps(data, separators=(",", ":")) + "\n")
+PY
+expect_rejected "blank outcome message key" "$fixture_root/blank-message-key"
+
+cp -R "${repo_root}/contracts/inference/v1" "$fixture_root/ready-capability"
+python3 - "$fixture_root/ready-capability/fixtures/capability-ready.json" <<'PY'
+from pathlib import Path
+import json
+import sys
+
+path = Path(sys.argv[1])
+data = json.loads(path.read_text())
+data["reason"] = "model-missing"
+path.write_text(json.dumps(data, separators=(",", ":")) + "\n")
+PY
+expect_rejected "ready capability with unavailable reason" "$fixture_root/ready-capability"
+
 echo "inference contract negative fixtures: OK"
