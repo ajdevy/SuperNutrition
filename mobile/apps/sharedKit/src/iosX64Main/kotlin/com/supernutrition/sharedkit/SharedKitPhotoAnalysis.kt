@@ -1,10 +1,12 @@
 package com.supernutrition.sharedkit
 
-import com.supernutrition.core.config.ConfigurationSnapshot
 import com.supernutrition.domain.photoanalysis.AttemptId
 import com.supernutrition.domain.photoanalysis.PhotoAnalysisEvent
 import com.supernutrition.domain.photoanalysis.RecoveryReason
+import com.supernutrition.domain.photoanalysis.PhotoLeaseStore
+import com.supernutrition.domain.photoanalysis.PhotoSessionStore
 import com.supernutrition.feature.photoanalysis.PhotoAnalysisFeature
+import com.supernutrition.feature.photoanalysis.PhotoAnalysisNativeAction
 import com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterModel
 import com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterState
 import com.supernutrition.platform.photoios.IosImageNormalizer
@@ -22,7 +24,8 @@ public class SharedKitPhotoAnalysisSession(
 ) {
     private val feature = PhotoAnalysisFeature(
         attemptId = AttemptId(attemptId),
-        configurationSnapshot = configurationSnapshot(attemptId),
+        leases = PhotoLeaseStore(),
+        sessions = PhotoSessionStore(),
     )
 
     public fun presenterState(): PhotoAnalysisPresenterState = PhotoAnalysisPresenterModel.from(feature.state).state
@@ -73,19 +76,6 @@ public class SharedKitPhotoAnalysisSession(
         feature.dispatch(PhotoAnalysisEvent.Restored)
     }
 
-    private companion object {
-        fun configurationSnapshot(attemptId: String): ConfigurationSnapshot = ConfigurationSnapshot(
-            snapshotId = attemptId,
-            revision = 1,
-            defaultLocale = "en-US",
-            measurementSystem = "metric",
-            catalogCountry = "US",
-            marketJurisdiction = "US",
-            processingRegion = "us-east",
-            policyVersion = "v1",
-            digest = "a".repeat(64),
-        )
-    }
 }
 
 /**
@@ -97,6 +87,6 @@ public class SharedKitPhotoAnalysisSession(
 public object SharedKitPhotoAnalysis {
     public fun viewController(
         session: SharedKitPhotoAnalysisSession,
-        onNativeAction: (String) -> Unit,
+        onNativeAction: (PhotoAnalysisNativeAction) -> Unit,
     ): UIViewController = error("Compose iOS UI is unavailable on the iosX64 compatibility lane")
 }

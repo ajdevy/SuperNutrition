@@ -20,11 +20,9 @@ class PhotoAnalysisCaptureScreenComposeTest {
                     com.supernutrition.domain.photoanalysis.PhotoAnalysisState.Capture,
                 ),
                 onAction = {},
-                bootstrapLaunchMarker = true,
             )
         }
 
-        onNodeWithTag("bootstrap_shell_launch_di").assertIsDisplayed()
         onNodeWithTag("photo_analysis_title").assertIsDisplayed()
         onNodeWithTag("photo_analysis_status").assertIsDisplayed()
         onNodeWithTag("capture_shutter").assertIsDisplayed()
@@ -35,12 +33,7 @@ class PhotoAnalysisCaptureScreenComposeTest {
     fun `screen renders and dispatches every bounded action`() = runComposeUiTest {
         val clicked = mutableListOf<PhotoAnalysisPresenterAction>()
         val model = PhotoAnalysisPresenterModel(
-            title = "Meal",
             statusLabel = "Recovery",
-            shutterLabel = "Take",
-            importLabel = "Import",
-            shutterAutomationId = "custom_shutter",
-            importAutomationId = "custom_import",
             state = PhotoAnalysisPresenterState.RECOVERY,
             actions = PhotoAnalysisPresenterAction.entries,
         )
@@ -48,7 +41,13 @@ class PhotoAnalysisCaptureScreenComposeTest {
             PhotoAnalysisCaptureScreen(
                 model = model,
                 onAction = clicked::add,
-                bootstrapLaunchMarker = false,
+                surface = PhotoAnalysisCaptureSurface(
+                    title = "Meal",
+                    shutterLabel = "Take",
+                    importLabel = "Import",
+                    shutterAutomationId = "custom_shutter",
+                    importAutomationId = "custom_import",
+                ),
             )
         }
 
@@ -68,17 +67,11 @@ class PhotoAnalysisCaptureScreenComposeTest {
         setContent {
             PhotoAnalysisCaptureScreen(
                 model = PhotoAnalysisPresenterModel(
-                    title = "Restoring",
                     statusLabel = "Restoring photo analysis",
-                    shutterLabel = "Take",
-                    importLabel = "Import",
-                    shutterAutomationId = "unused_shutter",
-                    importAutomationId = "unused_import",
                     state = PhotoAnalysisPresenterState.BACKGROUNDED,
                     actions = emptyList(),
                 ),
                 onAction = {},
-                bootstrapLaunchMarker = false,
             )
         }
 

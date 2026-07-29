@@ -33,30 +33,43 @@ class MobilePolicyPlugin : Plugin<Project> {
         project.extensions.extraProperties["supernutrition.packageNamespace"] =
             "com.supernutrition"
 
+        val repoRoot = repositoryRoot(mobileRoot)
+        val verifierPaths = listOf(
+            "scripts/verify-product-identity.sh",
+            "scripts/verify-interaction-policy-contract.sh",
+            "scripts/verify-mobile-api-contract.sh",
+            "scripts/verify-inference-contract.sh",
+            "scripts/verify-root-boundaries.sh",
+            "scripts/verify-ci-policy.sh",
+        ).map(repoRoot::resolve)
         project.tasks.register("verifyMobilePolicy") {
             group = "verification"
             description = "Validates the mobile scaffold policy without writing files."
+            inputs.files(verifierPaths)
+            inputs.files(
+                mobileRoot.resolve("product-lifecycle.toml"),
+                mobileRoot.resolve("config"),
+                mobileRoot.resolve(".maestro"),
+            )
+            outputs.upToDateWhen { false }
             doLast {
                 require(expectedRootName == "SuperNutrition-mobile") {
                     "Unexpected mobile root project name"
                 }
                 MobilePolicyValidator.validate(mobileRoot)
-                val repositoryRoot = mobileRoot.parent
-                listOf(
-                    "scripts/verify-product-identity.sh",
-                    "scripts/verify-interaction-policy-contract.sh",
-                    "scripts/verify-mobile-api-contract.sh",
-                ).forEach { relative ->
-                    val script = repositoryRoot.resolve(relative)
-                    require(Files.isRegularFile(script)) { "Missing local policy verifier: $relative" }
+                ModuleBoundaryVerifier.validate(mobileRoot)
+                verifierPaths.forEach { script ->
+                    require(Files.isRegularFile(script)) { "Missing local policy verifier: $script" }
                     val result = ProcessBuilder("bash", script.toString())
-                        .directory(repositoryRoot.toFile())
+                        .directory(repoRoot.toFile())
                         .inheritIO()
                         .start()
                         .waitFor()
-                    require(result == 0) { "Local policy verifier failed: $relative" }
+                    require(result == 0) { "Local policy verifier failed: $script" }
                 }
             }
         }
     }
+
+    private fun repositoryRoot(mobileRoot: Path): Path = mobileRoot.parent
 }

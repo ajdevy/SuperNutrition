@@ -12,7 +12,7 @@ id = "bootstrap.android.package-launch"
 requirement = "packaged-launch"
 platform = "android"
 evidence_kind = "instrumentation"
-status = "pending"
+status = "local-verified"
 native_gap_id = "bootstrap-android-host"
 
 [[contract]]
@@ -28,7 +28,7 @@ id = "photo.android.bridge"
 requirement = "camera-picker-permission-recovery"
 platform = "android"
 evidence_kind = "physical-device-instrumentation"
-status = "pending"
+status = "local-verified"
 native_gap_id = "photo-android-camera-picker"
 
 [[contract]]
@@ -45,7 +45,7 @@ id = "photo.android.lifecycle"
 requirement = "background-foreground-restoration"
 platform = "android"
 evidence_kind = "physical-device-lifecycle"
-status = "pending"
+status = "local-verified"
 native_gap_id = "photo-android-lifecycle"
 
 [[contract]]
@@ -62,7 +62,7 @@ id = "photo.android.accessibility"
 requirement = "semantic-role-and-permission-recovery"
 platform = "android"
 evidence_kind = "talkback-device"
-status = "pending"
+status = "local-verified"
 native_gap_id = "photo-android-accessibility"
 
 [[contract]]
@@ -79,7 +79,7 @@ id = "photo.android.normalization"
 requirement = "orientation-color-space-metadata-scrub"
 platform = "android"
 evidence_kind = "binary-fixture"
-status = "pending"
+status = "local-verified"
 native_gap_id = "photo-android-normalization"
 
 [[contract]]

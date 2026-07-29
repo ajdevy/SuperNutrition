@@ -4,11 +4,12 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.Settings
-import java.io.ByteArrayOutputStream
-import java.io.File
+import com.supernutrition.core.ui.CameraAvailability
+import com.supernutrition.core.ui.CameraPermissionState
+import com.supernutrition.core.ui.CaptureSurfaceContract
+import com.supernutrition.core.ui.PhotoRecoveryAction
 
 /**
  * Android-only bridge. Native intents and permission objects stay here; the
@@ -33,20 +34,7 @@ class AndroidPhotoBridge(private val context: Context) : PhotoBridgePort {
     override fun recoveryFor(
         permission: CameraPermissionState,
         availability: CameraAvailability,
-    ): List<PhotoRecoveryAction> = when {
-        permission != CameraPermissionState.GRANTED -> listOf(
-            PhotoRecoveryAction.OpenSettings,
-            PhotoRecoveryAction.ImportPhoto,
-            PhotoRecoveryAction.ManualSearch,
-        )
-
-        availability == CameraAvailability.UNAVAILABLE -> listOf(
-            PhotoRecoveryAction.ImportPhoto,
-            PhotoRecoveryAction.ManualSearch,
-        )
-
-        else -> emptyList()
-    }
+    ): List<PhotoRecoveryAction> = CaptureSurfaceContract().recoveryFor(permission, availability)
 
     fun cameraPermissionName(): String = Manifest.permission.CAMERA
 
@@ -78,25 +66,5 @@ class AndroidPhotoBridge(private val context: Context) : PhotoBridgePort {
     )
 
     /** Reads one selected URI or consumes the in-memory CameraX result. */
-    fun photoBytesFromResult(result: Intent?): ByteArray? {
-        result?.getStringExtra(AndroidPhotoCaptureFiles.EXTRA_CAPTURE_TOKEN)?.let { token ->
-            return AndroidPhotoCaptureResultStore.take(token)
-        }
-
-        val uri = result?.data ?: result?.clipData?.takeIf { it.itemCount > 0 }?.getItemAt(0)?.uri
-        if (uri != null) {
-            val bytes = runCatching {
-                context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
-            }.getOrNull()
-            if (AndroidPhotoCaptureFiles.isOwnedUri(context, uri)) {
-                uri.path?.let { File(it).delete() }
-            }
-            return bytes
-        }
-
-        val thumbnail = result?.extras?.get("data") as? Bitmap ?: return null
-        return ByteArrayOutputStream().use { output ->
-            if (!thumbnail.compress(Bitmap.CompressFormat.JPEG, 92, output)) null else output.toByteArray()
-        }
-    }
+    fun photoBytesFromResult(result: Intent?): ByteArray? = AndroidPhotoResultReader(context).read(result)
 }

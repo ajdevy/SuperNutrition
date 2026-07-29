@@ -9,10 +9,44 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.supernutrition.core.ui.UiAutomationIds
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.collectAsState
+
+data class PhotoAnalysisCaptureSurface(
+    val title: String = "Capture",
+    val shutterLabel: String = "Take meal photo",
+    val importLabel: String = "Choose photo",
+    val shutterAutomationId: String = UiAutomationIds.CAPTURE_SHUTTER.value,
+    val importAutomationId: String = UiAutomationIds.CAPTURE_IMPORT.value,
+    val requiredTapBudget: Int = 2,
+    val requiredScrollBudget: Int = 0,
+    val requiredFieldBudget: Int = 0,
+    val requiredChoiceBudget: Int = 0,
+    val auxiliaryTextEntryCharsBudget: Int = 0,
+    val auxiliaryChoiceSurfaceBudget: Int = 0,
+    val auxiliaryBackBudget: Int = 1,
+    val auxiliaryUndoBudget: Int = 0,
+    val auxiliaryCancelBudget: Int = 1,
+    val auxiliaryPermissionPromptBudget: Int = 1,
+)
+
+@Composable
+fun PhotoAnalysisCaptureContent(
+    feature: PhotoAnalysisFeature,
+    onAction: (PhotoAnalysisPresenterAction) -> Unit,
+    modifier: Modifier = Modifier,
+    surface: PhotoAnalysisCaptureSurface = PhotoAnalysisCaptureSurface(),
+) {
+    val state by feature.stateFlow.collectAsState()
+    PhotoAnalysisCaptureScreen(
+        model = PhotoAnalysisPresenterModel.from(state),
+        onAction = onAction,
+        modifier = modifier,
+        surface = surface,
+    )
+}
 
 /** Shared production Compose presenter surface used by Android and iOS hosts. */
 @Composable
@@ -20,22 +54,16 @@ fun PhotoAnalysisCaptureScreen(
     model: PhotoAnalysisPresenterModel,
     onAction: (PhotoAnalysisPresenterAction) -> Unit,
     modifier: Modifier = Modifier,
-    bootstrapLaunchMarker: Boolean = false,
+    surface: PhotoAnalysisCaptureSurface = PhotoAnalysisCaptureSurface(),
 ) {
-    val markerModifier = if (bootstrapLaunchMarker) {
-        Modifier.automationId(UiAutomationIds.BOOTSTRAP_LAUNCH_DI.value)
-    } else {
-        Modifier
-    }
     Column(
         modifier = modifier
-            .then(markerModifier)
             .fillMaxSize()
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Text(
-            text = model.title,
+            text = surface.title,
             modifier = Modifier.automationId(UiAutomationIds.PHOTO_ANALYSIS_TITLE.value),
         )
         Text(
@@ -47,16 +75,16 @@ fun PhotoAnalysisCaptureScreen(
             when (action) {
                 PhotoAnalysisPresenterAction.TakePhoto -> Button(
                     onClick = { onAction(action) },
-                    modifier = Modifier.automationId(model.shutterAutomationId),
+                    modifier = Modifier.automationId(surface.shutterAutomationId),
                 ) {
-                    Text(model.shutterLabel)
+                    Text(surface.shutterLabel)
                 }
 
                 PhotoAnalysisPresenterAction.ImportPhoto -> Button(
                     onClick = { onAction(action) },
-                    modifier = Modifier.automationId(model.importAutomationId),
+                    modifier = Modifier.automationId(surface.importAutomationId),
                 ) {
-                    Text(model.importLabel)
+                    Text(surface.importLabel)
                 }
 
                 PhotoAnalysisPresenterAction.OpenSettings -> Button(
@@ -84,4 +112,4 @@ fun PhotoAnalysisCaptureScreen(
     }
 }
 
-private fun Modifier.automationId(id: String): Modifier = testTag(id).semantics { contentDescription = id }
+private fun Modifier.automationId(id: String): Modifier = testTag(id)

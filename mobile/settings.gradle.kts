@@ -27,7 +27,6 @@ rootProject.name = "SuperNutrition-mobile"
 val scaffoldModules = listOf(
     ":apps:androidApp",
     ":apps:sharedKit",
-    ":apps:iosApp",
     ":core:config",
     ":core:model",
     ":core:navigation",

@@ -1,5 +1,4 @@
 appId: ${APP_ID}
-
 ---
 
 # Non-product bootstrap proof only. The app host slice supplies APP_ID and the

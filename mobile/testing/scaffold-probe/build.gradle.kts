@@ -5,10 +5,10 @@ plugins {
 
 kotlin {
     val enableIntelX64 =
-        System.getProperty("os.name") == "Mac OS X" &&
-            System.getProperty("os.arch") == "x86_64" &&
+        providers.systemProperty("os.name").orNull == "Mac OS X" &&
+            providers.systemProperty("os.arch").orNull == "x86_64" &&
             providers.gradleProperty("supernutrition.enableIntelIosX64").orNull == "true"
-    val isIntelMac = System.getProperty("os.arch") == "x86_64"
+    val isIntelMac = providers.systemProperty("os.arch").orNull == "x86_64"
     val enableIosDeviceTarget =
         !isIntelMac ||
             providers.gradleProperty("supernutrition.enableIosDeviceTarget").orNull == "true"
@@ -31,8 +31,6 @@ kotlin {
     }
 
     sourceSets {
-        commonMain.dependencies {
-        }
         commonTest.dependencies {
             implementation(kotlin("test"))
             implementation(project(":testing:compose-support"))

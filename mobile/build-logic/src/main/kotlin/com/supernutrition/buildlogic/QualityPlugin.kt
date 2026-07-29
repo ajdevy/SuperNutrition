@@ -18,6 +18,7 @@ import org.gradle.api.Task
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.withType
+import org.gradle.api.tasks.testing.Test
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.xml.sax.InputSource
@@ -33,9 +34,6 @@ import org.xml.sax.InputSource
 class QualityPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         val mobileRoot = project.rootProject.projectDir.toPath()
-        val formattingRequested = project.gradle.startParameter.taskNames.any { taskName ->
-            taskName == "qualityFormat" || taskName.endsWith(":qualityFormat")
-        }
         val explicitJvmCoverageRequested = project.providers
             .gradleProperty("supernutrition.runJvmCoverage")
             .map(String::toBoolean)
@@ -58,6 +56,23 @@ class QualityPlugin : Plugin<Project> {
             description = "Runs the read-only Apple quality gate."
             doLast {
                 MobilePolicyValidator.validate(mobileRoot)
+                val xcodeProject = mobileRoot.resolve(
+                    "apps/iosApp/SuperNutritionUIAcceptance.xcodeproj",
+                )
+                require(Files.isDirectory(xcodeProject)) {
+                    "Apple quality gate requires the checked-in Xcode project: $xcodeProject"
+                }
+                if (Files.isExecutable(Path.of("/usr/bin/xcodebuild"))) {
+                    val result = ProcessBuilder(
+                        "/usr/bin/xcodebuild",
+                        "-list",
+                        "-project",
+                        xcodeProject.toString(),
+                    ).directory(mobileRoot.toFile()).inheritIO().start().waitFor()
+                    require(result == 0) { "xcodebuild -list failed for $xcodeProject" }
+                } else {
+                    logger.lifecycle("xcodebuild unavailable; Apple execution remains optional")
+                }
                 logger.lifecycle(
                     "qualityCheckApple validated the local mobile policy; " +
                         "Apple evidence remains good-to-have.",
@@ -89,12 +104,13 @@ class QualityPlugin : Plugin<Project> {
         }
         qualityCheckJvmAndroid.configure { dependsOn(mobileUnitTests) }
         qualityCheckApple.configure { dependsOn(mobileUnitTests) }
-        project.gradle.projectsEvaluated {
-            val jvmUnitTestTasks = project.subprojects.flatMap { subproject ->
-                subproject.tasks.matching { it.name == "jvmTest" }.toList()
+        project.allprojects.forEach { subproject ->
+            subproject.tasks.withType<Test>().configureEach {
+                if (name == "jvmTest" || name.endsWith("UnitTest")) {
+                    mobileUnitTests.configure { dependsOn(this@configureEach) }
+                    mobileUnitCoverage.configure { dependsOn(this@configureEach) }
+                }
             }
-            mobileUnitTests.configure { dependsOn(jvmUnitTestTasks) }
-            mobileUnitCoverage.configure { dependsOn(jvmUnitTestTasks) }
         }
 
         val qualityFormat = project.tasks.register("qualityFormat") {
@@ -107,13 +123,6 @@ class QualityPlugin : Plugin<Project> {
             }
         }
 
-        val detektTaskPaths = project.subprojects
-            .filter { hasKotlinMultiplatformPlugin(it) }
-            .flatMap { detektTaskNames(it).map { taskName -> "${it.path}:$taskName" } }
-        qualityCheckJvmAndroid.configure { dependsOn(detektTaskPaths) }
-        qualityCheckApple.configure { dependsOn(detektTaskPaths) }
-        qualityFormat.configure { dependsOn(detektTaskPaths) }
-
         val productionPaths = productionModulePaths(mobileRoot)
         project.subprojects.forEach { subproject ->
             if (productionPaths.contains(subproject.path)) {
@@ -122,7 +131,16 @@ class QualityPlugin : Plugin<Project> {
                 }
             }
             subproject.pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
-                configureDetekt(subproject, project.rootProject, formattingRequested)
+                configureDetekt(subproject, project.rootProject)
+                wireDetektTasks(subproject, qualityCheckJvmAndroid, qualityCheckApple, qualityFormat)
+            }
+            subproject.pluginManager.withPlugin("com.android.application") {
+                configureDetekt(subproject, project.rootProject)
+                wireDetektTasks(subproject, qualityCheckJvmAndroid, qualityCheckApple, qualityFormat)
+            }
+            subproject.pluginManager.withPlugin("org.jetbrains.kotlin.android") {
+                configureDetekt(subproject, project.rootProject)
+                wireDetektTasks(subproject, qualityCheckJvmAndroid, qualityCheckApple, qualityFormat)
             }
         }
 
@@ -142,7 +160,7 @@ class QualityPlugin : Plugin<Project> {
         }
     }
 
-    private fun configureDetekt(target: Project, rootProject: Project, autocorrectRequested: Boolean) {
+    private fun configureDetekt(target: Project, rootProject: Project) {
         target.pluginManager.apply(DetektPlugin::class.java)
 
         val catalogs = rootProject.extensions.getByType(VersionCatalogsExtension::class.java)
@@ -158,14 +176,37 @@ class QualityPlugin : Plugin<Project> {
             buildUponDefaultConfig.set(true)
             ignoreFailures.set(false)
             parallel.set(true)
-            autoCorrect.set(autocorrectRequested)
+            autoCorrect.set(false)
         }
         target.tasks.withType<Detekt>().configureEach {
             config.from(configFile)
             buildUponDefaultConfig.set(true)
             ignoreFailures.set(false)
             parallel.set(true)
-            autoCorrect.set(autocorrectRequested)
+            autoCorrect.set(false)
+        }
+    }
+
+    private fun wireDetektTasks(
+        target: Project,
+        qualityCheckJvmAndroid: org.gradle.api.tasks.TaskProvider<Task>,
+        qualityCheckApple: org.gradle.api.tasks.TaskProvider<Task>,
+        qualityFormat: org.gradle.api.tasks.TaskProvider<Task>,
+    ) {
+        val formatTask = target.tasks.register("detektFormat", Detekt::class.java) {
+            description = "Formats Kotlin sources for this module through the explicit qualityFormat gate."
+            source(target.fileTree("src") { include("**/*.kt") })
+            classpath.from(target.files())
+            config.from(target.rootProject.file("config/detekt/detekt.yml"))
+            buildUponDefaultConfig.set(true)
+            ignoreFailures.set(false)
+            parallel.set(true)
+            autoCorrect.set(true)
+        }
+        qualityFormat.configure { dependsOn(formatTask) }
+        target.tasks.withType<Detekt>().configureEach {
+            qualityCheckJvmAndroid.configure { dependsOn(this@configureEach) }
+            qualityCheckApple.configure { dependsOn(this@configureEach) }
         }
     }
 
@@ -188,15 +229,22 @@ class QualityPlugin : Plugin<Project> {
         val reportRoot = rootProject.projectDir.toPath()
         val lifecycleFile = mobileRoot.resolve("product-lifecycle.toml").toFile()
         val coverageFile = mobileRoot.resolve("config/quality/coverage.toml").toFile()
-        val reportFiles = productionProjects.map { path ->
-            JvmCoverageVerifier.reportPath(reportRoot, path).toFile()
+        val reportFiles = productionProjects.flatMap { path ->
+            JvmCoverageVerifier.reportPaths(reportRoot, path).map(Path::toFile)
+        }
+        val reportTaskNames = setOf("koverXmlReportJvm", "koverXmlReportAndroid")
+        val reportTasks = productionProjects.flatMap { path ->
+            rootProject.findProject(path)?.tasks
+                ?.matching { it.name in reportTaskNames }
+                ?.toList()
+                .orEmpty()
         }
 
         qualityCoverageJvm.configure {
             // Keep lifecycle/inventory changes in the configuration-cache
             // input model. Report tasks are always wired, but the reports
             // themselves are skipped until the active claim is authorized.
-            dependsOn(productionProjects.map { "$it:koverXmlReportJvm" })
+            dependsOn(*reportTasks.toTypedArray())
             inputs.files(lifecycleFile, coverageFile, reportFiles)
             doLast {
                 require(coverageClaimAllowed(mobileRoot, localCoverageRequested)) {
@@ -216,7 +264,7 @@ class QualityPlugin : Plugin<Project> {
         }
 
         mobileUnitCoverage.configure {
-            dependsOn(productionProjects.map { "$it:koverXmlReportJvm" })
+            dependsOn(*reportTasks.toTypedArray())
             inputs.files(lifecycleFile, coverageFile, reportFiles)
             doLast {
                 require(localCoverageRequested) {
@@ -237,7 +285,7 @@ class QualityPlugin : Plugin<Project> {
 
         productionProjects.forEach { path ->
             rootProject.findProject(path)?.tasks
-                ?.matching { it.name == "koverXmlReportJvm" }
+                ?.matching { it.name in reportTaskNames }
                 ?.configureEach {
                     onlyIf {
                         lifecycle(mobileRoot) == "active" || localCoverageRequested
@@ -316,41 +364,10 @@ class QualityPlugin : Plugin<Project> {
     }
 
     private fun blocks(text: String, name: String): List<String> =
-        Regex("(?ms)^\\[\\[$name]]\\s*\\n(.*?)(?=^\\[\\[|\\z)")
-            .findAll(text)
-            .map { it.groupValues[1] }
-            .toList()
+        PolicyToml.blocks(text, name)
 
     private fun extractString(text: String, key: String): String? =
-        Regex("(?m)^${Regex.escape(key)}\\s*=\\s*\\\"([^\\\"]*)\\\"\\s*$")
-            .find(text)
-            ?.groupValues
-            ?.get(1)
-
-    private fun hasKotlinMultiplatformPlugin(project: Project): Boolean {
-        val buildFile = project.buildFile.toPath()
-        return Files.isRegularFile(buildFile) &&
-            Files.readString(buildFile).contains("libs.plugins.kotlin.multiplatform")
-    }
-
-    private fun detektTaskNames(project: Project): List<String> {
-        val buildFile = project.buildFile.toPath()
-        val buildScript = Files.readString(buildFile)
-        return buildList {
-            add("detektCommonMainSourceSet")
-            add("detektCommonTestSourceSet")
-            add("detektJvmMainSourceSet")
-            add("detektJvmTestSourceSet")
-            if (buildScript.contains("libs.plugins.android.kotlin.multiplatform.library")) {
-                add("detektAndroidMainSourceSet")
-                add("detektMainAndroid")
-            }
-            if (buildScript.contains("libs.plugins.compose")) {
-                add("detektJvmDevSourceSet")
-                add("detektDevJvm")
-            }
-        }
-    }
+        PolicyToml.string(text, key)
 
     private fun lifecycle(mobileRoot: Path): String =
         Regex("(?m)^lifecycle\\s*=\\s*\\\"([^\\\"]+)\\\"$")
@@ -406,40 +423,19 @@ internal object NativeEquivalentEvidenceVerifier {
     }
 
     private fun blocks(text: String, name: String): List<String> =
-        Regex("(?ms)^\\[\\[$name]]\\s*\\n(.*?)(?=^\\[\\[|\\z)")
-            .findAll(text)
-            .map { it.groupValues[1] }
-            .toList()
+        PolicyToml.blocks(text, name)
 
     private fun extractString(text: String, key: String): String? =
-        Regex("(?m)^${Regex.escape(key)}\\s*=\\s*\\\"([^\\\"]*)\\\"\\s*$")
-            .find(text)
-            ?.groupValues
-            ?.get(1)
+        PolicyToml.string(text, key)
 
     private fun extractInt(text: String, key: String): Int? =
-        Regex("(?m)^${Regex.escape(key)}\\s*=\\s*(\\d+)\\s*$")
-            .find(text)
-            ?.groupValues
-            ?.get(1)
-            ?.toInt()
+        PolicyToml.integer(text, key)
 
     private fun extractBoolean(text: String, key: String): Boolean? =
-        Regex("(?m)^${Regex.escape(key)}\\s*=\\s*(true|false)\\s*$")
-            .find(text)
-            ?.groupValues
-            ?.get(1)
-            ?.toBoolean()
+        PolicyToml.boolean(text, key)
 
     private fun extractStringList(text: String, key: String): List<String> =
-        Regex("(?m)^${Regex.escape(key)}\\s*=\\s*\\[([^]]*)]")
-            .find(text)
-            ?.groupValues
-            ?.get(1)
-            ?.let { values ->
-                Regex("\\\"([^\\\"]+)\\\"").findAll(values).map { it.groupValues[1] }.toList()
-            }
-            ?: emptyList()
+        PolicyToml.stringList(text, key)
 }
 
 internal data class JvmCoverageSummary(
@@ -449,9 +445,16 @@ internal data class JvmCoverageSummary(
 )
 
 internal object JvmCoverageVerifier {
-    fun reportPath(reportRoot: Path, projectPath: String): Path = reportRoot
-        .resolve(projectPath.removePrefix(":").replace(':', '/'))
-        .resolve("build/reports/kover/reportJvm.xml")
+    fun reportPaths(reportRoot: Path, projectPath: String): List<Path> {
+        val projectRoot = reportRoot.resolve(projectPath.removePrefix(":").replace(':', '/'))
+        return listOf(
+            projectRoot.resolve("build/reports/kover/reportJvm.xml"),
+            projectRoot.resolve("build/reports/kover/reportAndroid.xml"),
+        )
+    }
+
+    fun reportPath(reportRoot: Path, projectPath: String): Path =
+        reportPaths(reportRoot, projectPath).first()
 
     fun verify(reportRoot: Path, productionProjects: List<String>): JvmCoverageSummary {
         require(productionProjects.isNotEmpty()) {
@@ -464,9 +467,9 @@ internal object JvmCoverageVerifier {
         var branchCovered = 0L
 
         productionProjects.forEach { path ->
-            val report = reportPath(reportRoot, path)
-            require(Files.isRegularFile(report)) {
-                "Missing JVM Kover report for $path: $report"
+            val report = reportPaths(reportRoot, path).firstOrNull(Files::isRegularFile)
+            require(report != null) {
+                "Missing JVM/Android Kover report for $path: ${reportPaths(reportRoot, path).joinToString()}"
             }
             val text = try {
                 Files.readString(report)

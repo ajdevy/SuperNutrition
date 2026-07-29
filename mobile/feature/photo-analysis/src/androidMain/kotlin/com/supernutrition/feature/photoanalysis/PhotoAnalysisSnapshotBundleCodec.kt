@@ -29,8 +29,9 @@ object PhotoAnalysisSnapshotBundleCodec {
     private const val SNAPSHOT_RECOVERY = "recovery"
 
     @JvmStatic
-    fun encode(snapshot: PhotoAnalysisBackgroundSnapshot): Bundle = Bundle().apply {
+    fun encode(snapshot: PhotoAnalysisBackgroundSnapshot, expectedAttempt: AttemptId): Bundle = Bundle().apply {
         putString(SNAPSHOT_KIND_KEY, snapshot.kind)
+        putString(SNAPSHOT_ATTEMPT_KEY, expectedAttempt.value)
         when (snapshot) {
             PhotoAnalysisBackgroundSnapshot.Capture -> Unit
 
@@ -59,6 +60,7 @@ object PhotoAnalysisSnapshotBundleCodec {
     fun decode(savedState: Bundle?, expectedAttempt: AttemptId): PhotoAnalysisBackgroundSnapshot? {
         val state = savedState ?: return null
         val kind = state.getString(SNAPSHOT_KIND_KEY) ?: return null
+        if (state.getString(SNAPSHOT_ATTEMPT_KEY) != expectedAttempt.value) return null
         return when (kind) {
             SNAPSHOT_CAPTURE -> PhotoAnalysisBackgroundSnapshot.Capture
 
@@ -97,9 +99,8 @@ object PhotoAnalysisSnapshotBundleCodec {
     }
 
     private fun Bundle.decodeRecovery(expectedAttempt: AttemptId): PhotoAnalysisBackgroundSnapshot? {
-        val reason = getString(SNAPSHOT_REASON_KEY)
-            ?.let { value -> runCatching { RecoveryReason.valueOf(value) }.getOrNull() }
-            ?: return null
+        val reasonValue = getString(SNAPSHOT_REASON_KEY) ?: return null
+        val reason = RecoveryReason.entries.firstOrNull { it.name == reasonValue } ?: return null
         return PhotoAnalysisBackgroundSnapshot.Recovery(reason, getPhotoRef(expectedAttempt))
     }
 

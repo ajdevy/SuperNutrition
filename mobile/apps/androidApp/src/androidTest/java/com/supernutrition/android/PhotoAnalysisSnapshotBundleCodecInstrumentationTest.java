@@ -35,7 +35,8 @@ public final class PhotoAnalysisSnapshotBundleCodecInstrumentationTest {
         assertRoundTrip(new PhotoAnalysisBackgroundSnapshot.Recovery(RecoveryReason.PERMISSION_DENIED, null), attempt);
 
         Bundle encoded = PhotoAnalysisSnapshotBundleCodec.encode(
-                new PhotoAnalysisBackgroundSnapshot.Ready(ref)
+                new PhotoAnalysisBackgroundSnapshot.Ready(ref),
+                attempt
         );
         assertFalse(encoded.containsKey(URI_KEY));
         assertFalse(encoded.containsKey(BYTES_KEY));
@@ -47,7 +48,8 @@ public final class PhotoAnalysisSnapshotBundleCodecInstrumentationTest {
         AttemptId restoredAttempt = new AttemptId("restored-attempt");
         PhotoRef ref = PhotoRef.Companion.issue(sourceAttempt, "opaque-photo");
         Bundle encoded = PhotoAnalysisSnapshotBundleCodec.encode(
-                new PhotoAnalysisBackgroundSnapshot.Ready(ref)
+                new PhotoAnalysisBackgroundSnapshot.Ready(ref),
+                sourceAttempt
         );
 
         assertNull(PhotoAnalysisSnapshotBundleCodec.decode(encoded, restoredAttempt));
@@ -70,7 +72,7 @@ public final class PhotoAnalysisSnapshotBundleCodecInstrumentationTest {
             PhotoAnalysisBackgroundSnapshot expected,
             AttemptId attempt
     ) {
-        Bundle encoded = PhotoAnalysisSnapshotBundleCodec.encode(expected);
+        Bundle encoded = PhotoAnalysisSnapshotBundleCodec.encode(expected, attempt);
         assertEquals(expected, PhotoAnalysisSnapshotBundleCodec.decode(encoded, attempt));
     }
 }

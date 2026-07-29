@@ -15,7 +15,7 @@ class AndroidPhotoBridgeContractTest {
                 PhotoRecoveryAction.ImportPhoto,
                 PhotoRecoveryAction.ManualSearch,
             ),
-            contract.recoveryActions,
+            contract.recoveryFor(CameraPermissionState.DENIED, CameraAvailability.AVAILABLE),
         )
     }
 
@@ -23,7 +23,7 @@ class AndroidPhotoBridgeContractTest {
     fun `contract exposes every permission and availability state`() {
         assertEquals(
             listOf(
-                CameraPermissionState.UNKNOWN,
+                CameraPermissionState.NOT_DETERMINED,
                 CameraPermissionState.GRANTED,
                 CameraPermissionState.DENIED,
                 CameraPermissionState.RESTRICTED,

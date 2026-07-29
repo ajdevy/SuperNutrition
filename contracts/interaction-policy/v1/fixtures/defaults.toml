@@ -22,6 +22,7 @@ id = "catalog-proposal-after-confirmation"
 field = "catalogProposal"
 source = "confirmedCatalogServing"
 requires = "canonical-item-confirmed"
+atomic = true
 mutates_snapshot = false
 
 [[forbidden_case]]

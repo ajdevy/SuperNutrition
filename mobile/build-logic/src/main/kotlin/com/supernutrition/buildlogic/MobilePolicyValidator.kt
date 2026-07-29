@@ -17,27 +17,10 @@ import java.time.temporal.ChronoUnit
  * later product and evidence slices.
  */
 object MobilePolicyValidator {
-    private val requiredManifests = listOf(
-        "config/architecture/module-boundaries.toml",
-        "config/quality/module-matrix.toml",
-        "config/quality/ui-evidence-profile.toml",
-        "config/quality/positive-scenarios.toml",
-        "config/quality/journeys.toml",
-        "config/quality/platform-contracts.toml",
-        "config/quality/native-gaps.toml",
-        "config/quality/coverage.toml",
-        "config/quality/suppression-registry.toml",
-        "config/quality/interaction-policy.toml",
-        "config/quality/evidence-bindings.toml",
-        "config/product-identity.toml",
-        "config/compose-stability.conf",
-        "product-lifecycle.toml",
-    )
-
     fun validate(mobileRoot: Path) {
         require(Files.isDirectory(mobileRoot)) { "Missing mobile root: $mobileRoot" }
 
-        val files = requiredManifests.map { relative ->
+        val files = PolicyToml.requiredManifests.map { relative ->
             val path = mobileRoot.resolve(relative)
             require(Files.isRegularFile(path)) { "Missing policy manifest: $relative" }
             relative to Files.readString(path)
@@ -375,7 +358,7 @@ object MobilePolicyValidator {
 
     private fun validateManifestGraph(mobileRoot: Path, files: List<Pair<String, String>>) {
         val evidencePath = "config/quality/evidence-bindings.toml"
-        val boundPaths = requiredManifests.filterNot { it == evidencePath }.sorted()
+        val boundPaths = PolicyToml.requiredManifests.filterNot { it == evidencePath }.sorted()
         val evidence = files.single { it.first == evidencePath }.second
         require(extractInt(evidence, "manifest_count") == boundPaths.size) {
             "Evidence binding manifest_count must cover every policy manifest"
@@ -668,40 +651,19 @@ object MobilePolicyValidator {
     }
 
     private fun blocks(text: String, name: String): List<String> =
-        Regex("(?ms)^\\[\\[$name]]\\s*\\n(.*?)(?=^\\[\\[|\\z)")
-            .findAll(text)
-            .map { it.groupValues[1] }
-            .toList()
+        PolicyToml.blocks(text, name)
 
     private fun extractString(text: String, key: String): String? =
-        Regex("(?m)^${Regex.escape(key)}\\s*=\\s*\"([^\"]*)\"\\s*$")
-            .find(text)
-            ?.groupValues
-            ?.get(1)
+        PolicyToml.string(text, key)
 
     private fun extractInt(text: String, key: String): Int? =
-        Regex("(?m)^${Regex.escape(key)}\\s*=\\s*(\\d+)\\s*$")
-            .find(text)
-            ?.groupValues
-            ?.get(1)
-            ?.toInt()
+        PolicyToml.integer(text, key)
 
     private fun extractStringList(text: String, key: String): List<String> =
-        Regex("(?m)^${Regex.escape(key)}\\s*=\\s*\\[([^]]*)]")
-            .find(text)
-            ?.groupValues
-            ?.get(1)
-            ?.let { values ->
-                Regex("\"([^\"]+)\"").findAll(values).map { it.groupValues[1] }.toList()
-            }
-            ?: emptyList()
+        PolicyToml.stringList(text, key)
 
     private fun extractBoolean(text: String, key: String): Boolean? =
-        Regex("(?m)^${Regex.escape(key)}\\s*=\\s*(true|false)\\s*$")
-            .find(text)
-            ?.groupValues
-            ?.get(1)
-            ?.toBoolean()
+        PolicyToml.boolean(text, key)
 
     private fun digest(mobileRoot: Path, paths: List<String>): String {
         val digest = MessageDigest.getInstance("SHA-256")

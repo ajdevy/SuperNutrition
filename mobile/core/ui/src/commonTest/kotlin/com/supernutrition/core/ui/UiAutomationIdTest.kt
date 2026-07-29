@@ -11,7 +11,7 @@ class UiAutomationIdTest {
         val values = UiAutomationIds.all.map { it.value }
 
         assertEquals(values.size, values.toSet().size)
-        assertTrue(values.all { it.matches(Regex("[a-z][a-z0-9]*(?:_[a-z0-9]+)*")) })
+        assertTrue(values.all { it.matches(UI_AUTOMATION_ID_PATTERN) })
         assertEquals("bootstrap_shell_launch_di", UiAutomationIds.BOOTSTRAP_LAUNCH_DI.value)
         assertEquals("capture_shutter", UiAutomationIds.CAPTURE_SHUTTER.value)
         assertEquals("capture_import", UiAutomationIds.CAPTURE_IMPORT.value)

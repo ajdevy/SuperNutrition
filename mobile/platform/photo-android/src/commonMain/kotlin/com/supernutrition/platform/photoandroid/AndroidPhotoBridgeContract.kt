@@ -1,34 +1,17 @@
 package com.supernutrition.platform.photoandroid
 
-import com.supernutrition.core.ui.UiAutomationIds
-enum class CameraPermissionState {
-    UNKNOWN,
-    GRANTED,
-    DENIED,
-    RESTRICTED,
-}
+import com.supernutrition.core.ui.CameraAvailability as SharedCameraAvailability
+import com.supernutrition.core.ui.CameraPermissionState as SharedCameraPermissionState
+import com.supernutrition.core.ui.CaptureSurfaceContract as SharedCaptureSurfaceContract
+import com.supernutrition.core.ui.PhotoRecoveryAction as SharedPhotoRecoveryAction
 
-enum class CameraAvailability {
-    AVAILABLE,
-    UNAVAILABLE,
-}
-
-sealed interface PhotoRecoveryAction {
-    data object OpenSettings : PhotoRecoveryAction
-    data object ImportPhoto : PhotoRecoveryAction
-    data object ManualSearch : PhotoRecoveryAction
-}
-
-data class CaptureSurfaceContract(
-    val shutterAutomationId: String = UiAutomationIds.CAPTURE_SHUTTER.value,
-    val importAutomationId: String = UiAutomationIds.CAPTURE_IMPORT.value,
-    val cameraPermissionAutomationId: String = UiAutomationIds.CAPTURE_PERMISSION_RATIONALE.value,
-    val recoveryActions: List<PhotoRecoveryAction> = listOf(
-        PhotoRecoveryAction.OpenSettings,
-        PhotoRecoveryAction.ImportPhoto,
-        PhotoRecoveryAction.ManualSearch,
-    ),
-)
+typealias CameraAvailability = SharedCameraAvailability
+typealias CameraPermissionState = SharedCameraPermissionState
+typealias CaptureSurfaceContract = SharedCaptureSurfaceContract
+typealias PhotoRecoveryAction = SharedPhotoRecoveryAction
+typealias AndroidCameraPermissionState = SharedCameraPermissionState
+typealias AndroidCaptureSurfaceContract = SharedCaptureSurfaceContract
+typealias AndroidPhotoRecoveryAction = SharedPhotoRecoveryAction
 
 interface PhotoBridgePort {
     fun cameraPermissionState(): CameraPermissionState

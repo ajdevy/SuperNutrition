@@ -4,6 +4,13 @@ set -euo pipefail
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="${SUPERNUTRITION_ROOT_BOUNDARIES_ROOT:-$(cd "$script_dir/.." && pwd)}"
 
+for required_tool in find grep python3 rg; do
+  command -v "$required_tool" >/dev/null 2>&1 || {
+    printf 'root-boundaries: missing required tool: %s\n' "$required_tool" >&2
+    exit 1
+  }
+done
+
 for required in mobile contracts web/landing backend/mobile-api; do
   test -d "$repo_root/$required" || {
     printf 'missing required root: %s\n' "$required" >&2
@@ -24,9 +31,15 @@ done
 # would turn a released contract into a shared implementation dependency.
 if find "$repo_root/contracts" -type f \( \
   -name '*.kt' -o -name '*.kts' -o -name '*.java' -o -name '*.swift' -o \
-  -name '*.py' -o -name '*.js' -o -name '*.ts' -o -name '*.sh' \
+  -name '*.py' -o -name '*.js' -o -name '*.ts' -o -name '*.sh' -o \
+  -name '*.go' -o -name '*.rb' -o -name '*.rs' -o -name '*.cpp' -o \
+  -name '*.cc' -o -name '*.c' -o -name '*.h' -o -name '*.hpp' \
 \) -print -quit | grep -q .; then
   printf 'contracts contains executable or product source\n' >&2
+  exit 1
+fi
+if find "$repo_root/contracts" -type f -perm -111 -print -quit | grep -q .; then
+  printf 'contracts contains an executable file\n' >&2
   exit 1
 fi
 

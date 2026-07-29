@@ -578,7 +578,7 @@ also remains gated by G-4.
 
 ```text
 mobile/
-  product-lifecycle.toml              # scaffold-pending until atomic scaffold story
+  product-lifecycle.toml              # active-local after the completed atomic scaffold story
   apps/
     androidApp/                       # Thin Android host and composition root
     sharedKit/                        # KMP export and sole iOS bootstrap API

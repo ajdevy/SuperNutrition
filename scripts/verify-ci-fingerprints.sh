@@ -3,7 +3,7 @@ set -euo pipefail
 
 fingerprint_root="${SUPERNUTRITION_CI_FINGERPRINT_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
 expected_sha="${SUPERNUTRITION_EXPECTED_SHA:-${GITHUB_SHA:-}}"
-jobs=(quality-linux ui-journeys-android quality-apple ui-journeys-ios quality-web-landing quality-backend)
+jobs=(mobile-unit-coverage)
 shared_fields=(
   schema
   status
@@ -37,7 +37,7 @@ for job in "${jobs[@]}"; do
 done
 
 report_count="$(find "$fingerprint_root" -maxdepth 1 -type f -name '*.fingerprint' -print | wc -l | tr -d ' ')"
-test "$report_count" = "6" || fail "fingerprint directory must contain exactly six job reports"
+test "$report_count" = "1" || fail "fingerprint directory must contain exactly one active adapter report"
 
 if test -z "$expected_sha"; then
   expected_sha="$(field commit_sha "$fingerprint_root/${jobs[0]}.fingerprint")"
@@ -67,4 +67,4 @@ for job in "${jobs[@]:1}"; do
   done
 done
 
-printf '%s\n' 'ci-fingerprint: OK (six successful jobs share one commit and policy fingerprint set)'
+printf '%s\n' 'ci-fingerprint: OK (the active optional adapter shares one commit and policy fingerprint set)'

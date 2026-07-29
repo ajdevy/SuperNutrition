@@ -217,8 +217,8 @@ private struct PhotoAnalysisComposeHost: UIViewControllerRepresentable {
             photoBridge = IosPhotoBridge()
         }
 
-        func handle(action: String) {
-            switch action {
+        func handle(action: PhotoAnalysisNativeAction) {
+            switch action.name {
             case "TakePhoto":
                 requestCameraOrRecover()
             case "ImportPhoto":

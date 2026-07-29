@@ -6,7 +6,7 @@ repo_root="$(cd "$script_dir/.." && pwd)"
 fixture_root="$(mktemp -d "${TMPDIR:-/tmp}/supernutrition-ci-fingerprint.XXXXXX")"
 trap 'rm -rf "$fixture_root"' EXIT
 
-jobs=(quality-linux ui-journeys-android quality-apple ui-journeys-ios quality-web-landing quality-backend)
+jobs=(mobile-unit-coverage)
 for job in "${jobs[@]}"; do
   "$repo_root/scripts/emit-ci-fingerprint.sh" "$job" "$fixture_root/$job.fingerprint"
 done
@@ -16,7 +16,7 @@ SUPERNUTRITION_EXPECTED_SHA="$(git -C "$repo_root" rev-parse HEAD)" \
   "$repo_root/scripts/verify-ci-fingerprints.sh" >/dev/null
 
 expected_sha="$(git -C "$repo_root" rev-parse HEAD)"
-python3 - "$fixture_root/quality-linux.fingerprint" "$expected_sha" <<'PY'
+python3 - "$fixture_root/mobile-unit-coverage.fingerprint" "$expected_sha" <<'PY'
 from pathlib import Path
 import sys
 

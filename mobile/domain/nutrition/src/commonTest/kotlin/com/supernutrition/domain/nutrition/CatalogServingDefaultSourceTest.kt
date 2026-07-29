@@ -60,4 +60,49 @@ class CatalogServingDefaultSourceTest {
             CanonicalItemConfirmation("food:apple", "", snapshot.digest)
         }
     }
+
+    @Test
+    fun `source may return no default and cannot mutate or persist the snapshot`() {
+        val originalSnapshot = snapshot
+        var calls = 0
+        val source = CatalogServingDefaultSource { currentSnapshot, confirmation ->
+            calls += 1
+            assertEquals(snapshot, currentSnapshot)
+            assertEquals(snapshot.digest, confirmation.snapshotDigest)
+            null
+        }
+
+        assertEquals(
+            null,
+            source.standardServing(
+                snapshot,
+                CanonicalItemConfirmation("food:apple", "confirmation-null", snapshot.digest),
+            ),
+        )
+        assertEquals(1, calls)
+        assertEquals(originalSnapshot, snapshot)
+    }
+
+    @Test
+    fun `source implementations receive a snapshot mismatch as a rejected input`() {
+        val source = CatalogServingDefaultSource { currentSnapshot, confirmation ->
+            if (currentSnapshot.digest != confirmation.snapshotDigest) return@CatalogServingDefaultSource null
+            CatalogServingProposal(
+                canonicalItemId = confirmation.canonicalItemId,
+                serving = AtomicServing("g", "100"),
+                sourceId = "catalog-v1",
+            )
+        }
+
+        val result = source.standardServing(
+            snapshot,
+            CanonicalItemConfirmation("food:apple", "confirmation-match", snapshot.digest),
+        )
+        assertEquals("food:apple", result?.canonicalItemId)
+        assertEquals(null, source.standardServing(snapshot, CanonicalItemConfirmation(
+            "food:apple",
+            "confirmation-other",
+            "b".repeat(64),
+        )))
+    }
 }
