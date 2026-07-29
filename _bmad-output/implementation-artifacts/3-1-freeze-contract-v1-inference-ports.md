@@ -71,14 +71,16 @@ Implemented contract-v1 as pure KMP and published the immutable language-neutral
 release under `contracts/inference/v1`. The release contains typed capability,
 candidate, abstention, failure, provenance, request, engine, and telemetry
 allowlist models; it has no numeric nutrition fields or raw payload telemetry.
+This non-UI story does not change interaction budgets, defaults, consent, or
+auxiliary interaction paths.
 
 Validation evidence:
 
-- `:domain:inference:jvmTest`: 17 tests passed, including validation negative
+- `:domain:inference:jvmTest`: 18 tests passed, including validation negative
   paths, required-field serializer rejection, and canonical fixture round trips.
-- `:domain:inference` Kover report: 99.14% line and 94.29% branch coverage
-  (231/233 lines and 66/70 branches).
-- `mobileUnitCoverage`: passed with 98.18% line and 93.36% branch coverage
+- `:domain:inference` Kover report: 100.00% line and 94.29% branch coverage
+  (231/231 lines and 66/70 branches).
+- `mobileUnitCoverage`: passed with 98.41% line and 93.36% branch coverage
   across the six host production modules.
 - `qualityCheckJvmAndroid`: passed; static analysis and host tests passed while
   the scaffold remained fail-closed without a production quality claim.
