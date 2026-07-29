@@ -1,0 +1,65 @@
+# AD-9: model selection is configuration, not code. This is the ONLY file in the
+# product that may contain a model identifier; a test asserts that
+# (apps/api/src/modules/inference/domain/inference.invariants.test.ts).
+#
+# The active configuration is identified by an immutable version reported in
+# provenance and recorded in inference_runs, so any past result traces to the
+# exact roster that produced it.
+schema = "supernutrition.backend.model-profiles.v1"
+schema_version = 1
+profile_version = "2026-07-29.1"
+rollback_target = "none"
+
+[routing]
+# PLACEHOLDER. Gate G-5 owns the validated threshold and the calibration
+# transform. Until G-5 closes, no public accuracy claim rests on this number and
+# confidences are not compared across models.
+confidence_threshold = 0.75
+accept_band = "high"
+max_passes = 2
+pass_deadline_ms = 8000
+total_deadline_ms = 20000
+
+[[profile]]
+id = "fast-identify"
+pass = 1
+provider = "openrouter"
+model = "google/gemini-2.5-flash"
+max_output_tokens = 1024
+temperature = 0.0
+cost_per_1k_input_micros = 75
+cost_per_1k_output_micros = 300
+enabled = true
+
+[[profile]]
+id = "fast-identify-fallback"
+pass = 1
+provider = "openrouter"
+model = "openai/gpt-4o-mini"
+max_output_tokens = 1024
+temperature = 0.0
+cost_per_1k_input_micros = 150
+cost_per_1k_output_micros = 600
+enabled = true
+
+[[profile]]
+id = "deep-identify"
+pass = 2
+provider = "openrouter"
+model = "openai/gpt-4o"
+max_output_tokens = 2048
+temperature = 0.0
+cost_per_1k_input_micros = 2500
+cost_per_1k_output_micros = 10000
+enabled = true
+
+[[profile]]
+id = "deep-identify-alt"
+pass = 2
+provider = "openrouter"
+model = "anthropic/claude-sonnet"
+max_output_tokens = 2048
+temperature = 0.0
+cost_per_1k_input_micros = 3000
+cost_per_1k_output_micros = 15000
+enabled = false

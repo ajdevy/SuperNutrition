@@ -1,0 +1,131 @@
+schema = "supernutrition.product-inventory.v1"
+schema_version = 1
+product = "mobile-api"
+lifecycle = "active"
+inventory_version = "2026-07-29.1"
+
+# AD-29: this inventory is reconciled with the product's compiled source graph.
+# Every deployable unit lists its tests, coverage denominator, artifact, owner,
+# and quality task. Undeclared or merged-away units fail the gate.
+
+[quality]
+entrypoint = "quality-check"
+read_only = true
+format_entrypoint = "npm run format"
+coverage_tool = "vitest + @vitest/coverage-v8 4.1.10"
+coverage_line_floor = 85
+coverage_branch_floor = 85
+changed_line_requirement = 100
+changed_branch_requirement = 100
+
+[toolchain]
+runtime = "node >=22.11.0 <25.0.0"
+verified_on = "node 24.16.0"
+language = "typescript 5.9.3"
+package_manager = "npm"
+lock_state = "package-lock.json"
+frozen_install = "npm ci"
+dependency_cache = "./.npm-cache"
+adr = "docs/adr/0001-pinned-toolchain-tuple.md"
+
+[artifact]
+kind = "container-image"
+name = "mobile-api"
+dockerfile = "deploy/Dockerfile"
+entrypoint = "apps/api/dist/main.js"
+deploy_skeleton = "deploy/README.md"
+rollback = "previous image tag; migrations are forward-only"
+
+[owners]
+product = "backend"
+codeowners_principal = "backend"
+
+# ---------------------------------------------------------------------------
+# Deployable unit
+# ---------------------------------------------------------------------------
+
+[[unit]]
+id = "apps/api"
+kind = "deployable"
+path = "apps/api"
+source_root = "apps/api/src"
+tests = "apps/api/src/**/*.test.ts"
+coverage_denominator = "apps/api/src/**/*.ts"
+artifact = "mobile-api"
+owner = "backend"
+quality_task = "quality-check"
+
+# ---------------------------------------------------------------------------
+# Libraries — compiled into the deployable, each with its own denominator
+# ---------------------------------------------------------------------------
+
+[[unit]]
+id = "packages/shared"
+kind = "library"
+path = "packages/shared"
+source_root = "packages/shared/src"
+tests = "packages/shared/src/**/*.test.ts"
+coverage_denominator = "packages/shared/src/**/*.ts"
+owner = "backend"
+quality_task = "quality-check"
+
+[[unit]]
+id = "packages/contracts"
+kind = "library"
+path = "packages/contracts"
+source_root = "packages/contracts/src"
+tests = "none-required"
+coverage_denominator = "packages/contracts/src/**/*.ts"
+note = "type-only boundary interfaces; compiles to no runtime code"
+owner = "backend"
+quality_task = "quality-check"
+
+[[unit]]
+id = "packages/database"
+kind = "library"
+path = "packages/database"
+source_root = "packages/database/src"
+tests = "packages/database/src/**/*.test.ts"
+coverage_denominator = "packages/database/src/**/*.ts"
+migration_executable = "packages/database/src/migrations"
+owner = "backend"
+quality_task = "quality-check"
+
+# ---------------------------------------------------------------------------
+# Evidence recorded at activation
+# ---------------------------------------------------------------------------
+
+[evidence]
+production_source_files = 144
+test_files = 26
+tests_passing = 278
+tests_failing = 0
+schema_files = 19
+migrations = 1
+coverage_statements_pct = 94.47
+coverage_branches_pct = 96.90
+coverage_functions_pct = 96.74
+coverage_lines_pct = 93.96
+typecheck = "tsc --build, clean"
+lint = "eslint, clean"
+
+[contracts]
+consumed = ["contracts/mobile-api/v1"]
+consumption_mode = "pinned-immutable-release-as-data"
+generated_bindings = "contracts-generated/"
+writes_back = false
+
+# ---------------------------------------------------------------------------
+# Explicit non-claims. AD-37 activation means a real enforced quality gate,
+# not production readiness (docs/adr/0005-lifecycle-activation.md).
+# ---------------------------------------------------------------------------
+
+[not_claimed]
+business_logic_implemented = false
+production_ready = false
+remote_inference_enabled = false
+rollback_drill_recorded = false
+g4_provider_decision = "open"
+g2_catalog_packages = "open"
+g5_confidence_thresholds = "open"
+ad24_production_checklist = "incomplete"

@@ -102,6 +102,14 @@ prepare_fixture() {
   mkdir -p "$fixture_repo/web/landing" "$fixture_repo/backend/mobile-api"
   cp "$repo_root/web/landing/product-lifecycle.toml" "$fixture_repo/web/landing/product-lifecycle.toml"
   cp "$repo_root/backend/mobile-api/product-lifecycle.toml" "$fixture_repo/backend/mobile-api/product-lifecycle.toml"
+  # An active product's lifecycle record is only valid alongside its inventory
+  # (AD-37), so the fixture must carry both or the baseline is not the real
+  # repository state.
+  for product in web/landing backend/mobile-api; do
+    if test -f "$repo_root/$product/product-inventory.toml"; then
+      cp "$repo_root/$product/product-inventory.toml" "$fixture_repo/$product/product-inventory.toml"
+    fi
+  done
   printf '%s\n' "$fixture_repo"
 }
 
