@@ -4,7 +4,9 @@ product = "mobile"
 lifecycle = "active"
 source_digest = "local-only"
 manifest_count = 13
-manifest_digest = "cac15d6d65cadfcaa1fd6470d2de278439e8cfe10c914d41ac38979e7404de4a"
+manifest_digest = "72989b0d0969ce55a2b417f2c4d72a3bd249de0e586a3a15719d624679bebaa4"
+# This counts the bound policy manifests (excluding this file), not the native
+# evidence records below.
 profile = "photo-analysis"
 status = "active-local"
 

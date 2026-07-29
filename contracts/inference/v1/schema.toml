@@ -1,0 +1,21 @@
+schema = "supernutrition.photo-inference-engine-contract.v1"
+schema_version = 1
+contract_id = "photo-inference-engine"
+release = "v1"
+language_neutral = true
+executable = false
+canonical_json = true
+numeric_nutrition = false
+canonical_fixture_kinds = ["capability", "result", "telemetry"]
+
+[ports]
+request = "opaque-photo-ref-plus-immutable-attempt-context"
+capability = "typed-state-reason-user-safe-message-key"
+result = "ranked-identification-evidence-or-abstention-or-typed-failure"
+provenance = "route-engine-model-calibration-contract"
+telemetry = "versioned-allowlisted-operational-buckets-without-raw-payload"
+
+[compatibility]
+unknown_fields = "ignore"
+missing_required_fields = "reject"
+incompatible_change = "new-major-release"

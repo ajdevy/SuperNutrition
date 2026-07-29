@@ -29,6 +29,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":core:config"))
+            api(project(":domain:inference"))
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
