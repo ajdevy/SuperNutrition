@@ -126,8 +126,8 @@ data class PhotoInferenceRequest(val photoRef: PhotoRef, val attemptContext: Inf
 }
 
 interface PhotoInferenceEngine {
+    /** Every implementation must explicitly bind itself to the frozen contract release. */
     val contractVersion: String
-        get() = PHOTO_INFERENCE_CONTRACT_V1
 
     suspend fun capability(): EngineCapability
 

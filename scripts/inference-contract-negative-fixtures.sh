@@ -136,4 +136,8 @@ path.write_text(json.dumps(data, separators=(",", ":")) + "\n")
 PY
 expect_rejected "ready capability with unavailable reason" "$fixture_root/ready-capability"
 
+cp -R "${repo_root}/contracts/inference/v1" "$fixture_root/unhashed-json"
+printf '{}\n' > "$fixture_root/unhashed-json/unhashed.json"
+expect_rejected "unhashed release JSON" "$fixture_root/unhashed-json"
+
 echo "inference contract negative fixtures: OK"
