@@ -104,12 +104,21 @@ for product_root in "${PRODUCT_ROOTS[@]}"; do
       ;;
   esac
 
+  # AD-36 forbids source imports, workspaces, package/project dependencies,
+  # generated-source writes, runtime calls/configuration, build-task edges,
+  # shared output directories, and deployment/artifact dependencies across
+  # product roots. Non-executable Markdown under a product's docs/ cannot
+  # express any of those, and architecture documentation must be able to name
+  # the boundary it is documenting, so it is excluded from this scan. Every
+  # other path in the product root, including all checked-in configuration and
+  # manifests, remains covered.
   if rg --hidden -n -S \
     --glob '!**/build/**' \
     --glob '!**/.gradle/**' \
     --glob '!**/.idea/**' \
     --glob '!**/.kotlin/**' \
     --glob '!**/node_modules/**' \
+    --glob '!**/docs/**/*.md' \
     --glob '!**/*.jar' \
     --glob '!**/*.bin' \
     "$forbidden_pattern" "$repo_root/$product_root"; then
