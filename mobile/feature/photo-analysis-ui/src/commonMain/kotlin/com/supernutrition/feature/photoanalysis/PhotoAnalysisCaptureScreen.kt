@@ -13,11 +13,17 @@ import androidx.compose.ui.unit.dp
 import com.supernutrition.core.ui.UiAutomationIds
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
+import kotlinx.coroutines.flow.StateFlow
+import com.supernutrition.domain.photoanalysis.PhotoAnalysisState
 
 data class PhotoAnalysisCaptureSurface(
-    val title: String = "Capture",
-    val shutterLabel: String = "Take meal photo",
-    val importLabel: String = "Choose photo",
+    val copy: PhotoAnalysisPresenterCopy = PhotoAnalysisPresenterCopy.english(),
+    val title: String = copy.captureTitle,
+    val shutterLabel: String = copy.takeMealPhoto,
+    val importLabel: String = copy.choosePhoto,
+    val openSettingsLabel: String = copy.openSettings,
+    val scanAgainLabel: String = copy.scanAgain,
+    val cancelLabel: String = copy.cancel,
     val shutterAutomationId: String = UiAutomationIds.CAPTURE_SHUTTER.value,
     val importAutomationId: String = UiAutomationIds.CAPTURE_IMPORT.value,
     val requiredTapBudget: Int = 2,
@@ -34,14 +40,14 @@ data class PhotoAnalysisCaptureSurface(
 
 @Composable
 fun PhotoAnalysisCaptureContent(
-    feature: PhotoAnalysisFeature,
+    stateFlow: StateFlow<PhotoAnalysisState>,
     onAction: (PhotoAnalysisPresenterAction) -> Unit,
     modifier: Modifier = Modifier,
     surface: PhotoAnalysisCaptureSurface = PhotoAnalysisCaptureSurface(),
 ) {
-    val state by feature.stateFlow.collectAsState()
+    val state by stateFlow.collectAsState()
     PhotoAnalysisCaptureScreen(
-        model = PhotoAnalysisPresenterModel.from(state),
+        model = PhotoAnalysisPresenterModel.from(state, surface.copy),
         onAction = onAction,
         modifier = modifier,
         surface = surface,
@@ -91,21 +97,21 @@ fun PhotoAnalysisCaptureScreen(
                     onClick = { onAction(action) },
                     modifier = Modifier.automationId(UiAutomationIds.CAPTURE_OPEN_SETTINGS.value),
                 ) {
-                    Text("Open settings")
+                    Text(surface.openSettingsLabel)
                 }
 
                 PhotoAnalysisPresenterAction.ScanAgain -> Button(
                     onClick = { onAction(action) },
                     modifier = Modifier.automationId(UiAutomationIds.CAPTURE_SCAN_AGAIN.value),
                 ) {
-                    Text("Scan again")
+                    Text(surface.scanAgainLabel)
                 }
 
                 PhotoAnalysisPresenterAction.Cancel -> Button(
                     onClick = { onAction(action) },
                     modifier = Modifier.automationId(UiAutomationIds.CAPTURE_CANCEL.value),
                 ) {
-                    Text("Cancel")
+                    Text(surface.cancelLabel)
                 }
             }
         }

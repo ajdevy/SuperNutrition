@@ -17,8 +17,7 @@ import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.reinterpret
 import kotlinx.cinterop.useContents
 import kotlinx.cinterop.usePinned
-import platform.CommonCrypto.CC_SHA256
-import platform.CommonCrypto.CC_SHA256_DIGEST_LENGTH
+import platform.CommonCrypto.SN_SHA256
 import platform.CoreFoundation.CFDataCreateMutable
 import platform.CoreFoundation.CFDataGetBytePtr
 import platform.CoreFoundation.CFDataGetLength
@@ -35,7 +34,6 @@ import platform.UIKit.UIImage
 import platform.UIKit.UIGraphicsBeginImageContextWithOptions
 import platform.UIKit.UIGraphicsEndImageContext
 import platform.UIKit.UIGraphicsGetImageFromCurrentImageContext
-import platform.UIKit.UIScreen
 import platform.UniformTypeIdentifiers.UTTypeJPEG
 import platform.darwin.dispatch_get_main_queue
 import platform.darwin.dispatch_sync
@@ -59,8 +57,10 @@ class IosImageNormalizer(
             "iOS image has no drawable dimensions"
         }
 
-        val screenScale = UIScreen.mainScreen.scale
-        val renderScale = minOf(screenScale, maxDimension.toDouble() / maxOf(sourceWidth, sourceHeight))
+        val renderScale = minOf(
+            PhotoNormalizationDefaults.RENDER_SCALE,
+            maxDimension.toDouble() / maxOf(sourceWidth, sourceHeight),
+        )
         val outputWidth = maxOf(1, (sourceWidth * renderScale).toInt())
         val outputHeight = maxOf(1, (sourceHeight * renderScale).toInt())
         val normalizedImage = drawOnMainThread(image, sourceWidth, sourceHeight, renderScale)
@@ -131,13 +131,13 @@ class IosImageNormalizer(
 /** Uses the platform crypto implementation instead of maintaining SHA-256 here. */
 @OptIn(ExperimentalForeignApi::class)
 internal fun iosSha256(bytes: ByteArray): String {
-    val digest = ByteArray(CC_SHA256_DIGEST_LENGTH)
+    val digest = ByteArray(SHA256_DIGEST_LENGTH)
     digest.usePinned { output ->
         if (bytes.isEmpty()) {
-            CC_SHA256(null, 0u, output.addressOf(0).reinterpret())
+            SN_SHA256(null, 0u, output.addressOf(0).reinterpret())
         } else {
             bytes.usePinned { input ->
-                CC_SHA256(input.addressOf(0), bytes.size.toUInt(), output.addressOf(0).reinterpret())
+                SN_SHA256(input.addressOf(0), bytes.size.toUInt(), output.addressOf(0).reinterpret())
             }
         }
     }
@@ -145,6 +145,8 @@ internal fun iosSha256(bytes: ByteArray): String {
         byte.toInt().and(0xff).toString(16).padStart(2, '0')
     }
 }
+
+private const val SHA256_DIGEST_LENGTH = 32
 
 @OptIn(ExperimentalForeignApi::class)
 private fun CPointer<__CFData>.toByteArray(): ByteArray {

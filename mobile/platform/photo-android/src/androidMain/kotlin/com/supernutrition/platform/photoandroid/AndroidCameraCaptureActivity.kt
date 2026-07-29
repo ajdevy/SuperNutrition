@@ -33,6 +33,7 @@ class AndroidCameraCaptureActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         captureRequested = savedInstanceState?.getBoolean(CAPTURE_REQUESTED_KEY, true) ?: true
+        captureStarted = savedInstanceState?.getBoolean(CAPTURE_STARTED_KEY, false) ?: false
         if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             finishWithFailure(CaptureFailureReason.PERMISSION_DENIED)
             return
@@ -54,6 +55,7 @@ class AndroidCameraCaptureActivity : ComponentActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putBoolean(CAPTURE_REQUESTED_KEY, captureRequested)
+        outState.putBoolean(CAPTURE_STARTED_KEY, captureStarted)
         super.onSaveInstanceState(outState)
     }
 
@@ -85,6 +87,7 @@ class AndroidCameraCaptureActivity : ComponentActivity() {
                 this@AndroidCameraCaptureActivity.imageCapture = imageCapture
                 if (captureRequested && !captureStarted) {
                     captureStarted = true
+                    captureRequested = false
                     capture()
                 }
             }.onFailure { error ->
@@ -171,6 +174,7 @@ class AndroidCameraCaptureActivity : ComponentActivity() {
         const val TAG = "AndroidCameraCapture"
         const val MAX_CAPTURE_BYTES = 10 * 1024 * 1024
         const val CAPTURE_REQUESTED_KEY = "photo_analysis.camera.capture_requested"
+        const val CAPTURE_STARTED_KEY = "photo_analysis.camera.capture_started"
     }
 }
 

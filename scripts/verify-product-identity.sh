@@ -40,6 +40,40 @@ if contract.get("source_manifest") != "mobile/config/product-identity.toml":
     fail("identity contract must bind the mobile source manifest")
 if schema.get("contract_id") != "product-identity" or schema.get("release") != "v1":
     fail("product-identity schema release is invalid")
+visible_keys = (
+    "canonical_name",
+    "installed_display_name",
+    "launcher_name",
+    "in_app_name",
+    "accessibility_name",
+)
+field_schema = schema.get("fields", {})
+expected_field_values = {
+    "canonical_name": "SuperNutrition",
+    "installed_display_name": "SuperNutrition",
+    "launcher_name": "SuperNutrition",
+    "in_app_name": "SuperNutrition",
+    "accessibility_name": "SuperNutrition",
+    "store_listing_title": "SuperNutrition AI nutritionist",
+    "android_application_id": "com.supernutrition.android",
+    "ios_bundle_identifier": "com.supernutrition.ios",
+    "acceptance_android_application_id": "com.supernutrition.android.uiAcceptance",
+    "acceptance_ios_bundle_identifier": "com.supernutrition.ios.uiacceptance",
+}
+if set(field_schema) != set(expected_field_values):
+    fail("product-identity schema fields are incomplete or unexpected")
+for key, expected_value in expected_field_values.items():
+    definition = field_schema.get(key)
+    if definition.get("type") != "string" or definition.get("allowed_values") != [expected_value]:
+        fail(f"product-identity schema constraint is invalid for {key}")
+schema_values = {
+    **{key: contract.get(key) for key in visible_keys},
+    "store_listing_title": contract.get("store", {}).get("apple", {}).get("listing_title"),
+    **contract.get("technical", {}),
+}
+for key, value in schema_values.items():
+    if value not in field_schema[key]["allowed_values"]:
+        fail(f"product-identity schema rejected contract value for {key}")
 if compatibility.get("contract_id") != "product-identity" or compatibility.get("release") != "v1":
     fail("product-identity compatibility metadata is invalid")
 if compatibility.get("source_manifest") != "mobile/config/product-identity.toml":
@@ -76,13 +110,6 @@ for relative, content in sorted(
 if compatibility.get("digest") != release_digest.hexdigest():
     fail("product-identity compatibility digest is stale")
 
-visible_keys = (
-    "canonical_name",
-    "installed_display_name",
-    "launcher_name",
-    "in_app_name",
-    "accessibility_name",
-)
 for key in visible_keys:
     if mobile.get(key) != "SuperNutrition" or contract.get(key) != "SuperNutrition":
         fail(f"visible identity mismatch for {key}")

@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-/** Pure-KMP feature state. Platform hosts only provide native bridge effects. */
+/** Composition-root feature coordinator; presenter and UI remain reusable seams. */
 class PhotoAnalysisFeature(
     attemptId: AttemptId,
     leases: PhotoLeaseStorePort,

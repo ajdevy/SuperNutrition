@@ -5,12 +5,42 @@ release = "v1"
 language_neutral = true
 executable = false
 
-[fields]
-canonical_name = "visible product name"
-installed_display_name = "installed application name"
-launcher_name = "launcher name"
-in_app_name = "in-app product name"
-accessibility_name = "accessible product name"
-store_listing_title = "store-only listing title"
-android_application_id = "production Android application ID"
-ios_bundle_identifier = "production iOS bundle identifier"
+[fields.canonical_name]
+type = "string"
+allowed_values = ["SuperNutrition"]
+
+[fields.installed_display_name]
+type = "string"
+allowed_values = ["SuperNutrition"]
+
+[fields.launcher_name]
+type = "string"
+allowed_values = ["SuperNutrition"]
+
+[fields.in_app_name]
+type = "string"
+allowed_values = ["SuperNutrition"]
+
+[fields.accessibility_name]
+type = "string"
+allowed_values = ["SuperNutrition"]
+
+[fields.store_listing_title]
+type = "string"
+allowed_values = ["SuperNutrition AI nutritionist"]
+
+[fields.android_application_id]
+type = "string"
+allowed_values = ["com.supernutrition.android"]
+
+[fields.ios_bundle_identifier]
+type = "string"
+allowed_values = ["com.supernutrition.ios"]
+
+[fields.acceptance_android_application_id]
+type = "string"
+allowed_values = ["com.supernutrition.android.uiAcceptance"]
+
+[fields.acceptance_ios_bundle_identifier]
+type = "string"
+allowed_values = ["com.supernutrition.ios.uiacceptance"]

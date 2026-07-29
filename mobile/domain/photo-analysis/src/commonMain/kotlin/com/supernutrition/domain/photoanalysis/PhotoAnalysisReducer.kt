@@ -28,8 +28,8 @@ class PhotoAnalysisReducer(
 
     fun dispatch(event: PhotoAnalysisEvent) {
         val reduction = reduce(state, event)
-        reduction.effects.forEach(context::apply)
         state = reduction.state
+        reduction.effects.forEach(context::apply)
     }
 
     /** Exposes the deterministic transition and effect decision for unit tests and adapters. */

@@ -22,7 +22,7 @@ This repository vendors the BMAD Method core and BMM skills under `.agents/skill
 
 ## Agent tooling setup
 
-The skills are committed to this repository. On a fresh checkout, run `./scripts/setup-agent-tools.sh` once to install the local graphify CLI used by the project hook. Node.js 20.12+, Python 3.10+, and `uv` are required by the current BMAD/graphify tooling.
+The skills are committed to this repository. On a fresh checkout, run `./scripts/setup-agent-tools.sh` once to install the local graphify CLI used by the project hook. Node.js 20.12+, Python 3.11+, and `uv` are required by the current BMAD/graphify and typed-TOML validation tooling.
 
 ## Claude Code agents
 

@@ -272,7 +272,7 @@ class PhotoAnalysisDomainTest {
         assertEquals(PhotoAnalysisState.Capture, reducer.state)
         assertFalse(leases.isActive(ref))
         assertNull(sessions.read(ref))
-        assertContentEquals(byteArrayOf(1, 2, 3), input.bytes)
+        assertContentEquals(byteArrayOf(0, 0, 0), input.bytes)
     }
 
     @Test

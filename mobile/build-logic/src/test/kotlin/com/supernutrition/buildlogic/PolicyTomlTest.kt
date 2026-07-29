@@ -27,4 +27,21 @@ class PolicyTomlTest {
         assertEquals(2, PolicyToml.blocks(text, "unit").size)
         assertTrue(PolicyToml.requiredManifests.contains("config/architecture/module-boundaries.toml"))
     }
+
+    @Test
+    fun `forbidden import rules preserve source and configuration scopes`() {
+        val rules = PolicyToml.forbiddenImportRules(
+            """
+                forbidden_imports = [
+                    "android.* in mobile/domain/**",
+                    "mobile.testing.* in distributable configurations",
+                ]
+            """.trimIndent(),
+        )
+
+        assertEquals("android.", rules[0].importPrefix)
+        assertEquals("mobile/domain", rules[0].sourceScope)
+        assertEquals("mobile.testing.", rules[1].importPrefix)
+        assertEquals("distributable", rules[1].configurationScope)
+    }
 }
