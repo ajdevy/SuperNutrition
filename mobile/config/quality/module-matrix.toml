@@ -5,8 +5,8 @@ lifecycle = "active"
 inventory_state = "local-verified"
 source_digest = "local-only"
 quality_claim = true
-production_source_count = 9
-coverage_denominator_count = 9
+production_source_count = 10
+coverage_denominator_count = 10
 undeclared_executable_policy = "fail"
 
 # Active local inventory: every production source has an explicit quality
@@ -50,6 +50,14 @@ path = "mobile/core/ui"
 kind = "production-kmp"
 production = true
 quality_task = "core:ui:jvmTest"
+status = "local-verified"
+
+[[unit]]
+id = "domain-inference"
+path = "mobile/domain/inference"
+kind = "production-kmp"
+production = true
+quality_task = "domain:inference:jvmTest"
 status = "local-verified"
 
 [[unit]]
