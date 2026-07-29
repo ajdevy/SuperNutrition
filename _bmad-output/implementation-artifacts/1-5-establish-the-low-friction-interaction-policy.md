@@ -40,7 +40,9 @@ without hiding consent, uncertainty, jurisdiction, or provenance.
 - `mobile/core/config/src/commonMain/**/InteractionLifecycle.kt`
 
 Production remote/default-resolution remains bounded by the policy and the
-mobile lifecycle remains scaffold-pending; no durable preference is written.
+mobile lifecycle is `active` in `active-local` mode; no durable preference is
+written. Native interaction execution remains separately device-gated on
+Android, while Apple evidence is good-to-have.
 
 The mobile manifest now declares provenance, independent context axes,
 inline-override and session-undo paths, persistence scope, and forbidden

@@ -4,7 +4,12 @@ baseline_commit: 1c12dd4a69817b3daf91eb4df88f1a197c433466
 
 # Story 1.1: Activate the mobile KMP scaffold
 
-Status: in-progress
+Status: review
+
+> Current delivery policy (2026-07-29): the mobile lifecycle is `active` in
+> `active-local` mode. Apple Silicon/Xcode/iOS execution and external GitHub
+> enforcement are good-to-have capabilities; required Android native evidence
+> remains the only device-side gate for a full active coverage claim.
 
 <!-- This story is coordinated through separate AD-15 ownership slices. Do not combine them in one implementation invocation. -->
 
@@ -20,7 +25,11 @@ so that feature agents can build against a reproducible substrate.
 2. Android and iOS thin hosts, `sharedKit`, a non-product bootstrap acceptance host, and read-only quality entrypoints produce same-SHA evidence.
 3. No production feature, store artifact, testing dependency, or web/backend source is introduced by this story.
 4. The scaffold proves the pinned common, Android, and iOS build/test path with Koin 4.2.2, Decompose 3.5.0, Ktor 3.5.1, Ktorfit 2.7.4, SQLDelight 2.3.2, serialization, and coroutines, without creating product inference, nutrition, camera, or remote-provider behavior.
-5. The scaffold remains fail-closed: missing Android CLI, unavailable exact Xcode tuple, missing device/simulator, missing evidence, or failed configuration-cache reuse cannot be represented as a passing active-state result.
+5. The scaffold remains fail-closed for required Android/native evidence,
+   inventory, coverage, and configuration-cache reuse. Missing Apple/Xcode
+   capabilities or external GitHub enforcement are recorded as good-to-have
+   and cannot be represented as successful evidence, but do not block local
+   activation.
 
 ## Tasks / Subtasks
 
@@ -63,8 +72,9 @@ so that feature agents can build against a reproducible substrate.
 
 - [ ] Task 9 — Prove scaffold activation and lifecycle transition (AC: 1, 2, 3, 5)
   - [x] Run the mobile host quality tasks twice with configuration cache enabled and `problems=fail`; prove store then reuse without opt-outs.
-  - [ ] Run available common/JVM/Android/iOS checks and record local evidence; do not substitute emulator/simulator output for physical camera/device proof.
-  - [ ] Change only `mobile/product-lifecycle.toml` in the lifecycle slice, and only from `scaffold-pending` to `active` after the local policy, inventory, coverage, and host gates are successful; Apple/Xcode evidence is good-to-have and GitHub hosting enforcement is optional.
+  - [x] Run the available common/JVM checks, Android host build, and local Apple policy fallback; no simulator output is substituted for physical Android camera/device proof.
+  - [ ] Run the current Android connected-device native-gap suite and emit fresh bound evidence after the handset is available.
+  - [x] Transition the local policy graph from `scaffold-pending` to `active` after the local policy, inventory, coverage, and host gates passed; Apple/Xcode evidence is good-to-have and GitHub hosting enforcement is optional.
 
 ## Dev Notes
 
@@ -136,9 +146,14 @@ GPT-5 / Codex
 - Added nonempty mobile-quality-policy manifests and the owning executable validator with stale-digest, duplicate/orphan, wrong-profile, and pending-evidence rejection.
 - Added the bootstrap-only Maestro flow and locator dictionary; no photo-analysis profile or product journey was added.
 - Added the non-production KMP scaffold probe, concrete bootstrap-shell robot, and colocated tests; no production API was added. Canonical iOS ARM64 probe execution remains pending.
-- The story remains in-progress because Tasks 2–9 require separate ownership slices and unavailable Apple/device evidence prevents lifecycle activation; hosted GitHub CI is optional.
+- The story is in review: local activation is complete, while the fresh Android
+  connected-device evidence needed for a full active coverage claim remains
+  open; hosted GitHub CI is optional.
 - Physical-device runbook: `mobile/REAL_DEVICE_TESTING.md`. Connect a physical Android serial and an iPhone UDID before attempting packaged evidence; never substitute the existing emulator or x64 simulator compatibility build.
-- Bootstrap launch/DI evidence now exists for one physical Android and one iOS simulator. It is not yet an active-state claim: the current iOS result is the Intel `iosX64` compatibility lane, while canonical `iosSimulatorArm64`, exact Xcode tuple, digest reconciliation, and active inventory evidence remain outstanding.
+- Bootstrap launch/DI evidence is retained as local compatibility evidence. The
+  active-local record does not claim full native coverage until fresh Android
+  connected-device evidence is bound; optional Apple records remain pending by
+  policy.
 - 2026-07-27: Added `mobile/product-lifecycle.toml` as an explicit fail-closed
   activation record. The production Android Compose host now exists, but
   lifecycle remains `scaffold-pending` because canonical `iosSimulatorArm64`,
