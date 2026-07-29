@@ -1,6 +1,6 @@
 # Story 2.3: Implement capture recovery and session cleanup
 
-Status: review
+Status: done
 
 ## Story
 
@@ -35,6 +35,14 @@ lifecycle evidence is good-to-have and does not block local activation.
   native-gap evidence; pending Apple records never masquerade as success.
 
 ## Dev Agent Record
+
+### 2026-07-29 physical Android evidence
+
+The clean-source physical acceptance run
+`:apps:androidApp:connectedUiAcceptanceDebugAndroidTest` passed 14/14 with no
+failures, errors, or skips on `HONOR DNY-NX9 / Android 16`. Its lifecycle and
+accessibility evidence is bound to
+`38aaf2a072553bcd404005e41c8765a446a0f952`; iOS remains optional and pending.
 
 ### 2026-07-28 verification note
 

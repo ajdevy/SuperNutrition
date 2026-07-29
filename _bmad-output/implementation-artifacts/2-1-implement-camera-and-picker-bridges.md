@@ -1,6 +1,6 @@
 # Story 2.1: Implement camera and picker bridges
 
-Status: review
+Status: done
 
 ## Story
 
@@ -41,6 +41,14 @@ Requires E1.1 scaffold activation, E1.5 interaction contract, and the separate
   required for local activation.
 
 ## Dev Agent Record
+
+### 2026-07-29 physical Android evidence
+
+The clean-source physical acceptance run
+`:apps:androidApp:connectedUiAcceptanceDebugAndroidTest` passed 14/14 with no
+failures, errors, or skips on `HONOR DNY-NX9 / Android 16`. The resulting
+attestation binds the camera/picker evidence to
+`38aaf2a072553bcd404005e41c8765a446a0f952`; iOS remains optional and pending.
 
 ### 2026-07-28 verification note
 

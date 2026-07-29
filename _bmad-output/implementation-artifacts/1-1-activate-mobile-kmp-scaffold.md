@@ -4,7 +4,7 @@ baseline_commit: 1c12dd4a69817b3daf91eb4df88f1a197c433466
 
 # Story 1.1: Activate the mobile KMP scaffold
 
-Status: review
+Status: done
 
 > Current delivery policy (2026-07-29): the mobile lifecycle is `active` in
 > `active-local` mode. Apple Silicon/Xcode/iOS execution and external GitHub
@@ -70,10 +70,10 @@ so that feature agents can build against a reproducible substrate.
   - [x] Add a thin Xcode host and unique-bundle-ID, non-distributable acceptance scheme/configuration.
   - [x] Add launch/DI/host-composition smoke and `xcodebuild build-for-testing`/simulator wiring without archive/export paths or credentials. Canonical ARM64 and exact Xcode evidence remain unavailable on this host.
 
-- [ ] Task 9 — Prove scaffold activation and lifecycle transition (AC: 1, 2, 3, 5)
+- [x] Task 9 — Prove scaffold activation and lifecycle transition (AC: 1, 2, 3, 5)
   - [x] Run the mobile host quality tasks twice with configuration cache enabled and `problems=fail`; prove store then reuse without opt-outs.
   - [x] Run the available common/JVM checks, Android host build, and local Apple policy fallback; no simulator output is substituted for physical Android camera/device proof.
-  - [ ] Run the current Android connected-device native-gap suite and emit fresh bound evidence after the handset is available.
+  - [x] Run the current Android connected-device native-gap suite and emit fresh bound evidence after the handset is available.
   - [x] Transition the local policy graph from `scaffold-pending` to `active` after the local policy, inventory, coverage, and host gates passed; Apple/Xcode evidence is good-to-have and GitHub hosting enforcement is optional.
 
 ## Dev Notes
@@ -146,14 +146,13 @@ GPT-5 / Codex
 - Added nonempty mobile-quality-policy manifests and the owning executable validator with stale-digest, duplicate/orphan, wrong-profile, and pending-evidence rejection.
 - Added the bootstrap-only Maestro flow and locator dictionary; no photo-analysis profile or product journey was added.
 - Added the non-production KMP scaffold probe, concrete bootstrap-shell robot, and colocated tests; no production API was added. Canonical iOS ARM64 probe execution remains pending.
-- The story is in review: local activation is complete, while the fresh Android
-  connected-device evidence needed for a full active coverage claim remains
-  open; hosted GitHub CI is optional.
+- The story is complete: local activation and the required fresh Android
+  connected-device evidence support the full active local coverage claim;
+  hosted GitHub CI remains optional.
 - Physical-device runbook: `mobile/REAL_DEVICE_TESTING.md`. Connect a physical Android serial and an iPhone UDID before attempting packaged evidence; never substitute the existing emulator or x64 simulator compatibility build.
-- Bootstrap launch/DI evidence is retained as local compatibility evidence. The
-  active-local record does not claim full native coverage until fresh Android
-  connected-device evidence is bound; optional Apple records remain pending by
-  policy.
+- Bootstrap launch/DI evidence is bound to the successful Android
+  connected-device acceptance run. Optional Apple records remain pending by
+  policy and are never counted as success.
 - 2026-07-27: Added `mobile/product-lifecycle.toml` as an explicit fail-closed
   activation record. The production Android Compose host now exists, but
   lifecycle remains `scaffold-pending` because canonical `iosSimulatorArm64`,
@@ -165,10 +164,11 @@ GPT-5 / Codex
   evidence. It is retained as an optional compatibility/native lane and no
   longer blocks local lifecycle activation; reproducible local policy and
   coverage gates remain authoritative.
-- 2026-07-29: Lifecycle and policy manifests now report `active` with an
-  explicit `active-local` quality state. Local JVM Kover verification is
-  `97.91%` line / `93.43%` branch across five denominators; required Android
-  native evidence and the active coverage claim remain separately pending.
+- 2026-07-29: Lifecycle and policy manifests report `active` with an explicit
+  `active-local` quality state. The clean-source Android acceptance run on
+  `HONOR DNY-NX9 / Android 16` passed 14/14 with no failures, errors, or
+  skips and bound bootstrap, picker, normalization, lifecycle, and
+  accessibility evidence to `38aaf2a072553bcd404005e41c8765a446a0f952`.
 
 ### File List
 

@@ -1,6 +1,6 @@
 # Story 1.2: Enforce monorepo boundaries and contracts
 
-Status: review
+Status: done
 
 ## Story
 

@@ -1,6 +1,6 @@
 # Story 2.2: Normalize and quality-check Photo Input
 
-Status: review
+Status: done
 
 ## Story
 
@@ -36,6 +36,14 @@ is good-to-have and does not block local activation.
   optional evidence; the simulator lane remains compatibility-only.
 
 ## Dev Agent Record
+
+### 2026-07-29 physical Android evidence
+
+The clean-source physical acceptance run
+`:apps:androidApp:connectedUiAcceptanceDebugAndroidTest` passed 14/14 with no
+failures, errors, or skips on `HONOR DNY-NX9 / Android 16`. Its binary
+normalization fixture attestation is bound to
+`38aaf2a072553bcd404005e41c8765a446a0f952`; iOS remains optional and pending.
 
 ### 2026-07-28 verification note
 
