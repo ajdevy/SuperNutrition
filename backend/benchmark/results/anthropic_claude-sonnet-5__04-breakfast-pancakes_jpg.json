@@ -1,0 +1,60 @@
+{
+  "model": "anthropic/claude-sonnet-5",
+  "modelVersion": "anthropic/claude-sonnet-5",
+  "provider": "Google",
+  "duration": 1636.2334439999977,
+  "durationSec": "1.64",
+  "promptTokens": 1167,
+  "completionTokens": 224,
+  "totalTokens": 1391,
+  "cost": 0.004574,
+  "raw": "```json\n{\n  \"foods\": [\n    {\n      \"label\": \"Hamburger with beef patty, avocado, radish, and spinach on seeded bun\",\n      \"rank\": 1,\n      \"confidence\": 0.95,\n      \"assumptions\": [\"Patty appears to ",
+  "parsed": {
+    "foods": [
+      {
+        "label": "Hamburger with beef patty, avocado, radish, and spinach on seeded bun",
+        "rank": 1,
+        "confidence": 0.95,
+        "assumptions": [
+          "Patty appears to be beef",
+          "Green spread is likely avocado or guacamole",
+          "Sliced red vegetable is radish",
+          "Bun is topped with mixed seeds"
+        ]
+      },
+      {
+        "label": "Coca-Cola glass bottle beverage",
+        "rank": 2,
+        "confidence": 0.9,
+        "assumptions": [
+          "Bottles identified by red label and logo design"
+        ]
+      }
+    ]
+  },
+  "foods": [
+    {
+      "label": "Hamburger with beef patty, avocado, radish, and spinach on seeded bun",
+      "rank": 1,
+      "confidence": 0.95,
+      "assumptions": [
+        "Patty appears to be beef",
+        "Green spread is likely avocado or guacamole",
+        "Sliced red vegetable is radish",
+        "Bun is topped with mixed seeds"
+      ]
+    },
+    {
+      "label": "Coca-Cola glass bottle beverage",
+      "rank": 2,
+      "confidence": 0.9,
+      "assumptions": [
+        "Bottles identified by red label and logo design"
+      ]
+    }
+  ],
+  "image": "04-breakfast-pancakes.jpg",
+  "modelLabel": "Claude Sonnet 5 (Pass 2 alt)",
+  "pass": 2,
+  "key": "anthropic_claude-sonnet-5__04-breakfast-pancakes_jpg"
+}
