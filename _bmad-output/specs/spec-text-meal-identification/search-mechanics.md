@@ -30,9 +30,11 @@ Evaluated in order. The first tier that returns results is the result set; lower
 | Tier | Rule |
 | --- | --- |
 | 1 — Exact | Normalized query equals a normalized indexed name |
-| 2 — Prefix | Every query token is a prefix of some token in the record, in any order |
-| 3 — Token subset | All query tokens appear in the record; extra record tokens are permitted |
+| 2 — Token subset | Every query token appears as a complete record token; extra record tokens are permitted |
+| 3 — Prefix | Every query token is a prefix of some record token, in any order |
 | 4 — Fuzzy | Bounded edit distance per token, scaled to token length, applied only when tiers 1–3 are empty |
+
+**Token subset must precede prefix.** A complete token is also a prefix of itself, so ordering prefix first makes the token-subset tier unreachable — it could never match anything the prefix tier had not already taken. An earlier revision of this file had them the other way round; implementation surfaced it. Concretely, `rye` is a complete token of `Bread, rye` and only a prefix of `Ryebread`, and the first ordering loses that distinction.
 
 Fuzzy matching is last and bounded. An unbounded fuzzy tier turns a specific query into a wall of near-misses, which is the failure this ordering exists to prevent.
 
