@@ -48,13 +48,15 @@ class IosImageNormalizer(
     private val common = PhotoInputNormalizer(maxDimension = maxDimension, digest = digest)
 
     fun normalize(ref: PhotoRef, sourceData: NSData): NormalizedPhotoInput {
-        require(sourceData.length > 0u) { "Photo bytes must not be empty" }
+        if (sourceData.length == 0uL) {
+            throw PhotoPreparationException("Photo bytes must not be empty")
+        }
 
         val image = UIImage.imageWithData(sourceData)
             ?: throw PhotoPreparationException("iOS could not decode the selected image")
         val (sourceWidth, sourceHeight) = image.size.useContents { width to height }
-        require(sourceWidth > 0.0 && sourceHeight > 0.0) {
-            "iOS image has no drawable dimensions"
+        if (sourceWidth <= 0.0 || sourceHeight <= 0.0) {
+            throw PhotoPreparationException("iOS image has no drawable dimensions")
         }
 
         val renderScale = minOf(
@@ -134,10 +136,14 @@ internal fun iosSha256(bytes: ByteArray): String {
     val digest = ByteArray(SHA256_DIGEST_LENGTH)
     digest.usePinned { output ->
         if (bytes.isEmpty()) {
-            SN_SHA256(null, 0u, output.addressOf(0).reinterpret())
+            if (SN_SHA256(null, 0u, output.addressOf(0).reinterpret()) == 0) {
+                throw PhotoPreparationException("iOS SHA-256 calculation failed")
+            }
         } else {
             bytes.usePinned { input ->
-                SN_SHA256(input.addressOf(0), bytes.size.toUInt(), output.addressOf(0).reinterpret())
+                if (SN_SHA256(input.addressOf(0), bytes.size.toUInt(), output.addressOf(0).reinterpret()) == 0) {
+                    throw PhotoPreparationException("iOS SHA-256 calculation failed")
+                }
             }
         }
     }

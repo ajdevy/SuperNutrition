@@ -20,10 +20,15 @@ gradlePlugin {
             id = "com.supernutrition.quality"
             implementationClass = "com.supernutrition.buildlogic.QualityPlugin"
         }
+        register("kmpAppleTargets") {
+            id = "com.supernutrition.kmp-apple-targets"
+            implementationClass = "com.supernutrition.buildlogic.KmpAppleTargetsPlugin"
+        }
     }
 }
 
 dependencies {
+    implementation(libs.kotlin.gradle)
     implementation(libs.detekt.gradle)
     implementation(libs.detekt.ktlint.wrapper)
     implementation(libs.kover.gradle)

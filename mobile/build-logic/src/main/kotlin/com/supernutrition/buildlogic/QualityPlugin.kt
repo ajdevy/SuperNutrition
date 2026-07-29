@@ -125,22 +125,27 @@ class QualityPlugin : Plugin<Project> {
 
         val productionPaths = productionModulePaths(mobileRoot)
         project.subprojects.forEach { subproject ->
-            if (productionPaths.contains(subproject.path)) {
-                subproject.pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
-                    subproject.pluginManager.apply(KoverGradlePlugin::class.java)
+            var detektConfigured = false
+            fun configureDetektOnce() {
+                if (detektConfigured) return
+                configureDetekt(subproject, project.rootProject)
+                wireDetektTasks(subproject, qualityCheckJvmAndroid, qualityCheckApple, qualityFormat)
+                detektConfigured = true
+            }
+
+            listOf(
+                "org.jetbrains.kotlin.multiplatform",
+                "com.android.application",
+                "org.jetbrains.kotlin.android",
+            ).forEach { pluginId ->
+                subproject.pluginManager.withPlugin(pluginId) {
+                    if (pluginId == "org.jetbrains.kotlin.multiplatform" &&
+                        productionPaths.contains(subproject.path)
+                    ) {
+                        subproject.pluginManager.apply(KoverGradlePlugin::class.java)
+                    }
+                    configureDetektOnce()
                 }
-            }
-            subproject.pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
-                configureDetekt(subproject, project.rootProject)
-                wireDetektTasks(subproject, qualityCheckJvmAndroid, qualityCheckApple, qualityFormat)
-            }
-            subproject.pluginManager.withPlugin("com.android.application") {
-                configureDetekt(subproject, project.rootProject)
-                wireDetektTasks(subproject, qualityCheckJvmAndroid, qualityCheckApple, qualityFormat)
-            }
-            subproject.pluginManager.withPlugin("org.jetbrains.kotlin.android") {
-                configureDetekt(subproject, project.rootProject)
-                wireDetektTasks(subproject, qualityCheckJvmAndroid, qualityCheckApple, qualityFormat)
             }
         }
 
@@ -204,12 +209,9 @@ class QualityPlugin : Plugin<Project> {
             autoCorrect.set(true)
         }
         qualityFormat.configure { dependsOn(formatTask) }
-        target.tasks.withType<Detekt>().configureEach {
-            if (name != "detektFormat") {
-                qualityCheckJvmAndroid.configure { dependsOn(this@configureEach) }
-                qualityCheckApple.configure { dependsOn(this@configureEach) }
-            }
-        }
+        val analysisTasks = target.tasks.withType<Detekt>().matching { it.name != "detektFormat" }
+        qualityCheckJvmAndroid.configure { dependsOn(analysisTasks) }
+        qualityCheckApple.configure { dependsOn(analysisTasks) }
     }
 
     private fun configureJvmCoverageAggregation(

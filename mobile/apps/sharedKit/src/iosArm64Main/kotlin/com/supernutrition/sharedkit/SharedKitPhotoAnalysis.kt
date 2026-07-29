@@ -5,8 +5,10 @@ import com.supernutrition.domain.photoanalysis.PhotoAnalysisEvent
 import com.supernutrition.domain.photoanalysis.RecoveryReason
 import com.supernutrition.domain.photoanalysis.PhotoLeaseStore
 import com.supernutrition.domain.photoanalysis.PhotoSessionStore
+import com.supernutrition.domain.photoanalysis.PhotoPreparationException
 import com.supernutrition.feature.photoanalysis.PhotoAnalysisFeature
 import com.supernutrition.feature.photoanalysis.PhotoAnalysisNativeAction
+import com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterCopy
 import com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterModel
 import com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterState
 import com.supernutrition.feature.photoanalysis.PhotoAnalysisViewController
@@ -18,6 +20,7 @@ import platform.UIKit.UIViewController
 /** Canonical Apple production facade: shared presenter plus Compose surface. */
 public class SharedKitPhotoAnalysisSession(
     attemptId: String,
+    internal val copy: PhotoAnalysisPresenterCopy = sharedKitPhotoAnalysisCopy,
 ) {
     internal val feature = PhotoAnalysisFeature(
         attemptId = AttemptId(attemptId),
@@ -25,9 +28,9 @@ public class SharedKitPhotoAnalysisSession(
         sessions = PhotoSessionStore(),
     )
 
-    public fun presenterState(): PhotoAnalysisPresenterState = PhotoAnalysisPresenterModel.from(feature.state).state
+    public fun presenterState(): PhotoAnalysisPresenterState = PhotoAnalysisPresenterModel.from(feature.state, copy).state
 
-    public fun statusLabel(): String = PhotoAnalysisPresenterModel.from(feature.state).statusLabel
+    public fun statusLabel(): String = PhotoAnalysisPresenterModel.from(feature.state, copy).statusLabel
 
     public fun permissionDenied() {
         feature.dispatch(PhotoAnalysisEvent.PermissionDenied)
@@ -48,11 +51,10 @@ public class SharedKitPhotoAnalysisSession(
     public fun photoReturned(opaqueId: String, sourceData: NSData) {
         val ref = feature.issuePhotoRef(opaqueId)
         feature.dispatch(PhotoAnalysisEvent.PhotoCaptured(ref))
-        runCatching {
-            IosImageNormalizer().normalize(ref, sourceData)
-        }.onSuccess { normalized ->
+        try {
+            val normalized = IosImageNormalizer().normalize(ref, sourceData)
             feature.dispatch(PhotoAnalysisEvent.PreparationSucceeded(normalized))
-        }.onFailure {
+        } catch (_: PhotoPreparationException) {
             feature.dispatch(PhotoAnalysisEvent.PreparationFailed(RecoveryReason.POOR_IMAGE))
         }
     }
@@ -80,5 +82,5 @@ public object SharedKitPhotoAnalysis {
     public fun viewController(
         session: SharedKitPhotoAnalysisSession,
         onNativeAction: (PhotoAnalysisNativeAction) -> Unit,
-    ): UIViewController = PhotoAnalysisViewController(session.feature, onNativeAction)
+    ): UIViewController = PhotoAnalysisViewController(session.feature, session.copy, onNativeAction)
 }

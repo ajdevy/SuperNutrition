@@ -1,7 +1,10 @@
 package com.supernutrition.buildlogic
 
+import java.nio.file.FileVisitResult
 import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.SimpleFileVisitor
+import java.nio.file.attribute.BasicFileAttributes
 
 /** Enforces the dependency graph declared by config/architecture/module-boundaries.toml. */
 internal object ModuleBoundaryVerifier {
@@ -36,9 +39,28 @@ internal object ModuleBoundaryVerifier {
             if (!Files.isDirectory(moduleRoot)) {
                 emptyList()
             } else {
-                Files.walk(moduleRoot).use { paths ->
-                    paths.filter { path -> Files.isRegularFile(path) }.toList()
-                }
+                val files = mutableListOf<Path>()
+                Files.walkFileTree(moduleRoot, object : SimpleFileVisitor<Path>() {
+                    override fun preVisitDirectory(
+                        directory: Path,
+                        attributes: BasicFileAttributes,
+                    ): FileVisitResult = if (
+                        directory != moduleRoot && directory.fileName.toString() in setOf("build", ".gradle")
+                    ) {
+                        FileVisitResult.SKIP_SUBTREE
+                    } else {
+                        FileVisitResult.CONTINUE
+                    }
+
+                    override fun visitFile(
+                        file: Path,
+                        attributes: BasicFileAttributes,
+                    ): FileVisitResult {
+                        if (attributes.isRegularFile) files.add(file)
+                        return FileVisitResult.CONTINUE
+                    }
+                })
+                files
             }
         }.distinct()
         val violations = moduleFiles

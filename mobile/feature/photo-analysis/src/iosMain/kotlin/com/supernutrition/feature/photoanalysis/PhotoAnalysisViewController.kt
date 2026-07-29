@@ -8,10 +8,12 @@ import platform.UIKit.UIViewController
 @OptIn(ExperimentalForeignApi::class)
 fun PhotoAnalysisViewController(
     feature: PhotoAnalysisFeature,
+    copy: PhotoAnalysisPresenterCopy,
     onNativeAction: (PhotoAnalysisNativeAction) -> Unit,
 ): UIViewController = ComposeUIViewController {
     PhotoAnalysisCaptureContent(
         stateFlow = feature.stateFlow,
         onAction = { action -> feature.route(action, onNativeAction) },
+        surface = PhotoAnalysisCaptureSurface(copy = copy),
     )
 }

@@ -187,6 +187,17 @@ production_product_names = set(re.findall(
     r'PRODUCT_BUNDLE_IDENTIFIER = "com\.supernutrition\.ios"; PRODUCT_NAME = "([^"]+)"',
     ios_project,
 ))
+native_target_ids = {
+    name: identifier
+    for identifier, name in re.findall(
+        r'(?ms)^\s*([A-Za-z0-9]+) /\* ([^*]+) \*/ = \{\s*isa = PBXNativeTarget;',
+        ios_project,
+    )
+}
+acceptance_target_id = native_target_ids.get("SuperNutritionUIAcceptance")
+production_target_id = native_target_ids.get("SuperNutrition")
+if acceptance_target_id is None or production_target_id is None:
+    fail("iOS Xcode native target names are missing")
 if len(acceptance_product_names) != 1 or acceptance_product_names != {"SuperNutritionUIAcceptance"}:
     fail("iOS acceptance target product name is missing or collides with production")
 if len(production_product_names) != 1 or production_product_names != {"SuperNutrition"}:
@@ -201,10 +212,10 @@ production_scheme_path = scheme_root / "SuperNutrition.xcscheme"
 if not production_scheme_path.is_file():
     fail("iOS production shared scheme is missing")
 production_scheme = production_scheme_path.read_text(encoding="utf-8")
-if 'BlueprintIdentifier = "T50000010000000000000001"' not in acceptance_scheme or \
+if f'BlueprintIdentifier = "{acceptance_target_id}"' not in acceptance_scheme or \
         'BuildableName = "SuperNutritionUIAcceptance.app"' not in acceptance_scheme:
     fail("iOS acceptance scheme does not build the acceptance product")
-if 'BlueprintIdentifier = "T50000010000000000000003"' not in production_scheme or \
+if f'BlueprintIdentifier = "{production_target_id}"' not in production_scheme or \
         'BuildableName = "SuperNutrition.app"' not in production_scheme:
     fail("iOS production scheme does not build the production product")
 

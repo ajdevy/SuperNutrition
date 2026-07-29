@@ -9,11 +9,9 @@
 /* Begin PBXBuildFile section */
 		B10000010000000000000001 /* SuperNutritionUIAcceptanceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000001 /* SuperNutritionUIAcceptanceApp.swift */; };
 		B10000010000000000000002 /* SharedKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F20000010000000000000003 /* SharedKit.framework */; };
-		B10000010000000000000003 /* SharedKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F20000010000000000000003 /* SharedKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B10000010000000000000004 /* BootstrapLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000004 /* BootstrapLaunchTests.swift */; };
 		B10000010000000000000005 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F20000010000000000000005 /* XCTest.framework */; };
 		B10000010000000000000007 /* SharedKit.framework in Production Frameworks */ = {isa = PBXBuildFile; fileRef = F20000010000000000000003 /* SharedKit.framework */; };
-		B10000010000000000000008 /* SharedKit.framework in Production Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F20000010000000000000003 /* SharedKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B10000010000000000000009 /* SuperNutritionApp.swift in Production Sources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000008 /* SuperNutritionApp.swift */; };
 /* End PBXBuildFile section */
 
@@ -55,31 +53,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		P31000010000000000000001 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				B10000010000000000000003 /* SharedKit.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		P31000010000000000000002 /* Production Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				B10000010000000000000008 /* SharedKit.framework in Production Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXGroup section */
 		G40000010000000000000000 = {
@@ -135,10 +108,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = L60000010000000000000001 /* Build configuration list for PBXNativeTarget "SuperNutritionUIAcceptance" */;
 			buildPhases = (
+				S32000010000000000000001 /* Build SharedKit framework */,
 				P30000010000000000000003 /* Sources */,
 				P30000010000000000000001 /* Frameworks */,
-				S32000010000000000000001 /* Build SharedKit framework */,
-				P31000010000000000000001 /* Embed Frameworks */,
 				P30000010000000000000004 /* Resources */,
 			);
 			buildRules = (
@@ -172,10 +144,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = L60000010000000000000003 /* Build configuration list for PBXNativeTarget "SuperNutrition" */;
 			buildPhases = (
+				S32000010000000000000002 /* Build Production SharedKit framework */,
 				P30000010000000000000007 /* Production Sources */,
 				P30000010000000000000009 /* Production Frameworks */,
-				S32000010000000000000002 /* Build Production SharedKit framework */,
-				P31000010000000000000002 /* Production Embed Frameworks */,
 				P30000010000000000000008 /* Production Resources */,
 			);
 			buildRules = (
@@ -274,12 +245,12 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		C40000010000000000000001 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = { ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; FRAMEWORK_SEARCH_PATHS = ("$(SHARED_KIT_FRAMEWORK_DIR)", "$(inherited)"); IPHONEOS_DEPLOYMENT_TARGET = 15.0; PRODUCT_BUNDLE_IDENTIFIER = "com.supernutrition.ios.uiacceptance"; PRODUCT_NAME = "SuperNutritionUIAcceptance"; SDKROOT = iphoneos; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; KOTLIN_TARGET = iosSimulatorArm64; "KOTLIN_TARGET[sdk=iphoneos*]" = iosArm64; "KOTLIN_TARGET[sdk=iphonesimulator*][arch=x86_64]" = iosX64; SHARED_KIT_FRAMEWORK_DIR = "$(PROJECT_DIR)/../sharedKit/build/bin/$(KOTLIN_TARGET)/$(CONFIGURATION)Framework"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; }; name = Debug; };
-		C40000010000000000000002 /* Release */ = {isa = XCBuildConfiguration; buildSettings = { ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; FRAMEWORK_SEARCH_PATHS = ("$(SHARED_KIT_FRAMEWORK_DIR)", "$(inherited)"); IPHONEOS_DEPLOYMENT_TARGET = 15.0; PRODUCT_BUNDLE_IDENTIFIER = "com.supernutrition.ios.uiacceptance"; PRODUCT_NAME = "SuperNutritionUIAcceptance"; SDKROOT = iphoneos; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; KOTLIN_TARGET = iosSimulatorArm64; "KOTLIN_TARGET[sdk=iphoneos*]" = iosArm64; "KOTLIN_TARGET[sdk=iphonesimulator*][arch=x86_64]" = iosX64; SHARED_KIT_FRAMEWORK_DIR = "$(PROJECT_DIR)/../sharedKit/build/bin/$(KOTLIN_TARGET)/$(CONFIGURATION)Framework"; SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; }; name = Release; };
+		C40000010000000000000001 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = { ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; FRAMEWORK_SEARCH_PATHS = ("$(SHARED_KIT_FRAMEWORK_DIR)", "$(inherited)"); IPHONEOS_DEPLOYMENT_TARGET = 15.0; PRODUCT_BUNDLE_IDENTIFIER = "com.supernutrition.ios.uiacceptance"; PRODUCT_NAME = "SuperNutritionUIAcceptance"; SDKROOT = iphoneos; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; KOTLIN_TARGET = iosSimulatorArm64; "KOTLIN_TARGET[sdk=iphoneos*]" = iosArm64; "KOTLIN_TARGET[sdk=iphonesimulator*][arch=x86_64]" = iosX64; SHARED_KIT_FRAMEWORK_DIR = "$(PROJECT_DIR)/../sharedKit/build/bin/$(KOTLIN_TARGET)/debugFramework"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; }; name = Debug; };
+		C40000010000000000000002 /* Release */ = {isa = XCBuildConfiguration; buildSettings = { ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; FRAMEWORK_SEARCH_PATHS = ("$(SHARED_KIT_FRAMEWORK_DIR)", "$(inherited)"); IPHONEOS_DEPLOYMENT_TARGET = 15.0; PRODUCT_BUNDLE_IDENTIFIER = "com.supernutrition.ios.uiacceptance"; PRODUCT_NAME = "SuperNutritionUIAcceptance"; SDKROOT = iphoneos; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; KOTLIN_TARGET = iosSimulatorArm64; "KOTLIN_TARGET[sdk=iphoneos*]" = iosArm64; "KOTLIN_TARGET[sdk=iphonesimulator*][arch=x86_64]" = iosX64; SHARED_KIT_FRAMEWORK_DIR = "$(PROJECT_DIR)/../sharedKit/build/bin/$(KOTLIN_TARGET)/releaseFramework"; SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; }; name = Release; };
 		C40000010000000000000003 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = { CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_CFBundleDisplayName = "SuperNutrition UI Acceptance Tests"; IPHONEOS_DEPLOYMENT_TARGET = 15.0; PRODUCT_BUNDLE_IDENTIFIER = "com.supernutrition.ios.uiacceptance.tests"; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; TEST_TARGET_NAME = "SuperNutritionUIAcceptance"; }; name = Debug; };
 		C40000010000000000000004 /* Release */ = {isa = XCBuildConfiguration; buildSettings = { CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_CFBundleDisplayName = "SuperNutrition UI Acceptance Tests"; IPHONEOS_DEPLOYMENT_TARGET = 15.0; PRODUCT_BUNDLE_IDENTIFIER = "com.supernutrition.ios.uiacceptance.tests"; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; TEST_TARGET_NAME = "SuperNutritionUIAcceptance"; }; name = Release; };
-		C40000010000000000000005 /* Production Debug */ = {isa = XCBuildConfiguration; buildSettings = { CLANG_ENABLE_MODULES = YES; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; FRAMEWORK_SEARCH_PATHS = ("$(SHARED_KIT_FRAMEWORK_DIR)", "$(inherited)"); INFOPLIST_FILE = Info.plist; IPHONEOS_DEPLOYMENT_TARGET = 15.0; PRODUCT_BUNDLE_IDENTIFIER = "com.supernutrition.ios"; PRODUCT_NAME = "SuperNutrition"; SDKROOT = iphoneos; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; KOTLIN_TARGET = iosSimulatorArm64; "KOTLIN_TARGET[sdk=iphoneos*]" = iosArm64; "KOTLIN_TARGET[sdk=iphonesimulator*][arch=x86_64]" = iosX64; SHARED_KIT_FRAMEWORK_DIR = "$(PROJECT_DIR)/../sharedKit/build/bin/$(KOTLIN_TARGET)/$(CONFIGURATION)Framework"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; }; name = Debug; };
-		C40000010000000000000006 /* Production Release */ = {isa = XCBuildConfiguration; buildSettings = { CLANG_ENABLE_MODULES = YES; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; FRAMEWORK_SEARCH_PATHS = ("$(SHARED_KIT_FRAMEWORK_DIR)", "$(inherited)"); INFOPLIST_FILE = Info.plist; IPHONEOS_DEPLOYMENT_TARGET = 15.0; PRODUCT_BUNDLE_IDENTIFIER = "com.supernutrition.ios"; PRODUCT_NAME = "SuperNutrition"; SDKROOT = iphoneos; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; KOTLIN_TARGET = iosSimulatorArm64; "KOTLIN_TARGET[sdk=iphoneos*]" = iosArm64; "KOTLIN_TARGET[sdk=iphonesimulator*][arch=x86_64]" = iosX64; SHARED_KIT_FRAMEWORK_DIR = "$(PROJECT_DIR)/../sharedKit/build/bin/$(KOTLIN_TARGET)/$(CONFIGURATION)Framework"; SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; }; name = Release; };
+		C40000010000000000000005 /* Production Debug */ = {isa = XCBuildConfiguration; buildSettings = { CLANG_ENABLE_MODULES = YES; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; FRAMEWORK_SEARCH_PATHS = ("$(SHARED_KIT_FRAMEWORK_DIR)", "$(inherited)"); INFOPLIST_FILE = Info.plist; IPHONEOS_DEPLOYMENT_TARGET = 15.0; PRODUCT_BUNDLE_IDENTIFIER = "com.supernutrition.ios"; PRODUCT_NAME = "SuperNutrition"; SDKROOT = iphoneos; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; KOTLIN_TARGET = iosSimulatorArm64; "KOTLIN_TARGET[sdk=iphoneos*]" = iosArm64; "KOTLIN_TARGET[sdk=iphonesimulator*][arch=x86_64]" = iosX64; SHARED_KIT_FRAMEWORK_DIR = "$(PROJECT_DIR)/../sharedKit/build/bin/$(KOTLIN_TARGET)/debugFramework"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; }; name = Debug; };
+		C40000010000000000000006 /* Production Release */ = {isa = XCBuildConfiguration; buildSettings = { CLANG_ENABLE_MODULES = YES; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; FRAMEWORK_SEARCH_PATHS = ("$(SHARED_KIT_FRAMEWORK_DIR)", "$(inherited)"); INFOPLIST_FILE = Info.plist; IPHONEOS_DEPLOYMENT_TARGET = 15.0; PRODUCT_BUNDLE_IDENTIFIER = "com.supernutrition.ios"; PRODUCT_NAME = "SuperNutrition"; SDKROOT = iphoneos; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; KOTLIN_TARGET = iosSimulatorArm64; "KOTLIN_TARGET[sdk=iphoneos*]" = iosArm64; "KOTLIN_TARGET[sdk=iphonesimulator*][arch=x86_64]" = iosX64; SHARED_KIT_FRAMEWORK_DIR = "$(PROJECT_DIR)/../sharedKit/build/bin/$(KOTLIN_TARGET)/releaseFramework"; SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; }; name = Release; };
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */

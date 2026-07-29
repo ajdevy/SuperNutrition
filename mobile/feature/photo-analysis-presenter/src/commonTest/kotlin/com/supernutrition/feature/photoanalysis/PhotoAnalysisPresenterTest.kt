@@ -25,15 +25,18 @@ class PhotoAnalysisPresenterTest {
             metadataKeys = emptySet(),
             contentDigest = "a".repeat(64),
         )
-        val copy = PhotoAnalysisPresenterCopy.english().copy(
+        val copy = testCopy().copy(
             readyToCapture = "Pronto",
             openSettings = "Impostazioni",
         )
 
         assertEquals("Pronto", PhotoAnalysisPresenterModel.from(PhotoAnalysisState.Capture, copy).statusLabel)
         assertEquals(
-            "Impostazioni",
-            PhotoAnalysisPresenterCopy.english().copy(openSettings = "Impostazioni").openSettings,
+            "Camera permission is required",
+            PhotoAnalysisPresenterModel.from(
+                PhotoAnalysisState.Recovery(RecoveryReason.PERMISSION_DENIED),
+                copy,
+            ).statusLabel,
         )
         assertEquals(
             listOf(PhotoAnalysisPresenterAction.Cancel),
@@ -65,8 +68,9 @@ class PhotoAnalysisPresenterTest {
             RecoveryReason.OFFLINE to "Analysis is offline",
             RecoveryReason.CANCELLED to "Analysis cancelled",
         )
+        val copy = testCopy()
         expected.forEach { (reason, label) ->
-            val model = PhotoAnalysisPresenterModel.from(PhotoAnalysisState.Recovery(reason))
+            val model = PhotoAnalysisPresenterModel.from(PhotoAnalysisState.Recovery(reason), copy)
             assertEquals(label, model.statusLabel)
             assertEquals(
                 if (reason == RecoveryReason.PERMISSION_DENIED) {
@@ -81,7 +85,7 @@ class PhotoAnalysisPresenterTest {
 
     @Test
     fun `presenter keeps capture actions bounded and excludes remote consent`() {
-        val model = PhotoAnalysisPresenterModel.from(PhotoAnalysisState.Capture)
+        val model = PhotoAnalysisPresenterModel.from(PhotoAnalysisState.Capture, testCopy())
 
         assertEquals(PhotoAnalysisPresenterState.CAPTURE, model.state)
         assertEquals(
@@ -90,4 +94,26 @@ class PhotoAnalysisPresenterTest {
         )
         assertTrue(model.actions.none { it.name.contains("Consent", ignoreCase = true) })
     }
+
+    private fun testCopy() = PhotoAnalysisPresenterCopy(
+        captureTitle = "Capture",
+        takeMealPhoto = "Take meal photo",
+        choosePhoto = "Choose photo",
+        openSettings = "Open settings",
+        scanAgain = "Scan again",
+        cancel = "Cancel",
+        readyToCapture = "Ready to capture",
+        preparingPhoto = "Preparing photo",
+        photoReady = "Photo ready",
+        analyzingPhoto = "Analyzing photo",
+        reviewCandidate = "Review candidate",
+        restoringPhotoAnalysis = "Restoring photo analysis",
+        cameraPermissionRequired = "Camera permission is required",
+        cameraUnavailable = "Camera is unavailable",
+        photoCaptureFailed = "Photo capture failed",
+        photoQualityTooLow = "Photo quality is too low",
+        noFoodFound = "No food was found in the photo",
+        analysisOffline = "Analysis is offline",
+        analysisCancelled = "Analysis cancelled",
+    )
 }

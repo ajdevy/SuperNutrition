@@ -2,6 +2,7 @@ package com.supernutrition.platform.photoios
 
 import com.supernutrition.platform.photoios.permissioninterop.SNGetCameraAuthorizationStatus
 import com.supernutrition.platform.photoios.permissioninterop.SNRequestCameraAccess
+import com.supernutrition.core.config.PhotoNormalizationDefaults
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.AVFoundation.AVCaptureDevice
 import platform.AVFoundation.AVMediaTypeVideo
@@ -123,7 +124,9 @@ private class CameraPickerDelegate(
         didFinishPickingMediaWithInfo: Map<Any?, *>,
     ) {
         val image = didFinishPickingMediaWithInfo[UIImagePickerControllerOriginalImage] as? UIImage
-        val data = image?.let { UIImageJPEGRepresentation(it, 1.0) }
+        val data = image?.let {
+            UIImageJPEGRepresentation(it, PhotoNormalizationDefaults.JPEG_QUALITY / 100.0)
+        }
         dismissOnMain(picker) { clear(); onResult(data) }
     }
 }

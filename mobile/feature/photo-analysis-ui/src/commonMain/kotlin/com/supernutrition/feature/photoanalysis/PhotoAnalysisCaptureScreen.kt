@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.StateFlow
 import com.supernutrition.domain.photoanalysis.PhotoAnalysisState
 
 data class PhotoAnalysisCaptureSurface(
-    val copy: PhotoAnalysisPresenterCopy = PhotoAnalysisPresenterCopy.english(),
+    val copy: PhotoAnalysisPresenterCopy,
     val title: String = copy.captureTitle,
     val shutterLabel: String = copy.takeMealPhoto,
     val importLabel: String = copy.choosePhoto,
@@ -42,8 +42,8 @@ data class PhotoAnalysisCaptureSurface(
 fun PhotoAnalysisCaptureContent(
     stateFlow: StateFlow<PhotoAnalysisState>,
     onAction: (PhotoAnalysisPresenterAction) -> Unit,
+    surface: PhotoAnalysisCaptureSurface,
     modifier: Modifier = Modifier,
-    surface: PhotoAnalysisCaptureSurface = PhotoAnalysisCaptureSurface(),
 ) {
     val state by stateFlow.collectAsState()
     PhotoAnalysisCaptureScreen(
@@ -59,8 +59,8 @@ fun PhotoAnalysisCaptureContent(
 fun PhotoAnalysisCaptureScreen(
     model: PhotoAnalysisPresenterModel,
     onAction: (PhotoAnalysisPresenterAction) -> Unit,
+    surface: PhotoAnalysisCaptureSurface,
     modifier: Modifier = Modifier,
-    surface: PhotoAnalysisCaptureSurface = PhotoAnalysisCaptureSurface(),
 ) {
     Column(
         modifier = modifier

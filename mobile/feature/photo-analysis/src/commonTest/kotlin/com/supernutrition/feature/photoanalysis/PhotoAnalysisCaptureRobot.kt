@@ -15,6 +15,7 @@ interface PhotoAnalysisCaptureRobotHost {
 
 class PhotoAnalysisCaptureRobot(
     private val host: PhotoAnalysisCaptureRobotHost,
+    private val copy: PhotoAnalysisPresenterCopy,
     val trace: AcceptanceTrace = AcceptanceTrace("photo-analysis-capture-recovery"),
 ) : TypedScreenScope {
     override val screenId: String = "photo-analysis.capture"
@@ -28,11 +29,11 @@ class PhotoAnalysisCaptureRobot(
     fun assertCaptureSurface() {
         trace.assertFinal(StepId("capture-surface"), title) {
             host.state() == PhotoAnalysisPresenterState.CAPTURE &&
-                host.text(title) == "Capture" &&
-                host.text(status) == "Ready to capture"
+                host.text(title) == copy.captureTitle &&
+                host.text(status) == copy.readyToCapture
         }
-        check(host.text(shutter) == "Take meal photo") { "Capture shutter semantics drifted" }
-        check(host.text(import) == "Choose photo") { "Capture import semantics drifted" }
+        check(host.text(shutter) == copy.takeMealPhoto) { "Capture shutter semantics drifted" }
+        check(host.text(import) == copy.choosePhoto) { "Capture import semantics drifted" }
     }
 
     fun takePhoto() {
@@ -50,6 +51,6 @@ class PhotoAnalysisCaptureRobot(
             host.state() == PhotoAnalysisPresenterState.RECOVERY &&
                 host.text(status) == expectedStatus
         }
-        check(host.text(scanAgain) == "Scan again") { "Recovery retry semantics drifted" }
-    }
+        check(host.text(scanAgain) == copy.scanAgain) { "Recovery retry semantics drifted" }
+}
 }
