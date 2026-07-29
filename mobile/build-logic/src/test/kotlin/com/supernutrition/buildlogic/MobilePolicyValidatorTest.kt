@@ -2,6 +2,7 @@ package com.supernutrition.buildlogic
 
 import java.nio.file.Files
 import kotlin.test.Test
+import kotlin.test.assertFalse
 import kotlin.test.assertFailsWith
 
 class MobilePolicyValidatorTest {
@@ -10,6 +11,17 @@ class MobilePolicyValidatorTest {
         MobilePolicyValidator.validate(
             PathLocator.repoMobileRoot(),
         )
+    }
+
+    @Test
+    fun `validator accepts local policy without optional GitHub hosting gates`() {
+        val root = fixtureRoot("supernutrition-policy-local-hosting-test")
+        copyPolicyFixtures(root)
+        val lifecycle = Files.readString(root.resolve("product-lifecycle.toml"))
+
+        assertFalse(lifecycle.contains("all_six_jobs_success"))
+        assertFalse(lifecycle.contains("trusted_ruleset_audit"))
+        MobilePolicyValidator.validate(root)
     }
 
     @Test
@@ -150,6 +162,24 @@ class MobilePolicyValidatorTest {
                     "</resources>",
                     "<string name=\"unrelated\">SuperNutrition</string></resources>",
                 ),
+        )
+
+        assertFailsWith<IllegalArgumentException> {
+            MobilePolicyValidator.validate(root)
+        }
+    }
+
+    @Test
+    fun `validator rejects drift in every visible identity field`() {
+        val root = fixtureRoot("supernutrition-policy-identity-manifest-test")
+        copyPolicyFixtures(root)
+        val identity = root.resolve("config/product-identity.toml")
+        Files.writeString(
+            identity,
+            Files.readString(identity).replace(
+                "in_app_name = \"SuperNutrition\"",
+                "in_app_name = \"SuperNutrition AI nutritionist\"",
+            ),
         )
 
         assertFailsWith<IllegalArgumentException> {

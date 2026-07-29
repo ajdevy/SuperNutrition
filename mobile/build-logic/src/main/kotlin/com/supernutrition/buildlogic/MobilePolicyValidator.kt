@@ -115,8 +115,6 @@ object MobilePolicyValidator {
             "The lifecycle record must prove that the production Compose host exists"
         }
         listOf(
-            "all_six_jobs_success = false",
-            "trusted_ruleset_audit = false",
             "canonical_ios_simulator_arm64 = false",
             "exact_xcode_toolchain = false",
             "active_inventory_and_denominators = false",
@@ -136,12 +134,16 @@ object MobilePolicyValidator {
         }
 
         val identity = files.single { it.first == "config/product-identity.toml" }.second
-        require(identity.contains("canonical_name = \"SuperNutrition\"")) {
-            "Installed product identity must be SuperNutrition"
+        listOf(
+            "canonical_name",
+            "installed_display_name",
+            "launcher_name",
+            "in_app_name",
+            "accessibility_name",
+        ).forEach { key ->
+            requireManifestProperty(identity, key, "SuperNutrition")
         }
-        require(identity.contains("store_listing_title = \"SuperNutrition AI nutritionist\"")) {
-            "Store listing title must be SuperNutrition AI nutritionist"
-        }
+        requireManifestProperty(identity, "store_listing_title", "SuperNutrition AI nutritionist")
         val forbiddenVisibleVariants = identity.substringAfter("[forbidden_visible_variants]", "")
         require(extractStringList(forbiddenVisibleVariants, "values").toSet() ==
             setOf("SuperNutrition AI nutritionist", "AI nutritionist")) {
@@ -155,12 +157,8 @@ object MobilePolicyValidator {
         )) {
             "Product identity forbidden variants must cover every visible identity field"
         }
-        require(identity.contains("acceptance_android_application_id = \"com.supernutrition.android.uiAcceptance\"")) {
-            "Android acceptance identity must remain unique"
-        }
-        require(identity.contains("acceptance_ios_bundle_identifier = \"com.supernutrition.ios.uiacceptance\"")) {
-            "iOS acceptance identity must remain unique"
-        }
+        requireManifestProperty(identity, "acceptance_android_application_id", "com.supernutrition.android.uiAcceptance")
+        requireManifestProperty(identity, "acceptance_ios_bundle_identifier", "com.supernutrition.ios.uiacceptance")
         val androidStrings = mobileRoot.resolve("apps/androidApp/src/main/res/values/strings.xml")
         require(Files.isRegularFile(androidStrings) && Regex(
             "<string\\s+name=\"app_name\"\\s*>SuperNutrition</string>",
@@ -283,6 +281,13 @@ object MobilePolicyValidator {
     private fun requireProperty(text: String, key: String, expected: String) {
         require(Regex("(?m)^${Regex.escape(key)}\\s*=\\s*${Regex.escape(expected)}\\s*$").containsMatchIn(text)) {
             "$key must be set to $expected in the Gradle memory profile"
+        }
+    }
+
+    private fun requireManifestProperty(text: String, key: String, expected: String) {
+        require(Regex("(?m)^${Regex.escape(key)}\\s*=\\s*\\\"${Regex.escape(expected)}\\\"\\s*$")
+            .containsMatchIn(text)) {
+            "$key must be set to $expected in the product identity manifest"
         }
     }
 

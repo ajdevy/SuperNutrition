@@ -59,7 +59,7 @@ GiphySearch supplies useful lint and testing structure but no checked-in CI work
 - Kover 0.9.8 line and branch verification for measurable JVM/Android code, while Kotlin/Native and iOS evidence is reported separately rather than implied by JVM coverage;
 - exactly one denominator for every compiled production source, at least 85% unit-test line and branch coverage per module and per product aggregate across mobile/web/backend, and 100% for changed production lines and branch outcomes, with executable equivalent evidence for Native/hardware boundaries;
 - common Compose Multiplatform v2 robot contracts executed through JVM, Android device, and iOS simulator tasks, plus closed UJ/SM-9 and platform-contract catalogs mapped to one fingerprinted Maestro CLI 2.7.0 inventory, separate binary-bound platform oracles, and fresh native-gap evidence;
-- GitHub Actions on every branch push and pull request, with no path filters and an always-running same-commit aggregate; merge-group and externally enforced trusted-policy controls become required only after the AD-38 hosting-capability gate passes;
+- An optional GitHub Actions adapter on every branch push and pull request, with no path filters and an always-running same-commit aggregate when hosted; merge-group and externally enforced trusted-policy controls are optional;
 - dependency verification, dependency locking, and project-repository rejection;
 - Linux and macOS CI lanes plus story-gated real-device evidence;
 - narrow, owned, removal-bound suppressions and baselines;
@@ -92,7 +92,7 @@ GiphySearch's Detekt 1.23.8 pattern is adopted, but its version is not: the offi
 | Every push/PR — iOS UI | `ui-journeys-ios`: scaffold-pending lifecycle evidence until activation; active bootstrap runs only the non-product launch/DI smoke, while photo-analysis runs the same fingerprinted product journey inventory and assertions as Android |
 | Every push/PR — web | `quality-web-landing`: fail-closed no-production preselection evidence until the reviewed toolchain activation; afterward read-only build, lint, accessibility/unit tests, coverage, dependency integrity, artifact, and inventory evidence |
 | Every push/PR — backend | `quality-backend`: fail-closed no-production preselection evidence until activation; afterward read-only build, lint, unit/contract/security tests, coverage, dependency integrity, artifact, and every supported backend contract release |
-| Required aggregate | `ci-required`: `always()` with direct `needs` on exactly all six jobs, exact-success conclusions, and unconditional matching same-SHA root, lifecycle/inventory, contract catalog/version-matrix, and product evidence fingerprints; after AD-38, `trusted-policy-audit` independently validates candidate CI policy from protected code |
+| Optional hosted aggregate | `ci-required`: `always()` with direct `needs` on exactly all six jobs, exact-success conclusions, and unconditional matching same-SHA root, lifecycle/inventory, contract catalog/version-matrix, and product evidence fingerprints when hosted; an optional `trusted-policy-audit` can validate candidate CI policy from protected code |
 | Story-gated device | Camera bridge, local inference, latency, memory, thermal/battery, VoiceOver, TalkBack, and lifecycle behavior on the approved matrix |
 
 The monorepo and product bootstrap stories create and prove these commands and

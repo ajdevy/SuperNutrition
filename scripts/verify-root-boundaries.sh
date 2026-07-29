@@ -71,8 +71,10 @@ from pathlib import Path
 
 inventory = tomllib.loads(Path(os.environ["OWNERSHIP_INVENTORY"]).read_text(encoding="utf-8"))
 principals = inventory.get("principal", [])
-if inventory.get("status") != "pending-hosting-provisioning":
-    raise SystemExit("ownership inventory must remain pending until AD-38 hosting evidence exists")
+if inventory.get("status") != "local-policy-only":
+    raise SystemExit("ownership inventory must declare local-policy-only status")
+if inventory.get("external_gate") != "optional-hosting":
+    raise SystemExit("external hosting enforcement must remain optional")
 ids = [entry.get("id") for entry in principals]
 owners = [entry.get("codeowner") for entry in principals]
 if not ids or len(ids) != len(set(ids)) or len(owners) != len(set(owners)):

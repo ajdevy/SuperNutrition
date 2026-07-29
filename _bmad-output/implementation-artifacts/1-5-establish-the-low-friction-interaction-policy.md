@@ -54,3 +54,22 @@ a new revision. The contract fixture inventory and mobile validator cover the
 complete forbidden-default set. The released provenance vocabulary no longer
 contains an environment default path; CI executes the mobile JVM unit-test
 task that covers the resolver and ledger.
+
+## Independent Code Review
+
+Claude CLI Opus/high review was rerun on 2026-07-29.
+
+- [x] [Review][Patch] Local `qualityCheckJvmAndroid` and `qualityCheckApple`
+  now execute `mobileUnitTests` and the read-only mobile policy plus contract
+  validators, so interaction-policy coverage does not rely on hosted CI.
+- [x] [Review][Patch] The interaction-policy contract negative fixture remains
+  wired to the local validation path after removing hosted GitHub requirements.
+- [ ] [Review][Defer] Included `build-logic` unit tests are not folded into the
+  aggregate `mobileUnitTests` task; they remain available through the explicit
+  `:build-logic:test` gate.
+- [ ] [Review][Defer] Schema digest pinning and runtime provenance binding can
+  be strengthened in a follow-up without changing the current fail-closed
+  forbidden-default contract.
+- [ ] [Review][Defer] Hosted pipeline tamper resistance is intentionally not a
+  product gate because GitHub rulesets and trusted same-SHA evidence are
+  optional hosting capabilities.

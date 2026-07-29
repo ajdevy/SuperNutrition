@@ -45,3 +45,22 @@ The acceptance and production iOS targets have distinct product references,
 build phases, and committed shared schemes. The local strict gate compiled
 `:apps:androidApp:assembleProductionDebug`; the canonical Linux CI job repeats
 that production-target compilation when Actions is enabled.
+
+## Independent Code Review
+
+Claude CLI Opus/high review was rerun on 2026-07-29.
+
+- [x] [Review][Patch] Product identity validation is now part of the local
+  `verifyMobilePolicy` path and is required by the local quality tasks; it no
+  longer depends on hosted GitHub workflow execution.
+- [x] [Review][Patch] The mobile validator now checks the exact visible identity
+  fields instead of accepting unanchored substring matches.
+- [x] [Review][Patch] The product-identity negative fixture copies both iOS
+  schemes and has a baseline positive control before applying drift mutations.
+- [ ] [Review][Defer] Additional direct scans for every Android and iOS
+  generated/display-name property remain a follow-up hardening item; the
+  current validator still reconciles the authoritative manifest and existing
+  platform metadata checks.
+- [ ] [Review][Defer] Hosted-workflow identity-step tamper resistance is not a
+  local product gate because hosted GitHub enforcement is intentionally
+  optional.

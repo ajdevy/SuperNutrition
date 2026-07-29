@@ -23,8 +23,8 @@ quality matrix with an unconditional aggregate.
 - [x] Keep mobile policy checks read-only and fail-closed.
 - [x] Exclude the zero-branch Android-native implementation from the JVM
   denominator and bind it to explicit native-equivalent evidence.
-- [ ] Add full active-state inventory, coverage, device, and trusted-policy
-  evidence before activation.
+- [ ] Add full active-state inventory, coverage, and device evidence before
+  activation; external GitHub hosting policy is optional.
 
 ## Evidence
 
@@ -33,8 +33,9 @@ quality matrix with an unconditional aggregate.
 - `scripts/ci-policy-negative-fixtures.sh`
 - `mobile/build-logic/**`
 
-The workflow is checked in, but GitHub ruleset enforcement and physical-device
-evidence are intentionally not claimed by this story.
+The workflow is checked in as a local/optional CI policy. External GitHub
+ruleset enforcement is not a product gate; physical-device evidence remains a
+separate native requirement.
 
 ## Dev Agent Record
 
@@ -142,3 +143,7 @@ evidence are intentionally not claimed by this story.
   it rejects simulator UDIDs and requires a passing physical xcresult,
   `Debug-iphoneos` app, and `iosArm64` framework before emitting four bound
   native-gap records.
+- 2026-07-29: Removed the unavailable GitHub ruleset and trusted same-SHA
+  hosting requirements from lifecycle/coverage authorization. The checked-in
+  workflow and local CI-policy validators remain available but are optional for
+  activation; Apple, device, inventory, and coverage gates remain fail-closed.

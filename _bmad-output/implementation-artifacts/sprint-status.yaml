@@ -33,7 +33,7 @@ story_location: _bmad-output/implementation-artifacts
 development_status:
   epic-1: in-progress
   1-1-activate-mobile-kmp-scaffold: in-progress
-  1-2-enforce-monorepo-boundaries-and-contracts: in-progress
+  1-2-enforce-monorepo-boundaries-and-contracts: review
   1-3-establish-product-identity-metadata: review
   1-4-establish-repository-quality-gates: review
   1-5-establish-the-low-friction-interaction-policy: review
