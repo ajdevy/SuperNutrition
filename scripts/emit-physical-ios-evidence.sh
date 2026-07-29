@@ -142,7 +142,9 @@ test "$fixture_test_count" -eq 3 && test "$fixture_failures" = 0 && \
 
 app_path="${IOS_APP_PATH:-}"
 if test -z "$app_path"; then
-  app_path="$(find "$derived_data_root" -type d -path '*/Debug-iphoneos/SuperNutrition.app' -print -quit)"
+  # The physical acceptance project deliberately uses its own host bundle;
+  # SuperNutrition.app is not built by this XCTest scheme.
+  app_path="$(find "$derived_data_root" -type d -path '*/Debug-iphoneos/SuperNutritionUIAcceptance.app' -print -quit)"
 fi
 test -d "$app_path" || {
   printf 'physical iOS app artifact is missing under Debug-iphoneos\n' >&2
