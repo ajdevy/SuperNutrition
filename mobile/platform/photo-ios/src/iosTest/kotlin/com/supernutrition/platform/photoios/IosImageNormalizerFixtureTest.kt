@@ -40,7 +40,7 @@ class IosImageNormalizerFixtureTest {
     @Test
     fun `exif gps fixture normalizes to bounded metadata free pixels`() {
         val source = checkNotNull(SNMakeDataFromBase64(FIXTURE_BASE64))
-        val ref = PhotoRef.Companion.issue(AttemptId("ios-fixture-attempt"), "ios-fixture-photo")
+        val ref = PhotoRef.issue(AttemptId("ios-fixture-attempt"), "ios-fixture-photo")
         val normalized = IosImageNormalizer().normalize(ref, source)
 
         assertEquals(4, normalized.width)
