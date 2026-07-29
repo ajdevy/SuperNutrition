@@ -1,0 +1,28 @@
+schema = "supernutrition.photo-inference-engine-compatibility-matrix.v1"
+contract_id = "photo-inference-engine"
+release = "v1"
+digest = "3634abd47f88682cc0953cab229d932f4be26e7f0f76419877dcfe1ce229cba3"
+
+[[supported_pair]]
+producer = "domain-inference-v1"
+consumer = "local-android-v1"
+direction = "forward"
+expected = "accepted"
+
+[[supported_pair]]
+producer = "domain-inference-v1"
+consumer = "local-ios-v1"
+direction = "forward"
+expected = "accepted"
+
+[[supported_pair]]
+producer = "domain-inference-v1"
+consumer = "remote-v1"
+direction = "forward"
+expected = "accepted"
+
+[[supported_pair]]
+producer = "domain-inference-v1"
+consumer = "evaluation-v1"
+direction = "forward"
+expected = "accepted"

@@ -54,6 +54,14 @@ quality_task = "core:ui:jvmTest"
 status = "pending"
 
 [[unit]]
+id = "domain-inference"
+path = "mobile/domain/inference"
+kind = "production-kmp"
+production = true
+quality_task = "domain:inference:jvmTest"
+status = "pending"
+
+[[unit]]
 id = "domain-photo-analysis"
 path = "mobile/domain/photo-analysis"
 kind = "production-kmp"

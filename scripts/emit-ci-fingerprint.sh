@@ -18,7 +18,7 @@ case "$job_id" in
 esac
 
 repo_root="${SUPERNUTRITION_CI_FINGERPRINT_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
-test -d "$repo_root/.git" || {
+git -C "$repo_root" rev-parse --git-dir >/dev/null 2>&1 || {
   printf 'CI fingerprint root is not a Git checkout: %s\n' "$repo_root" >&2
   exit 1
 }
@@ -92,6 +92,13 @@ contract_catalog_digest="$(digest_paths \
   contracts/mobile-api/v1/schema.toml \
   contracts/mobile-api/v1/compatibility-matrix.toml \
   contracts/mobile-api/v1/fixtures/empty-analysis-request.toml \
+  contracts/inference/v1/schema.toml \
+  contracts/inference/v1/compatibility-matrix.toml \
+  contracts/inference/v1/fixtures/capability-ready.json \
+  contracts/inference/v1/fixtures/abstention-result.json \
+  contracts/inference/v1/fixtures/candidate-result.json \
+  contracts/inference/v1/fixtures/failure-result.json \
+  contracts/inference/v1/fixtures/telemetry-event.json \
   contracts/interaction-policy/v1/schema.toml \
   contracts/interaction-policy/v1/compatibility.toml \
   contracts/interaction-policy/v1/fixtures/defaults.toml)"

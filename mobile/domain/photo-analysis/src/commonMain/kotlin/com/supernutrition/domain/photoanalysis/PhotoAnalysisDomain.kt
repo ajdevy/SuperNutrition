@@ -2,38 +2,12 @@ package com.supernutrition.domain.photoanalysis
 
 import com.supernutrition.core.config.ConfigurationSnapshot
 
-data class AttemptId(val value: String) {
-    init {
-        require(value.isNotBlank())
-    }
-}
+typealias AttemptId = com.supernutrition.domain.inference.AttemptId
+typealias PhotoRef = com.supernutrition.domain.inference.PhotoRef
 
 data class RequestId(val value: String) {
     init {
         require(value.isNotBlank())
-    }
-}
-
-/** Opaque, attempt-leased photo identity. It is not a URI or platform object. */
-class PhotoRef private constructor(val opaqueId: String, val attemptId: AttemptId) {
-    override fun equals(other: Any?): Boolean =
-        other is PhotoRef && opaqueId == other.opaqueId && attemptId == other.attemptId
-
-    override fun hashCode(): Int = 31 * opaqueId.hashCode() + attemptId.hashCode()
-
-    override fun toString(): String = "PhotoRef(redacted)"
-
-    companion object {
-        private val OPAQUE_ID_PATTERN = Regex("[A-Za-z0-9._:-]{1,128}")
-
-        fun issue(attemptId: AttemptId, opaqueId: String): PhotoRef = PhotoRef(
-            opaqueId = opaqueId.also {
-                require(OPAQUE_ID_PATTERN.matches(it)) {
-                    "PhotoRef identity must be a bounded opaque token"
-                }
-            },
-            attemptId = attemptId,
-        )
     }
 }
 
