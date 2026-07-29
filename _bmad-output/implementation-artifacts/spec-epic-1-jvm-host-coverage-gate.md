@@ -89,11 +89,11 @@ after the first active inventory/coverage evidence is available.
 
 ## Auto Run Result
 
-- Result: bounded implementation complete; lifecycle activation intentionally not claimed.
+- Result: bounded implementation complete; lifecycle is now `active-local`, while the full active coverage claim remains intentionally unclaimed until required Android native evidence is bound.
 - Changed files: `QualityPlugin.kt`, `JvmCoverageVerifierTest.kt`, `MobilePolicyPluginTest.kt`, `coverage.toml`, and `product-lifecycle.toml`.
 - Local verification: strict build-logic/policy/quality suite passed with configuration-cache reuse; the temporary active audit aggregated five JVM denominators at 97.87% line / 93.09% branch; physical Android acceptance passed 10/10.
-- Residual risks: canonical Apple ARM64 simulator/Xcode evidence, trusted GitHub ruleset and same-SHA six-job evidence, and real fresh native-equivalent attestations remain activation gates.
-- Commit: not created because the checkout contains unrelated user work and this run preserves the existing dirty-worktree boundary.
+- Residual risks: required fresh Android native-equivalent attestations remain open. Apple ARM64/Xcode evidence and trusted GitHub ruleset/same-SHA hosted evidence are good-to-have capabilities, not local lifecycle gates.
+- Commit: superseded by the active-local lifecycle policy commit `2ab24372`.
 
 ## Change Log
 
