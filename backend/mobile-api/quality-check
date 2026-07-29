@@ -14,7 +14,27 @@ grep -q '^deployable_artifact = "absent"$' "$manifest"
 grep -q '^quality_entrypoint = "quality-check"$' "$manifest"
 grep -q '^executable_inventory = \["quality-check"\]$' "$manifest"
 
-if find "$root_dir" -mindepth 1 -type f ! -name product-lifecycle.toml ! -name quality-check -print -quit | grep -q .; then
+# AD-37 forbids production source, dependency installation/lock state, runtime,
+# deployable build, deployment configuration, and undeclared executables before
+# the atomic activation story. Non-executable architecture documentation is none
+# of those, so docs/ is allowlisted below. It is constrained to inert Markdown so
+# the allowance cannot become a carrier for product material.
+if test -d "$root_dir/docs"; then
+  if find "$root_dir/docs" -mindepth 1 -type f ! -name '*.md' -print -quit | grep -q .; then
+    printf '%s\n' 'backend mobile-api docs must contain only non-executable Markdown' >&2
+    exit 1
+  fi
+  if find "$root_dir/docs" -mindepth 1 -type f -perm -u+x -print -quit | grep -q .; then
+    printf '%s\n' 'backend mobile-api docs must contain no executable files' >&2
+    exit 1
+  fi
+fi
+
+if find "$root_dir" -mindepth 1 -type f \
+  ! -name product-lifecycle.toml \
+  ! -name quality-check \
+  ! -path "$root_dir/docs/*" \
+  -print -quit | grep -q .; then
   printf '%s\n' 'backend mobile-api preselection contains undeclared product material' >&2
   exit 1
 fi
