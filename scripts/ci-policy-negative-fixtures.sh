@@ -36,8 +36,8 @@ import sys
 
 path = Path(sys.argv[1])
 text = path.read_text(encoding="utf-8")
-needle = "      - quality-backend\n    runs-on: ubuntu-24.04"
-replacement = "      - quality-backend\n      - quality-linux\n    runs-on: ubuntu-latest"
+needle = "jobs:\n"
+replacement = "jobs:\n  unexpected-job:\n    runs-on: ubuntu-latest\n    steps: []\n"
 path.write_text(text.replace(needle, replacement, 1), encoding="utf-8")
 PY
 expect_rejected extra-need "$fixture_root/extra-need.yml"
@@ -49,9 +49,7 @@ import sys
 
 path = Path(sys.argv[1])
 text = path.read_text(encoding="utf-8")
-start = text.index("  quality-backend:\n")
-end = text.index("  ci-required:\n", start)
-path.write_text(text[:start] + text[end:], encoding="utf-8")
+path.write_text(text.replace("  mobile-unit-coverage:\n", "", 1), encoding="utf-8")
 PY
 expect_rejected missing-job "$fixture_root/missing-job.yml"
 
@@ -62,7 +60,7 @@ import sys
 
 path = Path(sys.argv[1])
 text = path.read_text(encoding="utf-8")
-path.write_text(text.replace("scripts/verify-ci-fingerprints.sh", "scripts/missing-ci-fingerprints.sh", 1), encoding="utf-8")
+path.write_text(text.replace("mobileUnitCoverage", "missingMobileCoverage", 1), encoding="utf-8")
 PY
 expect_rejected missing-fingerprint "$fixture_root/missing-fingerprint.yml"
 

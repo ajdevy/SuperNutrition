@@ -330,6 +330,11 @@ flowchart LR
 
   Current local policy amendment: the hosted Apple and iOS UI jobs are optional adapters. If Apple tooling is unavailable, local `qualityCheckApple` remains the authoritative policy check and no Apple success is inferred; the required Android lane remains the device-side gate.
 
+  The current checked-in GitHub adapter is intentionally reduced to
+  `mobile-unit-coverage`. The six-job matrix and `ci-required` fingerprint
+  aggregate remain optional reference policy only; they are not required for
+  lifecycle activation or local completion claims.
+
   The optional `ci-required` job in the same canonical workflow declares direct `needs: [quality-linux, ui-journeys-android, quality-apple, ui-journeys-ios, quality-web-landing, quality-backend]`, uses only `if: ${{ always() }}`, and succeeds only when the expected job set is exactly those six and every `needs.<job>.result` is `success`. When run, it validates the root-boundary result, root-tool inventory digest, contract-catalog digest, supported-release-matrix digest, every product lifecycle/inventory digest, and every evidence manifest's schema, product ID, event, repository, full SHA, run/job IDs, expected test and coverage counts for its lifecycle state, and artifact digest. `quality-linux` supplies the root-boundary/catalog result and mobile compatibility result; `quality-backend` supplies the backend compatibility result; `ci-required` rejects unequal catalog/matrix fingerprints. Missing, skipped, empty, stale, unparsable, duplicate, user-supplied, or wrong-SHA evidence fails the optional hosted aggregate; local product quality gates remain authoritative.
 
   A workflow-policy test rejects job/step conditions outside the aggregate expression, `continue-on-error`, empty/excluding matrices, optional required inputs, ignored/quarantined required tests, result-neutralizing shell constructs, success fallbacks, floating action/CLI references, `pull_request_target`, untrusted secrets, or excess permissions. Full-SHA actions and least privilege are mandatory. Product assertion failures are never retried into success; only a classified device/runner startup failure before testing may receive one bounded infrastructure retry, and all attempts remain evidence. Maestro 2.7.0 can capture per-step and crash/device screenshots, so UI-acceptance fixtures contain no real user data, artifact paths/types are allowlisted and redacted, and retention is short and explicit.
@@ -476,6 +481,38 @@ flowchart LR
   Programmatic auto-advance, reducer events, and accessibility focus traversal
   are not taps; Back, Undo, cancellation, and system permission prompts are
   separate bounded typed events.
+
+### AD-41 — Fail-closed market processing policy
+
+- **Binds:** NFR-27, AD-8, AD-12, AD-13, AD-21, AD-40, every remote transfer of
+  user content, `MarketPolicyResolver`
+- **Prevents:** a market being served by a provider region its law does not
+  permit, permission for one payload type implying another, and language support
+  being mistaken for a market position
+- **Rule:** `MarketPolicyResolver` resolves against signed policy data conforming
+  to the immutable language-neutral `contracts/market-policy/v1` schema, created
+  and versioned by a separately owned `market-policy-contract` slice. The mobile
+  instance is the protected `mobile/config/quality/market-policy.toml`. Each
+  market entry declares jurisdiction, `residencyPosture`, permitted processing
+  regions, per-modality remote permission and consent-copy version, accepted
+  input languages, and a named legal review with an approver and expiry.
+
+  Every market defaults to `unresolved` and permits no remote inference of any
+  modality; absence, `unresolved`, and expiry are equivalent at resolution time,
+  and no posture is inferred from a neighbouring market, shared language,
+  currency, or region grouping. A posture is set only by the named review and
+  never widened as a side effect of a story, configuration change, or provider
+  migration. Photo and text permissions are decided independently, each carrying
+  its own reviewed consent copy, and a transfer presenting another modality's
+  copy fails closed. Accepted input languages are independent of posture,
+  jurisdiction, and permitted regions in both directions. Catalog choice cannot
+  derive, widen, or silently change any of these values, and the resolved
+  jurisdiction and processing region are displayed before every consent
+  decision. Policy changes are isolated, provenance-recorded, and independently
+  approved; CI never writes policy state. The deterministic catalog search floor
+  and on-device identification do not depend on a posture, so fail-closed leaves
+  every market usable. Full schema, market states, and evidence requirements are
+  in `market-processing-policy.md`.
 
 ## Consistency Conventions
 
