@@ -11,6 +11,20 @@ import kotlin.test.assertTrue
 
 class InferenceContractTest {
     @Test
+    fun `engine port explicitly binds to contract v1`() {
+        val engine = object : PhotoInferenceEngine {
+            override val contractVersion: String = PHOTO_INFERENCE_CONTRACT_V1
+
+            override suspend fun capability(): EngineCapability = InferenceContractFixtures.readyCapability
+
+            override suspend fun analyze(request: PhotoInferenceRequest): PhotoInferenceResult =
+                InferenceContractFixtures.candidateResult
+        }
+
+        assertEquals(PHOTO_INFERENCE_CONTRACT_V1, engine.contractVersion)
+    }
+
+    @Test
     fun `engine request binds the opaque photo to its immutable attempt context`() {
         val attempt = AttemptId("attempt-contract-1")
         val request = PhotoInferenceRequest(
@@ -464,6 +478,10 @@ class InferenceContractTest {
             engineId = "fixture-engine",
         )
         assertEquals(CapabilityState.MODEL_REQUIRED, validUnavailable.state)
+        assertEquals(
+            "fixture-model-1",
+            validUnavailable.copy(modelVersion = "fixture-model-1").modelVersion,
+        )
         assertEquals(
             validUnavailable,
             InferenceContractJson.decodeCapability(InferenceContractJson.encodeCapability(validUnavailable)),

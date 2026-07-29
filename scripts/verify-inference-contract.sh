@@ -270,8 +270,17 @@ for relative, content in sorted(release_files):
 if matrix.get("digest") != hash_value.hexdigest():
     raise SystemExit("inference compatibility digest is stale")
 
-allowed = {"RELEASE.md", "schema.toml", "compatibility-matrix.toml"}
-if any(path.is_symlink() or (path.name not in allowed and path.suffix != ".json") for path in root.rglob("*") if path.is_file()):
+allowed = {
+    "RELEASE.md",
+    "schema.toml",
+    "compatibility-matrix.toml",
+    *(str(path.relative_to(root)) for path in fixture_paths),
+}
+if any(
+    path.is_symlink() or str(path.relative_to(root)) not in allowed
+    for path in root.rglob("*")
+    if path.is_file()
+):
     raise SystemExit("inference contract release contains executable or source material")
 print("photo-inference-engine contract: OK (v1 ports, canonical evidence, and compatibility matrix)")
 PY
