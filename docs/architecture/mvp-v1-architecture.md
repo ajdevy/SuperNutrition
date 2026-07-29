@@ -1,3 +1,14 @@
+# Product Vision
+
+This document describes the product vision and business goals.
+
+It is intended for human understanding and product alignment.
+
+This document is not an implementation specification and should not be treated as development instructions.
+
+
+
+
 # SuperNutrition MVP v1
 
 ## Product & Architecture Specification
