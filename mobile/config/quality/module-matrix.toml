@@ -5,8 +5,8 @@ lifecycle = "scaffold-pending"
 inventory_state = "photo-analysis-transition"
 source_digest = "pending"
 quality_claim = false
-production_source_count = 9
-coverage_denominator_count = 9
+production_source_count = 10
+coverage_denominator_count = 10
 undeclared_executable_policy = "fail"
 
 # Nonempty by design: these are the bounded scaffold policy owners, not

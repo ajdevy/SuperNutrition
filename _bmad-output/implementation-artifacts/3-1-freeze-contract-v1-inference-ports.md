@@ -74,7 +74,10 @@ allowlist models; it has no numeric nutrition fields or raw payload telemetry.
 
 Validation evidence:
 
-- `:domain:inference:jvmTest`: 8 tests passed.
+- `:domain:inference:jvmTest`: 13 tests passed, including validation negative
+  paths and canonical fixture round trips.
+- `mobileUnitCoverage`: passed with 97.51% line and 85.39% branch coverage
+  across the host production modules.
 - `qualityCheckJvmAndroid`: passed; static analysis and host tests passed while
   the scaffold remained fail-closed without a production quality claim.
 - `verifyMobilePolicy --dependency-verification=strict`: passed.
