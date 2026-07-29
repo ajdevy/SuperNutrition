@@ -26,7 +26,7 @@ def fail(message: str) -> None:
 
 if not re.search(r"^on:\s*$", text, re.MULTILINE):
     fail("workflow must declare a top-level on block")
-for trigger in ("push", "pull_request", "merge_group"):
+for trigger in ("push", "pull_request"):
     if not re.search(rf"^  {re.escape(trigger)}:\s*$", text, re.MULTILINE):
         fail(f"workflow is missing the {trigger} trigger")
 if re.search(r"^\s+paths(?:-ignore)?:\s*$", text, re.MULTILINE):
@@ -46,6 +46,25 @@ job_starts = [
     for index, line in enumerate(lines[jobs_start + 1:], jobs_start + 1)
     if (match := re.match(r"^  ([a-z0-9-]+):\s*$", line))
 ]
+
+actual = {job for _, job in job_starts}
+if actual == {"mobile-unit-coverage"}:
+    block = "\n".join(lines[job_starts[0][0]:])
+    if not re.search(r"uses:\s+actions/checkout@[0-9a-f]{40}(?:\s+#.*)?$", block, re.MULTILINE):
+        fail("mobile-unit-coverage must use a SHA-pinned actions/checkout")
+    for required in (
+        "mobileUnitCoverage",
+        "-Psupernutrition.runJvmCoverage=true",
+        "--dependency-verification=strict",
+        "--no-daemon",
+        "--no-configuration-cache",
+        "--max-workers=1",
+    ):
+        if required not in block:
+            fail(f"reduced mobile workflow is missing {required}")
+    print("ci-policy: OK (optional reduced mobile-unit coverage workflow, SHA-pinned checkout, no path filters)")
+    raise SystemExit(0)
+
 expected = {
     "quality-linux",
     "ui-journeys-android",

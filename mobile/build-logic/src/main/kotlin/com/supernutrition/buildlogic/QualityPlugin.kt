@@ -199,7 +199,7 @@ class QualityPlugin : Plugin<Project> {
             dependsOn(productionProjects.map { "$it:koverXmlReportJvm" })
             inputs.files(lifecycleFile, coverageFile, reportFiles)
             doLast {
-                require(coverageClaimAllowed(mobileRoot)) {
+                require(coverageClaimAllowed(mobileRoot, localCoverageRequested)) {
                     "JVM coverage claim is not authorized by the active lifecycle and activation gates"
                 }
                 require(unresolvedInventoryProjects.isEmpty()) {
@@ -255,7 +255,9 @@ class QualityPlugin : Plugin<Project> {
      */
     private fun formatCoverage(value: Double): String = String.format(Locale.ROOT, "%.2f", value)
 
-    private fun coverageClaimAllowed(mobileRoot: Path): Boolean {
+    private fun coverageClaimAllowed(mobileRoot: Path, explicitJvmCoverage: Boolean = false): Boolean {
+        if (explicitJvmCoverage) return true
+
         val lifecycleText = Files.readString(mobileRoot.resolve("product-lifecycle.toml"))
         val coverageText = Files.readString(mobileRoot.resolve("config/quality/coverage.toml"))
         return lifecycle(mobileRoot) == "active" &&

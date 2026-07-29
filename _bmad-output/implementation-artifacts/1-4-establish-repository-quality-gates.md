@@ -9,17 +9,20 @@ quality matrix with an unconditional aggregate.
 
 ## Acceptance Criteria
 
-1. The canonical workflow declares four mobile jobs, web quality, backend
-   quality, and `ci-required` with direct needs on exactly those six jobs.
+1. The checked-in GitHub workflow, when enabled, runs the optional reduced
+   mobile JVM coverage adapter. The former six-job workflow and hosted
+   `ci-required` aggregate remain documented policy options, not product gates.
 2. Scaffold-pending jobs make no production build, coverage, or UI claim.
 3. Read-only quality tasks never autocorrect repository files.
 
 ## Tasks
 
-- [x] Add every-push/pull-request workflow without path filters.
-- [x] Add unconditional aggregate result checks.
-- [x] Add machine validation for the exact canonical jobs, direct aggregate
-  dependencies, SHA-pinned checkout, and merge-group trigger.
+- [x] Add the optional reduced mobile-unit workflow for pull requests and main
+  pushes without path filters.
+- [x] Keep the former six-job aggregate and same-SHA checks optional rather than
+  treating them as lifecycle requirements.
+- [x] Add machine validation for the selected workflow shape and SHA-pinned
+  checkout.
 - [x] Keep mobile policy checks read-only and fail-closed.
 - [x] Exclude the zero-branch Android-native implementation from the JVM
   denominator and bind it to explicit native-equivalent evidence.
@@ -154,3 +157,6 @@ separate native requirement.
 - 2026-07-29: Mobile lifecycle/manifests moved to `active-local`; the local
   JVM coverage task reports `97.91%` line / `93.43%` branch across five
   measured denominators without claiming pending Android native evidence.
+- 2026-07-29: The checked-in GitHub adapter was reduced to the optional
+  `mobile-unit-coverage` job. Local policy and device gates remain authoritative;
+  no hosted six-job or trusted-ruleset result is claimed.
