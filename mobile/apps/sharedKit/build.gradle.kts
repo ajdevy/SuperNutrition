@@ -1,55 +1,24 @@
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
+    id("com.supernutrition.kmp-apple-targets")
 }
 
 val hostIsIntelMac =
     providers.systemProperty("os.name").orNull == "Mac OS X" &&
         providers.systemProperty("os.arch").orNull == "x86_64"
+val enableIosDeviceTarget = extra["supernutrition.enableIosDeviceTarget"] as Boolean
+val enableIntelX64 = extra["supernutrition.enableIntelX64"] as Boolean
+val enableAppleTargets = enableIosDeviceTarget || !hostIsIntelMac
 
 kotlin {
     jvm()
-    val isIntelMac = hostIsIntelMac
     val enableFrameworkExport = providers.gradleProperty("supernutrition.enableSharedKitFramework").orNull == "true"
-    val enableIosDeviceTarget =
-        providers.systemProperty("os.arch").orNull != "x86_64" ||
-            providers.gradleProperty("supernutrition.enableIosDeviceTarget").orNull == "true"
-    val enableAppleTargets = enableIosDeviceTarget || !isIntelMac
-    if (enableAppleTargets) {
-        if (enableIosDeviceTarget) {
-            iosArm64 {
-                if (enableFrameworkExport) {
-                    binaries.framework {
-                        baseName = "SharedKit"
-                        isStatic = true
-                        export(project(":platform:photo-ios"))
-                    }
-                }
-            }
-        }
-        if (!isIntelMac) {
-            iosSimulatorArm64 {
-                if (enableFrameworkExport) {
-                    binaries.framework {
-                        baseName = "SharedKit"
-                        isStatic = true
-                        export(project(":platform:photo-ios"))
-                    }
-                }
-            }
-        }
-    }
-    val enableIntelX64 =
-        isIntelMac &&
-            providers.gradleProperty("supernutrition.enableIntelIosX64").orNull == "true"
-    if (enableIntelX64) {
-        // Explicit local compatibility only. No ARM64 target is configured on this Intel lane.
-        iosX64 {
-            if (enableFrameworkExport) {
-                binaries.framework {
-                    baseName = "SharedKit"
-                    isStatic = true
-                    export(project(":platform:photo-ios"))
-                }
+    if (enableFrameworkExport) {
+        targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget>().configureEach {
+            binaries.framework {
+                baseName = "SharedKit"
+                isStatic = true
+                export(project(":platform:photo-ios"))
             }
         }
     }
@@ -67,7 +36,7 @@ kotlin {
                     api(project(":platform:photo-ios"))
                 }
             }
-            if (!isIntelMac) {
+            if (!hostIsIntelMac) {
                 iosSimulatorArm64Main.dependencies {
                     api(project(":platform:photo-ios"))
                 }

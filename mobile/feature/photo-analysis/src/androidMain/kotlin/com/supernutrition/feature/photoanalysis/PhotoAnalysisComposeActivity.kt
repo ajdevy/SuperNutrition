@@ -26,29 +26,27 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
     private var wasBackgrounded = false
 
     private val presentationCopy: PhotoAnalysisPresenterCopy by lazy {
-        PhotoAnalysisPresenterCopy.english().let { copy ->
-            copy.copy(
-                captureTitle = localized("capture_title", copy.captureTitle),
-                takeMealPhoto = localized("capture_shutter", copy.takeMealPhoto),
-                choosePhoto = localized("capture_import", copy.choosePhoto),
-                openSettings = localized("capture_open_settings", copy.openSettings),
-                scanAgain = localized("capture_scan_again", copy.scanAgain),
-                cancel = localized("capture_cancel", copy.cancel),
-                readyToCapture = localized("capture_status_ready", copy.readyToCapture),
-                preparingPhoto = localized("capture_status_preparing", copy.preparingPhoto),
-                photoReady = localized("capture_status_ready_photo", copy.photoReady),
-                analyzingPhoto = localized("capture_status_analyzing", copy.analyzingPhoto),
-                reviewCandidate = localized("capture_status_review", copy.reviewCandidate),
-                restoringPhotoAnalysis = localized("capture_status_restoring", copy.restoringPhotoAnalysis),
-                cameraPermissionRequired = localized("capture_recovery_permission", copy.cameraPermissionRequired),
-                cameraUnavailable = localized("capture_recovery_unavailable", copy.cameraUnavailable),
-                photoCaptureFailed = localized("capture_recovery_failed", copy.photoCaptureFailed),
-                photoQualityTooLow = localized("capture_recovery_quality", copy.photoQualityTooLow),
-                noFoodFound = localized("capture_recovery_no_food", copy.noFoodFound),
-                analysisOffline = localized("capture_recovery_offline", copy.analysisOffline),
-                analysisCancelled = localized("capture_recovery_cancelled", copy.analysisCancelled),
-            )
-        }
+        PhotoAnalysisPresenterCopy(
+            captureTitle = getString(R.string.capture_title),
+            takeMealPhoto = getString(R.string.capture_shutter),
+            choosePhoto = getString(R.string.capture_import),
+            openSettings = getString(R.string.capture_open_settings),
+            scanAgain = getString(R.string.capture_scan_again),
+            cancel = getString(R.string.capture_cancel),
+            readyToCapture = getString(R.string.capture_status_ready),
+            preparingPhoto = getString(R.string.capture_status_preparing),
+            photoReady = getString(R.string.capture_status_ready_photo),
+            analyzingPhoto = getString(R.string.capture_status_analyzing),
+            reviewCandidate = getString(R.string.capture_status_review),
+            restoringPhotoAnalysis = getString(R.string.capture_status_restoring),
+            cameraPermissionRequired = getString(R.string.capture_recovery_permission),
+            cameraUnavailable = getString(R.string.capture_recovery_unavailable),
+            photoCaptureFailed = getString(R.string.capture_recovery_failed),
+            photoQualityTooLow = getString(R.string.capture_recovery_quality),
+            noFoodFound = getString(R.string.capture_recovery_no_food),
+            analysisOffline = getString(R.string.capture_recovery_offline),
+            analysisCancelled = getString(R.string.capture_recovery_cancelled),
+        )
     }
 
     private val cameraLauncher = registerForActivityResult(
@@ -110,11 +108,6 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         feature.dispatch(com.supernutrition.domain.photoanalysis.PhotoAnalysisEvent.Backgrounded)
         wasBackgrounded = true
         super.onStop()
-    }
-
-    private fun localized(name: String, fallback: String): String {
-        val resourceId = resources.getIdentifier(name, "string", packageName)
-        return if (resourceId == 0) fallback else getString(resourceId)
     }
 
     private companion object {

@@ -69,29 +69,6 @@ data class PhotoAnalysisPresenterCopy(
         ).forEach { require(it.isNotBlank()) }
     }
 
-    companion object {
-        fun english(): PhotoAnalysisPresenterCopy = PhotoAnalysisPresenterCopy(
-            captureTitle = "Capture",
-            takeMealPhoto = "Take meal photo",
-            choosePhoto = "Choose photo",
-            openSettings = "Open settings",
-            scanAgain = "Scan again",
-            cancel = "Cancel",
-            readyToCapture = "Ready to capture",
-            preparingPhoto = "Preparing photo",
-            photoReady = "Photo ready",
-            analyzingPhoto = "Analyzing photo",
-            reviewCandidate = "Review candidate",
-            restoringPhotoAnalysis = "Restoring photo analysis",
-            cameraPermissionRequired = "Camera permission is required",
-            cameraUnavailable = "Camera is unavailable",
-            photoCaptureFailed = "Photo capture failed",
-            photoQualityTooLow = "Photo quality is too low",
-            noFoodFound = "No food was found in the photo",
-            analysisOffline = "Analysis is offline",
-            analysisCancelled = "Analysis cancelled",
-        )
-    }
 }
 
 data class PhotoAnalysisPresenterModel(
@@ -102,7 +79,7 @@ data class PhotoAnalysisPresenterModel(
     companion object {
         fun from(
             state: PhotoAnalysisState,
-            copy: PhotoAnalysisPresenterCopy = PhotoAnalysisPresenterCopy.english(),
+            copy: PhotoAnalysisPresenterCopy,
         ): PhotoAnalysisPresenterModel {
             val presenterState = when (state) {
                 PhotoAnalysisState.Capture -> PhotoAnalysisPresenterState.CAPTURE

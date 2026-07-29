@@ -226,8 +226,6 @@ private struct PhotoAnalysisComposeHost: UIViewControllerRepresentable {
             case .openSettings:
                 guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
                 UIApplication.shared.open(url)
-            default:
-                break
             }
         }
 
