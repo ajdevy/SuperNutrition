@@ -199,7 +199,7 @@ NFR-27: Remote processing of user content is permitted only where a named, appro
 - AR-46 (AD-39): Add protected `mobile/config/product-identity.toml` with exact canonical installed/in-app name `SuperNutrition` and exact Apple App Store and Google Play listing title `SuperNutrition AI nutritionist`. Generate or validate Android labels, iOS display-name metadata, `SuperNutritionUIAcceptance`, web metadata, and store-delivery metadata from it; test all profiles/locales and reject independently hard-coded variants. Select package and bundle identifiers in the scaffold story without changing visible identity.
 - AR-47 (AD-40): Make interaction budget a protected cross-product contract. Every product conforms to immutable `contracts/interaction-policy/v1` and creates/validates its product policy (mobile: `mobile/config/quality/interaction-policy.toml`) with an allowlist of defaultable fields, source precedence, independent CatalogCountry/MarketJurisdiction/ProcessingRegion/locale validity, provenance types, persistence scope, invalidation keys, complete lifecycle and atomic serving rules, cumulative required dimensions, bounded auxiliary events, and locale/accessibility evidence matrix. Every user-interaction-affecting story records tap, scroll, field, choice, text-entry, choice-surface, recovery-event, and default/override budgets; non-UI stories attest that they do not alter the budget or default policy. Food/preparation/serving corrections are session-scoped in the MVP. Approved policy may resolve jurisdiction/processing values, which must be shown before consent, but locale/catalog cannot derive or silently change them and users do not select provider routing. Auto-advance is limited to reversible local/UI steps; medical/allergen conclusions are prohibited and materially uncertain identity requires an honest question or Abstention. Negative tests reject unallowlisted, stale, hidden, digest/value-mismatched, non-atomic, or persisted sensitive defaults.
 
-- AR-48 (AD-2, AD-17): Carry identification modality in the inference contract. Input is exactly one of a `PhotoRef` or a text description plus its input locale, selected by a closed sealed discriminator; neither-nor-both fails closed as a typed contract error. Output shapes, capability states, abstention, provenance, and the no-numeric-nutrition rule are identical across modalities. Because no Engine implements the contract yet, modality is added before the ports freeze rather than as a later version; if freezing has already occurred, the change becomes a new contract version with a migration story under AR-33 and unchanged prior fixtures.
+- AR-48 (AD-2, AD-17, AD-36): Carry identification modality in a new major contract release. `contracts/inference/v1` shipped in story 3.1 as an immutable digest-pinned release whose `contract_id` is `photo-inference-engine`, whose request port is `opaque-photo-ref-plus-immutable-attempt-context`, and whose own compatibility rule declares `incompatible_change = "new-major-release"`. Modality is therefore added as `contracts/inference/v2` with a migration story under AR-33; v1 is never edited and its digest never changes. v2 takes a modality-neutral `contract_id`, and its input is exactly one of a `PhotoRef` or a text description plus input locale, selected by a closed sealed discriminator, with neither-nor-both failing closed as a typed contract error. Output shapes, capability states, abstention, provenance, and the no-numeric-nutrition rule are identical across modalities and unchanged from v1. The compatibility matrix declares both releases; every v1 canonical fixture continues to pass against v1; producers and consumers migrate release by release, and v1 is retired only when no implementation remains.
 - AR-49 (AD-7, AD-19): No Engine binds a canonical catalog record. Text and photo Engines alike return identification evidence only; mapping evidence to a canonical record requires an explicit user confirmation event, including at maximum confidence. Negative tests prove no path reaches a Grounded Nutrition Result from Engine output alone, and that a description the Engine cannot segment abstains rather than returning a confident subset as a whole meal.
 - AR-50 (AD-12, AD-19): Own the per-market language matrix as signed package data. Each market declares catalog language, accepted input languages, script, morphology, and synonyms; normalization is applied identically at index build and query time; markets with inflected catalog languages declare full morphological normalization because synonym enumeration per inflected form is not maintainable. Cross-script entry feeds the fuzzy tier only and never outranks an exact match in the record's own script.
 - AR-51 (AD-8, AD-12, AD-21): Bind text transfer to text-specific consent copy. `consentCopyVersion` currently denotes the reviewed photo-transfer explanation, whose approved copy states a smaller copy of the photo is sent; that disclosure cannot authorize sending a description. A text transfer presents its own reviewed copy version and fails closed on mismatch. Processing region resolves from market policy and never from the catalog; where a market's data-residency position is unresolved, remote text is disabled for that market rather than defaulting to the nearest provider region.
@@ -314,14 +314,21 @@ profile transition is only allowed when the production graph is present. Each
 story is one bounded agent slice and one pull request, as required by AR-31 and
 AR-33.
 
-E7 is sequenced around one hard constraint and one product decision. The
-constraint: E7.1 adds identification modality to the inference contract and must
-land before E3.1 freezes the ports, because no Engine implements the contract
-yet and adding modality now costs an amendment rather than a version migration.
-The decision: E7.2 delivers the deterministic search floor first and depends on
-the catalog rather than on any Engine, so it can proceed in parallel with E3 and
-E4 and ships before the model path. E7.3 through E7.6 build above the floor and
-degrade to it whenever an Engine is unavailable, abstains, or is declined.
+E7 is sequenced around one product decision and one decaying cost. The decision:
+E7.2 delivers the deterministic search floor first, depends on the catalog
+rather than on any Engine, and is therefore unblocked by the contract question
+entirely; it proceeds in parallel with E3 and E4 and ships before the model
+path. E7.3 through E7.6 build above the floor and degrade to it whenever an
+Engine is unavailable, abstains, or is declined.
+
+The decaying cost: E7.1 was scoped to amend the contract before story 3.1 froze
+the ports. Story 3.1 has shipped, `contracts/inference/v1` is immutable and
+digest-pinned, and its own compatibility rule requires a new major release for
+an incompatible change — so E7.1 is now a v2 release plus migration. Exactly one
+consumer implements v1 today. Every subsequent Engine story adds another, so the
+migration cost rises monotonically until v2 lands. Deciding whether typed
+identification is happening is therefore time-sensitive even though no story is
+blocked on it.
 
 ## Epic E1: Foundation and product shell
 
@@ -856,27 +863,40 @@ declined upload, yet FR-14 and UX-DR19 describe only the surface. This epic
 defines the behaviour, guarantees it on every supported device, and makes typing
 a meal an identification modality rather than a parallel subsystem.
 
-### Story E7.1: Carry identification modality in the inference contract
+### Story E7.1: Release inference contract v2 with identification modality
 
 As the contract owner,
-I want the inference contract to accept either a photo or a text description,
-so that typed identification is a modality rather than a second contract.
+I want a v2 release that accepts either a photo or a text description,
+so that typed identification is a modality rather than a second subsystem.
 
-**Traceability:** FR-5, FR-27, FR-31, NFR-9..NFR-12, AR-48, AR-49, AR-33.
+**Traceability:** FR-5, FR-27, FR-31, NFR-9..NFR-12, AR-33, AR-48, AR-49.
 
 **Acceptance Criteria:**
 
-- **Given** no Engine implements the contract yet, **when** modality is added,
-  **then** it lands as an amendment before E3.1 freezes the ports, and the
-  version-migration path in AR-48 applies only if freezing already occurred.
-- **Given** a request, **when** it carries neither or both of a `PhotoRef` and a
-  text payload, **then** it fails closed as a typed contract error rather than
-  defaulting to a modality.
+- **Given** `contracts/inference/v1` is an immutable digest-pinned release,
+  **when** modality is added, **then** it ships as a new `contracts/inference/v2`
+  release; v1 files are untouched and its recorded digest still verifies.
+- **Given** v1's `contract_id` is `photo-inference-engine`, **when** v2 is
+  authored, **then** it takes a modality-neutral contract id and the Kotlin
+  `PhotoInferenceRequest`/`PhotoInferenceEngine` types gain modality-neutral v2
+  equivalents.
+- **Given** a v2 request, **when** it carries neither or both of a `PhotoRef`
+  and a text payload, **then** it fails closed as a typed contract error rather
+  than defaulting to a modality.
 - **Then** capability states, Candidate, Abstention, provenance, and typed-error
-  shapes are identical across modalities, and no modality returns numeric
-  nutrition.
-- **And** canonical fixtures cover both modalities, and every fixture that
-  existed before the amendment passes unchanged.
+  shapes are identical across modalities and unchanged from v1, and no modality
+  returns numeric nutrition.
+- **And** the compatibility matrix declares both releases, v2 publishes its own
+  canonical fixtures for both modalities, every v1 fixture still passes against
+  v1, and `scripts/verify-inference-contract.sh` verifies both.
+- **And** v1 is retired only when no producer or consumer implements it, as a
+  separate change.
+
+**Cost note:** this story was originally scoped as an amendment landed before
+story 3.1 froze the ports. Story 3.1 has since shipped, so the migration path is
+now the only path. Each further Engine built against v1 — local Android, local
+iOS, gateway, evaluation — adds one more consumer to migrate, so the cost rises
+until v2 lands.
 
 ### Story E7.2: Deliver the deterministic catalog search floor
 

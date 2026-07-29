@@ -1,18 +1,30 @@
 # Inference contract — identification modality
 
-Serves CAP-4. The contract as designed is photo-only and cannot carry a text engine. **No engine implements it yet**, so the fix is an amendment before the ports freeze, not a version migration.
+Serves CAP-4. The shipped contract is photo-only and cannot carry a text engine. It is now a **released, immutable, digest-pinned artifact**, so modality arrives as a new major release, not an edit.
 
-## What the contract currently fixes
+## What v1 fixed, and how hard
 
-AD-2 states every engine implements `PhotoInferenceEngine` contract version `1`, with input "a `PhotoRef` plus immutable attempt context". The solution-design request invariants make `photo` a required field and require adapters to read bytes only through `PhotoContentSource`. There is no modality discriminator and no optional-payload path. A text engine cannot satisfy that shape without claiming a photo it does not have.
+Story 3.1 shipped `contracts/inference/v1`. Its own files close the question:
 
-## Amendment, not migration
+| Source | Statement |
+| --- | --- |
+| `RELEASE.md` | "Immutable, language-neutral, data-only contract release" |
+| `compatibility-matrix.toml` | `digest = "3634abd4…"` — SHA-256 over schema, matrix, and canonical fixtures |
+| `schema.toml` | `contract_id = "photo-inference-engine"`, `request = "opaque-photo-ref-plus-immutable-attempt-context"` |
+| `schema.toml` | `incompatible_change = "new-major-release"` |
+| `InferenceContract.kt` | `PhotoInferenceRequest(val photoRef: PhotoRef, …)` — non-nullable |
 
-Story E3.1 — "Freeze contract-v1 inference ports" — has not run. Mobile is still `scaffold-pending`; there is no local engine, no remote adapter, no gateway mapping, and no evaluation consumer built against the contract. Nothing exists to migrate.
+There is no modality discriminator and no optional-payload path, and a text engine cannot satisfy that shape without claiming a photo it does not have. The digest means any edit to v1 is detectable and invalid; the compatibility rule means the contract itself mandates a new major release. AD-36 says the same at the architecture level: releases under `contracts/` are immutable.
 
-So modality is added to contract v1 **before** E3.1 freezes it, and story E7.1 is sequenced ahead of E3.1 for exactly this reason. The cost is editing an unimplemented type rather than versioning a live one, and the migration sequence below is the fallback that applies only if freezing has already happened.
+## Migration, not amendment
 
-This is worth stating plainly because the opposite reading is easy to reach: "contract v1 is frozen photo-only, therefore text needs v2." That inference is correct in structure and wrong in timing — v1 is *specified*, not *frozen*, and the difference is an entire story.
+An earlier draft of this file scoped modality as an amendment landed before story 3.1 froze the ports, on the reasoning that nothing implemented the contract yet so nothing needed migrating. **That window has closed.** Story 3.1 has shipped, v1 is released and digest-pinned, and the migration path below is now the only path.
+
+Two consequences the amendment framing did not carry:
+
+**The contract id is itself photo-shaped.** `photo-inference-engine` cannot describe a contract that also accepts text, so v2 takes a modality-neutral id, and the Kotlin `PhotoInferenceRequest` and `PhotoInferenceEngine` types gain modality-neutral v2 equivalents. That is a wider break than adding a field.
+
+**The cost decays monotonically.** Exactly one consumer implements v1 today. Every further Engine story — local Android, local iOS, gateway, evaluation — adds another to migrate. Nothing is blocked on this decision, but it gets more expensive with each one, so it is worth settling whether typed identification is happening rather than letting the answer emerge.
 
 ## Shape
 
@@ -52,27 +64,18 @@ Each group also carries the span of the description it was derived from, so the 
 
 An engine that cannot segment abstains for the whole request rather than returning a confident subset. Partial segmentation presented as complete is the FM-6 failure.
 
-## Delivery — amendment path
+## Delivery — v2 release and migration
 
-The expected path, while no engine implements the contract:
+Story E7.1, under AR-33, landed before the engine work that consumes it:
 
-1. Add the modality discriminator and text payload to contract v1 in `mobile/domain/inference`, in story E7.1, before E3.1 freezes the ports.
-2. Extend AD-17's canonical fixtures with modality-aware cases. Every fixture authored before the amendment passes unchanged — that is the correctness test either way.
-3. E3.1 then freezes a modality-aware contract, and the photo engines in E3.2 and E3.3 are built against it directly.
+1. Author `contracts/inference/v2` as a new release directory with a modality-neutral `contract_id`, its own schema, canonical fixtures for both modalities, and its own digest. **`contracts/inference/v1` is not touched**; its recorded digest must still verify afterwards.
+2. Declare both releases in the compatibility matrix, with the supported producer/consumer pairs for each.
+3. Add modality-neutral v2 types in `mobile/domain/inference` alongside the v1 types, rather than editing them.
+4. Migrate photo producers and consumers to v2 with the `photo` modality, behaviour identical — currently one consumer, more with each Engine story.
+5. Introduce the text engine against v2.
+6. Retire v1 only when no producer or consumer implements it, as a separate change.
 
-Per AR-33 this remains its own story landed before the concrete engine work that depends on it. It simply amends rather than versions.
-
-## Fallback — migration path
-
-Applies **only** if E3.1 has already frozen the ports photo-only before E7.1 lands. Then modality becomes a contract-breaking change and AR-33 requires a version:
-
-1. Publish v2 alongside v1, with the compatibility matrix declaring both.
-2. Extend fixtures with modality-aware cases; existing v1 fixtures pass unchanged.
-3. Migrate photo engines to v2 with the `photo` modality, behaviour identical.
-4. Introduce the text engine against v2.
-5. Retire v1 only when no engine implements it, as a separate change.
-
-The cost difference is the reason for the sequencing constraint in E7.1: the amendment edits an unimplemented type, while the migration touches every engine, the gateway mapping, and the evaluation consumer.
+`scripts/verify-inference-contract.sh` must verify both releases, and the v1 fixtures must continue to pass against v1 unchanged. That is the correctness test for the migration: v2 is additive at the release level, and v1's frozen bytes stay frozen.
 
 ## Routing and remote text
 
