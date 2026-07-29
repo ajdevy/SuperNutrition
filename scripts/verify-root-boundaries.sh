@@ -86,21 +86,35 @@ for entry in principals:
 PY
 
 # Product roots may integrate only through immutable data-only releases under
-# contracts/. A textual reference to another product root is therefore a
-# forbidden source, build, runtime, generated-output, cache, or deployment
-# edge. Generated local build metadata is excluded from this read-only scan;
+# contracts/. AD-36 forbids source imports, workspaces, package/project
+# dependencies, generated-source writes, runtime calls/configuration,
+# build-task edges, shared output directories, and deployment/artifact
+# dependencies across product roots.
+#
+# Every one of those is a PATH reference. Matching any textual occurrence of a
+# sibling root's name instead flags prose, and — more importantly — flags the
+# lint rule that enforces this very boundary, which cannot express the forbidden
+# pattern without containing it. So the scan matches path-shaped references:
+# a relative traversal into a sibling root, or a quoted path beginning at one.
+#
+# Generated local build metadata is excluded from this read-only scan;
 # product-owned manifests and checked-in configuration remain covered.
+path_edge_pattern() {
+  # $1 is an alternation of sibling root paths.
+  printf '(\\.{1,2}/)+(%s)([/"'\''`[:space:],;)]|$)|["'\''`](%s)/' "$1" "$1"
+}
+
 PRODUCT_ROOTS=(mobile web/landing backend/mobile-api)
 for product_root in "${PRODUCT_ROOTS[@]}"; do
   case "$product_root" in
     mobile)
-      forbidden_pattern='web/landing|backend/mobile-api'
+      forbidden_pattern="$(path_edge_pattern 'web/landing|backend/mobile-api')"
       ;;
     web/landing)
-      forbidden_pattern='(^|[^[:alnum:]_])mobile([/.[:space:]]|$)|backend/mobile-api'
+      forbidden_pattern="$(path_edge_pattern 'mobile|backend/mobile-api')"
       ;;
     backend/mobile-api)
-      forbidden_pattern='(^|[^[:alnum:]_])mobile([/.[:space:]]|$)|web/landing'
+      forbidden_pattern="$(path_edge_pattern 'mobile|web/landing')"
       ;;
   esac
 
@@ -131,4 +145,16 @@ mobile_lifecycle="scaffold-pending"
 if test -f "$repo_root/mobile/product-lifecycle.toml"; then
   mobile_lifecycle="$(sed -n 's/^lifecycle = "\([^"]*\)"$/\1/p' "$repo_root/mobile/product-lifecycle.toml" | head -n 1)"
 fi
-printf 'root-boundaries: OK (mobile %s; web/backend preselection)\n' "$mobile_lifecycle"
+read_lifecycle() {
+  if test -f "$repo_root/$1/product-lifecycle.toml"; then
+    sed -n 's/^lifecycle = "\([^"]*\)"$/\1/p' "$repo_root/$1/product-lifecycle.toml" | head -n 1
+  else
+    printf 'absent'
+  fi
+}
+
+web_lifecycle="$(read_lifecycle web/landing)"
+backend_lifecycle="$(read_lifecycle backend/mobile-api)"
+
+printf 'root-boundaries: OK (mobile %s; web %s; backend %s)\n' \
+  "$mobile_lifecycle" "$web_lifecycle" "$backend_lifecycle"

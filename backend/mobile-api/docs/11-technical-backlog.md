@@ -18,6 +18,23 @@ Both changes are narrow and commented in place. If either owner prefers a
 different resolution — a separate docs root outside the product tree, or a
 policy-level exemption list — reverting is a one-line change in each file.
 
+## 11.0b Debt created by Stage 2 activation
+
+Three further root-policy files changed so the AD-37 backend activation could
+happen at all. Each was a checked-in assumption that backend would stay
+`preselection` forever, which AD-37 explicitly contradicts. All three changes
+make the checks **stricter**, not looser, and each was verified against
+deliberate violations before being accepted.
+
+| ID | Item | Owner | Priority |
+| --- | --- | --- | --- |
+| **D-3** ⚠ | `scripts/verify-root-boundaries.sh` cross-product scan now matches **path-shaped** references (a relative traversal into a sibling root, or a quoted path beginning at one) rather than any textual occurrence of a sibling root's name. The old scan flagged the product description, a source comment, and — decisively — the ESLint rule that enforces AD-36, which cannot express the forbidden pattern without containing it. Verified: five real edge shapes (relative import, `file:` dependency, workspace glob, build path, re-export) are all still rejected. | Repository policy | P0 |
+| **D-4** ⚠ | `scripts/verify-product-identity.sh` asserted that `backend/mobile-api` and `web/landing` must *remain* `preselection`. AD-37 permits an atomic transition to `active` in a reviewed toolchain story, so that assertion made the transition impossible. It now validates whichever state is declared: `preselection` must claim no quality, no production source, and no runtime; `active` must claim quality **and** carry every activation artifact plus a nonempty inventory agreeing with the lifecycle record. Verified: a fake activation missing the inventory, the quality claim, or with an unknown state is rejected. | Repository policy | P0 |
+| **D-5** | `scripts/product-identity-negative-fixtures.sh` now copies `product-inventory.toml` alongside `product-lifecycle.toml`, because an active lifecycle record is only valid with its inventory and the baseline fixture must be the real repository state. | Repository policy | P1 |
+
+The root-boundaries status line also now reports each product's actual
+lifecycle rather than the hardcoded string `web/backend preselection`.
+
 ## 11.1 P0 — before any production source
 
 | ID | Item | Notes |
