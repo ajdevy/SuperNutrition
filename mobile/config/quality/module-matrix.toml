@@ -90,7 +90,7 @@ path = "mobile/platform/photo-ios"
 kind = "production-adapter"
 quality_task = "platform:photo-ios:jvmTest"
 production = true
-status = "pending"
+status = "active"
 
 [[unit]]
 id = "feature-photo-analysis-ui"
