@@ -38,6 +38,13 @@ class InferenceContractTest {
         assertFailsWith<IllegalArgumentException> { AttemptId(" ") }
 
         val attempt = AttemptId("attempt-contract-invalid")
+        val photoRef = PhotoRef.issue(attempt, "leased-photo-1")
+        assertEquals(photoRef, PhotoRef.issue(attempt, "leased-photo-1"))
+        assertFalse(photoRef == PhotoRef.issue(attempt, "leased-photo-2"))
+        assertFalse(photoRef == PhotoRef.issue(AttemptId("other-attempt"), "leased-photo-1"))
+        assertFalse((photoRef as Any?) == null)
+        assertFalse((photoRef as Any).equals("leased-photo-1"))
+        assertEquals(photoRef.hashCode(), PhotoRef.issue(attempt, "leased-photo-1").hashCode())
         assertFailsWith<IllegalArgumentException> { PhotoRef.issue(attempt, " ") }
         assertFailsWith<IllegalArgumentException> {
             InferenceAttemptContext(
@@ -119,6 +126,78 @@ class InferenceContractTest {
     }
 
     @Test
+    fun `serializers reject missing capability fields`() {
+        val unavailableCapability = EngineCapability(
+            contractVersion = PHOTO_INFERENCE_CONTRACT_V1,
+            state = CapabilityState.MODEL_REQUIRED,
+            reason = CapabilityReason.MODEL_MISSING,
+            userMessageKey = "inference.capability.model_required",
+            engineId = "fixture-engine",
+            modelVersion = null,
+        )
+        val encodedCapability = InferenceContractJson.encodeCapability(unavailableCapability)
+        listOf("contractVersion", "state", "reason", "userMessageKey", "engineId").forEach { field ->
+            assertFailsWith<SerializationException> {
+                InferenceContractJson.decodeCapability(
+                    encodedCapability.replace("\"$field\":", "\"removed$field\":"),
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `serializers reject missing result fields`() {
+        assertFailsWith<SerializationException> {
+            InferenceContractJson.decode(
+                InferenceContractJson.encode(InferenceContractFixtures.candidateResult)
+                    .replace("\"candidates\":", "\"removedCandidates\":"),
+            )
+        }
+        assertFailsWith<SerializationException> {
+            InferenceContractJson.decode(
+                InferenceContractJson.encode(InferenceContractFixtures.abstentionResult)
+                    .replace("\"userMessageKey\":", "\"removedUserMessageKey\":"),
+            )
+        }
+        assertFailsWith<SerializationException> {
+            InferenceContractJson.decode(
+                InferenceContractJson.encode(InferenceContractFixtures.failureResult)
+                    .replace("\"userMessageKey\":", "\"removedUserMessageKey\":"),
+            )
+        }
+        assertFailsWith<SerializationException> {
+            InferenceContractJson.decode(
+                InferenceContractJson.encode(InferenceContractFixtures.candidateResult)
+                    .replace("\"label\":", "\"removedLabel\":"),
+            )
+        }
+        assertFailsWith<SerializationException> {
+            InferenceContractJson.decode(
+                InferenceContractJson.encode(InferenceContractFixtures.candidateResult)
+                    .replace("\"band\":", "\"removedBand\":"),
+            )
+        }
+        assertFailsWith<SerializationException> {
+            InferenceContractJson.decode(
+                InferenceContractJson.encode(InferenceContractFixtures.candidateResult)
+                    .replace("\"calibrationVersion\":", "\"removedCalibrationVersion\":"),
+            )
+        }
+        assertFailsWith<SerializationException> {
+            InferenceContractJson.decode(
+                InferenceContractJson.encode(InferenceContractFixtures.candidateResult)
+                    .replace("\"userMessageKey\":", "\"removedUserMessageKey\":"),
+            )
+        }
+        assertFailsWith<SerializationException> {
+            InferenceContractJson.decodeTelemetry(
+                InferenceContractJson.encodeTelemetry(InferenceContractFixtures.telemetryEvent)
+                    .replace("\"resourceBucket\":", "\"removedResourceBucket\":"),
+            )
+        }
+    }
+
+    @Test
     fun `canonical outcomes contain identification evidence but no nutrition`() {
         val results = listOf(
             InferenceContractFixtures.candidateResult,
@@ -165,9 +244,24 @@ class InferenceContractTest {
         assertFailsWith<IllegalArgumentException> {
             InferenceOutcome.Candidates(listOf(candidate, candidate.copy(rank = 2)))
         }
+        val orderedCandidates = InferenceOutcome.Candidates(
+            listOf(
+                candidate,
+                candidate.copy(candidateId = "food:apple", rank = 2),
+                candidate.copy(candidateId = "food:carrot", rank = 3),
+            ),
+        )
+        assertEquals(3, orderedCandidates.candidates.size)
         assertFailsWith<IllegalArgumentException> {
             InferenceAssumption(AssumptionCode.MIXED_DISH, " ")
         }
+        assertFailsWith<IllegalArgumentException> {
+            InferenceAssumption(AssumptionCode.MIXED_DISH, "")
+        }
+        assertEquals(
+            " x",
+            InferenceAssumption(AssumptionCode.MIXED_DISH, " x").userMessageKey,
+        )
         assertFailsWith<IllegalArgumentException> {
             Confidence(Double.NaN, ConfidenceBand.LOW)
         }
@@ -180,33 +274,89 @@ class InferenceContractTest {
                 engineId = "fixture-engine",
             )
         }
+        assertFailsWith<IllegalArgumentException> {
+            InferenceContractFixtures.readyCapability.copy(modelVersion = "")
+        }
+        assertFailsWith<IllegalArgumentException> {
+            InferenceContractFixtures.readyCapability.copy(modelVersion = " ")
+        }
+        assertEquals(
+            " x",
+            InferenceContractFixtures.readyCapability.copy(userMessageKey = " x").userMessageKey,
+        )
+        assertEquals(
+            " x",
+            InferenceContractFixtures.readyCapability.copy(engineId = " x").engineId,
+        )
     }
 
     @Test
-    fun `candidate, outcome, and provenance invariants reject malformed evidence`() {
-        val candidate = InferenceContractFixtures.candidateResult.outcome
-            .let { it as InferenceOutcome.Candidates }
-            .candidates
-            .single()
+    fun `candidate invariants reject malformed values`() {
+        val candidate = candidateFixture()
         val provenance = candidate.provenance
 
         assertFailsWith<IllegalArgumentException> {
-            InferenceCandidate("", candidate.label, candidate.rank, candidate.confidence, emptyList(), provenance)
+            InferenceCandidate(
+                candidateId = "",
+                label = candidate.label,
+                rank = candidate.rank,
+                confidence = candidate.confidence,
+                unresolvedAssumptions = emptyList(),
+                provenance = provenance,
+            )
         }
         assertFailsWith<IllegalArgumentException> {
-            InferenceCandidate(candidate.candidateId, "", candidate.rank, candidate.confidence, emptyList(), provenance)
+            InferenceCandidate(
+                candidateId = " ",
+                label = candidate.label,
+                rank = candidate.rank,
+                confidence = candidate.confidence,
+                unresolvedAssumptions = emptyList(),
+                provenance = provenance,
+            )
+        }
+        assertEquals(" x", candidate.copy(candidateId = " x").candidateId)
+        assertFailsWith<IllegalArgumentException> {
+            InferenceCandidate(
+                candidateId = candidate.candidateId,
+                label = "",
+                rank = candidate.rank,
+                confidence = candidate.confidence,
+                unresolvedAssumptions = emptyList(),
+                provenance = provenance,
+            )
+        }
+        assertFailsWith<IllegalArgumentException> {
+            InferenceCandidate(
+                candidateId = candidate.candidateId,
+                label = " ",
+                rank = candidate.rank,
+                confidence = candidate.confidence,
+                unresolvedAssumptions = emptyList(),
+                provenance = provenance,
+            )
         }
         assertFailsWith<IllegalArgumentException> { candidate.copy(rank = 0) }
         assertFailsWith<IllegalArgumentException> { InferenceOutcome.Candidates(emptyList()) }
         assertFailsWith<IllegalArgumentException> {
-            InferenceOutcome.Candidates(listOf(candidate, candidate.copy(candidateId = "food:apple", rank = 1)))
+            InferenceOutcome.Candidates(
+                listOf(candidate, candidate.copy(candidateId = "food:apple", rank = 1)),
+            )
         }
         assertFailsWith<IllegalArgumentException> {
-            InferenceOutcome.Candidates(listOf(candidate, candidate.copy(candidateId = "food:apple", rank = 3)))
+            InferenceOutcome.Candidates(
+                listOf(candidate, candidate.copy(candidateId = "food:apple", rank = 3)),
+            )
         }
         assertFailsWith<IllegalArgumentException> {
             InferenceOutcome.Candidates(listOf(candidate, candidate.copy(rank = 2)))
         }
+    }
+
+    @Test
+    fun `outcome messages reject blank values`() {
+        val provenance = candidateFixture().provenance
+
         assertFailsWith<IllegalArgumentException> {
             InferenceOutcome.Abstention(
                 reason = AbstentionReason.IMAGE_QUALITY,
@@ -215,6 +365,21 @@ class InferenceContractTest {
             )
         }
         assertFailsWith<IllegalArgumentException> {
+            InferenceOutcome.Abstention(
+                reason = AbstentionReason.IMAGE_QUALITY,
+                userMessageKey = "",
+                provenance = provenance,
+            )
+        }
+        assertEquals(
+            " x",
+            InferenceOutcome.Abstention(
+                reason = AbstentionReason.IMAGE_QUALITY,
+                userMessageKey = " x",
+                provenance = provenance,
+            ).userMessageKey,
+        )
+        assertFailsWith<IllegalArgumentException> {
             InferenceOutcome.Failure(
                 code = InferenceFailureCode.INVALID_INPUT,
                 retryable = false,
@@ -222,12 +387,72 @@ class InferenceContractTest {
                 provenance = provenance,
             )
         }
-        assertFailsWith<IllegalArgumentException> { Confidence(-0.01, ConfidenceBand.LOW) }
-        assertFailsWith<IllegalArgumentException> { provenance.copy(engineId = "") }
-        assertFailsWith<IllegalArgumentException> { provenance.copy(modelVersion = "") }
-        assertFailsWith<IllegalArgumentException> { provenance.copy(calibrationVersion = "") }
-        assertFailsWith<IllegalArgumentException> { provenance.copy(contractVersion = "photo-inference-engine/v2") }
+        assertEquals(
+            " x",
+            InferenceOutcome.Failure(
+                code = InferenceFailureCode.INVALID_INPUT,
+                retryable = false,
+                userMessageKey = " x",
+                provenance = provenance,
+            ).userMessageKey,
+        )
+        assertFailsWith<IllegalArgumentException> {
+            InferenceOutcome.Failure(
+                code = InferenceFailureCode.INVALID_INPUT,
+                retryable = false,
+                userMessageKey = "",
+                provenance = provenance,
+            )
+        }
     }
+
+    @Test
+    fun `confidence and provenance reject malformed values`() {
+        val provenance = candidateFixture().provenance
+
+        assertFailsWith<IllegalArgumentException> { Confidence(-0.01, ConfidenceBand.LOW) }
+        assertFailsWith<IllegalArgumentException> { Confidence(1.01, ConfidenceBand.HIGH) }
+        assertFailsWith<IllegalArgumentException> { Confidence(Double.POSITIVE_INFINITY, ConfidenceBand.HIGH) }
+        assertFailsWith<IllegalArgumentException> { Confidence(Double.NEGATIVE_INFINITY, ConfidenceBand.LOW) }
+        assertEquals(0.0, Confidence(0.0, ConfidenceBand.LOW).score)
+        assertEquals(1.0, Confidence(1.0, ConfidenceBand.HIGH).score)
+        assertFailsWith<IllegalArgumentException> { provenance.copy(engineId = "") }
+        assertFailsWith<IllegalArgumentException> { provenance.copy(engineId = " ") }
+        assertFailsWith<IllegalArgumentException> { provenance.copy(modelVersion = "") }
+        assertFailsWith<IllegalArgumentException> { provenance.copy(modelVersion = " ") }
+        assertFailsWith<IllegalArgumentException> { provenance.copy(calibrationVersion = "") }
+        assertFailsWith<IllegalArgumentException> { provenance.copy(calibrationVersion = " ") }
+        assertEquals(" x", provenance.copy(engineId = " x").engineId)
+        assertEquals(" x", provenance.copy(modelVersion = " x").modelVersion)
+        assertEquals(" x", provenance.copy(calibrationVersion = " x").calibrationVersion)
+        assertFailsWith<IllegalArgumentException> { provenance.copy(contractVersion = "photo-inference-engine/v2") }
+        assertEquals(
+            PHOTO_INFERENCE_CONTRACT_V1,
+            PhotoInferenceResult(
+                buildString { append(PHOTO_INFERENCE_CONTRACT_V1) },
+                InferenceContractFixtures.candidateResult.outcome,
+            ).contractVersion,
+        )
+        assertFailsWith<IllegalArgumentException> {
+            PhotoInferenceResult("photo-inference-engine/v2", InferenceContractFixtures.candidateResult.outcome)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            InferenceTelemetryEvent(
+                contractVersion = "photo-inference-engine/v2",
+                eventType = InferenceTelemetryEventType.ATTEMPT,
+                route = InferenceRoute.LOCAL,
+                capabilityState = CapabilityState.READY,
+                outcome = InferenceTelemetryOutcome.CANDIDATES,
+                durationBucket = TelemetryDurationBucket.UNDER_1S,
+                resourceBucket = TelemetryResourceBucket.WITHIN_BUDGET,
+            )
+        }
+    }
+
+    private fun candidateFixture(): InferenceCandidate = InferenceContractFixtures.candidateResult.outcome
+        .let { it as InferenceOutcome.Candidates }
+        .candidates
+        .single()
 
     @Test
     fun `capability invariants cover ready and unavailable states`() {
@@ -239,12 +464,18 @@ class InferenceContractTest {
             engineId = "fixture-engine",
         )
         assertEquals(CapabilityState.MODEL_REQUIRED, validUnavailable.state)
+        assertEquals(
+            validUnavailable,
+            InferenceContractJson.decodeCapability(InferenceContractJson.encodeCapability(validUnavailable)),
+        )
 
         assertFailsWith<IllegalArgumentException> {
             validUnavailable.copy(contractVersion = "photo-inference-engine/v2")
         }
         assertFailsWith<IllegalArgumentException> { validUnavailable.copy(userMessageKey = " ") }
+        assertFailsWith<IllegalArgumentException> { validUnavailable.copy(userMessageKey = "") }
         assertFailsWith<IllegalArgumentException> { validUnavailable.copy(engineId = " ") }
+        assertFailsWith<IllegalArgumentException> { validUnavailable.copy(engineId = "") }
         assertFailsWith<IllegalArgumentException> {
             InferenceContractFixtures.readyCapability.copy(modelVersion = null)
         }

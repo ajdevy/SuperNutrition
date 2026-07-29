@@ -27,7 +27,7 @@ if {path.name for path in fixture_paths} != {
     "failure-result.json",
     "telemetry-event.json",
 }:
-    raise SystemExit("inference v1 must publish exactly the three outcome and one telemetry fixture")
+    raise SystemExit("inference v1 must publish exactly three result, one capability, and one telemetry fixture")
 
 schema = tomllib.loads(schema_path.read_text())
 matrix = tomllib.loads(matrix_path.read_text())
