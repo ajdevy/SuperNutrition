@@ -146,4 +146,11 @@ separate native requirement.
 - 2026-07-29: Removed the unavailable GitHub ruleset and trusted same-SHA
   hosting requirements from lifecycle/coverage authorization. The checked-in
   workflow and local CI-policy validators remain available but are optional for
-  activation; Apple, device, inventory, and coverage gates remain fail-closed.
+  activation; Android device, inventory, and coverage gates remain fail-closed,
+  while Apple/Xcode evidence is good-to-have.
+- 2026-07-29: Reclassified real Apple/Xcode execution as good-to-have. The
+  local quality gate keeps Apple native gaps explicit and optional while the
+  JVM denominators record reproducible local observations.
+- 2026-07-29: Mobile lifecycle/manifests moved to `active-local`; the local
+  JVM coverage task reports `97.91%` line / `93.43%` branch across five
+  measured denominators without claiming pending Android native evidence.

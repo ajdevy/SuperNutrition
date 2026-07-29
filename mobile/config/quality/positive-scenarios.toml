@@ -1,9 +1,9 @@
 schema = "supernutrition.mobile.positive-scenarios.v1"
 schema_version = 1
 product = "mobile"
-lifecycle = "scaffold-pending"
+lifecycle = "active"
 profile = "photo-analysis"
-source_digest = "pending"
+source_digest = "local-only"
 scenario_count = 1
 catalog_state = "transitioned-photo-analysis"
 

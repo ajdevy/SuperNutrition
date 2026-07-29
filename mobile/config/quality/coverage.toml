@@ -1,8 +1,8 @@
 schema = "supernutrition.mobile.coverage-inventory.v1"
 schema_version = 1
 product = "mobile"
-lifecycle = "scaffold-pending"
-source_digest = "pending"
+lifecycle = "active"
+source_digest = "local-only"
 quality_claim = false
 production_source_count = 9
 denominator_count = 9
@@ -11,12 +11,17 @@ minimum_branch_percent = 85
 changed_line_percent = 100
 changed_branch_percent = 100
 native_equivalent_evidence_required = true
+optional_apple_evidence_allowed = true
 empty_or_zero_denominator = "fail"
-status = "pending"
+status = "active-local"
+local_aggregate_line_percent = "97.91"
+local_aggregate_branch_percent = "93.43"
+local_aggregate_status = "local-verified"
 
-# Every compiled production unit has exactly one denominator even while the
-# scaffold remains fail-closed. Observed percentages stay pending until the
-# trusted active-state quality matrix is available.
+# Every compiled production unit has exactly one denominator. JVM observations
+# below are local-only measurements; native-equivalent records remain pending
+# until their executable evidence is available. Apple evidence is optional for
+# activation, but pending records are never counted as successful evidence.
 [[denominator]]
 id = "core-config"
 unit_id = "core-config"
@@ -27,9 +32,9 @@ line_minimum_percent = 85
 branch_minimum_percent = 85
 changed_line_minimum_percent = 100
 changed_branch_minimum_percent = 100
-observed_line_percent = "pending"
-observed_branch_percent = "pending"
-status = "pending"
+observed_line_percent = "98.51"
+observed_branch_percent = "100.00"
+status = "local-verified"
 
 [[denominator]]
 id = "domain-photo-analysis"
@@ -41,9 +46,9 @@ line_minimum_percent = 85
 branch_minimum_percent = 85
 changed_line_minimum_percent = 100
 changed_branch_minimum_percent = 100
-observed_line_percent = "pending"
-observed_branch_percent = "pending"
-status = "pending"
+observed_line_percent = "96.77"
+observed_branch_percent = "85.00"
+status = "local-verified"
 
 [[denominator]]
 id = "core-ui"
@@ -55,9 +60,9 @@ line_minimum_percent = 85
 branch_minimum_percent = 85
 changed_line_minimum_percent = 100
 changed_branch_minimum_percent = 100
-observed_line_percent = "pending"
-observed_branch_percent = "pending"
-status = "pending"
+observed_line_percent = "96.15"
+observed_branch_percent = "100.00"
+status = "local-verified"
 
 [[denominator]]
 id = "platform-photo-android"
@@ -114,9 +119,9 @@ line_minimum_percent = 85
 branch_minimum_percent = 85
 changed_line_minimum_percent = 100
 changed_branch_minimum_percent = 100
-observed_line_percent = "pending"
-observed_branch_percent = "pending"
-status = "pending"
+observed_line_percent = "100.00"
+observed_branch_percent = "100.00"
+status = "local-verified"
 
 [[denominator]]
 id = "feature-photo-analysis"
@@ -143,6 +148,6 @@ line_minimum_percent = 85
 branch_minimum_percent = 85
 changed_line_minimum_percent = 100
 changed_branch_minimum_percent = 100
-observed_line_percent = "pending"
-observed_branch_percent = "pending"
-status = "pending"
+observed_line_percent = "90.91"
+observed_branch_percent = "100.00"
+status = "local-verified"

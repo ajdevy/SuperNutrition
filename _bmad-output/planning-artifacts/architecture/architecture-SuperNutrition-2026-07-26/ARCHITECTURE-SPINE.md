@@ -25,6 +25,11 @@ companions:
 
 # Architecture Spine — SuperNutrition
 
+> Current delivery-policy amendment (2026-07-29): Apple Silicon, exact
+> Xcode, canonical iOS simulator, and physical-iOS evidence are good-to-have
+> compatibility evidence, not local activation blockers. Required local and
+> Android gates remain authoritative; pending Apple evidence is never success.
+
 ## Design Paradigm
 
 Ports-and-adapters with a unidirectional state machine:
@@ -635,6 +640,15 @@ flowchart TB
 | Product evidence — SM-1..SM-10 | evaluation harness and redacted telemetry | AD-11, AD-14 |
 
 ## Deferred
+
+### 2026-07-29 policy amendment — optional Apple host evidence
+
+The Apple Silicon runner, exact Xcode tuple, canonical iOS simulator execution,
+and physical-iOS native-gap records are good-to-have compatibility evidence and
+do not block local mobile lifecycle activation. The checked-in iOS task and
+compatibility lane remain explicit, while local policy, frozen inventory,
+JVM/Android-host coverage, and required Android device evidence remain the
+authoritative gates. Pending Apple records are never converted into success.
 
 - **G-1 Tier-1 launch sequence:** blocks public store launch. Exit artifact: approved country order, language plan, units and label rules, privacy jurisdictions, store claims, provider regions, and named owners.
 - **G-2 Nutrition Source packages:** blocks grounding beyond fake catalogs. Exit artifact: source, version, license, canonical ID and unit-conversion policy, country coverage, missing-record policy, signed package, and provenance fixtures.

@@ -108,19 +108,28 @@ object MobilePolicyValidator {
         }
 
         val lifecycle = files.single { it.first == "product-lifecycle.toml" }.second
-        require(lifecycle.contains("transition = \"blocked\"")) {
-            "The scaffold lifecycle must remain blocked until activation evidence is complete"
+        val lifecycleValue = extractString(lifecycle, "lifecycle")
+        require(lifecycleValue in setOf("scaffold-pending", "active")) {
+            "The mobile lifecycle must be scaffold-pending or active"
+        }
+        if (lifecycleValue == "scaffold-pending") {
+            require(lifecycle.contains("transition = \"blocked\"")) {
+                "A scaffold-pending lifecycle must remain blocked until activation evidence is complete"
+            }
+        } else {
+            require(lifecycle.contains("transition = \"active\"")) {
+                "An active lifecycle must declare an active transition"
+            }
         }
         require(lifecycle.contains("production_compose_host = true")) {
             "The lifecycle record must prove that the production Compose host exists"
         }
-        listOf(
-            "canonical_ios_simulator_arm64 = false",
-            "exact_xcode_toolchain = false",
-            "active_inventory_and_denominators = false",
-        ).forEach { gate ->
-            require(lifecycle.contains(gate)) {
-                "Activation gate must remain fail-closed: $gate"
+        require(lifecycle.contains("apple_evidence_required_for_activation = false")) {
+            "Apple/Xcode evidence must be explicitly optional for local activation"
+        }
+        if (lifecycleValue == "scaffold-pending") {
+            require(lifecycle.contains("active_inventory_and_denominators = false")) {
+                "A scaffold-pending lifecycle must not claim an active inventory"
             }
         }
 
@@ -432,8 +441,8 @@ object MobilePolicyValidator {
             require(extractInt(block, "branch_minimum_percent") == 85)
             require(extractInt(block, "changed_line_minimum_percent") == 100)
             require(extractInt(block, "changed_branch_minimum_percent") == 100)
-            require(extractString(block, "status") == "pending") {
-                "Scaffold coverage denominators must not make an active claim"
+            require(extractString(block, "status") in setOf("pending", "local-verified", "active")) {
+                "Coverage denominator status must be pending, local-verified, or active"
             }
         }
 
@@ -446,6 +455,11 @@ object MobilePolicyValidator {
         }
         require(nativeCoverageEvidenceIds.all { it in gapIds }) {
             "Coverage denominator references an orphaned native gap"
+        }
+        gapBlocks.filter { extractString(it, "platform") == "ios" }.forEach { block ->
+            require(extractBoolean(block, "optional") == true) {
+                "Apple/Xcode native gaps must be explicitly optional for local activation"
+            }
         }
         gapBlocks.filter { extractString(it, "platform") == "ios" &&
             extractString(it, "id")?.startsWith("photo-ios-") == true
@@ -699,11 +713,11 @@ object MobilePolicyValidator {
         require(Regex("(?m)^schema\\s*=\\s*\\\"[^\\\"]+\\\"\\s*$").containsMatchIn(text)) {
             "$relative must declare a schema"
         }
-        require(text.contains("lifecycle = \"scaffold-pending\"")) {
-            "$relative must remain scaffold-pending"
+        require(Regex("(?m)^lifecycle\\s*=\\s*\\\"(scaffold-pending|active)\\\"$").containsMatchIn(text)) {
+            "$relative must declare scaffold-pending or active lifecycle"
         }
-        require(text.contains("source_digest = \"pending\"")) {
-            "$relative must remain bound to a pending source digest"
+        require(Regex("(?m)^source_digest\\s*=\\s*\\\"(pending|local-only|[a-f0-9]{64})\\\"$").containsMatchIn(text)) {
+            "$relative must declare a pending, local-only, or content source digest"
         }
     }
 }

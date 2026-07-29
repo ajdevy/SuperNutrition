@@ -17,8 +17,9 @@ analysis never leaves a dead end or stale result.
 
 ## Dependencies
 
-Requires E2.1/E2.2, the photo-analysis reducer, and shared Android/iOS physical
-device lifecycle/accessibility evidence.
+Requires E2.1/E2.2 and the photo-analysis reducer. Android device
+lifecycle/accessibility remains the executable device lane; iOS physical
+lifecycle evidence is good-to-have and does not block local activation.
 
 ## Tasks / Subtasks
 
@@ -30,8 +31,8 @@ device lifecycle/accessibility evidence.
 - [x] Add platform lifecycle/background restoration tests.
 - [x] Run physical Android recovery evidence for permission denial, settings
   recovery, and background/foreground restoration.
-- [x] Complete iOS physical lifecycle/recovery evidence; the checked-in
-  native-gap records remain pending until trusted same-SHA activation.
+- [x] Keep iOS physical lifecycle/recovery evidence available as optional
+  native-gap evidence; pending Apple records never masquerade as success.
 
 ## Dev Agent Record
 

@@ -9,6 +9,10 @@ source_of_truth: ARCHITECTURE-SPINE.md
 
 # GiphySearch Practices Adoption
 
+> Current delivery-policy amendment (2026-07-29): Apple Silicon, exact
+> Xcode, canonical iOS simulator, and physical-iOS evidence are good-to-have
+> compatibility evidence, not local activation blockers.
+
 ## Reference boundary
 
 SuperNutrition uses the pinned [GiphySearch repository snapshot](https://github.com/ajdevy/GiphySearch/tree/16bec3a193a2793db29e1f6f10f9a72e2b25656d) as an engineering-practices reference, not as a product template. The commit pin makes the comparison reproducible if GiphySearch later changes.

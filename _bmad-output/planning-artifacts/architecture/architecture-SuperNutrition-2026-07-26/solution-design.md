@@ -12,6 +12,11 @@ source_of_truth: ARCHITECTURE-SPINE.md
 
 # SuperNutrition Solution Design
 
+> Current delivery-policy amendment (2026-07-29): Apple Silicon, exact
+> Xcode, canonical iOS simulator, and physical-iOS evidence are good-to-have
+> compatibility evidence, not local activation blockers. Required local and
+> Android gates remain authoritative; pending Apple evidence is never success.
+
 ## 1. Purpose
 
 This design turns the SuperNutrition product brief, PRD, and UX specification into an implementation boundary for a Kotlin Multiplatform Android and iOS app. It is intentionally specific about the seams that multiple developers must share, especially the contract between local and remote photo inference, while leaving model and provider selection to evidence gates.
