@@ -106,7 +106,7 @@ changed_line_minimum_percent = 100
 changed_branch_minimum_percent = 100
 observed_line_percent = "pending"
 observed_branch_percent = "pending"
-status = "pending"
+status = "active"
 
 [[denominator]]
 id = "feature-photo-analysis-ui"
