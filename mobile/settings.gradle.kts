@@ -59,6 +59,7 @@ scaffoldModules.forEach { path ->
             ":apps:sharedKit",
             ":core:config",
             ":core:ui",
+            ":domain:inference",
             ":domain:photo-analysis",
             ":feature:photo-analysis-presenter",
             ":feature:photo-analysis-ui",
@@ -68,12 +69,14 @@ scaffoldModules.forEach { path ->
         "photoIos" -> path in setOf(
             ":core:config",
             ":core:ui",
+            ":domain:inference",
             ":domain:photo-analysis",
             ":platform:photo-ios",
         )
         "photoUi" -> path in setOf(
             ":core:config",
             ":core:ui",
+            ":domain:inference",
             ":domain:photo-analysis",
             ":feature:photo-analysis-presenter",
             ":feature:photo-analysis-ui",
