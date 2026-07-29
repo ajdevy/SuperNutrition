@@ -2,10 +2,10 @@ package com.supernutrition.feature.photoanalysis
 
 import android.app.Activity
 import android.content.Intent
-import android.util.Log
 import com.supernutrition.core.ui.CameraAvailability
 import com.supernutrition.core.ui.CameraPermissionState
 import com.supernutrition.domain.photoanalysis.PhotoAnalysisEvent
+import com.supernutrition.domain.photoanalysis.PhotoPreparationException
 import com.supernutrition.domain.photoanalysis.RecoveryReason
 import com.supernutrition.platform.photoandroid.AndroidImageNormalizer
 import com.supernutrition.platform.photoandroid.AndroidPhotoBridge
@@ -62,22 +62,16 @@ class PhotoAnalysisAndroidHostController(
 
         try {
             feature.dispatch(PhotoAnalysisEvent.PreparationSucceeded(normalizer.normalize(ref, sourceBytes)))
-        } catch (error: Throwable) {
-            Log.e(TAG, "Photo normalization failed", error)
+        } catch (error: PhotoPreparationException) {
             feature.dispatch(PhotoAnalysisEvent.PreparationFailed(RecoveryReason.POOR_IMAGE))
         }
     }
 
     private fun handleNativeAction(action: PhotoAnalysisNativeAction) {
-        try {
-            when (action) {
-                PhotoAnalysisNativeAction.TakePhoto -> openCamera()
-                PhotoAnalysisNativeAction.ImportPhoto -> launchImport()
-                PhotoAnalysisNativeAction.OpenSettings -> launchSettings()
-            }
-        } catch (error: Throwable) {
-            Log.e(TAG, "Native photo action failed: $action", error)
-            feature.dispatch(PhotoAnalysisEvent.PreparationFailed(RecoveryReason.CAPTURE_FAILED))
+        when (action) {
+            PhotoAnalysisNativeAction.TakePhoto -> openCamera()
+            PhotoAnalysisNativeAction.ImportPhoto -> launchImport()
+            PhotoAnalysisNativeAction.OpenSettings -> launchSettings()
         }
     }
 
@@ -89,9 +83,5 @@ class PhotoAnalysisAndroidHostController(
         } else {
             launchCamera()
         }
-    }
-
-    private companion object {
-        const val TAG = "PhotoAnalysisAndroidHost"
     }
 }

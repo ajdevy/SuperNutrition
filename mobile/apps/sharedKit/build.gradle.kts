@@ -59,9 +59,7 @@ kotlin {
             implementation(libs.koin.core)
             implementation(project(":core:ui"))
             api(project(":feature:photo-analysis-presenter"))
-            if (!hostIsIntelMac || enableIosDeviceTarget) {
-                implementation(project(":feature:photo-analysis-ui"))
-            }
+            api(project(":feature:photo-analysis"))
         }
         if (enableAppleTargets) {
             if (enableIosDeviceTarget) {

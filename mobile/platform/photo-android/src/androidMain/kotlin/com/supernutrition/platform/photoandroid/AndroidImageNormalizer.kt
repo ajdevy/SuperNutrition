@@ -8,6 +8,7 @@ import com.supernutrition.core.config.withoutJpegApplicationMetadata
 import com.supernutrition.domain.photoanalysis.ImageOrientation
 import com.supernutrition.domain.photoanalysis.NormalizedPhotoInput
 import com.supernutrition.domain.photoanalysis.PhotoInputNormalizer
+import com.supernutrition.domain.photoanalysis.PhotoPreparationException
 import com.supernutrition.domain.photoanalysis.PhotoRef
 import com.supernutrition.domain.photoanalysis.RawPhoto
 import java.io.ByteArrayOutputStream
@@ -30,13 +31,13 @@ class AndroidImageNormalizer(
         sourceOrientation: ImageOrientation = sourceBytes.exifOrientation(),
     ): NormalizedPhotoInput {
         val decoded = BitmapFactory.decodeByteArray(sourceBytes, 0, sourceBytes.size)
-            ?: error("Unable to decode captured image")
+            ?: throw PhotoPreparationException("Unable to decode captured image")
         val oriented = rotate(decoded, sourceOrientation)
         val bounded = bound(oriented)
         return try {
             val output = ByteArrayOutputStream()
-            check(bounded.compress(Bitmap.CompressFormat.JPEG, PhotoNormalizationDefaults.JPEG_QUALITY, output)) {
-                "Unable to re-encode captured image"
+            if (!bounded.compress(Bitmap.CompressFormat.JPEG, PhotoNormalizationDefaults.JPEG_QUALITY, output)) {
+                throw PhotoPreparationException("Unable to re-encode captured image")
             }
             common.normalize(
                 RawPhoto(

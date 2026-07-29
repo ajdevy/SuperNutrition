@@ -3,6 +3,8 @@ package com.supernutrition.platform.photoios
 import com.supernutrition.platform.photoios.permissioninterop.SNGetCameraAuthorizationStatus
 import com.supernutrition.platform.photoios.permissioninterop.SNRequestCameraAccess
 import kotlinx.cinterop.ExperimentalForeignApi
+import platform.AVFoundation.AVCaptureDevice
+import platform.AVFoundation.AVMediaTypeVideo
 import platform.Foundation.NSData
 import platform.Foundation.NSBundle
 import platform.UIKit.UIImage
@@ -37,9 +39,7 @@ class IosPhotoBridge : IosPhotoBridgePort {
     override fun photoPickerUsageDescription(): String = usageDescription(PHOTO_LIBRARY_USAGE_KEY)
 
     /** True when the native camera source is present on this device/runtime. */
-    fun cameraAvailable(): Boolean = UIImagePickerController.isSourceTypeAvailable(
-        UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypeCamera,
-    )
+    fun cameraAvailable(): Boolean = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo) != null
 
     /** Resolves the permission prompt in the bridge; the host receives only a Boolean. */
     fun ensureCameraAccess(onResult: (Boolean) -> Unit) {
@@ -57,7 +57,10 @@ class IosPhotoBridge : IosPhotoBridgePort {
         val picker = UIImagePickerController()
         picker.sourceType = UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypeCamera
         val delegate = CameraPickerDelegate(onResult) { activeDelegate = null }
-        if (!retain(delegate)) return
+        if (!retain(delegate)) {
+            failPresentation(onResult)
+            return
+        }
         picker.delegate = delegate
         from.presentViewController(picker, animated = true, completion = null)
     }
@@ -72,7 +75,10 @@ class IosPhotoBridge : IosPhotoBridgePort {
         }
         val picker = PHPickerViewController(configuration = configuration)
         val delegate = PhotoPickerDelegate(onResult) { activeDelegate = null }
-        if (!retain(delegate)) return
+        if (!retain(delegate)) {
+            failPresentation(onResult)
+            return
+        }
         picker.delegate = delegate
         from.presentViewController(picker, animated = true, completion = null)
     }
@@ -83,6 +89,10 @@ class IosPhotoBridge : IosPhotoBridgePort {
         if (activeDelegate != null) return false
         activeDelegate = delegate
         return true
+    }
+
+    private fun failPresentation(onResult: (NSData?) -> Unit) {
+        dispatch_async(dispatch_get_main_queue()) { onResult(null) }
     }
 
     private fun usageDescription(key: String): String =

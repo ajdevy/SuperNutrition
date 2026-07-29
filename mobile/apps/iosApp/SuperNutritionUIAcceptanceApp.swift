@@ -218,12 +218,12 @@ private struct PhotoAnalysisComposeHost: UIViewControllerRepresentable {
         }
 
         func handle(action: PhotoAnalysisNativeAction) {
-            switch action.name {
-            case "TakePhoto":
+            switch action {
+            case .takePhoto:
                 requestCameraOrRecover()
-            case "ImportPhoto":
+            case .importPhoto:
                 presentPhotoPicker()
-            case "OpenSettings":
+            case .openSettings:
                 guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
                 UIApplication.shared.open(url)
             default:

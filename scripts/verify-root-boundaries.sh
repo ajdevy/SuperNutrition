@@ -131,8 +131,24 @@ for product_root in "${PRODUCT_ROOTS[@]}"; do
   fi
 done
 
-mobile_lifecycle="scaffold-pending"
-if test -f "$repo_root/mobile/product-lifecycle.toml"; then
-  mobile_lifecycle="$(sed -n 's/^lifecycle = "\([^"]*\)"$/\1/p' "$repo_root/mobile/product-lifecycle.toml" | head -n 1)"
-fi
+mobile_lifecycle="$({
+  REPO_ROOT="$repo_root" python3 - <<'PY'
+import os
+import tomllib
+from pathlib import Path
+
+path = Path(os.environ["REPO_ROOT"]) / "mobile/product-lifecycle.toml"
+if not path.is_file():
+    print("scaffold-pending")
+else:
+    try:
+        data = tomllib.loads(path.read_text(encoding="utf-8"))
+    except (OSError, tomllib.TOMLDecodeError) as error:
+        raise SystemExit(f"root-boundaries: invalid mobile lifecycle TOML: {error}") from error
+    lifecycle = data.get("lifecycle")
+    if not isinstance(lifecycle, str) or not lifecycle:
+        raise SystemExit("root-boundaries: mobile lifecycle must be a non-empty string")
+    print(lifecycle)
+PY
+})"
 printf 'root-boundaries: OK (mobile %s; web/backend preselection)\n' "$mobile_lifecycle"

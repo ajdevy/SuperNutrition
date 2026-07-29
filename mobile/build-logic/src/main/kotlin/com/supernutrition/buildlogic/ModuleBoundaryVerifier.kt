@@ -31,18 +31,22 @@ internal object ModuleBoundaryVerifier {
         }
         require(edges.isNotEmpty()) { "Module-boundary inventory contains no allowed edges" }
 
-        val violations = Files.walk(mobileRoot).use { paths ->
-            paths.filter { it.fileName.toString() == "build.gradle.kts" }
-                .filter { !it.toString().contains("/build/") }
-                .flatMap { source -> dependencies(source, mobileRoot, modules, edges).stream() }
-                .toList()
-        }
-        val forbiddenImportViolations = Files.walk(mobileRoot).use { paths ->
-            paths.filter { it.fileName.toString().endsWith(".kt") }
-                .filter { !it.toString().contains("/build/") }
-                .flatMap { source -> forbiddenImports(source, mobileRoot, text).stream() }
-                .toList()
-        }
+        val moduleFiles = modules.flatMap { module ->
+            val moduleRoot = mobileRoot.resolve(module.path.removePrefix("mobile/"))
+            if (!Files.isDirectory(moduleRoot)) {
+                emptyList()
+            } else {
+                Files.walk(moduleRoot).use { paths ->
+                    paths.filter { path -> Files.isRegularFile(path) }.toList()
+                }
+            }
+        }.distinct()
+        val violations = moduleFiles
+            .filter { it.fileName.toString() == "build.gradle.kts" }
+            .flatMap { source -> dependencies(source, mobileRoot, modules, edges) }
+        val forbiddenImportViolations = moduleFiles
+            .filter { it.fileName.toString().endsWith(".kt") }
+            .flatMap { source -> forbiddenImports(source, mobileRoot, text) }
         val allViolations = violations + forbiddenImportViolations
         require(allViolations.isEmpty()) {
             "Module-boundary violations:\n${allViolations.joinToString("\n") { "- $it" }}"
@@ -100,27 +104,28 @@ internal object ModuleBoundaryVerifier {
         inventoryText: String,
     ): List<String> {
         val relativeSource = mobileRoot.relativize(sourceFile).toString().replace('\\', '/')
-        val rules = PolicyToml.stringList(inventoryText, "forbidden_imports").mapNotNull { rule ->
-            val match = Regex("^(.+?)\\s+in\\s+(.+)$").matchEntire(rule) ?: return@mapNotNull null
-            val importPattern = match.groupValues[1].removeSuffix("*")
-            val scope = match.groupValues[2]
-                .removePrefix("mobile/")
-                .removeSuffix("/**")
-                .trimEnd('/')
-            importPattern to scope
+        val rules = PolicyToml.forbiddenImportRules(inventoryText)
+        val applicableRules = rules.filter { rule ->
+            when {
+                rule.sourceScope != null -> {
+                    val scope = rule.sourceScope.removePrefix("mobile/")
+                    relativeSource == scope || relativeSource.startsWith("$scope/")
+                }
+
+                rule.configurationScope == "distributable" ->
+                    relativeSource.contains("/src/") &&
+                        !Regex("/src/[^/]*test[^/]*/", RegexOption.IGNORE_CASE).containsMatchIn(relativeSource)
+
+                else -> false
+            }
         }
-        if (rules.isEmpty() || !rules.any { (_, scope) ->
-                relativeSource == scope || relativeSource.startsWith("$scope/")
-            }) return emptyList()
+        if (applicableRules.isEmpty()) return emptyList()
 
         return Files.readAllLines(sourceFile).mapIndexedNotNull { index, line ->
             val imported = Regex("^\\s*import\\s+([^\\s]+)").find(line)?.groupValues?.get(1)
                 ?: return@mapIndexedNotNull null
-            rules.firstOrNull { (prefix, scope) ->
-                (relativeSource == scope || relativeSource.startsWith("$scope/")) &&
-                    imported.startsWith(prefix)
-            }?.let { (prefix, _) ->
-                "${mobileRoot.relativize(sourceFile)}:${index + 1}: import $imported matches forbidden $prefix*"
+            applicableRules.firstOrNull { rule -> imported.startsWith(rule.importPrefix) }?.let { rule ->
+                "${mobileRoot.relativize(sourceFile)}:${index + 1}: import $imported matches forbidden ${rule.importPrefix}*"
             }
         }
     }

@@ -205,8 +205,10 @@ class QualityPlugin : Plugin<Project> {
         }
         qualityFormat.configure { dependsOn(formatTask) }
         target.tasks.withType<Detekt>().configureEach {
-            qualityCheckJvmAndroid.configure { dependsOn(this@configureEach) }
-            qualityCheckApple.configure { dependsOn(this@configureEach) }
+            if (name != "detektFormat") {
+                qualityCheckJvmAndroid.configure { dependsOn(this@configureEach) }
+                qualityCheckApple.configure { dependsOn(this@configureEach) }
+            }
         }
     }
 

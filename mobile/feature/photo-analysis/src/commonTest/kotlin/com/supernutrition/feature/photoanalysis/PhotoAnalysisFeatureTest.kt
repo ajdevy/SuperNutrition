@@ -9,7 +9,6 @@ import com.supernutrition.domain.photoanalysis.PhotoSessionStore
 import com.supernutrition.domain.photoanalysis.RecoveryReason
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class PhotoAnalysisFeatureTest {
     @Test
@@ -46,17 +45,12 @@ class PhotoAnalysisFeatureTest {
     }
 
     @Test
-    fun `presenter keeps recovery explicit and never adds remote consent`() {
-        val model = PhotoAnalysisPresenterModel.from(
-            PhotoAnalysisState.Recovery(reason = RecoveryReason.PERMISSION_DENIED),
-        )
+    fun `ignored events do not change the feature state stream`() {
+        val feature = feature("attempt-ignored-event")
 
-        assertEquals(PhotoAnalysisPresenterState.RECOVERY, model.state)
-        assertEquals(
-            listOf(PhotoAnalysisPresenterAction.OpenSettings, PhotoAnalysisPresenterAction.ImportPhoto),
-            model.actions,
-        )
-        assertTrue(model.statusLabel.isNotBlank())
+        feature.dispatch(PhotoAnalysisEvent.ScanAgain)
+
+        assertEquals(PhotoAnalysisState.Capture, feature.stateFlow.value)
     }
 
     private fun feature(attempt: String) = PhotoAnalysisFeature(

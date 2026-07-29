@@ -8,6 +8,12 @@ package com.supernutrition.buildlogic
  * silently accepting different spellings of the same policy field.
  */
 internal object PolicyToml {
+    data class ForbiddenImportRule(
+        val importPrefix: String,
+        val sourceScope: String? = null,
+        val configurationScope: String? = null,
+    )
+
     val requiredManifests = listOf(
         "config/architecture/module-boundaries.toml",
         "config/quality/module-matrix.toml",
@@ -60,4 +66,26 @@ internal object PolicyToml {
                 Regex("\\\"([^\\\"]+)\\\"").findAll(values).map { it.groupValues[1] }.toList()
             }
             ?: emptyList()
+
+    fun forbiddenImportRules(text: String): List<ForbiddenImportRule> =
+        stringList(text, "forbidden_imports").map { rawRule ->
+            val parts = rawRule.split(" in ", limit = 2)
+            require(parts.size == 2) { "Invalid forbidden import rule: $rawRule" }
+            val importPrefix = parts[0].trim().removeSuffix("*")
+            val scope = parts[1].trim()
+            require(importPrefix.isNotEmpty()) { "Forbidden import prefix must not be empty" }
+            when {
+                scope == "distributable configurations" -> ForbiddenImportRule(
+                    importPrefix = importPrefix,
+                    configurationScope = "distributable",
+                )
+
+                scope.endsWith("/**") -> ForbiddenImportRule(
+                    importPrefix = importPrefix,
+                    sourceScope = scope.removeSuffix("/**").trimEnd('/'),
+                )
+
+                else -> error("Unsupported forbidden import scope: $scope")
+            }
+        }
 }

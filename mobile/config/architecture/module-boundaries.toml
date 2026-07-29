@@ -71,7 +71,7 @@ production = false
 id = "feature-host"
 path = "mobile/feature/photo-analysis"
 kind = "composition-root"
-source_sets = ["commonMain", "commonTest", "jvmTest", "androidMain", "androidDeviceTest"]
+source_sets = ["commonMain", "commonTest", "jvmTest", "androidMain", "androidDeviceTest", "iosMain", "iosSimulatorArm64Test", "iosX64Test"]
 production = false
 
 [[module]]

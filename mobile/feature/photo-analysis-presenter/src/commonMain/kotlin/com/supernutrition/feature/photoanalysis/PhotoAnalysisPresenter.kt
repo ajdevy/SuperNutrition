@@ -23,13 +23,87 @@ enum class PhotoAnalysisPresenterAction {
     ScanAgain,
 }
 
+/** Localizable copy is supplied by the product host; the presenter owns no locale lookup. */
+data class PhotoAnalysisPresenterCopy(
+    val captureTitle: String,
+    val takeMealPhoto: String,
+    val choosePhoto: String,
+    val openSettings: String,
+    val scanAgain: String,
+    val cancel: String,
+    val readyToCapture: String,
+    val preparingPhoto: String,
+    val photoReady: String,
+    val analyzingPhoto: String,
+    val reviewCandidate: String,
+    val restoringPhotoAnalysis: String,
+    val cameraPermissionRequired: String,
+    val cameraUnavailable: String,
+    val photoCaptureFailed: String,
+    val photoQualityTooLow: String,
+    val noFoodFound: String,
+    val analysisOffline: String,
+    val analysisCancelled: String,
+) {
+    init {
+        listOf(
+            captureTitle,
+            takeMealPhoto,
+            choosePhoto,
+            openSettings,
+            scanAgain,
+            cancel,
+            readyToCapture,
+            preparingPhoto,
+            photoReady,
+            analyzingPhoto,
+            reviewCandidate,
+            restoringPhotoAnalysis,
+            cameraPermissionRequired,
+            cameraUnavailable,
+            photoCaptureFailed,
+            photoQualityTooLow,
+            noFoodFound,
+            analysisOffline,
+            analysisCancelled,
+        ).forEach { require(it.isNotBlank()) }
+    }
+
+    companion object {
+        fun english(): PhotoAnalysisPresenterCopy = PhotoAnalysisPresenterCopy(
+            captureTitle = "Capture",
+            takeMealPhoto = "Take meal photo",
+            choosePhoto = "Choose photo",
+            openSettings = "Open settings",
+            scanAgain = "Scan again",
+            cancel = "Cancel",
+            readyToCapture = "Ready to capture",
+            preparingPhoto = "Preparing photo",
+            photoReady = "Photo ready",
+            analyzingPhoto = "Analyzing photo",
+            reviewCandidate = "Review candidate",
+            restoringPhotoAnalysis = "Restoring photo analysis",
+            cameraPermissionRequired = "Camera permission is required",
+            cameraUnavailable = "Camera is unavailable",
+            photoCaptureFailed = "Photo capture failed",
+            photoQualityTooLow = "Photo quality is too low",
+            noFoodFound = "No food was found in the photo",
+            analysisOffline = "Analysis is offline",
+            analysisCancelled = "Analysis cancelled",
+        )
+    }
+}
+
 data class PhotoAnalysisPresenterModel(
     val statusLabel: String,
     val state: PhotoAnalysisPresenterState,
     val actions: List<PhotoAnalysisPresenterAction>,
 ) {
     companion object {
-        fun from(state: PhotoAnalysisState): PhotoAnalysisPresenterModel {
+        fun from(
+            state: PhotoAnalysisState,
+            copy: PhotoAnalysisPresenterCopy = PhotoAnalysisPresenterCopy.english(),
+        ): PhotoAnalysisPresenterModel {
             val presenterState = when (state) {
                 PhotoAnalysisState.Capture -> PhotoAnalysisPresenterState.CAPTURE
                 is PhotoAnalysisState.Preparing -> PhotoAnalysisPresenterState.PREPARING
@@ -40,30 +114,30 @@ data class PhotoAnalysisPresenterModel(
                 is PhotoAnalysisState.Backgrounded -> PhotoAnalysisPresenterState.BACKGROUNDED
             }
             return PhotoAnalysisPresenterModel(
-                statusLabel = statusLabel(state),
+                statusLabel = statusLabel(state, copy),
                 state = presenterState,
                 actions = actions(state),
             )
         }
 
-        private fun statusLabel(state: PhotoAnalysisState): String = when (state) {
-            PhotoAnalysisState.Capture -> "Ready to capture"
-            is PhotoAnalysisState.Preparing -> "Preparing photo"
-            is PhotoAnalysisState.Ready -> "Photo ready"
-            is PhotoAnalysisState.Analyzing -> "Analyzing photo"
-            is PhotoAnalysisState.CandidateReview -> "Review candidate"
-            is PhotoAnalysisState.Recovery -> recoveryLabel(state.reason)
-            is PhotoAnalysisState.Backgrounded -> "Restoring photo analysis"
+        private fun statusLabel(state: PhotoAnalysisState, copy: PhotoAnalysisPresenterCopy): String = when (state) {
+            PhotoAnalysisState.Capture -> copy.readyToCapture
+            is PhotoAnalysisState.Preparing -> copy.preparingPhoto
+            is PhotoAnalysisState.Ready -> copy.photoReady
+            is PhotoAnalysisState.Analyzing -> copy.analyzingPhoto
+            is PhotoAnalysisState.CandidateReview -> copy.reviewCandidate
+            is PhotoAnalysisState.Recovery -> recoveryLabel(state.reason, copy)
+            is PhotoAnalysisState.Backgrounded -> copy.restoringPhotoAnalysis
         }
 
-        private fun recoveryLabel(reason: RecoveryReason): String = when (reason) {
-            RecoveryReason.PERMISSION_DENIED -> "Camera permission is required"
-            RecoveryReason.CAMERA_UNAVAILABLE -> "Camera is unavailable"
-            RecoveryReason.CAPTURE_FAILED -> "Photo capture failed"
-            RecoveryReason.POOR_IMAGE -> "Photo quality is too low"
-            RecoveryReason.NO_FOOD -> "No food was found in the photo"
-            RecoveryReason.OFFLINE -> "Analysis is offline"
-            RecoveryReason.CANCELLED -> "Analysis cancelled"
+        private fun recoveryLabel(reason: RecoveryReason, copy: PhotoAnalysisPresenterCopy): String = when (reason) {
+            RecoveryReason.PERMISSION_DENIED -> copy.cameraPermissionRequired
+            RecoveryReason.CAMERA_UNAVAILABLE -> copy.cameraUnavailable
+            RecoveryReason.CAPTURE_FAILED -> copy.photoCaptureFailed
+            RecoveryReason.POOR_IMAGE -> copy.photoQualityTooLow
+            RecoveryReason.NO_FOOD -> copy.noFoodFound
+            RecoveryReason.OFFLINE -> copy.analysisOffline
+            RecoveryReason.CANCELLED -> copy.analysisCancelled
         }
 
         private fun actions(state: PhotoAnalysisState): List<PhotoAnalysisPresenterAction> = when (state) {

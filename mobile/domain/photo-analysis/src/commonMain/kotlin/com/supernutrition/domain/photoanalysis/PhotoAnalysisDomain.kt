@@ -1,9 +1,6 @@
-@file:OptIn(kotlin.concurrent.atomics.ExperimentalAtomicApi::class)
-
 package com.supernutrition.domain.photoanalysis
 
 import com.supernutrition.domain.inference.isSha256Digest
-import kotlin.concurrent.atomics.AtomicReference
 
 typealias AttemptId = com.supernutrition.domain.inference.AttemptId
 typealias PhotoRef = com.supernutrition.domain.inference.PhotoRef
@@ -26,43 +23,25 @@ interface PhotoLeaseStorePort {
     fun revokeAttempt(attemptId: AttemptId): Int
 }
 
-/** Thread-safe in-memory lease store retained under the original public name. */
+/** Single-reducer in-memory lease store retained under the original public name. */
 class PhotoLeaseStore : PhotoLeaseStorePort {
-    private val active = AtomicReference<Set<PhotoRef>>(emptySet())
+    private val active = mutableSetOf<PhotoRef>()
 
     override fun issue(attemptId: AttemptId, opaqueId: String): PhotoRef {
         val ref = PhotoRef.issue(attemptId, opaqueId)
-        update { it + ref }
+        active += ref
         return ref
     }
 
-    override fun isActive(ref: PhotoRef): Boolean = ref in active.load()
+    override fun isActive(ref: PhotoRef): Boolean = ref in active
 
     /** Returns false on repeated cleanup; repeated cleanup is still safe. */
-    override fun revoke(ref: PhotoRef): Boolean = remove { it == ref }
+    override fun revoke(ref: PhotoRef): Boolean = active.remove(ref)
 
     override fun revokeAttempt(attemptId: AttemptId): Int {
-        while (true) {
-            val current = active.load()
-            val remaining = current.filterTo(mutableSetOf()) { it.attemptId != attemptId }
-            val removed = current.size - remaining.size
-            if (active.compareAndSet(current, remaining)) return removed
-        }
-    }
-
-    private fun update(transform: (Set<PhotoRef>) -> Set<PhotoRef>) {
-        while (true) {
-            val current = active.load()
-            if (active.compareAndSet(current, transform(current))) return
-        }
-    }
-
-    private fun remove(predicate: (PhotoRef) -> Boolean): Boolean {
-        while (true) {
-            val current = active.load()
-            val removed = current.firstOrNull(predicate) ?: return false
-            if (active.compareAndSet(current, current - removed)) return true
-        }
+        val revoked = active.filterTo(mutableSetOf()) { it.attemptId == attemptId }
+        active.removeAll(revoked)
+        return revoked.size
     }
 }
 
@@ -128,6 +107,15 @@ class NormalizedPhotoInput(
     val metadataKeys: Set<String> = metadataKeys.toSet()
     val contentDigest: String = contentDigest
 
+    init {
+        require(storedBytes.isNotEmpty()) { "Normalized photo bytes must not be empty" }
+        require(width > 0 && height > 0) { "Normalized photo dimensions must be positive" }
+        require(orientation == ImageOrientation.UP) { "Normalized photo orientation must be UP" }
+        require(colorSpace == "sRGB") { "Normalized photo color space must be sRGB" }
+        require(this.metadataKeys.isEmpty()) { "Normalized photo metadata must be empty" }
+        require(isSha256Digest(contentDigest)) { "Normalized photo digest must be SHA-256" }
+    }
+
     fun copy(
         ref: PhotoRef = this.ref,
         bytes: ByteArray = this.bytes,
@@ -147,6 +135,10 @@ class NormalizedPhotoInput(
         metadataKeys,
         contentDigest,
     )
+
+    internal fun wipeBytes() {
+        storedBytes.fill(0)
+    }
 
     override fun equals(other: Any?): Boolean = other is NormalizedPhotoInput &&
         ref == other.ref && bytes.contentEquals(other.bytes) && width == other.width && height == other.height &&
@@ -227,34 +219,26 @@ interface PhotoSessionStorePort {
     fun clearAttempt(attemptId: AttemptId): Int
 }
 
-/** Thread-safe in-memory content store; removing content never mutates caller-owned bytes. */
+/** Single-reducer in-memory content store with explicit secure cleanup. */
 class PhotoSessionStore : PhotoSessionStorePort {
-    private val contents = AtomicReference<Map<PhotoRef, NormalizedPhotoInput>>(emptyMap())
+    private val contents = mutableMapOf<PhotoRef, NormalizedPhotoInput>()
 
     override fun put(input: NormalizedPhotoInput) {
-        while (true) {
-            val current = contents.load()
-            if (contents.compareAndSet(current, current + (input.ref to input))) return
-        }
+        contents[input.ref] = input
     }
 
-    override fun read(ref: PhotoRef): NormalizedPhotoInput? = contents.load()[ref]
+    override fun read(ref: PhotoRef): NormalizedPhotoInput? = contents[ref]
 
     override fun remove(ref: PhotoRef): Boolean {
-        while (true) {
-            val current = contents.load()
-            if (ref !in current) return false
-            if (contents.compareAndSet(current, current - ref)) return true
-        }
+        val removed = contents.remove(ref) ?: return false
+        removed.wipeBytes()
+        return true
     }
 
-    /** Idempotent terminal cleanup without mutating byte values. */
+    /** Idempotent terminal cleanup that zeroes sensitive photo bytes before release. */
     override fun clearAttempt(attemptId: AttemptId): Int {
-        while (true) {
-            val current = contents.load()
-            val remaining = current.filterKeys { it.attemptId != attemptId }
-            val removed = current.size - remaining.size
-            if (contents.compareAndSet(current, remaining)) return removed
-        }
+        val refs = contents.keys.filter { it.attemptId == attemptId }
+        refs.forEach { ref -> contents.remove(ref)?.wipeBytes() }
+        return refs.size
     }
 }
