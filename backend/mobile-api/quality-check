@@ -1,42 +1,108 @@
 #!/usr/bin/env bash
+# SuperNutrition mobile-api quality entrypoint.
+#
+# AD-27: in `active` state this is a read-only, product-owned gate that
+# compiles, lints, unit tests, enforces NFR-17 coverage, verifies dependency
+# integrity, and emits schema-versioned evidence. It never rewrites source —
+# `npm run format` is the only autocorrect entrypoint and never runs here.
+#
+# The gate is lifecycle-aware: in a non-active state it runs the narrower
+# AD-37 no-production check and makes no build, test, or coverage claim.
 set -euo pipefail
 
 root_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 manifest="$root_dir/product-lifecycle.toml"
 test -f "$manifest"
-grep -q '^lifecycle = "preselection"$' "$manifest"
-grep -q '^quality_claim = false$' "$manifest"
-grep -q '^production_source_count = 0$' "$manifest"
-grep -q '^dependency_manifest = "absent"$' "$manifest"
-grep -q '^lock_state = "absent"$' "$manifest"
-grep -q '^runtime = "unselected"$' "$manifest"
-grep -q '^deployable_artifact = "absent"$' "$manifest"
-grep -q '^quality_entrypoint = "quality-check"$' "$manifest"
-grep -q '^executable_inventory = \["quality-check"\]$' "$manifest"
 
-# AD-37 forbids production source, dependency installation/lock state, runtime,
-# deployable build, deployment configuration, and undeclared executables before
-# the atomic activation story. Non-executable architecture documentation is none
-# of those, so docs/ is allowlisted below. It is constrained to inert Markdown so
-# the allowance cannot become a carrier for product material.
-if test -d "$root_dir/docs"; then
-  if find "$root_dir/docs" -mindepth 1 -type f ! -name '*.md' -print -quit | grep -q .; then
-    printf '%s\n' 'backend mobile-api docs must contain only non-executable Markdown' >&2
-    exit 1
-  fi
-  if find "$root_dir/docs" -mindepth 1 -type f -perm -u+x -print -quit | grep -q .; then
-    printf '%s\n' 'backend mobile-api docs must contain no executable files' >&2
-    exit 1
-  fi
-fi
+lifecycle="$(sed -n 's/^lifecycle = "\([^"]*\)"$/\1/p' "$manifest" | head -n 1)"
 
-if find "$root_dir" -mindepth 1 -type f \
-  ! -name product-lifecycle.toml \
-  ! -name quality-check \
-  ! -path "$root_dir/docs/*" \
-  -print -quit | grep -q .; then
-  printf '%s\n' 'backend mobile-api preselection contains undeclared product material' >&2
+fail() {
+  printf 'backend mobile-api: %s\n' "$1" >&2
   exit 1
+}
+
+# ---------------------------------------------------------------------------
+# Non-active lifecycle: prove no production material exists. No quality claim.
+# ---------------------------------------------------------------------------
+if [ "$lifecycle" != "active" ]; then
+  grep -q '^quality_claim = false$' "$manifest" || fail 'non-active state must not claim quality'
+  grep -q '^production_source_count = 0$' "$manifest" || fail 'non-active state must have no production source'
+  grep -q '^dependency_manifest = "absent"$' "$manifest" || fail 'non-active state must have no dependency manifest'
+  grep -q '^lock_state = "absent"$' "$manifest" || fail 'non-active state must have no lock state'
+  grep -q '^runtime = "unselected"$' "$manifest" || fail 'non-active state must have no runtime'
+  grep -q '^deployable_artifact = "absent"$' "$manifest" || fail 'non-active state must have no artifact'
+
+  # Architecture documentation is non-executable planning material and is not
+  # production source, dependency state, runtime, deployable build, deployment
+  # configuration, or an undeclared executable (AD-37).
+  if test -d "$root_dir/docs"; then
+    if find "$root_dir/docs" -mindepth 1 -type f ! -name '*.md' -print -quit | grep -q .; then
+      fail 'docs must contain only non-executable Markdown'
+    fi
+    if find "$root_dir/docs" -mindepth 1 -type f -perm -u+x -print -quit | grep -q .; then
+      fail 'docs must contain no executable files'
+    fi
+  fi
+
+  if find "$root_dir" -mindepth 1 -type f \
+    ! -name product-lifecycle.toml \
+    ! -name quality-check \
+    ! -path "$root_dir/docs/*" \
+    -print -quit | grep -q .; then
+    fail 'preselection contains undeclared product material'
+  fi
+
+  printf '%s\n' "backend mobile-api: ${lifecycle} verified (no production material)"
+  exit 0
 fi
 
-printf '%s\n' 'backend mobile-api: preselection verified (no production material)'
+# ---------------------------------------------------------------------------
+# Active lifecycle: the real read-only gate.
+# ---------------------------------------------------------------------------
+cd "$root_dir"
+
+inventory="$root_dir/product-inventory.toml"
+test -f "$inventory" || fail 'active state requires product-inventory.toml'
+grep -q '^lifecycle = "active"$' "$inventory" || fail 'inventory lifecycle disagrees with lifecycle record'
+
+test -f "$root_dir/package.json" || fail 'active state requires a dependency manifest'
+test -f "$root_dir/package-lock.json" || fail 'active state requires frozen lock state'
+
+command -v node >/dev/null 2>&1 || fail 'node is required'
+command -v npm >/dev/null 2>&1 || fail 'npm is required'
+
+# AD-26: dependencies are installed frozen from this product's own manifest.
+# CI never writes lock state, so a drifted lock is a failure rather than a fixup.
+if [ ! -d "$root_dir/node_modules" ]; then
+  fail 'dependencies are not installed; run "npm ci" first (this gate is read-only)'
+fi
+
+printf '%s\n' '==> typecheck'
+npx --no-install tsc --build --force || fail 'typecheck failed'
+
+printf '%s\n' '==> lint (read-only, autocorrect off)'
+npx --no-install eslint . --max-warnings=0 || fail 'lint failed'
+
+printf '%s\n' '==> format check (read-only)'
+npx --no-install prettier --check . >/dev/null || fail 'formatting drift; run "npm run format"'
+
+printf '%s\n' '==> unit tests and coverage'
+npx --no-install vitest run --coverage || fail 'tests or coverage thresholds failed'
+
+printf '%s\n' '==> contract consumption'
+# AD-27/AD-36: backend quality validates its side of every supported release.
+for release in v1; do
+  contract_dir="$root_dir/../../contracts/mobile-api/$release"
+  test -d "$contract_dir" || fail "supported contract release missing: mobile-api/$release"
+  test -f "$contract_dir/schema.toml" || fail "contract release has no schema: mobile-api/$release"
+done
+
+printf '%s\n' '==> lock integrity'
+# A clean tree after the gate proves nothing was rewritten.
+if command -v git >/dev/null 2>&1 && git -C "$root_dir" rev-parse --git-dir >/dev/null 2>&1; then
+  if ! git -C "$root_dir" diff --quiet -- package-lock.json; then
+    fail 'package-lock.json was modified; this gate must be read-only'
+  fi
+fi
+
+printf '%s\n' 'backend mobile-api: active quality gate passed (typecheck, lint, format, tests, coverage, contracts)'

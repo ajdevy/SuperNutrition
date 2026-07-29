@@ -219,10 +219,42 @@ if f'BlueprintIdentifier = "{production_target_id}"' not in production_scheme or
         'BuildableName = "SuperNutrition.app"' not in production_scheme:
     fail("iOS production scheme does not build the production product")
 
+# AD-37: web and backend begin in `preselection` and change atomically to
+# `active` in their own reviewed toolchain stories. Freezing them at
+# `preselection` would make that transition impossible, so this asserts the
+# record is INTERNALLY CONSISTENT for whichever state it declares, and that an
+# active product actually carries its activation evidence.
 for relative in ("web/landing/product-lifecycle.toml", "backend/mobile-api/product-lifecycle.toml"):
     lifecycle = tomllib.loads((repo_root / relative).read_text(encoding="utf-8"))
-    if lifecycle.get("lifecycle") != "preselection" or lifecycle.get("quality_claim") is not False:
-        fail(f"{relative} must remain a non-claiming preselection root")
+    state = lifecycle.get("lifecycle")
+
+    if state == "preselection":
+        if lifecycle.get("quality_claim") is not False:
+            fail(f"{relative} preselection must not claim quality")
+        if lifecycle.get("production_source_count") != 0:
+            fail(f"{relative} preselection must have no production source")
+        if lifecycle.get("runtime") != "unselected":
+            fail(f"{relative} preselection must not select a runtime")
+    elif state == "active":
+        if lifecycle.get("quality_claim") is not True:
+            fail(f"{relative} active must claim quality")
+        for required in ("dependency_manifest", "lock_state", "runtime",
+                         "deployable_artifact", "quality_entrypoint", "product_inventory"):
+            value = lifecycle.get(required)
+            if not value or value == "absent" or value == "unselected":
+                fail(f"{relative} active is missing activation evidence: {required}")
+        if lifecycle.get("production_source_count", 0) <= 0:
+            fail(f"{relative} active must declare production source")
+        inventory_path = repo_root / relative.replace("product-lifecycle.toml", "product-inventory.toml")
+        if not inventory_path.is_file():
+            fail(f"{relative} active requires a product inventory")
+        inventory = tomllib.loads(inventory_path.read_text(encoding="utf-8"))
+        if inventory.get("lifecycle") != "active":
+            fail(f"{relative} inventory disagrees with the lifecycle record")
+        if not inventory.get("unit"):
+            fail(f"{relative} active inventory must be nonempty")
+    else:
+        fail(f"{relative} declares an unknown lifecycle state: {state!r}")
 
 print("product-identity: OK (mobile, web landing, store, and technical identifiers agree)")
 PY
