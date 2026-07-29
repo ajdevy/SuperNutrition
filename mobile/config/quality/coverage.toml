@@ -3,7 +3,7 @@ schema_version = 1
 product = "mobile"
 lifecycle = "active"
 source_digest = "local-only"
-quality_claim = false
+quality_claim = true
 production_source_count = 9
 denominator_count = 9
 minimum_line_percent = 85
@@ -19,9 +19,9 @@ local_aggregate_branch_percent = "93.43"
 local_aggregate_status = "local-verified"
 
 # Every compiled production unit has exactly one denominator. JVM observations
-# below are local-only measurements; native-equivalent records remain pending
-# until their executable evidence is available. Apple evidence is optional for
-# activation, but pending records are never counted as successful evidence.
+# below are local-only measurements; native-equivalent records are bound to
+# executable Android evidence. Apple evidence is optional for activation, and
+# pending optional records are never counted as successful evidence.
 [[denominator]]
 id = "core-config"
 unit_id = "core-config"

@@ -166,6 +166,7 @@ mkdir -p "$temporary_root"
 trap 'rm -rf "$temporary_root"' EXIT
 
 for evidence_id in \
+  bootstrap-android-host \
   photo-android-camera-picker \
   photo-android-normalization \
   photo-android-lifecycle \

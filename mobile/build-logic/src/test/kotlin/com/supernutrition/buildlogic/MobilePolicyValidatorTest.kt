@@ -37,7 +37,8 @@ class MobilePolicyValidatorTest {
                     text.replace("lifecycle = \"scaffold-pending\"", "lifecycle = \"active\"")
                         .replace("source_digest = \"pending\"", "source_digest = \"local-only\"")
                         .replace("transition = \"blocked\"", "transition = \"active\"")
-                        .replace("active_inventory_and_denominators = false", "active_inventory_and_denominators = true"),
+                        .replace("active_inventory_and_denominators = false", "active_inventory_and_denominators = true")
+                        .replace("quality_claim = false", "quality_claim = true"),
                 )
             }
         }

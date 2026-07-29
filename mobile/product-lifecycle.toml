@@ -3,7 +3,7 @@ schema_version = 1
 product = "mobile"
 lifecycle = "active"
 source_digest = "local-only"
-quality_claim = false
+quality_claim = true
 transition = "active"
 quality_entrypoint = "gradlew"
 executable_inventory = ["gradlew"]
@@ -18,6 +18,4 @@ apple_evidence_required_for_activation = false
 apple_evidence_status = "good-to-have"
 
 [blockers]
-items = [
-  "required Android native evidence and active coverage claim remain pending",
-]
+items = []
