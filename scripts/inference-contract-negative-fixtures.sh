@@ -140,4 +140,8 @@ cp -R "${repo_root}/contracts/inference/v1" "$fixture_root/unhashed-json"
 printf '{}\n' > "$fixture_root/unhashed-json/unhashed.json"
 expect_rejected "unhashed release JSON" "$fixture_root/unhashed-json"
 
+cp -R "${repo_root}/contracts/inference/v1" "$fixture_root/symlinked-directory"
+ln -s "${repo_root}/contracts/inference/v1/fixtures" "$fixture_root/symlinked-directory/fixture-link"
+expect_rejected "symlinked release directory" "$fixture_root/symlinked-directory"
+
 echo "inference contract negative fixtures: OK"

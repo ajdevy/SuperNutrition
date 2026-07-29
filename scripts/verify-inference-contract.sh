@@ -276,9 +276,10 @@ allowed = {
     "compatibility-matrix.toml",
     *(str(path.relative_to(root)) for path in fixture_paths),
 }
-if any(
-    path.is_symlink() or str(path.relative_to(root)) not in allowed
-    for path in root.rglob("*")
+release_entries = list(root.rglob("*"))
+if any(path.is_symlink() for path in release_entries) or any(
+    str(path.relative_to(root)) not in allowed
+    for path in release_entries
     if path.is_file()
 ):
     raise SystemExit("inference contract release contains executable or source material")
