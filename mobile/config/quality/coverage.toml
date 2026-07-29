@@ -4,8 +4,8 @@ product = "mobile"
 lifecycle = "scaffold-pending"
 source_digest = "pending"
 quality_claim = false
-production_source_count = 9
-denominator_count = 9
+production_source_count = 10
+denominator_count = 10
 minimum_line_percent = 85
 minimum_branch_percent = 85
 changed_line_percent = 100
@@ -17,6 +17,20 @@ status = "pending"
 # Every compiled production unit has exactly one denominator even while the
 # scaffold remains fail-closed. Observed percentages stay pending until the
 # trusted active-state quality matrix is available.
+[[denominator]]
+id = "domain-inference"
+unit_id = "domain-inference"
+source_path = "mobile/domain/inference"
+coverage_kind = "jvm"
+test_task = ":domain:inference:jvmTest"
+line_minimum_percent = 85
+branch_minimum_percent = 85
+changed_line_minimum_percent = 100
+changed_branch_minimum_percent = 100
+observed_line_percent = "pending"
+observed_branch_percent = "pending"
+status = "pending"
+
 [[denominator]]
 id = "core-config"
 unit_id = "core-config"

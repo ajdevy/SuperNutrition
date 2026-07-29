@@ -93,6 +93,18 @@ mutates_repository = false
 test_entrypoint = "scripts/mobile-api-contract-negative-fixtures.sh"
 
 [[executable]]
+path = "scripts/verify-inference-contract.sh"
+purpose = "read-only photo-inference-engine v1 schema and compatibility validation"
+mutates_repository = false
+test_entrypoint = "scripts/verify-inference-contract.sh"
+
+[[executable]]
+path = "scripts/inference-contract-negative-fixtures.sh"
+purpose = "negative fixtures for photo-inference-engine compatibility and nutrition drift"
+mutates_repository = false
+test_entrypoint = "scripts/inference-contract-negative-fixtures.sh"
+
+[[executable]]
 path = "scripts/verify-interaction-policy-contract.sh"
 purpose = "read-only interaction-policy v1 schema and forbidden-default validation"
 mutates_repository = false

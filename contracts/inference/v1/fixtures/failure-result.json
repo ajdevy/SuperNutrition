@@ -1,0 +1,1 @@
+{"contractVersion":"photo-inference-engine/v1","outcome":{"outcomeType":"failure","code":"temporary-unavailable","retryable":true,"userMessageKey":"inference.failure.temporary_unavailable","provenance":{"route":"local","engineId":"fixture-engine","modelVersion":"fixture-model-1","calibrationVersion":"fixture-calibration-1","contractVersion":"photo-inference-engine/v1"}}}
