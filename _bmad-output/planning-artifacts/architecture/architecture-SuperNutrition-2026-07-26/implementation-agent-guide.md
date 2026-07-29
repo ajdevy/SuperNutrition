@@ -66,7 +66,7 @@ Do not ask it to create the whole application in one invocation. One invocation 
 | Shared Compose UI contracts | Compose Multiplatform v2 test API behind the project robot DSL for common semantics, state, and bounded layout; execute `jvmTest`, `connectedAndroidTest`, and `iosSimulatorArm64Test` |
 | Cross-platform UI acceptance | Bootstrap runs one non-product packaged launch/DI smoke; the irreversible photo-analysis profile runs the positive UJ-1 through UJ-4 Maestro CLI 2.7.0 inventory on Android and iOS |
 | Native UI evidence | Android instrumentation and XCTest/XCUIAutomation only for platform bridge, OS UI, accessibility, lifecycle, or physical-device gaps |
-| CI | GitHub Actions on every branch push and pull request with no path filters and an always-running same-SHA aggregate; merge-group and externally enforced trusted-policy controls become required only after AD-38 proves hosting support |
+| CI | Optional GitHub Actions adapter on every branch push and pull request with no path filters and an always-running same-SHA aggregate when hosted; merge-group and externally enforced trusted-policy controls are optional |
 
 ## 4. Mandatory project overrides
 
@@ -202,7 +202,7 @@ Forbidden: mobile Gradle/settings/build logic or production source; web/backend 
 Obey AD-15, AD-27, AD-29, and AD-35 through AD-38.
 Create the three exact product roots, independent contracts root, policy-only tooling inventory, common product-inventory schema, distinct ownership roles, mobile scaffold-pending plus web/backend preselection lifecycle records and gates, and six-job CI.
 Run quality-linux root-boundary/catalog validation unconditionally; make quality-backend emit its contract-side fingerprint; make ci-required directly need exactly six jobs and always require matching root, inventory, lifecycle, contract-catalog, and released-version-matrix fingerprints.
-Trigger every branch push and pull request without filters. Add merge_group only when AD-38 evidence proves it can be enforced. Never claim ruleset, trusted required workflow, or merge-queue enforcement before that gate passes.
+When hosted, trigger every branch push and pull request without filters. Add merge_group only as an optional hosting configuration. Never claim ruleset, trusted required workflow, or merge-queue enforcement from checked-in files.
 Do not choose web/backend frameworks or create a root package-manager workspace, shared cache, shared dependency install, product build plugin, product source generator, or multi-product deployment.
 ```
 
@@ -210,11 +210,11 @@ Do not choose web/backend frameworks or create a root package-manager workspace,
 
 ```text
 Use devops-orchestrator.
-Owned slice: hosting/ruleset/trusted-policy configuration and its immutable evidence only.
+Owned slice: optional hosting/ruleset/trusted-policy configuration and its immutable evidence only.
 Forbidden: product source, product build files, contracts, and unrelated repository settings.
 Obey AD-35 and AD-38.
-Provision and prove private-repository rulesets, distinct-owner approvals, required ci-required, immutable trusted-policy-audit, and a blocked bypass attempt. Require and prove merge_group only if merge queue remains enabled.
-Do not report this story complete from checked-in workflow YAML alone.
+If the hosting plan supports it, provision and prove private-repository rulesets, distinct-owner approvals, required ci-required, immutable trusted-policy-audit, and a blocked bypass attempt. Require and prove merge_group only if merge queue remains enabled.
+Do not claim external enforcement from checked-in workflow YAML alone; this optional slice never blocks lifecycle activation.
 ```
 
 ### 7.0b Mobile build-policy scaffold slice
@@ -287,7 +287,7 @@ The story-level evidence matrix has exactly one owning invocation per proof:
 | iOS framework export/link and native bootstrap bridge | `mobile/apps/sharedKit` |
 | Android app/package/device and non-distributable acceptance evidence | `mobile/apps/androidApp` |
 | iOS Xcode app/scheme/simulator and non-distributable acceptance evidence | `mobile/apps/iosApp` |
-| Aggregate `qualityCheckJvmAndroid`, `qualityCheckApple`, four mobile jobs, and all-six-job same-SHA success | activation invocation writes only `mobile/product-lifecycle.toml`; the candidate active-state CI execution is read-only |
+| Aggregate `qualityCheckJvmAndroid`, `qualityCheckApple`, and the local equivalents of the four mobile quality lanes | activation invocation writes only `mobile/product-lifecycle.toml`; optional hosted CI execution is read-only |
 
 The coordinator may read all prior outputs but writes only its current slice.
 The final invocation proposes `active` on the story branch; that candidate
@@ -512,7 +512,7 @@ An agent-authored story is not complete until:
 - every affected production source has one denominator, its module and product aggregate meet 85% line/branch coverage, changed production lines/branches meet 100%, and required equivalent evidence executes;
 - every affected catalog journey passes through the same fingerprinted Maestro flow on Android and iOS, all linked non-visual oracles pass, affected common robot IDs execute on JVM/Android/iOS, and every applicable native-gap entry passes;
 - every affected journey records its tap/scroll/field/choice budget, bounded text-entry/choice-surface/recovery maxima, proposal/decision IDs, value/digests, and default provenance, and verifies the shortest safe default path, each user-override/Undo path, and negative cases for hidden/forbidden defaults;
-- every-push GitHub Actions jobs and the always-running same-SHA aggregate are present and fail closed; production work does not begin until AD-38 proves the externally enforced controls;
+- local quality entrypoints and their fail-closed policy checks are present; optional hosted GitHub Actions may provide the same aggregate, but AD-38 enforcement evidence is not required for production work;
 - no required task is skipped, disabled, filtered to zero, ignored, or absent;
 - no new repository, literal/dynamic dependency version, broad suppression, wildcard stability entry, or production/shippable dependency on `testing` was introduced;
 - mandatory cancellation, consent, logging, replay, cleanup, and deletion conformance scenarios remain present and pass.

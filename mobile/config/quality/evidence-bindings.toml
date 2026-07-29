@@ -4,7 +4,7 @@ product = "mobile"
 lifecycle = "scaffold-pending"
 source_digest = "pending"
 manifest_count = 13
-manifest_digest = "1990c0ca08584431400bdd5b8ee50690e5cb8da95528a879a03e18ef341ce17c"
+manifest_digest = "5975c1e6bf57cb044904d312a9bd68b3e970458bfe42bc979a5669acb483fc8e"
 profile = "photo-analysis"
 status = "pending"
 

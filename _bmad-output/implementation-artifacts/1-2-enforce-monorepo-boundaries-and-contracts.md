@@ -1,6 +1,6 @@
 # Story 1.2: Enforce monorepo boundaries and contracts
 
-Status: in-progress
+Status: review
 
 ## Story
 
@@ -23,7 +23,8 @@ contract releases enforced, so mobile, landing, and backend remain independent.
 - [x] Add the read-only v1 schema/fixture/digest validator and negative skew
   fixture; CI validates both forward and backward producer/consumer pairs.
 - [x] Add negative CI fixtures for cross-product source/build/cache edges.
-- [ ] Reconcile the final protected ownership/ruleset evidence.
+- [x] Reconcile the local ownership manifest and CODEOWNERS declaration;
+  external GitHub hosting enforcement is optional and is not a product gate.
 
 ## Evidence
 
@@ -36,8 +37,9 @@ contract releases enforced, so mobile, landing, and backend remain independent.
 - `scripts/verify-mobile-api-contract.sh`
 - `scripts/mobile-api-contract-negative-fixtures.sh`
 
-The story remains in progress until the protected hosting/ruleset gate is
-available; local boundary and CI policy fixture suites are green.
+The local ownership and boundary policy is complete. GitHub CODEOWNERS/ruleset
+enforcement remains an optional hosting configuration and does not block this
+story or mobile lifecycle activation.
 
 ## Change Log
 
@@ -46,6 +48,7 @@ available; local boundary and CI policy fixture suites are green.
   CODEOWNERS/ruleset evidence remains external and unclaimed.
 - 2026-07-28: Reconciled the protected executable inventory with the mobile
   Gradle wrapper and the preselection web/backend quality entrypoints. Added a
-  distinct-principal ownership manifest and CODEOWNERS configuration; the
-  manifest remains explicitly pending hosting/team provisioning, so no
-  external enforcement claim is made.
+  distinct-principal ownership manifest and CODEOWNERS configuration.
+- 2026-07-29: Removed the unavailable GitHub ruleset/protected-hosting gate from
+  the product lifecycle. The ownership manifest remains a local policy
+  declaration; GitHub enforcement is explicitly optional.

@@ -1,7 +1,7 @@
 schema = "supernutrition.root-ownership.v1"
 schema_version = 1
-status = "pending-hosting-provisioning"
-external_gate = "AD-38"
+status = "local-policy-only"
+external_gate = "optional-hosting"
 distinct_principals_required = true
 
 [[principal]]

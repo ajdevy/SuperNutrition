@@ -20,6 +20,26 @@ expect_rejected() {
     cat "$fixture_root/$name.out" >&2
     exit 1
   fi
+  if ! grep -q '^product-identity:' "$fixture_root/$name.out"; then
+    printf 'identity fixture failed for an unrelated reason: %s\n' "$name" >&2
+    cat "$fixture_root/$name.out" >&2
+    exit 1
+  fi
+}
+
+expect_accepted() {
+  local name="$1"
+  local fixture_repo="$2"
+  local contract="$fixture_repo/contracts/product-identity/v1/metadata.toml"
+  local mobile_identity="$fixture_repo/mobile/config/product-identity.toml"
+  if ! SUPERNUTRITION_REPO_ROOT="$fixture_repo" \
+    SUPERNUTRITION_MOBILE_IDENTITY="$mobile_identity" \
+    SUPERNUTRITION_IDENTITY_CONTRACT="$contract" \
+    "$validator" >"$fixture_root/$name.out" 2>&1; then
+    printf 'identity fixture unexpectedly rejected: %s\n' "$name" >&2
+    cat "$fixture_root/$name.out" >&2
+    exit 1
+  fi
 }
 
 refresh_digest() {
@@ -74,11 +94,19 @@ prepare_fixture() {
   cp "$repo_root/mobile/apps/iosApp/Info.plist" "$fixture_repo/mobile/apps/iosApp/Info.plist"
   cp "$repo_root/mobile/apps/iosApp/SuperNutritionUIAcceptance.xcodeproj/project.pbxproj" \
     "$fixture_repo/mobile/apps/iosApp/SuperNutritionUIAcceptance.xcodeproj/project.pbxproj"
+  mkdir -p "$fixture_repo/mobile/apps/iosApp/SuperNutritionUIAcceptance.xcodeproj/xcshareddata/xcschemes"
+  cp "$repo_root/mobile/apps/iosApp/SuperNutritionUIAcceptance.xcodeproj/xcshareddata/xcschemes/SuperNutritionUIAcceptance.xcscheme" \
+    "$fixture_repo/mobile/apps/iosApp/SuperNutritionUIAcceptance.xcodeproj/xcshareddata/xcschemes/SuperNutritionUIAcceptance.xcscheme"
+  cp "$repo_root/mobile/apps/iosApp/SuperNutritionUIAcceptance.xcodeproj/xcshareddata/xcschemes/SuperNutrition.xcscheme" \
+    "$fixture_repo/mobile/apps/iosApp/SuperNutritionUIAcceptance.xcodeproj/xcshareddata/xcschemes/SuperNutrition.xcscheme"
   mkdir -p "$fixture_repo/web/landing" "$fixture_repo/backend/mobile-api"
   cp "$repo_root/web/landing/product-lifecycle.toml" "$fixture_repo/web/landing/product-lifecycle.toml"
   cp "$repo_root/backend/mobile-api/product-lifecycle.toml" "$fixture_repo/backend/mobile-api/product-lifecycle.toml"
   printf '%s\n' "$fixture_repo"
 }
+
+baseline="$(prepare_fixture baseline)"
+expect_accepted baseline "$baseline"
 
 wrong_store_title="$(prepare_fixture wrong-store-title)"
 python3 - "$wrong_store_title/contracts/product-identity/v1/metadata.toml" <<'PY'

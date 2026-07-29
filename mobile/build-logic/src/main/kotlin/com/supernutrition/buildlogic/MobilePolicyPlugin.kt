@@ -41,6 +41,21 @@ class MobilePolicyPlugin : Plugin<Project> {
                     "Unexpected mobile root project name"
                 }
                 MobilePolicyValidator.validate(mobileRoot)
+                val repositoryRoot = mobileRoot.parent
+                listOf(
+                    "scripts/verify-product-identity.sh",
+                    "scripts/verify-interaction-policy-contract.sh",
+                    "scripts/verify-mobile-api-contract.sh",
+                ).forEach { relative ->
+                    val script = repositoryRoot.resolve(relative)
+                    require(Files.isRegularFile(script)) { "Missing local policy verifier: $relative" }
+                    val result = ProcessBuilder("bash", script.toString())
+                        .directory(repositoryRoot.toFile())
+                        .inheritIO()
+                        .start()
+                        .waitFor()
+                    require(result == 0) { "Local policy verifier failed: $relative" }
+                }
             }
         }
     }

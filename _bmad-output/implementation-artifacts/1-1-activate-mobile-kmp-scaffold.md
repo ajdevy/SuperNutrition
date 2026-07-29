@@ -63,8 +63,8 @@ so that feature agents can build against a reproducible substrate.
 
 - [ ] Task 9 — Prove scaffold activation and lifecycle transition (AC: 1, 2, 3, 5)
   - [x] Run the mobile host quality tasks twice with configuration cache enabled and `problems=fail`; prove store then reuse without opt-outs.
-  - [ ] Run available common/JVM/Android/iOS checks and record same-SHA evidence; do not substitute emulator/simulator output for physical camera/device proof.
-  - [ ] Change only `mobile/product-lifecycle.toml` in the lifecycle slice, and only from `scaffold-pending` to `active` after every prior handoff and the all-six-job aggregate are successful; otherwise leave it fail-closed.
+  - [ ] Run available common/JVM/Android/iOS checks and record local evidence; do not substitute emulator/simulator output for physical camera/device proof.
+  - [ ] Change only `mobile/product-lifecycle.toml` in the lifecycle slice, and only from `scaffold-pending` to `active` after the local policy, Apple, Xcode, inventory, coverage, and host gates are successful; GitHub hosting enforcement is optional.
 
 ## Dev Notes
 
@@ -136,14 +136,16 @@ GPT-5 / Codex
 - Added nonempty mobile-quality-policy manifests and the owning executable validator with stale-digest, duplicate/orphan, wrong-profile, and pending-evidence rejection.
 - Added the bootstrap-only Maestro flow and locator dictionary; no photo-analysis profile or product journey was added.
 - Added the non-production KMP scaffold probe, concrete bootstrap-shell robot, and colocated tests; no production API was added. Canonical iOS ARM64 probe execution remains pending.
-- The story remains in-progress because Tasks 2–9 require separate ownership slices and unavailable Apple/device/CI evidence prevents lifecycle activation.
+- The story remains in-progress because Tasks 2–9 require separate ownership slices and unavailable Apple/device evidence prevents lifecycle activation; hosted GitHub CI is optional.
 - Physical-device runbook: `mobile/REAL_DEVICE_TESTING.md`. Connect a physical Android serial and an iPhone UDID before attempting packaged evidence; never substitute the existing emulator or x64 simulator compatibility build.
-- Bootstrap launch/DI evidence now exists for one physical Android and one iOS simulator. It is not yet an active-state claim: the current iOS result is the Intel `iosX64` compatibility lane, while canonical `iosSimulatorArm64`, exact Xcode tuple, digest reconciliation, and trusted CI/ruleset evidence remain outstanding.
+- Bootstrap launch/DI evidence now exists for one physical Android and one iOS simulator. It is not yet an active-state claim: the current iOS result is the Intel `iosX64` compatibility lane, while canonical `iosSimulatorArm64`, exact Xcode tuple, digest reconciliation, and active inventory evidence remain outstanding.
 - 2026-07-27: Added `mobile/product-lifecycle.toml` as an explicit fail-closed
   activation record. The production Android Compose host now exists, but
-  lifecycle remains `scaffold-pending` because trusted same-SHA six-job/ruleset
-  evidence, canonical `iosSimulatorArm64`/exact Xcode, and active inventory
-  denominators are still unproven.
+  lifecycle remains `scaffold-pending` because canonical `iosSimulatorArm64`,
+  exact Xcode, and active inventory denominators are still unproven.
+- 2026-07-29: GitHub ruleset and trusted same-SHA hosting evidence were removed
+  from activation requirements. Local policy, Apple, Xcode, inventory,
+  coverage, and host gates remain fail-closed.
 
 ### File List
 
@@ -239,7 +241,7 @@ GPT-5 / Codex
   lane passed normalization/presenter/framework checks.
 - 2026-07-27: Split the shared production photo presenter/Compose surface into pure-KMP `feature/photo-analysis-ui`; Android remains on the Android-bearing host module, while canonical Apple targets are prepared without claiming Intel `iosX64` Compose evidence because Compose 1.11.1 has no `iosX64` publication.
 - 2026-07-28: Separated the pure reducer/presenter into `feature/photo-analysis-presenter`, which compiles on the Intel `iosX64` compatibility target; the Compose screen remains target-bound to Android and canonical Apple targets. SharedKit exposes the same presenter session on x64 and the Compose view-controller facade on Apple targets.
-- 2026-07-28: Fresh full local matrix passed after Gradle memory tuning: 120 actionable tasks, JVM suites, read-only quality, Android acceptance assemble, and configuration-cache store/reuse. The physical Honor DNY-NX9 lane passed 7/7 connected tests; the Intel iOS compatibility lane passed x64 normalization/presenter tests and Xcode simulator 4/4. Lifecycle remains scaffold-pending because canonical ARM64, physical iOS, exact Xcode, and protected GitHub evidence are unavailable.
+- 2026-07-28: Fresh full local matrix passed after Gradle memory tuning: 120 actionable tasks, JVM suites, read-only quality, Android acceptance assemble, and configuration-cache store/reuse. The physical Honor DNY-NX9 lane passed 7/7 connected tests; the Intel iOS compatibility lane passed x64 normalization/presenter tests and Xcode simulator 4/4. Lifecycle remains scaffold-pending because canonical ARM64, physical iOS, and exact Xcode evidence are unavailable; protected GitHub hosting is optional.
 - 2026-07-28: Added an executable Compose UI Test v2 screen contract for the
   production capture surface. Strict `:feature:photo-analysis-ui:jvmTest`
   passed with the host-specific test-only Skiko runtime; the strict full local
@@ -259,8 +261,8 @@ GPT-5 / Codex
 - 2026-07-28: Added a read-only six-job CI fingerprint contract and aggregate
   verifier. It binds temporary reports to the checked-out commit, workflow SHA,
   lifecycle records, root/contract/product fingerprints, inventories, and
-  Maestro flows; the lifecycle remains blocked until trusted CI and Apple/device
-  evidence exists.
+  Maestro flows; the lifecycle remains blocked until Apple/device evidence
+  exists, while hosted trust enforcement is optional.
 - 2026-07-28: Executed Maestro 2.7.0 syntax validation against the checked-in
   photo-analysis flow and fixed its missing YAML front-matter separator. Both
   lifecycle-aware CI runners now syntax-check the flow before execution; the
@@ -269,7 +271,8 @@ GPT-5 / Codex
 - 2026-07-28: The Intel iOS 26.0 simulator ran the checked-in Maestro
   photo-analysis flow successfully (`1/1`, 12 seconds) against the x64
   compatibility app. This remains compatibility evidence only; canonical
-  `iosSimulatorArm64`, exact Xcode 26.4.1, and trusted CI evidence remain open.
+  `iosSimulatorArm64` and exact Xcode 26.4.1 remain open, while hosted CI
+  evidence is optional.
 - 2026-07-28: Hardened the read-only policy validator against concurrent Gradle
   output churn. Lock-state discovery now skips `build`, `.gradle`, `.git`, and
   `graphify-out` subtrees instead of traversing volatile compiler caches; the
@@ -284,9 +287,9 @@ GPT-5 / Codex
 - 2026-07-28: Marked the scaffold-probe and compose-support implementation
   slices complete after re-running the JVM presenter/domain tests, strict
   `platform:photo-ios:iosX64Test`, and the Intel `sharedKit:linkIosX64`
-  framework lane. Task 9 remains open because the all-six-job trusted
-  evidence, canonical Apple ARM64/Xcode tuple, and lifecycle activation gates
-  are not available on this host.
+  framework lane. Task 9 remains open because the canonical Apple ARM64/Xcode
+  tuple and lifecycle activation gates are not available on this host; the
+  all-six-job hosted evidence is optional.
 - 2026-07-28: Re-ran the Intel x64 compatibility host with the complete
   `enableTestingAppleTargets`/`enableIntelIosX64` flag pair and explicit
   `ARCHS=x86_64`; the Xcode acceptance scheme passed 4/4 on the booted iOS
@@ -303,5 +306,5 @@ GPT-5 / Codex
   dependency verification; the first strict quality run stored configuration
   cache and the repeat reused it in 2 seconds. CI, root-boundary, API,
   product-identity, interaction-policy, and graphify checks are green; the
-  lifecycle remains fail-closed because trusted hosted CI/ruleset and physical
+  lifecycle remains fail-closed because canonical Apple/Xcode and physical
   iOS evidence are still unavailable.

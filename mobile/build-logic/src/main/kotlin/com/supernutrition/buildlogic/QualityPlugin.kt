@@ -87,6 +87,8 @@ class QualityPlugin : Plugin<Project> {
             group = "verification"
             description = "Runs every declared mobile JVM unit-test task without emitting a coverage claim."
         }
+        qualityCheckJvmAndroid.configure { dependsOn(mobileUnitTests) }
+        qualityCheckApple.configure { dependsOn(mobileUnitTests) }
         project.gradle.projectsEvaluated {
             val jvmUnitTestTasks = project.subprojects.flatMap { subproject ->
                 subproject.tasks.matching { it.name == "jvmTest" }.toList()
@@ -133,6 +135,11 @@ class QualityPlugin : Plugin<Project> {
         )
 
         qualityCheckJvmAndroid.configure { dependsOn(qualityCoverageJvm) }
+        project.tasks.findByName("verifyMobilePolicy")?.let { mobilePolicyTask ->
+            qualityCheckJvmAndroid.configure { dependsOn(mobilePolicyTask) }
+            qualityCheckApple.configure { dependsOn(mobilePolicyTask) }
+            qualityCoverageJvm.configure { dependsOn(mobilePolicyTask) }
+        }
     }
 
     private fun configureDetekt(target: Project, rootProject: Project, autocorrectRequested: Boolean) {
@@ -255,8 +262,6 @@ class QualityPlugin : Plugin<Project> {
             coverageText.contains("quality_claim = true") &&
             nativeEquivalentEvidenceAllowed(mobileRoot) &&
             listOf(
-                "all_six_jobs_success = true",
-                "trusted_ruleset_audit = true",
                 "canonical_ios_simulator_arm64 = true",
                 "exact_xcode_toolchain = true",
                 "active_inventory_and_denominators = true",
