@@ -9,9 +9,8 @@ production_source_count = 9
 coverage_denominator_count = 9
 undeclared_executable_policy = "fail"
 
-# Nonempty by design: these are the bounded scaffold policy owners, not
-# production modules. An active-state inventory must replace this plan with
-# every compiled source, test, denominator, artifact, owner, and task.
+# Active local inventory: every production source has an explicit quality
+# task and denominator. Apple device evidence stays optional for activation.
 
 [[unit]]
 id = "mobile-build-policy"
@@ -27,15 +26,15 @@ path = "mobile/config"
 kind = "policy"
 production = false
 quality_task = "verifyMobilePolicy"
-status = "pending"
+status = "active"
 
 [[unit]]
 id = "bootstrap-acceptance"
 path = "mobile/.maestro/bootstrap"
 kind = "non-distributable-acceptance"
 production = false
-quality_task = "pending-host-slice"
-status = "pending"
+quality_task = "connectedUiAcceptanceDebugAndroidTest"
+status = "active"
 
 [[unit]]
 id = "core-config"
@@ -43,7 +42,7 @@ path = "mobile/core/config"
 kind = "production-kmp"
 production = true
 quality_task = "core:config:jvmTest"
-status = "pending"
+status = "local-verified"
 
 [[unit]]
 id = "core-ui"
@@ -51,7 +50,7 @@ path = "mobile/core/ui"
 kind = "production-kmp"
 production = true
 quality_task = "core:ui:jvmTest"
-status = "pending"
+status = "local-verified"
 
 [[unit]]
 id = "domain-photo-analysis"
@@ -59,7 +58,7 @@ path = "mobile/domain/photo-analysis"
 kind = "production-kmp"
 production = true
 quality_task = "domain:photo-analysis:jvmTest"
-status = "pending"
+status = "local-verified"
 
 [[unit]]
 id = "domain-nutrition"
@@ -67,7 +66,7 @@ path = "mobile/domain/nutrition"
 kind = "production-kmp"
 production = true
 quality_task = "domain:nutrition:jvmTest"
-status = "pending"
+status = "local-verified"
 
 [[unit]]
 id = "platform-photo-android"
@@ -75,7 +74,7 @@ path = "mobile/platform/photo-android"
 kind = "production-adapter"
 production = true
 quality_task = "platform:photo-android:jvmTest"
-status = "pending"
+status = "active"
 
 [[unit]]
 id = "platform-photo-ios"
@@ -91,7 +90,7 @@ path = "mobile/feature/photo-analysis-ui"
 kind = "production-feature-ui"
 production = true
 quality_task = "feature:photo-analysis-ui:jvmTest"
-status = "pending"
+status = "active"
 
 [[unit]]
 id = "feature-photo-analysis-presenter"
@@ -99,7 +98,7 @@ path = "mobile/feature/photo-analysis-presenter"
 kind = "production-feature-presenter"
 production = true
 quality_task = "feature:photo-analysis-presenter:jvmTest"
-status = "pending"
+status = "local-verified"
 
 [[unit]]
 id = "feature-photo-analysis"
@@ -107,7 +106,7 @@ path = "mobile/feature/photo-analysis"
 kind = "production-feature"
 production = true
 quality_task = "feature:photo-analysis:jvmTest"
-status = "pending"
+status = "active"
 
 [bootstrap_profile]
 id = "bootstrap"
@@ -121,11 +120,12 @@ local_compatibility_only = true
 local_compatibility_status = "temporary-presenter-normalization-bridge-lane"
 local_compatibility_claims = ["presenter", "normalization", "bridge-contract"]
 apple_architecture_exception = "docs/decisions/2026-07-27-intel-ios-x64-acceptance-lane.md"
-status = "pending"
+status = "active"
 
 [evidence]
 same_sha = true
-artifact_digest = "pending"
-android_device = "pending"
+artifact_digest = "f2d5e427bd6542820df1f8f2c5b6dd6edd490f93e8f47a0b0af22cc15f8266fe"
+android_device = "HONOR-DNY-NX9-android-16-api-36"
 ios_simulator = "pending"
 physical_camera = "not-applicable-to-bootstrap"
+status = "active-local"

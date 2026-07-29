@@ -1,6 +1,6 @@
 # Story 1.3: Establish product identity metadata
 
-Status: review
+Status: done
 
 ## Story
 

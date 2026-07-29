@@ -1,6 +1,6 @@
 # Story 1.5: Establish the low-friction interaction policy
 
-Status: review
+Status: done
 
 ## Story
 
@@ -26,7 +26,8 @@ without hiding consent, uncertainty, jurisdiction, or provenance.
   idempotent session-scoped overrides and invalidation.
 - [x] Bind journey-level tap/scroll/field/choice budgets and the Android/iOS
   accessibility contracts to the photo-analysis scenario; native execution
-  remains pending until the platform gaps are attested.
+  is attested on physical Android; optional Apple gaps remain explicit and
+  pending.
 
 ## Evidence
 
