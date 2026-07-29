@@ -1,0 +1,76 @@
+{
+  "model": "google/gemini-2.5-flash",
+  "modelVersion": "google/gemini-2.5-flash",
+  "provider": "Google",
+  "duration": 2004.679591,
+  "durationSec": "2.00",
+  "promptTokens": 1893,
+  "completionTokens": 307,
+  "totalTokens": 2200,
+  "cost": 0.00046814999999999997,
+  "raw": "```json\n{\n  \"foods\": [\n    {\n      \"label\": \"Paella\",\n      \"rank\": 1,\n      \"confidence\": 0.95,\n      \"assumptions\": [\n        \"The dish contains rice, seafood (shrimp), meat (possibly chorizo or chi",
+  "parsed": {
+    "foods": [
+      {
+        "label": "Paella",
+        "rank": 1,
+        "confidence": 0.95,
+        "assumptions": [
+          "The dish contains rice, seafood (shrimp), meat (possibly chorizo or chicken), vegetables (peas, bell peppers), and is garnished with lemon wedges and fresh herbs (cilantro/parsley), which are common ingredients in paella.",
+          "The cooking vessel appears to be a shallow pan, consistent with how paella is traditionally cooked and served."
+        ]
+      },
+      {
+        "label": "Jambalaya",
+        "rank": 2,
+        "confidence": 0.7,
+        "assumptions": [
+          "The dish contains rice, seafood (shrimp), meat, and vegetables, which are also common in jambalaya.",
+          "The color and texture of the rice are similar to jambalaya."
+        ]
+      },
+      {
+        "label": "Fried Rice",
+        "rank": 3,
+        "confidence": 0.4,
+        "assumptions": [
+          "The dish is primarily rice with various mix-ins like shrimp and vegetables.",
+          "However, the specific spices and overall appearance lean more towards paella or jambalaya than typical fried rice."
+        ]
+      }
+    ]
+  },
+  "foods": [
+    {
+      "label": "Paella",
+      "rank": 1,
+      "confidence": 0.95,
+      "assumptions": [
+        "The dish contains rice, seafood (shrimp), meat (possibly chorizo or chicken), vegetables (peas, bell peppers), and is garnished with lemon wedges and fresh herbs (cilantro/parsley), which are common ingredients in paella.",
+        "The cooking vessel appears to be a shallow pan, consistent with how paella is traditionally cooked and served."
+      ]
+    },
+    {
+      "label": "Jambalaya",
+      "rank": 2,
+      "confidence": 0.7,
+      "assumptions": [
+        "The dish contains rice, seafood (shrimp), meat, and vegetables, which are also common in jambalaya.",
+        "The color and texture of the rice are similar to jambalaya."
+      ]
+    },
+    {
+      "label": "Fried Rice",
+      "rank": 3,
+      "confidence": 0.4,
+      "assumptions": [
+        "The dish is primarily rice with various mix-ins like shrimp and vegetables.",
+        "However, the specific spices and overall appearance lean more towards paella or jambalaya than typical fried rice."
+      ]
+    }
+  ],
+  "image": "02-burger-fries.jpg",
+  "modelLabel": "Gemini 2.5 Flash (Pass 1 main)",
+  "pass": 1,
+  "key": "google_gemini-2.5-flash__02-burger-fries_jpg"
+}
