@@ -1,0 +1,183 @@
+schema = "supernutrition.mobile-api-consent-receipt.v1"
+schema_version = 1
+release = "v1"
+language_neutral = true
+executable = false
+
+# Consent receipt.
+#
+# AD-8: remote transfer begins only after an explicit consent receipt bound to
+# the digest of the SCRUBBED NORMALIZED payload — not an unsanitized source
+# file — plus purpose, market jurisdiction, processing region, retention
+# version, configuration version, and transfer state.
+#
+# Field set is the union of the stage brief and docs/09 §9.5. Where the brief
+# is a subset, §9.5 governs: a receipt missing a binding field cannot prove the
+# precondition it exists to prove.
+
+[semantics]
+scope = "per-attempt-per-modality"
+persists_across_attempts = false
+persists_across_sessions = false
+payload_stored = false
+digest_covers = "scrubbed-normalized-payload-bytes"
+recorded_server_side_for_audit = true
+# A declined receipt is recorded too. Proving a user said no is as important as
+# proving they said yes.
+records_declined_decisions = true
+
+# ---------------------------------------------------------------------------
+# fields
+# ---------------------------------------------------------------------------
+
+[[field]]
+name = "version"
+type = "string"
+optional = false
+enum = ["1"]
+description = "Receipt schema version, independent of the contract release version."
+
+[[field]]
+name = "attemptId"
+type = "string"
+optional = false
+pattern = "^att_[A-Za-z0-9]{16,64}$"
+description = "Binds the receipt to exactly one attempt. A receipt is not reusable across attempts."
+
+[[field]]
+name = "digest"
+type = "string"
+optional = false
+pattern = "^sha256:[0-9a-f]{64}$"
+description = """
+SHA-256 of the scrubbed, normalized payload bytes — after EXIF, GPS, and all \
+non-essential metadata are stripped. The gateway recomputes this over what it \
+actually received; a mismatch is malformed-consent and no provider is called."""
+
+[[field]]
+name = "modality"
+type = "string"
+optional = false
+enum = ["photo", "text"]
+description = """
+Photo and text are decided independently. A receipt presenting one modality's \
+consent copy for a transfer of the other fails closed (AD-41 MP-4)."""
+
+[[field]]
+name = "purpose"
+type = "string"
+optional = false
+enum = ["food-identification"]
+description = "Closed set. A purpose not on this list cannot be consented to through this contract."
+
+[[field]]
+name = "decision"
+type = "string"
+optional = false
+enum = ["granted", "declined"]
+description = """
+Explicit. There is no default and no pre-selection: upload and no-upload are \
+equal, unselected, and visually neutral on the consent surface (AD-40, E4.1)."""
+
+[[field]]
+name = "marketJurisdiction"
+type = "string"
+optional = false
+pattern = "^[A-Z]{2}$"
+description = """
+The jurisdiction resolved by the gateway and DISPLAYED to the user before the \
+decision. Recorded here as what the user was shown when they decided (MP-7)."""
+
+[[field]]
+name = "processingRegion"
+type = "string"
+optional = false
+nullable = true
+description = """
+The region shown to the user before the decision. Null only for a declined \
+receipt where no region was resolved. Users consent to the resulting transfer; \
+they never pick routing."""
+
+[[field]]
+name = "consentCopyVersion"
+type = "string"
+optional = false
+nullable = true
+description = """
+The reviewed disclosure text version the user actually saw, for this modality. \
+Null is permitted only when decision = declined. A granted receipt with a null \
+or unknown copy version fails closed — otherwise there is no record of what was \
+disclosed."""
+
+[[field]]
+name = "retentionVersion"
+type = "string"
+optional = false
+description = "Version of the retention policy disclosed at decision time."
+
+[[field]]
+name = "retentionDays"
+type = "integer"
+optional = false
+minimum = 0
+maximum = 0
+description = """
+Provider-side retention disclosed to the user, in days. Constrained to exactly \
+0 in v1: AD-8 forbids durable raw-photo retention, and G-4 requires \
+zero-retention provider terms. A nonzero value cannot be expressed by this \
+release, so a retention change is a visible contract change rather than a \
+configuration edit."""
+
+[[field]]
+name = "configurationVersion"
+type = "string"
+optional = false
+description = """
+Monotonic version of the signed ConfigurationSnapshot in force (AD-20). Ties \
+the decision to the exact policy set that produced the disclosure."""
+
+[[field]]
+name = "recordedAt"
+type = "string"
+optional = false
+format = "RFC 3339 UTC instant"
+description = "When the user decided."
+
+[[field]]
+name = "expiresAt"
+type = "string"
+optional = false
+format = "RFC 3339 UTC instant"
+description = """
+Consent is never open-ended. Evaluated at RESOLUTION time, not at build or \
+issue time, so a receipt that expires in flight is rejected."""
+
+# ---------------------------------------------------------------------------
+# validation
+# ---------------------------------------------------------------------------
+
+[validation]
+digest_mismatch = "malformed-consent"
+structurally_invalid = "malformed-consent"
+expired_at_resolution_time = "consent-expired"
+absent = "consent-required"
+declined = "consent-required"
+modality_mismatch = "consent-required"
+unknown_consent_copy_version = "consent-required"
+attempt_id_mismatch = "malformed-consent"
+max_validity_seconds = 900
+evaluated_at = "resolution-time"
+
+[fail_closed]
+# Every one of these must hold. Any one absent means no provider call is made.
+conditions = [
+  "digest-matches-received-payload",
+  "modality-matches-endpoint",
+  "consent-copy-version-known-for-modality",
+  "decision-is-granted",
+  "not-expired-at-resolution-time",
+  "market-posture-permits-modality",
+  "processing-region-in-permitted-list",
+  "retention-and-configuration-versions-supported",
+]
+any_condition_absent = "no-provider-call"

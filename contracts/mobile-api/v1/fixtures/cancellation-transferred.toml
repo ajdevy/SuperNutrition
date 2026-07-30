@@ -1,0 +1,47 @@
+schema = "supernutrition.mobile-api-fixture.v1"
+fixture_id = "cancellation-transferred"
+expected = "accepted"
+description = """
+Cancellation after the payload reached the provider. The result is suppressed \
+and a downstream deletion request is issued, but recallClaimed stays false: \
+reporting a deletion REQUEST as a deletion GUARANTEE is a claim the gateway \
+cannot keep. A late provider emission after this point is discarded, never \
+returned — one terminal outcome per attempt."""
+
+[request]
+method = "DELETE"
+path = "/gw/v1/inference/att_07Q4D0W8R3X5T9V1"
+
+[request.headers]
+"X-Request-Id" = "req_07Q4D0W8R3X5T9V1Z2B4"
+"X-Contract-Version" = "mobile-api/v1"
+
+[request.state_at_cancellation]
+transferState = "transferred"
+bytes_received_by_gateway = 388502
+provider_called = true
+inference_in_progress = true
+
+[response]
+status = 202
+
+[response.body]
+attemptId = "att_07Q4D0W8R3X5T9V1"
+transferState = "transferred"
+bytesTransferred = 388502
+recallClaimed = false
+downstreamDeletionRequested = true
+resultSuppressed = true
+cancelledAt = "2026-07-29T14:22:47Z"
+
+[assertions]
+recall_claimed = false
+downstream_deletion_requested = true
+result_suppressed = true
+late_provider_emission_discarded = true
+late_emission_returned_to_client = false
+payload_disposed = true
+payload_persisted = false
+honest_claim = "Deletion was requested downstream. Sent bytes are not claimed to be recalled."
+user_facing_copy_may_claim_recall = false
+repeat_cancellation_returns_same_record = true
