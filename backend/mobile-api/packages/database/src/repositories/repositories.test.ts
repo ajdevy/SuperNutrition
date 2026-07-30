@@ -36,9 +36,13 @@ describe('repository skeletons fail loudly', () => {
     await expect(call()).rejects.toBeInstanceOf(NotImplementedError);
   });
 
-  it('InferenceRunRecorder methods are not silently no-ops', async () => {
-    await expect(runs.record({} as never)).rejects.toBeInstanceOf(NotImplementedError);
-    await expect(runs.pruneOlderThan(new Date(0))).rejects.toBeInstanceOf(NotImplementedError);
+  // The recorder is implemented (Stage 4). It is exercised against a real
+  // database elsewhere; here we only assert it is no longer a placeholder,
+  // because a telemetry writer that silently throws would drop every row.
+  it('InferenceRunRecorder is implemented, not a placeholder', () => {
+    expect(runs).toBeInstanceOf(DrizzleInferenceRunRecorder);
+    expect(typeof runs.record).toBe('function');
+    expect(typeof runs.pruneOlderThan).toBe('function');
   });
 
   it('names the missing operation in the error', async () => {

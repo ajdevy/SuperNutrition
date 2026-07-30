@@ -77,6 +77,12 @@ if [ ! -d "$root_dir/node_modules" ]; then
   fail 'dependencies are not installed; run "npm ci" first (this gate is read-only)'
 fi
 
+# Snapshot the lock so the read-only claim is tested against what this gate
+# does, not against the working tree. Comparing to git HEAD instead would fail
+# on any uncommitted dependency change — a legitimate edit under review — while
+# saying nothing about whether the gate itself rewrote the lock.
+lock_before="$(shasum -a 256 "$root_dir/package-lock.json" | cut -d' ' -f1)"
+
 printf '%s\n' '==> typecheck'
 npx --no-install tsc --build --force || fail 'typecheck failed'
 
@@ -98,11 +104,9 @@ for release in v1; do
 done
 
 printf '%s\n' '==> lock integrity'
-# A clean tree after the gate proves nothing was rewritten.
-if command -v git >/dev/null 2>&1 && git -C "$root_dir" rev-parse --git-dir >/dev/null 2>&1; then
-  if ! git -C "$root_dir" diff --quiet -- package-lock.json; then
-    fail 'package-lock.json was modified; this gate must be read-only'
-  fi
+lock_after="$(shasum -a 256 "$root_dir/package-lock.json" | cut -d' ' -f1)"
+if [ "$lock_before" != "$lock_after" ]; then
+  fail 'this gate rewrote package-lock.json; it must be read-only'
 fi
 
 printf '%s\n' 'backend mobile-api: active quality gate passed (typecheck, lint, format, tests, coverage, contracts)'
