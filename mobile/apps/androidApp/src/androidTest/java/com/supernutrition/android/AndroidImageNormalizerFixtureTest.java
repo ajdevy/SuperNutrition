@@ -57,13 +57,17 @@ public final class AndroidImageNormalizerFixtureTest {
     }
 
     @Test
-    public void defaultOrientationReaderUsesExifOrientation() throws Exception {
+    public void callerSuppliedOrientationIsApplied() throws Exception {
         PhotoRef ref = PhotoRef.Companion.issue(
                 new AttemptId("fixture-default-orientation"),
                 "fixture-photo"
         );
 
-        NormalizedPhotoInput normalized = new AndroidImageNormalizer().normalize(ref, fixtureBytes());
+        NormalizedPhotoInput normalized = new AndroidImageNormalizer().normalize(
+                ref,
+                fixtureBytes(),
+                ImageOrientation.RIGHT
+        );
 
         assertEquals(4, normalized.getWidth());
         assertEquals(6, normalized.getHeight());

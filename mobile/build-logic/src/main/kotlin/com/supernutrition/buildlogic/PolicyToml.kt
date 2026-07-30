@@ -1,5 +1,8 @@
 package com.supernutrition.buildlogic
 
+import java.util.Collections
+import java.util.WeakHashMap
+
 /**
  * Small typed parser for the repository's data-only TOML policy manifests.
  *
@@ -79,6 +82,10 @@ internal object PolicyToml {
             }
         }
 
+    // Validators issue many independent queries against one immutable manifest.
+    // Cache the typed representation by source text instead of reparsing each accessor.
+    private val documents = Collections.synchronizedMap(WeakHashMap<String, Document>())
+
     private data class Document(
         val root: LinkedHashMap<String, Value> = linkedMapOf(),
         val tables: MutableList<Table> = mutableListOf(),
@@ -102,7 +109,11 @@ internal object PolicyToml {
             .mapNotNull { it.values[key] }
             .firstOrNull()
 
-    private fun parse(text: String): Document {
+    private fun parse(text: String): Document = documents[text] ?: synchronized(documents) {
+        documents[text] ?: parseDocument(text).also { documents[text] = it }
+    }
+
+    private fun parseDocument(text: String): Document {
         val document = Document()
         var current: Table? = null
         val pending = StringBuilder()

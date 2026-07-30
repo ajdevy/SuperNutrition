@@ -58,10 +58,13 @@ class PhotoAnalysisAndroidHostController(
                 return
             }
             val returnedOperation = data?.getStringExtra(AndroidPhotoCaptureFiles.EXTRA_OPERATION_ID)
-            if (returnedOperation != null && returnedOperation != expectedOperation) return
             captureOperation.pendingOperationId = null
-            if (resultCode == Activity.RESULT_OK && returnedOperation != expectedOperation) {
-                feature.dispatch(PhotoAnalysisEvent.PreparationFailed(RecoveryReason.CAPTURE_FAILED))
+            if (returnedOperation != expectedOperation) {
+                feature.dispatch(
+                    PhotoAnalysisEvent.PreparationFailed(
+                        if (resultCode == Activity.RESULT_OK) RecoveryReason.CAPTURE_FAILED else RecoveryReason.CANCELLED,
+                    ),
+                )
                 return
             }
         }

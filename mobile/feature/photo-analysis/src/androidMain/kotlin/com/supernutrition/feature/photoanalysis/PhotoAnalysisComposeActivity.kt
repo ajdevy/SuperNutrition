@@ -25,6 +25,7 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
     }
     private val feature: PhotoAnalysisFeature get() = retainedState.feature
     private lateinit var host: PhotoAnalysisAndroidHostController
+    private var permissionRationale: android.app.AlertDialog? = null
     private var wasBackgrounded = false
 
     private val presentationCopy: PhotoAnalysisPresenterCopy by lazy {
@@ -79,8 +80,9 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         savedInstanceState?.getString(PENDING_OPERATION_ID_KEY)?.let {
             retainedState.captureOperation.pendingOperationId = it
         }
-        retainedState.captureOperation.permissionRequestInFlight =
-            savedInstanceState?.getBoolean(PERMISSION_REQUEST_IN_FLIGHT_KEY) ?: false
+        // Android does not replay an Activity Result permission callback after
+        // process death. Restoring this transient guard would prevent a retry.
+        retainedState.captureOperation.permissionRequestInFlight = false
         val photoBridge = AndroidPhotoBridge(
             context = this,
             permissionRequestInFlight = retainedState.captureOperation.permissionRequestInFlight,
@@ -91,11 +93,15 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
             normalizer = AndroidImageNormalizer(),
             requestCameraPermission = { permissionLauncher.launch(Manifest.permission.CAMERA) },
             showCameraPermissionRationale = { onContinue ->
-                android.app.AlertDialog.Builder(this)
-                    .setMessage(R.string.capture_permission_rationale)
-                    .setNegativeButton(R.string.capture_cancel, null)
-                    .setPositiveButton(R.string.capture_permission_continue) { _, _ -> onContinue() }
-                    .show()
+                permissionRationale?.dismiss()
+                if (!isFinishing && !isDestroyed) {
+                    permissionRationale = android.app.AlertDialog.Builder(this)
+                        .setMessage(R.string.capture_permission_rationale)
+                        .setNegativeButton(R.string.capture_cancel, null)
+                        .setPositiveButton(R.string.capture_permission_continue) { _, _ -> onContinue() }
+                        .create()
+                        .also { it.show() }
+                }
             },
             launchCamera = { operationId -> cameraLauncher.launch(photoBridge.cameraCaptureIntent(operationId)) },
             launchImport = { importLauncher.launch(photoBridge.photoPickerIntent()) },
@@ -138,6 +144,8 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
     }
 
     override fun onStop() {
+        permissionRationale?.dismiss()
+        permissionRationale = null
         feature.dispatch(com.supernutrition.domain.photoanalysis.PhotoAnalysisEvent.Backgrounded)
         wasBackgrounded = true
         retainedState.wasBackgrounded = true

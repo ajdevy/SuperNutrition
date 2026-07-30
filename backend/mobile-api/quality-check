@@ -22,16 +22,59 @@ import ast
 import os
 from pathlib import Path
 
+try:
+    import tomllib
+except ModuleNotFoundError:  # Python 3.10 has no stdlib TOML reader.
+    tomllib = None
+
 root = Path(os.environ["BACKEND_ROOT"])
 manifest = Path(os.environ["BACKEND_MANIFEST"])
 def read_manifest(path: Path) -> dict:
-    """Parse this dependency-free preselection manifest on Python 3.10+."""
+    """Parse the root-only preselection manifest on Python 3.10+."""
+    if tomllib is not None:
+        parsed = tomllib.loads(path.read_text(encoding="utf-8"))
+        return {key: value for key, value in parsed.items() if not isinstance(value, dict)}
+
+    def without_comment(raw: str) -> str:
+        quote = None
+        escaped = False
+        for index, char in enumerate(raw):
+            if escaped:
+                escaped = False
+            elif quote and char == "\\":
+                escaped = True
+            elif char in {"'", '"'}:
+                quote = None if quote == char else (char if quote is None else quote)
+            elif char == "#" and quote is None:
+                return raw[:index]
+        if quote is not None:
+            raise ValueError("unterminated string")
+        return raw
+
     data = {}
+    pending = ""
+    depth = 0
+    in_table = False
     for raw_line in path.read_text(encoding="utf-8").splitlines():
-        line = raw_line.split("#", 1)[0].strip()
-        if not line or line.startswith("[") or "=" not in line:
+        line = without_comment(raw_line).strip()
+        if not line:
             continue
-        key, _, raw_value = line.partition("=")
+        if line.startswith("[") and depth == 0:
+            if not (line.endswith("]") and not line.startswith("[[")):
+                raise ValueError("unsupported table declaration")
+            in_table = True
+            continue
+        if in_table:
+            continue
+        pending = f"{pending} {line}".strip()
+        depth += line.count("[") - line.count("]")
+        if depth < 0:
+            raise ValueError("array closes before it opens")
+        if depth:
+            continue
+        if "=" not in pending:
+            raise ValueError("assignment is missing '='")
+        key, _, raw_value = pending.partition("=")
         value = raw_value.strip()
         if value in {"true", "false"}:
             parsed = value == "true"
@@ -41,6 +84,9 @@ def read_manifest(path: Path) -> dict:
             except (SyntaxError, ValueError) as error:
                 raise ValueError(f"unsupported TOML value for {key.strip()}") from error
         data[key.strip()] = parsed
+        pending = ""
+    if pending or depth:
+        raise ValueError("unterminated array assignment")
     return data
 
 try:
