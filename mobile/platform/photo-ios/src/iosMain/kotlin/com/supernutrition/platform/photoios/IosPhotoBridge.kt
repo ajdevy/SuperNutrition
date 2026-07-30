@@ -85,13 +85,15 @@ class IosPhotoBridge : IosPhotoBridgePort, IosPhotoPresentationPort {
     /** Resolves the permission prompt in the bridge; the host receives only a Boolean. */
     override fun ensureCameraAccess(onResult: (Boolean) -> Unit) {
         when (cameraPermissionState()) {
-            IosCameraPermissionState.GRANTED -> onResult(true)
-            IosCameraPermissionState.NOT_DETERMINED -> SNRequestCameraAccess(onResult)
+            IosCameraPermissionState.GRANTED -> deliver(onResult, true)
+            IosCameraPermissionState.NOT_DETERMINED -> SNRequestCameraAccess { granted ->
+                deliver(onResult, granted)
+            }
             IosCameraPermissionState.DENIED,
             IosCameraPermissionState.RATIONALE,
             IosCameraPermissionState.PERMANENTLY_DENIED,
             IosCameraPermissionState.RESTRICTED,
-            -> onResult(false)
+            -> deliver(onResult, false)
         }
     }
 
@@ -111,8 +113,8 @@ class IosPhotoBridge : IosPhotoBridgePort, IosPhotoPresentationPort {
         val controller = CameraCaptureViewController(
             cancelLabel = cancelLabel,
             shutterLabel = shutterLabel,
-            onResult = onResult,
-            onFailure = onFailure,
+            onResult = { data -> deliver(onResult, data) },
+            onFailure = { failPresentation(onFailure) },
         ) { weakBridge.get()?.activeDelegate = null }
         if (!retain(controller)) {
             failPresentation(onFailure)
@@ -142,7 +144,10 @@ class IosPhotoBridge : IosPhotoBridgePort, IosPhotoPresentationPort {
         val picker = TrackedPhotoPickerViewController(configuration) {
             delegate.presentationDismissed()
         }
-        delegate = PhotoPickerDelegate(onResult, onFailure) { weakBridge.get()?.activeDelegate = null }
+        delegate = PhotoPickerDelegate(
+            onResult = { data -> deliver(onResult, data) },
+            onFailure = { failPresentation(onFailure) },
+        ) { weakBridge.get()?.activeDelegate = null }
         if (!retain(delegate)) {
             failPresentation(onFailure)
             return
@@ -161,6 +166,10 @@ class IosPhotoBridge : IosPhotoBridgePort, IosPhotoPresentationPort {
 
     private fun failPresentation(onFailure: () -> Unit) {
         dispatch_async(dispatch_get_main_queue()) { onFailure() }
+    }
+
+    private fun <T> deliver(callback: (T) -> Unit, value: T) {
+        dispatch_async(dispatch_get_main_queue()) { callback(value) }
     }
 
     private fun cameraDevice(): AVCaptureDevice? = SNDefaultBackCamera()

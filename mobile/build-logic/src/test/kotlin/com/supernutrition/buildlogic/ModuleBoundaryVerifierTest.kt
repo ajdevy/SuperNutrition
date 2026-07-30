@@ -54,6 +54,34 @@ class ModuleBoundaryVerifierTest {
         }
     }
 
+    @Test
+    fun `platform wrapped project edge keeps its outer configuration`() {
+        val root = fixture("feature")
+        try {
+            Files.writeString(
+                root.resolve("feature/photo/build.gradle.kts"),
+                "implementation(platform(project(\":domain:photo\")))",
+            )
+            ModuleBoundaryVerifier.validate(root)
+        } finally {
+            root.toFile().deleteRecursively()
+        }
+    }
+
+    @Test
+    fun `platform wrapped undeclared edge still fails`() {
+        val root = fixture("feature")
+        try {
+            Files.writeString(
+                root.resolve("feature/photo/build.gradle.kts"),
+                "implementation(platform(project(\":platform:photo\")))",
+            )
+            assertFailsWith<IllegalArgumentException> { ModuleBoundaryVerifier.validate(root) }
+        } finally {
+            root.toFile().deleteRecursively()
+        }
+    }
+
     private fun fixture(source: String): java.nio.file.Path {
         val root = Files.createTempDirectory("module-boundaries")
         Files.createDirectories(root.resolve("config/architecture"))

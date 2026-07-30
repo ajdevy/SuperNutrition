@@ -153,7 +153,10 @@ class AndroidCameraCaptureActivity : ComponentActivity() {
 
                 override fun onError(exception: ImageCaptureException) {
                     Log.e(TAG, "Camera capture failed", exception)
-                    activity.get()?.finishWithFailure(CaptureFailureReason.CAPTURE_FAILED)
+                    val owner = activity.get() ?: return
+                    if (!owner.isFinishing && !owner.isDestroyed) {
+                        owner.finishWithFailure(CaptureFailureReason.CAPTURE_FAILED)
+                    }
                 }
             },
         )
@@ -209,14 +212,8 @@ class AndroidCameraCaptureActivity : ComponentActivity() {
     }
 }
 
-private enum class CaptureFailureReason {
+private enum class CaptureFailureReason(val wireValue: String) {
     PERMISSION_DENIED("permission-denied"),
     CAMERA_UNAVAILABLE("camera-unavailable"),
     CAPTURE_FAILED("capture-failed");
-
-    val wireValue: String
-
-    private constructor(wireValue: String) {
-        this.wireValue = wireValue
-    }
 }

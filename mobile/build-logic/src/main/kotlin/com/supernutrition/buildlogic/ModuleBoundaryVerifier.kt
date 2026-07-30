@@ -186,9 +186,9 @@ internal object ModuleBoundaryVerifier {
     private fun parseProjectDependency(line: String, fallbackConfiguration: String?): ProjectDependency? {
         val projectMarker = line.indexOf("project(")
         if (projectMarker < 0) return null
-        val configuration = line.substring(0, projectMarker)
-            .trim()
-            .substringBeforeLast('(')
+        val prefix = line.substring(0, projectMarker).trim()
+        val configuration = prefix
+            .substringBefore('(')
             .trim()
             .substringAfterLast(' ')
             .substringAfterLast('.')

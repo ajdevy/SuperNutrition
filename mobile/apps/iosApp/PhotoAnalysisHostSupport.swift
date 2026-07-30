@@ -89,107 +89,102 @@ struct PhotoAnalysisComposeHost: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 
     final class Coordinator: NSObject {
-        let session: SharedKitPhotoAnalysisSession
-        let photoBridge: IosPhotoBridge
-        weak var hostViewController: UIViewController?
-
         init(session: SharedKitPhotoAnalysisSession) {
-            self.session = session
-            photoBridge = IosPhotoBridge()
+            presentation = PhotoAnalysisPresentationCoordinator(session: session)
+        }
+
+        let presentation: PhotoAnalysisPresentationCoordinator
+        weak var hostViewController: UIViewController? {
+            didSet { presentation.presenter = hostViewController }
         }
 
         func handle(action: PhotoAnalysisNativeAction) {
-            guard let mappedAction = PhotoAnalysisHostAction(action) else {
-                session.captureFailed()
-                return
-            }
-            switch mappedAction {
-            case .takePhoto:
-                requestCameraOrRecover()
-            case .importPhoto:
-                presentPhotoPicker()
-            case .openSettings:
-                guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
-                UIApplication.shared.open(url)
-            }
-        }
-
-        private func requestCameraOrRecover() {
-            guard photoBridge.cameraAvailable() else {
-                session.cameraUnavailable()
-                return
-            }
-
-            photoBridge.ensureCameraAccess { [weak self] granted in
-                guard let self else { return }
-                guard granted.boolValue else {
-                    self.session.permissionDenied()
-                    return
-                }
-                guard let hostViewController = self.hostViewController else {
-                    self.session.captureFailed()
-                    return
-                }
-                self.photoBridge.presentCamera(
-                    from: hostViewController,
-                    cancelLabel: self.session.presenterCopy.capture.cancel,
-                    shutterLabel: self.session.presenterCopy.capture.takeMealPhoto,
-                    onResult: { [weak self] data in
-                        guard let self else { return }
-                        if let data {
-                            self.session.photoReturned(
-                                opaqueId: UUID().uuidString,
-                                sourceData: data,
-                            )
-                        } else {
-                            self.session.captureCancelled()
-                        }
-                    },
-                    onFailure: { [weak self] in
-                        self?.session.captureFailed()
-                    },
-                )
-            }
-        }
-
-        private func presentPhotoPicker() {
-            guard let hostViewController else {
-                session.captureFailed()
-                return
-            }
-            photoBridge.presentPhotoPicker(
-                from: hostViewController,
-                onResult: { [weak self] data in
-                    guard let self else { return }
-                    if let data {
-                        self.session.photoReturned(
-                            opaqueId: UUID().uuidString,
-                            sourceData: data,
-                        )
-                    } else {
-                        self.session.captureCancelled()
-                    }
-                },
-                onFailure: { [weak self] in
-                    self?.session.captureFailed()
-                },
-            )
+            presentation.handle(action: action)
         }
     }
+}
+
+/// Shared orchestration for both Swift hosts. Native implementation remains an injected port.
+final class PhotoAnalysisPresentationCoordinator {
+    let session: SharedKitPhotoAnalysisSession
+    private let photoBridge: IosPhotoPresentationPort
+    weak var presenter: UIViewController?
+    var didChange: () -> Void = {}
+
+    init(session: SharedKitPhotoAnalysisSession, photoBridge: IosPhotoPresentationPort = IosPhotoBridge()) {
+        self.session = session
+        self.photoBridge = photoBridge
+    }
+
+    func handle(action: PhotoAnalysisNativeAction) {
+        guard let action = PhotoAnalysisHostAction(action) else { fail(); return }
+        switch action {
+        case .takePhoto: takePhoto()
+        case .importPhoto: importPhoto()
+        case .openSettings: openSettings()
+        }
+    }
+
+    func takePhoto() { requestCamera() }
+    func importPhoto() { presentPhotoPicker() }
+
+    private func requestCamera() {
+        guard photoBridge.cameraAvailable() else { session.cameraUnavailable(); changed(); return }
+        photoBridge.ensureCameraAccess { [weak self] granted in
+            self?.onMain {
+                guard granted.boolValue else { self?.session.permissionDenied(); self?.changed(); return }
+                self?.presentCamera()
+            }
+        }
+    }
+
+    private func presentCamera() {
+        guard let presenter else { fail(); return }
+        photoBridge.presentCamera(
+            from: presenter,
+            cancelLabel: session.presenterCopy.capture.cancel,
+            shutterLabel: session.presenterCopy.capture.takeMealPhoto,
+            onResult: { [weak self] data in self?.complete(data) },
+            onFailure: { [weak self] in self?.fail() },
+        )
+    }
+
+    private func presentPhotoPicker() {
+        guard let presenter else { fail(); return }
+        photoBridge.presentPhotoPicker(
+            from: presenter,
+            onResult: { [weak self] data in self?.complete(data) },
+            onFailure: { [weak self] in self?.fail() },
+        )
+    }
+
+    private func complete(_ data: NSData?) {
+        onMain { [weak self] in
+            guard let self else { return }
+            if let data { session.photoReturned(opaqueId: UUID().uuidString, sourceData: data) }
+            else { session.captureCancelled() }
+            changed()
+        }
+    }
+
+    private func fail() { onMain { [weak self] in self?.session.captureFailed(); self?.changed() } }
+    private func changed() { didChange() }
+    private func openSettings() { guard let url = URL(string: UIApplication.openSettingsURLString) else { return }; UIApplication.shared.open(url) }
+    private func onMain(_ work: @escaping () -> Void) { if Thread.isMainThread { work() } else { DispatchQueue.main.async(execute: work) } }
 }
 
 #if arch(x86_64)
 /// Compatibility renderer for Intel hosts whose pinned Compose graph has no iosX64 publication.
 struct PhotoAnalysisIntelCompatibilityView: View {
     let session: SharedKitPhotoAnalysisSession
-    private let photoBridge: IosPhotoBridge
+    private let presentation: PhotoAnalysisPresentationCoordinator
     @Environment(\.scenePhase) private var scenePhase
     @State private var status: String
     @State private var presenter: UIViewController?
 
     init(session: SharedKitPhotoAnalysisSession) {
         self.session = session
-        photoBridge = IosPhotoBridge()
+        presentation = PhotoAnalysisPresentationCoordinator(session: session)
         _status = State(initialValue: session.statusLabel())
     }
 
@@ -206,12 +201,12 @@ struct PhotoAnalysisIntelCompatibilityView: View {
                 .accessibilityIdentifier(SharedKitAutomationIds.shared.photoAnalysisStatus)
 
             Button(session.presenterCopy.capture.takeMealPhoto) {
-                requestCameraOrRecover()
+                presentation.takePhoto()
             }
             .accessibilityIdentifier(SharedKitAutomationIds.shared.captureShutter)
 
             Button(session.presenterCopy.capture.choosePhoto) {
-                presentPhotoPicker()
+                presentation.importPhoto()
             }
             .accessibilityIdentifier(SharedKitAutomationIds.shared.captureImport)
 
@@ -223,7 +218,11 @@ struct PhotoAnalysisIntelCompatibilityView: View {
             }
         }
         .padding()
-        .background(PhotoAnalysisNativePresenter { presenter = $0 })
+        .background(PhotoAnalysisNativePresenter { controller in
+            presenter = controller
+            presentation.presenter = controller
+        })
+        .onAppear { presentation.didChange = refreshStatus }
         .onChange(of: scenePhase) { phase in
             handle(scenePhase: phase)
         }
@@ -245,73 +244,6 @@ struct PhotoAnalysisIntelCompatibilityView: View {
         @unknown default:
             break
         }
-    }
-
-    private func requestCameraOrRecover() {
-        guard photoBridge.cameraAvailable() else {
-            session.cameraUnavailable()
-            refreshStatus()
-            return
-        }
-
-        photoBridge.ensureCameraAccess { granted in
-            DispatchQueue.main.async {
-                guard granted.boolValue else {
-                    session.permissionDenied()
-                    refreshStatus()
-                    return
-                }
-                guard let presenter else {
-                    session.captureFailed()
-                    refreshStatus()
-                    return
-                }
-                photoBridge.presentCamera(
-                    from: presenter,
-                    cancelLabel: session.presenterCopy.capture.cancel,
-                    shutterLabel: session.presenterCopy.capture.takeMealPhoto,
-                    onResult: { data in
-                        DispatchQueue.main.async {
-                            if let data {
-                                session.photoReturned(opaqueId: UUID().uuidString, sourceData: data)
-                            } else {
-                                session.captureCancelled()
-                            }
-                            refreshStatus()
-                        }
-                    },
-                    onFailure: {
-                        session.captureFailed()
-                        refreshStatus()
-                    },
-                )
-            }
-        }
-    }
-
-    private func presentPhotoPicker() {
-        guard let presenter else {
-            session.captureFailed()
-            refreshStatus()
-            return
-        }
-        photoBridge.presentPhotoPicker(
-            from: presenter,
-            onResult: { data in
-                DispatchQueue.main.async {
-                    if let data {
-                        session.photoReturned(opaqueId: UUID().uuidString, sourceData: data)
-                    } else {
-                        session.captureCancelled()
-                    }
-                    refreshStatus()
-                }
-            },
-            onFailure: {
-                session.captureFailed()
-                refreshStatus()
-            },
-        )
     }
 
     private func openSettings() {

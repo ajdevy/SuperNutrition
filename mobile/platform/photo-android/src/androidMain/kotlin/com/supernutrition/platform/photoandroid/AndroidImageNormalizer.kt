@@ -24,9 +24,6 @@ class AndroidImageNormalizer(
 ) : AndroidPhotoNormalizerPort {
     private val common = PhotoInputNormalizer(digest = ::sha256)
 
-    fun normalize(ref: PhotoRef, sourceBytes: ByteArray): NormalizedPhotoInput =
-        normalize(ref, sourceBytes, sourceBytes.exifOrientation())
-
     override fun normalize(
         ref: PhotoRef,
         sourceBytes: ByteArray,
