@@ -53,4 +53,71 @@ class CatalogSearchTest {
         // prefix-only record does not dilute it.
         assertEquals(listOf("food:rye-bread"), results.map { it.canonicalItemId })
     }
+
+    @Test
+    fun `a query accounting for more of a record outranks a more qualified record`() {
+        val search = CatalogSearch(
+            listOf(
+                CatalogRecord(
+                    canonicalItemId = "food:bread-rye-reduced-sodium",
+                    displayName = "Bread, rye, reduced sodium",
+                ),
+                CatalogRecord(canonicalItemId = "food:rye-bread", displayName = "Bread, rye"),
+            ),
+        )
+
+        val results = search.search("rye bread")
+
+        // Both match TOKEN_SUBSET, so the tier cannot separate them. The query
+        // accounts for all of "Bread, rye" but half of the sodium variant, so
+        // the unqualified record ranks first. Canonical id would order these the
+        // other way round, which is why it is only the final tiebreak.
+        assertEquals(
+            listOf("food:rye-bread", "food:bread-rye-reduced-sodium"),
+            results.map { it.canonicalItemId },
+        )
+    }
+
+    @Test
+    fun `records matching in the same tier are ordered by canonical id, not catalog order`() {
+        val search = CatalogSearch(
+            listOf(
+                CatalogRecord(canonicalItemId = "food:zucchini-raw", displayName = "Zucchini raw"),
+                CatalogRecord(canonicalItemId = "food:apple-raw", displayName = "Apple raw"),
+            ),
+        )
+
+        val results = search.search("raw")
+
+        // Both match TOKEN_SUBSET equally. Catalog order must not decide the
+        // result order, or the same query returns different orderings on two
+        // devices whose packages were built in a different sequence.
+        assertEquals(
+            listOf("food:apple-raw", "food:zucchini-raw"),
+            results.map { it.canonicalItemId },
+        )
+    }
+
+    @Test
+    fun `a single-character typo still finds the record`() {
+        val search = CatalogSearch(
+            listOf(CatalogRecord(canonicalItemId = "food:rye-bread", displayName = "Bread, rye")),
+        )
+
+        val results = search.search("bred")
+
+        assertEquals(listOf("food:rye-bread"), results.map { it.canonicalItemId })
+    }
+
+    @Test
+    fun `an unrelated query returns nothing rather than a nearest guess`() {
+        val search = CatalogSearch(
+            listOf(
+                CatalogRecord(canonicalItemId = "food:rye-bread", displayName = "Bread, rye"),
+                CatalogRecord(canonicalItemId = "food:platano", displayName = "Plátano"),
+            ),
+        )
+
+        assertEquals(emptyList(), search.search("motorcycle").map { it.canonicalItemId })
+    }
 }
