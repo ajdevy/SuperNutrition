@@ -2,6 +2,8 @@ import SwiftUI
 import SharedKit
 import UIKit
 
+private typealias PhotoAnalysisNativeAction = Photo_analysisPhotoAnalysisNativeAction
+
 /// Production host. UI-acceptance-only launch and compatibility code remains in
 /// SuperNutritionUIAcceptanceApp.swift and is compiled only by the acceptance target.
 @main
@@ -72,13 +74,12 @@ private struct ProductionPhotoAnalysisComposeHost: UIViewControllerRepresentable
         }
 
         func handle(action: PhotoAnalysisNativeAction) {
-            switch action {
-            case .takePhoto:
+            if action == .takephoto {
                 requestCameraOrRecover()
-            case .importPhoto:
+            } else if action == .importphoto {
                 presentPhotoPicker()
-            case .openSettings:
-                guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+            } else if action == .opensettings,
+                      let url = URL(string: UIApplication.openSettingsURLString) {
                 UIApplication.shared.open(url)
             }
         }

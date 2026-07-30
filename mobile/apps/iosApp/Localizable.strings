@@ -1,0 +1,25 @@
+"bootstrap.ready" = "Bootstrap ready";
+
+"photo_analysis.capture.title" = "Capture";
+"photo_analysis.capture.take_photo" = "Take meal photo";
+"photo_analysis.capture.choose_photo" = "Choose photo";
+"photo_analysis.capture.open_settings" = "Open settings";
+"photo_analysis.capture.cancel" = "Cancel";
+"photo_analysis.capture.shutter" = "Take photo";
+"photo_analysis.recovery.scan_again" = "Scan again";
+"photo_analysis.action.cancel" = "Cancel";
+
+"photo_analysis.status.ready_to_capture" = "Ready to capture";
+"photo_analysis.status.preparing_photo" = "Preparing photo";
+"photo_analysis.status.photo_ready" = "Photo ready";
+"photo_analysis.status.analyzing_photo" = "Analyzing photo";
+"photo_analysis.status.review_candidate" = "Review candidate";
+"photo_analysis.status.restoring_photo_analysis" = "Restoring photo analysis";
+
+"photo_analysis.recovery.permission_required" = "Camera permission is required";
+"photo_analysis.recovery.camera_unavailable" = "Camera is unavailable";
+"photo_analysis.recovery.capture_failed" = "Photo capture failed";
+"photo_analysis.recovery.quality_too_low" = "Photo quality is too low";
+"photo_analysis.recovery.no_food_found" = "No food was found in the photo";
+"photo_analysis.recovery.offline" = "Analysis is offline";
+"photo_analysis.recovery.cancelled" = "Analysis cancelled";

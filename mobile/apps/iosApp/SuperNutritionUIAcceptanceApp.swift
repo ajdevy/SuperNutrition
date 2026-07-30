@@ -2,6 +2,8 @@ import SwiftUI
 import SharedKit
 import UIKit
 
+private typealias PhotoAnalysisNativeAction = Photo_analysisPhotoAnalysisNativeAction
+
 @main
 struct SuperNutritionUIAcceptanceApp: App {
     private let session: SharedKitPhotoAnalysisSession
@@ -43,26 +45,26 @@ private struct IntelCompatibilityCaptureView: View {
         VStack(spacing: 16) {
             Text(" ")
                 .accessibilityIdentifier(SharedKitAutomationIds.shared.bootstrapLaunchMarker)
-                .accessibilityLabel("Bootstrap ready")
+                .accessibilityLabel(String(localized: "bootstrap.ready"))
                 .frame(width: 1, height: 1)
                 .opacity(0.01)
-            Text("Capture")
+            Text(session.captureTitle())
                 .accessibilityIdentifier(SharedKitAutomationIds.shared.photoAnalysisTitle)
             Text(status)
                 .accessibilityIdentifier(SharedKitAutomationIds.shared.photoAnalysisStatus)
 
-            Button("Take meal photo") {
+            Button(session.takeMealPhotoLabel()) {
                 requestCameraOrRecover()
             }
             .accessibilityIdentifier(SharedKitAutomationIds.shared.captureShutter)
 
-            Button("Choose photo") {
+            Button(session.choosePhotoLabel()) {
                 presentPhotoPicker()
             }
             .accessibilityIdentifier(SharedKitAutomationIds.shared.captureImport)
 
-            if status == "Camera permission is required" || status == "Camera is unavailable" {
-                Button("Open settings") {
+            if session.shouldOfferSettings() {
+                Button(session.openSettingsLabel()) {
                     openSettings()
                 }
                 .accessibilityIdentifier(SharedKitAutomationIds.shared.captureOpenSettings)
@@ -218,13 +220,12 @@ private struct PhotoAnalysisComposeHost: UIViewControllerRepresentable {
         }
 
         func handle(action: PhotoAnalysisNativeAction) {
-            switch action {
-            case .takePhoto:
+            if action == .takephoto {
                 requestCameraOrRecover()
-            case .importPhoto:
+            } else if action == .importphoto {
                 presentPhotoPicker()
-            case .openSettings:
-                guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+            } else if action == .opensettings,
+                      let url = URL(string: UIApplication.openSettingsURLString) {
                 UIApplication.shared.open(url)
             }
         }

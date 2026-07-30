@@ -1,0 +1,4 @@
+headers = PhotoCaptureData.h
+language = Objective-C
+package = com.supernutrition.platform.photoios.captureinterop
+linkerOpts = -framework AVFoundation

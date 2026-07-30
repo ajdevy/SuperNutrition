@@ -7,17 +7,18 @@ import kotlin.test.assertEquals
 class PhotoAnalysisCaptureRobotTest {
     @Test
     fun `robot uses typed semantics and bounded final assertions`() {
+        val copy = testCopy()
         val host = FakeHost(
             state = PhotoAnalysisPresenterState.CAPTURE,
             texts = mapOf(
-                "photo_analysis_title" to "Capture",
-                "photo_analysis_status" to "Ready to capture",
-                "capture_shutter" to "Take meal photo",
-                "capture_import" to "Choose photo",
-                "capture_scan_again" to "Scan again",
+                "photo_analysis_title" to copy.captureTitle,
+                "photo_analysis_status" to copy.readyToCapture,
+                "capture_shutter" to copy.takeMealPhoto,
+                "capture_import" to copy.choosePhoto,
+                "capture_scan_again" to copy.scanAgain,
             ),
         )
-        val robot = PhotoAnalysisCaptureRobot(host, testCopy())
+        val robot = PhotoAnalysisCaptureRobot(host, copy)
 
         robot.assertCaptureSurface()
         robot.takePhoto()
@@ -44,24 +45,24 @@ class PhotoAnalysisCaptureRobotTest {
     }
 
     private fun testCopy() = PhotoAnalysisPresenterCopy(
-        captureTitle = "Capture",
-        takeMealPhoto = "Take meal photo",
-        choosePhoto = "Choose photo",
-        openSettings = "Open settings",
-        scanAgain = "Scan again",
-        cancel = "Cancel",
-        readyToCapture = "Ready to capture",
-        preparingPhoto = "Preparing photo",
-        photoReady = "Photo ready",
-        analyzingPhoto = "Analyzing photo",
-        reviewCandidate = "Review candidate",
-        restoringPhotoAnalysis = "Restoring photo analysis",
-        cameraPermissionRequired = "Camera permission is required",
-        cameraUnavailable = "Camera is unavailable",
-        photoCaptureFailed = "Photo capture failed",
-        photoQualityTooLow = "Photo quality is too low",
-        noFoodFound = "No food was found in the photo",
-        analysisOffline = "Analysis is offline",
-        analysisCancelled = "Analysis cancelled",
+        captureTitle = "Acquisizione",
+        takeMealPhoto = "Scatta foto del pasto",
+        choosePhoto = "Scegli foto",
+        openSettings = "Apri impostazioni",
+        scanAgain = "Scansiona di nuovo",
+        cancel = "Annulla",
+        readyToCapture = "Pronto per acquisire",
+        preparingPhoto = "Preparazione foto",
+        photoReady = "Foto pronta",
+        analyzingPhoto = "Analisi foto",
+        reviewCandidate = "Rivedi candidato",
+        restoringPhotoAnalysis = "Ripristino analisi foto",
+        cameraPermissionRequired = "Serve il permesso fotocamera",
+        cameraUnavailable = "Fotocamera non disponibile",
+        photoCaptureFailed = "Acquisizione foto non riuscita",
+        photoQualityTooLow = "Qualita foto insufficiente",
+        noFoodFound = "Nessun alimento trovato",
+        analysisOffline = "Analisi offline",
+        analysisCancelled = "Analisi annullata",
     )
 }

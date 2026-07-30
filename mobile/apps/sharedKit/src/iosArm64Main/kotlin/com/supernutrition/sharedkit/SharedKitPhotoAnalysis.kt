@@ -2,10 +2,11 @@ package com.supernutrition.sharedkit
 
 import com.supernutrition.domain.photoanalysis.AttemptId
 import com.supernutrition.domain.photoanalysis.PhotoAnalysisEvent
-import com.supernutrition.domain.photoanalysis.RecoveryReason
+import com.supernutrition.domain.photoanalysis.PhotoAnalysisState
 import com.supernutrition.domain.photoanalysis.PhotoLeaseStore
-import com.supernutrition.domain.photoanalysis.PhotoSessionStore
 import com.supernutrition.domain.photoanalysis.PhotoPreparationException
+import com.supernutrition.domain.photoanalysis.PhotoSessionStore
+import com.supernutrition.domain.photoanalysis.RecoveryReason
 import com.supernutrition.feature.photoanalysis.PhotoAnalysisFeature
 import com.supernutrition.feature.photoanalysis.PhotoAnalysisNativeAction
 import com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterCopy
@@ -18,10 +19,11 @@ import platform.Foundation.NSData
 import platform.UIKit.UIViewController
 
 /** Canonical Apple production facade: shared presenter plus Compose surface. */
-public class SharedKitPhotoAnalysisSession(
+public class SharedKitPhotoAnalysisSession private constructor(
     attemptId: String,
-    internal val copy: PhotoAnalysisPresenterCopy = sharedKitPhotoAnalysisCopy,
+    internal val copy: PhotoAnalysisPresenterCopy = localizedPhotoAnalysisCopy(),
 ) {
+    public constructor(attemptId: String) : this(attemptId, localizedPhotoAnalysisCopy())
     internal val feature = PhotoAnalysisFeature(
         attemptId = AttemptId(attemptId),
         leases = PhotoLeaseStore(),
@@ -31,6 +33,17 @@ public class SharedKitPhotoAnalysisSession(
     public fun presenterState(): PhotoAnalysisPresenterState = PhotoAnalysisPresenterModel.from(feature.state, copy).state
 
     public fun statusLabel(): String = PhotoAnalysisPresenterModel.from(feature.state, copy).statusLabel
+
+    public fun captureTitle(): String = copy.captureTitle
+
+    public fun takeMealPhotoLabel(): String = copy.takeMealPhoto
+
+    public fun choosePhotoLabel(): String = copy.choosePhoto
+
+    public fun openSettingsLabel(): String = copy.openSettings
+
+    public fun shouldOfferSettings(): Boolean =
+        (feature.state as? PhotoAnalysisState.Recovery)?.reason == RecoveryReason.PERMISSION_DENIED
 
     public fun permissionDenied() {
         feature.dispatch(PhotoAnalysisEvent.PermissionDenied)
