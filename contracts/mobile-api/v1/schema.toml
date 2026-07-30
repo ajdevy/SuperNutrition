@@ -4,14 +4,111 @@ release = "v1"
 language_neutral = true
 executable = false
 
+# Surface A only — the first-party inference gateway (/gw/v1). The product API
+# (/api/v1) is a separate surface and requires its own contract release before
+# any client consumes it.
+surface = "inference-gateway"
+base_path = "/gw/v1"
+
+[release_state]
+# v1 was a four-file stub. This release completes it BEFORE either product
+# implements gateway behaviour against it: the mobile remote-inference module
+# does not exist, and the backend gateway is route declarations only.
+#
+# That window is now closed. Once either side ships behaviour bound to these
+# shapes, an incompatible change requires a new major release with a
+# coexistence window, server-before-client activation, a minimum-supported
+# version policy, a rollback plan, and a removal story (AD-36).
+status = "complete"
+frozen_after_first_consumer = true
+next_incompatible_change = "new-major-release"
+
 [envelope]
 contract_id = "mobile-api"
 photo_payload = "normalized-scrubbed-bytes-only"
 attempt_id_required = true
 effect_id_required = true
 consent_receipt_required_before_remote = true
+# Binary payloads travel as a multipart part, never inside the envelope. See
+# gateway-request.toml [transport].
+transport = "multipart/form-data"
+envelope_part = "context"
+payload_part = "payload"
+
+[modality]
+# Photo and text permissions are decided independently per market. A transfer
+# presenting another modality's consent copy fails closed (AD-41 MP-4).
+supported = ["photo"]
+reserved = ["text"]
+per_modality_consent = true
+
+[nutrition]
+# AD-7: inference returns food identity evidence only. Nutrition comes from the
+# versioned on-device catalog. No gateway response carries calories, macros, or
+# micronutrients — asserted by the release validator, not left to review.
+numeric_nutrition = false
+forbidden_response_keys = [
+  "calories", "kcal", "energy",
+  "protein", "proteinG",
+  "fat", "fatG",
+  "carb", "carbs", "carbG", "carbohydrate",
+  "fiber", "fiberG",
+  "sugar", "sugarG",
+  "sodium", "sodiumMg",
+  "nutrients", "nutrition", "macros", "micronutrients",
+  "servingBasis", "gramWeight",
+]
+
+[identifiers]
+# Attempt IDs are random opaque strings (spine convention table). A UUIDv7
+# would be time-sortable, which embeds a creation timestamp and weakens the
+# opacity AD-14 requires of an identifier that appears in telemetry.
+attempt_id_pattern = "^att_[A-Za-z0-9]{16,64}$"
+effect_id_pattern = "^eff_[A-Za-z0-9]{16,64}$"
+request_id_pattern = "^req_[A-Za-z0-9]{16,64}$"
+digest_pattern = "^sha256:[0-9a-f]{64}$"
+market_jurisdiction_format = "ISO 3166-1 alpha-2"
+locale_format = "BCP 47"
+timestamp_format = "RFC 3339 UTC instant"
+
+[authority]
+# AD-41 MP-7: the resolved jurisdiction and processing region are DISPLAYED,
+# never chosen. A client-asserted value is advisory only; the gateway resolves
+# authoritatively and echoes what it resolved. A client cannot widen its own
+# market by asserting a more permissive one.
+market_jurisdiction = "server-resolved"
+processing_region = "server-resolved"
+client_supplied_jurisdiction = "advisory-hint-only"
+client_supplied_region = "not-accepted"
 
 [compatibility]
 unknown_fields = "ignore"
 missing_required_fields = "reject"
 incompatible_change = "new-major-release"
+unknown_enum_value = "map-to-unknown"
+
+[files]
+# Every normative file in this release. The digest in compatibility-matrix.toml
+# covers exactly this set plus the fixtures.
+schemas = [
+  "schema.toml",
+  "gateway-request.toml",
+  "gateway-response.toml",
+  "error-taxonomy.toml",
+  "consent-receipt.toml",
+  "rate-limit.toml",
+  "transfer-states.toml",
+  "market-policy.toml",
+  "compatibility-matrix.toml",
+]
+fixtures = [
+  "fixtures/empty-analysis-request.toml",
+  "fixtures/photo-analysis-success.toml",
+  "fixtures/photo-analysis-low-confidence.toml",
+  "fixtures/photo-analysis-abstention.toml",
+  "fixtures/photo-analysis-consent-expired.toml",
+  "fixtures/photo-analysis-rate-limited.toml",
+  "fixtures/cancellation-pre-transfer.toml",
+  "fixtures/cancellation-transferred.toml",
+]
+documentation = ["RELEASE.md"]

@@ -1,0 +1,190 @@
+schema = "supernutrition.mobile-api-market-policy.v1"
+schema_version = 1
+release = "v1"
+language_neutral = true
+executable = false
+
+# Market policy RESPONSE contract.
+#
+# This file defines what the gateway returns when a client asks which policy
+# applies. It is NOT the policy data itself: the signed per-market entries live
+# in a separately owned `contracts/market-policy/v1` release authored by a
+# principal independent of the products that consume it (AD-41). This contract
+# describes the shape of the answer, never the answer.
+#
+# The client calls this BEFORE presenting a consent sheet, because the resolved
+# jurisdiction and processing region must be visible before either choice
+# (AD-41 MP-7).
+
+[endpoint]
+method = "GET"
+path = "/gw/v1/policy/market"
+success_status = 200
+cacheable = false
+cache_rationale = """
+A posture expires at resolution time, and an expired entry behaves as \
+unresolved. A cached permissive answer would outlive the permission it \
+reports."""
+
+[[query_param]]
+name = "jurisdiction"
+type = "string"
+optional = true
+nullable = true
+pattern = "^[A-Z]{2}$"
+description = """
+ADVISORY hint for which entry to look up first. The gateway resolves the \
+authoritative jurisdiction itself. Omitting it is valid and normal."""
+
+[[query_param]]
+name = "modality"
+type = "string"
+optional = false
+enum = ["photo", "text"]
+description = "Permissions are per-modality and are never inferred across modalities (MP-4)."
+
+# ---------------------------------------------------------------------------
+# response
+# ---------------------------------------------------------------------------
+
+[[response_field]]
+name = "marketJurisdiction"
+type = "string"
+optional = false
+pattern = "^[A-Z]{2}$"
+description = "The jurisdiction the gateway resolved. Authoritative, and displayed before any consent decision."
+
+[[response_field]]
+name = "processingRegion"
+type = "string"
+optional = false
+nullable = true
+description = """
+The region where processing would occur. Null whenever remote is not permitted. \
+Resolved by policy, never selected by the user: users consent to the resulting \
+transfer, not to a provider-region picker (MP-7)."""
+
+[[response_field]]
+name = "residencyPosture"
+type = "string"
+optional = false
+enum = ["unresolved", "unrestricted", "restricted-in-region", "prohibited"]
+description = """
+The legal position for this market. See [posture] below for the meaning of each \
+value and for why this enum differs from the stage brief."""
+
+[[response_field]]
+name = "remotePermitted"
+type = "boolean"
+optional = false
+description = """
+Derived, for the requested modality only. False whenever the posture is \
+unresolved, prohibited, or expired, or the modality is not permitted. A client \
+must treat false as final for this attempt and offer the local and manual \
+alternatives."""
+
+[[response_field]]
+name = "consentCopyVersion"
+type = "string"
+optional = false
+nullable = true
+description = """
+The reviewed disclosure version to present for THIS modality. Null when remote \
+is not permitted. A transfer presenting another modality's copy fails closed."""
+
+[[response_field]]
+name = "acceptedInputLanguages"
+type = "array"
+items = "string"
+optional = false
+format = "BCP 47"
+description = """
+Languages a user may type in this market. Independent of posture, jurisdiction, \
+and permitted regions in BOTH directions: supporting a language is a product \
+capability, operating in a market is a legal position, and neither implies the \
+other (MP-5). A market may list languages while unresolved."""
+
+[[response_field]]
+name = "policyVersion"
+type = "string"
+optional = false
+description = "Version of the signed market-policy release that produced this answer."
+
+[[response_field]]
+name = "resolvedAt"
+type = "string"
+optional = false
+format = "RFC 3339 UTC instant"
+description = "Resolution time. Expiry is evaluated here, not at build time (MP-3)."
+
+# ---------------------------------------------------------------------------
+# posture semantics
+# ---------------------------------------------------------------------------
+
+[posture]
+default = "unresolved"
+fail_closed = true
+divergence_from_stage_brief = """
+The stage brief lists three postures: consent-required, remote-prohibited, \
+remote-permitted. This release uses the four values defined by AD-41 and \
+market-processing-policy.md instead.
+
+The reason is `unresolved`, which the brief's set omits. MP-1 makes it the \
+DEFAULT state of every market: a market that is absent from the policy, or \
+whose review has expired, permits no remote inference of any modality. A \
+three-value enum with no unresolved state has no way to express \
+'not yet reviewed', so every unreviewed market would have to be assigned one of \
+the permissive values — which is precisely the fail-open behaviour AD-41 exists \
+to prevent.
+
+The brief's vocabulary maps on: remote-permitted corresponds to unrestricted, \
+remote-prohibited to prohibited, and consent-required is not a posture at all \
+but a property of every permitted transfer (consent is always required)."""
+
+[[posture_value]]
+id = "unresolved"
+remote_inference = "none"
+is_default = true
+description = """
+No named legal review has set a position, or the review expired. Absence, \
+unresolved, and expiry are equivalent at resolution time (MP-1, MP-3). Nothing \
+infers a posture from a neighbouring market, a shared language, a currency, or \
+a region grouping."""
+local_path_available = true
+
+[[posture_value]]
+id = "unrestricted"
+remote_inference = "permitted-to-any-listed-region"
+is_default = false
+description = "Permitted to any entry in the market's permitted processing regions."
+local_path_available = true
+
+[[posture_value]]
+id = "restricted-in-region"
+remote_inference = "permitted-to-listed-in-jurisdiction-regions-only"
+is_default = false
+description = "Permitted only to the listed in-jurisdiction regions."
+local_path_available = true
+
+[[posture_value]]
+id = "prohibited"
+remote_inference = "none"
+is_default = false
+description = "Explicitly not permitted, and not offered in the interface."
+local_path_available = true
+
+[invariants]
+# In every posture the product remains usable. The deterministic catalog search
+# floor and on-device identification do not depend on a posture, which is what
+# makes fail-closed a viable default rather than an outage.
+product_usable_in_every_posture = true
+posture_set_only_by_named_legal_review = true
+posture_never_widened_as_side_effect = true
+expiry_mandatory = true
+expiry_evaluated_at_resolution_time = true
+catalog_choice_cannot_change_posture = true
+catalog_choice_cannot_change_jurisdiction = true
+catalog_choice_cannot_change_processing_region = true
+language_support_independent_of_posture = true
+resolved_values_displayed_before_consent = true
+user_selects_provider_routing = false
