@@ -9,7 +9,24 @@ import type { InferenceFailure, InferenceRequest, InferenceResult } from './infe
  * new transfer and requires no new consent receipt (docs/07 §7.5).
  */
 export interface InferenceOrchestrator {
-  analyze(request: InferenceRequest): Promise<Result<InferenceResult, InferenceFailure>>;
+  analyze(
+    request: InferenceRequest,
+    options: InferenceAttemptOptions,
+  ): Promise<Result<InferenceResult, InferenceFailure>>;
+}
+
+/**
+ * Attempt-scoped runtime concerns, separate from the request payload.
+ *
+ * The signal is not optional: AD-6 requires cancellation to abort transport and
+ * downstream work, and a port that cannot be cancelled cannot honour that.
+ * The resolved market values travel here rather than in the request because
+ * they are server-resolved, never client-supplied (AD-41 MP-7).
+ */
+export interface InferenceAttemptOptions {
+  readonly signal: AbortSignal;
+  readonly marketJurisdiction: string | null;
+  readonly processingRegion: string | null;
 }
 
 /** Telemetry row per pass. No user foreign key (docs/05 §5.4). */

@@ -2,7 +2,7 @@ schema = "supernutrition.product-inventory.v1"
 schema_version = 1
 product = "mobile-api"
 lifecycle = "active"
-inventory_version = "2026-07-29.1"
+inventory_version = "2026-07-30.1"
 
 # AD-29: this inventory is reconciled with the product's compiled source graph.
 # Every deployable unit lists its tests, coverage denominator, artifact, owner,
@@ -96,16 +96,16 @@ quality_task = "quality-check"
 # ---------------------------------------------------------------------------
 
 [evidence]
-production_source_files = 144
-test_files = 26
-tests_passing = 278
+production_source_files = 159
+test_files = 39
+tests_passing = 537
 tests_failing = 0
 schema_files = 19
 migrations = 1
-coverage_statements_pct = 94.47
-coverage_branches_pct = 96.90
-coverage_functions_pct = 96.74
-coverage_lines_pct = 93.96
+coverage_statements_pct = 93.44
+coverage_branches_pct = 90.22
+coverage_functions_pct = 92.21
+coverage_lines_pct = 94.13
 typecheck = "tsc --build, clean"
 lint = "eslint, clean"
 
@@ -121,9 +121,9 @@ writes_back = false
 # ---------------------------------------------------------------------------
 
 [not_claimed]
-business_logic_implemented = false
+business_logic_implemented = "gateway-surface-only"
 production_ready = false
-remote_inference_enabled = false
+remote_inference_enabled = "code-path-complete-no-market-permits-it"
 rollback_drill_recorded = false
 g4_provider_decision = "open"
 g2_catalog_packages = "open"

@@ -1,7 +1,10 @@
 import type { Result, Modality, ResidencyPosture } from '@supernutrition/shared';
 
 /**
- * Security contracts (docs/09). Interfaces only — Stage 3 implements.
+ * Security contracts (docs/09) and their implementations.
+ *
+ * The contracts were declared in Stage 2; Stage 4 supplies the gateway
+ * implementations re-exported at the bottom of this file.
  */
 
 export interface RateLimitKey {
@@ -140,3 +143,37 @@ export interface UploadValidator {
 export interface PayloadDisposal {
   dispose(attemptId: string): Promise<void>;
 }
+
+// --- implementations ---------------------------------------------------------
+
+export { GATEWAY_CODES, GATEWAY_ERRORS, GatewayError, isGatewayError } from './gateway-errors.js';
+export type { GatewayCode, GatewayErrorSpec, GatewayErrorDetail } from './gateway-errors.js';
+
+export { verifyConsent, computePayloadDigest, MAX_CONSENT_VALIDITY_SECONDS } from './consent.js';
+export type { ConsentReceiptInput, ConsentVerificationInput } from './consent.js';
+
+export {
+  StaticMarketPolicyResolver,
+  deniedResolution,
+  FIXTURE_MARKET_POLICY,
+  PRODUCTION_MARKET_POLICY,
+} from './market-policy.resolver.js';
+
+export {
+  JwtTokenIssuer,
+  TestModeAuthenticator,
+  hashRefreshToken,
+  generateRefreshToken,
+  generateOpaqueId,
+  refreshTokenMatches,
+} from './auth.js';
+export type { AuthContext, TokenPair, TokenIssuerConfig } from './auth.js';
+
+export {
+  RedisRateLimiter,
+  InMemoryRateLimiter,
+  RedisEffectStore,
+  InMemoryEffectStore,
+  InMemoryIdempotencyStore,
+} from './stores.js';
+export type { RedisLike, RateLimitRule } from './stores.js';

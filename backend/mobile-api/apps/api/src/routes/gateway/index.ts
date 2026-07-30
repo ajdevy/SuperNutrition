@@ -32,3 +32,32 @@ export const GATEWAY_PIPELINE = [
 ] as const;
 
 export type GatewayPipelineStep = (typeof GATEWAY_PIPELINE)[number];
+
+// --- implementations ---------------------------------------------------------
+
+export {
+  validateRequest,
+  assertRemoteEnabled,
+  assertTransferAuthorized,
+  verifyConsentAndMarket,
+  magicBytesMatch,
+  SUPPORTED_CONTRACT_VERSIONS,
+  ALLOWED_CONTENT_TYPES,
+  MAX_PAYLOAD_BYTES,
+  EFFECT_TTL_SECONDS,
+} from './inference.handler.js';
+export type {
+  GatewayResponseBody,
+  OutcomeOut,
+  CandidateOut,
+  InferenceRequestInput,
+} from './inference.handler.js';
+
+export { TransferStateTracker, cancellationStatus } from './transfer-state.js';
+export type { CancellationRecord } from './transfer-state.js';
+
+export { runInferencePipeline } from './pipeline.js';
+export type { PipelineDeps, PipelineInput, PayloadSink } from './pipeline.js';
+
+export { registerGatewayRoutes } from './routes.js';
+export type { GatewayRouteDeps } from './routes.js';
