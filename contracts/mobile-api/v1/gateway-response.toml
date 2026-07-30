@@ -1,0 +1,306 @@
+schema = "supernutrition.mobile-api-gateway-response.v1"
+schema_version = 1
+release = "v1"
+language_neutral = true
+executable = false
+
+# Response envelope for the first-party inference gateway.
+#
+# The outcome is a sealed union discriminated by `outcomeType`. A consumer that
+# meets an unrecognised discriminant maps it to `unknown` and treats the attempt
+# as a recoverable failure rather than guessing.
+
+[endpoint]
+method = "POST"
+path = "/gw/v1/inference/photo"
+success_status = 200
+content_type = "application/json"
+
+[[header]]
+name = "X-Correlation-Id"
+type = "string"
+optional = false
+description = "Present on every response including errors, so a user report is traceable without a screenshot."
+
+[[header]]
+name = "X-RateLimit-Remaining"
+type = "integer"
+optional = true
+description = "See rate-limit.toml."
+
+# ---------------------------------------------------------------------------
+# envelope
+# ---------------------------------------------------------------------------
+
+[[envelope]]
+field = "contractVersion"
+type = "string"
+optional = false
+enum = ["mobile-api/v1"]
+description = "Release this response is written against."
+
+[[envelope]]
+field = "requestId"
+type = "string"
+optional = false
+pattern = "^req_[A-Za-z0-9]{16,64}$"
+description = "Server-generated, one-time. Echoed into logs and telemetry."
+
+[[envelope]]
+field = "attemptId"
+type = "string"
+optional = false
+pattern = "^att_[A-Za-z0-9]{16,64}$"
+description = "Echoed from the request. Binds this response to exactly one attempt."
+
+[[envelope]]
+field = "resolvedMarketJurisdiction"
+type = "string"
+optional = false
+pattern = "^[A-Z]{2}$"
+description = """
+The jurisdiction the gateway actually resolved and applied. Authoritative, and \
+not necessarily the client's advisory claim. Displayed to the user before any \
+subsequent consent decision (AD-41 MP-7)."""
+
+[[envelope]]
+field = "resolvedProcessingRegion"
+type = "string"
+optional = false
+nullable = true
+description = "The region where processing actually occurred. Null only when no remote processing took place."
+
+[[envelope]]
+field = "outcome"
+type = "object"
+optional = false
+discriminator = "outcomeType"
+variants = ["candidates", "abstention", "failure"]
+unknown_variant_behavior = "map-to-unknown-and-treat-as-recoverable-failure"
+description = "Sealed success/failure payload. Exactly one terminal outcome per attempt (AD-6)."
+
+# ---------------------------------------------------------------------------
+# outcome: candidates
+# ---------------------------------------------------------------------------
+
+[[outcome_candidates]]
+field = "outcomeType"
+type = "string"
+optional = false
+enum = ["candidates"]
+
+[[outcome_candidates]]
+field = "candidates"
+type = "array"
+items = "Candidate"
+optional = false
+min_items = 1
+max_items = 10
+description = "Ranked identification evidence, best first. Never empty — an empty result is an abstention."
+
+[[outcome_candidates]]
+field = "requiresConfirmation"
+type = "boolean"
+optional = false
+description = """
+True when no candidate reached the accept threshold. This is NOT a failure: the \
+user is the authority, so the honest result of uncertainty is a question rather \
+than an error (Principle 2). The client must not auto-advance a candidate into \
+grounding when this is true (AD-40)."""
+
+# ---------------------------------------------------------------------------
+# Candidate — identity evidence only
+# ---------------------------------------------------------------------------
+
+[[candidate]]
+field = "candidateId"
+type = "string"
+optional = false
+max_length = 128
+description = "Stable within the attempt. Used by the client to reference a selection."
+
+[[candidate]]
+field = "label"
+type = "string"
+optional = false
+max_length = 200
+description = """
+Human-readable food name in the request locale where available. Free-form text: \
+never written to logs or telemetry (AD-14 forbids free-form labels)."""
+
+[[candidate]]
+field = "rank"
+type = "integer"
+optional = false
+minimum = 1
+description = "1 is best. Ranks are dense and unique within one response."
+
+[[candidate]]
+field = "confidence"
+type = "object"
+optional = false
+object_schema = "gateway-response.toml [confidence]"
+
+[[candidate]]
+field = "unresolvedAssumptions"
+type = "array"
+items = "Assumption"
+optional = false
+max_items = 10
+description = "May be empty. Surfaces what the model could not determine, so the user can correct it."
+
+[[candidate]]
+field = "provenance"
+type = "object"
+optional = false
+object_schema = "gateway-response.toml [provenance]"
+
+# A Candidate carries NO calories, macros, or micronutrients, and no serving
+# basis or gram weight. Nutrition comes from the versioned on-device catalog
+# after the user confirms a canonical item (AD-7). The release validator asserts
+# the absence of every forbidden key listed in schema.toml [nutrition].
+
+[[confidence]]
+field = "score"
+type = "number"
+optional = false
+minimum = 0.0
+maximum = 1.0
+description = "Calibrated within one engine and calibration version."
+
+[[confidence]]
+field = "band"
+type = "string"
+optional = false
+enum = ["low", "medium", "high"]
+description = """
+Coarse bucket for presentation. Bands are comparable across engines only when a \
+Gate G-5 calibration transform exists; until then the client presents the band \
+and does not rank across engines."""
+
+[[assumption]]
+field = "code"
+type = "string"
+optional = false
+max_length = 64
+description = "Stable machine-readable assumption key, e.g. portion-unknown."
+
+[[assumption]]
+field = "userMessageKey"
+type = "string"
+optional = false
+max_length = 128
+description = "i18n key the client renders. The gateway never sends prose for display."
+
+[[provenance]]
+field = "route"
+type = "string"
+optional = false
+enum = ["remote"]
+description = "Always remote for a gateway response. Local results never traverse this contract."
+
+[[provenance]]
+field = "engineId"
+type = "string"
+optional = false
+description = "Identifies the gateway engine, not the upstream provider product name."
+
+[[provenance]]
+field = "modelVersion"
+type = "string"
+optional = false
+description = "Immutable model or deployment identifier that produced this result (AD-9)."
+
+[[provenance]]
+field = "calibrationVersion"
+type = "string"
+optional = false
+description = "Confidence calibration in force. A score is meaningless without it."
+
+[[provenance]]
+field = "contractVersion"
+type = "string"
+optional = false
+description = "Engine contract version, distinct from the mobile-api envelope version."
+
+# ---------------------------------------------------------------------------
+# outcome: abstention
+# ---------------------------------------------------------------------------
+
+[[outcome_abstention]]
+field = "outcomeType"
+type = "string"
+optional = false
+enum = ["abstention"]
+
+[[outcome_abstention]]
+field = "reasonCode"
+type = "string"
+optional = false
+enum = [
+  "no-food-detected",
+  "image-unusable",
+  "ambiguous-scene",
+  "below-confidence-floor",
+  "content-rejected-by-provider",
+]
+description = "Closed set. An abstention is a successful attempt that honestly declines to identify."
+
+[[outcome_abstention]]
+field = "userMessageKey"
+type = "string"
+optional = false
+description = "i18n key explaining the abstention and the manual alternative."
+
+[[outcome_abstention]]
+field = "manualAlternativeAvailable"
+type = "boolean"
+optional = false
+description = """
+Always true in v1. Manual entry and catalog search work without this service, \
+which is what makes a fail-closed remote path a degraded experience rather than \
+an outage."""
+
+# ---------------------------------------------------------------------------
+# outcome: failure
+# ---------------------------------------------------------------------------
+
+[[outcome_failure]]
+field = "outcomeType"
+type = "string"
+optional = false
+enum = ["failure"]
+
+[[outcome_failure]]
+field = "failureCode"
+type = "string"
+optional = false
+description = "One gatewayCode from error-taxonomy.toml. Never a provider message."
+
+[[outcome_failure]]
+field = "userMessageKey"
+type = "string"
+optional = false
+description = "i18n key from the taxonomy entry."
+
+[[outcome_failure]]
+field = "recoverable"
+type = "boolean"
+optional = false
+description = "Mirrors the taxonomy entry. The client must not retry when false."
+
+[[outcome_failure]]
+field = "retryAfterSeconds"
+type = "integer"
+optional = true
+nullable = true
+minimum = 0
+description = "Present only when recoverable and a wait is required."
+
+[error_envelope]
+# Non-2xx responses use this shape rather than the outcome union, so a transport
+# failure is never mistaken for an inference outcome.
+shape = "{ error: { gatewayCode, userMessageKey, recoverable, retryAfterSeconds, correlationId, details[] } }"
+details_item = "{ field: string, issue: string }"
+internal_detail_leaked = false
+provider_message_leaked = false

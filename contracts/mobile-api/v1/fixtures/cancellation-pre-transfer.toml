@@ -1,0 +1,41 @@
+schema = "supernutrition.mobile-api-fixture.v1"
+fixture_id = "cancellation-pre-transfer"
+expected = "accepted"
+description = """
+Cancellation before any bytes left the device. This is the only state where the \
+gateway can make a complete guarantee: nothing was sent, so nothing needs \
+deleting anywhere."""
+
+[request]
+method = "DELETE"
+path = "/gw/v1/inference/att_06P3C9V7Q2W4S8U0"
+
+[request.headers]
+"X-Request-Id" = "req_06P3C9V7Q2W4S8U0Y1A3"
+"X-Contract-Version" = "mobile-api/v1"
+
+[request.state_at_cancellation]
+transferState = "pre-transfer"
+bytes_received_by_gateway = 0
+provider_called = false
+
+[response]
+status = 204
+
+[response.body]
+attemptId = "att_06P3C9V7Q2W4S8U0"
+transferState = "pre-transfer"
+bytesTransferred = 0
+recallClaimed = false
+downstreamDeletionRequested = false
+resultSuppressed = false
+cancelledAt = "2026-07-29T14:05:11Z"
+
+[assertions]
+zero_bytes_sent = true
+provider_called = false
+downstream_deletion_requested = false
+recall_claimed = false
+honest_claim = "Nothing was sent. This is a complete guarantee."
+payload_disposed = true
+repeat_cancellation_returns_same_record = true
