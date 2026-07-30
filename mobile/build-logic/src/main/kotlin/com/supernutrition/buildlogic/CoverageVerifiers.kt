@@ -1,16 +1,12 @@
 package com.supernutrition.buildlogic
 
-import java.io.StringReader
 import java.nio.file.Files
 import java.nio.file.Path
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.Locale
-import javax.xml.XMLConstants
-import javax.xml.parsers.DocumentBuilderFactory
 import org.w3c.dom.Element
 import org.w3c.dom.Node
-import org.xml.sax.InputSource
 
 internal object NativeEquivalentEvidenceVerifier {
     fun allowed(
@@ -39,9 +35,9 @@ internal object NativeEquivalentEvidenceVerifier {
             val gap = gapBlocks.firstOrNull { PolicyToml.string(it, "id") == id } ?: return@all false
             val evidence = evidenceBlocks.firstOrNull { PolicyToml.string(it, "id") == id } ?: return@all false
             if (PolicyToml.string(evidence, "status") != "success") return@all false
-            if (!isHexDigest(PolicyToml.string(evidence, "commit_sha"), 40) ||
-                !isHexDigest(PolicyToml.string(evidence, "artifact_digest"), 64) ||
-                !isHexDigest(PolicyToml.string(evidence, "fixture_digest"), 64)
+            if (PolicyToml.string(evidence, "commit_sha")?.isLowercaseHexDigest(40) != true ||
+                PolicyToml.string(evidence, "artifact_digest")?.isLowercaseHexDigest(64) != true ||
+                PolicyToml.string(evidence, "fixture_digest")?.isLowercaseHexDigest(64) != true
             ) return@all false
             if (PolicyToml.string(evidence, "device_os").isNullOrBlank() ||
                 PolicyToml.string(evidence, "task_version").isNullOrBlank()
@@ -53,8 +49,6 @@ internal object NativeEquivalentEvidenceVerifier {
         }
     }
 
-    private fun isHexDigest(value: String?, length: Int): Boolean =
-        value?.length == length && value.all { it in "0123456789abcdef" }
 }
 
 internal data class JvmCoverageSummary(
@@ -137,15 +131,7 @@ internal object JvmCoverageVerifier {
 
     private fun parseReport(text: String, projectPath: String): Element {
         try {
-            val factory = DocumentBuilderFactory.newInstance().apply {
-                setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true)
-                setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)
-                setFeature("http://xml.org/sax/features/external-general-entities", false)
-                setFeature("http://xml.org/sax/features/external-parameter-entities", false)
-                isXIncludeAware = false
-                isExpandEntityReferences = false
-            }
-            val document = factory.newDocumentBuilder().parse(InputSource(StringReader(text)))
+            val document = parseSecureXml(text)
             require(document.documentElement?.tagName == "report") { "root element is not <report>" }
             return document.documentElement
         } catch (error: IllegalArgumentException) {
