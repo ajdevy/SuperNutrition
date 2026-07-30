@@ -17,6 +17,22 @@ export interface PayloadRef {
   readonly digest: string;
 }
 
+/**
+ * Resolves an opaque ref to the bytes it stands for.
+ *
+ * Only a provider adapter holds one of these. Keeping the resolution behind a
+ * port is what lets the orchestrator route an attempt without ever touching
+ * image data, so payload disposal stays the responsibility of exactly one
+ * component (docs/07 §7.3, AD-8).
+ *
+ * Returns null once the payload has been disposed, so a late or duplicated call
+ * cannot resurrect bytes that were already destroyed.
+ */
+export interface PayloadSource {
+  read(ref: PayloadRef): Uint8Array | null;
+  dispose(attemptId: AttemptId): void;
+}
+
 export interface InferenceContext {
   readonly catalogCountry: string;
   readonly mealType: string;

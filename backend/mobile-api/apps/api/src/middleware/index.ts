@@ -35,3 +35,11 @@ export interface ErrorMapper {
 export interface CorrelationIdProvider {
   next(): string;
 }
+
+// --- implementations ---------------------------------------------------------
+
+export { generateCorrelationId, resolveCorrelationId } from './correlation-id.js';
+export { mapError, toGatewayError } from './error-handler.js';
+export type { MappedErrorResponse } from './error-handler.js';
+export { enforceRateLimits, rateLimitHeaders } from './rate-limiter.js';
+export type { RateLimitCheckInput, RateLimitHeaders } from './rate-limiter.js';
