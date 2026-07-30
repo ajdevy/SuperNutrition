@@ -3,15 +3,13 @@ package com.supernutrition.platform.photoios
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import com.supernutrition.core.ui.UiAutomationIds
 
 class IosPhotoBridgeContractTest {
     @Test
     fun `shared automation IDs stay equal across platform bridges`() {
-        val contract = IosCaptureSurfaceContract()
-
-        assertEquals("capture_shutter", contract.shutterAutomationId)
-        assertEquals("capture_import", contract.importAutomationId)
-        assertEquals("capture_permission_rationale", contract.cameraPermissionAutomationId)
+        assertEquals("capture_shutter", UiAutomationIds.CAPTURE_SHUTTER.value)
+        assertEquals("capture_import", UiAutomationIds.CAPTURE_IMPORT.value)
     }
 
     @Test
@@ -27,6 +25,6 @@ class IosPhotoBridgeContractTest {
             ),
             IosCameraPermissionState.entries,
         )
-        assertTrue(IosCaptureSurfaceContract().shutterAutomationId.isNotBlank())
+        assertTrue(UiAutomationIds.CAPTURE_SHUTTER.value.isNotBlank())
     }
 }

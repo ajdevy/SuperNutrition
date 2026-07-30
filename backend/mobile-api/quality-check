@@ -18,16 +18,34 @@ test -f "$manifest" || {
 }
 
 BACKEND_ROOT="$root_dir" BACKEND_MANIFEST="$manifest" python3 - <<'PY'
+import ast
 import os
-import sys
-import tomllib
 from pathlib import Path
 
 root = Path(os.environ["BACKEND_ROOT"])
 manifest = Path(os.environ["BACKEND_MANIFEST"])
+def read_manifest(path: Path) -> dict:
+    """Parse this dependency-free preselection manifest on Python 3.10+."""
+    data = {}
+    for raw_line in path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.split("#", 1)[0].strip()
+        if not line or line.startswith("[") or "=" not in line:
+            continue
+        key, _, raw_value = line.partition("=")
+        value = raw_value.strip()
+        if value in {"true", "false"}:
+            parsed = value == "true"
+        else:
+            try:
+                parsed = ast.literal_eval(value)
+            except (SyntaxError, ValueError) as error:
+                raise ValueError(f"unsupported TOML value for {key.strip()}") from error
+        data[key.strip()] = parsed
+    return data
+
 try:
-    data = tomllib.loads(manifest.read_text(encoding="utf-8"))
-except (OSError, tomllib.TOMLDecodeError) as error:
+    data = read_manifest(manifest)
+except (OSError, ValueError) as error:
     raise SystemExit(f"backend mobile-api: invalid lifecycle TOML: {error}") from error
 
 expected = {

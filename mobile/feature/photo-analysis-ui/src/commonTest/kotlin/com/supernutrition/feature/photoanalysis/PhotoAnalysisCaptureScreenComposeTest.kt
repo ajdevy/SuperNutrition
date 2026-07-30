@@ -7,6 +7,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.v2.runComposeUiTest
 import com.supernutrition.core.ui.UiAutomationIds
+import com.supernutrition.core.ui.UiAutomationId
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -23,18 +24,18 @@ class PhotoAnalysisCaptureScreenComposeTest {
                     copy,
                 ),
                 onAction = {},
-                surface = PhotoAnalysisCaptureSurface(copy = copy),
+                surface = PhotoAnalysisCaptureSurface(presenterCopy = copy),
             )
         }
 
-        onNodeWithTag("photo_analysis_title").assertIsDisplayed()
-        onNodeWithTag("photo_analysis_title").assertTextEquals(copy.capture.title)
-        onNodeWithTag("photo_analysis_status").assertIsDisplayed()
-        onNodeWithTag("photo_analysis_status").assertTextEquals(copy.status.readyToCapture)
-        onNodeWithTag("capture_shutter").assertIsDisplayed()
-        onNodeWithTag("capture_shutter").assertTextEquals(copy.capture.takeMealPhoto)
-        onNodeWithTag("capture_import").assertIsDisplayed()
-        onNodeWithTag("capture_import").assertTextEquals(copy.capture.choosePhoto)
+        onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_TITLE.value).assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_TITLE.value).assertTextEquals(copy.capture.title)
+        onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_STATUS.value).assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_STATUS.value).assertTextEquals(copy.status.readyToCapture)
+        onNodeWithTag(UiAutomationIds.CAPTURE_SHUTTER.value).assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.CAPTURE_SHUTTER.value).assertTextEquals(copy.capture.takeMealPhoto)
+        onNodeWithTag(UiAutomationIds.CAPTURE_IMPORT.value).assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.CAPTURE_IMPORT.value).assertTextEquals(copy.capture.choosePhoto)
     }
 
     @Test
@@ -51,12 +52,11 @@ class PhotoAnalysisCaptureScreenComposeTest {
                 model = model,
                 onAction = clicked::add,
                 surface = PhotoAnalysisCaptureSurface(
-                    copy = copy,
-                    title = copy.capture.title,
-                    shutterLabel = copy.capture.takeMealPhoto,
-                    importLabel = copy.capture.choosePhoto,
-                    shutterAutomationId = "custom_shutter",
-                    importAutomationId = "custom_import",
+                    presenterCopy = copy,
+                    automationIds = PhotoAnalysisCaptureAutomationIds(
+                        shutter = UiAutomationId("custom_shutter"),
+                        import = UiAutomationId("custom_import"),
+                    ),
                 ),
             )
         }
@@ -83,7 +83,7 @@ class PhotoAnalysisCaptureScreenComposeTest {
                     actions = emptyList(),
                 ),
                 onAction = {},
-                surface = PhotoAnalysisCaptureSurface(copy = copy),
+                surface = PhotoAnalysisCaptureSurface(presenterCopy = copy),
             )
         }
 

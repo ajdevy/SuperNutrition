@@ -11,36 +11,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.supernutrition.core.ui.UiAutomationIds
+import com.supernutrition.core.ui.UiAutomationId
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
 import kotlinx.coroutines.flow.StateFlow
 import com.supernutrition.domain.photoanalysis.PhotoAnalysisState
 
 data class PhotoAnalysisCaptureSurface(
-    val copy: PhotoAnalysisPresenterCopy,
-    val title: String = copy.capture.title,
-    val shutterLabel: String = copy.capture.takeMealPhoto,
-    val importLabel: String = copy.capture.choosePhoto,
-    val openSettingsLabel: String = copy.capture.openSettings,
-    val scanAgainLabel: String = copy.recovery.scanAgain,
-    val cancelLabel: String = copy.capture.cancel,
-    val titleAutomationId: String = UiAutomationIds.PHOTO_ANALYSIS_TITLE.value,
-    val statusAutomationId: String = UiAutomationIds.PHOTO_ANALYSIS_STATUS.value,
-    val shutterAutomationId: String = UiAutomationIds.CAPTURE_SHUTTER.value,
-    val importAutomationId: String = UiAutomationIds.CAPTURE_IMPORT.value,
-    val openSettingsAutomationId: String = UiAutomationIds.CAPTURE_OPEN_SETTINGS.value,
-    val scanAgainAutomationId: String = UiAutomationIds.CAPTURE_SCAN_AGAIN.value,
-    val cancelAutomationId: String = UiAutomationIds.CAPTURE_CANCEL.value,
-    val requiredTapBudget: Int = 2,
-    val requiredScrollBudget: Int = 0,
-    val requiredFieldBudget: Int = 0,
-    val requiredChoiceBudget: Int = 0,
-    val auxiliaryTextEntryCharsBudget: Int = 0,
-    val auxiliaryChoiceSurfaceBudget: Int = 0,
-    val auxiliaryBackBudget: Int = 1,
-    val auxiliaryUndoBudget: Int = 0,
-    val auxiliaryCancelBudget: Int = 1,
-    val auxiliaryPermissionPromptBudget: Int = 1,
+    val presenterCopy: PhotoAnalysisPresenterCopy,
+    val automationIds: PhotoAnalysisCaptureAutomationIds = PhotoAnalysisCaptureAutomationIds(),
+)
+
+data class PhotoAnalysisCaptureAutomationIds(
+    val title: UiAutomationId = UiAutomationIds.PHOTO_ANALYSIS_TITLE,
+    val status: UiAutomationId = UiAutomationIds.PHOTO_ANALYSIS_STATUS,
+    val shutter: UiAutomationId = UiAutomationIds.CAPTURE_SHUTTER,
+    val import: UiAutomationId = UiAutomationIds.CAPTURE_IMPORT,
+    val openSettings: UiAutomationId = UiAutomationIds.CAPTURE_OPEN_SETTINGS,
+    val scanAgain: UiAutomationId = UiAutomationIds.CAPTURE_SCAN_AGAIN,
+    val cancel: UiAutomationId = UiAutomationIds.CAPTURE_CANCEL,
 )
 
 @Composable
@@ -52,7 +41,7 @@ fun PhotoAnalysisCaptureContent(
 ) {
     val state by stateFlow.collectAsState()
     PhotoAnalysisCaptureScreen(
-        model = PhotoAnalysisPresenterModel.from(state, surface.copy),
+        model = PhotoAnalysisPresenterModel.from(state, surface.presenterCopy),
         onAction = onAction,
         modifier = modifier,
         surface = surface,
@@ -74,53 +63,53 @@ fun PhotoAnalysisCaptureScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Text(
-            text = surface.title,
-            modifier = Modifier.automationId(surface.titleAutomationId),
+            text = surface.presenterCopy.capture.title,
+            modifier = Modifier.automationId(surface.automationIds.title),
         )
         Text(
             text = model.statusLabel,
-            modifier = Modifier.automationId(surface.statusAutomationId),
+            modifier = Modifier.automationId(surface.automationIds.status),
         )
 
         model.actions.forEach { action ->
             when (action) {
                 PhotoAnalysisPresenterAction.TakePhoto -> Button(
                     onClick = { onAction(action) },
-                    modifier = Modifier.automationId(surface.shutterAutomationId),
+                    modifier = Modifier.automationId(surface.automationIds.shutter),
                 ) {
-                    Text(surface.shutterLabel)
+                    Text(surface.presenterCopy.capture.takeMealPhoto)
                 }
 
                 PhotoAnalysisPresenterAction.ImportPhoto -> Button(
                     onClick = { onAction(action) },
-                    modifier = Modifier.automationId(surface.importAutomationId),
+                    modifier = Modifier.automationId(surface.automationIds.import),
                 ) {
-                    Text(surface.importLabel)
+                    Text(surface.presenterCopy.capture.choosePhoto)
                 }
 
                 PhotoAnalysisPresenterAction.OpenSettings -> Button(
                     onClick = { onAction(action) },
-                    modifier = Modifier.automationId(surface.openSettingsAutomationId),
+                    modifier = Modifier.automationId(surface.automationIds.openSettings),
                 ) {
-                    Text(surface.openSettingsLabel)
+                    Text(surface.presenterCopy.capture.openSettings)
                 }
 
                 PhotoAnalysisPresenterAction.ScanAgain -> Button(
                     onClick = { onAction(action) },
-                    modifier = Modifier.automationId(surface.scanAgainAutomationId),
+                    modifier = Modifier.automationId(surface.automationIds.scanAgain),
                 ) {
-                    Text(surface.scanAgainLabel)
+                    Text(surface.presenterCopy.recovery.scanAgain)
                 }
 
                 PhotoAnalysisPresenterAction.Cancel -> Button(
                     onClick = { onAction(action) },
-                    modifier = Modifier.automationId(surface.cancelAutomationId),
+                    modifier = Modifier.automationId(surface.automationIds.cancel),
                 ) {
-                    Text(surface.cancelLabel)
+                    Text(surface.presenterCopy.capture.cancel)
                 }
             }
         }
     }
 }
 
-private fun Modifier.automationId(id: String): Modifier = testTag(id)
+private fun Modifier.automationId(id: UiAutomationId): Modifier = testTag(id.value)

@@ -7,6 +7,7 @@ import com.supernutrition.domain.photoanalysis.PhotoAnalysisBackgroundSnapshot
 import com.supernutrition.domain.photoanalysis.PhotoAnalysisState
 import com.supernutrition.domain.photoanalysis.PhotoRef
 import com.supernutrition.domain.photoanalysis.RecoveryReason
+import com.supernutrition.domain.photoanalysis.RequestId
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -52,7 +53,7 @@ class PhotoAnalysisPresenterTest {
         )
         assertTrue(
             PhotoAnalysisPresenterModel.from(
-                PhotoAnalysisState.Analyzing(ref, com.supernutrition.domain.photoanalysis.RequestId("request")),
+                PhotoAnalysisState.Analyzing(ref, RequestId("request")),
                 copy,
             ).statusLabel.isNotBlank(),
         )
@@ -96,6 +97,9 @@ class PhotoAnalysisPresenterTest {
             listOf(PhotoAnalysisPresenterAction.TakePhoto, PhotoAnalysisPresenterAction.ImportPhoto),
             model.actions,
         )
-        assertTrue(model.actions.none { it.name.contains("Consent", ignoreCase = true) })
+        assertEquals(
+            setOf(PhotoAnalysisPresenterAction.TakePhoto, PhotoAnalysisPresenterAction.ImportPhoto),
+            model.actions.toSet(),
+        )
     }
 }

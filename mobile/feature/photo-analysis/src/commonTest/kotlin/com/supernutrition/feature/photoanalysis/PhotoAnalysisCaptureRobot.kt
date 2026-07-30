@@ -18,7 +18,7 @@ class PhotoAnalysisCaptureRobot(
     private val copy: PhotoAnalysisPresenterCopy,
     val trace: AcceptanceTrace = AcceptanceTrace("photo-analysis-capture-recovery"),
 ) : TypedScreenScope {
-    override val screenId: String = "photo-analysis.capture"
+    override val screenId: String = PhotoAnalysisCaptureRobotContract.SCREEN_ID
 
     private val title = SemanticId(UiAutomationIds.PHOTO_ANALYSIS_TITLE.value)
     private val status = SemanticId(UiAutomationIds.PHOTO_ANALYSIS_STATUS.value)
@@ -27,30 +27,38 @@ class PhotoAnalysisCaptureRobot(
     private val scanAgain = SemanticId(UiAutomationIds.CAPTURE_SCAN_AGAIN.value)
 
     fun assertCaptureSurface() {
-        trace.assertFinal(StepId("capture-surface"), title) {
+        trace.assertFinal(PhotoAnalysisCaptureRobotContract.CAPTURE_SURFACE_STEP, title) {
             host.state() == PhotoAnalysisPresenterState.CAPTURE &&
                 host.text(title) == copy.capture.title &&
                 host.text(status) == copy.status.readyToCapture
         }
-        check(host.text(shutter) == copy.capture.takeMealPhoto) { "Capture shutter semantics drifted" }
-        check(host.text(import) == copy.capture.choosePhoto) { "Capture import semantics drifted" }
+        check(host.text(shutter) == copy.capture.takeMealPhoto)
+        check(host.text(import) == copy.capture.choosePhoto)
     }
 
     fun takePhoto() {
-        trace.record(StepId("take-photo"), shutter)
+        trace.record(PhotoAnalysisCaptureRobotContract.TAKE_PHOTO_STEP, shutter)
         host.click(shutter)
     }
 
     fun importPhoto() {
-        trace.record(StepId("import-photo"), import)
+        trace.record(PhotoAnalysisCaptureRobotContract.IMPORT_PHOTO_STEP, import)
         host.click(import)
     }
 
     fun assertRecoverySurface(expectedStatus: String) {
-        trace.assertFinal(StepId("recovery-surface"), status) {
+        trace.assertFinal(PhotoAnalysisCaptureRobotContract.RECOVERY_SURFACE_STEP, status) {
             host.state() == PhotoAnalysisPresenterState.RECOVERY &&
                 host.text(status) == expectedStatus
         }
-        check(host.text(scanAgain) == copy.recovery.scanAgain) { "Recovery retry semantics drifted" }
+        check(host.text(scanAgain) == copy.recovery.scanAgain)
+    }
 }
+
+internal object PhotoAnalysisCaptureRobotContract {
+    const val SCREEN_ID = "photo-analysis.capture"
+    val CAPTURE_SURFACE_STEP = StepId("capture-surface")
+    val TAKE_PHOTO_STEP = StepId("take-photo")
+    val IMPORT_PHOTO_STEP = StepId("import-photo")
+    val RECOVERY_SURFACE_STEP = StepId("recovery-surface")
 }

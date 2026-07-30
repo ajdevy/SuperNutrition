@@ -8,10 +8,6 @@ import java.nio.file.attribute.BasicFileAttributes
 
 /** Enforces the dependency graph declared by config/architecture/module-boundaries.toml. */
 internal object ModuleBoundaryVerifier {
-    private val dependencyPattern = Regex(
-        "([A-Za-z][A-Za-z0-9_]*)\\s*\\(\\s*project\\(\\s*\\\"(:[^\\\"]+)\\\"\\s*\\)\\s*\\)",
-    )
-
     fun validate(mobileRoot: Path) {
         val inventory = mobileRoot.resolve("config/architecture/module-boundaries.toml")
         require(Files.isRegularFile(inventory)) { "Missing module-boundary inventory: $inventory" }
@@ -46,7 +42,7 @@ internal object ModuleBoundaryVerifier {
                         attributes: BasicFileAttributes,
                     ): FileVisitResult = if (
                         directory != moduleRoot && directory.fileName.toString() in setOf(
-                            "build", ".gradle", ".git", "node_modules",
+                            "build", ".gradle", ".kotlin", ".git", "node_modules", "out", "DerivedData",
                         )
                     ) {
                         FileVisitResult.SKIP_SUBTREE
@@ -95,10 +91,15 @@ internal object ModuleBoundaryVerifier {
             }
             .maxByOrNull { it.path.length }
             ?: return emptyList()
-        val script = Files.readString(buildFile)
-        return dependencyPattern.findAll(script).mapNotNull { match ->
-            val configuration = match.groupValues[1]
-            val targetPath = match.groupValues[2]
+        val violations = mutableListOf<String>()
+        val sourceSetScopes = mutableListOf<SourceSetScope>()
+        var braceDepth = 0
+        var multilineDependencyConfiguration: String? = null
+        Files.readAllLines(buildFile).forEach { rawLine ->
+            val line = stripComment(rawLine)
+            parseProjectDependency(line, multilineDependencyConfiguration)?.let { dependency ->
+            val configuration = dependency.configuration
+            val targetPath = dependency.targetPath
             val targetRelativePath = targetPath
                 .removePrefix(":")
                 .replace(':', '/')
@@ -109,12 +110,11 @@ internal object ModuleBoundaryVerifier {
                         targetRelativePath.startsWith("$moduleRelativePath/")
                 }
                 .maxByOrNull { it.path.length }
-                ?: return@mapNotNull "${source.id} -> $targetPath ($configuration): target is not in module inventory"
-            val sourceSet = Regex("(?m)([A-Za-z][A-Za-z0-9_]*)\\.dependencies\\s*\\{")
-                .findAll(script.substring(0, match.range.first))
-                .lastOrNull()
-                ?.groupValues
-                ?.get(1)
+                ?: run {
+                    violations += "${source.id} -> $targetPath ($configuration): target is not in module inventory"
+                    return@let
+                }
+            val sourceSet = sourceSetScopes.lastOrNull()?.name
             val scope = if (
                 configuration.contains("test", ignoreCase = true) ||
                 sourceSet?.endsWith("Test") == true
@@ -122,8 +122,26 @@ internal object ModuleBoundaryVerifier {
             val allowed = edges.any {
                 it.scope == scope && source.id in it.from && target.id in it.to
             }
-            if (allowed) null else "${source.id} -> ${target.id} ($scope, $configuration)"
-        }.toList()
+            if (!allowed) violations += "${source.id} -> ${target.id} ($scope, $configuration)"
+            }
+
+            parseSourceSet(line)?.let { name ->
+                sourceSetScopes += SourceSetScope(braceDepth + 1, name)
+            }
+            multilineDependencyConfiguration = if (line.contains("project(")) {
+                null
+            } else {
+                line.trim()
+                    .takeIf { it.endsWith('(') }
+                    ?.dropLast(1)
+                    ?.trim()
+                    ?.substringAfterLast('.')
+                    ?.takeIf { it.isNotEmpty() && it.all { char -> char.isLetterOrDigit() || char == '_' } }
+            }
+            braceDepth += braceDelta(line)
+            sourceSetScopes.removeAll { it.depth > braceDepth }
+        }
+        return violations
     }
 
     private fun forbiddenImports(
@@ -152,12 +170,58 @@ internal object ModuleBoundaryVerifier {
         if (applicableRules.isEmpty()) return emptyList()
 
         return Files.readAllLines(sourceFile).mapIndexedNotNull { index, line ->
-            val imported = Regex("^\\s*import\\s+([^\\s]+)").find(line)?.groupValues?.get(1)
-                ?: return@mapIndexedNotNull null
+            val trimmed = line.trim()
+            if (!trimmed.startsWith("import ")) return@mapIndexedNotNull null
+            val imported = trimmed.removePrefix("import ").trim().substringBefore(" //").trim()
             applicableRules.firstOrNull { rule -> imported.startsWith(rule.importPrefix) }?.let { rule ->
                 "${mobileRoot.relativize(sourceFile)}:${index + 1}: import $imported matches forbidden ${rule.importPrefix}*"
             }
         }
+    }
+
+    private data class ProjectDependency(val configuration: String, val targetPath: String)
+
+    private data class SourceSetScope(val depth: Int, val name: String)
+
+    private fun parseProjectDependency(line: String, fallbackConfiguration: String?): ProjectDependency? {
+        val projectMarker = line.indexOf("project(")
+        if (projectMarker < 0) return null
+        val configuration = line.substring(0, projectMarker)
+            .trim()
+            .substringBeforeLast('(')
+            .trim()
+            .substringAfterLast(' ')
+            .substringAfterLast('.')
+            .ifEmpty { fallbackConfiguration.orEmpty() }
+        if (configuration.isEmpty()) return null
+        val valueStart = projectMarker + "project(".length
+        val quote = line.getOrNull(valueStart) ?: return null
+        if (quote != '"' && quote != '\'') return null
+        val valueEnd = line.indexOf(quote, valueStart + 1)
+        if (valueEnd <= valueStart + 1) return null
+        val targetPath = line.substring(valueStart + 1, valueEnd)
+        return targetPath.takeIf { it.startsWith(":") }?.let { ProjectDependency(configuration, it) }
+    }
+
+    private fun parseSourceSet(line: String): String? {
+        val marker = line.indexOf(".dependencies")
+        if (marker <= 0 || !line.substring(marker).contains('{')) return null
+        val name = line.substring(0, marker).trim().substringAfterLast(' ').substringAfterLast('.')
+        return name.takeIf { it.isNotEmpty() && it.all { char -> char.isLetterOrDigit() || char == '_' } }
+    }
+
+    private fun braceDelta(line: String): Int = line.count { it == '{' } - line.count { it == '}' }
+
+    private fun stripComment(line: String): String {
+        var quoted = false
+        var escaped = false
+        line.forEachIndexed { index, char ->
+            if (escaped) escaped = false
+            else if (char == '\\' && quoted) escaped = true
+            else if (char == '"') quoted = !quoted
+            else if (!quoted && char == '/' && line.getOrNull(index + 1) == '/') return line.substring(0, index)
+        }
+        return line
     }
 
     private data class Module(val id: String, val path: String)

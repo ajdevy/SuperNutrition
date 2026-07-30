@@ -36,9 +36,11 @@ class AndroidCameraCaptureActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         operationId = intent.getStringExtra(AndroidPhotoCaptureFiles.EXTRA_OPERATION_ID)
         captureRequested = savedInstanceState?.getBoolean(CAPTURE_REQUESTED_KEY, true) ?: true
-        // The in-memory output is intentionally discarded on recreation, so a
-        // restored camera surface must capture a fresh frame rather than claim
-        // that the previous one-shot operation is still running.
+        val restoredCaptureInFlight = savedInstanceState?.getBoolean(CAPTURE_IN_FLIGHT_KEY, false) ?: false
+        // The in-memory output is intentionally discarded on recreation. If a
+        // one-shot capture was in flight, explicitly schedule exactly one fresh
+        // frame after rebinding instead of relying on an unsaved boolean.
+        if (restoredCaptureInFlight) captureRequested = true
         captureStarted = false
         if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             finishWithFailure(CaptureFailureReason.PERMISSION_DENIED)
@@ -60,7 +62,8 @@ class AndroidCameraCaptureActivity : ComponentActivity() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putBoolean(CAPTURE_REQUESTED_KEY, captureRequested || captureStarted)
+        outState.putBoolean(CAPTURE_REQUESTED_KEY, captureRequested)
+        outState.putBoolean(CAPTURE_IN_FLIGHT_KEY, captureStarted)
         super.onSaveInstanceState(outState)
     }
 
@@ -120,16 +123,19 @@ class AndroidCameraCaptureActivity : ComponentActivity() {
         }
         val output = BoundedCaptureOutputStream(MAX_CAPTURE_BYTES)
         captureOutput = output
+        val activity = WeakReference(this)
         imageCapture.takePicture(
             ImageCapture.OutputFileOptions.Builder(output).build(),
             ContextCompat.getMainExecutor(this),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+                    val owner = activity.get() ?: return
+                    if (owner.isFinishing || owner.isDestroyed) return
                     val bytes = output.toByteArray()
                     if (bytes.isEmpty()) {
-                        finishWithFailure(CaptureFailureReason.CAPTURE_FAILED)
+                        owner.finishWithFailure(CaptureFailureReason.CAPTURE_FAILED)
                     } else {
-                        setResult(
+                        owner.setResult(
                             Activity.RESULT_OK,
                             Intent().apply {
                                 putExtra(
@@ -141,13 +147,13 @@ class AndroidCameraCaptureActivity : ComponentActivity() {
                                 }
                             },
                         )
-                        finish()
+                        owner.finish()
                     }
                 }
 
                 override fun onError(exception: ImageCaptureException) {
                     Log.e(TAG, "Camera capture failed", exception)
-                    finishWithFailure(CaptureFailureReason.CAPTURE_FAILED)
+                    activity.get()?.finishWithFailure(CaptureFailureReason.CAPTURE_FAILED)
                 }
             },
         )
@@ -158,7 +164,7 @@ class AndroidCameraCaptureActivity : ComponentActivity() {
             Activity.RESULT_FIRST_USER,
             Intent().apply {
                 putExtra(AndroidPhotoCaptureFiles.EXTRA_CAPTURE_FAILURE, true)
-                putExtra(AndroidPhotoCaptureFiles.EXTRA_CAPTURE_FAILURE_REASON, reason.name)
+                putExtra(AndroidPhotoCaptureFiles.EXTRA_CAPTURE_FAILURE_REASON, reason.wireValue)
                 operationId?.let {
                     putExtra(AndroidPhotoCaptureFiles.EXTRA_OPERATION_ID, it)
                 }
@@ -199,11 +205,18 @@ class AndroidCameraCaptureActivity : ComponentActivity() {
         const val TAG = "AndroidCameraCapture"
         const val MAX_CAPTURE_BYTES = 10 * 1024 * 1024
         const val CAPTURE_REQUESTED_KEY = "photo_analysis.camera.capture_requested"
+        const val CAPTURE_IN_FLIGHT_KEY = "photo_analysis.camera.capture_in_flight"
     }
 }
 
 private enum class CaptureFailureReason {
-    PERMISSION_DENIED,
-    CAMERA_UNAVAILABLE,
-    CAPTURE_FAILED,
+    PERMISSION_DENIED("permission-denied"),
+    CAMERA_UNAVAILABLE("camera-unavailable"),
+    CAPTURE_FAILED("capture-failed");
+
+    val wireValue: String
+
+    private constructor(wireValue: String) {
+        this.wireValue = wireValue
+    }
 }

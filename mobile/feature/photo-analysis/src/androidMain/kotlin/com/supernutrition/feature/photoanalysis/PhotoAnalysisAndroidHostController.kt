@@ -7,17 +7,18 @@ import com.supernutrition.core.ui.CameraPermissionState
 import com.supernutrition.domain.photoanalysis.PhotoAnalysisEvent
 import com.supernutrition.domain.photoanalysis.PhotoPreparationException
 import com.supernutrition.domain.photoanalysis.RecoveryReason
-import com.supernutrition.platform.photoandroid.AndroidImageNormalizer
+import com.supernutrition.platform.photoandroid.AndroidPhotoBridgePort
+import com.supernutrition.platform.photoandroid.AndroidPhotoNormalizerPort
 import com.supernutrition.platform.photoandroid.AndroidPhotoCaptureFiles
-import com.supernutrition.platform.photoandroid.AndroidPhotoBridge
 import java.util.UUID
 
 /** Typed Android effect coordinator kept outside the Activity and platform bridge. */
 class PhotoAnalysisAndroidHostController(
     private val feature: PhotoAnalysisFeature,
-    private val photoBridge: AndroidPhotoBridge,
-    private val normalizer: AndroidImageNormalizer,
+    private val photoBridge: AndroidPhotoBridgePort,
+    private val normalizer: AndroidPhotoNormalizerPort,
     private val requestCameraPermission: () -> Unit,
+    private val showCameraPermissionRationale: (onContinue: () -> Unit) -> Unit,
     private val launchCamera: (String) -> Unit,
     private val launchImport: () -> Unit,
     private val launchSettings: () -> Unit,
@@ -33,6 +34,7 @@ class PhotoAnalysisAndroidHostController(
 
     fun onPermissionResult(granted: Boolean) {
         photoBridge.markCameraPermissionRequestCompleted()
+        captureOperation.permissionRequestInFlight = false
         if (granted) {
             openCamera()
         } else {
@@ -42,10 +44,26 @@ class PhotoAnalysisAndroidHostController(
 
     fun onActivityResult(resultCode: Int, data: Intent?, isCamera: Boolean) {
         if (isCamera) {
-            val expectedOperation = captureOperation.pendingOperationId ?: return
+            val expectedOperation = captureOperation.pendingOperationId
+            if (expectedOperation == null) {
+                feature.dispatch(
+                    PhotoAnalysisEvent.PreparationFailed(
+                        if (resultCode == Activity.RESULT_OK) {
+                            RecoveryReason.CAPTURE_FAILED
+                        } else {
+                            RecoveryReason.CANCELLED
+                        },
+                    ),
+                )
+                return
+            }
             val returnedOperation = data?.getStringExtra(AndroidPhotoCaptureFiles.EXTRA_OPERATION_ID)
             if (returnedOperation != null && returnedOperation != expectedOperation) return
             captureOperation.pendingOperationId = null
+            if (resultCode == Activity.RESULT_OK && returnedOperation != expectedOperation) {
+                feature.dispatch(PhotoAnalysisEvent.PreparationFailed(RecoveryReason.CAPTURE_FAILED))
+                return
+            }
         }
         if (resultCode != Activity.RESULT_OK) {
             feature.dispatch(
@@ -99,20 +117,26 @@ class PhotoAnalysisAndroidHostController(
             }
 
             CameraPermissionState.NOT_DETERMINED,
-            CameraPermissionState.RATIONALE,
             CameraPermissionState.DENIED,
-            -> {
-                photoBridge.markCameraPermissionRequestStarted()
-                requestCameraPermission()
-            }
+            -> requestPermission()
 
+            CameraPermissionState.RATIONALE -> showCameraPermissionRationale(::requestPermission)
             CameraPermissionState.PERMANENTLY_DENIED,
             CameraPermissionState.RESTRICTED,
             -> feature.dispatch(PhotoAnalysisEvent.PermissionDenied)
+        }
+    }
+
+    private fun requestPermission() {
+        if (!captureOperation.permissionRequestInFlight) {
+            captureOperation.permissionRequestInFlight = true
+                photoBridge.markCameraPermissionRequestStarted()
+                requestCameraPermission()
         }
     }
 }
 
 class CaptureOperationState {
     var pendingOperationId: String? = null
+    var permissionRequestInFlight: Boolean = false
 }

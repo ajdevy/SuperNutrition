@@ -6,7 +6,32 @@ import UIKit
 typealias PhotoAnalysisNativeAction = Photo_analysisPhotoAnalysisNativeAction
 
 enum PhotoAnalysisHostConstants {
-    static let attemptID = Bundle.main.bundleIdentifier ?? "com.supernutrition.ios"
+    static let attemptID: String = {
+        guard let bundleIdentifier = Bundle.main.bundleIdentifier,
+              !bundleIdentifier.isEmpty else {
+            preconditionFailure("The application bundle must declare CFBundleIdentifier")
+        }
+        return bundleIdentifier
+    }()
+}
+
+enum PhotoAnalysisAppBootstrap {
+    static func makeSession() -> SharedKitPhotoAnalysisSession {
+        _ = SharedKitBootstrap.shared.start()
+        return SharedKitPhotoAnalysisSession(attemptId: PhotoAnalysisHostConstants.attemptID)
+    }
+}
+
+struct PhotoAnalysisAppRootView: View {
+    let session: SharedKitPhotoAnalysisSession
+
+    var body: some View {
+        #if arch(x86_64)
+        PhotoAnalysisIntelCompatibilityView(session: session)
+        #else
+        PhotoAnalysisComposeLifecycleHost(session: session)
+        #endif
+    }
 }
 
 private enum PhotoAnalysisHostAction: Int {
@@ -107,8 +132,8 @@ struct PhotoAnalysisComposeHost: UIViewControllerRepresentable {
                 }
                 self.photoBridge.presentCamera(
                     from: hostViewController,
-                    cancelLabel: self.session.cameraCancelLabel,
-                    shutterLabel: self.session.cameraShutterLabel,
+                    cancelLabel: self.session.presenterCopy.capture.cancel,
+                    shutterLabel: self.session.presenterCopy.capture.takeMealPhoto,
                     onResult: { [weak self] data in
                         guard let self else { return }
                         if let data {
@@ -175,23 +200,23 @@ struct PhotoAnalysisIntelCompatibilityView: View {
                 .accessibilityLabel(String(localized: "bootstrap.ready"))
                 .frame(width: 1, height: 1)
                 .opacity(0.01)
-            Text(session.captureTitleLabel)
+            Text(session.presenterCopy.capture.title)
                 .accessibilityIdentifier(SharedKitAutomationIds.shared.photoAnalysisTitle)
             Text(status)
                 .accessibilityIdentifier(SharedKitAutomationIds.shared.photoAnalysisStatus)
 
-            Button(session.cameraShutterLabel) {
+            Button(session.presenterCopy.capture.takeMealPhoto) {
                 requestCameraOrRecover()
             }
             .accessibilityIdentifier(SharedKitAutomationIds.shared.captureShutter)
 
-            Button(session.photoPickerLabel) {
+            Button(session.presenterCopy.capture.choosePhoto) {
                 presentPhotoPicker()
             }
             .accessibilityIdentifier(SharedKitAutomationIds.shared.captureImport)
 
             if session.shouldOfferSettings() {
-                Button(session.settingsLabel) {
+                Button(session.presenterCopy.capture.openSettings) {
                     openSettings()
                 }
                 .accessibilityIdentifier(SharedKitAutomationIds.shared.captureOpenSettings)
@@ -243,8 +268,8 @@ struct PhotoAnalysisIntelCompatibilityView: View {
                 }
                 photoBridge.presentCamera(
                     from: presenter,
-                    cancelLabel: session.cameraCancelLabel,
-                    shutterLabel: session.cameraShutterLabel,
+                    cancelLabel: session.presenterCopy.capture.cancel,
+                    shutterLabel: session.presenterCopy.capture.takeMealPhoto,
                     onResult: { data in
                         DispatchQueue.main.async {
                             if let data {

@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.supernutrition.platform.photoandroid.AndroidPhotoBridge;
+import com.supernutrition.platform.photoandroid.AndroidPhotoResultKeys;
 
 import org.junit.Test;
 
@@ -17,7 +18,7 @@ public final class AndroidPhotoBridgeBytesInstrumentationTest {
     @Test
     public void cameraThumbnailResultBecomesJpegBytes() {
         Bitmap bitmap = Bitmap.createBitmap(2, 3, Bitmap.Config.ARGB_8888);
-        Intent result = new Intent().putExtra("data", bitmap);
+        Intent result = new Intent().putExtra(AndroidPhotoResultKeys.LEGACY_THUMBNAIL, bitmap);
 
         byte[] bytes = new AndroidPhotoBridge(
                 InstrumentationRegistry.getInstrumentation().getTargetContext()

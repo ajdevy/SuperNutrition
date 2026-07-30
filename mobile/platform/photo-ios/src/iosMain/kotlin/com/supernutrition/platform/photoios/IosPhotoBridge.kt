@@ -40,6 +40,7 @@ import platform.PhotosUI.PHPickerConfiguration
 import platform.UniformTypeIdentifiers.UTTypeImage
 import platform.darwin.dispatch_async
 import platform.darwin.dispatch_get_main_queue
+import platform.darwin.dispatch_queue_create
 import kotlin.native.ref.WeakReference
 import com.supernutrition.platform.photoios.captureinterop.SNCreateCaptureInput
 import com.supernutrition.platform.photoios.captureinterop.SNDefaultBackCamera
@@ -47,8 +48,25 @@ import com.supernutrition.platform.photoios.captureinterop.SNSetViewAccessibilit
 import com.supernutrition.core.ui.UiAutomationIds
 
 /** iOS bridge seam; AVFoundation/PhotosUI objects stay behind the platform boundary. */
+interface IosPhotoPresentationPort {
+    fun cameraAvailable(): Boolean
+    fun ensureCameraAccess(onResult: (Boolean) -> Unit)
+    fun presentCamera(
+        from: UIViewController,
+        cancelLabel: String,
+        shutterLabel: String,
+        onResult: (NSData?) -> Unit,
+        onFailure: () -> Unit,
+    )
+    fun presentPhotoPicker(
+        from: UIViewController,
+        onResult: (NSData?) -> Unit,
+        onFailure: () -> Unit,
+    )
+}
+
 @OptIn(ExperimentalForeignApi::class, kotlin.experimental.ExperimentalNativeApi::class)
-class IosPhotoBridge : IosPhotoBridgePort {
+class IosPhotoBridge : IosPhotoBridgePort, IosPhotoPresentationPort {
     override fun cameraPermissionState(): IosCameraPermissionState = when (SNGetCameraAuthorizationStatus()) {
         AVAuthorizationStatusAuthorized -> IosCameraPermissionState.GRANTED
         AVAuthorizationStatusDenied -> IosCameraPermissionState.DENIED
@@ -62,10 +80,10 @@ class IosPhotoBridge : IosPhotoBridgePort {
     override fun photoPickerUsageDescription(): String = usageDescription(PHOTO_LIBRARY_USAGE_KEY)
 
     /** True when the native camera source is present on this device/runtime. */
-    fun cameraAvailable(): Boolean = cameraDevice() != null
+    override fun cameraAvailable(): Boolean = cameraDevice() != null
 
     /** Resolves the permission prompt in the bridge; the host receives only a Boolean. */
-    fun ensureCameraAccess(onResult: (Boolean) -> Unit) {
+    override fun ensureCameraAccess(onResult: (Boolean) -> Unit) {
         when (cameraPermissionState()) {
             IosCameraPermissionState.GRANTED -> onResult(true)
             IosCameraPermissionState.NOT_DETERMINED -> SNRequestCameraAccess(onResult)
@@ -78,7 +96,7 @@ class IosPhotoBridge : IosPhotoBridgePort {
     }
 
     /** Presents the native camera and returns only opaque bytes to the app host. */
-    fun presentCamera(
+    override fun presentCamera(
         from: UIViewController,
         cancelLabel: String,
         shutterLabel: String,
@@ -104,7 +122,7 @@ class IosPhotoBridge : IosPhotoBridgePort {
     }
 
     /** Presents the native single-selection picker and returns opaque bytes only. */
-    fun presentPhotoPicker(
+    override fun presentPhotoPicker(
         from: UIViewController,
         onResult: (NSData?) -> Unit,
         onFailure: () -> Unit,
@@ -167,6 +185,10 @@ private class CameraCaptureViewController(
     private val clear: () -> Unit,
 ) : UIViewController(nibName = null, bundle = null), AVCapturePhotoCaptureDelegateProtocol {
     private val captureSession = AVCaptureSession()
+    private val captureSessionQueue = dispatch_queue_create(
+        "com.supernutrition.photo.capture.session",
+        null,
+    )
     private val photoOutput = AVCapturePhotoOutput()
     private var previewLayer: AVCaptureVideoPreviewLayer? = null
     private var cancelButton: UIButton? = null
@@ -193,6 +215,8 @@ private class CameraCaptureViewController(
         cancelButton = UIButton().apply {
             setTitle(cancelLabel, forState = UIControlStateNormal)
             setTitleColor(UIColor.whiteColor, forState = UIControlStateNormal)
+            titleLabel?.numberOfLines = 0
+            titleLabel?.adjustsFontSizeToFitWidth = true
             addTarget(
                 target = this@CameraCaptureViewController,
                 action = NSSelectorFromString("cancelCapture"),
@@ -204,6 +228,8 @@ private class CameraCaptureViewController(
         shutterButton = UIButton().apply {
             setTitle(shutterLabel, forState = UIControlStateNormal)
             setTitleColor(UIColor.whiteColor, forState = UIControlStateNormal)
+            titleLabel?.numberOfLines = 0
+            titleLabel?.adjustsFontSizeToFitWidth = true
             addTarget(
                 target = this@CameraCaptureViewController,
                 action = NSSelectorFromString("capturePhoto"),
@@ -211,22 +237,32 @@ private class CameraCaptureViewController(
             )
         }
         view.addSubview(checkNotNull(shutterButton))
-        captureSession.startRunning()
+        dispatch_async(captureSessionQueue) {
+            captureSession.startRunning()
+        }
     }
 
     override fun viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         previewLayer?.frame = view.bounds
         val safeArea = view.safeAreaInsets.useContents { top to bottom }
+        val horizontalInset = minOf(24.0, CGRectGetWidth(view.bounds) / 12.0)
+        val availableWidth = maxOf(120.0, CGRectGetWidth(view.bounds) - horizontalInset * 2.0)
         cancelButton?.setFrame(
-            platform.CoreGraphics.CGRectMake(20.0, safeArea.first + 16.0, 120.0, 48.0),
+            platform.CoreGraphics.CGRectMake(
+                horizontalInset,
+                safeArea.first + 16.0,
+                minOf(availableWidth, 220.0),
+                56.0,
+            ),
         )
+        val shutterWidth = minOf(availableWidth, 260.0)
         shutterButton?.setFrame(
             platform.CoreGraphics.CGRectMake(
-                (CGRectGetWidth(view.bounds) - 160.0) / 2.0,
-                CGRectGetHeight(view.bounds) - safeArea.second - 80.0,
-                160.0,
-                64.0,
+                (CGRectGetWidth(view.bounds) - shutterWidth) / 2.0,
+                CGRectGetHeight(view.bounds) - safeArea.second - 88.0,
+                shutterWidth,
+                72.0,
             ),
         )
     }
@@ -235,7 +271,7 @@ private class CameraCaptureViewController(
         super.viewDidDisappear(animated)
         if (!finished) {
             finished = true
-            captureSession.stopRunning()
+            dispatch_async(captureSessionQueue) { captureSession.stopRunning() }
             clear()
             onResult(null)
         }
@@ -274,14 +310,14 @@ private class CameraCaptureViewController(
     private fun finish(data: NSData?) {
         if (finished) return
         finished = true
-        captureSession.stopRunning()
+        dispatch_async(captureSessionQueue) { captureSession.stopRunning() }
         dismissOnMain(this) { clear(); onResult(data) }
     }
 
     private fun finishFailure() {
         if (finished) return
         finished = true
-        captureSession.stopRunning()
+        dispatch_async(captureSessionQueue) { captureSession.stopRunning() }
         dismissOnMain(this) { clear(); onFailure() }
     }
 }

@@ -21,14 +21,16 @@ import java.security.MessageDigest
  */
 class AndroidImageNormalizer(
     private val maxDimension: Int = PhotoNormalizationDefaults.MAX_DIMENSION,
-) {
+) : AndroidPhotoNormalizerPort {
     private val common = PhotoInputNormalizer(digest = ::sha256)
 
-    @JvmOverloads
-    fun normalize(
+    fun normalize(ref: PhotoRef, sourceBytes: ByteArray): NormalizedPhotoInput =
+        normalize(ref, sourceBytes, sourceBytes.exifOrientation())
+
+    override fun normalize(
         ref: PhotoRef,
         sourceBytes: ByteArray,
-        sourceOrientation: ImageOrientation = sourceBytes.exifOrientation(),
+        sourceOrientation: ImageOrientation,
     ): NormalizedPhotoInput {
         val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
         BitmapFactory.decodeByteArray(sourceBytes, 0, sourceBytes.size, bounds)

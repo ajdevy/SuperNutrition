@@ -12,7 +12,7 @@ import java.util.UUID
  */
 object AndroidPhotoCaptureResultStore {
     private const val MAX_RESULTS = 2
-    private const val MAX_AGE_MILLIS = 5 * 60 * 1000L
+    private const val MAX_AGE_MILLIS = 30 * 1000L
 
     private data class Entry(val bytes: ByteArray, val createdAtMillis: Long)
 

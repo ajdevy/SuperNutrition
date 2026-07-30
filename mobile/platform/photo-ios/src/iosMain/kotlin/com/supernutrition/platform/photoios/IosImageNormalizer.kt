@@ -1,6 +1,5 @@
 package com.supernutrition.platform.photoios
 
-import cnames.structs.__CFData
 import com.supernutrition.platform.photoios.captureinterop.SNCreateBoundedImage
 import com.supernutrition.core.config.PhotoNormalizationDefaults
 import com.supernutrition.core.config.withoutJpegApplicationMetadata
@@ -11,19 +10,14 @@ import com.supernutrition.domain.photoanalysis.PhotoPreparationException
 import com.supernutrition.domain.photoanalysis.PhotoRef
 import com.supernutrition.domain.photoanalysis.RawPhoto
 import kotlinx.cinterop.ByteVar
-import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.reinterpret
 import kotlinx.cinterop.useContents
 import kotlinx.cinterop.usePinned
 import platform.CommonCrypto.SN_SHA256
-import platform.CoreFoundation.CFDataGetBytePtr
-import platform.CoreFoundation.CFDataGetLength
-import platform.CoreFoundation.CFRelease
 import platform.CoreGraphics.CGRectMake
 import platform.CoreGraphics.CGSizeMake
-import platform.Foundation.CFBridgingRetain
 import platform.Foundation.NSData
 import platform.Foundation.NSThread
 import platform.UIKit.UIImage
@@ -71,13 +65,7 @@ class IosImageNormalizer(
             image = normalizedImage,
             compressionQuality = PhotoNormalizationDefaults.JPEG_QUALITY / 100.0,
         ) ?: throw PhotoPreparationException("iOS could not encode the normalized JPEG")
-        val retainedData = CFBridgingRetain(normalizedData)?.reinterpret<__CFData>()
-            ?: throw PhotoPreparationException("iOS could not retain the normalized JPEG")
-        val rawBytes = try {
-            retainedData.toByteArray()
-        } finally {
-            CFRelease(retainedData)
-        }
+        val rawBytes = normalizedData.toByteArray()
 
         return common.normalize(
             RawPhoto(
@@ -136,11 +124,11 @@ private const val SHA256_DIGEST_LENGTH = 32
 private const val MAX_SOURCE_BYTES = 10 * 1024 * 1024
 
 @OptIn(ExperimentalForeignApi::class)
-private fun CPointer<__CFData>.toByteArray(): ByteArray {
-    val byteCount = CFDataGetLength(this).toInt()
+private fun NSData.toByteArray(): ByteArray {
+    val byteCount = length.toInt()
     val result = ByteArray(byteCount)
     if (result.isEmpty()) return result
-    val source = CFDataGetBytePtr(this)?.reinterpret<ByteVar>()
+    val source = bytes?.reinterpret<ByteVar>()
         ?: throw PhotoPreparationException("iOS returned empty normalized image bytes")
     result.usePinned { pinned ->
         memcpy(pinned.addressOf(0), source, byteCount.toULong())

@@ -18,4 +18,6 @@
     <string name="capture_recovery_no_food">No food was found in the photo</string>
     <string name="capture_recovery_offline">Analysis is offline</string>
     <string name="capture_recovery_cancelled">Analysis cancelled</string>
+    <string name="capture_permission_rationale">Camera access is needed to take a meal photo.</string>
+    <string name="capture_permission_continue">Continue</string>
 </resources>

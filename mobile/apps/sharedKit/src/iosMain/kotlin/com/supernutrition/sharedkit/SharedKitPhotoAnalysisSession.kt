@@ -18,24 +18,9 @@ import platform.Foundation.NSData
 /** Shared Apple session facade; only the renderer differs between Apple targets. */
 public class SharedKitPhotoAnalysisSession private constructor(
     attemptId: String,
-    internal val presenterCopy: PhotoAnalysisPresenterCopy = localizedPhotoAnalysisCopy(),
+    public val presenterCopy: PhotoAnalysisPresenterCopy = localizedPhotoAnalysisCopy(),
 ) {
     public constructor(attemptId: String) : this(attemptId, localizedPhotoAnalysisCopy())
-
-    public val cameraCancelLabel: String
-        get() = presenterCopy.capture.cancel
-
-    public val cameraShutterLabel: String
-        get() = presenterCopy.capture.takeMealPhoto
-
-    public val captureTitleLabel: String
-        get() = presenterCopy.capture.title
-
-    public val photoPickerLabel: String
-        get() = presenterCopy.capture.choosePhoto
-
-    public val settingsLabel: String
-        get() = presenterCopy.capture.openSettings
 
     internal val feature = PhotoAnalysisFeature(
         attemptId = AttemptId(attemptId),
@@ -74,6 +59,8 @@ public class SharedKitPhotoAnalysisSession private constructor(
             feature.dispatch(PhotoAnalysisEvent.PreparationSucceeded(normalized))
         } catch (_: PhotoPreparationException) {
             feature.dispatch(PhotoAnalysisEvent.PreparationFailed(RecoveryReason.POOR_IMAGE))
+        } catch (_: Exception) {
+            feature.dispatch(PhotoAnalysisEvent.PreparationFailed(RecoveryReason.CAPTURE_FAILED))
         }
     }
 

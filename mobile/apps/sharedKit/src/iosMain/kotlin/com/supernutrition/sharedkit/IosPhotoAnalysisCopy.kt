@@ -13,7 +13,7 @@ internal fun localizedPhotoAnalysisCopy(): PhotoAnalysisPresenterCopy = PhotoAna
         takeMealPhoto = localized("photo_analysis.capture.take_photo"),
         choosePhoto = localized("photo_analysis.capture.choose_photo"),
         openSettings = localized("photo_analysis.capture.open_settings"),
-        cancel = localized("photo_analysis.action.cancel"),
+        cancel = localized("photo_analysis.capture.cancel"),
     ),
     status = StatusCopy(
         readyToCapture = localized("photo_analysis.status.ready_to_capture"),

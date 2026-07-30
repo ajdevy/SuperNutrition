@@ -23,7 +23,6 @@ object UiAutomationIds {
     val CAPTURE_SCAN_AGAIN = UiAutomationId("capture_scan_again")
     val CAPTURE_CANCEL = UiAutomationId("capture_cancel")
     val CAPTURE_OPEN_SETTINGS = UiAutomationId("capture_open_settings")
-    val CAPTURE_PERMISSION_RATIONALE = UiAutomationId("capture_permission_rationale")
     val CAPTURE_NATIVE = UiAutomationId("capture_native")
 
     val all: List<UiAutomationId> = listOf(
@@ -35,7 +34,6 @@ object UiAutomationIds {
         CAPTURE_SCAN_AGAIN,
         CAPTURE_CANCEL,
         CAPTURE_OPEN_SETTINGS,
-        CAPTURE_PERMISSION_RATIONALE,
         CAPTURE_NATIVE,
     )
 }
