@@ -1,7 +1,6 @@
 package com.supernutrition.platform.photoios
 
 import cnames.structs.__CFData
-import cnames.structs.__CFString
 import com.supernutrition.core.config.PhotoNormalizationDefaults
 import com.supernutrition.core.config.withoutJpegApplicationMetadata
 import com.supernutrition.domain.photoanalysis.ImageOrientation
@@ -18,7 +17,6 @@ import kotlinx.cinterop.reinterpret
 import kotlinx.cinterop.useContents
 import kotlinx.cinterop.usePinned
 import platform.CommonCrypto.SN_SHA256
-import platform.CoreFoundation.CFDataCreateMutable
 import platform.CoreFoundation.CFDataGetBytePtr
 import platform.CoreFoundation.CFDataGetLength
 import platform.CoreFoundation.CFRelease
@@ -27,14 +25,11 @@ import platform.CoreGraphics.CGSizeMake
 import platform.Foundation.CFBridgingRetain
 import platform.Foundation.NSData
 import platform.Foundation.NSThread
-import platform.ImageIO.CGImageDestinationAddImage
-import platform.ImageIO.CGImageDestinationCreateWithData
-import platform.ImageIO.CGImageDestinationFinalize
 import platform.UIKit.UIImage
+import platform.UIKit.UIImageJPEGRepresentation
 import platform.UIKit.UIGraphicsBeginImageContextWithOptions
 import platform.UIKit.UIGraphicsEndImageContext
 import platform.UIKit.UIGraphicsGetImageFromCurrentImageContext
-import platform.UniformTypeIdentifiers.UTTypeJPEG
 import platform.darwin.dispatch_get_main_queue
 import platform.darwin.dispatch_sync
 import platform.posix.memcpy
@@ -68,31 +63,16 @@ class IosImageNormalizer(
         val normalizedImage = drawOnMainThread(image, sourceWidth, sourceHeight, renderScale)
             ?: throw PhotoPreparationException("iOS could not render the selected image")
 
-        val outputData = checkNotNull(CFDataCreateMutable(null, 0)) {
-            "iOS could not allocate the normalized image buffer"
-        }
-        val jpegType = checkNotNull(CFBridgingRetain(UTTypeJPEG.identifier))
-            .reinterpret<__CFString>()
-        val destination = CGImageDestinationCreateWithData(
-            data = outputData,
-            type = jpegType,
-            count = 1u,
-            options = null,
-        ) ?: run {
-            CFRelease(jpegType)
-            CFRelease(outputData)
-            throw PhotoPreparationException("iOS could not create a metadata-free JPEG destination")
-        }
+        val normalizedData = UIImageJPEGRepresentation(
+            image = normalizedImage,
+            compressionQuality = PhotoNormalizationDefaults.JPEG_QUALITY / 100.0,
+        ) ?: throw PhotoPreparationException("iOS could not encode the normalized JPEG")
+        val retainedData = CFBridgingRetain(normalizedData)?.reinterpret<__CFData>()
+            ?: throw PhotoPreparationException("iOS could not retain the normalized JPEG")
         val rawBytes = try {
-            CGImageDestinationAddImage(destination, normalizedImage.CGImage, null)
-            check(CGImageDestinationFinalize(destination)) {
-                "iOS could not finalize the normalized image"
-            }
-            outputData.toByteArray()
+            retainedData.toByteArray()
         } finally {
-            CFRelease(destination)
-            CFRelease(jpegType)
-            CFRelease(outputData)
+            CFRelease(retainedData)
         }
 
         return common.normalize(

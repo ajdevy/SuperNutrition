@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Take a meal photo for on-device analysis.</string>
+	<string>$(PRODUCT_NAME)</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Choose one meal photo to prepare.</string>
+	<string>$(PRODUCT_NAME)</string>
 	<key>CFBundleDisplayName</key>
 	<string>SuperNutrition</string>
 	<key>CFBundleIdentifier</key>

@@ -21,6 +21,8 @@ class IosPhotoBridgeContractTest {
                 IosCameraPermissionState.NOT_DETERMINED,
                 IosCameraPermissionState.GRANTED,
                 IosCameraPermissionState.DENIED,
+                IosCameraPermissionState.RATIONALE,
+                IosCameraPermissionState.PERMANENTLY_DENIED,
                 IosCameraPermissionState.RESTRICTED,
             ),
             IosCameraPermissionState.entries,

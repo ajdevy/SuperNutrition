@@ -22,12 +22,7 @@ class MobilePolicyPlugin : Plugin<Project> {
 
         val lifecycle = mobileRoot.resolve("product-lifecycle.toml")
             .takeIf(Files::isRegularFile)
-            ?.let { path ->
-                Regex("(?m)^lifecycle\\s*=\\s*\\\"([^\\\"]+)\\\"\\s*$")
-                    .find(Files.readString(path))
-                    ?.groupValues
-                    ?.get(1)
-            }
+            ?.let { path -> PolicyToml.string(Files.readString(path), "lifecycle") }
             ?: "scaffold-pending"
         project.extensions.extraProperties["supernutrition.lifecycle"] = lifecycle
         project.extensions.extraProperties["supernutrition.packageNamespace"] =
@@ -51,7 +46,7 @@ class MobilePolicyPlugin : Plugin<Project> {
                 mobileRoot.resolve("config"),
                 mobileRoot.resolve(".maestro"),
             )
-            outputs.upToDateWhen { false }
+            inputs.property("mobileLifecycle", lifecycle)
             doLast {
                 require(expectedRootName == "SuperNutrition-mobile") {
                     "Unexpected mobile root project name"

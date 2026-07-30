@@ -16,4 +16,6 @@ public object SharedKitAutomationIds {
         get() = UiAutomationIds.CAPTURE_IMPORT.value
     public val captureOpenSettings: String
         get() = UiAutomationIds.CAPTURE_OPEN_SETTINGS.value
+    public val captureNative: String
+        get() = UiAutomationIds.CAPTURE_NATIVE.value
 }

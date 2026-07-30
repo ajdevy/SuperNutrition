@@ -24,8 +24,13 @@ data class PhotoAnalysisCaptureSurface(
     val openSettingsLabel: String = copy.openSettings,
     val scanAgainLabel: String = copy.scanAgain,
     val cancelLabel: String = copy.cancel,
+    val titleAutomationId: String = UiAutomationIds.PHOTO_ANALYSIS_TITLE.value,
+    val statusAutomationId: String = UiAutomationIds.PHOTO_ANALYSIS_STATUS.value,
     val shutterAutomationId: String = UiAutomationIds.CAPTURE_SHUTTER.value,
     val importAutomationId: String = UiAutomationIds.CAPTURE_IMPORT.value,
+    val openSettingsAutomationId: String = UiAutomationIds.CAPTURE_OPEN_SETTINGS.value,
+    val scanAgainAutomationId: String = UiAutomationIds.CAPTURE_SCAN_AGAIN.value,
+    val cancelAutomationId: String = UiAutomationIds.CAPTURE_CANCEL.value,
     val requiredTapBudget: Int = 2,
     val requiredScrollBudget: Int = 0,
     val requiredFieldBudget: Int = 0,
@@ -70,11 +75,11 @@ fun PhotoAnalysisCaptureScreen(
     ) {
         Text(
             text = surface.title,
-            modifier = Modifier.automationId(UiAutomationIds.PHOTO_ANALYSIS_TITLE.value),
+            modifier = Modifier.automationId(surface.titleAutomationId),
         )
         Text(
             text = model.statusLabel,
-            modifier = Modifier.automationId(UiAutomationIds.PHOTO_ANALYSIS_STATUS.value),
+            modifier = Modifier.automationId(surface.statusAutomationId),
         )
 
         model.actions.forEach { action ->
@@ -95,21 +100,21 @@ fun PhotoAnalysisCaptureScreen(
 
                 PhotoAnalysisPresenterAction.OpenSettings -> Button(
                     onClick = { onAction(action) },
-                    modifier = Modifier.automationId(UiAutomationIds.CAPTURE_OPEN_SETTINGS.value),
+                    modifier = Modifier.automationId(surface.openSettingsAutomationId),
                 ) {
                     Text(surface.openSettingsLabel)
                 }
 
                 PhotoAnalysisPresenterAction.ScanAgain -> Button(
                     onClick = { onAction(action) },
-                    modifier = Modifier.automationId(UiAutomationIds.CAPTURE_SCAN_AGAIN.value),
+                    modifier = Modifier.automationId(surface.scanAgainAutomationId),
                 ) {
                     Text(surface.scanAgainLabel)
                 }
 
                 PhotoAnalysisPresenterAction.Cancel -> Button(
                     onClick = { onAction(action) },
-                    modifier = Modifier.automationId(UiAutomationIds.CAPTURE_CANCEL.value),
+                    modifier = Modifier.automationId(surface.cancelAutomationId),
                 ) {
                     Text(surface.cancelLabel)
                 }

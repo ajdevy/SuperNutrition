@@ -25,9 +25,10 @@ class PhotoAnalysisPresenterTest {
             metadataKeys = emptySet(),
             contentDigest = "a".repeat(64),
         )
-        val copy = testCopy().copy(
-            readyToCapture = "Pronto",
-            openSettings = "Impostazioni",
+        val baseCopy = PhotoAnalysisPresenterCopyFixtures.localized()
+        val copy = baseCopy.copy(
+            status = baseCopy.status.copy(readyToCapture = "Pronto"),
+            capture = baseCopy.capture.copy(openSettings = "Impostazioni"),
         )
 
         assertEquals(copy.readyToCapture, PhotoAnalysisPresenterModel.from(PhotoAnalysisState.Capture, copy).statusLabel)
@@ -59,7 +60,7 @@ class PhotoAnalysisPresenterTest {
 
     @Test
     fun `presenter renders every recovery label and bounded actions`() {
-        val copy = testCopy()
+        val copy = PhotoAnalysisPresenterCopyFixtures.localized()
         val expected = mapOf(
             RecoveryReason.PERMISSION_DENIED to copy.cameraPermissionRequired,
             RecoveryReason.CAMERA_UNAVAILABLE to copy.cameraUnavailable,
@@ -85,7 +86,10 @@ class PhotoAnalysisPresenterTest {
 
     @Test
     fun `presenter keeps capture actions bounded and excludes remote consent`() {
-        val model = PhotoAnalysisPresenterModel.from(PhotoAnalysisState.Capture, testCopy())
+        val model = PhotoAnalysisPresenterModel.from(
+            PhotoAnalysisState.Capture,
+            PhotoAnalysisPresenterCopyFixtures.localized(),
+        )
 
         assertEquals(PhotoAnalysisPresenterState.CAPTURE, model.state)
         assertEquals(
@@ -94,26 +98,4 @@ class PhotoAnalysisPresenterTest {
         )
         assertTrue(model.actions.none { it.name.contains("Consent", ignoreCase = true) })
     }
-
-    private fun testCopy() = PhotoAnalysisPresenterCopy(
-        captureTitle = "Acquisizione",
-        takeMealPhoto = "Scatta foto del pasto",
-        choosePhoto = "Scegli foto",
-        openSettings = "Apri impostazioni",
-        scanAgain = "Scansiona di nuovo",
-        cancel = "Annulla",
-        readyToCapture = "Pronto per acquisire",
-        preparingPhoto = "Preparazione foto",
-        photoReady = "Foto pronta",
-        analyzingPhoto = "Analisi foto",
-        reviewCandidate = "Rivedi candidato",
-        restoringPhotoAnalysis = "Ripristino analisi foto",
-        cameraPermissionRequired = "Serve il permesso fotocamera",
-        cameraUnavailable = "Fotocamera non disponibile",
-        photoCaptureFailed = "Acquisizione foto non riuscita",
-        photoQualityTooLow = "Qualita foto insufficiente",
-        noFoodFound = "Nessun alimento trovato",
-        analysisOffline = "Analisi offline",
-        analysisCancelled = "Analisi annullata",
-    )
 }

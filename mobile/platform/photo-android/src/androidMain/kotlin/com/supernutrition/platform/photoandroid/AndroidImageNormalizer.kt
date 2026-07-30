@@ -30,7 +30,20 @@ class AndroidImageNormalizer(
         sourceBytes: ByteArray,
         sourceOrientation: ImageOrientation = sourceBytes.exifOrientation(),
     ): NormalizedPhotoInput {
-        val decoded = BitmapFactory.decodeByteArray(sourceBytes, 0, sourceBytes.size)
+        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+        BitmapFactory.decodeByteArray(sourceBytes, 0, sourceBytes.size, bounds)
+        if (bounds.outWidth <= 0 || bounds.outHeight <= 0) {
+            throw PhotoPreparationException("Unable to read captured image dimensions")
+        }
+        val decoded = BitmapFactory.decodeByteArray(
+            sourceBytes,
+            0,
+            sourceBytes.size,
+            BitmapFactory.Options().apply {
+                inSampleSize = sampleSizeFor(bounds.outWidth, bounds.outHeight)
+                inPreferredConfig = Bitmap.Config.ARGB_8888
+            },
+        )
             ?: throw PhotoPreparationException("Unable to decode captured image")
         val oriented = rotate(decoded, sourceOrientation)
         val bounded = bound(oriented)
@@ -81,9 +94,25 @@ class AndroidImageNormalizer(
         )
     }
 
+    private fun sampleSizeFor(width: Int, height: Int): Int {
+        var sample = 1
+        while (decodedPixelCount(width, height, sample) > MAX_DECODE_PIXELS) {
+            if (sample > Int.MAX_VALUE / 2) return sample
+            sample *= 2
+        }
+        return sample
+    }
+
+    private fun decodedPixelCount(width: Int, height: Int, sample: Int): Long =
+        ((width.toLong() + sample - 1L) / sample) * ((height.toLong() + sample - 1L) / sample)
+
     private fun sha256(bytes: ByteArray): String = MessageDigest.getInstance("SHA-256")
         .digest(bytes)
         .joinToString(separator = "") { byte ->
             byte.toInt().and(0xff).toString(16).padStart(2, '0')
         }
+
+    private companion object {
+        const val MAX_DECODE_PIXELS = 16_777_216L
+    }
 }

@@ -1,6 +1,7 @@
 package com.supernutrition.platform.photoandroid
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -20,7 +21,13 @@ class AndroidPhotoBridge(private val context: Context) : PhotoBridgePort {
         context.checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED ->
             CameraPermissionState.GRANTED
 
-        else -> CameraPermissionState.DENIED
+        (context as? Activity)?.shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) == true ->
+            CameraPermissionState.RATIONALE
+
+        !context.getSharedPreferences(PERMISSIONS_PREFS, Context.MODE_PRIVATE)
+            .getBoolean(CAMERA_PERMISSION_REQUESTED, false) -> CameraPermissionState.NOT_DETERMINED
+
+        else -> CameraPermissionState.PERMANENTLY_DENIED
     }
 
     override fun cameraAvailability(): CameraAvailability = if (
@@ -38,9 +45,10 @@ class AndroidPhotoBridge(private val context: Context) : PhotoBridgePort {
 
     fun cameraPermissionName(): String = Manifest.permission.CAMERA
 
-    fun cameraCaptureIntent(attemptId: String = "android-photo-attempt"): Intent =
+    fun cameraCaptureIntent(attemptId: String, operationId: String): Intent =
         Intent(context, AndroidCameraCaptureActivity::class.java).apply {
             putExtra(AndroidPhotoCaptureFiles.EXTRA_ATTEMPT_ID, attemptId)
+            putExtra(AndroidPhotoCaptureFiles.EXTRA_OPERATION_ID, operationId)
         }
 
     fun cleanupStaleCaptureFiles(): Int = AndroidPhotoCaptureFiles.cleanupStale(context)
@@ -67,4 +75,25 @@ class AndroidPhotoBridge(private val context: Context) : PhotoBridgePort {
 
     /** Reads one selected URI or consumes the in-memory CameraX result. */
     fun photoBytesFromResult(result: Intent?): ByteArray? = AndroidPhotoResultReader(context).read(result)
+
+    fun markCameraPermissionRequestStarted() {
+        context.getSharedPreferences(PERMISSIONS_PREFS, Context.MODE_PRIVATE)
+            .edit()
+            .putBoolean(CAMERA_PERMISSION_REQUESTED, true)
+            .apply()
+    }
+
+    private companion object {
+        const val PERMISSIONS_PREFS = "photo_analysis_permissions"
+        const val CAMERA_PERMISSION_REQUESTED = "camera_permission_requested"
+    }
+}
+
+object AndroidPhotoResultKeys {
+    /** Legacy camera contracts use this platform-defined thumbnail extra. */
+    const val LEGACY_THUMBNAIL = "data"
+}
+
+object AndroidPhotoAttemptIds {
+    const val CAPTURE = "android-photo-attempt"
 }

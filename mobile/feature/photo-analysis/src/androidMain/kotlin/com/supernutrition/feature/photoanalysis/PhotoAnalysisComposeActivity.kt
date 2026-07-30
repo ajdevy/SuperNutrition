@@ -12,40 +12,44 @@ import com.supernutrition.domain.photoanalysis.AttemptId
 import com.supernutrition.domain.photoanalysis.PhotoLeaseStore
 import com.supernutrition.domain.photoanalysis.PhotoSessionStore
 import com.supernutrition.platform.photoandroid.AndroidImageNormalizer
+import com.supernutrition.platform.photoandroid.AndroidPhotoAttemptIds
 import com.supernutrition.platform.photoandroid.AndroidPhotoBridge
 
 /** Android composition root: lifecycle, result launchers, and feature wiring only. */
 class PhotoAnalysisComposeActivity : ComponentActivity() {
-    private val attemptId = AttemptId(ATTEMPT_ID)
-    private val feature = PhotoAnalysisFeature(
-        attemptId = attemptId,
-        leases = PhotoLeaseStore(),
-        sessions = PhotoSessionStore(),
-    )
+    private val attemptId = AttemptId(AndroidPhotoAttemptIds.CAPTURE)
+    private lateinit var retainedState: RetainedState
+    private val feature: PhotoAnalysisFeature get() = retainedState.feature
     private lateinit var host: PhotoAnalysisAndroidHostController
     private var wasBackgrounded = false
 
     private val presentationCopy: PhotoAnalysisPresenterCopy by lazy {
         PhotoAnalysisPresenterCopy(
-            captureTitle = getString(R.string.capture_title),
-            takeMealPhoto = getString(R.string.capture_shutter),
-            choosePhoto = getString(R.string.capture_import),
-            openSettings = getString(R.string.capture_open_settings),
-            scanAgain = getString(R.string.capture_scan_again),
-            cancel = getString(R.string.capture_cancel),
-            readyToCapture = getString(R.string.capture_status_ready),
-            preparingPhoto = getString(R.string.capture_status_preparing),
-            photoReady = getString(R.string.capture_status_ready_photo),
-            analyzingPhoto = getString(R.string.capture_status_analyzing),
-            reviewCandidate = getString(R.string.capture_status_review),
-            restoringPhotoAnalysis = getString(R.string.capture_status_restoring),
-            cameraPermissionRequired = getString(R.string.capture_recovery_permission),
-            cameraUnavailable = getString(R.string.capture_recovery_unavailable),
-            photoCaptureFailed = getString(R.string.capture_recovery_failed),
-            photoQualityTooLow = getString(R.string.capture_recovery_quality),
-            noFoodFound = getString(R.string.capture_recovery_no_food),
-            analysisOffline = getString(R.string.capture_recovery_offline),
-            analysisCancelled = getString(R.string.capture_recovery_cancelled),
+            capture = CaptureCopy(
+                title = getString(R.string.capture_title),
+                takeMealPhoto = getString(R.string.capture_shutter),
+                choosePhoto = getString(R.string.capture_import),
+                openSettings = getString(R.string.capture_open_settings),
+                cancel = getString(R.string.capture_cancel),
+            ),
+            status = StatusCopy(
+                readyToCapture = getString(R.string.capture_status_ready),
+                preparingPhoto = getString(R.string.capture_status_preparing),
+                photoReady = getString(R.string.capture_status_ready_photo),
+                analyzingPhoto = getString(R.string.capture_status_analyzing),
+                reviewCandidate = getString(R.string.capture_status_review),
+                restoringPhotoAnalysis = getString(R.string.capture_status_restoring),
+            ),
+            recovery = RecoveryCopy(
+                scanAgain = getString(R.string.capture_scan_again),
+                cameraPermissionRequired = getString(R.string.capture_recovery_permission),
+                cameraUnavailable = getString(R.string.capture_recovery_unavailable),
+                photoCaptureFailed = getString(R.string.capture_recovery_failed),
+                photoQualityTooLow = getString(R.string.capture_recovery_quality),
+                noFoodFound = getString(R.string.capture_recovery_no_food),
+                analysisOffline = getString(R.string.capture_recovery_offline),
+                analysisCancelled = getString(R.string.capture_recovery_cancelled),
+            ),
         )
     }
 
@@ -67,15 +71,20 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        retainedState = lastNonConfigurationInstance as? RetainedState ?: RetainedState(attemptId)
+        wasBackgrounded = retainedState.wasBackgrounded
         val photoBridge = AndroidPhotoBridge(this)
         host = PhotoAnalysisAndroidHostController(
             feature = feature,
             photoBridge = photoBridge,
             normalizer = AndroidImageNormalizer(),
             requestCameraPermission = { permissionLauncher.launch(Manifest.permission.CAMERA) },
-            launchCamera = { cameraLauncher.launch(photoBridge.cameraCaptureIntent(ATTEMPT_ID)) },
+            launchCamera = { operationId ->
+                cameraLauncher.launch(photoBridge.cameraCaptureIntent(AndroidPhotoAttemptIds.CAPTURE, operationId))
+            },
             launchImport = { importLauncher.launch(photoBridge.photoPickerIntent()) },
             launchSettings = { startActivity(photoBridge.settingsIntent()) },
+            captureOperation = retainedState.captureOperation,
         ).also { it.initialize() }
 
         PhotoAnalysisSnapshotBundleCodec.decode(savedInstanceState, attemptId)?.let { snapshot ->
@@ -91,6 +100,9 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         }
     }
 
+    @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
+    override fun onRetainCustomNonConfigurationInstance(): Any = retainedState
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putAll(PhotoAnalysisSnapshotBundleCodec.encode(feature.snapshotForPersistence(), attemptId))
@@ -101,16 +113,25 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         if (wasBackgrounded) {
             feature.dispatch(com.supernutrition.domain.photoanalysis.PhotoAnalysisEvent.Restored)
             wasBackgrounded = false
+            retainedState.wasBackgrounded = false
         }
     }
 
     override fun onStop() {
         feature.dispatch(com.supernutrition.domain.photoanalysis.PhotoAnalysisEvent.Backgrounded)
         wasBackgrounded = true
+        retainedState.wasBackgrounded = true
         super.onStop()
     }
 
-    private companion object {
-        const val ATTEMPT_ID = "android-photo-attempt"
+    private class RetainedState(attemptId: AttemptId) {
+        val feature = PhotoAnalysisFeature(
+            attemptId = attemptId,
+            leases = PhotoLeaseStore(),
+            sessions = PhotoSessionStore(),
+        )
+        val captureOperation = CaptureOperationState()
+        var wasBackgrounded: Boolean = false
     }
+
 }

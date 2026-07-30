@@ -37,6 +37,13 @@ internal object PolicyToml {
             .map { it.groupValues[1] }
             .toList()
 
+    fun section(text: String, name: String): String =
+        Regex("(?ms)^\\[${Regex.escape(name)}]\\s*\\n(.*?)(?=^\\[|\\z)")
+            .find(text)
+            ?.groupValues
+            ?.get(1)
+            ?: ""
+
     fun string(text: String, key: String): String? =
         Regex("(?m)^${Regex.escape(key)}\\s*=\\s*\\\"([^\\\"]*)\\\"\\s*$")
             .find(text)

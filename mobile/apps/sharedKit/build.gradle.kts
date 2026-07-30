@@ -3,9 +3,7 @@ plugins {
     id("com.supernutrition.kmp-apple-targets")
 }
 
-val hostIsIntelMac =
-    providers.systemProperty("os.name").orNull == "Mac OS X" &&
-        providers.systemProperty("os.arch").orNull == "x86_64"
+val hostIsIntelMac = extra["supernutrition.isIntelMac"] as Boolean
 val enableIosDeviceTarget = extra["supernutrition.enableIosDeviceTarget"] as Boolean
 val enableIntelX64 = extra["supernutrition.enableIntelX64"] as Boolean
 val enableAppleTargets = enableIosDeviceTarget || !hostIsIntelMac
@@ -24,6 +22,22 @@ kotlin {
     }
 
     sourceSets {
+        if (enableAppleTargets) {
+            val iosMain = maybeCreate("iosMain")
+            val iosMainSourceSet = getByName("iosMain").also { it.dependsOn(getByName("commonMain")) }
+            if (enableIosDeviceTarget) {
+                named("iosArm64Main") { dependsOn(iosMainSourceSet) }
+                if (!hostIsIntelMac) {
+                    named("iosSimulatorArm64Main") { dependsOn(iosMainSourceSet) }
+                }
+            }
+            if (enableIntelX64) {
+                named("iosX64Main") { dependsOn(iosMainSourceSet) }
+            }
+            iosMain.dependencies {
+                implementation(project(":platform:photo-ios"))
+            }
+        }
         commonMain.dependencies {
             implementation(libs.koin.core)
             implementation(project(":core:ui"))

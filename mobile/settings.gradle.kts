@@ -60,9 +60,12 @@ scaffoldModules.forEach { path ->
             ":core:ui",
             ":domain:inference",
             ":domain:photo-analysis",
+            ":feature:photo-analysis",
             ":feature:photo-analysis-presenter",
             ":feature:photo-analysis-ui",
+            ":platform:photo-android",
             ":platform:photo-ios",
+            ":testing:compose-support",
         )
         "androidApp" -> path == ":apps:androidApp"
         "photoIos" -> path in setOf(
