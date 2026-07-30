@@ -44,4 +44,18 @@ class PolicyTomlTest {
         assertEquals("mobile.testing.", rules[1].importPrefix)
         assertEquals("distributable", rules[1].configurationScope)
     }
+
+    @Test
+    fun `typed parser handles comments escaped strings and trailing array commas`() {
+        val text = """
+            label = "meal #1" # comment outside the value
+            values = [
+                "one",
+                "two",
+            ]
+        """.trimIndent()
+
+        assertEquals("meal #1", PolicyToml.string(text, "label"))
+        assertEquals(listOf("one", "two"), PolicyToml.stringList(text, "values"))
+    }
 }

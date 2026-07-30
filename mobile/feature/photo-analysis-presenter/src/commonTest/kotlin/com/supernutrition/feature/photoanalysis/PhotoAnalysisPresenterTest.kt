@@ -31,9 +31,9 @@ class PhotoAnalysisPresenterTest {
             capture = baseCopy.capture.copy(openSettings = "Impostazioni"),
         )
 
-        assertEquals(copy.readyToCapture, PhotoAnalysisPresenterModel.from(PhotoAnalysisState.Capture, copy).statusLabel)
+        assertEquals(copy.status.readyToCapture, PhotoAnalysisPresenterModel.from(PhotoAnalysisState.Capture, copy).statusLabel)
         assertEquals(
-            copy.cameraPermissionRequired,
+            copy.recovery.cameraPermissionRequired,
             PhotoAnalysisPresenterModel.from(
                 PhotoAnalysisState.Recovery(RecoveryReason.PERMISSION_DENIED),
                 copy,
@@ -62,13 +62,13 @@ class PhotoAnalysisPresenterTest {
     fun `presenter renders every recovery label and bounded actions`() {
         val copy = PhotoAnalysisPresenterCopyFixtures.localized()
         val expected = mapOf(
-            RecoveryReason.PERMISSION_DENIED to copy.cameraPermissionRequired,
-            RecoveryReason.CAMERA_UNAVAILABLE to copy.cameraUnavailable,
-            RecoveryReason.CAPTURE_FAILED to copy.photoCaptureFailed,
-            RecoveryReason.POOR_IMAGE to copy.photoQualityTooLow,
-            RecoveryReason.NO_FOOD to copy.noFoodFound,
-            RecoveryReason.OFFLINE to copy.analysisOffline,
-            RecoveryReason.CANCELLED to copy.analysisCancelled,
+            RecoveryReason.PERMISSION_DENIED to copy.recovery.cameraPermissionRequired,
+            RecoveryReason.CAMERA_UNAVAILABLE to copy.recovery.cameraUnavailable,
+            RecoveryReason.CAPTURE_FAILED to copy.recovery.photoCaptureFailed,
+            RecoveryReason.POOR_IMAGE to copy.recovery.photoQualityTooLow,
+            RecoveryReason.NO_FOOD to copy.recovery.noFoodFound,
+            RecoveryReason.OFFLINE to copy.recovery.analysisOffline,
+            RecoveryReason.CANCELLED to copy.recovery.analysisCancelled,
         )
         expected.forEach { (reason, label) ->
             val model = PhotoAnalysisPresenterModel.from(PhotoAnalysisState.Recovery(reason), copy)

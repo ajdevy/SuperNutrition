@@ -1,10 +1,9 @@
 #include <CommonCrypto/CommonDigest.h>
-#include <stddef.h>
 
-static inline int SN_SHA256(
+static inline void SN_SHA256(
     const void *data,
     unsigned int length,
     unsigned char *output
 ) {
-    return CC_SHA256(data, (CC_LONG)length, output) != NULL;
+    CC_SHA256(data, (CC_LONG)length, output);
 }

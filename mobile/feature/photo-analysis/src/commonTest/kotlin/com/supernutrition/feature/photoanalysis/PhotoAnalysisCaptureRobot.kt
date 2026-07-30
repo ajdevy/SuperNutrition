@@ -29,11 +29,11 @@ class PhotoAnalysisCaptureRobot(
     fun assertCaptureSurface() {
         trace.assertFinal(StepId("capture-surface"), title) {
             host.state() == PhotoAnalysisPresenterState.CAPTURE &&
-                host.text(title) == copy.captureTitle &&
-                host.text(status) == copy.readyToCapture
+                host.text(title) == copy.capture.title &&
+                host.text(status) == copy.status.readyToCapture
         }
-        check(host.text(shutter) == copy.takeMealPhoto) { "Capture shutter semantics drifted" }
-        check(host.text(import) == copy.choosePhoto) { "Capture import semantics drifted" }
+        check(host.text(shutter) == copy.capture.takeMealPhoto) { "Capture shutter semantics drifted" }
+        check(host.text(import) == copy.capture.choosePhoto) { "Capture import semantics drifted" }
     }
 
     fun takePhoto() {
@@ -51,6 +51,6 @@ class PhotoAnalysisCaptureRobot(
             host.state() == PhotoAnalysisPresenterState.RECOVERY &&
                 host.text(status) == expectedStatus
         }
-        check(host.text(scanAgain) == copy.scanAgain) { "Recovery retry semantics drifted" }
+        check(host.text(scanAgain) == copy.recovery.scanAgain) { "Recovery retry semantics drifted" }
 }
 }

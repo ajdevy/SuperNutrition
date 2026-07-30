@@ -18,12 +18,12 @@ import com.supernutrition.domain.photoanalysis.PhotoAnalysisState
 
 data class PhotoAnalysisCaptureSurface(
     val copy: PhotoAnalysisPresenterCopy,
-    val title: String = copy.captureTitle,
-    val shutterLabel: String = copy.takeMealPhoto,
-    val importLabel: String = copy.choosePhoto,
-    val openSettingsLabel: String = copy.openSettings,
-    val scanAgainLabel: String = copy.scanAgain,
-    val cancelLabel: String = copy.cancel,
+    val title: String = copy.capture.title,
+    val shutterLabel: String = copy.capture.takeMealPhoto,
+    val importLabel: String = copy.capture.choosePhoto,
+    val openSettingsLabel: String = copy.capture.openSettings,
+    val scanAgainLabel: String = copy.recovery.scanAgain,
+    val cancelLabel: String = copy.capture.cancel,
     val titleAutomationId: String = UiAutomationIds.PHOTO_ANALYSIS_TITLE.value,
     val statusAutomationId: String = UiAutomationIds.PHOTO_ANALYSIS_STATUS.value,
     val shutterAutomationId: String = UiAutomationIds.CAPTURE_SHUTTER.value,

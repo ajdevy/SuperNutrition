@@ -28,13 +28,13 @@ class PhotoAnalysisCaptureScreenComposeTest {
         }
 
         onNodeWithTag("photo_analysis_title").assertIsDisplayed()
-        onNodeWithTag("photo_analysis_title").assertTextEquals(copy.captureTitle)
+        onNodeWithTag("photo_analysis_title").assertTextEquals(copy.capture.title)
         onNodeWithTag("photo_analysis_status").assertIsDisplayed()
-        onNodeWithTag("photo_analysis_status").assertTextEquals(copy.readyToCapture)
+        onNodeWithTag("photo_analysis_status").assertTextEquals(copy.status.readyToCapture)
         onNodeWithTag("capture_shutter").assertIsDisplayed()
-        onNodeWithTag("capture_shutter").assertTextEquals(copy.takeMealPhoto)
+        onNodeWithTag("capture_shutter").assertTextEquals(copy.capture.takeMealPhoto)
         onNodeWithTag("capture_import").assertIsDisplayed()
-        onNodeWithTag("capture_import").assertTextEquals(copy.choosePhoto)
+        onNodeWithTag("capture_import").assertTextEquals(copy.capture.choosePhoto)
     }
 
     @Test
@@ -42,7 +42,7 @@ class PhotoAnalysisCaptureScreenComposeTest {
         val copy = PhotoAnalysisPresenterCopyFixtures.localized()
         val clicked = mutableListOf<PhotoAnalysisPresenterAction>()
         val model = PhotoAnalysisPresenterModel(
-            statusLabel = copy.photoCaptureFailed,
+            statusLabel = copy.recovery.photoCaptureFailed,
             state = PhotoAnalysisPresenterState.RECOVERY,
             actions = PhotoAnalysisPresenterAction.entries,
         )
@@ -52,9 +52,9 @@ class PhotoAnalysisCaptureScreenComposeTest {
                 onAction = clicked::add,
                 surface = PhotoAnalysisCaptureSurface(
                     copy = copy,
-                    title = copy.captureTitle,
-                    shutterLabel = copy.takeMealPhoto,
-                    importLabel = copy.choosePhoto,
+                    title = copy.capture.title,
+                    shutterLabel = copy.capture.takeMealPhoto,
+                    importLabel = copy.capture.choosePhoto,
                     shutterAutomationId = "custom_shutter",
                     importAutomationId = "custom_import",
                 ),
@@ -78,7 +78,7 @@ class PhotoAnalysisCaptureScreenComposeTest {
         setContent {
             PhotoAnalysisCaptureScreen(
                 model = PhotoAnalysisPresenterModel(
-                    statusLabel = copy.restoringPhotoAnalysis,
+                    statusLabel = copy.status.restoringPhotoAnalysis,
                     state = PhotoAnalysisPresenterState.BACKGROUNDED,
                     actions = emptyList(),
                 ),

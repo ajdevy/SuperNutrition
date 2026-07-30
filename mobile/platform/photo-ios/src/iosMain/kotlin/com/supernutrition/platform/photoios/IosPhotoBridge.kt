@@ -119,9 +119,12 @@ class IosPhotoBridge : IosPhotoBridgePort {
             filter = platform.PhotosUI.PHPickerFilter.imagesFilter()
             selectionLimit = 1
         }
-        val picker = PHPickerViewController(configuration = configuration)
         val weakBridge = WeakReference(this)
-        val delegate = PhotoPickerDelegate(onResult, onFailure) { weakBridge.get()?.activeDelegate = null }
+        lateinit var delegate: PhotoPickerDelegate
+        val picker = TrackedPhotoPickerViewController(configuration) {
+            delegate.presentationDismissed()
+        }
+        delegate = PhotoPickerDelegate(onResult, onFailure) { weakBridge.get()?.activeDelegate = null }
         if (!retain(delegate)) {
             failPresentation(onFailure)
             return
@@ -228,6 +231,16 @@ private class CameraCaptureViewController(
         )
     }
 
+    override fun viewDidDisappear(animated: Boolean) {
+        super.viewDidDisappear(animated)
+        if (!finished) {
+            finished = true
+            captureSession.stopRunning()
+            clear()
+            onResult(null)
+        }
+    }
+
     @ObjCAction
     private fun capturePhoto() {
         photoOutput.capturePhotoWithSettings(AVCapturePhotoSettings.photoSettings(), delegate = this)
@@ -274,35 +287,69 @@ private class CameraCaptureViewController(
 }
 
 @OptIn(ExperimentalForeignApi::class)
+private class TrackedPhotoPickerViewController(
+    configuration: PHPickerConfiguration,
+    private val onDismissed: () -> Unit,
+) : PHPickerViewController(configuration = configuration) {
+    private var programmaticDismissal = false
+
+    fun markProgrammaticDismissal() {
+        programmaticDismissal = true
+    }
+
+    override fun viewDidDisappear(animated: Boolean) {
+        super.viewDidDisappear(animated)
+        if (!programmaticDismissal) onDismissed()
+    }
+}
+
+@OptIn(ExperimentalForeignApi::class)
 private class PhotoPickerDelegate(
     private val onResult: (NSData?) -> Unit,
     private val onFailure: () -> Unit,
     private val clear: () -> Unit,
 ) : NSObject(), PHPickerViewControllerDelegateProtocol {
+    private var completed = false
+
+    fun presentationDismissed() {
+        complete { onResult(null) }
+    }
+
     override fun picker(picker: PHPickerViewController, didFinishPicking: List<*>) {
+        if (completed) return
         val result = didFinishPicking.firstOrNull() as? PHPickerResult
         if (result == null) {
-            dismissOnMain(picker) { clear(); onResult(null) }
+            dismissPickerOnMain(picker) { onResult(null) }
             return
         }
 
         result.itemProvider.loadDataRepresentationForTypeIdentifier(UTTypeImage.identifier) { data, error ->
             if (error != null || data == null || data.length > MAX_PICKER_BYTES.toULong()) {
                 dispatch_async(dispatch_get_main_queue()) {
-                    picker.dismissViewControllerAnimated(true) {
-                        clear()
-                        onFailure()
-                    }
+                    dismissPicker(picker) { onFailure() }
                 }
                 return@loadDataRepresentationForTypeIdentifier
             }
             dispatch_async(dispatch_get_main_queue()) {
-                picker.dismissViewControllerAnimated(true) {
-                    clear()
-                    onResult(data)
-                }
+                dismissPicker(picker) { onResult(data) }
             }
         }
+    }
+
+    private fun complete(action: () -> Unit) {
+        if (completed) return
+        completed = true
+        clear()
+        action()
+    }
+
+    private fun dismissPickerOnMain(picker: PHPickerViewController, action: () -> Unit) {
+        dispatch_async(dispatch_get_main_queue()) { dismissPicker(picker, action) }
+    }
+
+    private fun dismissPicker(picker: PHPickerViewController, action: () -> Unit) {
+        (picker as? TrackedPhotoPickerViewController)?.markProgrammaticDismissal()
+        picker.dismissViewControllerAnimated(true) { complete(action) }
     }
 }
 

@@ -23,19 +23,19 @@ public class SharedKitPhotoAnalysisSession private constructor(
     public constructor(attemptId: String) : this(attemptId, localizedPhotoAnalysisCopy())
 
     public val cameraCancelLabel: String
-        get() = presenterCopy.cancel
+        get() = presenterCopy.capture.cancel
 
     public val cameraShutterLabel: String
-        get() = presenterCopy.takeMealPhoto
+        get() = presenterCopy.capture.takeMealPhoto
 
     public val captureTitleLabel: String
-        get() = presenterCopy.captureTitle
+        get() = presenterCopy.capture.title
 
     public val photoPickerLabel: String
-        get() = presenterCopy.choosePhoto
+        get() = presenterCopy.capture.choosePhoto
 
     public val settingsLabel: String
-        get() = presenterCopy.openSettings
+        get() = presenterCopy.capture.openSettings
 
     internal val feature = PhotoAnalysisFeature(
         attemptId = AttemptId(attemptId),

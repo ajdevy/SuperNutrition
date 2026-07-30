@@ -32,6 +32,7 @@ class PhotoAnalysisAndroidHostController(
     }
 
     fun onPermissionResult(granted: Boolean) {
+        photoBridge.markCameraPermissionRequestCompleted()
         if (granted) {
             openCamera()
         } else {
@@ -71,6 +72,8 @@ class PhotoAnalysisAndroidHostController(
             feature.dispatch(PhotoAnalysisEvent.PreparationSucceeded(normalizer.normalize(ref, sourceBytes)))
         } catch (error: PhotoPreparationException) {
             feature.dispatch(PhotoAnalysisEvent.PreparationFailed(RecoveryReason.POOR_IMAGE))
+        } catch (error: Exception) {
+            feature.dispatch(PhotoAnalysisEvent.PreparationFailed(RecoveryReason.CAPTURE_FAILED))
         }
     }
 

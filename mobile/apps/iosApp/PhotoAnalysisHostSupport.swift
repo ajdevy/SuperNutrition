@@ -1,11 +1,12 @@
 import SwiftUI
+import Foundation
 import SharedKit
 import UIKit
 
 typealias PhotoAnalysisNativeAction = Photo_analysisPhotoAnalysisNativeAction
 
 enum PhotoAnalysisHostConstants {
-    static let attemptID = "ios-photo-attempt"
+    static let attemptID = Bundle.main.bundleIdentifier ?? "com.supernutrition.ios"
 }
 
 private enum PhotoAnalysisHostAction: Int {
@@ -13,9 +14,9 @@ private enum PhotoAnalysisHostAction: Int {
     case importPhoto
     case openSettings
 
-    init(_ action: PhotoAnalysisNativeAction) {
+    init?(_ action: PhotoAnalysisNativeAction) {
         guard let mapped = Self(rawValue: Int(action.ordinal)) else {
-            fatalError("Unsupported PhotoAnalysisNativeAction ordinal: \(action.ordinal)")
+            return nil
         }
         self = mapped
     }
@@ -73,7 +74,11 @@ struct PhotoAnalysisComposeHost: UIViewControllerRepresentable {
         }
 
         func handle(action: PhotoAnalysisNativeAction) {
-            switch PhotoAnalysisHostAction(action) {
+            guard let mappedAction = PhotoAnalysisHostAction(action) else {
+                session.captureFailed()
+                return
+            }
+            switch mappedAction {
             case .takePhoto:
                 requestCameraOrRecover()
             case .importPhoto:
