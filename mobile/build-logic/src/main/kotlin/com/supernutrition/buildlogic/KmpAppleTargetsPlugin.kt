@@ -8,8 +8,11 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 /** Central target policy for every KMP module on Apple and Intel hosts. */
 class KmpAppleTargetsPlugin : Plugin<Project> {
     override fun apply(project: Project) {
-        val isIntelMac = project.providers.systemProperty("os.name").orNull == "Mac OS X" &&
-            project.providers.systemProperty("os.arch").orNull == "x86_64"
+        val isIntelMac = project.providers.systemProperty("os.name").orNull
+            ?.contains("mac", ignoreCase = true) == true &&
+            project.providers.systemProperty("os.arch").orNull
+                ?.lowercase()
+                ?.let { it == "x86_64" || it == "amd64" } == true
         val enableIosDeviceTarget = !isIntelMac ||
             project.providers.gradleProperty("supernutrition.enableIosDeviceTarget").orNull == "true"
         val enableIntelX64 = isIntelMac &&

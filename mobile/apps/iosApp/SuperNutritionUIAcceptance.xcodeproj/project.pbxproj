@@ -14,19 +14,24 @@
 		B10000010000000000000007 /* SharedKit.framework in Production Frameworks */ = {isa = PBXBuildFile; fileRef = F20000010000000000000003 /* SharedKit.framework */; };
 		B10000010000000000000009 /* SuperNutritionApp.swift in Production Sources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000008 /* SuperNutritionApp.swift */; };
 		B10000010000000000000010 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000009 /* Localizable.strings */; };
+		B10000010000000000000011 /* PhotoAnalysisHostSupport.swift in Acceptance Sources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000010 /* PhotoAnalysisHostSupport.swift */; };
+		B10000010000000000000012 /* PhotoAnalysisHostSupport.swift in Production Sources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000010 /* PhotoAnalysisHostSupport.swift */; };
+		B10000010000000000000013 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000011 /* InfoPlist.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		F20000010000000000000000 /* SuperNutritionUIAcceptance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SuperNutritionUIAcceptance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F20000010000000000000001 /* SuperNutritionUIAcceptanceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperNutritionUIAcceptanceApp.swift; sourceTree = "<group>"; };
 		F20000010000000000000002 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F20000010000000000000003 /* SharedKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = SharedKit.framework; path = "$(SHARED_KIT_FRAMEWORK_DIR)/SharedKit.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F20000010000000000000003 /* SharedKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = SharedKit.framework; path = "$(SHARED_KIT_FRAMEWORK_DIR)/SharedKit.framework"; sourceTree = "<group>"; };
 		F20000010000000000000004 /* BootstrapLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BootstrapLaunchTests.swift; sourceTree = "<group>"; };
 		F20000010000000000000005 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = "System/Library/Frameworks/XCTest.framework"; sourceTree = SDKROOT; };
 		F20000010000000000000006 /* SuperNutritionUIAcceptanceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SuperNutritionUIAcceptanceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F20000010000000000000007 /* SuperNutrition.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SuperNutrition.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F20000010000000000000008 /* SuperNutritionApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperNutritionApp.swift; sourceTree = "<group>"; };
 		F20000010000000000000009 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
+		F20000010000000000000010 /* PhotoAnalysisHostSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAnalysisHostSupport.swift; sourceTree = "<group>"; };
+		F20000010000000000000011 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,7 +77,9 @@
 			children = (
 				F20000010000000000000001 /* SuperNutritionUIAcceptanceApp.swift */,
 				F20000010000000000000008 /* SuperNutritionApp.swift */,
+				F20000010000000000000010 /* PhotoAnalysisHostSupport.swift */,
 				F20000010000000000000002 /* Info.plist */,
+				F20000010000000000000011 /* InfoPlist.strings */,
 				F20000010000000000000009 /* Localizable.strings */,
 			);
 			sourceTree = "<group>";
@@ -195,15 +202,15 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		P30000010000000000000004 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (B10000010000000000000010 /* Localizable.strings in Resources */); runOnlyForDeploymentPostprocessing = 0; };
+		P30000010000000000000004 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (B10000010000000000000010 /* Localizable.strings in Resources */, B10000010000000000000013 /* InfoPlist.strings in Resources */); runOnlyForDeploymentPostprocessing = 0; };
 		P30000010000000000000006 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
-		P30000010000000000000008 /* Production Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (B10000010000000000000010 /* Localizable.strings in Resources */); runOnlyForDeploymentPostprocessing = 0; };
+		P30000010000000000000008 /* Production Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (B10000010000000000000010 /* Localizable.strings in Resources */, B10000010000000000000013 /* InfoPlist.strings in Resources */); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		P30000010000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B10000010000000000000001 /* SuperNutritionUIAcceptanceApp.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
+		P30000010000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B10000010000000000000001 /* SuperNutritionUIAcceptanceApp.swift in Sources */, B10000010000000000000011 /* PhotoAnalysisHostSupport.swift in Acceptance Sources */); runOnlyForDeploymentPostprocessing = 0; };
 		P30000010000000000000005 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B10000010000000000000004 /* BootstrapLaunchTests.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
-		P30000010000000000000007 /* Production Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B10000010000000000000009 /* SuperNutritionApp.swift in Production Sources */); runOnlyForDeploymentPostprocessing = 0; };
+		P30000010000000000000007 /* Production Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B10000010000000000000009 /* SuperNutritionApp.swift in Production Sources */, B10000010000000000000012 /* PhotoAnalysisHostSupport.swift in Production Sources */); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -221,6 +228,13 @@
 			files = (
 			);
 			inputPaths = (
+				"$(PROJECT_DIR)/../../../scripts/build-sharedkit-framework.sh",
+				"$(PROJECT_DIR)/../../../mobile/gradle/libs.versions.toml",
+				"$(PROJECT_DIR)/../../../mobile/gradle/verification-metadata.xml",
+				"$(PROJECT_DIR)/../../../mobile/apps/sharedKit/build.gradle.kts",
+				"$(PROJECT_DIR)/../../../mobile/apps/sharedKit/src",
+				"$(PROJECT_DIR)/../../../mobile/platform/photo-ios/src",
+				"$(PROJECT_DIR)/../../../mobile/feature/photo-analysis/src",
 			);
 			name = "Build SharedKit framework";
 			outputPaths = (
@@ -228,7 +242,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\ncd \"${PROJECT_DIR}/../..\"\ncase \"${KOTLIN_TARGET}\" in\n  iosArm64) GRADLE_KOTLIN_TARGET=IosArm64 ;;\n  iosSimulatorArm64) GRADLE_KOTLIN_TARGET=IosSimulatorArm64 ;;\n  iosX64) GRADLE_KOTLIN_TARGET=IosX64 ;;\n  *) echo \"Unsupported KOTLIN_TARGET: ${KOTLIN_TARGET}\" >&2; exit 1 ;;\nesac\n./gradlew -Psupernutrition.enableSharedKitFramework=true -Psupernutrition.enableIosDeviceTarget=true -Psupernutrition.enableIntelIosX64=true \":apps:sharedKit:link${CONFIGURATION}Framework${GRADLE_KOTLIN_TARGET}\"\n";
+			shellScript = "set -e\ncd \"${PROJECT_DIR}/../../..\"\nbash ./scripts/build-sharedkit-framework.sh \"${CONFIGURATION}\" \"${KOTLIN_TARGET}\"\n";
 		};
 		S32000010000000000000002 /* Build Production SharedKit framework */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -236,6 +250,13 @@
 			files = (
 			);
 			inputPaths = (
+				"$(PROJECT_DIR)/../../../scripts/build-sharedkit-framework.sh",
+				"$(PROJECT_DIR)/../../../mobile/gradle/libs.versions.toml",
+				"$(PROJECT_DIR)/../../../mobile/gradle/verification-metadata.xml",
+				"$(PROJECT_DIR)/../../../mobile/apps/sharedKit/build.gradle.kts",
+				"$(PROJECT_DIR)/../../../mobile/apps/sharedKit/src",
+				"$(PROJECT_DIR)/../../../mobile/platform/photo-ios/src",
+				"$(PROJECT_DIR)/../../../mobile/feature/photo-analysis/src",
 			);
 			name = "Build Production SharedKit framework";
 			outputPaths = (
@@ -243,7 +264,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\ncd \"${PROJECT_DIR}/../..\"\ncase \"${KOTLIN_TARGET}\" in\n  iosArm64) GRADLE_KOTLIN_TARGET=IosArm64 ;;\n  iosSimulatorArm64) GRADLE_KOTLIN_TARGET=IosSimulatorArm64 ;;\n  iosX64) GRADLE_KOTLIN_TARGET=IosX64 ;;\n  *) echo \"Unsupported KOTLIN_TARGET: ${KOTLIN_TARGET}\" >&2; exit 1 ;;\nesac\n./gradlew -Psupernutrition.enableSharedKitFramework=true -Psupernutrition.enableIosDeviceTarget=true -Psupernutrition.enableIntelIosX64=true \":apps:sharedKit:link${CONFIGURATION}Framework${GRADLE_KOTLIN_TARGET}\"\n";
+			shellScript = "set -e\ncd \"${PROJECT_DIR}/../../..\"\nbash ./scripts/build-sharedkit-framework.sh \"${CONFIGURATION}\" \"${KOTLIN_TARGET}\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

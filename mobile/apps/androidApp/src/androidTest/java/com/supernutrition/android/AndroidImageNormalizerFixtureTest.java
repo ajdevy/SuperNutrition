@@ -2,10 +2,10 @@ package com.supernutrition.android;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 
-import com.supernutrition.domain.photoanalysis.AttemptId;
 import com.supernutrition.domain.photoanalysis.ImageOrientation;
 import com.supernutrition.domain.photoanalysis.NormalizedPhotoInput;
-import com.supernutrition.domain.photoanalysis.PhotoRef;
+import com.supernutrition.domain.inference.AttemptId;
+import com.supernutrition.domain.inference.PhotoRef;
 import com.supernutrition.platform.photoandroid.AndroidImageNormalizer;
 
 import org.junit.Test;

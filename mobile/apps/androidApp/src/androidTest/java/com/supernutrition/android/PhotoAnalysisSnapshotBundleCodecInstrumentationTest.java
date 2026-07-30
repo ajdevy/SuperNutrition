@@ -2,28 +2,27 @@ package com.supernutrition.android;
 
 import android.os.Bundle;
 
-import com.supernutrition.domain.photoanalysis.AttemptId;
+import java.util.Arrays;
+import java.util.HashSet;
+
 import com.supernutrition.domain.photoanalysis.PhotoAnalysisBackgroundSnapshot;
-import com.supernutrition.domain.photoanalysis.PhotoRef;
 import com.supernutrition.domain.photoanalysis.RecoveryReason;
 import com.supernutrition.domain.photoanalysis.RequestId;
+import com.supernutrition.domain.inference.AttemptId;
+import com.supernutrition.domain.inference.PhotoRef;
 import com.supernutrition.feature.photoanalysis.PhotoAnalysisSnapshotBundleCodec;
+import com.supernutrition.platform.photoandroid.AndroidPhotoAttemptIds;
 
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 
 /** Device-bound process-recreation proof for the Android lifecycle codec. */
 public final class PhotoAnalysisSnapshotBundleCodecInstrumentationTest {
-    private static final String ATTEMPT_KEY = "photo_analysis.snapshot.attempt";
-    private static final String URI_KEY = "photo_analysis.snapshot.uri";
-    private static final String BYTES_KEY = "photo_analysis.snapshot.bytes";
-
     @Test
     public void everySnapshotVariantRoundTripsWithoutPhotoPayload() {
-        AttemptId attempt = new AttemptId("android-photo-attempt");
+        AttemptId attempt = new AttemptId(AndroidPhotoAttemptIds.CAPTURE);
         PhotoRef ref = PhotoRef.Companion.issue(attempt, "opaque-photo");
 
         assertRoundTrip(PhotoAnalysisBackgroundSnapshot.Capture.INSTANCE, attempt);
@@ -38,8 +37,16 @@ public final class PhotoAnalysisSnapshotBundleCodecInstrumentationTest {
                 new PhotoAnalysisBackgroundSnapshot.Ready(ref),
                 attempt
         );
-        assertFalse(encoded.containsKey(URI_KEY));
-        assertFalse(encoded.containsKey(BYTES_KEY));
+        assertEquals(PhotoAnalysisSnapshotBundleCodec.SNAPSHOT_SCHEMA_VERSION,
+                encoded.getInt(PhotoAnalysisSnapshotBundleCodec.SNAPSHOT_SCHEMA_VERSION_KEY));
+        assertEquals("opaque-photo",
+                encoded.getString(PhotoAnalysisSnapshotBundleCodec.SNAPSHOT_OPAQUE_KEY));
+        assertEquals(new HashSet<>(Arrays.asList(
+                        PhotoAnalysisSnapshotBundleCodec.SNAPSHOT_SCHEMA_VERSION_KEY,
+                        PhotoAnalysisSnapshotBundleCodec.SNAPSHOT_KIND_KEY,
+                        PhotoAnalysisSnapshotBundleCodec.SNAPSHOT_ATTEMPT_KEY,
+                        PhotoAnalysisSnapshotBundleCodec.SNAPSHOT_OPAQUE_KEY)),
+                encoded.keySet());
     }
 
     @Test
@@ -53,19 +60,33 @@ public final class PhotoAnalysisSnapshotBundleCodecInstrumentationTest {
         );
 
         assertNull(PhotoAnalysisSnapshotBundleCodec.decode(encoded, restoredAttempt));
-        assertEquals(sourceAttempt.getValue(), encoded.getString(ATTEMPT_KEY));
+        assertEquals(sourceAttempt.getValue(),
+                encoded.getString(PhotoAnalysisSnapshotBundleCodec.SNAPSHOT_ATTEMPT_KEY));
     }
 
     @Test
     public void malformedRequestIdIsRejectedWithoutThrowing() {
         AttemptId attempt = new AttemptId("malformed-request-attempt");
         Bundle encoded = new Bundle();
-        encoded.putString("photo_analysis.snapshot.kind", "analyzing");
-        encoded.putString(ATTEMPT_KEY, attempt.getValue());
-        encoded.putString("photo_analysis.snapshot.opaque", "opaque-photo");
-        encoded.putString("photo_analysis.snapshot.request", "");
+        encoded.putInt(PhotoAnalysisSnapshotBundleCodec.SNAPSHOT_SCHEMA_VERSION_KEY,
+                PhotoAnalysisSnapshotBundleCodec.SNAPSHOT_SCHEMA_VERSION);
+        encoded.putString(PhotoAnalysisSnapshotBundleCodec.SNAPSHOT_KIND_KEY,
+                PhotoAnalysisSnapshotBundleCodec.SNAPSHOT_ANALYZING);
+        encoded.putString(PhotoAnalysisSnapshotBundleCodec.SNAPSHOT_ATTEMPT_KEY, attempt.getValue());
+        encoded.putString(PhotoAnalysisSnapshotBundleCodec.SNAPSHOT_OPAQUE_KEY, "opaque-photo");
+        encoded.putString(PhotoAnalysisSnapshotBundleCodec.SNAPSHOT_REQUEST_KEY, "");
 
         assertNull(PhotoAnalysisSnapshotBundleCodec.decode(encoded, attempt));
+    }
+
+    @Test
+    public void wrongBundleTypesAreRejectedWithoutThrowing() {
+        AttemptId attempt = new AttemptId("wrong-type-attempt");
+        Bundle malformed = new Bundle();
+        malformed.putString(PhotoAnalysisSnapshotBundleCodec.SNAPSHOT_SCHEMA_VERSION_KEY, "one");
+        malformed.putString(PhotoAnalysisSnapshotBundleCodec.SNAPSHOT_ATTEMPT_KEY, attempt.getValue());
+
+        assertNull(PhotoAnalysisSnapshotBundleCodec.decode(malformed, attempt));
     }
 
     private static void assertRoundTrip(

@@ -10,6 +10,7 @@ object AndroidPhotoCaptureFiles {
     const val CAPTURE_FILE_PREFIX = "supernutrition-camera-"
     const val EXTRA_ATTEMPT_ID = "com.supernutrition.platform.photoandroid.ATTEMPT_ID"
     const val EXTRA_CAPTURE_TOKEN = "com.supernutrition.platform.photoandroid.CAPTURE_TOKEN"
+    const val EXTRA_OPERATION_ID = "com.supernutrition.platform.photoandroid.OPERATION_ID"
     const val EXTRA_CAPTURE_FAILURE = "com.supernutrition.platform.photoandroid.CAPTURE_FAILURE"
     const val EXTRA_CAPTURE_FAILURE_REASON = "com.supernutrition.platform.photoandroid.CAPTURE_FAILURE_REASON"
 

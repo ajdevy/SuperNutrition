@@ -28,13 +28,15 @@ public final class AndroidPhotoCaptureFilesInstrumentationTest {
 
     @Test
     public void cameraIntentTargetsThePrivateCameraXActivity() {
-        Intent intent = new AndroidPhotoBridge(context).cameraCaptureIntent("attempt-42");
+        Intent intent = new AndroidPhotoBridge(context).cameraCaptureIntent("attempt-42", "operation-42");
 
         assertEquals(context.getPackageName(), intent.getComponent().getPackageName());
         assertEquals(AndroidCameraCaptureActivity.class.getName(),
                 intent.getComponent().getClassName());
         assertEquals("attempt-42",
                 intent.getStringExtra(AndroidPhotoCaptureFiles.EXTRA_ATTEMPT_ID));
+        assertEquals("operation-42",
+                intent.getStringExtra(AndroidPhotoCaptureFiles.EXTRA_OPERATION_ID));
     }
 
     @Test

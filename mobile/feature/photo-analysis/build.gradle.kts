@@ -36,8 +36,8 @@ kotlin {
             implementation(kotlin("test"))
             implementation(project(":core:ui"))
             implementation(project(":feature:photo-analysis-ui"))
-            implementation(project(":feature:photo-analysis-presenter"))
             implementation(project(":testing:compose-support"))
+            implementation(project(":feature:photo-analysis-presenter"))
         }
         jvmMain.dependencies {
             implementation(compose.runtime)

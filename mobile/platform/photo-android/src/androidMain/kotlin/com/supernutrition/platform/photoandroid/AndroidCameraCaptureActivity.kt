@@ -29,11 +29,16 @@ class AndroidCameraCaptureActivity : ComponentActivity() {
     private var captureOutput: BoundedCaptureOutputStream? = null
     private var captureStarted = false
     private var captureRequested = true
+    private var operationId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        operationId = intent.getStringExtra(AndroidPhotoCaptureFiles.EXTRA_OPERATION_ID)
         captureRequested = savedInstanceState?.getBoolean(CAPTURE_REQUESTED_KEY, true) ?: true
-        captureStarted = savedInstanceState?.getBoolean(CAPTURE_STARTED_KEY, false) ?: false
+        // The in-memory output is intentionally discarded on recreation, so a
+        // restored camera surface must capture a fresh frame rather than claim
+        // that the previous one-shot operation is still running.
+        captureStarted = false
         if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             finishWithFailure(CaptureFailureReason.PERMISSION_DENIED)
             return
@@ -54,8 +59,7 @@ class AndroidCameraCaptureActivity : ComponentActivity() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putBoolean(CAPTURE_REQUESTED_KEY, captureRequested)
-        outState.putBoolean(CAPTURE_STARTED_KEY, captureStarted)
+        outState.putBoolean(CAPTURE_REQUESTED_KEY, captureRequested || captureStarted)
         super.onSaveInstanceState(outState)
     }
 
@@ -115,10 +119,15 @@ class AndroidCameraCaptureActivity : ComponentActivity() {
                     } else {
                         setResult(
                             Activity.RESULT_OK,
-                            Intent().putExtra(
-                                AndroidPhotoCaptureFiles.EXTRA_CAPTURE_TOKEN,
-                                AndroidPhotoCaptureResultStore.put(bytes),
-                            ),
+                            Intent().apply {
+                                putExtra(
+                                    AndroidPhotoCaptureFiles.EXTRA_CAPTURE_TOKEN,
+                                    AndroidPhotoCaptureResultStore.put(bytes),
+                                )
+                                operationId?.let {
+                                    putExtra(AndroidPhotoCaptureFiles.EXTRA_OPERATION_ID, it)
+                                }
+                            },
                         )
                         finish()
                     }
@@ -135,9 +144,13 @@ class AndroidCameraCaptureActivity : ComponentActivity() {
     private fun finishWithFailure(reason: CaptureFailureReason) {
         setResult(
             Activity.RESULT_FIRST_USER,
-            Intent()
-                .putExtra(AndroidPhotoCaptureFiles.EXTRA_CAPTURE_FAILURE, true)
-                .putExtra(AndroidPhotoCaptureFiles.EXTRA_CAPTURE_FAILURE_REASON, reason.name),
+            Intent().apply {
+                putExtra(AndroidPhotoCaptureFiles.EXTRA_CAPTURE_FAILURE, true)
+                putExtra(AndroidPhotoCaptureFiles.EXTRA_CAPTURE_FAILURE_REASON, reason.name)
+                operationId?.let {
+                    putExtra(AndroidPhotoCaptureFiles.EXTRA_OPERATION_ID, it)
+                }
+            },
         )
         finish()
     }
@@ -174,7 +187,6 @@ class AndroidCameraCaptureActivity : ComponentActivity() {
         const val TAG = "AndroidCameraCapture"
         const val MAX_CAPTURE_BYTES = 10 * 1024 * 1024
         const val CAPTURE_REQUESTED_KEY = "photo_analysis.camera.capture_requested"
-        const val CAPTURE_STARTED_KEY = "photo_analysis.camera.capture_started"
     }
 }
 

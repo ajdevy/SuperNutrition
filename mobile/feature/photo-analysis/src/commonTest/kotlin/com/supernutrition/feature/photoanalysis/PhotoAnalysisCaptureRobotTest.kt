@@ -7,7 +7,7 @@ import kotlin.test.assertEquals
 class PhotoAnalysisCaptureRobotTest {
     @Test
     fun `robot uses typed semantics and bounded final assertions`() {
-        val copy = testCopy()
+        val copy = PhotoAnalysisPresenterCopyFixtures.localized()
         val host = FakeHost(
             state = PhotoAnalysisPresenterState.CAPTURE,
             texts = mapOf(
@@ -43,26 +43,4 @@ class PhotoAnalysisCaptureRobotTest {
             clicked += target.value
         }
     }
-
-    private fun testCopy() = PhotoAnalysisPresenterCopy(
-        captureTitle = "Acquisizione",
-        takeMealPhoto = "Scatta foto del pasto",
-        choosePhoto = "Scegli foto",
-        openSettings = "Apri impostazioni",
-        scanAgain = "Scansiona di nuovo",
-        cancel = "Annulla",
-        readyToCapture = "Pronto per acquisire",
-        preparingPhoto = "Preparazione foto",
-        photoReady = "Foto pronta",
-        analyzingPhoto = "Analisi foto",
-        reviewCandidate = "Rivedi candidato",
-        restoringPhotoAnalysis = "Ripristino analisi foto",
-        cameraPermissionRequired = "Serve il permesso fotocamera",
-        cameraUnavailable = "Fotocamera non disponibile",
-        photoCaptureFailed = "Acquisizione foto non riuscita",
-        photoQualityTooLow = "Qualita foto insufficiente",
-        noFoodFound = "Nessun alimento trovato",
-        analysisOffline = "Analisi offline",
-        analysisCancelled = "Analisi annullata",
-    )
 }

@@ -26,6 +26,8 @@ class AndroidPhotoBridgeContractTest {
                 CameraPermissionState.NOT_DETERMINED,
                 CameraPermissionState.GRANTED,
                 CameraPermissionState.DENIED,
+                CameraPermissionState.RATIONALE,
+                CameraPermissionState.PERMANENTLY_DENIED,
                 CameraPermissionState.RESTRICTED,
             ),
             CameraPermissionState.entries,

@@ -313,17 +313,19 @@ class QualityPlugin : Plugin<Project> {
         val lifecycleText = Files.readString(mobileRoot.resolve("product-lifecycle.toml"))
         val coverageText = Files.readString(mobileRoot.resolve("config/quality/coverage.toml"))
         return lifecycle(mobileRoot) == "active" &&
-            coverageText.contains("quality_claim = true") &&
+            PolicyToml.boolean(coverageText, "quality_claim") == true &&
             nativeEquivalentEvidenceAllowed(mobileRoot) &&
             listOf(
-                "active_inventory_and_denominators = true",
-                "production_compose_host = true",
-            ).all(lifecycleText::contains)
+                "active_inventory_and_denominators",
+                "production_compose_host",
+            ).all { PolicyToml.boolean(PolicyToml.section(lifecycleText, "activation"), it) == true }
     }
 
     private fun qualityClaimConfigured(mobileRoot: Path): Boolean =
-        Files.readString(mobileRoot.resolve("config/quality/coverage.toml"))
-            .contains("quality_claim = true")
+        PolicyToml.boolean(
+            Files.readString(mobileRoot.resolve("config/quality/coverage.toml")),
+            "quality_claim",
+        ) == true
 
     private fun productionModulePaths(mobileRoot: Path): List<String> {
         val denominators = coverageDenominators(mobileRoot)
@@ -374,11 +376,10 @@ class QualityPlugin : Plugin<Project> {
         PolicyToml.string(text, key)
 
     private fun lifecycle(mobileRoot: Path): String =
-        Regex("(?m)^lifecycle\\s*=\\s*\\\"([^\\\"]+)\\\"$")
-            .find(Files.readString(mobileRoot.resolve("product-lifecycle.toml")))
-            ?.groupValues
-            ?.get(1)
-            ?: error("Mobile lifecycle is missing")
+        PolicyToml.string(
+            Files.readString(mobileRoot.resolve("product-lifecycle.toml")),
+            "lifecycle",
+        ) ?: error("Mobile lifecycle is missing")
 }
 
 private data class CoverageDenominator(

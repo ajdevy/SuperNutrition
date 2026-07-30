@@ -13,16 +13,16 @@ final class BootstrapLaunchTests: XCTestCase {
         let app = XCUIApplication()
         app.launch()
 
-        XCTAssertTrue(app.descendants(matching: .any)["bootstrap_shell_launch_di"].waitForExistence(timeout: 15))
-        XCTAssertTrue(app.descendants(matching: .any)["photo_analysis_status"].exists)
-        XCTAssertTrue(app.buttons["capture_shutter"].waitForExistence(timeout: 15))
-        XCTAssertTrue(app.buttons["capture_import"].exists)
+        XCTAssertTrue(app.descendants(matching: .any)[SharedKitAutomationIds.shared.bootstrapLaunchMarker].waitForExistence(timeout: 15))
+        XCTAssertTrue(app.descendants(matching: .any)[SharedKitAutomationIds.shared.photoAnalysisStatus].exists)
+        XCTAssertTrue(app.buttons[SharedKitAutomationIds.shared.captureShutter].waitForExistence(timeout: 15))
+        XCTAssertTrue(app.buttons[SharedKitAutomationIds.shared.captureImport].exists)
     }
 
     func testCameraActionUsesNativeSourceOrRecovery() {
         let app = XCUIApplication()
         let permissionMonitor = addUIInterruptionMonitor(withDescription: "Camera permission") { alert in
-            let allow = alert.buttons["Allow"]
+            let allow = alert.buttons.element(boundBy: max(0, alert.buttons.count - 1))
             guard allow.exists else { return false }
             allow.tap()
             return true
@@ -30,31 +30,33 @@ final class BootstrapLaunchTests: XCTestCase {
         defer { removeUIInterruptionMonitor(permissionMonitor) }
         app.launch()
 
-        let shutter = app.buttons["capture_shutter"]
+        let shutter = app.buttons[SharedKitAutomationIds.shared.captureShutter]
         XCTAssertTrue(shutter.waitForExistence(timeout: 15))
         shutter.tap()
         app.tap()
 
-        let recovery = app.buttons["capture_open_settings"]
+        let recovery = app.buttons[SharedKitAutomationIds.shared.captureOpenSettings]
         if recovery.waitForExistence(timeout: 5) {
-            XCTAssertTrue(app.descendants(matching: .any)["photo_analysis_status"].exists)
+            XCTAssertTrue(app.descendants(matching: .any)[SharedKitAutomationIds.shared.photoAnalysisStatus].exists)
             return
         }
 
         XCTAssertTrue(nativeCameraControlIsVisible(in: app))
         XCTAssertTrue(dismissOrRecoverPresentedCamera(from: app))
-        XCTAssertTrue(app.buttons["capture_shutter"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.buttons[SharedKitAutomationIds.shared.captureShutter].waitForExistence(timeout: 10))
     }
 
     func testPhotoPickerOpensAndCanBeCancelled() {
         let app = XCUIApplication()
         app.launch()
 
-        let importButton = app.buttons["capture_import"]
+        let importButton = app.buttons[SharedKitAutomationIds.shared.captureImport]
         XCTAssertTrue(importButton.waitForExistence(timeout: 15))
         importButton.tap()
 
-        let cancel = app.buttons["Cancel"]
+        let pickerNavigationBar = app.navigationBars.firstMatch
+        XCTAssertTrue(pickerNavigationBar.waitForExistence(timeout: 10))
+        let cancel = pickerNavigationBar.buttons.element(boundBy: 0)
         XCTAssertTrue(cancel.waitForExistence(timeout: 10))
         cancel.tap()
 
@@ -65,13 +67,13 @@ final class BootstrapLaunchTests: XCTestCase {
         let app = XCUIApplication()
         app.launch()
 
-        let shutter = app.buttons["capture_shutter"]
+        let shutter = app.buttons[SharedKitAutomationIds.shared.captureShutter]
         XCTAssertTrue(shutter.waitForExistence(timeout: 15))
         shutter.tap()
 
-        let recovery = app.buttons["capture_open_settings"]
+        let recovery = app.buttons[SharedKitAutomationIds.shared.captureOpenSettings]
         if recovery.waitForExistence(timeout: 5) {
-            XCTAssertTrue(app.descendants(matching: .any)["photo_analysis_status"].exists)
+            XCTAssertTrue(app.descendants(matching: .any)[SharedKitAutomationIds.shared.photoAnalysisStatus].exists)
         } else {
             XCTAssertTrue(nativeCameraControlIsVisible(in: app))
             XCTAssertTrue(dismissOrRecoverPresentedCamera(from: app))
@@ -80,16 +82,16 @@ final class BootstrapLaunchTests: XCTestCase {
         XCUIDevice.shared.press(.home)
         app.activate()
 
-        XCTAssertTrue(app.descendants(matching: .any)["bootstrap_shell_launch_di"].waitForExistence(timeout: 10))
-        XCTAssertTrue(app.buttons["capture_shutter"].exists)
-        XCTAssertTrue(app.buttons["capture_import"].exists)
+        XCTAssertTrue(app.descendants(matching: .any)[SharedKitAutomationIds.shared.bootstrapLaunchMarker].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.buttons[SharedKitAutomationIds.shared.captureShutter].exists)
+        XCTAssertTrue(app.buttons[SharedKitAutomationIds.shared.captureImport].exists)
         if recovery.exists {
-            XCTAssertTrue(app.descendants(matching: .any)["photo_analysis_status"].exists)
+            XCTAssertTrue(app.descendants(matching: .any)[SharedKitAutomationIds.shared.photoAnalysisStatus].exists)
         }
     }
 
     private func nativeCameraControlIsVisible(in app: XCUIApplication) -> Bool {
-        let capture = app.descendants(matching: .any)["PhotoCapture"]
+        let capture = app.descendants(matching: .any)[SharedKitAutomationIds.shared.captureNative]
         return capture.waitForExistence(timeout: 10)
     }
 
@@ -100,6 +102,6 @@ final class BootstrapLaunchTests: XCTestCase {
         // weakening the native-source assertion above.
         app.terminate()
         app.launch()
-        return app.buttons["capture_shutter"].waitForExistence(timeout: 15)
+        return app.buttons[SharedKitAutomationIds.shared.captureShutter].waitForExistence(timeout: 15)
     }
 }

@@ -31,51 +31,51 @@ object MobilePolicyValidator {
         }
 
         val moduleMatrix = files.single { it.first == "config/quality/module-matrix.toml" }.second
-        require(moduleMatrix.contains("[[unit]]")) {
+        require(PolicyToml.blocks(moduleMatrix, "unit").isNotEmpty()) {
             "The scaffold product inventory must contain policy units"
         }
-        require(moduleMatrix.contains("undeclared_executable_policy = \"fail\"")) {
+        require(PolicyToml.string(moduleMatrix, "undeclared_executable_policy") == "fail") {
             "The module inventory must fail on undeclared executables"
         }
 
         val profile = files.single { it.first == "config/quality/ui-evidence-profile.toml" }.second
         val scenarios = files.single { it.first == "config/quality/positive-scenarios.toml" }.second
         val journeys = files.single { it.first == "config/quality/journeys.toml" }.second
-        when {
-            profile.contains("profile = \"bootstrap\"") -> {
-                require(scenarios.contains("profile = \"bootstrap\"")) {
+        when (PolicyToml.string(profile, "profile")) {
+            "bootstrap" -> {
+                require(PolicyToml.string(scenarios, "profile") == "bootstrap") {
                     "Bootstrap scenarios must use the bootstrap profile"
                 }
-                require(journeys.contains("profile = \"bootstrap\"")) {
+                require(PolicyToml.string(journeys, "profile") == "bootstrap") {
                     "Bootstrap journeys must use the bootstrap profile"
                 }
-                require(!profile.contains("profile = \"photo-analysis\"")) {
+                require(PolicyToml.string(profile, "profile") != "photo-analysis") {
                     "Bootstrap profile cannot activate product journeys"
                 }
             }
-            profile.contains("profile = \"photo-analysis\"") -> {
-                require(scenarios.contains("profile = \"photo-analysis\"")) {
+            "photo-analysis" -> {
+                require(PolicyToml.string(scenarios, "profile") == "photo-analysis") {
                     "Photo-analysis scenarios must bind the transitioned profile"
                 }
-                require(journeys.contains("profile = \"photo-analysis\"")) {
+                require(PolicyToml.string(journeys, "profile") == "photo-analysis") {
                     "Photo-analysis journeys must bind the transitioned profile"
                 }
-                require((extractInt(scenarios, "scenario_count") ?: 0) > 0) {
+                require((PolicyToml.integer(scenarios, "scenario_count") ?: 0) > 0) {
                     "Photo-analysis transition requires a non-empty scenario catalog"
                 }
-                require((extractInt(journeys, "journey_count") ?: 0) > 0) {
+                require((PolicyToml.integer(journeys, "journey_count") ?: 0) > 0) {
                     "Photo-analysis transition requires a non-empty journey catalog"
                 }
                 require(Files.exists(mobileRoot.resolve("feature/photo-analysis"))) {
                     "Photo-analysis profile requires the feature source"
                 }
-                require(profile.contains("ios_simulator_task = \"iosSimulatorArm64Test\"")) {
+                require(PolicyToml.string(profile, "ios_simulator_task") == "iosSimulatorArm64Test") {
                     "Photo-analysis profile must keep iosSimulatorArm64Test as the canonical Apple task"
                 }
-                require(profile.contains("local_compatibility_task = \"iosX64Test\"")) {
+                require(PolicyToml.string(profile, "local_compatibility_task") == "iosX64Test") {
                     "Photo-analysis profile must declare the Intel x64 compatibility task separately"
                 }
-                require(profile.contains("local_compatibility_only = true")) {
+                require(PolicyToml.boolean(profile, "local_compatibility_only") == true) {
                     "Intel x64 evidence must never be treated as canonical Apple evidence"
                 }
             }
@@ -86,15 +86,15 @@ object MobilePolicyValidator {
         val lifecycleValue = extractString(lifecycle, "lifecycle")
         val coverage = files.single { it.first == "config/quality/coverage.toml" }.second
         if (lifecycleValue == "scaffold-pending") {
-            require(coverage.contains("quality_claim = false")) {
+            require(PolicyToml.boolean(coverage, "quality_claim") == false) {
                 "Scaffold coverage must not make a product quality claim"
             }
         } else {
-            require(coverage.contains("quality_claim = true")) {
+            require(PolicyToml.boolean(coverage, "quality_claim") == true) {
                 "An active lifecycle must declare an active quality claim"
             }
         }
-        require(coverage.contains("empty_or_zero_denominator = \"fail\"")) {
+        require(PolicyToml.string(coverage, "empty_or_zero_denominator") == "fail") {
             "Zero coverage denominators must fail closed"
         }
 
@@ -102,22 +102,22 @@ object MobilePolicyValidator {
             "The mobile lifecycle must be scaffold-pending or active"
         }
         if (lifecycleValue == "scaffold-pending") {
-            require(lifecycle.contains("transition = \"blocked\"")) {
+            require(PolicyToml.string(lifecycle, "transition") == "blocked") {
                 "A scaffold-pending lifecycle must remain blocked until activation evidence is complete"
             }
         } else {
-            require(lifecycle.contains("transition = \"active\"")) {
+            require(PolicyToml.string(lifecycle, "transition") == "active") {
                 "An active lifecycle must declare an active transition"
             }
         }
-        require(lifecycle.contains("production_compose_host = true")) {
+        require(PolicyToml.boolean(PolicyToml.section(lifecycle, "activation"), "production_compose_host") == true) {
             "The lifecycle record must prove that the production Compose host exists"
         }
-        require(lifecycle.contains("apple_evidence_required_for_activation = false")) {
+        require(PolicyToml.boolean(PolicyToml.section(lifecycle, "activation"), "apple_evidence_required_for_activation") == false) {
             "Apple/Xcode evidence must be explicitly optional for local activation"
         }
         if (lifecycleValue == "scaffold-pending") {
-            require(lifecycle.contains("active_inventory_and_denominators = false")) {
+            require(PolicyToml.boolean(PolicyToml.section(lifecycle, "activation"), "active_inventory_and_denominators") == false) {
                 "A scaffold-pending lifecycle must not claim an active inventory"
             }
         }
@@ -142,12 +142,12 @@ object MobilePolicyValidator {
             requireManifestProperty(identity, key, "SuperNutrition")
         }
         requireManifestProperty(identity, "store_listing_title", "SuperNutrition AI nutritionist")
-        val forbiddenVisibleVariants = identity.substringAfter("[forbidden_visible_variants]", "")
-        require(extractStringList(forbiddenVisibleVariants, "values").toSet() ==
+        val forbiddenVisibleVariants = PolicyToml.section(identity, "forbidden_visible_variants")
+        require(PolicyToml.stringList(forbiddenVisibleVariants, "values").toSet() ==
             setOf("SuperNutrition AI nutritionist", "AI nutritionist")) {
             "Product identity must declare the closed forbidden visible variants"
         }
-        require(extractStringList(forbiddenVisibleVariants, "applies_to").toSet() == setOf(
+        require(PolicyToml.stringList(forbiddenVisibleVariants, "applies_to").toSet() == setOf(
             "installed_display_name",
             "launcher_name",
             "in_app_name",
@@ -171,18 +171,20 @@ object MobilePolicyValidator {
         }
 
         val interaction = files.single { it.first == "config/quality/interaction-policy.toml" }.second
-        require(interaction.contains("defaultLocale")) {
+        val defaults = PolicyToml.section(interaction, "defaults")
+        require(PolicyToml.stringList(defaults, "allowlist").contains("defaultLocale")) {
             "Interaction policy must declare the closed default allowlist"
         }
-        require(interaction.contains("allowlist = [\"defaultLocale\", \"measurementSystem\", \"catalogProposal\", \"standardServing\"]")) {
+        require(PolicyToml.stringList(defaults, "allowlist") == listOf(
+            "defaultLocale", "measurementSystem", "catalogProposal", "standardServing",
+        )) {
             "Interaction policy allowlist must remain closed"
         }
-        require(interaction.contains("remote_upload = \"never-preselected\"")) {
+        require(PolicyToml.string(PolicyToml.section(interaction, "forbidden_defaults"), "remote_upload") == "never-preselected") {
             "Remote consent must never be a defaultable interaction field"
         }
-        val forbiddenDefaults = extractStringList(
-            interaction.substringAfter("[forbidden_defaults]", ""),
-            "fields",
+        val forbiddenDefaults = PolicyToml.stringList(
+            PolicyToml.section(interaction, "forbidden_defaults"), "fields",
         ).toSet()
         require(forbiddenDefaults == setOf(
             "foodIdentity",
@@ -368,13 +370,13 @@ object MobilePolicyValidator {
         }
 
         val moduleMatrix = files.single { it.first == "config/quality/module-matrix.toml" }.second
-        require(moduleMatrix.contains("ios_task = \"iosSimulatorArm64Test\"")) {
+        require(PolicyToml.string(moduleMatrix, "ios_task") == "iosSimulatorArm64Test") {
             "Module inventory must keep iosSimulatorArm64Test as the canonical Apple task"
         }
-        require(moduleMatrix.contains("local_compatibility_task = \"iosX64Test\"")) {
+        require(PolicyToml.string(moduleMatrix, "local_compatibility_task") == "iosX64Test") {
             "Module inventory must declare the Intel x64 compatibility task"
         }
-        require(moduleMatrix.contains("local_compatibility_only = true")) {
+        require(PolicyToml.boolean(moduleMatrix, "local_compatibility_only") == true) {
             "Module inventory must not promote Intel x64 compatibility evidence"
         }
         val units = blocks(moduleMatrix, "unit")

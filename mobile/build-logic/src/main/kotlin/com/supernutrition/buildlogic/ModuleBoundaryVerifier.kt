@@ -9,7 +9,7 @@ import java.nio.file.attribute.BasicFileAttributes
 /** Enforces the dependency graph declared by config/architecture/module-boundaries.toml. */
 internal object ModuleBoundaryVerifier {
     private val dependencyPattern = Regex(
-        "(?m)^\\s*([A-Za-z][A-Za-z0-9_]*)\\s*\\([^\\n]*project\\(\\\"(:[^\\\"]+)\\\"\\)",
+        "([A-Za-z][A-Za-z0-9_]*)\\s*\\(\\s*project\\(\\s*\\\"(:[^\\\"]+)\\\"\\s*\\)\\s*\\)",
     )
 
     fun validate(mobileRoot: Path) {
@@ -45,7 +45,9 @@ internal object ModuleBoundaryVerifier {
                         directory: Path,
                         attributes: BasicFileAttributes,
                     ): FileVisitResult = if (
-                        directory != moduleRoot && directory.fileName.toString() in setOf("build", ".gradle")
+                        directory != moduleRoot && directory.fileName.toString() in setOf(
+                            "build", ".gradle", ".git", "node_modules",
+                        )
                     ) {
                         FileVisitResult.SKIP_SUBTREE
                     } else {
@@ -56,7 +58,11 @@ internal object ModuleBoundaryVerifier {
                         file: Path,
                         attributes: BasicFileAttributes,
                     ): FileVisitResult {
-                        if (attributes.isRegularFile) files.add(file)
+                        if (attributes.isRegularFile && (
+                                file.fileName.toString() == "build.gradle.kts" ||
+                                    file.fileName.toString().endsWith(".kt")
+                            )
+                        ) files.add(file)
                         return FileVisitResult.CONTINUE
                     }
                 })
@@ -111,7 +117,7 @@ internal object ModuleBoundaryVerifier {
                 ?.get(1)
             val scope = if (
                 configuration.contains("test", ignoreCase = true) ||
-                sourceSet?.contains("test", ignoreCase = true) == true
+                sourceSet?.endsWith("Test") == true
             ) "test-only" else "production"
             val allowed = edges.any {
                 it.scope == scope && source.id in it.from && target.id in it.to
@@ -135,8 +141,10 @@ internal object ModuleBoundaryVerifier {
                 }
 
                 rule.configurationScope == "distributable" ->
-                    relativeSource.contains("/src/") &&
-                        !Regex("/src/[^/]*test[^/]*/", RegexOption.IGNORE_CASE).containsMatchIn(relativeSource)
+                    relativeSource.split('/').let { segments ->
+                        val srcIndex = segments.indexOf("src")
+                        srcIndex >= 0 && segments.getOrNull(srcIndex + 1)?.endsWith("Test") != true
+                    }
 
                 else -> false
             }

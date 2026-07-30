@@ -39,6 +39,7 @@ android {
 
 dependencies {
     implementation(libs.koin.core)
+    implementation(project(":core:ui"))
     implementation(project(":feature:photo-analysis"))
     implementation(project(":platform:photo-android"))
     androidTestImplementation(libs.androidx.test.runner)
