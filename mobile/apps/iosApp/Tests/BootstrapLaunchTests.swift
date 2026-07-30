@@ -37,7 +37,7 @@ final class BootstrapLaunchTests: XCTestCase {
 
         let recovery = app.buttons["capture_open_settings"]
         if recovery.waitForExistence(timeout: 5) {
-            XCTAssertTrue(app.staticTexts["Camera is unavailable"].exists)
+            XCTAssertTrue(app.descendants(matching: .any)["photo_analysis_status"].exists)
             return
         }
 
@@ -71,7 +71,7 @@ final class BootstrapLaunchTests: XCTestCase {
 
         let recovery = app.buttons["capture_open_settings"]
         if recovery.waitForExistence(timeout: 5) {
-            XCTAssertTrue(app.staticTexts["Camera is unavailable"].exists)
+            XCTAssertTrue(app.descendants(matching: .any)["photo_analysis_status"].exists)
         } else {
             XCTAssertTrue(nativeCameraControlIsVisible(in: app))
             XCTAssertTrue(dismissOrRecoverPresentedCamera(from: app))
@@ -84,7 +84,7 @@ final class BootstrapLaunchTests: XCTestCase {
         XCTAssertTrue(app.buttons["capture_shutter"].exists)
         XCTAssertTrue(app.buttons["capture_import"].exists)
         if recovery.exists {
-            XCTAssertTrue(app.staticTexts["Camera is unavailable"].exists)
+            XCTAssertTrue(app.descendants(matching: .any)["photo_analysis_status"].exists)
         }
     }
 

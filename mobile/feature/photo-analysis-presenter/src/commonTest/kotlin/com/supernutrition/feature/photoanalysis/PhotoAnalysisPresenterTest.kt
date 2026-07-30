@@ -30,9 +30,9 @@ class PhotoAnalysisPresenterTest {
             openSettings = "Impostazioni",
         )
 
-        assertEquals("Pronto", PhotoAnalysisPresenterModel.from(PhotoAnalysisState.Capture, copy).statusLabel)
+        assertEquals(copy.readyToCapture, PhotoAnalysisPresenterModel.from(PhotoAnalysisState.Capture, copy).statusLabel)
         assertEquals(
-            "Camera permission is required",
+            copy.cameraPermissionRequired,
             PhotoAnalysisPresenterModel.from(
                 PhotoAnalysisState.Recovery(RecoveryReason.PERMISSION_DENIED),
                 copy,
@@ -59,16 +59,16 @@ class PhotoAnalysisPresenterTest {
 
     @Test
     fun `presenter renders every recovery label and bounded actions`() {
-        val expected = mapOf(
-            RecoveryReason.PERMISSION_DENIED to "Camera permission is required",
-            RecoveryReason.CAMERA_UNAVAILABLE to "Camera is unavailable",
-            RecoveryReason.CAPTURE_FAILED to "Photo capture failed",
-            RecoveryReason.POOR_IMAGE to "Photo quality is too low",
-            RecoveryReason.NO_FOOD to "No food was found in the photo",
-            RecoveryReason.OFFLINE to "Analysis is offline",
-            RecoveryReason.CANCELLED to "Analysis cancelled",
-        )
         val copy = testCopy()
+        val expected = mapOf(
+            RecoveryReason.PERMISSION_DENIED to copy.cameraPermissionRequired,
+            RecoveryReason.CAMERA_UNAVAILABLE to copy.cameraUnavailable,
+            RecoveryReason.CAPTURE_FAILED to copy.photoCaptureFailed,
+            RecoveryReason.POOR_IMAGE to copy.photoQualityTooLow,
+            RecoveryReason.NO_FOOD to copy.noFoodFound,
+            RecoveryReason.OFFLINE to copy.analysisOffline,
+            RecoveryReason.CANCELLED to copy.analysisCancelled,
+        )
         expected.forEach { (reason, label) ->
             val model = PhotoAnalysisPresenterModel.from(PhotoAnalysisState.Recovery(reason), copy)
             assertEquals(label, model.statusLabel)
@@ -96,24 +96,24 @@ class PhotoAnalysisPresenterTest {
     }
 
     private fun testCopy() = PhotoAnalysisPresenterCopy(
-        captureTitle = "Capture",
-        takeMealPhoto = "Take meal photo",
-        choosePhoto = "Choose photo",
-        openSettings = "Open settings",
-        scanAgain = "Scan again",
-        cancel = "Cancel",
-        readyToCapture = "Ready to capture",
-        preparingPhoto = "Preparing photo",
-        photoReady = "Photo ready",
-        analyzingPhoto = "Analyzing photo",
-        reviewCandidate = "Review candidate",
-        restoringPhotoAnalysis = "Restoring photo analysis",
-        cameraPermissionRequired = "Camera permission is required",
-        cameraUnavailable = "Camera is unavailable",
-        photoCaptureFailed = "Photo capture failed",
-        photoQualityTooLow = "Photo quality is too low",
-        noFoodFound = "No food was found in the photo",
-        analysisOffline = "Analysis is offline",
-        analysisCancelled = "Analysis cancelled",
+        captureTitle = "Acquisizione",
+        takeMealPhoto = "Scatta foto del pasto",
+        choosePhoto = "Scegli foto",
+        openSettings = "Apri impostazioni",
+        scanAgain = "Scansiona di nuovo",
+        cancel = "Annulla",
+        readyToCapture = "Pronto per acquisire",
+        preparingPhoto = "Preparazione foto",
+        photoReady = "Foto pronta",
+        analyzingPhoto = "Analisi foto",
+        reviewCandidate = "Rivedi candidato",
+        restoringPhotoAnalysis = "Ripristino analisi foto",
+        cameraPermissionRequired = "Serve il permesso fotocamera",
+        cameraUnavailable = "Fotocamera non disponibile",
+        photoCaptureFailed = "Acquisizione foto non riuscita",
+        photoQualityTooLow = "Qualita foto insufficiente",
+        noFoodFound = "Nessun alimento trovato",
+        analysisOffline = "Analisi offline",
+        analysisCancelled = "Analisi annullata",
     )
 }

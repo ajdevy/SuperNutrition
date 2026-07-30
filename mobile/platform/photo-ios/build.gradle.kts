@@ -26,6 +26,10 @@ kotlin {
                     defFile(project.file("src/nativeInterop/cinterop/photo-permission.def"))
                     compilerOpts("-I${project.file("src/nativeInterop/cinterop").absolutePath}")
                 }
+                create("photoCapture") {
+                    defFile(project.file("src/nativeInterop/cinterop/photo-capture.def"))
+                    compilerOpts("-I${project.file("src/nativeInterop/cinterop").absolutePath}")
+                }
                 create("commonCrypto") {
                     defFile(project.file("src/nativeInterop/cinterop/common-crypto.def"))
                     compilerOpts(
