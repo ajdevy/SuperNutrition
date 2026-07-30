@@ -6,15 +6,10 @@ import java.nio.file.Path
 import java.nio.file.SimpleFileVisitor
 import java.nio.file.attribute.BasicFileAttributes
 import java.security.MessageDigest
-import java.io.StringReader
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.Properties
-import javax.xml.XMLConstants
-import javax.xml.parsers.DocumentBuilderFactory
-import org.w3c.dom.Document
 import org.w3c.dom.Node
-import org.xml.sax.InputSource
 
 /**
  * Read-only validator for the fail-closed mobile scaffold policy.
@@ -695,10 +690,10 @@ object MobilePolicyValidator {
         }
     }
 
-    private fun String.isSha256Digest(): Boolean = length == 64 && all { it in "0123456789abcdef" }
+    private fun String.isSha256Digest(): Boolean = isLowercaseHexDigest(64)
 
     private fun xmlResourceValue(path: Path, name: String): String? = runCatching {
-        val document = parseXml(Files.readString(path))
+        val document = parseSecureXml(Files.readString(path), disallowDoctype = false)
         (0 until document.getElementsByTagName("string").length)
             .asSequence()
             .map { document.getElementsByTagName("string").item(it) }
@@ -707,7 +702,7 @@ object MobilePolicyValidator {
     }.getOrNull()
 
     private fun plistValue(path: Path, key: String): String? = runCatching {
-        val document = parseXml(Files.readString(path))
+        val document = parseSecureXml(Files.readString(path), disallowDoctype = false)
         val keys = document.getElementsByTagName("key")
         (0 until keys.length).asSequence().map { keys.item(it) }
             .firstOrNull { it.textContent == key }
@@ -718,12 +713,4 @@ object MobilePolicyValidator {
             }
     }.getOrNull()
 
-    private fun parseXml(text: String): Document = DocumentBuilderFactory.newInstance().apply {
-        setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true)
-        setFeature("http://xml.org/sax/features/external-general-entities", false)
-        setFeature("http://xml.org/sax/features/external-parameter-entities", false)
-        setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
-        isXIncludeAware = false
-        isExpandEntityReferences = false
-    }.newDocumentBuilder().parse(InputSource(StringReader(text)))
 }
