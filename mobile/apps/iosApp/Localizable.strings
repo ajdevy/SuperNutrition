@@ -6,7 +6,6 @@
 "photo_analysis.capture.open_settings" = "Open settings";
 "photo_analysis.capture.cancel" = "Cancel";
 "photo_analysis.recovery.scan_again" = "Scan again";
-"photo_analysis.action.cancel" = "Cancel";
 
 "photo_analysis.status.ready_to_capture" = "Ready to capture";
 "photo_analysis.status.preparing_photo" = "Preparing photo";

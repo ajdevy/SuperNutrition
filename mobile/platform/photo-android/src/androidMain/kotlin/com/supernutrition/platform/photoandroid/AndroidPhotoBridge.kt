@@ -1,7 +1,6 @@
 package com.supernutrition.platform.photoandroid
 
 import android.Manifest
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -9,15 +8,16 @@ import android.net.Uri
 import android.provider.Settings
 import com.supernutrition.core.ui.CameraAvailability
 import com.supernutrition.core.ui.CameraPermissionState
-import com.supernutrition.core.ui.CaptureSurfaceContract
-import com.supernutrition.core.ui.PhotoRecoveryAction
 
 /**
  * Android-only bridge. Native intents and permission objects stay here; the
  * common feature receives only PhotoRef and bridge outcomes.
  */
-class AndroidPhotoBridge(private val context: Context) : PhotoBridgePort {
-    private var permissionRequestInFlight = false
+class AndroidPhotoBridge(
+    private val context: Context,
+    permissionRequestInFlight: Boolean = false,
+) : AndroidPhotoBridgePort {
+    private var permissionRequestInFlight = permissionRequestInFlight
 
     override fun cameraPermissionState(): CameraPermissionState = when {
         context.checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED ->
@@ -25,7 +25,8 @@ class AndroidPhotoBridge(private val context: Context) : PhotoBridgePort {
 
         permissionRequestInFlight -> CameraPermissionState.NOT_DETERMINED
 
-        (context as? Activity)?.shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) == true ->
+        context is android.app.Activity &&
+            context.shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) ->
             CameraPermissionState.RATIONALE
 
         !context.getSharedPreferences(PERMISSIONS_PREFS, Context.MODE_PRIVATE)
@@ -42,22 +43,14 @@ class AndroidPhotoBridge(private val context: Context) : PhotoBridgePort {
         CameraAvailability.UNAVAILABLE
     }
 
-    override fun recoveryFor(
-        permission: CameraPermissionState,
-        availability: CameraAvailability,
-    ): List<PhotoRecoveryAction> = CaptureSurfaceContract().recoveryFor(permission, availability)
-
-    fun cameraPermissionName(): String = Manifest.permission.CAMERA
-
-    fun cameraCaptureIntent(attemptId: String, operationId: String): Intent =
+    override fun cameraCaptureIntent(operationId: String): Intent =
         Intent(context, AndroidCameraCaptureActivity::class.java).apply {
-            putExtra(AndroidPhotoCaptureFiles.EXTRA_ATTEMPT_ID, attemptId)
             putExtra(AndroidPhotoCaptureFiles.EXTRA_OPERATION_ID, operationId)
         }
 
-    fun cleanupStaleCaptureFiles(): Int = AndroidPhotoCaptureFiles.cleanupStale(context)
+    override fun cleanupStaleCaptureFiles(): Int = AndroidPhotoCaptureFiles.cleanupStale(context)
 
-    fun isCaptureFailure(result: Intent?): Boolean =
+    override fun isCaptureFailure(result: Intent?): Boolean =
         result?.getBooleanExtra(AndroidPhotoCaptureFiles.EXTRA_CAPTURE_FAILURE, false) == true
 
     /**
@@ -66,21 +59,21 @@ class AndroidPhotoBridge(private val context: Context) : PhotoBridgePort {
      * legacy acceptance host starts it; OPEN_DOCUMENT is the safer selected-
      * only system fallback and does not grant broad media access.
      */
-    fun photoPickerIntent(): Intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+    override fun photoPickerIntent(): Intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
         type = "image/*"
         addCategory(Intent.CATEGORY_OPENABLE)
         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
 
-    fun settingsIntent(): Intent = Intent(
+    override fun settingsIntent(): Intent = Intent(
         Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
         Uri.parse("package:${context.packageName}"),
     )
 
     /** Reads one selected URI or consumes the in-memory CameraX result. */
-    fun photoBytesFromResult(result: Intent?): ByteArray? = AndroidPhotoResultReader(context).read(result)
+    override fun photoBytesFromResult(result: Intent?): ByteArray? = AndroidPhotoResultReader(context).read(result)
 
-    fun markCameraPermissionRequestStarted() {
+    override fun markCameraPermissionRequestStarted() {
         permissionRequestInFlight = true
         context.getSharedPreferences(PERMISSIONS_PREFS, Context.MODE_PRIVATE)
             .edit()
@@ -88,7 +81,7 @@ class AndroidPhotoBridge(private val context: Context) : PhotoBridgePort {
             .apply()
     }
 
-    fun markCameraPermissionRequestCompleted() {
+    override fun markCameraPermissionRequestCompleted() {
         permissionRequestInFlight = false
     }
 

@@ -36,6 +36,24 @@ class ModuleBoundaryVerifierTest {
         }
     }
 
+    @Test
+    fun `multiline production edge is accepted`() {
+        val root = fixture("feature")
+        try {
+            Files.writeString(
+                root.resolve("feature/photo/build.gradle.kts"),
+                """
+                    implementation(
+                        project(":domain:photo")
+                    )
+                """.trimIndent(),
+            )
+            ModuleBoundaryVerifier.validate(root)
+        } finally {
+            root.toFile().deleteRecursively()
+        }
+    }
+
     private fun fixture(source: String): java.nio.file.Path {
         val root = Files.createTempDirectory("module-boundaries")
         Files.createDirectories(root.resolve("config/architecture"))

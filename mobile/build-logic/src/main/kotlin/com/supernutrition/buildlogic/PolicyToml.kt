@@ -28,7 +28,6 @@ internal object PolicyToml {
         "config/quality/interaction-policy.toml",
         "config/quality/evidence-bindings.toml",
         "config/product-identity.toml",
-        "config/compose-stability.conf",
         "product-lifecycle.toml",
     )
 

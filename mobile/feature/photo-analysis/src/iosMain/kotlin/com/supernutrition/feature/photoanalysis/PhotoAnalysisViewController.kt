@@ -14,6 +14,6 @@ fun PhotoAnalysisViewController(
     PhotoAnalysisCaptureContent(
         stateFlow = feature.stateFlow,
         onAction = { action -> feature.route(action, onNativeAction) },
-        surface = PhotoAnalysisCaptureSurface(copy = copy),
+        surface = PhotoAnalysisCaptureSurface(presenterCopy = copy),
     )
 }

@@ -76,15 +76,28 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         wasBackgrounded = retainedState.wasBackgrounded
-        val photoBridge = AndroidPhotoBridge(this)
+        savedInstanceState?.getString(PENDING_OPERATION_ID_KEY)?.let {
+            retainedState.captureOperation.pendingOperationId = it
+        }
+        retainedState.captureOperation.permissionRequestInFlight =
+            savedInstanceState?.getBoolean(PERMISSION_REQUEST_IN_FLIGHT_KEY) ?: false
+        val photoBridge = AndroidPhotoBridge(
+            context = this,
+            permissionRequestInFlight = retainedState.captureOperation.permissionRequestInFlight,
+        )
         host = PhotoAnalysisAndroidHostController(
             feature = feature,
             photoBridge = photoBridge,
             normalizer = AndroidImageNormalizer(),
             requestCameraPermission = { permissionLauncher.launch(Manifest.permission.CAMERA) },
-            launchCamera = { operationId ->
-                cameraLauncher.launch(photoBridge.cameraCaptureIntent(AndroidPhotoAttemptIds.CAPTURE, operationId))
+            showCameraPermissionRationale = { onContinue ->
+                android.app.AlertDialog.Builder(this)
+                    .setMessage(R.string.capture_permission_rationale)
+                    .setNegativeButton(R.string.capture_cancel, null)
+                    .setPositiveButton(R.string.capture_permission_continue) { _, _ -> onContinue() }
+                    .show()
             },
+            launchCamera = { operationId -> cameraLauncher.launch(photoBridge.cameraCaptureIntent(operationId)) },
             launchImport = { importLauncher.launch(photoBridge.photoPickerIntent()) },
             launchSettings = { startActivity(photoBridge.settingsIntent()) },
             captureOperation = retainedState.captureOperation,
@@ -98,7 +111,7 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
                 stateFlow = feature.stateFlow,
                 onAction = host::handleAction,
                 modifier = Modifier.semantics { testTagsAsResourceId = true },
-                surface = PhotoAnalysisCaptureSurface(copy = presentationCopy),
+                surface = PhotoAnalysisCaptureSurface(presenterCopy = presentationCopy),
             )
         }
     }
@@ -106,6 +119,13 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putAll(PhotoAnalysisSnapshotBundleCodec.encode(feature.snapshotForPersistence(), attemptId))
+        retainedState.captureOperation.pendingOperationId?.let {
+            outState.putString(PENDING_OPERATION_ID_KEY, it)
+        }
+        outState.putBoolean(
+            PERMISSION_REQUEST_IN_FLIGHT_KEY,
+            retainedState.captureOperation.permissionRequestInFlight,
+        )
     }
 
     override fun onStart() {
@@ -132,6 +152,11 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         )
         val captureOperation = CaptureOperationState()
         var wasBackgrounded: Boolean = false
+    }
+
+    private companion object {
+        const val PENDING_OPERATION_ID_KEY = "photo_analysis.pending_operation_id"
+        const val PERMISSION_REQUEST_IN_FLIGHT_KEY = "photo_analysis.permission_request_in_flight"
     }
 
 }

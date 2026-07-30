@@ -6,8 +6,15 @@ import java.nio.file.Path
 import java.nio.file.SimpleFileVisitor
 import java.nio.file.attribute.BasicFileAttributes
 import java.security.MessageDigest
+import java.io.StringReader
 import java.time.Instant
 import java.time.temporal.ChronoUnit
+import java.util.Properties
+import javax.xml.XMLConstants
+import javax.xml.parsers.DocumentBuilderFactory
+import org.w3c.dom.Document
+import org.w3c.dom.Node
+import org.xml.sax.InputSource
 
 /**
  * Read-only validator for the fail-closed mobile scaffold policy.
@@ -126,8 +133,12 @@ object MobilePolicyValidator {
         validateQualityToolCatalog(mobileRoot)
         validateDependencyLockPolicy(mobileRoot)
 
-        val stability = files.single { it.first == "config/compose-stability.conf" }.second
-        require(!Regex("(^|[.=])\\s*\\*", RegexOption.MULTILINE).containsMatchIn(stability)) {
+        val stabilityPath = mobileRoot.resolve("config/compose-stability.conf")
+        require(Files.isRegularFile(stabilityPath)) {
+            "Missing Compose stability configuration: config/compose-stability.conf"
+        }
+        val stability = Files.readString(stabilityPath)
+        require(stability.lineSequence().none { it.substringBefore('#').contains('*') }) {
             "Wildcard Compose stability entries are forbidden"
         }
 
@@ -158,15 +169,11 @@ object MobilePolicyValidator {
         requireManifestProperty(identity, "acceptance_android_application_id", "com.supernutrition.android.uiAcceptance")
         requireManifestProperty(identity, "acceptance_ios_bundle_identifier", "com.supernutrition.ios.uiacceptance")
         val androidStrings = mobileRoot.resolve("apps/androidApp/src/main/res/values/strings.xml")
-        require(Files.isRegularFile(androidStrings) && Regex(
-            "<string\\s+name=\"app_name\"\\s*>SuperNutrition</string>",
-        ).containsMatchIn(Files.readString(androidStrings))) {
+        require(Files.isRegularFile(androidStrings) && xmlResourceValue(androidStrings, "app_name") == "SuperNutrition") {
             "Android visible identity must match the canonical manifest"
         }
         val iosInfo = mobileRoot.resolve("apps/iosApp/Info.plist")
-        require(Files.isRegularFile(iosInfo) && Regex(
-            "<key>CFBundleDisplayName</key>\\s*<string>SuperNutrition</string>",
-        ).containsMatchIn(Files.readString(iosInfo))) {
+        require(Files.isRegularFile(iosInfo) && plistValue(iosInfo, "CFBundleDisplayName") == "SuperNutrition") {
             "iOS visible identity must match the canonical manifest"
         }
 
@@ -213,7 +220,7 @@ object MobilePolicyValidator {
             "Missing build-logic Gradle memory profile: build-logic/gradle.properties"
         }
 
-        val product = Files.readString(productProperties)
+        val product = loadProperties(productProperties)
         requirePropertyContains(product, "org.gradle.jvmargs", "-Xms256m")
         requirePropertyContains(product, "org.gradle.jvmargs", "-Xmx4g")
         requirePropertyContains(product, "org.gradle.jvmargs", "-XX:MaxMetaspaceSize=1536m")
@@ -229,7 +236,7 @@ object MobilePolicyValidator {
         requirePropertyContains(product, "kotlin.daemon.jvmargs", "-XX:+UseG1GC")
         requireProperty(product, "kotlin.daemon.useFallbackStrategy", "false")
 
-        val buildLogic = Files.readString(buildLogicProperties)
+        val buildLogic = loadProperties(buildLogicProperties)
         requirePropertyContains(buildLogic, "org.gradle.jvmargs", "-Xms128m")
         requirePropertyContains(buildLogic, "org.gradle.jvmargs", "-Xmx1g")
         requirePropertyContains(buildLogic, "org.gradle.jvmargs", "-XX:MaxMetaspaceSize=512m")
@@ -278,27 +285,26 @@ object MobilePolicyValidator {
         }
     }
 
-    private fun requireProperty(text: String, key: String, expected: String) {
-        require(Regex("(?m)^${Regex.escape(key)}\\s*=\\s*${Regex.escape(expected)}\\s*$").containsMatchIn(text)) {
+    private fun requireProperty(properties: Properties, key: String, expected: String) {
+        require(properties.getProperty(key)?.trim() == expected) {
             "$key must be set to $expected in the Gradle memory profile"
         }
     }
 
     private fun requireManifestProperty(text: String, key: String, expected: String) {
-        require(Regex("(?m)^${Regex.escape(key)}\\s*=\\s*\\\"${Regex.escape(expected)}\\\"\\s*$")
-            .containsMatchIn(text)) {
+        require(PolicyToml.string(text, key) == expected) {
             "$key must be set to $expected in the product identity manifest"
         }
     }
 
-    private fun requirePropertyContains(text: String, key: String, expected: String) {
-        val value = Regex("(?m)^${Regex.escape(key)}\\s*=\\s*(.*)$")
-            .find(text)
-            ?.groupValues
-            ?.get(1)
-        require(value?.contains(expected) == true) {
+    private fun requirePropertyContains(properties: Properties, key: String, expected: String) {
+        require(properties.getProperty(key)?.contains(expected) == true) {
             "$key must contain $expected in the Gradle memory profile"
         }
+    }
+
+    private fun loadProperties(path: Path): Properties = Properties().also { properties ->
+        Files.newInputStream(path).use(properties::load)
     }
 
     private fun validateDependencyLockPolicy(mobileRoot: Path) {
@@ -326,7 +332,7 @@ object MobilePolicyValidator {
      */
     private fun findProjectDirectories(mobileRoot: Path): List<Path> {
         val projectDirectories = linkedSetOf<Path>()
-        val generatedDirectories = setOf("build", ".gradle", ".git", "graphify-out")
+        val generatedDirectories = setOf("build", ".gradle", ".kotlin", ".git", "graphify-out", "out", "DerivedData")
         Files.walkFileTree(
             mobileRoot,
             object : SimpleFileVisitor<Path>() {
@@ -484,9 +490,8 @@ object MobilePolicyValidator {
 
         val scenarios = files.single { it.first == "config/quality/positive-scenarios.toml" }.second
         val journeys = files.single { it.first == "config/quality/journeys.toml" }.second
-        Regex("native_gap_ids\\s*=\\s*\\[([^]]*)]").findAll(scenarios).flatMap { match ->
-            Regex("\"([^\"]+)\"").findAll(match.groupValues[1]).map { it.groupValues[1] }
-        }.forEach { gapId ->
+        blocks(scenarios, "scenario").flatMap { extractStringList(it, "native_gap_ids") }
+            .forEach { gapId ->
             require(gapId in gapIds) { "Scenario references an orphaned native gap: $gapId" }
         }
 
@@ -573,7 +578,7 @@ object MobilePolicyValidator {
                     "$blockName must declare an undo path"
                 }
                 val resolvedDigest = extractString(block, "resolved_value_digest")
-                require(resolvedDigest == "pending" || resolvedDigest?.matches(DIGEST_PATTERN) == true) {
+                require(resolvedDigest == "pending" || resolvedDigest?.isSha256Digest() == true) {
                     "$blockName must bind a resolved-value digest or explicit pending state"
                 }
                 require(extractStringList(block, "forbidden_default_tests").toSet() == setOf(
@@ -640,8 +645,8 @@ object MobilePolicyValidator {
             val status = extractString(block, "status") ?: error("Evidence record $id is missing status")
             if (status == "success") {
                 require(extractString(block, "commit_sha") != "pending")
-                require(extractString(block, "artifact_digest")?.matches(DIGEST_PATTERN) == true)
-                require(extractString(block, "fixture_digest")?.matches(DIGEST_PATTERN) == true)
+                require(extractString(block, "artifact_digest")?.isSha256Digest() == true)
+                require(extractString(block, "fixture_digest")?.isSha256Digest() == true)
                 val executedAt = Instant.parse(extractString(block, "executed_at"))
                 val maxAge = gapBlocks.first { extractString(it, "id") == id }
                     .let { extractInt(it, "max_age_days") ?: error("Gap $id has no max age") }
@@ -677,17 +682,48 @@ object MobilePolicyValidator {
         return digest.digest().joinToString("") { "%02x".format(it) }
     }
 
-    private val DIGEST_PATTERN = Regex("[a-f0-9]{64}")
-
     private fun validateCommonManifest(relative: String, text: String) {
-        require(Regex("(?m)^schema\\s*=\\s*\\\"[^\\\"]+\\\"\\s*$").containsMatchIn(text)) {
+        require(!extractString(text, "schema").isNullOrBlank()) {
             "$relative must declare a schema"
         }
-        require(Regex("(?m)^lifecycle\\s*=\\s*\\\"(scaffold-pending|active)\\\"$").containsMatchIn(text)) {
+        require(extractString(text, "lifecycle") in setOf("scaffold-pending", "active")) {
             "$relative must declare scaffold-pending or active lifecycle"
         }
-        require(Regex("(?m)^source_digest\\s*=\\s*\\\"(pending|local-only|[a-f0-9]{64})\\\"$").containsMatchIn(text)) {
+        require(extractString(text, "source_digest") in setOf("pending", "local-only") ||
+            extractString(text, "source_digest")?.isSha256Digest() == true) {
             "$relative must declare a pending, local-only, or content source digest"
         }
     }
+
+    private fun String.isSha256Digest(): Boolean = length == 64 && all { it in "0123456789abcdef" }
+
+    private fun xmlResourceValue(path: Path, name: String): String? = runCatching {
+        val document = parseXml(Files.readString(path))
+        (0 until document.getElementsByTagName("string").length)
+            .asSequence()
+            .map { document.getElementsByTagName("string").item(it) }
+            .firstOrNull { it.attributes?.getNamedItem("name")?.nodeValue == name }
+            ?.textContent
+    }.getOrNull()
+
+    private fun plistValue(path: Path, key: String): String? = runCatching {
+        val document = parseXml(Files.readString(path))
+        val keys = document.getElementsByTagName("key")
+        (0 until keys.length).asSequence().map { keys.item(it) }
+            .firstOrNull { it.textContent == key }
+            ?.let { keyNode ->
+                var sibling: Node? = keyNode.nextSibling
+                while (sibling != null && sibling.nodeType != Node.ELEMENT_NODE) sibling = sibling.nextSibling
+                sibling?.takeIf { it.nodeName == "string" }?.textContent
+            }
+    }.getOrNull()
+
+    private fun parseXml(text: String): Document = DocumentBuilderFactory.newInstance().apply {
+        setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true)
+        setFeature("http://xml.org/sax/features/external-general-entities", false)
+        setFeature("http://xml.org/sax/features/external-parameter-entities", false)
+        setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
+        isXIncludeAware = false
+        isExpandEntityReferences = false
+    }.newDocumentBuilder().parse(InputSource(StringReader(text)))
 }
