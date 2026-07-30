@@ -35,6 +35,13 @@ deliberate violations before being accepted.
 The root-boundaries status line also now reports each product's actual
 lifecycle rather than the hardcoded string `web/backend preselection`.
 
+## 11.0c Debt created by the Stage 3 contract release
+
+| ID | Item | Owner | Priority |
+| --- | --- | --- | --- |
+| **D-6** ⚠ | `scripts/verify-mobile-api-contract.sh` computed the release digest over a **hardcoded three-file list**, while `RELEASE.md` describes it as covering "the sorted release files". Once the release grew past the stub, the hardcoded set would have silently stopped covering the 14 new files — a released contract whose digest ignores most of its own content. The digest is now derived from the filesystem and cross-checked against the manifest in `schema.toml`. The validator also gained the Stage 3 verification checks (typed and documented fields, unique `gatewayCode`, no nutrition keys, §9.5 receipt coverage, fail-closed postures, `recallClaimed` constrained, fixture/taxonomy agreement). Verified against 11 deliberate violations. | Repository policy | P0 |
+| **B-5** ✅ | **Contract release: gateway envelope.** Delivered by Stage 3 — request/response envelopes, 21-code error taxonomy, consent receipt, rate-limit shape, transfer states, market policy, and 8 canonical fixtures. This was the critical path item blocking client stories E4.1 and E4.2; both are now unblocked. Still requires contract-owner approval before it counts as published (AD-36). | Contract principal | Done, pending approval |
+
 ## 11.1 P0 — before any production source
 
 | ID | Item | Notes |
