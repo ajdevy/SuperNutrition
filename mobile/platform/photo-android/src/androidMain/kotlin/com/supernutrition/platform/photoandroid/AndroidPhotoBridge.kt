@@ -17,9 +17,13 @@ import com.supernutrition.core.ui.PhotoRecoveryAction
  * common feature receives only PhotoRef and bridge outcomes.
  */
 class AndroidPhotoBridge(private val context: Context) : PhotoBridgePort {
+    private var permissionRequestInFlight = false
+
     override fun cameraPermissionState(): CameraPermissionState = when {
         context.checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED ->
             CameraPermissionState.GRANTED
+
+        permissionRequestInFlight -> CameraPermissionState.NOT_DETERMINED
 
         (context as? Activity)?.shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) == true ->
             CameraPermissionState.RATIONALE
@@ -77,10 +81,15 @@ class AndroidPhotoBridge(private val context: Context) : PhotoBridgePort {
     fun photoBytesFromResult(result: Intent?): ByteArray? = AndroidPhotoResultReader(context).read(result)
 
     fun markCameraPermissionRequestStarted() {
+        permissionRequestInFlight = true
         context.getSharedPreferences(PERMISSIONS_PREFS, Context.MODE_PRIVATE)
             .edit()
             .putBoolean(CAMERA_PERMISSION_REQUESTED, true)
             .apply()
+    }
+
+    fun markCameraPermissionRequestCompleted() {
+        permissionRequestInFlight = false
     }
 
     private companion object {

@@ -11,11 +11,11 @@ class PhotoAnalysisCaptureRobotTest {
         val host = FakeHost(
             state = PhotoAnalysisPresenterState.CAPTURE,
             texts = mapOf(
-                "photo_analysis_title" to copy.captureTitle,
-                "photo_analysis_status" to copy.readyToCapture,
-                "capture_shutter" to copy.takeMealPhoto,
-                "capture_import" to copy.choosePhoto,
-                "capture_scan_again" to copy.scanAgain,
+                "photo_analysis_title" to copy.capture.title,
+                "photo_analysis_status" to copy.status.readyToCapture,
+                "capture_shutter" to copy.capture.takeMealPhoto,
+                "capture_import" to copy.capture.choosePhoto,
+                "capture_scan_again" to copy.recovery.scanAgain,
             ),
         )
         val robot = PhotoAnalysisCaptureRobot(host, copy)

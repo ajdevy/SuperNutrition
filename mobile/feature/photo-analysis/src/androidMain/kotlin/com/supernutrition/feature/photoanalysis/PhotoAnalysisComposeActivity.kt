@@ -5,6 +5,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
@@ -18,7 +20,9 @@ import com.supernutrition.platform.photoandroid.AndroidPhotoBridge
 /** Android composition root: lifecycle, result launchers, and feature wiring only. */
 class PhotoAnalysisComposeActivity : ComponentActivity() {
     private val attemptId = AttemptId(AndroidPhotoAttemptIds.CAPTURE)
-    private lateinit var retainedState: RetainedState
+    private val retainedState: RetainedState by lazy {
+        ViewModelProvider(this)[RetainedState::class.java]
+    }
     private val feature: PhotoAnalysisFeature get() = retainedState.feature
     private lateinit var host: PhotoAnalysisAndroidHostController
     private var wasBackgrounded = false
@@ -71,7 +75,6 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        retainedState = lastNonConfigurationInstance as? RetainedState ?: RetainedState(attemptId)
         wasBackgrounded = retainedState.wasBackgrounded
         val photoBridge = AndroidPhotoBridge(this)
         host = PhotoAnalysisAndroidHostController(
@@ -100,9 +103,6 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         }
     }
 
-    @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
-    override fun onRetainCustomNonConfigurationInstance(): Any = retainedState
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putAll(PhotoAnalysisSnapshotBundleCodec.encode(feature.snapshotForPersistence(), attemptId))
@@ -124,9 +124,9 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         super.onStop()
     }
 
-    private class RetainedState(attemptId: AttemptId) {
+    private class RetainedState : ViewModel() {
         val feature = PhotoAnalysisFeature(
-            attemptId = attemptId,
+            attemptId = AttemptId(AndroidPhotoAttemptIds.CAPTURE),
             leases = PhotoLeaseStore(),
             sessions = PhotoSessionStore(),
         )

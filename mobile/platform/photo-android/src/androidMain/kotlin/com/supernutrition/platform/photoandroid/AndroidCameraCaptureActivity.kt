@@ -17,6 +17,7 @@ import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import java.io.ByteArrayOutputStream
 import java.io.IOException
+import java.lang.ref.WeakReference
 import android.util.Log
 
 /**
@@ -71,34 +72,45 @@ class AndroidCameraCaptureActivity : ComponentActivity() {
 
     private fun bindCamera(previewView: PreviewView) {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
+        val activity = WeakReference(this)
+        val executor = ContextCompat.getMainExecutor(this)
         cameraProviderFuture.addListener({
-            runCatching {
-                val preview = Preview.Builder().build().also {
-                    it.surfaceProvider = previewView.surfaceProvider
-                }
-                val imageCapture = ImageCapture.Builder()
-                    .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
-                    .build()
-                val provider = cameraProviderFuture.get()
-                provider.unbindAll()
-                provider.bindToLifecycle(
-                    this,
-                    CameraSelector.DEFAULT_BACK_CAMERA,
-                    preview,
-                    imageCapture,
-                )
-                cameraProvider = provider
-                this@AndroidCameraCaptureActivity.imageCapture = imageCapture
-                if (captureRequested && !captureStarted) {
-                    captureStarted = true
-                    captureRequested = false
-                    capture()
-                }
-            }.onFailure { error ->
-                Log.e(TAG, "Camera binding failed", error)
-                finishWithFailure(CaptureFailureReason.CAMERA_UNAVAILABLE)
+            val owner = activity.get() ?: return@addListener
+            if (owner.isFinishing || owner.isChangingConfigurations || owner.isDestroyed) return@addListener
+            owner.bindCameraProvider(cameraProviderFuture, previewView)
+        }, executor)
+    }
+
+    private fun bindCameraProvider(
+        cameraProviderFuture: com.google.common.util.concurrent.ListenableFuture<ProcessCameraProvider>,
+        previewView: PreviewView,
+    ) {
+        runCatching {
+            val preview = Preview.Builder().build().also {
+                it.surfaceProvider = previewView.surfaceProvider
             }
-        }, ContextCompat.getMainExecutor(this))
+            val imageCapture = ImageCapture.Builder()
+                .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
+                .build()
+            val provider = cameraProviderFuture.get()
+            provider.unbindAll()
+            provider.bindToLifecycle(
+                this,
+                CameraSelector.DEFAULT_BACK_CAMERA,
+                preview,
+                imageCapture,
+            )
+            cameraProvider = provider
+            this.imageCapture = imageCapture
+            if (captureRequested && !captureStarted) {
+                captureStarted = true
+                captureRequested = false
+                capture()
+            }
+        }.onFailure { error ->
+            Log.e(TAG, "Camera binding failed", error)
+            finishWithFailure(CaptureFailureReason.CAMERA_UNAVAILABLE)
+        }
     }
 
     private fun capture() {

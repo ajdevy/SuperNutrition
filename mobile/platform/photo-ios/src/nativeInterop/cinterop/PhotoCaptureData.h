@@ -1,5 +1,6 @@
 #import <AVFoundation/AVFoundation.h>
 #import <Foundation/Foundation.h>
+#import <ImageIO/ImageIO.h>
 #import <UIKit/UIKit.h>
 
 static inline AVCaptureDevice * _Nullable SNDefaultBackCamera(void) {
@@ -23,4 +24,26 @@ static inline void SNSetViewAccessibilityIdentifier(UIView *view, NSString *iden
 
 static inline NSData * _Nullable SNFileDataRepresentation(AVCapturePhoto *photo) {
     return [photo fileDataRepresentation];
+}
+
+static inline UIImage * _Nullable SNCreateBoundedImage(NSData *data, unsigned int maxDimension) {
+    CGImageSourceRef source = CGImageSourceCreateWithData((__bridge CFDataRef)data, NULL);
+    if (source == NULL) return nil;
+
+    NSDictionary *options = @{
+        (NSString *)kCGImageSourceCreateThumbnailFromImageAlways: @YES,
+        (NSString *)kCGImageSourceCreateThumbnailWithTransform: @YES,
+        (NSString *)kCGImageSourceThumbnailMaxPixelSize: @(maxDimension),
+    };
+    CGImageRef thumbnail = CGImageSourceCreateThumbnailAtIndex(
+        source,
+        0,
+        (__bridge CFDictionaryRef)options
+    );
+    CFRelease(source);
+    if (thumbnail == NULL) return nil;
+
+    UIImage *image = [UIImage imageWithCGImage:thumbnail scale:1.0 orientation:UIImageOrientationUp];
+    CGImageRelease(thumbnail);
+    return image;
 }

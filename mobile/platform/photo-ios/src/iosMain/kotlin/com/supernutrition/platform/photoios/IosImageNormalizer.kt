@@ -1,6 +1,7 @@
 package com.supernutrition.platform.photoios
 
 import cnames.structs.__CFData
+import com.supernutrition.platform.photoios.captureinterop.SNCreateBoundedImage
 import com.supernutrition.core.config.PhotoNormalizationDefaults
 import com.supernutrition.core.config.withoutJpegApplicationMetadata
 import com.supernutrition.domain.photoanalysis.ImageOrientation
@@ -46,8 +47,11 @@ class IosImageNormalizer(
         if (sourceData.length == 0uL) {
             throw PhotoPreparationException("Photo bytes must not be empty")
         }
+        if (sourceData.length > MAX_SOURCE_BYTES.toULong()) {
+            throw PhotoPreparationException("Photo bytes exceed the iOS source limit")
+        }
 
-        val image = UIImage.imageWithData(sourceData)
+        val image = SNCreateBoundedImage(sourceData, maxDimension.toUInt())
             ?: throw PhotoPreparationException("iOS could not decode the selected image")
         val (sourceWidth, sourceHeight) = image.size.useContents { width to height }
         if (sourceWidth <= 0.0 || sourceHeight <= 0.0) {
@@ -116,14 +120,10 @@ internal fun iosSha256(bytes: ByteArray): String {
     val digest = ByteArray(SHA256_DIGEST_LENGTH)
     digest.usePinned { output ->
         if (bytes.isEmpty()) {
-            if (SN_SHA256(null, 0u, output.addressOf(0).reinterpret()) == 0) {
-                throw PhotoPreparationException("iOS SHA-256 calculation failed")
-            }
+            SN_SHA256(null, 0u, output.addressOf(0).reinterpret())
         } else {
             bytes.usePinned { input ->
-                if (SN_SHA256(input.addressOf(0), bytes.size.toUInt(), output.addressOf(0).reinterpret()) == 0) {
-                    throw PhotoPreparationException("iOS SHA-256 calculation failed")
-                }
+                SN_SHA256(input.addressOf(0), bytes.size.toUInt(), output.addressOf(0).reinterpret())
             }
         }
     }
@@ -133,6 +133,7 @@ internal fun iosSha256(bytes: ByteArray): String {
 }
 
 private const val SHA256_DIGEST_LENGTH = 32
+private const val MAX_SOURCE_BYTES = 10 * 1024 * 1024
 
 @OptIn(ExperimentalForeignApi::class)
 private fun CPointer<__CFData>.toByteArray(): ByteArray {

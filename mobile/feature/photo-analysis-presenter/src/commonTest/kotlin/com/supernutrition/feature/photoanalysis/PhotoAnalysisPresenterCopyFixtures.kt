@@ -1,6 +1,6 @@
 package com.supernutrition.feature.photoanalysis
 
-/** Stable non-English copy sample shared by presenter, feature, and UI contract tests. */
+/** Test-only non-English copy used to prove hosts do not depend on English literals. */
 object PhotoAnalysisPresenterCopyFixtures {
     fun localized(): PhotoAnalysisPresenterCopy = PhotoAnalysisPresenterCopy(
         capture = CaptureCopy(
