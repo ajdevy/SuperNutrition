@@ -2,7 +2,7 @@
   "name": "@supernutrition/mobile-api",
   "version": "0.1.0",
   "private": true,
-  "description": "SuperNutrition mobile API — first-party inference gateway and product API",
+  "description": "SuperNutrition mobile API \u2014 first-party inference gateway and product API",
   "license": "UNLICENSED",
   "type": "module",
   "engines": {

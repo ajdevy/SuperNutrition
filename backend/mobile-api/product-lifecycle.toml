@@ -7,7 +7,7 @@ activation_story = "backend/02-skeleton.md (Stage 2)"
 activation_adr = "docs/adr/0005-lifecycle-activation.md"
 source_digest = "tracked-by-git"
 quality_claim = true
-production_source_count = 144
+production_source_count = 159
 dependency_manifest = "package.json"
 lock_state = "package-lock.json"
 runtime = "node >=22.11.0 <25.0.0"
@@ -17,10 +17,10 @@ product_inventory = "product-inventory.toml"
 executable_inventory = ["quality-check"]
 
 [evidence]
-tests_passing = 278
-test_files = 26
-coverage_line_pct = 93.96
-coverage_branch_pct = 96.90
+tests_passing = 537
+test_files = 39
+coverage_line_pct = 94.13
+coverage_branch_pct = 90.22
 coverage_tool = "vitest 4.1.10 + @vitest/coverage-v8"
 typecheck = "tsc --build"
 lint = "eslint (read-only)"

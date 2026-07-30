@@ -350,12 +350,22 @@ export default tseslint.config(
               },
             },
             {
+              // Middleware maps thrown errors to the B-5 taxonomy and enforces
+              // rate limits, both owned by app-security. Both are cross-cutting
+              // app infrastructure — neither is a domain nor a module — so this
+              // edge does not cross a layer boundary.
               from: { element: { type: 'app-middleware' } },
               allow: {
                 to: {
                   element: {
                     types: {
-                      anyOf: ['shared', 'app-config', 'app-logging', 'app-middleware'],
+                      anyOf: [
+                        'shared',
+                        'app-config',
+                        'app-logging',
+                        'app-middleware',
+                        'app-security',
+                      ],
                     },
                   },
                 },
