@@ -71,24 +71,23 @@ photos. Pixels and a dish class are not a valid gram oracle.
 
 | OS/device tier | Physical device | Runtime and execution provider | Semantic result | Ingredient / weight result | Runtime/resource result |
 | --- | --- | --- | --- | --- |
-| Android broad-tier candidate | Honor DNY-NX9; Android 16/API 36; `arm64-v8a`; explicit ADB mDNS serial `adb-AU3N025429006787-97BOdK._adb-tls-connect._tcp` | ONNX Runtime Android `1.28.0`; CPU; available processor threads | fresh `5/5`, accuracy `1.0` under current `0.55` floor | visible ingredients `unsupported`; plated weight `not-evaluable` | session init `3,293 ms`; p50 `181 ms`; p95 `264 ms`; max `299 ms`; PSS `26,278 -> 269,382 KB`; battery current `-1,429 -> -1,447 µA`; thermal `0 -> 0` |
+| Android broad-tier candidate | Honor DNY-NX9; Android 16/API 36; `arm64-v8a`; explicit ADB mDNS serial `adb-AU3N025429006787-97BOdK._adb-tls-connect._tcp` | ONNX Runtime Android `1.28.0`; CPU; available processor threads | fresh `5/5`, accuracy `1.0` under current `0.55` floor | visible ingredients `unsupported`; plated weight `not-evaluable` | session init `2,142 ms`; p50 `184 ms`; p95 `299 ms`; max `337 ms`; PSS `64,751 -> 276,503 KB`; battery current `-1,293 -> -1,454 µA`; thermal `0 -> 0` |
 | iOS high-tier candidate | iPhone 14 Pro; iOS 26.5.2; `arm64e`; UDID `REDACTED_PHYSICAL_DEVICE_UDID` | ONNX Runtime Objective-C `1.27.0`; XNNPACK; 2 threads | fresh `5/5`, accuracy `1.0` | visible ingredients `unsupported`; plated weight `not-evaluable` | session init `559 ms`; p50 `83 ms`; p95 `85 ms`; max `85 ms`; resident `260,240 -> 252,016 KB`; thermal `0 -> 0`; battery level unchanged |
 
-The Android run above is the fresh physical rerun after the device was
-reconnected. Its original `0.60` confidence-floor report was `4/5` only
-because the correctly classified sushi fixture scored `0.592399`; changing
-the declared floor to `0.55` makes the contract match the observed exact-label
-result. In fixture order, the exploratory composite top-1 labels were
+The Android run above is the latest fresh physical run after the device was
+reconnected. The correctly classified sushi fixture scored `0.592399`, so the
+declared floor remains `0.55` rather than `0.60`. In fixture order, the
+exploratory composite top-1 labels were
 `steak`, `grilled_salmon`, `fried_rice`, `bibimbap`, and `chicken_curry`.
 They remain single dish labels and do not establish ingredient recognition.
 
-The same Honor device also passed direct Android instrumentation with the
-rebuilt acceptance APKs: UI/semantics and capture suite `15/15`, plus isolated
-local-Android adapter suite `4/4`, all with zero failures, errors, or skips.
-Gradle's connected task was not used for this fresh invocation because its
-dependency resolver attempted to fetch Compose desktop artifacts absent from
-the local cache; the direct instrumentation result is retained as device
-correctness evidence, not as a clean Gradle evidence bundle.
+The same Honor device also passed the rebuilt Gradle-connected Android suites:
+UI/semantics and capture suite `15/15` through
+`connectedUiAcceptanceDebugAndroidTest`, plus isolated local-Android adapter
+suite `4/4` through `connectedAndroidDeviceTest`, all with zero failures,
+errors, or skips. The strict dependency locks were refreshed after syncing
+`origin/main`, and both tasks ran offline against the explicit wireless ADB
+serial.
 
 The iOS result was obtained from a freshly installed, automatically signed
 `SuperNutritionG3` app using the configured Apple development team. All ten
@@ -117,9 +116,9 @@ requirements.
 
 | Budget | Proposed bound | Android | iOS |
 | --- | --- | --- | --- |
-| Session initialization | <= 500 ms cold start | **fail**, 3,293 ms | **fail**, 559 ms |
-| Inference latency | p95 <= 100 ms; max <= 150 ms after warm-up | **fail**, 264/299 ms | pass, 85/85 ms |
-| Peak process memory | <= 160 MB Android PSS; <= 160 MB iOS resident | **fail**, 269,382 KB | **fail**, 252,016 KB |
+| Session initialization | <= 500 ms cold start | **fail**, 2,142 ms | **fail**, 559 ms |
+| Inference latency | p95 <= 100 ms; max <= 150 ms after warm-up | **fail**, 299/337 ms | pass, 85/85 ms |
+| Peak process memory | <= 160 MB Android PSS; <= 160 MB iOS resident | **fail**, 276,503 KB | **fail**, 252,016 KB |
 | Thermal | no serious/critical transition | pass, 0 -> 0 | pass, 0 -> 0 |
 | Battery | <= 1% over 50 inferences plus native trace where available | sampled current `-1,429 -> -1,447 µA`; energy/percentage open | level unchanged; current/energy trace open |
 | Model integrity | pinned SHA before session creation; mismatch fails closed | pass | pass |

@@ -2,12 +2,13 @@ package com.supernutrition.android;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.SystemClock;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.uiautomator.By;
+import androidx.test.uiautomator.StaleObjectException;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject2;
-import androidx.test.uiautomator.Until;
 
 import com.supernutrition.core.ui.UiAutomationIds;
 import com.supernutrition.feature.photoanalysis.R;
@@ -21,6 +22,8 @@ import static org.junit.Assert.assertNotNull;
 
 /** Physical-device semantic contract for the production Compose capture surface. */
 public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
+    private static final long SEMANTICS_TIMEOUT_MS = 15_000L;
+
     @Test
     public void captureSurfaceExposesStableAutomationIdsAndLabels() {
         Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
@@ -43,18 +46,38 @@ public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
     }
 
     private static void assertSemantic(UiDevice device, String id, String label) {
-        UiObject2 node = device.wait(Until.findObject(By.res(id)), 5_000L);
-        assertNotNull("missing Compose semantic id: " + id, node);
-        String text = node.getText();
-        if (text == null) {
-            List<UiObject2> children = node.getChildren();
-            for (UiObject2 child : children) {
-                if (child.getText() != null) {
-                    text = child.getText();
-                    break;
+        long deadline = SystemClock.uptimeMillis() + SEMANTICS_TIMEOUT_MS;
+        String text = null;
+        while (SystemClock.uptimeMillis() < deadline) {
+            UiObject2 node = device.findObject(By.res(id));
+            if (node != null) {
+                try {
+                    text = textFor(node);
+                    if (label.equals(text)) {
+                        return;
+                    }
+                } catch (StaleObjectException ignored) {
+                    // Compose may replace the semantics node during recomposition.
                 }
             }
+            SystemClock.sleep(100L);
         }
+        assertNotNull("missing Compose semantic id: " + id, device.findObject(By.res(id)));
         assertEquals("wrong label for Compose semantic id: " + id, label, text);
+    }
+
+    private static String textFor(UiObject2 node) {
+        String text = node.getText();
+        if (text != null) {
+            return text;
+        }
+        List<UiObject2> children = node.getChildren();
+        for (UiObject2 child : children) {
+            String childText = child.getText();
+            if (childText != null) {
+                return childText;
+            }
+        }
+        return null;
     }
 }
