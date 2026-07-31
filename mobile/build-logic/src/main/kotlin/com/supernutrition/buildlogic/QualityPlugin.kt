@@ -201,9 +201,30 @@ class QualityPlugin : Plugin<Project> {
             autoCorrect.set(true)
         }
         qualityFormat.configure { dependsOn(formatTask) }
-        val analysisTasks = target.tasks.withType<Detekt>().matching { it.name != "detektFormat" }
+        val analysisTasks = target.tasks.withType<Detekt>().matching {
+            it.name != "detektFormat" && it.name != DETEKT_PLAIN_TASK
+        }
         qualityCheckJvmAndroid.configure { dependsOn(analysisTasks) }
         qualityCheckApple.configure { dependsOn(analysisTasks) }
+
+        // Detekt's own plain `detekt` task sources src/main/kotlin and
+        // src/test/kotlin, which no Kotlin Multiplatform module has. It is
+        // therefore permanently NO-SOURCE and exits 0 without inspecting a
+        // single file, while the per-source-set tasks beside it find real
+        // violations. That is the task name every developer and every piece of
+        // upstream Detekt documentation reaches for, so it reports success on
+        // unlinted code by default.
+        //
+        // It cannot be removed: Gradle has no supported un-register, and
+        // `enabled = false` or `onlyIf { false }` still exit 0 as SKIPPED,
+        // trading one silent green for another. Making it a lifecycle alias is
+        // the change that makes the invocation honest — it stays NO-SOURCE
+        // itself, but Gradle runs its dependencies first and fails on their
+        // findings. The authoritative qualityCheck entrypoints keep their own
+        // direct edges above, so this cannot weaken them.
+        target.tasks.matching { it.name == DETEKT_PLAIN_TASK }.configureEach {
+            dependsOn(analysisTasks)
+        }
     }
 
     private fun configureJvmCoverageAggregation(
@@ -373,3 +394,6 @@ private data class CoverageDenominator(
     val sourcePath: String,
     val coverageKind: String,
 )
+
+/** Detekt's own plain task, registered by DetektPlugin rather than by this plugin. */
+private const val DETEKT_PLAIN_TASK = "detekt"
