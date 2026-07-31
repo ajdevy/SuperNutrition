@@ -21,4 +21,16 @@ class SharedKitBootstrapTest {
         assertEquals("capture_import", SharedKitAutomationIds.captureImport)
         assertEquals("capture_native", SharedKitAutomationIds.captureNative)
     }
+
+    @Test
+    fun photoAnalysisNativeActionKeepsTheSwiftOrdinalContract() {
+        assertEquals(
+            listOf(
+                SharedKitPhotoAnalysisNativeAction.TakePhoto,
+                SharedKitPhotoAnalysisNativeAction.ImportPhoto,
+                SharedKitPhotoAnalysisNativeAction.OpenSettings,
+            ),
+            SharedKitPhotoAnalysisNativeAction.entries,
+        )
+    }
 }
