@@ -150,8 +150,8 @@ GPT-5 / Codex
   evidence is local-only because the checkout still contains the user's
   untracked presentation work; it is correctness evidence and does not close
   the signed G-3 runtime/model gate.
-- 2026-07-31 current-HEAD physical rerun after the FPB research baseline
-  commit `5f6c8772`: automatic signing with the local Apple Development team
+- 2026-07-31 physical rerun on code commit `5f6c8772` (the FPB research
+  baseline): automatic signing with the local Apple Development team
   `Z4JKB6L22Z` passed the Xcode acceptance scheme `5/5` on the paired iPhone
   14 Pro (`00008120-0012295934E0C01E`, iOS 26.5.2), and
   `scripts/run-physical-ios-fixtures.sh` passed `5/5` arm64 fixture tests
