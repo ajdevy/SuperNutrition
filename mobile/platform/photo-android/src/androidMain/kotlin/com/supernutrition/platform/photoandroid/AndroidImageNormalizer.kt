@@ -19,11 +19,11 @@ import java.security.MessageDigest
  * travel into the common Photo Input. Orientation is supplied by the native
  * metadata reader and applied to pixels before the JPEG is emitted.
  */
-class AndroidImageNormalizer(
-    private val maxDimension: Int = PhotoNormalizationDefaults.MAX_DIMENSION,
-) : AndroidPhotoNormalizerPort {
+class AndroidImageNormalizer(private val maxDimension: Int = PhotoNormalizationDefaults.MAX_DIMENSION) :
+    AndroidPhotoNormalizerPort {
     private val common = PhotoInputNormalizer(digest = ::sha256)
 
+    @Suppress("ThrowsCount")
     override fun normalize(
         ref: PhotoRef,
         sourceBytes: ByteArray,

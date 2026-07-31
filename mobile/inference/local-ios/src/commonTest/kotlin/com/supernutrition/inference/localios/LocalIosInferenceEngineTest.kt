@@ -353,6 +353,7 @@ class LocalIosInferenceEngineTest {
     private fun engine(runtime: IosLocalInferenceRuntime): LocalIosInferenceEngine =
         LocalIosInferenceEngine(RecordingPhotoStore(input), leaseStore(), runtime) { "a".repeat(64) }
 
+    @Suppress("LongParameterList")
     private fun validModel(
         modelVersion: String = "app",
         integrityIdentity: String = "a".repeat(64),

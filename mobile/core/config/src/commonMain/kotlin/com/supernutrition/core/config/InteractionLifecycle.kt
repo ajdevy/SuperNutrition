@@ -105,8 +105,7 @@ class DefaultDecisionLedger(private val snapshotDigest: String, private val poli
     }
 
     fun undo(proposal: DefaultProposal, decisionId: String, undoneDecisionId: String): DefaultDecision {
-        val undone = decisionsById[undoneDecisionId]
-        require(undone != null) {
+        val undone = requireNotNull(decisionsById[undoneDecisionId]) {
             "Cannot undo an unknown default decision"
         }
         require(undone.proposalId == proposal.proposalId) {
