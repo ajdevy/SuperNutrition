@@ -33,7 +33,7 @@ object MobilePolicyValidator {
         }
 
         val moduleMatrix = files.single { it.first == "config/quality/module-matrix.toml" }.second
-        require(PolicyToml.blocks(moduleMatrix, "unit").isNotEmpty()) {
+        require(PolicyToml.blocks(PolicyToml.document(moduleMatrix), "unit").isNotEmpty()) {
             "The scaffold product inventory must contain policy units"
         }
         require(PolicyToml.string(moduleMatrix, "undeclared_executable_policy") == "fail") {
@@ -652,20 +652,32 @@ object MobilePolicyValidator {
         }
     }
 
-    private fun blocks(text: String, name: String): List<String> =
-        PolicyToml.blocks(text, name)
+    private fun blocks(text: String, name: String): List<PolicyToml.Table> =
+        PolicyToml.blocks(PolicyToml.document(text), name)
 
     private fun extractString(text: String, key: String): String? =
         PolicyToml.string(text, key)
 
+    private fun extractString(table: PolicyToml.Table, key: String): String? =
+        PolicyToml.string(table, key)
+
     private fun extractInt(text: String, key: String): Int? =
         PolicyToml.integer(text, key)
+
+    private fun extractInt(table: PolicyToml.Table, key: String): Int? =
+        PolicyToml.integer(table, key)
 
     private fun extractStringList(text: String, key: String): List<String> =
         PolicyToml.stringList(text, key)
 
+    private fun extractStringList(table: PolicyToml.Table, key: String): List<String> =
+        PolicyToml.stringList(table, key)
+
     private fun extractBoolean(text: String, key: String): Boolean? =
         PolicyToml.boolean(text, key)
+
+    private fun extractBoolean(table: PolicyToml.Table, key: String): Boolean? =
+        PolicyToml.boolean(table, key)
 
     private fun digest(mobileRoot: Path, paths: List<String>): String {
         val digest = MessageDigest.getInstance("SHA-256")

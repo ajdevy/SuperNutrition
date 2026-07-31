@@ -361,11 +361,11 @@ class QualityPlugin : Plugin<Project> {
         )
     }
 
-    private fun blocks(text: String, name: String): List<String> =
-        PolicyToml.blocks(text, name)
+    private fun blocks(text: String, name: String): List<PolicyToml.Table> =
+        PolicyToml.blocks(PolicyToml.document(text), name)
 
-    private fun extractString(text: String, key: String): String? =
-        PolicyToml.string(text, key)
+    private fun extractString(table: PolicyToml.Table, key: String): String? =
+        PolicyToml.string(table, key)
 
     private fun lifecycle(mobileRoot: Path): String =
         PolicyToml.string(

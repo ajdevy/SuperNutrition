@@ -29,6 +29,21 @@ class PolicyTomlTest {
     }
 
     @Test
+    fun `typed document exposes tables without serializing policy text`() {
+        val document = PolicyToml.document(
+            """
+                lifecycle = "active"
+
+                [[unit]]
+                id = "first"
+            """.trimIndent(),
+        )
+
+        assertEquals("active", PolicyToml.string(document, "lifecycle"))
+        assertEquals("first", PolicyToml.string(PolicyToml.blocks(document, "unit").single(), "id"))
+    }
+
+    @Test
     fun `forbidden import rules preserve source and configuration scopes`() {
         val rules = PolicyToml.forbiddenImportRules(
             """
