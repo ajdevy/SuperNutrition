@@ -10,8 +10,10 @@ object InferenceContractJson {
         ignoreUnknownKeys = true
     }
 
-    fun encode(result: PhotoInferenceResult): String =
-        json.encodeToString(PhotoInferenceResult.serializer(), result)
+    fun encode(result: PhotoInferenceResult): String = json.encodeToString(
+        PhotoInferenceResult.serializer(),
+        result,
+    )
 
     fun encodeCapability(capability: EngineCapability): String =
         json.encodeToString(EngineCapability.serializer(), capability)

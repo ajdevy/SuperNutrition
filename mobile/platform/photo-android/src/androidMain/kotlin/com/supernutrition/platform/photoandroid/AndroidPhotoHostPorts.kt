@@ -1,8 +1,8 @@
 package com.supernutrition.platform.photoandroid
 
 import android.content.Intent
-import com.supernutrition.domain.photoanalysis.NormalizedPhotoInput
 import com.supernutrition.domain.photoanalysis.ImageOrientation
+import com.supernutrition.domain.photoanalysis.NormalizedPhotoInput
 import com.supernutrition.domain.photoanalysis.PhotoRef
 
 /** Android-only operations kept behind the feature host's platform seam. */

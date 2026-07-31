@@ -1,7 +1,7 @@
 package com.supernutrition.feature.photoanalysis
 
-import com.supernutrition.testing.composesupport.SemanticId
 import com.supernutrition.core.ui.UiAutomationIds
+import com.supernutrition.testing.composesupport.SemanticId
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

@@ -164,6 +164,7 @@ class LocalFirstRouter(
     private val gateG5Verifier: GateG5EvidenceVerifier = GateG5EvidenceVerifier { _, _ -> false },
     private val consentVerifier: RemoteConsentVerifier = RemoteConsentVerifier { _, _, _ -> false },
 ) {
+    @Suppress("LongParameterList")
     fun initial(
         token: RouteAttemptToken,
         localCapability: CapabilityState,
@@ -212,7 +213,7 @@ class LocalFirstRouter(
             RouteDecision.RunRemote(
                 token.nextDecision(),
                 RemoteEligibilityReason.EXPLICIT_USER_REQUEST,
-                consentReceipt!!,
+                requireNotNull(consentReceipt),
             )
 
         consent == RemoteConsentState.DECLINED -> RouteDecision.OfferRemote(
@@ -252,7 +253,7 @@ class LocalFirstRouter(
             RouteDecision.KeepLocal(token.nextDecision(), LocalTerminalReason.REMOTE_DECLINED)
 
         consent == RemoteConsentState.GRANTED && isValidConsent(consentReceipt, token, policy) ->
-            RouteDecision.RunRemote(token.nextDecision(), reason, consentReceipt!!)
+            RouteDecision.RunRemote(token.nextDecision(), reason, requireNotNull(consentReceipt))
 
         else -> RouteDecision.OfferRemote(
             token = token.nextDecision(),
