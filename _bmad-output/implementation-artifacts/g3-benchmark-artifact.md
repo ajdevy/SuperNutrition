@@ -111,7 +111,7 @@ errors, or skips. The strict dependency locks were refreshed after syncing
 `origin/main`, and both tasks ran offline against the explicit wireless ADB
 serial.
 
-The current-HEAD correctness rerun after commit `5f6c8772` reproduced those
+The physical correctness rerun on code commit `5f6c8772` reproduced those
 Android results on the explicit serial. The paired physical iPhone 14 Pro
 also passed the automatic-signing Xcode acceptance scheme `5/5` and the
 binary-bound `iosArm64` fixture runner `5/5` (3 normalization, 2 bridge) on
