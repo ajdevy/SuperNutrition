@@ -383,6 +383,13 @@ GPT-5 / Codex
   The emitted records are local-only because the user's untracked manual
   testing presentation remains in the worktree; these lanes prove Android
   adapter and host correctness, not signed G-3 ingredient/weight quality.
+- 2026-08-01 verification on the unchanged production code from `5f6c8772`
+  (documentation head `6ea5954c`): the same physical Honor device again passed
+  `connectedAndroidDeviceTest` `4/4` and
+  `connectedUiAcceptanceDebugAndroidTest` `15/15`, with zero failures, errors,
+  or skips. A local-only Android evidence bundle was emitted at
+  `/tmp/supernutrition-android-evidence-20260801`; it is intentionally not an
+  activation claim while the presentation WIP keeps the checkout dirty.
 
 ### File List
 
