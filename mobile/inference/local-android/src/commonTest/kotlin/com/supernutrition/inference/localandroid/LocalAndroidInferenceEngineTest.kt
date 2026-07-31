@@ -263,6 +263,29 @@ class LocalAndroidInferenceEngineTest {
     }
 
     @Test
+    fun `runtime diagnostics expose none of the forbidden payload surface`() = runTest {
+        val forbidden = listOf(
+            "raw-photo-bytes",
+            "/tmp/photo.jpg",
+            "Banana",
+            "prompt text",
+            "model response",
+            "secret-token",
+            "Authorization: Bearer",
+        )
+        val runtime = RecordingRuntime(
+            AndroidRuntimeCapability.Ready(model),
+            thrown = IllegalStateException(forbidden.joinToString("|")),
+        )
+
+        val failure = assertIs<InferenceOutcome.Failure>(engine(runtime).analyze(request).outcome)
+        val diagnostic = failure.toString()
+
+        forbidden.forEach { value -> assertFalse(diagnostic.contains(value)) }
+        assertEquals("inference.failure.runtime", failure.userMessageKey)
+    }
+
+    @Test
     fun `input lease validation rejects missing foreign empty and unnormalized content`() = runTest {
         val runtime = RecordingRuntime(currentCapability = AndroidRuntimeCapability.Ready(model))
         val cases = listOf(

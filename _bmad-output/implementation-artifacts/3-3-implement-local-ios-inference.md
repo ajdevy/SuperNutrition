@@ -50,7 +50,7 @@ an implicit remote transfer.
 - [x] Add deterministic tests first and implementation second; cover all
   contract outcomes, capability faults, integrity/compatibility/resource
   rejection, and rollback ownership.
-- [ ] Add explicit forbidden-artifact/log assertions for raw photo bytes,
+- [x] Add explicit forbidden-artifact/log assertions for raw photo bytes,
   filenames, paths, labels, prompts, responses, secrets, and headers.
 - [x] Run focused JVM/Apple tests, Detekt, policy/lock validation, and the
   `iosArm64TestBinaries` device-target compile. The Intel x64 compatibility
@@ -152,6 +152,10 @@ GPT-5 / Codex
 - [x] [Review][Patch] Ready model provenance now requires explicit verified
   runtime evidence and cannot claim app rollback for platform-managed models
   [mobile/inference/local-ios/src/commonMain/kotlin/com/supernutrition/inference/localios/LocalIosInference.kt].
+- [x] [Review][Patch] Runtime diagnostic assertions reject raw bytes, paths,
+  labels, prompts, responses, secrets, and authorization headers from the
+  typed failure surface
+  [mobile/inference/local-ios/src/commonTest/kotlin/com/supernutrition/inference/localios/LocalIosInferenceEngineTest.kt].
 - [x] [Review][Defer] Physical iOS execution remains blocked before test
   execution by missing Xcode account/provisioning profiles; no physical result
   is claimed. Runtime selection remains gated by signed G-3 evidence.
