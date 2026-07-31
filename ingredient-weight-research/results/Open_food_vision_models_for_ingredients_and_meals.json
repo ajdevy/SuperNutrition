@@ -1,0 +1,831 @@
+{
+  "repositories_and_sources": [
+    {
+      "item": "FoodSeg103 ReLeM / SETR food ingredient segmentation",
+      "repositories": [
+        "https://github.com/LARC-CMU-SMU/FoodSeg103-Benchmark-v1"
+      ],
+      "paper_or_dataset": [
+        "https://arxiv.org/abs/2105.05409",
+        "https://huggingface.co/datasets/EduardoPacheco/FoodSeg103"
+      ],
+      "checkpoint": "The official benchmark repository links a model zoo; the reproducible configuration uses SETR with ReLeM and an iter_80000.pth checkpoint. A public runnable R50_ReLeM.pth artifact is also present in https://huggingface.co/spaces/Johnnyyyyy56/ReLeM-FoodSeg103-Demo.",
+      "evidence": "The repository provides segmentation baselines and ReLeM food-knowledge pretraining, rather than only a dataset.",
+      "accessed_on": "2026-07-31"
+    },
+    {
+      "item": "FoodSAM",
+      "repositories": [
+        "https://github.com/jamesjg/FoodSAM"
+      ],
+      "paper": [
+        "https://arxiv.org/abs/2308.05938",
+        "https://doi.org/10.1109/TMM.2023.3330047"
+      ],
+      "checkpoint": "The repository includes its SETR semantic-segmentation checkpoint area and documents the external SAM and detector weights required by the composite pipeline.",
+      "evidence": "Official PyTorch implementation for semantic, instance, panoptic, and promptable food segmentation.",
+      "accessed_on": "2026-07-31"
+    },
+    {
+      "item": "FoodInsSeg ingredient-instance benchmark",
+      "repositories": [
+        "https://github.com/jamesjg/FoodInsSeg"
+      ],
+      "paper_and_project": [
+        "https://github.com/jamesjg/FoodInsSeg#readme",
+        "https://laura990501.github.io/"
+      ],
+      "checkpoint": "No trained production checkpoint is published in the official repository; the repository provides COCO-format images, polygon masks, category labels, statistics, visualization, and evaluation code.",
+      "evidence": "This is the strongest open food-domain instance-mask source found for training or evaluating an ingredient detector/segmenter.",
+      "accessed_on": "2026-07-31"
+    },
+    {
+      "item": "ViT fine-tuned on Food-101",
+      "repositories_and_model_card": [
+        "https://huggingface.co/ashaduzzaman/vit-finetuned-food101",
+        "https://huggingface.co/docs/transformers/tasks/image_classification"
+      ],
+      "dataset": "https://huggingface.co/datasets/ethz/food101",
+      "checkpoint": "ashaduzzaman/vit-finetuned-food101, safetensors, about 85.9M parameters, based on google/vit-base-patch16-224-in21k.",
+      "evidence": "The model card reports 89.6% evaluation accuracy on Food-101 and gives a Transformers inference contract.",
+      "accessed_on": "2026-07-31"
+    },
+    {
+      "item": "FoodLMM and FoodLMM-Chat",
+      "repositories": [
+        "https://github.com/YuehaoYin/FoodLMM"
+      ],
+      "paper": "https://arxiv.org/abs/2312.14991",
+      "checkpoint": "https://huggingface.co/Yueha0/FoodLMM-Chat; the model repository is marked Apache-2.0 and exposes a 4.83 GB safetensors shard, with the full checkpoint split across multiple files.",
+      "datasets": [
+        "https://huggingface.co/datasets/foodai/FoodDialogues",
+        "https://huggingface.co/datasets/foodai/FoodReasonSeg"
+      ],
+      "evidence": "The official code describes food recognition, ingredient recognition, recipe generation, nutrition estimation, segmentation masks, and multi-round conversation.",
+      "accessed_on": "2026-07-31"
+    },
+    {
+      "item": "im2recipe-Pytorch / Recipe1M+ image-recipe embedding",
+      "repository": "https://github.com/torralba-lab/im2recipe-Pytorch",
+      "paper_and_dataset": [
+        "https://arxiv.org/abs/1611.07930",
+        "http://pic2recipe.csail.mit.edu/"
+      ],
+      "checkpoint": "The official repository links a pretrained Recipe1M+ checkpoint and shows test.py usage with snapshots/model_e500_v-8.950.pth.tar.",
+      "evidence": "An image encoder is trained jointly with recipe text, ingredient IDs, and categories; this is retrieval/embedding evidence, not a calibrated per-pixel ingredient detector.",
+      "accessed_on": "2026-07-31"
+    },
+    {
+      "item": "Food.AI MobileNetV2 SSD",
+      "repository": "https://github.com/jonathanyin12/Food.AI",
+      "paper_or_runtime": "https://github.com/tensorflow/examples/tree/master/lite/examples/object_detection/android",
+      "checkpoint": "The repository documents food_detect.tflite under model_checkpoints/tflite_model and bundles it into an Android demo.",
+      "evidence": "A concrete, old but useful end-to-end Android food detector using MobileNetV2 SSD and TFLite.",
+      "accessed_on": "2026-07-31"
+    },
+    {
+      "item": "MobileSAM",
+      "repositories": [
+        "https://github.com/ChaoningZhang/MobileSAM",
+        "https://github.com/facebookresearch/segment-anything"
+      ],
+      "paper": "https://arxiv.org/abs/2306.14289",
+      "checkpoint": "The official repository documents weights/mobile_sam.pt and the vit_t model type; it also provides scripts/export_onnx_model.py.",
+      "evidence": "A lightweight, class-agnostic promptable mask generator intended for mobile applications; it needs a separate food labeler or prompt policy.",
+      "accessed_on": "2026-07-31"
+    },
+    {
+      "item": "Depth Anything V2 Small",
+      "repositories_and_model_cards": [
+        "https://github.com/DepthAnything/Depth-Anything-V2",
+        "https://huggingface.co/depth-anything/Depth-Anything-V2-Small-hf",
+        "https://huggingface.co/apple/coreml-depth-anything-v2-small"
+      ],
+      "paper": "https://arxiv.org/abs/2406.09414",
+      "checkpoint": "Official Small, Base, and Large relative-depth checkpoints are linked by the repository; Small is 24.8M parameters. An Apple Core ML conversion and an Android ONNX implementation are linked by the official README.",
+      "evidence": "The repository reports direct Core ML integration and gives an HxW raw depth-map output contract.",
+      "accessed_on": "2026-07-31"
+    },
+    {
+      "item": "MiDaS 3.1 DPT-LeViT / DPT-Swin2-Tiny",
+      "repository": "https://github.com/isl-org/MiDaS",
+      "paper": "https://arxiv.org/abs/1907.01341",
+      "checkpoint": "The repository lists dpt_levit_224 and dpt_swin2_tiny_256 for embedded devices, plus legacy OpenVINO weights.",
+      "evidence": "A mature relative monocular-depth baseline with explicit embedded-device model variants, but the GitHub repository was archived on 2025-08-25.",
+      "accessed_on": "2026-07-31"
+    },
+    {
+      "item": "Ultralytics YOLO detection and segmentation family",
+      "repository": "https://github.com/ultralytics/ultralytics",
+      "documentation": [
+        "https://github.com/ultralytics/ultralytics/blob/main/docs/en/tasks/segment.md",
+        "https://github.com/ultralytics/ultralytics/blob/main/ultralytics/engine/exporter.py"
+      ],
+      "checkpoint": "Current official small detection, classification, and segmentation checkpoints are downloaded by model name, for example yolo26n.pt and yolo26n-seg.pt; custom FoodInsSeg or consented-corpus weights must be trained separately.",
+      "evidence": "The framework supports detection, instance segmentation, semantic segmentation, classification, and export to ONNX, Core ML, LiteRT/TFLite, and ExecuTorch.",
+      "accessed_on": "2026-07-31"
+    },
+    {
+      "item": "Qwen2.5-VL-3B-Instruct",
+      "repositories_and_model_card": [
+        "https://github.com/QwenLM/Qwen2.5-VL",
+        "https://huggingface.co/Qwen/Qwen2.5-VL-3B-Instruct"
+      ],
+      "paper": "https://arxiv.org/abs/2502.13923",
+      "checkpoint": "The official 3B instruction checkpoint is available in safetensors and is loaded with AutoProcessor and Qwen2_5_VLForConditionalGeneration.",
+      "evidence": "A general open vision-language baseline with image/video chat, visual grounding boxes or points, and structured text output; it has no food-specific fine-tuning in the cited release.",
+      "accessed_on": "2026-07-31"
+    },
+    {
+      "item": "Deployment references shared by the candidates",
+      "official_runtime_documentation": [
+        "https://onnxruntime.ai/docs/tutorials/mobile/",
+        "https://onnxruntime.ai/docs/tutorials/mobile/helpers/",
+        "https://apple.github.io/coremltools/docs-guides/source/overview-coremltools.html",
+        "https://developers.google.com/edge/litert/conversion/overview",
+        "https://github.com/google-ai-edge/litert-torch",
+        "https://docs.pytorch.org/executorch/stable/using-executorch-export.html"
+      ],
+      "evidence": "These official runtime references support the conversion feasibility judgments below and should be pinned in a model manifest rather than treated as interchangeable runtimes.",
+      "accessed_on": "2026-07-31"
+    }
+  ],
+  "maintenance_and_reproducibility": [
+    {
+      "item": "FoodSeg103 ReLeM / SETR",
+      "status": "Official research repository with configs, training and evaluation scripts, model-zoo references, and a public demo checkpoint. It is reproducible for research with the legacy MMsegmentation stack, but the dependency environment is old and the original large dataset download is password-gated.",
+      "checkpoint_reproducibility": "Good for a research baseline when the exact config, checkpoint, class map, crop size, and preprocessing are pinned. The public demo is evidence that R50_ReLeM.pth can be loaded, not evidence of mobile export.",
+      "caveat": "[uncertain] The current availability and exact provenance of every original model-zoo checkpoint link should be rechecked before a build is archived."
+    },
+    {
+      "item": "FoodSAM",
+      "status": "Official implementation with runnable semantic and panoptic commands and reported FoodSeg103 and UECFoodPixComplete metrics. The architecture is a multi-stage composition of SAM, a food semantic segmenter, and an object detector.",
+      "checkpoint_reproducibility": "Moderate: the repository and code are public, but reproducing the complete pipeline requires multiple external weights, legacy dependencies, and exact merge/post-processing behavior.",
+      "caveat": "[uncertain] The maintenance level is adequate for research replication but not demonstrated as a maintained mobile SDK."
+    },
+    {
+      "item": "FoodInsSeg",
+      "status": "Small official repository with 11 commits and evaluation/visualization code; it is a dataset and benchmark rather than a finished model package.",
+      "checkpoint_reproducibility": "High for reading annotations and evaluating COCO-format predictions; low for reproducing a best model because the official repository does not publish a trained detector checkpoint.",
+      "caveat": "[uncertain] Long-term dataset-host availability is dependent on external Google Drive or Baidu links."
+    },
+    {
+      "item": "Food-101 ViT",
+      "status": "Checkpoint, model card, class mapping, and Transformers inference path are directly available. The model card is a single-author fine-tune rather than a long-lived production project.",
+      "checkpoint_reproducibility": "Good for fixed 224x224 Food-101 classification; the card documents base model, dataset, optimizer, epochs, and reported accuracy.",
+      "caveat": "[uncertain] Independent verification of the reported 89.6% result and the exact training artifact hash was not performed."
+    },
+    {
+      "item": "FoodLMM",
+      "status": "Official code is public but only six GitHub commits and no GitHub releases are shown. A Hugging Face checkpoint is available and the code documents two-stage training and deployment through a CUDA Python demo.",
+      "checkpoint_reproducibility": "Moderate for server research; low for mobile. It depends on LISA-7B, SAM ViT-H, DeepSpeed, large datasets, and generated conversation data.",
+      "caveat": "[uncertain] The exact full checkpoint size, checkpoint-to-code compatibility, and reproducibility of GPT-4-generated FoodDialogues/FoodReasonSeg should be verified before relying on it."
+    },
+    {
+      "item": "im2recipe-Pytorch",
+      "status": "Official MIT-licensed code with a linked pretrained checkpoint and a documented extraction/evaluation flow. The repository is research-oriented and requires old data formats and very large Recipe1M+ image archives.",
+      "checkpoint_reproducibility": "Good for the published retrieval experiment when gated dataset access and LMDB artifacts are available; poor as a self-contained modern inference package.",
+      "caveat": "[uncertain] Current compatibility with modern PyTorch, torchvision, and mobile export tooling is not established by the repository."
+    },
+    {
+      "item": "Food.AI",
+      "status": "A compact Android demonstration with 18 commits, a training notebook, label map, and a TFLite artifact path. It is valuable as an integration example, not as a current accuracy benchmark.",
+      "checkpoint_reproducibility": "Good for reproducing the old Android demo if the referenced Drive files remain available; weak for production because the dataset, checkpoint hash, and evaluation report are not versioned in the repository.",
+      "caveat": "[uncertain] The repository does not expose a clear license file or current maintenance commitment."
+    },
+    {
+      "item": "MobileSAM",
+      "status": "Official repository with explicit checkpoint loading, automatic-mask and prompt APIs, and an ONNX export script. It is much smaller than the original SAM path but still a general segmentation model.",
+      "checkpoint_reproducibility": "Good for the published vit_t checkpoint and prompt API; preprocessing, decoder post-processing, and prompt sampling must be frozen for parity.",
+      "caveat": "[uncertain] No food-domain accuracy or maintained Android/iOS reference app is supplied by the official repository."
+    },
+    {
+      "item": "Depth Anything V2 Small",
+      "status": "Official repository supplies model definitions, checkpoint links, a Transformers path, Core ML links, and Android/ONNX community references. The Small model is the only practical candidate in this set for an initial mobile experiment.",
+      "checkpoint_reproducibility": "Good for relative-depth inference when the OpenCV preprocessing and 518-pixel default are preserved; the repository warns that the Pillow Transformers path can differ slightly.",
+      "caveat": "[uncertain] Third-party Android and ONNX integrations are references, not official SuperNutrition device evidence."
+    },
+    {
+      "item": "MiDaS",
+      "status": "Mature and documented, with explicitly named tiny/LeViT models and output maps, but the GitHub repository is archived and read-only.",
+      "checkpoint_reproducibility": "Good for a baseline and camera demo; lower strategic value than Depth Anything V2 Small because it is archived and has more legacy dependencies.",
+      "caveat": "[uncertain] Exact commercial redistribution terms for each MiDaS weight and upstream training dataset were not resolved from the archived repository."
+    },
+    {
+      "item": "Ultralytics YOLO",
+      "status": "Actively maintained framework with extensive task and export documentation. Its current small models are strong engineering baselines but have no food-domain evidence until fine-tuned.",
+      "checkpoint_reproducibility": "High for official COCO checkpoints and export commands; medium for a food model because the custom dataset, augmentation, NMS/end-to-end choice, and label taxonomy become project-owned.",
+      "caveat": "[uncertain] Export support varies by model version and operator set; every candidate export must be executed and compared on target devices."
+    },
+    {
+      "item": "Qwen2.5-VL-3B-Instruct",
+      "status": "Official model card and source repository provide a current Transformers chat and grounding path. It is a large general model, not a food-specific checkpoint.",
+      "checkpoint_reproducibility": "Good for server inference with pinned Transformers and processor versions; poor for a small mobile artifact without a model-specific quantized/export path.",
+      "caveat": "[uncertain] The redirected Qwen repository now presents Qwen3-VL branding, so the exact source revision for Qwen2.5-VL must be pinned."
+    }
+  ],
+  "license_and_usage": [
+    {
+      "item": "FoodSeg103 ReLeM / SETR",
+      "code_license": "Apache-2.0 in the official benchmark repository.",
+      "model_license": "[uncertain] The public demo/model artifacts carry Apache metadata in some mirrors, but the original checkpoint and every upstream pretrained component should be checked individually.",
+      "dataset_license": "[uncertain] The repository describes a password-gated research download without a clear commercial grant in the cited README. Do not ship a commercial model trained on it until dataset rights are confirmed.",
+      "commercial_guidance": "Use as a teacher, benchmark, or research-only baseline until code, checkpoint, and dataset terms are recorded in the model manifest."
+    },
+    {
+      "item": "FoodSAM",
+      "code_and_model_license": "The FoodSAM repository states Apache-2.0 for its model/code.",
+      "dependency_license": "SAM, UniDet, and MMSegmentation are separate dependencies with their own licenses and pretrained-weight terms.",
+      "dataset_license": "FoodSeg103 and UECFoodPixComplete are not automatically commercial-use grants; UECFoodPixComplete explicitly states non-commercial research use.",
+      "commercial_guidance": "Do not bundle the benchmark data or its weights into SuperNutrition without written permission; use a separately consented corpus for commercial fine-tuning."
+    },
+    {
+      "item": "FoodInsSeg",
+      "code_and_dataset_license": "The official README states CC BY-NC-SA 4.0 and separately says academic research only; commercial and profit purposes are prohibited.",
+      "commercial_guidance": "Research and annotation bootstrapping only. Do not use its images, masks, or derivative checkpoint as a commercial training source without a separate license."
+    },
+    {
+      "item": "ViT fine-tuned on Food-101",
+      "model_license": "Apache-2.0 on the cited Hugging Face model card.",
+      "dataset_license": "[uncertain] Food-101 is publicly downloadable and widely used for research, but the cited dataset card does not establish a commercial image-redistribution grant.",
+      "commercial_guidance": "Treat the checkpoint as a candidate pending dataset and base-model provenance review; prefer a consented commercial training set for a shipped classifier."
+    },
+    {
+      "item": "FoodLMM",
+      "code_license": "Apache-2.0 in the official GitHub repository.",
+      "checkpoint_license": "Apache-2.0 metadata is shown for Yueha0/FoodLMM-Chat.",
+      "training_data_terms": "VIREO Food-172, Recipe1M, Nutrition5k, FoodSeg103, UECFoodPixComplete, FoodDialogues, and FoodReasonSeg have separate rights and access conditions; several are research-oriented or derived from other sources.",
+      "commercial_guidance": "The Apache label does not clear the training corpora or LISA/SAM dependencies. Keep it server-side for research evaluation until a full provenance and DPA review is complete."
+    },
+    {
+      "item": "im2recipe-Pytorch",
+      "code_license": "MIT in the official repository.",
+      "dataset_and_checkpoint_terms": "Recipe1M/Recipe1M+ access is granted through a form and the README says access is for research at universities and research institutions.",
+      "commercial_guidance": "Code can be reused subject to MIT terms, but the dataset and pretrained checkpoint should be treated as research-only unless the dataset owners grant commercial rights."
+    },
+    {
+      "item": "Food.AI",
+      "code_license": "[uncertain] No clear repository license file was visible in the cited GitHub page.",
+      "dataset_terms": "Open Images and TensorFlow example code have their own terms; the specific Drive training export is not a substitute for provenance.",
+      "commercial_guidance": "Use only as a reference implementation until the repository owner confirms reuse rights and the exact checkpoint provenance."
+    },
+    {
+      "item": "MobileSAM",
+      "code_and_model_license": "Apache-2.0 in the official repository; the original SAM repository is also Apache-2.0.",
+      "dataset_and_weight_terms": "The SAM training corpus and any third-party TinyViT components still require provenance review; the repository license alone is not a universal dataset grant.",
+      "commercial_guidance": "Technically attractive for a correction/annotation tool, but retain the exact checkpoint and dependency notices with the app artifact."
+    },
+    {
+      "item": "Depth Anything V2 Small",
+      "code_and_small_model_license": "The official repository and Small model are presented under Apache-2.0.",
+      "other_model_sizes": "[uncertain] Do not assume the Small checkpoint license applies to Base, Large, or Giant variants; review each model card.",
+      "commercial_guidance": "Small is the preferred licensing candidate, but the training-data and upstream DINOv2 provenance should still be recorded."
+    },
+    {
+      "item": "MiDaS",
+      "code_license": "MIT in the archived repository.",
+      "weight_and_data_terms": "[uncertain] The archived repository names multiple upstream depth datasets and weights but does not give a single commercial redistribution decision for every artifact.",
+      "commercial_guidance": "Use for internal comparison only until the selected weight and upstream data terms are cleared."
+    },
+    {
+      "item": "Ultralytics YOLO",
+      "code_license": "AGPL-3.0 for the open-source repository; Ultralytics documents an enterprise license for commercial use that avoids AGPL obligations.",
+      "model_and_data_terms": "Official checkpoint and COCO data terms must be reviewed separately from the code license.",
+      "commercial_guidance": "Not a default dependency for SuperNutrition unless the legal owner approves AGPL compliance or purchases/records an enterprise license."
+    },
+    {
+      "item": "Qwen2.5-VL-3B-Instruct",
+      "model_license": "Qwen Research License Agreement: non-commercial use is granted; commercial use requires requesting a separate license.",
+      "code_license": "The source repository and Transformers components have separate licenses from the model materials.",
+      "commercial_guidance": "Research/server evaluation only until Alibaba Cloud commercial licensing is obtained and the license text is distributed with any derivative artifact."
+    }
+  ],
+  "task_and_labels": [
+    {
+      "item": "FoodSeg103 ReLeM / SETR",
+      "task": "Food-domain semantic segmentation with ingredient-level pixel labels and multimodal recipe pretraining.",
+      "labels": "The benchmark is named FoodSeg103 and the README describes 104 ingredient classes including the background convention [uncertain]; use the exact category_id.txt from the selected release as the contract.",
+      "input_output_contract": "Fixed RGB image tensor from the MMseg pipeline, commonly evaluated at 768x768; output is per-pixel class logits or a class-ID mask with shape [H,W].",
+      "annotation_granularity": "Semantic masks; separate instances of the same ingredient are not inherently separated."
+    },
+    {
+      "item": "FoodSAM",
+      "task": "Semantic, instance, panoptic, and promptable segmentation of food images.",
+      "labels": "FoodSeg103 or UECFoodPixComplete food categories plus non-food/background classes from the detector; SAM masks are initially class-agnostic.",
+      "input_output_contract": "RGB image plus optional points, boxes, or detector prompts; outputs semantic masks, instance masks, panoptic masks, mask scores, and merged class IDs.",
+      "annotation_granularity": "Pixel masks with instance/panoptic composition; quality depends on the semantic segmenter, SAM proposals, detector, and merge strategy."
+    },
+    {
+      "item": "FoodInsSeg",
+      "task": "Ingredient-level instance segmentation benchmark and evaluation target, not a complete model.",
+      "labels": "103 ingredient categories.",
+      "input_output_contract": "COCO-style image plus predicted boxes, polygon or encoded masks, class IDs, confidence scores, and image IDs; the official evaluator consumes COCO result JSON.",
+      "annotation_granularity": "119,048 individual polygon masks; separate food items and repeated ingredients are represented as separate instances."
+    },
+    {
+      "item": "ViT fine-tuned on Food-101",
+      "task": "Single-label food dish classification.",
+      "labels": "101 Food-101 dish categories.",
+      "input_output_contract": "RGB image resized/cropped to 224x224 with the ViT processor; output is a [1,101] logits vector mapped through id2label.",
+      "annotation_granularity": "Image-level dish label only; no boxes, ingredient labels, or masks."
+    },
+    {
+      "item": "FoodLMM",
+      "task": "Multimodal food recognition, ingredient recognition, recipe generation, nutrition estimation, conversation, and segmentation-mask prediction.",
+      "labels": "Natural-language food/ingredient/recipe outputs plus task-specific tokens and auxiliary masks; the public code does not define a stable mobile JSON schema.",
+      "input_output_contract": "Image plus conversation prompt into a LISA/LLaVA-style model; output includes autoregressive text and, for supported heads, segmentation masks and nutrition-related predictions.",
+      "annotation_granularity": "Mixed: image-level language, structured food reasoning, and multiple masks; generated dialogue is not equivalent to human-confirmed labels."
+    },
+    {
+      "item": "im2recipe-Pytorch",
+      "task": "Cross-modal image-to-recipe retrieval and image/recipe embedding learning.",
+      "labels": "Recipe ingredients, ingredient IDs, semantic categories, and text vocabulary used for training; it does not emit visible-instance masks.",
+      "input_output_contract": "Food image through a ResNet-50 vision encoder; output is an image embedding compared with recipe/text embeddings, with retrieval ranking evaluated by MedR and recall.",
+      "annotation_granularity": "Recipe-level ingredient association rather than visible ingredient localization; hidden ingredients and preparation steps can be retrieved."
+    },
+    {
+      "item": "Food.AI MobileNetV2 SSD",
+      "task": "Real-time food object detection on Android.",
+      "labels": "15 food classes derived from Open Images v4.",
+      "input_output_contract": "Camera RGB frame into a TFLite MobileNetV2 SSD; outputs bounding boxes, class IDs, detection scores, and countable detections.",
+      "annotation_granularity": "Bounding boxes only; not ingredient-level segmentation and not a portion estimator."
+    },
+    {
+      "item": "MobileSAM",
+      "task": "Promptable class-agnostic segmentation.",
+      "labels": "No semantic food labels; prompts identify the object to mask.",
+      "input_output_contract": "RGB image plus point/box prompts; outputs boolean masks, mask quality scores, and low-resolution mask logits.",
+      "annotation_granularity": "Instance-like masks per prompt, without food identity."
+    },
+    {
+      "item": "Depth Anything V2 Small",
+      "task": "Monocular relative depth estimation.",
+      "labels": "No food labels.",
+      "input_output_contract": "RGB image, normally with the repository's 518-pixel preprocessing; output is an HxW relative/inverse-depth map, not a metric distance map.",
+      "annotation_granularity": "Dense pixel depth ordering; no object identities or mass labels."
+    },
+    {
+      "item": "MiDaS",
+      "task": "Monocular relative depth estimation.",
+      "labels": "No food labels.",
+      "input_output_contract": "RGB image resized according to the selected model variant; output is a dense relative depth map written to the output directory.",
+      "annotation_granularity": "Dense relative depth with no metric scale, segmentation, or food category."
+    },
+    {
+      "item": "Ultralytics YOLO",
+      "task": "Object detection, instance segmentation, semantic segmentation, or classification depending on the selected checkpoint.",
+      "labels": "Official checkpoints use COCO or other task-specific labels; a SuperNutrition model would need a versioned ingredient/meal taxonomy and custom training.",
+      "input_output_contract": "RGB image, usually letterboxed to a fixed inference size such as 640; outputs boxes/classes/confidences or prototype-mask coefficients and masks for segmentation variants.",
+      "annotation_granularity": "Boxes or instance masks; semantic masks are available in the current framework, but ingredient granularity is project-defined."
+    },
+    {
+      "item": "Qwen2.5-VL-3B-Instruct",
+      "task": "General image/video-text understanding, visual grounding, structured descriptions, and conversational reasoning.",
+      "labels": "No fixed food taxonomy; can generate candidate ingredients, meal descriptions, boxes/points, and JSON-like text under prompting.",
+      "input_output_contract": "Image or video plus text messages processed by AutoProcessor; output is generated token IDs decoded to text, with grounding coordinates represented in text.",
+      "annotation_granularity": "Language and coordinate suggestions; not deterministic segmentation masks or a calibrated classification head."
+    }
+  ],
+  "dataset_scale_and_domain": [
+    {
+      "item": "FoodSeg103 / ReLeM",
+      "scale": "7,118 images; the official benchmark README describes 4,983 training and 2,135 test images, with an average of about six ingredient labels per image. The related FoodSeg154 extension contains 9,490 images and 154 classes.",
+      "domain": "Food photographs sourced from Recipe1M and annotated at ingredient/pixel level; stronger than dish-only data for plated multi-component meals, but still a finite taxonomy with cuisine and capture bias.",
+      "split_and_leakage": "The official split is fixed; ReLeM training removes FoodSeg103 test images from the Recipe1M-derived training data."
+    },
+    {
+      "item": "FoodSAM",
+      "scale": "Evaluated on FoodSeg103 and UECFoodPixComplete; the underlying SAM component was trained on 11 million images and 1.1 billion masks, while the food semantics come from smaller food datasets.",
+      "domain": "Good food-segmentation evidence across two benchmarks, but the generic SAM pretraining does not provide food identity and UECFoodPixComplete is a non-commercial research corpus.",
+      "split_and_leakage": "Use the fixed benchmark splits; avoid using test images to select prompts, merge thresholds, or model checkpoints."
+    },
+    {
+      "item": "FoodInsSeg",
+      "scale": "7,118 images, 4,983 train and 2,135 test, 103 categories, 119,048 instance masks; average 16.59 masks per training image and 17.01 per test image, with up to 186 masks in one test image.",
+      "domain": "Directly targets ingredient-level instances in cluttered multi-component food images and is therefore a strong training/evaluation shape match.",
+      "split_and_leakage": "The official repository follows the FoodSeg103 train/test split; do not mix the same images into a consented validation set."
+    },
+    {
+      "item": "Food-101",
+      "scale": "101,000 images across 101 categories; 750 training and 250 test images per category.",
+      "domain": "Dish-level photos from Foodspotting with deliberate fine-grained dish discrimination; useful for recognition pretraining, weak for visible ingredient decomposition and mixed plates.",
+      "split_and_leakage": "The training set intentionally contains label noise; the test set was manually reviewed."
+    },
+    {
+      "item": "FoodLMM",
+      "scale": "Combines VIREO Food-172, Recipe1M, Nutrition5k, FoodSeg103, UECFoodPixComplete, FoodDialogues, and FoodReasonSeg. Exact dataset sizes and released training examples vary by source.",
+      "domain": "The broadest food-domain mixture in this set, including recipes, nutrition, ingredients, masks, and generated dialogue; the mixture also inherits every source corpus's cuisine, license, and annotation bias.",
+      "split_and_leakage": "The code documents FoodSeg103 test exclusion for the ReLeM-like component; reproduce all other source-specific splits before evaluating."
+    },
+    {
+      "item": "Recipe1M+ / im2recipe",
+      "scale": "Approximately one million recipe-image-text associations in the Recipe1M family, with very large image archives and gated access; the cited repository also exposes nutrition-linked subsets with 35,867 train, 7,687 validation, and 7,681 test recipes.",
+      "domain": "Strong recipe/ingredient language coverage, but associations describe a recipe and are not proof that every ingredient is visible in the photographed serving.",
+      "split_and_leakage": "Use the published train/validation/test partitions and deduplicate near-identical recipe images before any downstream evaluation."
+    },
+    {
+      "item": "Food.AI",
+      "scale": "15 food object classes from Open Images v4; the repository does not provide a complete current image-count or class-balanced evaluation report.",
+      "domain": "Real-time Android demonstration with generic food boxes; too coarse for ingredients, sauces, portions, or dense multi-component meals.",
+      "split_and_leakage": "[uncertain] The exact train/validation/test composition of the referenced Drive export is not versioned in the repository."
+    },
+    {
+      "item": "MobileSAM",
+      "scale": "Distilled/generalized from SAM-style pretraining rather than a food corpus.",
+      "domain": "Good mask proposal prior for human-in-the-loop annotation or correction; no evidence of food-specific labels or performance on plated meals in the official repository.",
+      "split_and_leakage": "There is no food-domain split; SuperNutrition must create one."
+    },
+    {
+      "item": "Depth Anything V2 Small",
+      "scale": "Trained from 595,000 synthetic labeled images and more than 62 million real unlabeled images with pseudo-depth labels; Small has 24.8M parameters.",
+      "domain": "Broad natural-image coverage and no food-specific calibration; useful as a relative geometry feature, not as a food-volume ground truth source.",
+      "split_and_leakage": "Evaluate separately on phone food photos, with device/camera and lighting splits that are absent from the public depth benchmarks."
+    },
+    {
+      "item": "MiDaS",
+      "scale": "Trained on up to 12 mixed depth datasets including KITTI, NYU Depth V2, MegaDepth, and synthetic/real sources.",
+      "domain": "General scenes rather than food; the embedded-device variants are useful for comparison, not a food-specific depth claim.",
+      "split_and_leakage": "Public depth benchmark splits do not represent plated food close-ups or calibrated serving geometry."
+    },
+    {
+      "item": "Ultralytics YOLO",
+      "scale": "Official weights are trained on general datasets such as COCO; the framework can consume FoodInsSeg, FoodSeg103-derived boxes/masks, or a new consented corpus after conversion.",
+      "domain": "Excellent engineering substrate for custom food detection/instance segmentation, but zero direct ingredient-domain performance until fine-tuned.",
+      "split_and_leakage": "Split by person, meal, restaurant, and capture session rather than random image only; food images often contain near duplicates."
+    },
+    {
+      "item": "Qwen2.5-VL-3B-Instruct",
+      "scale": "General multimodal pretraining and instruction data; the model card reports broad image, video, grounding, and agent benchmarks rather than food-specific training size.",
+      "domain": "Useful as a remote hypothesis generator for meal descriptions and corrections; no cited Food-101, FoodSeg103, or Nutrition5k fine-tune in the official release.",
+      "split_and_leakage": "Build a food-specific held-out set and avoid treating generated answers as labels without human confirmation."
+    }
+  ],
+  "expected_ingredient_quality": [
+    {
+      "item": "FoodSeg103 ReLeM / SETR",
+      "evidence": "The official benchmark reports ingredient pixel segmentation and food-aware ReLeM pretraining. A practical baseline is the reported R-50 FPN ReLeM mIoU of 29.1 in the repository table; this is research-benchmark evidence, not production accuracy.",
+      "strengths": "Best starting point for a food semantic-mask teacher and taxonomy exploration.",
+      "failure_modes": "Overlapping ingredients, visually similar ingredients, hidden ingredients, sauces/oils, preparation state, and out-of-taxonomy foods. Semantic masks also merge repeated instances.",
+      "quality_assessment": "[uncertain] The benchmark quality is meaningful for research, but transfer quality on SuperNutrition's camera/cuisine distribution must be measured on a new held-out corpus."
+    },
+    {
+      "item": "FoodSAM",
+      "evidence": "Official FoodSeg103 results report mIoU 46.42, aAcc 84.10, and mAcc 58.27; UECFoodPixComplete results report mIoU 66.14, aAcc 88.47, and mAcc 78.01.",
+      "strengths": "Combines food semantic knowledge with class-agnostic masks and can produce instance/panoptic outputs or accept prompts.",
+      "failure_modes": "The reported numbers are semantic benchmark metrics; instance and panoptic quality depends on detector prompts, mask merging, small/occluded ingredients, and non-food background handling.",
+      "quality_assessment": "[uncertain] It is a strong annotation/teacher candidate, not evidence that a single FoodSAM pass gives reliable ingredient identity or mass."
+    },
+    {
+      "item": "FoodInsSeg",
+      "evidence": "The benchmark's 119,048 ingredient-instance masks and high per-image instance counts directly expose crowded-meal difficulty.",
+      "strengths": "Provides the right instance granularity for separate portions of the same or different ingredients.",
+      "failure_modes": "Academic-only data, 103-category ceiling, masks still cannot reveal hidden ingredients, ingredient mass, or recipe composition; dense instances can be very small.",
+      "quality_assessment": "[uncertain] Dataset suitability is strong for bootstrapping but commercial transfer and cross-cuisine generalization are unproven."
+    },
+    {
+      "item": "ViT fine-tuned on Food-101",
+      "evidence": "The model card reports 89.6% accuracy on its Food-101 evaluation set.",
+      "strengths": "Simple, deterministic, exportable dish classifier for candidate generation when the input is one dominant dish.",
+      "failure_modes": "Single dish label, label noise, Western/cuisine bias, no ingredient localization, and arbitrary confidence when the image is a mixed plate.",
+      "quality_assessment": "[uncertain] The reported accuracy should not be used as a meal or ingredient accuracy estimate."
+    },
+    {
+      "item": "FoodLMM",
+      "evidence": "The paper and code explicitly target food recognition, ingredient recognition, recipe generation, nutrition estimation, segmentation, and conversation across multiple food datasets.",
+      "strengths": "Richest food-domain reasoning prior and useful source of candidate ingredient hypotheses or user-facing explanations on a remote path.",
+      "failure_modes": "Hallucinated ingredients, plausible but invisible recipe components, non-deterministic wording, uncertain numeric nutrition, and masks/text that need schema validation and user confirmation.",
+      "quality_assessment": "[uncertain] Published domain claims are not enough to establish per-class ingredient precision, calibration, or grams accuracy on SuperNutrition photos."
+    },
+    {
+      "item": "im2recipe-Pytorch",
+      "evidence": "The released model is evaluated by cross-modal retrieval MedR/recall and is trained with recipe ingredients and categories.",
+      "strengths": "Useful for recipe/ingredient candidate retrieval and ontology expansion when a dish is recognizable.",
+      "failure_modes": "Retrieval can return a recipe with ingredients not visible in the image; it does not localize, segment, or quantify components.",
+      "quality_assessment": "[uncertain] Its utility for ingredient candidate ranking on current mobile meal photos needs a new evaluation."
+    },
+    {
+      "item": "Food.AI",
+      "evidence": "The repository demonstrates real-time Android detection and confidence display with a TFLite MobileNetV2 SSD.",
+      "strengths": "Low-friction mobile wiring and explicit TFLite detection contract.",
+      "failure_modes": "Only 15 generic food classes, old Open Images transfer, boxes instead of masks, and no evidence for occlusion, mixed dishes, or calorie/weight accuracy.",
+      "quality_assessment": "[uncertain] Treat accuracy as unknown until the referenced checkpoint and test set are recovered."
+    },
+    {
+      "item": "MobileSAM",
+      "evidence": "SAM provides broad zero-shot masks and MobileSAM provides a lightweight promptable implementation with ONNX export.",
+      "strengths": "Useful for annotator correction, click-to-mask UX, and mask proposals after an identity model produces a point or box.",
+      "failure_modes": "No semantic food identity, ambiguity between touching ingredients, prompt sensitivity, and loss of fine details after mobile resizing.",
+      "quality_assessment": "[uncertain] Food mask quality must be benchmarked on the project's own occlusion and sauce cases."
+    },
+    {
+      "item": "Depth Anything V2 Small",
+      "evidence": "The official paper/site reports improved relative-depth robustness and fine-grained detail over V1, but not food or mass estimation.",
+      "strengths": "Potential dense geometry feature for segmentation-guided relative height and shape cues.",
+      "failure_modes": "Scale/shift ambiguity, reflective food, textureless plates, shadows, transparent containers, and edge errors; a good relative depth map can still produce wrong volume.",
+      "quality_assessment": "[uncertain] No food-domain depth or portion metric was found in the official release."
+    },
+    {
+      "item": "MiDaS",
+      "evidence": "The official repository provides embedded-device variants and established cross-dataset depth research.",
+      "strengths": "Useful comparison point for whether the newer depth model earns its device cost.",
+      "failure_modes": "Relative-only depth, archived implementation, general-scene bias, and poor identifiability of shallow food height from one RGB view.",
+      "quality_assessment": "[uncertain] No food-domain evidence was found."
+    },
+    {
+      "item": "Ultralytics YOLO",
+      "evidence": "The framework has mature detection/segmentation training and validation, but its official weights are general-domain.",
+      "strengths": "Practical route to a small custom detector/instance segmenter once FoodInsSeg or a consented corpus supplies labels.",
+      "failure_modes": "Taxonomy drift, small ingredients, crowded masks, NMS/overlap errors, domain shift, and license cost/obligations.",
+      "quality_assessment": "[uncertain] Food quality depends almost entirely on the new training corpus and must not be inferred from COCO metrics."
+    },
+    {
+      "item": "Qwen2.5-VL-3B-Instruct",
+      "evidence": "The official model card supports image chat, visual grounding, and structured text, but reports general benchmarks only.",
+      "strengths": "Remote fallback for natural-language clarification, candidate generation, and difficult long-tail meals.",
+      "failure_modes": "Hallucination, inconsistent JSON, weak small-object localization, no calibrated food taxonomy, and high latency/memory.",
+      "quality_assessment": "[uncertain] Food-domain ingredient quality is unverified and must be measured against human-reviewed labels."
+    }
+  ],
+  "weight_ground_truth": [
+    {
+      "item": "FoodSeg103 ReLeM / SETR",
+      "ground_truth": "No image-linked grams, calibrated scale, metric depth, or volume ground truth in the segmentation checkpoint; pixel masks and ingredient labels are the target.",
+      "implication": "It can identify pixels but cannot learn a validated mass mapping from its public supervision."
+    },
+    {
+      "item": "FoodSAM and FoodInsSeg",
+      "ground_truth": "Segmentation masks and category labels only; no grams or scale readings.",
+      "implication": "Useful for area/mask supervision, not weight supervision."
+    },
+    {
+      "item": "ViT Food-101",
+      "ground_truth": "Image-level dish labels only; no grams, volume, or depth.",
+      "implication": "A classifier confidence score is not a portion measurement."
+    },
+    {
+      "item": "FoodLMM",
+      "ground_truth": "It trains on Nutrition5k and nutrition-related food data, but the public model contract does not establish per-ingredient independently weighed image ground truth or a calibrated grams output [uncertain].",
+      "implication": "Do not reuse its numeric nutrition output as a mass label without a separate weighed validation study."
+    },
+    {
+      "item": "im2recipe-Pytorch",
+      "ground_truth": "Recipe-linked ingredient quantities and, in the cited nutrition subset, ingredient weight fields exist as text/recipe metadata; they are not independent measurements of the photographed serving [uncertain].",
+      "implication": "Useful for recipe association, not visual mass ground truth."
+    },
+    {
+      "item": "Food.AI and Ultralytics YOLO",
+      "ground_truth": "Boxes/masks and class labels; no public weighed component ground truth in the cited implementations.",
+      "implication": "A custom weighed corpus is required for portion estimation."
+    },
+    {
+      "item": "MobileSAM",
+      "ground_truth": "Prompted masks only; no food identity, grams, volume, or scale data.",
+      "implication": "Use only as a geometry/annotation component."
+    },
+    {
+      "item": "Depth Anything V2 Small and MiDaS",
+      "ground_truth": "Relative or inverse depth learned from generic depth data; no metric food depth or scale readings in the public checkpoints.",
+      "implication": "Metric scale requires device depth/calibration or a new paired depth-and-weighing corpus."
+    },
+    {
+      "item": "Qwen2.5-VL",
+      "ground_truth": "No food grams or scale ground truth in the general multimodal release.",
+      "implication": "Generated numeric answers must be treated as hypotheses, not measurements."
+    }
+  ],
+  "portion_method_and_metrics": [
+    {
+      "item": "Food segmentation models",
+      "method": "Use semantic/instance masks to estimate visible area or to pool depth over each component; the public models do not define a volume-to-mass function.",
+      "reported_metrics": "FoodSAM reports mIoU, aAcc, and mAcc on FoodSeg103 and UECFoodPixComplete; FoodInsSeg is evaluated with COCO-style mask results. No public grams MAE is attached to these checkpoints.",
+      "required_supernutrition_metric": "Per-component mask mIoU and boundary F-score, per-class precision/recall, occlusion-stratified failure rate, and meal-level item recall before any weight calculation."
+    },
+    {
+      "item": "Depth Anything V2 Small / MiDaS",
+      "method": "Use dense relative depth only as a shape/height cue. Metric volume requires a calibrated RGB-D or LiDAR/AR depth source, known camera intrinsics/pose, plate or reference object geometry, and a food-specific volume model.",
+      "reported_metrics": "The cited releases report depth benchmark metrics rather than portion grams; no valid food-volume or grams MAE is provided.",
+      "required_supernutrition_metric": "Depth scale error, per-component height/volume error, whole-meal grams MAE, relative error, p90 absolute error, and calibration failure rate by device/lighting."
+    },
+    {
+      "item": "FoodLMM / Qwen2.5-VL",
+      "method": "Use text/grounding outputs for candidate generation and clarification; do not accept free-form numeric mass as the portion method.",
+      "reported_metrics": "General VLM benchmarks and food task claims do not establish grams MAE, calibrated confidence, or deterministic output schema [uncertain].",
+      "required_supernutrition_metric": "Structured-candidate exact match/top-k recall, schema-valid rate, abstention precision, correction burden, and numeric hallucination rate; any mass output must be compared with independent scale readings."
+    },
+    {
+      "item": "Recommended mass-estimation head",
+      "method": "Train a separate regression/distribution head over identity plus instance mask plus calibrated geometry, with density/preparation priors and an explicit unknown/insufficient-view outcome. Preserve user correction and independent catalog calculation outside the model.",
+      "reported_metrics": "No public checkpoint in this survey satisfies this contract.",
+      "required_supernutrition_metric": "At minimum: component MAE in grams, relative error, p90 error, meal-total MAE, bias by ingredient/preparation/occlusion/device, confidence calibration, and percentage of attempts that abstain rather than claim false precision."
+    }
+  ],
+  "weight_limitations": [
+    {
+      "limitation": "Single RGB identifiability",
+      "detail": "Two servings can have the same visible area but different thickness, density, hidden layers, oil/sauce content, or container geometry. No segmentation or language model can recover those grams without additional supervision or assumptions.",
+      "product_rule": "Never turn a class confidence, mask area, or generated recipe quantity into grams without a validated conversion model and visible assumptions."
+    },
+    {
+      "limitation": "Relative monocular depth",
+      "detail": "Depth Anything V2 and MiDaS produce relative/inverse depth; the scale and shift are not metric. Camera distance, focal length, crop, plate curvature, and shadows can change the apparent geometry.",
+      "product_rule": "Use depth as optional evidence; require calibrated device depth or a reference object for any volume claim."
+    },
+    {
+      "limitation": "Occlusion and mixtures",
+      "detail": "Masks can miss ingredients under other food, merge touching items, or assign a visible sauce region to the wrong component. Recipe retrieval and VLM reasoning can add ingredients that are not visible.",
+      "product_rule": "Expose unknown/partially visible states, allow correction, and record per-item assumptions in the inference provenance."
+    },
+    {
+      "limitation": "Density and preparation",
+      "detail": "A mask or volume does not identify density changes from cooking, water uptake, frying, bone/peel, or mixed dishes. Generic nutrient catalogs cannot silently resolve those states.",
+      "product_rule": "Use a versioned preparation taxonomy and user confirmation; a model prediction is identification evidence, not the nutrition source."
+    },
+    {
+      "limitation": "Mobile resource and conversion risk",
+      "detail": "Large transformers, composite SAM pipelines, dynamic VLM generation, unsupported operators, and post-processing can exceed mobile memory or fall back to CPU.",
+      "product_rule": "Benchmark exact model artifacts on real Android and iOS devices, keep output parity fixtures, and disable a route when conversion or calibration evidence fails."
+    }
+  ],
+  "mobile_runtime_path": [
+    {
+      "item": "FoodSeg103 ReLeM / SETR",
+      "onnx": "Possible after exporting the PyTorch/MMseg graph with a fixed input and replacing or eliminating unsupported custom ops; validate logits and class-map parity.",
+      "core_ml": "Possible in principle through Core ML Tools from an exported PyTorch graph, but [uncertain] the legacy MMseg wrapper, transformer decoder, and preprocessing have not been verified in Core ML.",
+      "litert": "[uncertain] LiteRT Torch can convert PyTorch models to .tflite, but this specific legacy ReLeM graph is not in the cited converter coverage.",
+      "executorch": "[uncertain] PyTorch export may work for a simplified fixed-shape segmenter; the full legacy graph should not be assumed supported.",
+      "recommendation": "Use as an offline teacher or distillation source; train a smaller mobile segmenter for production."
+    },
+    {
+      "item": "FoodSAM",
+      "onnx": "Individual components may be exported, but the semantic segmenter, SAM, detector, prompts, and merge logic are a multi-model pipeline rather than one simple ONNX graph.",
+      "core_ml": "[uncertain] Each component could require a separate conversion and custom post-processing; no official Core ML package is supplied.",
+      "litert": "[uncertain] A composite FoodSAM mobile conversion is not demonstrated; a compact semantic segmenter is a more realistic LiteRT target.",
+      "executorch": "[uncertain] Possible only after decomposing the pipeline and freezing prompt/merge behavior; not a first mobile milestone.",
+      "recommendation": "Use server-side or annotation-side, and consider MobileSAM only for click-to-correct masks."
+    },
+    {
+      "item": "FoodInsSeg",
+      "onnx_core_ml_litert_executorch": "No model checkpoint to convert; use its COCO annotations to train a separate exportable detector/segmenter.",
+      "recommendation": "Keep the dataset out of a commercial build unless separately licensed; use the schema and evaluation code to define a consented replacement corpus."
+    },
+    {
+      "item": "ViT fine-tuned on Food-101",
+      "onnx": "Straightforward fixed-shape export to ONNX with a 224x224 RGB input and 101 logits; use ONNX Runtime mobile with XNNPACK/CPU and test NNAPI/CoreML delegates.",
+      "core_ml": "Straightforward through Core ML Tools using a traced/exported PyTorch model and explicit input shape, image normalization, and classifier labels.",
+      "litert": "Good candidate for LiteRT Torch conversion followed by post-training quantization, subject to operator and accuracy checks.",
+      "executorch": "Good candidate for torch.export and a small XNNPACK/Core ML backend artifact; output is a simple logits tensor.",
+      "resource_note": "About 86M FP32 parameters is large for a small offline app; prefer a mobile CNN or distilled classifier after the baseline is validated."
+    },
+    {
+      "item": "FoodLMM",
+      "onnx": "The vision and language components could be exported separately, but autoregressive generation, custom tokens, segmentation heads, and KV cache make a single ONNX mobile contract difficult.",
+      "core_ml": "[uncertain] Core ML can convert some PyTorch/LLM components, but the full FoodLMM chat plus auxiliary heads is not shown as a Core ML artifact.",
+      "litert": "[uncertain] LiteRT Torch has a generative path for selected transformer architectures, not proof of FoodLMM compatibility.",
+      "executorch": "[uncertain] Possible only after architecture-specific export, quantization, and memory work; the 4.83 GB shard alone rules it out for the initial local route.",
+      "recommendation": "Remote gateway research candidate only; return bounded candidate evidence rather than raw model text to mobile."
+    },
+    {
+      "item": "im2recipe-Pytorch",
+      "onnx": "The ResNet-50 image encoder and embedding head are likely exportable to ONNX with a fixed preprocessing contract; recipe-text embedding and retrieval can remain server-side.",
+      "core_ml": "Likely feasible for the vision encoder through Core ML Tools; [uncertain] the old word-embedding/text path has no mobile conversion evidence.",
+      "litert": "The image branch is a reasonable LiteRT Torch candidate; keep recipe retrieval and vocabulary outside the mobile binary.",
+      "executorch": "The image branch is likely feasible with torch.export/XNNPACK; the complete tri-joint model is not a suitable first target.",
+      "recommendation": "Use as an offline/server candidate-retrieval experiment, not as the main ingredient segmenter."
+    },
+    {
+      "item": "Food.AI MobileNetV2 SSD",
+      "onnx": "The bundled TFLite model can be used through LiteRT; conversion to ONNX is unnecessary unless standardizing on ONNX Runtime.",
+      "core_ml": "Possible through a new conversion from the TensorFlow checkpoint, but no Core ML artifact is provided.",
+      "litert": "Direct and already demonstrated in an Android app; retain label map, normalization, anchors, and post-processing as the contract.",
+      "executorch": "[uncertain] No direct ExecuTorch artifact or export path is documented.",
+      "recommendation": "Use only as plumbing/reference; do not treat the 15-class old detector as the product model."
+    },
+    {
+      "item": "MobileSAM",
+      "onnx": "Official export script is provided; ONNX Runtime mobile is the most direct cross-platform experiment.",
+      "core_ml": "Possible from ONNX or traced PyTorch via Core ML Tools, but prompt encoder/decoder output parity and dynamic prompt shapes must be tested.",
+      "litert": "[uncertain] Direct LiteRT conversion is not documented by the official repo; simplify to fixed prompt counts or use the model only in annotation tooling.",
+      "executorch": "[uncertain] Possible with fixed-shape prompt tensors and supported operators; no official artifact is supplied.",
+      "recommendation": "Good candidate for human correction/annotation on capable devices, not for automatic food identity."
+    },
+    {
+      "item": "Depth Anything V2 Small",
+      "onnx": "Feasible; the official README links an ONNX implementation and gives a fixed encoder/input contract. Verify OpenCV preprocessing and HxW output parity.",
+      "core_ml": "Strongest candidate in the survey because the official README links Apple Core ML models, including coreml-depth-anything-v2-small.",
+      "litert": "[uncertain] Likely feasible through PyTorch-to-LiteRT for the Small graph, but must verify the DINOv2/DPT operator set and quantization error.",
+      "executorch": "[uncertain] Potentially feasible via torch.export and XNNPACK/Core ML backends; no official ExecuTorch artifact is cited.",
+      "recommendation": "Evaluate only as optional relative-depth evidence; pair with calibrated depth or a reference object for mass."
+    },
+    {
+      "item": "MiDaS",
+      "onnx": "Feasible for the named small/LeViT variants through standard PyTorch/ONNX paths; validate the archived preprocessing.",
+      "core_ml": "[uncertain] Possible via Core ML Tools, but no official Core ML package is linked for the selected model.",
+      "litert": "[uncertain] Small convolutional variants may convert more easily than transformer variants; no official LiteRT artifact is supplied.",
+      "executorch": "[uncertain] Legacy graph export is possible in principle but has no current official mobile path.",
+      "recommendation": "Benchmark as a fallback/baseline, not the preferred new implementation."
+    },
+    {
+      "item": "Ultralytics YOLO",
+      "onnx": "Official export supports ONNX and ONNX Runtime inference; use fixed image size and pin NMS/end-to-end behavior.",
+      "core_ml": "Official export supports Core ML; validate custom segmentation outputs and post-processing on iOS.",
+      "litert": "Official export supports TensorFlow Lite/LiteRT; quantize only after comparing masks/boxes and class confidence.",
+      "executorch": "The current exporter lists ExecuTorch output; verify the exact model version, backend, and real-device performance before relying on it.",
+      "recommendation": "A practical custom detector/segmenter route if licensing is approved and a consented corpus replaces research-only food data."
+    },
+    {
+      "item": "Qwen2.5-VL-3B-Instruct",
+      "onnx": "[uncertain] Vision encoder and selected decoder blocks may be exportable, but dynamic multimodal generation and processor logic are not a simple mobile graph.",
+      "core_ml": "[uncertain] Core ML conversion is possible only with substantial model-specific work and quantization; no official artifact is cited.",
+      "litert": "[uncertain] LiteRT generative export supports selected architectures, but Qwen2.5-VL multimodal conversion is not established by the official sources used here.",
+      "executorch": "[uncertain] Research implementations may exist, but the cited official documentation does not provide a Qwen2.5-VL mobile package.",
+      "recommendation": "Remote-only baseline behind the first-party gateway; never make raw VLM text the mobile contract."
+    },
+    {
+      "item": "Shared runtime constraint",
+      "onnx_runtime": "ONNX Runtime mobile supports Android and iOS CPU, Android NNAPI/XNNPACK, and iOS CoreML/XNNPACK; use its model usability checker and custom operator build for size control.",
+      "core_ml_tools": "Core ML Tools can convert PyTorch/TensorFlow models and requires explicit PyTorch input shapes; use ML Program and explicit ImageType/TensorType preprocessing.",
+      "litert_torch": "LiteRT Torch converts PyTorch models to .tflite and is currently Beta for classic models; direct conversion coverage does not replace target-model testing.",
+      "executorch": "ExecuTorch exports a dedicated .pte per backend, commonly XNNPACK for Android and Core ML/MPS for iOS, with unsupported partitions falling back to CPU.",
+      "parity_requirement": "For every candidate, freeze input color space, resize/crop, normalization, tensor layout, label map, thresholds, mask resizing, and post-processing; compare source and converted outputs on golden pixels before device benchmarks."
+    }
+  ],
+  "consented_corpus_blueprint": [
+    {
+      "stage": "Pilot and protocol lock",
+      "recommended_size": "300-500 consented meals from at least 30 participants and 3-5 capture devices; include single-component, mixed, layered, sauced, occluded, culturally diverse, and out-of-taxonomy plates.",
+      "capture": "Original RGB photo, optional burst/short multi-view sequence, device model, lens/camera mode, orientation, approximate camera-to-plate distance, lighting class, optional ARCore/ARKit or LiDAR depth, and a visible scale/reference object when the user accepts it.",
+      "ground_truth": "Tare the dish/container and weigh the whole meal independently. For ingredient grams, weigh each component before plating or separate the finished meal using a predeclared protocol; record preparation state, edible portion, peel/bone, and uncertainty.",
+      "goal": "Test whether the annotation, weighing, consent, and app-contract workflow is repeatable before collecting scale."
+    },
+    {
+      "stage": "Teacher and annotation corpus",
+      "recommended_size": "5,000-10,000 meals and 25,000-60,000 component instances, with a deliberately long-tail ingredient list and at least 20 cuisine/meal contexts.",
+      "annotation": "Two independent annotators mark semantic and instance polygons, canonical ingredient ID, preparation state, visible/occluded/uncertain flags, dish-level identity, and optional prompt points/boxes. Adjudicate disagreements and preserve raw annotations plus final consensus.",
+      "model_use": "Use FoodSeg103/ReLeM, FoodSAM, MobileSAM, and a generic detector only as pre-annotation proposals. Humans must be able to correct every mask and label; proposals must never become silently accepted ground truth.",
+      "quality_checks": "Mask agreement, label agreement, missing-component review, scale repeatability, image-quality checks, duplicate-image detection, and a held-out audit by an annotator who did not create the labels."
+    },
+    {
+      "stage": "Mass and geometry corpus",
+      "recommended_size": "10,000-20,000 meals with independent whole-meal grams and, for a stratified subset of 3,000-5,000 meals, component-level grams plus calibrated depth/reference geometry.",
+      "measurement": "Use a verified scale with tare procedure and repeat measurement; capture before/after or controlled component separation for mixtures. Record whether the reading is whole meal, component, recipe ingredient, edible portion, or proxy.",
+      "splits": "Split by participant, household, meal session, restaurant/source, recipe, device, and cuisine. Keep all near-duplicate captures in one partition; reserve a final device/cuisine holdout.",
+      "goal": "Train and evaluate a separate portion head without confusing recipe quantities, mask area, or generic depth with grams ground truth."
+    },
+    {
+      "stage": "Consent and privacy fields",
+      "required_fields": "Participant pseudonymous ID, explicit image collection purpose, training/evaluation consent, commercial-use consent, raw-image retention period, withdrawal method, optional depth/metadata consent, annotation/reviewer consent, device metadata consent, contact/rights channel, and model/version provenance.",
+      "privacy_controls": "Avoid faces, documents, addresses, and free-form personal notes; strip EXIF location by default; hash participant/session IDs; restrict raw images; log only allowlisted opaque attempt/model IDs; delete on withdrawal and record deletion evidence.",
+      "product_boundary": "Mobile sends raw photos only after the applicable remote consent; local/offline routes must not transmit an image."
+    },
+    {
+      "stage": "Evaluation and acceptance",
+      "required_metrics": "Ingredient top-1/top-3 recall, mask mIoU and boundary F-score, instance AP, per-class and occlusion-stratified performance, schema-valid rate, abstention precision, whole-meal grams MAE, component grams MAE, relative error, p90 error, calibration error, correction burden, latency, memory, thermal, and battery.",
+      "acceptance_rule": "Report local-only, remote-only, hybrid, and manual routes separately. No nutrition/weight public claim until the weighed corpus, calibrated confidence, error thresholds, and failure/abstention policy pass the project G-5 evaluation gate."
+    }
+  ],
+  "recommendation_for_supernutrition": [
+    {
+      "priority": 1,
+      "recommendation": "Build the first candidate stack around a small custom food segmenter/detector trained on a consented replacement corpus, with FoodSeg103/ReLeM and FoodSAM used as research teachers and FoodInsSeg used only where its license permits. Use instance masks when separate component portions matter; semantic masks are insufficient for repeated or touching ingredients.",
+      "reason": "This preserves a deterministic mobile contract and avoids shipping a research-only dataset or a large composite model."
+    },
+    {
+      "priority": 2,
+      "recommendation": "Use MobileSAM as an optional human-in-the-loop correction/annotation path and not as the automatic food recognizer. Pair it with a food labeler, explicit prompts, and a corrected-mask evidence trail.",
+      "reason": "MobileSAM supplies masks but no food identity, and prompt sensitivity is visible to the user."
+    },
+    {
+      "priority": 3,
+      "recommendation": "Evaluate Depth Anything V2 Small only as optional geometry evidence. Prefer calibrated ARCore/ARKit/LiDAR depth or a reference object for mass estimation; keep MiDaS as a comparison baseline rather than a new dependency.",
+      "reason": "Both public depth models are relative-depth models and cannot identify grams from a single RGB image."
+    },
+    {
+      "priority": 4,
+      "recommendation": "Keep FoodLMM and Qwen2.5-VL behind the first-party remote gateway for research and long-tail candidate generation. Map their outputs into the versioned Engine contract as ranked candidates, confidence, assumptions, and provenance; never expose raw text or unvalidated numeric nutrition as authoritative.",
+      "reason": "They are domain-rich or general multimodal hypothesis generators, but their outputs are non-deterministic, expensive, and legally constrained."
+    },
+    {
+      "priority": 5,
+      "recommendation": "Use Food.AI only to accelerate an Android TFLite plumbing spike. Use Ultralytics YOLO only after legal approval of AGPL/enterprise terms and only with custom food data; its export matrix is useful but its COCO weights are not food evidence.",
+      "reason": "The former proves mobile wiring but is old and coarse; the latter is a practical engineering framework with material licensing obligations."
+    },
+    {
+      "priority": 6,
+      "recommendation": "For G-3, freeze one model manifest per candidate containing checksum, license/provenance, taxonomy, input color space and dimensions, normalization, output tensor schema, thresholds, conversion tool versions, runtime/backend, and golden source-vs-converted fixtures. Run real Android and iOS device benchmarks before selecting a local route.",
+      "reason": "This matches the architecture requirement that model choice, preprocessing parity, rollback, and capability evidence are explicit and versioned."
+    },
+    {
+      "priority": 7,
+      "recommendation": "Do not compute displayed calories or macros inside any vision checkpoint. Confirm a candidate ingredient, map it to the versioned catalog, and calculate nutrition deterministically from a serving basis; require a user-visible assumption and manual alternative when identity, visibility, preparation, or mass is uncertain.",
+      "reason": "Identification evidence and nutrition calculation are separate product responsibilities, and false gram precision is the dominant safety risk."
+    }
+  ],
+  "uncertain": [
+    "maintenance_and_reproducibility",
+    "license_and_usage",
+    "expected_ingredient_quality",
+    "mobile_runtime_path",
+    "weight_ground_truth",
+    "portion_method_and_metrics"
+  ]
+}
