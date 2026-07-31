@@ -96,11 +96,18 @@ internal object JvmCoverageVerifier {
                 throw IllegalArgumentException("Unable to read JVM Kover report for $path: $report", error)
             }
             val line = counter(text, "LINE", path)
-            val branch = counter(text, "BRANCH", path)
+            // A production module can contain executable lines but no branch
+            // instructions at all. Keep the line denominator mandatory, but
+            // do not turn that valid branchless module into a product-wide
+            // empty-branch failure; other modules still contribute the
+            // aggregate branch denominator.
+            val branch = counter(text, "BRANCH", path, allowEmpty = true)
             lineMissed += line.first
             lineCovered += line.second
-            branchMissed += branch.first
-            branchCovered += branch.second
+            if (branch.first + branch.second > 0) {
+                branchMissed += branch.first
+                branchCovered += branch.second
+            }
         }
         val linePercent = percentage(lineCovered, lineMissed, "line")
         val branchPercent = percentage(branchCovered, branchMissed, "branch")
@@ -113,7 +120,12 @@ internal object JvmCoverageVerifier {
         return JvmCoverageSummary(linePercent, branchPercent, productionProjects.size)
     }
 
-    fun counter(text: String, type: String, projectPath: String): Pair<Long, Long> {
+    fun counter(
+        text: String,
+        type: String,
+        projectPath: String,
+        allowEmpty: Boolean = false,
+    ): Pair<Long, Long> {
         val report = parseReport(text, projectPath)
         val rootCounters = (0 until report.childNodes.length)
             .map(report.childNodes::item)
@@ -128,7 +140,7 @@ internal object JvmCoverageVerifier {
         val match = rootCounters.single() as Element
         val missed = counterValue(match, "missed", type, projectPath)
         val covered = counterValue(match, "covered", type, projectPath)
-        require(missed + covered > 0) {
+        require(allowEmpty || missed + covered > 0) {
             "JVM Kover report for $projectPath has an empty $type denominator"
         }
         return missed to covered

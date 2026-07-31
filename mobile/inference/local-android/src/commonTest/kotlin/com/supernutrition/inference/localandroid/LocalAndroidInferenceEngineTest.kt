@@ -443,6 +443,7 @@ class LocalAndroidInferenceEngineTest {
     private fun engine(runtime: AndroidLocalInferenceRuntime): LocalAndroidInferenceEngine =
         LocalAndroidInferenceEngine(RecordingPhotoStore(input), leaseStore(), runtime) { "a".repeat(64) }
 
+    @Suppress("LongParameterList")
     private fun validModel(
         modelVersion: String = "model",
         integrityIdentity: String = "a".repeat(64),

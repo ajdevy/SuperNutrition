@@ -1,6 +1,5 @@
 package com.supernutrition.platform.photoios
 
-import com.supernutrition.platform.photoios.captureinterop.SNCreateBoundedImage
 import com.supernutrition.core.config.PhotoNormalizationDefaults
 import com.supernutrition.core.config.withoutJpegApplicationMetadata
 import com.supernutrition.domain.photoanalysis.ImageOrientation
@@ -9,6 +8,7 @@ import com.supernutrition.domain.photoanalysis.PhotoInputNormalizer
 import com.supernutrition.domain.photoanalysis.PhotoPreparationException
 import com.supernutrition.domain.photoanalysis.PhotoRef
 import com.supernutrition.domain.photoanalysis.RawPhoto
+import com.supernutrition.platform.photoios.captureinterop.SNCreateBoundedImage
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
@@ -20,11 +20,11 @@ import platform.CoreGraphics.CGRectMake
 import platform.CoreGraphics.CGSizeMake
 import platform.Foundation.NSData
 import platform.Foundation.NSThread
-import platform.UIKit.UIImage
-import platform.UIKit.UIImageJPEGRepresentation
 import platform.UIKit.UIGraphicsBeginImageContextWithOptions
 import platform.UIKit.UIGraphicsEndImageContext
 import platform.UIKit.UIGraphicsGetImageFromCurrentImageContext
+import platform.UIKit.UIImage
+import platform.UIKit.UIImageJPEGRepresentation
 import platform.darwin.dispatch_get_main_queue
 import platform.darwin.dispatch_sync
 import platform.posix.memcpy
@@ -37,6 +37,7 @@ class IosImageNormalizer(
 ) {
     private val common = PhotoInputNormalizer(maxDimension = maxDimension, digest = digest)
 
+    @Suppress("ThrowsCount")
     fun normalize(ref: PhotoRef, sourceData: NSData): NormalizedPhotoInput {
         if (sourceData.length == 0uL) {
             throw PhotoPreparationException("Photo bytes must not be empty")

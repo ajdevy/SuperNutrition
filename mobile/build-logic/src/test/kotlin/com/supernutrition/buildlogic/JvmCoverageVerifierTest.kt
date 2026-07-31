@@ -79,6 +79,23 @@ class JvmCoverageVerifierTest {
     }
 
     @Test
+    fun `aggregate ignores a branchless module but keeps its line denominator`() {
+        val root = Files.createTempDirectory("jvm-coverage-branchless")
+        try {
+            writeReport(root, ":branchless", lineMissed = 0, lineCovered = 10, branchMissed = 0, branchCovered = 0)
+            writeReport(root, ":branchful", lineMissed = 1, lineCovered = 9, branchMissed = 1, branchCovered = 9)
+
+            val result = JvmCoverageVerifier.verify(root, listOf(":branchless", ":branchful"))
+
+            assertEquals(95.0, result.linePercent)
+            assertEquals(90.0, result.branchPercent)
+            assertEquals(2, result.moduleCount)
+        } finally {
+            root.toFile().deleteRecursively()
+        }
+    }
+
+    @Test
     fun `missing report fails with its project path`() {
         val root = Files.createTempDirectory("jvm-coverage-missing")
         try {

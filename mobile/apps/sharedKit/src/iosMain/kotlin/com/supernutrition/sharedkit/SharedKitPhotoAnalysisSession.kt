@@ -12,10 +12,10 @@ import com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterCopy
 import com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterModel
 import com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterState
 import com.supernutrition.platform.photoios.IosImageNormalizer
-import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSData
 
 /** Shared Apple session facade; only the renderer differs between Apple targets. */
+@Suppress("TooManyFunctions")
 public class SharedKitPhotoAnalysisSession private constructor(
     attemptId: String,
     public val presenterCopy: PhotoAnalysisPresenterCopy = localizedPhotoAnalysisCopy(),
@@ -28,9 +28,15 @@ public class SharedKitPhotoAnalysisSession private constructor(
         sessions = PhotoSessionStore(),
     )
 
-    public fun presenterState(): PhotoAnalysisPresenterState = PhotoAnalysisPresenterModel.from(feature.state, presenterCopy).state
+    public fun presenterState(): PhotoAnalysisPresenterState = PhotoAnalysisPresenterModel.from(
+        feature.state,
+        presenterCopy,
+    ).state
 
-    public fun statusLabel(): String = PhotoAnalysisPresenterModel.from(feature.state, presenterCopy).statusLabel
+    public fun statusLabel(): String = PhotoAnalysisPresenterModel.from(
+        feature.state,
+        presenterCopy,
+    ).statusLabel
 
     public fun shouldOfferSettings(): Boolean =
         (feature.state as? PhotoAnalysisState.Recovery)?.reason == RecoveryReason.PERMISSION_DENIED

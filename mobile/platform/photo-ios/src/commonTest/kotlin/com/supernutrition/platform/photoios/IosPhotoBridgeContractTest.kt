@@ -1,9 +1,9 @@
 package com.supernutrition.platform.photoios
 
+import com.supernutrition.core.ui.UiAutomationIds
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-import com.supernutrition.core.ui.UiAutomationIds
 
 class IosPhotoBridgeContractTest {
     @Test
