@@ -9,10 +9,10 @@ package com.supernutrition.domain.nutrition
  * only from an approved package, and a fake calorie count is exactly the kind of
  * plausible-but-wrong number the grounding chain exists to prevent.
  *
- * The alternate names are the point. Every record answers to more than the words
- * one cataloguer chose, because a record reachable only by its display name
- * serves whichever dialect it happened to be written in — the failure UJ-3
- * exists to catch.
+ * Target languages are English and Russian. The alternate names are the point:
+ * a record reachable only by its display name serves whichever wording one
+ * cataloguer happened to choose, which is the failure UJ-3 exists to catch.
+ * English alone still needs them — aubergine and eggplant are the same food.
  *
  * Russian entries carry inflected forms explicitly rather than relying on a
  * stemmer. Russian nouns decline across six cases, and enumerating the forms
@@ -24,23 +24,21 @@ object SeedCatalog {
     val records: List<CatalogRecord> = listOf(
         CatalogRecord(
             canonicalItemId = "food:avocado-raw",
-            displayName = "Aguacate",
+            displayName = "Avocado",
             alternateNames = listOf(
-                // palta across much of South America, aguacate in Mexico and
-                // Spain. Different words, not spellings of each other.
-                "palta",
-                "avocado",
                 "avocado raw",
+                "авокадо",
+                "avokado",
             ),
         ),
         CatalogRecord(
             canonicalItemId = "food:bean-black",
-            displayName = "Frijoles negros",
+            displayName = "Beans, black",
             alternateNames = listOf(
-                "judias negras",
-                "porotos negros",
-                "habichuelas negras",
                 "black beans",
+                "чёрная фасоль",
+                "фасоль",
+                "fasol",
             ),
         ),
         CatalogRecord(
@@ -65,8 +63,8 @@ object SeedCatalog {
             alternateNames = listOf(
                 "boiled egg",
                 "hard boiled egg",
-                "huevo cocido",
                 "яйцо вареное",
+                "яйцо",
             ),
         ),
         CatalogRecord(
@@ -74,8 +72,8 @@ object SeedCatalog {
             displayName = "Bread, rye",
             alternateNames = listOf(
                 "rye bread",
-                "pan de centeno",
                 "ржаной хлеб",
+                "хлеб ржаной",
             ),
         ),
         CatalogRecord(
@@ -85,7 +83,6 @@ object SeedCatalog {
                 // Same food, different English. A British user typing aubergine
                 // must not miss a record written in American English.
                 "aubergine",
-                "berenjena",
                 "баклажан",
             ),
         ),
@@ -95,7 +92,6 @@ object SeedCatalog {
             alternateNames = listOf(
                 "cilantro",
                 "fresh coriander",
-                "culantro",
                 "кинза",
             ),
         ),
@@ -104,7 +100,6 @@ object SeedCatalog {
             displayName = "Rice, white, cooked",
             alternateNames = listOf(
                 "white rice",
-                "arroz blanco",
                 "рис",
                 "ris",
             ),
