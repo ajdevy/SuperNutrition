@@ -54,8 +54,8 @@ silently uploads a photo.
 - [x] Run all domain/inference tests, policy/coverage/quality gates, graphify,
   and available Android/native evidence lanes. The available Android physical
   UI acceptance is 15/15 on the explicit device but is not Epic 3 inference
-  evidence; physical iOS signing remains unavailable and the aggregate gate
-  remains blocked by the pre-existing nutrition denominator.
+  evidence; local quality passes, while physical iOS signing and G-3 remain
+  unavailable.
 
 ## Dev Notes
 

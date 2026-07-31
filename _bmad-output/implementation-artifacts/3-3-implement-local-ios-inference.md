@@ -94,8 +94,9 @@ an implicit remote transfer.
   `scripts/run-physical-ios-fixtures.sh` and the signed Xcode acceptance scheme
   on the real iPhone. Use `mobile/REAL_DEVICE_TESTING.md` and emit evidence
   only from a clean, digest-bound run.
-- Aggregate `qualityCheckJvmAndroid` must be rerun; the existing
-  `domain:nutrition` empty BRANCH denominator is a separate baseline blocker.
+- Aggregate `qualityCheckJvmAndroid` has been rerun and passes locally; the
+  remaining iOS-specific gaps are the signed G-3 artifact and physical
+  Xcode/device prerequisites.
 
 ## Interaction-budget attestation
 
