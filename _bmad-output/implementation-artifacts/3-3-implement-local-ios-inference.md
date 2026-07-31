@@ -54,9 +54,9 @@ an implicit remote transfer.
   filenames, paths, labels, prompts, responses, secrets, and headers.
 - [x] Run focused JVM/Apple tests, Detekt, policy/lock validation, and the
   `iosArm64TestBinaries` device-target compile. The Intel x64 compatibility
-  lane is blocked by an untrusted Kotlin serialization klib; physical Xcode
-  execution is blocked by missing local Xcode account/profiles. Record G-3 and
-  device gaps honestly.
+  lane is blocked by an untrusted Kotlin serialization klib; the signed
+  physical Xcode and arm64 fixture lanes are now recorded separately. Record
+  G-3 honestly as the remaining production gate.
 
 ## Dev Notes
 
@@ -126,9 +126,13 @@ GPT-5 / Codex
   cancellation-safe generation tokens, and runtime cleanup.
 - JVM tests pass with 98.6111% line and 86.8421% branch coverage; Detekt and
   strict lock/policy validation pass. `iosArm64TestBinaries` completes.
-- Physical Xcode test was attempted on the paired iPhone but stopped before
-  execution because no Xcode account/provisioning profiles exist for the
-  acceptance bundle; no physical iOS evidence is claimed. G-3 remains open.
+- Physical iOS evidence now passes on the paired iPhone 14 Pro using the local
+  Xcode account/team: the signed Xcode acceptance scheme passed 5/5 tests and
+  the arm64 fixture runner passed 5/5 tests (3 normalization, 2 bridge).
+  Evidence is bound to commit `1a22bff1`, the current framework/app and fixture
+  digests, device `REDACTED_PHYSICAL_DEVICE_UDID`, Xcode 26.0.1, and Gradle 9.5.0.
+  G-3 remains open because these are bridge/normalization correctness lanes,
+  not a signed runtime/model latency-memory-thermal-battery benchmark.
 
 ### File List
 
@@ -157,6 +161,6 @@ GPT-5 / Codex
   labels, prompts, responses, secrets, and authorization headers from the
   typed failure surface
   [mobile/inference/local-ios/src/commonTest/kotlin/com/supernutrition/inference/localios/LocalIosInferenceEngineTest.kt].
-- [x] [Review][Defer] Physical iOS execution remains blocked before test
-  execution by missing Xcode account/provisioning profiles; no physical result
-  is claimed. Runtime selection remains gated by signed G-3 evidence.
+- [x] [Review][Patch] Physical Xcode UI acceptance and binary-bound iOS
+  fixtures now execute on the paired device with the configured development
+  team; runtime selection remains gated by signed G-3 evidence.
