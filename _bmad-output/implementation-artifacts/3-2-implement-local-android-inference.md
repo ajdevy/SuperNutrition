@@ -319,6 +319,11 @@ GPT-5 / Codex
   `bb875cbc61fed96a3f89e71a630520043bb2f08ed8425c32c21c0d38f0735159`.
   Strict dependency verification also required the checked-in SHA-256 for
   Gradle's `org.junit:junit-bom:5.9.2` module metadata.
+- 2026-07-31 latest explicit-serial UI rerun: `connectedUiAcceptanceDebugAndroidTest`
+  completed on `AU3N025429006787` (`DNY-NX9`, Android 16 / API 36) at
+  `2026-07-31T13:56:12Z`, with 15 tests, 0 failures, 0 errors, and 0 skips.
+  The result XML is
+  `mobile/apps/androidApp/build/outputs/androidTest-results/connected/debug/flavors/uiAcceptance/TEST-DNY-NX9 - 16-_apps_androidApp-uiAcceptance.xml`.
 - 2026-07-31 dedicated local-Android adapter device rerun: committed
   `connectedAndroidDeviceTest` for the isolated `androidDeviceTest` source set,
   ran it on `AU3N025429006787` (`DNY-NX9`, Android 16 / API 36), and completed
