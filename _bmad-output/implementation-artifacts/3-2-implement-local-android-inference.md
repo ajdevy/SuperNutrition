@@ -137,13 +137,26 @@ so that eligible devices can analyze without transmitting Photo Input.
     `qualityCheckJvmAndroid` now passes with JVM host coverage of 96.33% line and
     85.88% branch across 8 production modules; branchless modules remain in the
     line denominator without inventing branch outcomes.
-  - [ ] Run the dedicated E3.2 physical Android inference scenario and emit
-    evidence bound to commit, APK/module digest, fixture/config/model digests,
-    device/OS, task version, and execution time. A clean current-commit run
-    emitted the Android UI/native-gap records on DNY-NX9 / Android 16 with
-    15/15 tests passing; it does not exercise local inference, network
-    isolation, or G-3 benchmark behavior. The signed G-3 exit artifact remains
-    outstanding.
+  - [x] Run the dedicated E3.2 physical Android inference scenario and bind
+    the local-only evidence to committed source `3516acd7e91eb9d964211bdf541789faa576ecfb`,
+    test APK digest
+    `72916281b00af192ed584218821b587f6cfe01e5d3926bae13bcb0a5bca00394`,
+    fixture/model test-source digest
+    `e8ffaddaa26935bff8735456d9b654003ffb4fdbca7acde29b8d03d8042500af`,
+    module build/lock digests
+    `86952f61ae6e0e156ee9d10ec349ab47539f321a3390befc1010fae507b3fc22` /
+    `b2d887723bdd54849e5ef7affcf2ce5b6e586ddc37975c466afda8dfb7b5069f`,
+    policy digest `61b92987320bd6d26a616a62e8d7202fef3b966da6eb744d9196afd02dbde4e6`,
+    device `HONOR-DNY-NX9-android-16-api-36`, task
+    `connectedAndroidDeviceTest-gradle-9.5.0`, and execution
+    `2026-07-31T09:48:14Z`. The result XML is
+    `mobile/inference/local-android/build/outputs/androidTest-results/connected/androidMain/TEST-DNY-NX9 - 16-_inference_local-android-.xml`;
+    it reports 2 tests, 0 failures, 0 errors, and 0 skipped. The recording
+    runtime asserted zero network attempts, leased-byte-only input, and
+    fail-closed behavior without reading photo content when unavailable.
+  - [ ] Extend this evidence to the signed G-3 real-device benchmark for
+    runtime/model selection, latency, peak memory, thermal, battery, and
+    rollback budgets. The G-3 exit artifact remains outstanding.
   - [ ] Update only the story record and owned module/test files plus any
     separately approved policy/evidence handoff files; do not modify iOS,
     remote, UI, catalog, root product, or unrelated WIP.
@@ -305,6 +318,14 @@ GPT-5 / Codex
   `bb875cbc61fed96a3f89e71a630520043bb2f08ed8425c32c21c0d38f0735159`.
   Strict dependency verification also required the checked-in SHA-256 for
   Gradle's `org.junit:junit-bom:5.9.2` module metadata.
+- 2026-07-31 dedicated local-Android adapter device rerun: committed
+  `connectedAndroidDeviceTest` for the isolated `androidDeviceTest` source set,
+  ran it on `AU3N025429006787` (`DNY-NX9`, Android 16 / API 36), and completed
+  2/2 tests with 0 failures, errors, or skips. The test APK digest is
+  `72916281b00af192ed584218821b587f6cfe01e5d3926bae13bcb0a5bca00394`; the
+  run timestamp is `2026-07-31T09:48:14Z`. This is bounded adapter evidence
+  for local-only input and fail-closed behavior, not a concrete ML runtime or
+  signed G-3 performance/thermal/battery/rollback benchmark.
 
 ### File List
 
@@ -313,6 +334,7 @@ GPT-5 / Codex
 - `mobile/inference/local-android/gradle.lockfile`
 - `mobile/inference/local-android/src/commonMain/kotlin/com/supernutrition/inference/localandroid/LocalAndroidInference.kt`
 - `mobile/inference/local-android/src/commonTest/kotlin/com/supernutrition/inference/localandroid/LocalAndroidInferenceEngineTest.kt`
+- `mobile/inference/local-android/src/androidDeviceTest/kotlin/com/supernutrition/inference/localandroid/LocalAndroidInferenceDeviceTest.kt`
 - `mobile/feature/photo-analysis/src/androidMain/kotlin/com/supernutrition/feature/photoanalysis/PhotoAnalysisComposeActivity.kt`
 - `mobile/apps/androidApp/src/androidTest/java/com/supernutrition/android/PhotoAnalysisComposeSemanticsInstrumentationTest.java`
 - `mobile/config/quality/module-matrix.toml`
