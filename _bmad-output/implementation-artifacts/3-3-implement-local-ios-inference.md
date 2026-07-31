@@ -133,6 +133,11 @@ GPT-5 / Codex
   digests, device `REDACTED_PHYSICAL_DEVICE_UDID`, Xcode 26.0.1, and Gradle 9.5.0.
   G-3 remains open because these are bridge/normalization correctness lanes,
   not a signed runtime/model latency-memory-thermal-battery benchmark.
+- 2026-07-31 preliminary G-3 spike: the separate research harness completed
+  50/50 inferences on the paired iPhone 14 Pro and recorded latency, resident
+  memory, and thermal evidence. iOS battery/energy evidence and owner
+  acceptance remain open in
+  `_bmad-output/implementation-artifacts/g3-benchmark-artifact.md`.
 
 ### File List
 
