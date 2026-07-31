@@ -1,0 +1,39 @@
+name: coverage-readme
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: coverage-readme
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Test coverage dashboard generator
+        run: python3 -m unittest discover -s scripts/tests -p 'test_*.py'
+      - name: Generate JVM and Android-host coverage reports
+        run: >-
+          ./mobile/gradlew -p mobile mobileCoverageReports
+          -Psupernutrition.runJvmCoverage=true
+          --dependency-verification=strict
+          --no-daemon
+          --no-configuration-cache
+          --max-workers=1
+      - name: Build static coverage dashboard
+        run: python3 scripts/build_coverage_site.py --output-dir _site
+      - name: Verify README coverage snapshot
+        run: >-
+          python3 scripts/update_readme_metrics.py
+          --readme README.md
+          --site-dir _site
+          --check
