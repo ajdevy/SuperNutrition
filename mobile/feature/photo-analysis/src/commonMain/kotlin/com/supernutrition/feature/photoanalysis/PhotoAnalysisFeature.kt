@@ -8,6 +8,9 @@ import com.supernutrition.domain.photoanalysis.PhotoAnalysisState
 import com.supernutrition.domain.photoanalysis.PhotoLeaseStorePort
 import com.supernutrition.domain.photoanalysis.PhotoRef
 import com.supernutrition.domain.photoanalysis.PhotoSessionStorePort
+import com.supernutrition.domain.photoanalysis.RouteAttemptContext
+import com.supernutrition.domain.photoanalysis.RouteAttemptToken
+import com.supernutrition.domain.photoanalysis.RouteDecision
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -38,4 +41,8 @@ class PhotoAnalysisFeature(
     fun snapshotForPersistence(): PhotoAnalysisBackgroundSnapshot = reducer.snapshotForPersistence()
 
     fun issuePhotoRef(opaqueId: String): PhotoRef = reducer.issuePhotoRef(opaqueId)
+
+    fun startRouteAttempt(context: RouteAttemptContext): RouteAttemptToken = reducer.startRouteAttempt(context)
+
+    fun acceptRouteDecision(decision: RouteDecision): Boolean = reducer.acceptRouteDecision(decision)
 }
