@@ -40,7 +40,7 @@ if test "$xcode_version" != "Xcode 26.4.1"; then
 fi
 
 runtime_id="com.apple.CoreSimulator.SimRuntime.iOS-26-4"
-if ! xcrun simctl list runtimes 2>/dev/null | grep -Fq "$runtime_id ("; then
+if ! xcrun simctl list runtimes 2>/dev/null | awk -v runtime_id="$runtime_id" '$0 ~ runtime_id && $0 !~ /unavailable/ {found=1} END {exit !found}'; then
   run_optional_apple_quality
 fi
 
