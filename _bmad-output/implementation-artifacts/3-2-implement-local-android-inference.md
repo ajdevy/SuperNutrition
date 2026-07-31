@@ -133,9 +133,10 @@ so that eligible devices can analyze without transmitting Photo Input.
 
 - [ ] Execute quality and Android evidence gates (AC: 4–5)
   - [x] Run focused local-Android tests, strict dependency/lock/policy validation,
-    Detekt, Android compilation, and changed-code coverage; the aggregate
-    `qualityCheckJvmAndroid` remains blocked by the pre-existing empty BRANCH
-    denominator in `domain:nutrition`.
+    Detekt, Android compilation, and changed-code coverage. The aggregate
+    `qualityCheckJvmAndroid` now passes with JVM host coverage of 96.33% line and
+    85.88% branch across 8 production modules; branchless modules remain in the
+    line denominator without inventing branch outcomes.
   - [ ] Run the dedicated E3.2 physical Android inference scenario and emit
     evidence bound to commit, APK/module digest, fixture/config/model digests,
     device/OS, task version, and execution time. A clean current-commit run
@@ -282,9 +283,9 @@ GPT-5 / Codex
 - Added deterministic tests for all capability states, local-only execution,
   provenance, abstention/failure mapping, input leases, cancellation, late
   results, rollback ownership, and invalid runtime metadata.
-- Focused module coverage is 99.3151% line and 90.7895% branch; the aggregate
-  quality gate remains blocked by the pre-existing `domain:nutrition` empty
-  BRANCH denominator.
+- Focused module coverage is 99.3151% line and 90.7895% branch; the full local
+  `qualityCheckJvmAndroid` gate passes with 96.33% line and 85.88% branch across
+  8 production modules.
 - The physical Android acceptance task completed 15/15 tests on the explicit
   `AU3N025429006787` serial after fixing ViewModel reflection visibility and
   the Compose resource-ID assertion helper. Clean current-commit Android
@@ -298,10 +299,12 @@ GPT-5 / Codex
   This is physical Android UI/semantics, capture, normalization, lifecycle,
   and snapshot evidence; it does not satisfy the dedicated local-inference,
   network-isolation, or signed G-3 benchmark requirement.
-- 2026-07-31 clean evidence rerun: rebuilt and installed the acceptance APK
-  from commit `44df3b6e`, ran the explicit-serial device lane from a clean
+- 2026-07-31 final clean evidence rerun: rebuilt and installed the acceptance
+  APK from commit `7dc777d2`, ran the explicit-serial device lane from a clean
   worktree, and emitted five success records with artifact digest
-  `2ab1a039cc31d8907f78acd2cf5b0e2cc91e53f975808847a052b26ecf467d81`.
+  `bb875cbc61fed96a3f89e71a630520043bb2f08ed8425c32c21c0d38f0735159`.
+  Strict dependency verification also required the checked-in SHA-256 for
+  Gradle's `org.junit:junit-bom:5.9.2` module metadata.
 
 ### File List
 
@@ -327,6 +330,9 @@ GPT-5 / Codex
 - 2026-07-31: Re-ran the explicit-serial Android acceptance lane on the
   connected physical device; 15/15 tests passed. The dedicated E3.2
   local-inference/G-3 evidence gate remains open.
+- 2026-07-31: Bound the final clean Android acceptance run to commit
+  `7dc777d2`; the UI/native-gap records pass, while dedicated local-inference
+  network-isolation and signed G-3 benchmark evidence remain outstanding.
 
 ### Review Findings
 
