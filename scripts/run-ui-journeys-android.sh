@@ -35,7 +35,7 @@ for executable in "$sdkmanager_bin" "$avdmanager_bin"; do
   }
 done
 
-yes | "$sdkmanager_bin" --licenses >/dev/null
+"$sdkmanager_bin" --licenses < <(yes) >/dev/null
 "$sdkmanager_bin" --install \
   "platform-tools" \
   "emulator" \
