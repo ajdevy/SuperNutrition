@@ -40,6 +40,8 @@ class UpdateReadmeMetricsTest(unittest.TestCase):
         self.assertIn("3,456", section)
         self.assertIn("domain-nutrition", section)
         self.assertIn("n/a", section)
+        self.assertIn("ci-required.yml", section)
+        self.assertNotIn("coverage-readme.yml", section)
         self.assertIn("android-ui-coverage.yml", section)
         self.assertIn("ios-ui-coverage.yml", section)
         self.assertIn("JVM%20line", section)

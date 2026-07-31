@@ -40,9 +40,10 @@ context:
 
 - `scripts/run-ui-journeys-android.sh` -- starts the emulator, runs Android instrumentation, and executes the shared Maestro journey.
 - `scripts/run-ui-journeys-ios.sh` -- builds the iOS acceptance host, runs XCTest plus Maestro, and emits simulator diagnostics.
+- `scripts/run-local-ci.sh` -- runs the same JVM/report job locally and exposes explicit Android, iOS, and all-platform modes.
 - `scripts/verify_ui_test_reports.py` -- rejects missing, empty, skipped, or failed JUnit/XCTest results before a workflow can report success.
-- `.github/workflows/coverage-readme.yml` -- publishes the existing static coverage/LOC artifact.
-- `.github/workflows/ci-required.yml` -- publishes JVM coverage artifacts from the unit gate.
+- `.github/workflows/ci-required.yml` -- runs the JVM gate and publishes the
+  combined static coverage/LOC and JVM coverage artifact.
 - `scripts/update_readme_metrics.py` and `scripts/tests/test_update_readme_metrics.py` -- render and verify the generated README snapshot and metric badges.
 - `README.md` -- presents workflow badges, generated metric badges, and links to each report source.
 
@@ -52,14 +53,16 @@ context:
 
 - [x] `scripts/run-ui-journeys-android.sh` -- run the connected Android UI suite before Maestro and retain its report path -- cover both instrumentation and cross-platform journey evidence.
 - [x] `scripts/run-ui-journeys-ios.sh` -- support required hosted execution and save an xcresult bundle -- prevent unavailable Apple tooling from becoming a false pass.
-- [x] `.github/workflows/android-ui-coverage.yml` and `.github/workflows/ios-ui-coverage.yml` -- run each platform suite on pull requests and `main`, with pinned checkout/tool setup and always-uploaded artifacts -- make results discoverable.
-- [x] `.github/workflows/coverage-readme.yml` and `.github/workflows/ci-required.yml` -- upload their generated reports -- make existing README badges actionable.
+- [x] `.github/workflows/android-ui-coverage.yml` and `.github/workflows/ios-ui-coverage.yml` -- run each platform suite on `main` pushes or manual dispatch, with pinned checkout/tool setup and always-uploaded artifacts -- make results discoverable without charging every pull request.
+- [x] `.github/workflows/ci-required.yml` -- uploads the generated dashboard and
+  JVM reports together, making the README badges actionable without a
+  duplicate Gradle job.
 - [x] `scripts/verify_ui_test_reports.py`, `scripts/tests/test_verify_ui_test_reports.py`, `scripts/update_readme_metrics.py`, its tests, and `README.md` -- add fail-closed report validation plus polished status/metric badges and report links without stale generated values -- keep documentation validation deterministic.
 
 **Acceptance Criteria:**
 
-- Given a pull request or `main` push, when Android UI coverage runs, then the connected Android tests and the shared Maestro journey execute on the hosted emulator and the workflow exposes their reports.
-- Given a pull request or `main` push, when iOS UI coverage runs, then XCTest and the shared Maestro journey execute on the hosted simulator and the workflow exposes JUnit plus xcresult diagnostics.
+- Given a `main` push or manual dispatch, when Android UI coverage runs, then the connected Android tests and the shared Maestro journey execute on the hosted emulator and the workflow exposes their reports.
+- Given a `main` push or manual dispatch, when iOS UI coverage runs, then XCTest and the shared Maestro journey execute on the hosted simulator and the workflow exposes JUnit plus xcresult diagnostics.
 - Given any generated README snapshot, when the coverage workflow verifies it, then JVM line/branch, source-file, code-line, Android UI, iOS UI, and report workflow badges are present and their links resolve to the corresponding workflow/report.
 - Given a platform suite fails or its required toolchain is unavailable, when artifacts are finalized, then the workflow remains failed and diagnostics are still uploaded.
 

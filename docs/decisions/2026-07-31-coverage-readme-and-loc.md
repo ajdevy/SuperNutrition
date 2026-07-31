@@ -38,9 +38,20 @@ important later, `cloc` is the most conservative replacement candidate:
 
 ## Scope and operation
 
-The README workflow is separate from `ci-required.yml`, preserving the current
-reduced CI adapter and its policy fingerprint. It runs on pull requests, pushes
-to `main`, or an explicit manual run, uses a full-SHA-pinned checkout, and
-fails if an inventory report, its HTML companion, or the marked README
-snapshot is missing or stale. `web/landing` remains preselection and does not
-become the report site.
+The README snapshot and JVM coverage now run in the single
+`.github/workflows/ci-required.yml` job. The job runs the unit gate and report
+generation together, so Gradle configuration, dependency resolution, and cache
+lookups happen once per hosted run. It uses a full-SHA-pinned checkout, a
+JDK/Gradle dependency cache, and Gradle configuration-cache reuse, then fails
+if the inventory report, its HTML companion, or the marked README snapshot is
+missing or stale. `web/landing` remains preselection and does not become the
+report site.
+
+The Android and iOS UI workflows are intentionally limited to pushes to
+`main` and explicit manual runs. They remain available for native/device
+evidence without charging every pull request. Android SDK installation is
+conditional on incomplete packages and bounded by a timeout, emulator startup
+is bounded and fail-fast, and instrumentation plus APK assembly share one
+Gradle invocation. The exact local equivalents are exposed by
+`scripts/run-local-ci.sh`; `jvm` is the default, while `android`,
+`ios`, and `all` require the corresponding native toolchains.

@@ -54,10 +54,11 @@ if actual == {"mobile-unit-coverage"}:
         fail("mobile-unit-coverage must use a SHA-pinned actions/checkout")
     for required in (
         "mobileUnitCoverage",
+        "mobileCoverageReports",
         "-Psupernutrition.runJvmCoverage=true",
         "--dependency-verification=strict",
         "--no-daemon",
-        "--no-configuration-cache",
+        "--configuration-cache",
         "--max-workers=1",
     ):
         if required not in block:
