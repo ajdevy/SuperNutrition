@@ -133,6 +133,11 @@ GPT-5 / Codex
   acceptance `5/5`, and iOS arm64 bridge/normalization fixtures `5/5` all
   passed on the paired physical devices. These records do not activate a
   concrete local runtime or close the signed G-3 ingredient/weight gate.
+- 2026-08-01 rerun on the unchanged production code from `5f6c8772` repeated
+  all four physical-device correctness lanes successfully: Android `4/4` plus
+  `15/15`, and iOS `5/5` plus `5/5`. The hosted check remains independent and
+  is not used as evidence because GitHub billing prevented any CI step from
+  starting.
 
 ### File List
 
