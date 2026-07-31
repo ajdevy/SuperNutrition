@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: coverage-readme
+  group: coverage-readme-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
