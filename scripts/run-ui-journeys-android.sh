@@ -81,13 +81,29 @@ test -n "$device_serial" || {
   printf 'no online Android device was discovered\n' >&2
   exit 1
 }
+export ANDROID_SERIAL="$device_serial"
+
+"$repo_root/mobile/gradlew" -p "$repo_root/mobile" \
+  :apps:androidApp:connectedUiAcceptanceDebugAndroidTest \
+  -Pandroid.testInstrumentationRunnerArguments.deviceSerial="$device_serial" \
+  --dependency-verification=strict \
+  --no-daemon \
+  --no-configuration-cache
+
+find "$repo_root/mobile/apps/androidApp/build" -type f \
+  \( -path '*/androidTest-results/*' -o -path '*/reports/androidTests/*' \) \
+  -print >"$report_root/android-instrumentation-files.txt"
+python3 "$repo_root/scripts/verify_ui_test_reports.py" \
+  --junit-root "$repo_root/mobile/apps/androidApp/build/outputs/androidTest-results" \
+  --label "Android instrumentation"
 
 "$repo_root/mobile/gradlew" -p "$repo_root/mobile" \
   :apps:androidApp:assembleUiAcceptanceDebug \
   --dependency-verification=strict \
   --no-daemon \
   --no-configuration-cache
-apk_path="$(find "$repo_root/mobile/apps/androidApp/build/outputs/apk" -type f -name '*uiAcceptance*debug.apk' -print -quit)"
+apk_path="$(find "$repo_root/mobile/apps/androidApp/build/outputs/apk" -type f \
+  -name '*uiAcceptance*debug.apk' ! -name '*androidTest*' -print -quit)"
 test -n "$apk_path" || {
   printf 'uiAcceptance APK was not produced\n' >&2
   exit 1
@@ -104,3 +120,6 @@ maestro_bin="$(ensure_maestro_cli "$repo_root" "$temp_root")"
   --format junit \
   --output "$report_root/junit.xml" \
   --test-output-dir "$report_root/debug"
+python3 "$repo_root/scripts/verify_ui_test_reports.py" \
+  --junit-root "$report_root" \
+  --label "Android Maestro"
