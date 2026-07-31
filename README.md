@@ -3,42 +3,29 @@
 <!-- coverage-report:start -->
 ## Quality snapshot
 
-[![Coverage dashboard](https://github.com/flexsent-labs/SuperNutrition/actions/workflows/ci-required.yml/badge.svg?branch=main)](https://github.com/flexsent-labs/SuperNutrition/actions/workflows/ci-required.yml) [![JVM unit coverage](https://github.com/flexsent-labs/SuperNutrition/actions/workflows/ci-required.yml/badge.svg?branch=main)](https://github.com/flexsent-labs/SuperNutrition/actions/workflows/ci-required.yml) [![Android UI coverage](https://github.com/flexsent-labs/SuperNutrition/actions/workflows/android-ui-coverage.yml/badge.svg?branch=main)](https://github.com/flexsent-labs/SuperNutrition/actions/workflows/android-ui-coverage.yml) [![iOS UI coverage](https://github.com/flexsent-labs/SuperNutrition/actions/workflows/ios-ui-coverage.yml/badge.svg?branch=main)](https://github.com/flexsent-labs/SuperNutrition/actions/workflows/ios-ui-coverage.yml)
-
-[![JVM line](https://img.shields.io/badge/JVM%20line-97.45%25-brightgreen?style=flat-square)](https://github.com/flexsent-labs/SuperNutrition/actions/workflows/ci-required.yml) [![JVM branch](https://img.shields.io/badge/JVM%20branch-87.88%25-brightgreen?style=flat-square)](https://github.com/flexsent-labs/SuperNutrition/actions/workflows/ci-required.yml) [![Source files](https://img.shields.io/badge/Source%20files-171-5865F2?style=flat-square)](https://github.com/flexsent-labs/SuperNutrition/actions/workflows/ci-required.yml) [![Code lines](https://img.shields.io/badge/Code%20lines-24%2C618-5865F2?style=flat-square)](https://github.com/flexsent-labs/SuperNutrition/actions/workflows/ci-required.yml)
-
 | Metric | Value |
 |---|---:|
-| JVM host line coverage | 97.45% |
-| JVM host branch coverage | 87.88% |
-| Tracked source files | 171 |
-| Code lines | 24,618 |
+| JVM host line coverage | 98.01% |
+| JVM host branch coverage | 88.03% |
+| Tracked source files | 175 |
+| Code lines | 26,752 |
 
 ### Coverage by denominator
 
 | Module | Kind | Line | Branch |
 |---|---|---:|---:|
 | `domain-inference` | jvm | 100.00% | 79.58% |
-| `core-config` | jvm | 97.66% | 92.99% |
-| `domain-photo-analysis` | jvm | 97.38% | 88.68% |
+| `core-config` | jvm | 97.65% | 92.92% |
+| `domain-photo-analysis` | jvm | 98.49% | 89.05% |
+| `inference-local-android` | jvm | 98.32% | 87.50% |
+| `inference-local-ios` | jvm | 98.31% | 87.50% |
 | `core-ui` | jvm | 75.76% | 100.00% |
 | `platform-photo-android` | native-equivalent | 0.00% | 0.00% |
 | `platform-photo-ios` | native-equivalent | n/a | n/a |
 | `feature-photo-analysis-ui` | native-equivalent | 84.13% | 40.00% |
-| `feature-photo-analysis-presenter` | jvm | 99.05% | 85.11% |
+| `feature-photo-analysis-presenter` | jvm | 99.02% | 85.11% |
 | `feature-photo-analysis` | native-equivalent | 0.00% | 0.76% |
 | `domain-nutrition` | jvm | 92.31% | 100.00% |
-
-### Report links
-
-| Report | Workflow and artifacts |
-|---|---|
-| Coverage dashboard | [Open workflow runs and artifacts](https://github.com/flexsent-labs/SuperNutrition/actions/workflows/ci-required.yml) |
-| JVM unit coverage | [Open workflow runs and artifacts](https://github.com/flexsent-labs/SuperNutrition/actions/workflows/ci-required.yml) |
-| Android UI coverage | [Open workflow runs and artifacts](https://github.com/flexsent-labs/SuperNutrition/actions/workflows/android-ui-coverage.yml) |
-| iOS UI coverage | [Open workflow runs and artifacts](https://github.com/flexsent-labs/SuperNutrition/actions/workflows/ios-ui-coverage.yml) |
-
-Run the exact local JVM/report gate with [`scripts/run-local-ci.sh jvm`](scripts/run-local-ci.sh). Use `docker` for the same Linux JVM/report gate in Docker, or `android`, `ios`, or `all` when the native toolchains are available.
 
 Generated from the committed coverage inventory by [`scripts/build_coverage_site.py`](scripts/build_coverage_site.py). `n/a` means that an optional report is pending or has an empty denominator; the quality gate remains fail-closed for an empty denominator.
 <!-- coverage-report:end -->
