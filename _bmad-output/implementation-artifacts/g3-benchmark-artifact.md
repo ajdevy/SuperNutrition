@@ -67,6 +67,28 @@ vessel, weigh each visible ingredient before plating, weigh the final plate,
 record scale readings and resolution, then capture overview and oblique device
 photos. Pixels and a dish class are not a valid gram oracle.
 
+### Selected research baseline for ingredient and weight work
+
+FPB/YOLOv12-FoodWeight is the selected first research baseline for the next
+multi-component experiment. Its pinned repository/checkpoint/dataset
+provenance, AGPL-3.0 repository boundary, adapter, and smoke evidence are
+recorded in
+[`ingredient-weight-research/README.md`](../../ingredient-weight-research/README.md),
+[`fpb-yolov12-foodweight-manifest.json`](../../ingredient-weight-research/fpb-yolov12-foodweight-manifest.json),
+and [`fpb-smoke-evidence.json`](../../ingredient-weight-research/fpb-smoke-evidence.json).
+The five-image CPU smoke produced detections on `5/5` cases, class accuracy
+`0.60`, mean box IoU `0.805`, weight MAE `48.54 g`, and p90 absolute error
+`110.48 g`. The published checkpoint required a temporary compatibility shim
+with current Ultralytics because the pinned repository cannot load its
+`C3k2` layer; this is not a production mobile integration.
+
+Therefore FPB is now the implementation/evaluation starting point for
+ingredient candidates, boxes, and grams, but it does not change this artifact's
+current capability result: the product contract still emits a single dish
+candidate, the smoke has no masks, and the repository/dataset license and
+phone-photo generalization remain unresolved. No G-3 signature or production
+runtime selection is implied by choosing this baseline.
+
 ## Device matrix and measured evidence
 
 | OS/device tier | Physical device | Runtime and execution provider | Semantic result | Ingredient / weight result | Runtime/resource result |
@@ -88,6 +110,15 @@ suite `4/4` through `connectedAndroidDeviceTest`, all with zero failures,
 errors, or skips. The strict dependency locks were refreshed after syncing
 `origin/main`, and both tasks ran offline against the explicit wireless ADB
 serial.
+
+The current-HEAD correctness rerun after commit `5f6c8772` reproduced those
+Android results on the explicit serial. The paired physical iPhone 14 Pro
+also passed the automatic-signing Xcode acceptance scheme `5/5` and the
+binary-bound `iosArm64` fixture runner `5/5` (3 normalization, 2 bridge) on
+iOS 26.5.2. These records are local-only because the checkout intentionally
+preserves the user's untracked manual-testing presentation; they are
+correctness evidence and do not close the signed runtime/model, ingredient,
+or weight gates.
 
 The latest iOS result was obtained from a freshly installed, automatically
 signed `SuperNutritionG3` app using the configured Apple development team after
