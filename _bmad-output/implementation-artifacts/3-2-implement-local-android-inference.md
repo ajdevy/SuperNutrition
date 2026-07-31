@@ -373,8 +373,8 @@ GPT-5 / Codex
   p50/p95/max `198/287/535 ms`, PSS `26,445 -> 271,125 KB`, battery current
   `-1,287 -> -1,563 µA`, and thermal `0 -> 0`; ingredient remains
   `unsupported` and weight remains `not-evaluable`.
-- 2026-07-31 current-HEAD device acceptance after the FPB research baseline
-  commit `5f6c8772`: the explicit wireless serial
+- 2026-07-31 physical device acceptance on code commit `5f6c8772` (the FPB
+  research baseline): the explicit wireless serial
   `adb-AU3N025429006787-97BOdK._adb-tls-connect._tcp` passed the isolated local
   adapter suite `4/4` and the UI/capture/semantics suite `15/15` on Honor
   DNY-NX9 / Android 16 (API 36), with zero failures, errors, and skips. The
