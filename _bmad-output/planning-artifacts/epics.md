@@ -145,7 +145,7 @@ NFR-24: Product journeys minimize interaction while preserving safe user control
 
 NFR-25: Deterministic catalog search is reproducible and bounded. The same query against the same package version returns byte-identical result ordering across platforms and runs, with no personalization, history, or learned component; a declared latency budget is met on the lowest supported device tier with network disabled and every Engine reporting unavailable. Golden query fixtures pin expected canonical IDs and order per package version.
 
-NFR-26: Language support is a per-market matrix, not a global switch. The first three targets are English, Spanish, and Russian, which between them exercise every normalization profile: none beyond plurals, light stemming with diacritics, and full lemmatization with cross-script entry. Each supported market declares catalog language, accepted input languages, script, morphological normalization, and synonym data as versioned package data rather than search-code conditionals, and ships its own query fixtures keyed per catalog-and-input-language pair, because an accepted input language does not imply a catalog written in it. Regional name variants of one food resolve to one canonical ID rather than selecting a dialect per market. English-only behaviour is not a valid default for a market whose catalog is not in English, and a market added without fixtures is treated as untested. Accepted input languages are independent of market processing position in both directions: supporting a language is a product capability, operating in a market is a legal position, and neither implies the other.
+NFR-26: Language support is a per-market matrix, not a global switch. The first two targets are English and Russian, sitting at opposite ends of the normalization range: none beyond plurals, and full lemmatization with cross-script entry. Spanish was an earlier target and was dropped, which leaves the middle profile -- light stemming with diacritics -- designed but unexercised; a market landing on it is a new decision rather than an increment. Each supported market declares catalog language, accepted input languages, script, morphological normalization, and synonym data as versioned package data rather than search-code conditionals, and ships its own query fixtures keyed per catalog-and-input-language pair, because an accepted input language does not imply a catalog written in it. Regional name variants of one food resolve to one canonical ID rather than selecting a dialect per market. English-only behaviour is not a valid default for a market whose catalog is not in English, and a market added without fixtures is treated as untested. Accepted input languages are independent of market processing position in both directions: supporting a language is a product capability, operating in a market is a legal position, and neither implies the other.
 
 NFR-27: Remote processing of user content is permitted only where a named, approved, expiring legal position says it is. Every market defaults to unresolved and permits no remote transfer of any modality; absence, unresolved, and expiry are equivalent at resolution time. Photo and text permissions are independent, each bound to its own reviewed consent copy. Catalog choice cannot derive or change jurisdiction, posture, permitted regions, or permissions, and the resolved jurisdiction and processing region are shown before every consent decision. The deterministic search floor and on-device identification never depend on a market posture, so a fail-closed market remains usable.
 
@@ -942,11 +942,10 @@ so that the catalog is usable in every market we support.
 - **Given** a market declaring cross-script entry, **when** a record is typed in
   the other script, **then** it is reachable through the fuzzy tier only and
   never outranks an exact match in the record's own script.
-- **Given** English, Spanish, and Russian as the first three targets, **when**
-  their fixtures run, **then** each passes against the catalog it searches:
-  Spanish resolves regional variants of one food to one canonical ID, and
-  Russian resolves inflected noun forms and Latin-script entry of Cyrillic
-  records.
+- **Given** English and Russian as the first two targets, **when** their
+  fixtures run, **then** each passes against the catalog it searches: English
+  resolves alternate names of one food to one canonical ID, and Russian
+  resolves inflected noun forms and Latin-script entry of Cyrillic records.
 - **Given** an accepted input language, **when** its fixtures are authored,
   **then** they are keyed per catalog-and-input-language pair, because an input
   language does not imply a catalog written in it; a language proven against one

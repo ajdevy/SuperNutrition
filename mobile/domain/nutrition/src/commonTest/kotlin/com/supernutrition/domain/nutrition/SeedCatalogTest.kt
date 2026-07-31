@@ -37,14 +37,14 @@ class SeedCatalogTest {
     }
 
     @Test
-    fun `spanish regional variants of one food reach one canonical id`() {
+    fun `a russian name and its latin-script form reach one canonical id`() {
         val search = CatalogSearch(SeedCatalog.records)
 
-        val palta = search.search("palta").map { it.canonicalItemId }
-        val aguacate = search.search("aguacate").map { it.canonicalItemId }
+        val cyrillic = search.search("авокадо").map { it.canonicalItemId }
+        val latin = search.search("avokado").map { it.canonicalItemId }
 
-        assertEquals(palta, aguacate)
-        assertEquals(listOf("food:avocado-raw"), palta)
+        assertEquals(cyrillic, latin)
+        assertEquals(listOf("food:avocado-raw"), cyrillic)
     }
 
     @Test
