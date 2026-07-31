@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import subprocess
 import sys
 import unittest
@@ -58,9 +59,14 @@ class BuildCoverageSiteTest(unittest.TestCase):
             write_site(root, output)
 
             index = (output / "index.html").read_text(encoding="utf-8")
+            loc = json.loads((output / "loc.json").read_text(encoding="utf-8"))
+            coverage = json.loads((output / "coverage.json").read_text(encoding="utf-8"))
             self.assertIn("90.00%", index)
             self.assertIn("n/a", index)
             self.assertIn("Code lines", index)
+            self.assertEqual(loc["code_lines"], 2)
+            self.assertEqual(coverage["host_jvm"]["line_percent"], 90.0)
+            self.assertIsNone(coverage["host_jvm"]["branch_percent"])
             self.assertTrue((output / "reports/core-config/index.html").is_file())
 
     def test_write_site_fails_when_a_report_is_missing(self) -> None:
