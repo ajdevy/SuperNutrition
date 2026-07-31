@@ -14,7 +14,9 @@ Story 3.1 shipped `contracts/inference/v1`. Its own files close the question:
 | `schema.toml` | `incompatible_change = "new-major-release"` |
 | `InferenceContract.kt` | `PhotoInferenceRequest(val photoRef: PhotoRef, …)` — non-nullable |
 
-There is no modality discriminator and no optional-payload path, and a text engine cannot satisfy that shape without claiming a photo it does not have. The digest means any edit to v1 is detectable and invalid; the compatibility rule means the contract itself mandates a new major release. AD-36 says the same at the architecture level: releases under `contracts/` are immutable.
+There is no modality discriminator and no optional-payload path, and a text engine cannot satisfy that shape without claiming a photo it does not have. The compatibility rule means the contract itself mandates a new major release, and AD-36 says the same at the architecture level: releases under `contracts/` are immutable.
+
+An earlier revision of this file added "the digest means any edit to v1 is detectable and invalid." That was false, and commit `83547213` proved it: four published releases were edited in place, every digest was updated in the same commit, and all four validators passed. A digest recorded inside the bytes it describes cannot detect a self-consistent rewrite. Detection now comes from `scripts/verify-release-immutability.sh`, which compares against a base revision from git rather than from the reviewed tree — so the v2 requirement rests on the compatibility rule and on a gate that works, not on a property the digest never had.
 
 ## Migration, not amendment
 

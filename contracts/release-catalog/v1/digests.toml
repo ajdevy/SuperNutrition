@@ -1,0 +1,116 @@
+schema = "supernutrition.release-catalog.v1"
+schema_version = 1
+
+# Append-only record of contract release digests.
+#
+# WHY THIS EXISTS OUTSIDE THE RELEASES
+# Each release records its own digest inside itself, and each validator compares
+# a computed digest against that same in-release field. That detects a release
+# edited without updating its digest. It cannot detect a release edited together
+# with the digest describing it, because the tree is then self-consistent — which
+# is what commit 83547213 did to four releases on 2026-07-31, green.
+#
+# WHY THIS FILE IS NOT THE GATE
+# Moving the digest out of the release only relocates the self-reference: an
+# attacker edits the release and this file in one commit. The actual gate is
+# scripts/verify-release-immutability.sh, which compares against a base revision
+# taken from git rather than from any file in the reviewed tree. This catalog is
+# the human-readable record; git history is the evidence.
+#
+# APPEND ONLY. Existing entries are never edited. A release whose digest changes
+# gets a new entry with status = "current" and its predecessor set to
+# "superseded", which is why entries carry release_id rather than being keyed by
+# it — a release legitimately has more than one row over its lifetime.
+#
+# Produce a digest with: scripts/emit-release-digest.sh <release-root>
+
+# --- current -----------------------------------------------------------------
+
+[[entry]]
+release_id = "photo-inference-engine/v1"
+path = "contracts/inference/v1"
+digest = "b63de2850e1213815c8949fdfec82acb54903ca1b149b8bd6bdc748718b64179"
+algorithm = "release-sha256-v2"
+recorded_at_commit = "83547213"
+status = "current"
+
+[[entry]]
+release_id = "mobile-api/v1"
+path = "contracts/mobile-api/v1"
+digest = "f42c6e319330cc3d7d79df34b3387a8721b46f99bdcc5f23a516cb57869c2c03"
+algorithm = "release-sha256-v2"
+recorded_at_commit = "83547213"
+status = "current"
+
+[[entry]]
+release_id = "interaction-policy/v1"
+path = "contracts/interaction-policy/v1"
+digest = "01ed816e5ed129f780def8aed9ae445058cea616ec35fc31d240fe7feebf724f"
+algorithm = "release-sha256-v2"
+recorded_at_commit = "83547213"
+status = "current"
+
+[[entry]]
+release_id = "product-identity/v1"
+path = "contracts/product-identity/v1"
+digest = "94fe1c32c33dfc0859bb0f3dfe657948320d659844d82111449a4bef1646b94b"
+algorithm = "release-sha256-v2"
+recorded_at_commit = "83547213"
+status = "current"
+
+# --- superseded --------------------------------------------------------------
+#
+# These are the digests these releases carried between their publication and
+# commit 83547213. They are recorded because the change happened and the record
+# should say so, not because they can all be checked.
+#
+# `reproducible` states, per entry, whether scripts/emit-release-digest.sh can
+# recompute the recorded value from the release bytes at recorded_at_commit.
+# Three cannot: 83547213 added RELEASE.md to the hashed set, so the algorithm
+# that produced them no longer exists in the tree. Recording that honestly is
+# the point — an unverifiable number labelled verifiable is worse than one
+# labelled unverifiable.
+
+[[entry]]
+release_id = "photo-inference-engine/v1"
+path = "contracts/inference/v1"
+digest = "3634abd47f88682cc0953cab229d932f4be26e7f0f76419877dcfe1ce229cba3"
+algorithm = "release-sha256-v1"
+recorded_at_commit = "7e17932c"
+status = "superseded"
+superseded_by_commit = "83547213"
+reproducible = false
+note = "release-sha256-v1 excluded RELEASE.md; the v2 algorithm yields 1daedab6751f65c59559bbf7dbb38e7339d2508bda615a5fdc1974e1f967e2af over the same bytes"
+
+[[entry]]
+release_id = "mobile-api/v1"
+path = "contracts/mobile-api/v1"
+digest = "ebda0f5151acb5478489e6a9c32f8e778f9eee2416455a0aed7dc2238f627594"
+algorithm = "release-sha256-v1"
+recorded_at_commit = "7e17932c"
+status = "superseded"
+superseded_by_commit = "83547213"
+reproducible = false
+note = "release-sha256-v1 excluded RELEASE.md; the v2 algorithm yields 95716a2ab87e over the same bytes. schema.toml also gained contract_id in 83547213, so both the algorithm and the content changed"
+
+[[entry]]
+release_id = "interaction-policy/v1"
+path = "contracts/interaction-policy/v1"
+digest = "39536784162e9877a46ba274215f870b3a721b04e2a222ac84a37e7f63c0935a"
+algorithm = "release-sha256-v1"
+recorded_at_commit = "7e17932c"
+status = "superseded"
+superseded_by_commit = "83547213"
+reproducible = false
+note = "release-sha256-v1 excluded RELEASE.md; the v2 algorithm yields 29551e4e253b over the same bytes. fixtures/defaults.toml also gained atomic = true in 83547213, so both the algorithm and a canonical fixture changed"
+
+[[entry]]
+release_id = "product-identity/v1"
+path = "contracts/product-identity/v1"
+digest = "bd2e3f4d73c70f28afd9c27cb9d286f11949fe0e142477ec4e9b86fa51377070"
+algorithm = "release-sha256-v2"
+recorded_at_commit = "7e17932c"
+status = "superseded"
+superseded_by_commit = "83547213"
+reproducible = true
+note = "the only one of the four that is checkable: its hashed set was unchanged by 83547213, so the recorded value recomputes exactly from the 7e17932c bytes. Its digest moved purely because schema.toml gained ten normative [fields.*] blocks — a pure content change to a published release"
