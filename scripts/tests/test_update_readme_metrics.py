@@ -46,6 +46,7 @@ class UpdateReadmeMetricsTest(unittest.TestCase):
         self.assertIn("ios-ui-coverage.yml", section)
         self.assertIn("JVM%20line", section)
         self.assertIn("### Report links", section)
+        self.assertIn("run-local-ci.sh jvm", section)
 
     def test_replace_section_preserves_surrounding_readme(self) -> None:
         readme = f"# Project\n\n{START_MARKER}\nold\n{END_MARKER}\n\n## Next\n"

@@ -135,6 +135,10 @@ def render_section(loc: dict[str, object], coverage: dict[str, object]) -> str:
             f"| Android UI coverage | [Open workflow runs and artifacts]({workflow_url(WORKFLOWS['android'])}) |",
             f"| iOS UI coverage | [Open workflow runs and artifacts]({workflow_url(WORKFLOWS['ios'])}) |",
             "",
+            "Run the exact local JVM/report gate with "
+            "[`scripts/run-local-ci.sh jvm`](scripts/run-local-ci.sh). "
+            "Use `android`, `ios`, or `all` when the native toolchains are available.",
+            "",
             "Generated from the committed coverage inventory by "
             "[`scripts/build_coverage_site.py`](scripts/build_coverage_site.py). "
             "`n/a` means that an optional report is pending or has an empty "
