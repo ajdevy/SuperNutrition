@@ -16,6 +16,8 @@ static const float kSemanticMinConfidence = 0.55f;
 static NSString* const kModelName = @"swin-finetuned-food101-matmul-int8.onnx";
 static NSString* const kModelSha256 =
     @"9070f8097cda88923f77774d93d9fead7cee344486521c7fc5142806642061df";
+static NSString* const kMealManifestSha256 =
+    @"d312e9c7408aa474df38ff823d9fd3fc6c8a3a86cffc94df7ce53391c6975292";
 
 static NSArray<NSString*>* G3Fixtures(void) {
   return @[ @"steak-side-plate", @"fish-side-plate", @"chopped-salad", @"buddha-bowl",
@@ -255,12 +257,28 @@ static NSString* G3JsonString(NSDictionary* object) {
       @"runtime_version" : @"1.27.0",
       @"model" : kModelName,
       @"model_sha256" : kModelSha256,
+      @"meal_benchmark_manifest_sha256" : kMealManifestSha256,
+      @"meal_benchmark_fixture_count" : @5,
       @"fixture_count" : @(firstInferences.count),
       @"semantic_expected_count" : @(expectedCount),
       @"semantic_correct_count" : @(correctCount),
       @"semantic_accuracy" : @(expectedCount == 0 ? 0.0f : (float)correctCount / expectedCount),
       @"semantic_min_confidence" : @(kSemanticMinConfidence),
       @"semantic_pass" : @(semanticPass),
+      @"ingredient_benchmark" : @{
+        @"status" : @"unsupported",
+        @"scope" : @"visible_ingredient_set",
+        @"ground_truth_case_count" : @5,
+        @"predicted_case_count" : @0,
+        @"reason" : @"Food-101 runner emits one dish label and no ingredient candidates, boxes, or masks."
+      },
+      @"weight_benchmark" : @{
+        @"status" : @"not-evaluable",
+        @"scope" : @"plated_mass_g",
+        @"ground_truth_case_count" : @0,
+        @"predicted_case_count" : @0,
+        @"reason" : @"Fixtures have no calibrated scale ground truth and the current model emits no mass estimate."
+      },
       @"warmup_runs" : @(kWarmupRuns),
       @"measured_runs" : @(kMeasuredRuns),
       @"session_init_ms" : @(sessionInitMs),

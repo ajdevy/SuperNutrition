@@ -1,0 +1,146 @@
+{
+  "schema": "supernutrition.g3-meal-benchmark.v1",
+  "scope": "visible-ingredient-set-and-plated-mass",
+  "ground_truth_policy": {
+    "ingredient_labels": "visible-manual-annotation",
+    "ingredient_definition": "Only visibly separable food components are annotated; hidden recipe ingredients, oil, salt, and dressing composition are excluded.",
+    "weight_definition": "Mass in grams for each visible ingredient plus optional total plated food mass after taring the empty plate or bowl.",
+    "weight_ground_truth": "required-from-calibrated-scale",
+    "weight_capture_protocol": [
+      "Tare the empty serving vessel on a calibrated kitchen scale.",
+      "Plate the exact meal shown in the photo without removing garnish or sauce.",
+      "Record total food mass in grams with scale resolution and timestamp.",
+      "Capture one overview photo and one oblique photo on each device tier.",
+      "Keep the scale reading and photo fixture ID in the same consented record."
+    ]
+  },
+  "pass_policy": {
+    "ingredient_macro_f1_min": 0.85,
+    "ingredient_case_f1_min": 0.80,
+    "weight_relative_mae_max": 0.15,
+    "weight_p90_absolute_error_g_max": 50
+  },
+  "cases": [
+    {
+      "fixture": "steak-side-plate",
+      "image": "steak-side-plate.jpg",
+      "scenario": "steak with side dish and sauce",
+      "visible_ingredient_labels": [
+        "beef_steak",
+        "quinoa",
+        "carrot",
+        "cucumber",
+        "green_bean",
+        "creamy_sauce"
+      ],
+      "ingredient_masses_g": {
+        "beef_steak": null,
+        "quinoa": null,
+        "carrot": null,
+        "cucumber": null,
+        "green_bean": null,
+        "creamy_sauce": null
+      },
+      "total_mass_g": null,
+      "weight_ground_truth_status": "not-weighed-public-photo"
+    },
+    {
+      "fixture": "fish-side-plate",
+      "image": "fish-side-plate.jpg",
+      "scenario": "fish with mixed vegetables",
+      "visible_ingredient_labels": [
+        "fish",
+        "broccoli",
+        "carrot",
+        "onion",
+        "celery"
+      ],
+      "ingredient_masses_g": {
+        "fish": null,
+        "broccoli": null,
+        "carrot": null,
+        "onion": null,
+        "celery": null
+      },
+      "total_mass_g": null,
+      "weight_ground_truth_status": "not-weighed-public-photo"
+    },
+    {
+      "fixture": "chopped-salad",
+      "image": "chopped-salad.jpg",
+      "scenario": "chopped salad with separated garnish",
+      "visible_ingredient_labels": [
+        "carrot",
+        "tomato",
+        "cucumber",
+        "corn",
+        "chili_pepper",
+        "cilantro"
+      ],
+      "ingredient_masses_g": {
+        "carrot": null,
+        "tomato": null,
+        "cucumber": null,
+        "corn": null,
+        "chili_pepper": null,
+        "cilantro": null
+      },
+      "total_mass_g": null,
+      "weight_ground_truth_status": "not-weighed-public-photo"
+    },
+    {
+      "fixture": "buddha-bowl",
+      "image": "buddha-bowl.jpg",
+      "scenario": "Buddha bowl with grains, legumes, greens, and toppings",
+      "visible_ingredient_labels": [
+        "avocado",
+        "white_rice",
+        "tempeh",
+        "edamame",
+        "radish",
+        "lettuce",
+        "bean_sprout",
+        "bell_pepper",
+        "sesame",
+        "green_onion"
+      ],
+      "ingredient_masses_g": {
+        "avocado": null,
+        "white_rice": null,
+        "tempeh": null,
+        "edamame": null,
+        "radish": null,
+        "lettuce": null,
+        "bean_sprout": null,
+        "bell_pepper": null,
+        "sesame": null,
+        "green_onion": null
+      },
+      "total_mass_g": null,
+      "weight_ground_truth_status": "not-weighed-public-photo"
+    },
+    {
+      "fixture": "salmon-grain-plate",
+      "image": "salmon-grain-plate.jpg",
+      "scenario": "fish, grains, beans, greens, and sauce",
+      "visible_ingredient_labels": [
+        "fish",
+        "white_rice",
+        "beans",
+        "leafy_greens",
+        "tomato_sauce",
+        "carrot"
+      ],
+      "ingredient_masses_g": {
+        "fish": null,
+        "white_rice": null,
+        "beans": null,
+        "leafy_greens": null,
+        "tomato_sauce": null,
+        "carrot": null
+      },
+      "total_mass_g": null,
+      "weight_ground_truth_status": "not-weighed-public-photo"
+    }
+  ]
+}

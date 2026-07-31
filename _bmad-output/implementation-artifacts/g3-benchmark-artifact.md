@@ -4,7 +4,7 @@
 | --- | --- |
 | Artifact ID | `G3-SN-2026-07-31-preliminary-01` |
 | Status | `proposed-preliminary` |
-| Scope | Epic 3 local inference runtime/model, semantic recognition, and resource-budget decision |
+| Scope | Epic 3 local inference runtime/model, semantic recognition, ingredient capability, weight capability, and resource-budget decision |
 | Production activation | **Blocked until user acceptance/signature and remaining gaps close** |
 | Measurement harness | [`tools/g3-benchmark/README.md`](../../tools/g3-benchmark/README.md) |
 | Research record | [`docs/research/epic-3-food-recognition-preprocessing-camera.md`](../../docs/research/epic-3-food-recognition-preprocessing-camera.md) |
@@ -14,7 +14,9 @@ This document records reproducible physical-device evidence. It is not a
 signature and does not activate a production runtime. It now includes a
 bounded semantic recognition proof for five single-dish Food-101 labels. It
 does not claim multi-object detection, ingredient extraction, portion
-estimation, nutrition correctness, or general Food-101 accuracy.
+estimation, nutrition correctness, or general Food-101 accuracy. The meal
+benchmark records those capabilities as explicit unsupported/not-evaluable
+until a component model and calibrated scale corpus exist.
 
 ## Candidate and semantic contract
 
@@ -39,12 +41,38 @@ Food-101 itself is a 101-class single-dish classification benchmark. The
 contains 101,000 images, noisy training labels, source/cuisine bias, and no
 ingredient or nutrition metadata.
 
+## Ingredient and plated-weight benchmark
+
+The five composite fixtures are defined in
+[`tools/g3-benchmark/meal-benchmark-manifest.json`](../../tools/g3-benchmark/meal-benchmark-manifest.json).
+The annotation scope is visible, separable components only; hidden recipe
+ingredients, oil, sauces whose composition is not visible, and nutrition
+values are excluded. The intended metrics are per-meal ingredient-set
+precision/recall/F1 and total plated-mass MAE/p90 absolute error in grams.
+Per-ingredient mass is also required; the total is an optional aggregate used
+to detect conservation errors.
+
+The current pinned Food-101 runner reports the capability boundary on each
+device:
+
+| Capability | Current device result | Why it is not a quality score |
+| --- | --- | --- |
+| Visible ingredient set | `unsupported`, 5 cases in the corpus, 0 predictions | The runner emits one dish label, not ingredient candidates, boxes, or masks |
+| Plated mass in grams | `not-evaluable`, 0 calibrated cases, 0 predictions | Public photos have no tared scale readings and the model emits no mass |
+
+The dependency-free evaluator is
+[`tools/g3-benchmark/evaluate-meal-benchmark.py`](../../tools/g3-benchmark/evaluate-meal-benchmark.py).
+Weights must be added from a consented controlled capture: tare the empty
+vessel, weigh each visible ingredient before plating, weigh the final plate,
+record scale readings and resolution, then capture overview and oblique device
+photos. Pixels and a dish class are not a valid gram oracle.
+
 ## Device matrix and measured evidence
 
-| OS/device tier | Physical device | Runtime and execution provider | Semantic result | Runtime/resource result |
+| OS/device tier | Physical device | Runtime and execution provider | Semantic result | Ingredient / weight result | Runtime/resource result |
 | --- | --- | --- | --- | --- |
-| Android broad-tier candidate | Honor DNY-NX9; Android 16/API 36; `arm64-v8a`; serial `AU3N025429006787` | ONNX Runtime Android `1.28.0`; CPU; available processor threads | `5/5`, accuracy `1.0` under current `0.55` floor; fresh rerun pending reconnect | session init `1,839 ms`; p50 `187 ms`; p95 `290 ms`; max `310 ms`; PSS `63,914 -> 274,681 KB`; thermal `0 -> 0` |
-| iOS high-tier candidate | iPhone 14 Pro; iOS 26.5.2; `arm64e`; UDID `00008120-0012295934E0C01E` | ONNX Runtime Objective-C `1.27.0`; XNNPACK; 2 threads | fresh `5/5`, accuracy `1.0` | session init `602 ms`; p50 `84 ms`; p95 `86 ms`; max `88 ms`; resident `260,528 -> 252,208 KB`; thermal `0 -> 0`; battery level unchanged |
+| Android broad-tier candidate | Honor DNY-NX9; Android 16/API 36; `arm64-v8a`; serial `AU3N025429006787` | ONNX Runtime Android `1.28.0`; CPU; available processor threads | `5/5`, accuracy `1.0` under current `0.55` floor; fresh rerun pending reconnect | visible ingredients `unsupported`; plated weight `not-evaluable` | session init `1,839 ms`; p50 `187 ms`; p95 `290 ms`; max `310 ms`; PSS `63,914 -> 274,681 KB`; thermal `0 -> 0` |
+| iOS high-tier candidate | iPhone 14 Pro; iOS 26.5.2; `arm64e`; UDID `00008120-0012295934E0C01E` | ONNX Runtime Objective-C `1.27.0`; XNNPACK; 2 threads | fresh `5/5`, accuracy `1.0` | visible ingredients `unsupported`; plated weight `not-evaluable` | session init `559 ms`; p50 `83 ms`; p95 `85 ms`; max `85 ms`; resident `260,240 -> 252,016 KB`; thermal `0 -> 0`; battery level unchanged |
 
 The Android run above is a fresh physical run of the same pinned model. Its
 original `0.60` confidence-floor report was `4/5` only because the correctly
@@ -56,7 +84,10 @@ connected device; no stale result was accepted.
 The iOS result was obtained from a freshly installed, automatically signed
 `SuperNutritionG3` app using the configured Apple development team. All ten
 fixtures were loaded from the bundle, and the result file was copied from the
-app-owned container with `devicectl`.
+app-owned container with `devicectl`. In the same run, the composite top-1 dish
+labels were `filet_mignon`, `grilled_salmon`, `fried_rice`, `bibimbap`, and
+`chicken_curry` in fixture order. These are exploratory single-label outputs,
+not ingredient predictions, and are not used as ingredient quality scores.
 
 ## Fixture provenance
 
@@ -77,9 +108,9 @@ requirements.
 
 | Budget | Proposed bound | Android | iOS |
 | --- | --- | --- | --- |
-| Session initialization | <= 500 ms cold start | **fail**, 1,839 ms | **fail**, 602 ms |
-| Inference latency | p95 <= 100 ms; max <= 150 ms after warm-up | **fail**, 290/310 ms | pass, 86/88 ms |
-| Peak process memory | <= 160 MB Android PSS; <= 160 MB iOS resident | **fail**, 274,681 KB | **fail**, 252,208 KB |
+| Session initialization | <= 500 ms cold start | **fail**, 1,839 ms | **fail**, 559 ms |
+| Inference latency | p95 <= 100 ms; max <= 150 ms after warm-up | **fail**, 290/310 ms | pass, 85/85 ms |
+| Peak process memory | <= 160 MB Android PSS; <= 160 MB iOS resident | **fail**, 274,681 KB | **fail**, 252,016 KB |
 | Thermal | no serious/critical transition | pass, 0 -> 0 | pass, 0 -> 0 |
 | Battery | <= 1% over 50 inferences plus native trace where available | prior run sampled current; fresh rerun pending | level unchanged; current/energy trace open |
 | Model integrity | pinned SHA before session creation; mismatch fails closed | pass | pass |
@@ -113,6 +144,11 @@ linked at the top of this artifact.
 - Run a consented, weighed multi-component meal corpus (target 300-500 meals)
   with independent food-level ground truth; the five public semantic images
   do not establish real-world accuracy.
+- Add a detector/segmenter that emits ingredient candidates and visible
+  regions, then run the five composite cases plus the weighed corpus through
+  the ingredient-set evaluator; current Food-101 output cannot satisfy this.
+- Capture tared plated mass for every weight case and report gram MAE, relative
+  MAE, and p90 absolute error by device, cuisine, lighting, and meal type.
 - Add or select a detector/segmentation stage before claiming multi-object
   recognition for plates with sides, salads, fish, or Buddha bowls.
 - Record rollback behavior for model download/cache and runtime initialization
