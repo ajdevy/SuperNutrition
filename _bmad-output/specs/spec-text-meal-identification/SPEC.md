@@ -36,7 +36,7 @@ Typing what you ate is also a better interaction than paging a result list, and 
 
 - id: CAP-4
   intent: Inference engines can accept either a photo or a text description through one versioned contract, so identification modality is a contract property rather than a parallel subsystem.
-  success: Photo and text engines both implement a modality-aware `contracts/inference/v2`; v1 stays byte-identical and its recorded digest still verifies; the compatibility matrix declares both releases; a request carrying neither or both modality payloads fails closed.
+  success: Photo and text engines both implement a modality-aware `contracts/inference/v2`; `scripts/emit-release-digest.sh contracts/inference/v1` still prints `b63de2850e1213815c8949fdfec82acb54903ca1b149b8bd6bdc748718b64179` and `scripts/verify-release-immutability.sh` passes; the compatibility matrix declares both releases; a request carrying neither or both modality payloads fails closed.
 
 - id: CAP-5
   intent: A text-derived candidate binds to a canonical catalog record only through explicit user confirmation, never automatically.
