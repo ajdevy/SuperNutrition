@@ -12,13 +12,14 @@ internal object ModuleBoundaryVerifier {
         val inventory = mobileRoot.resolve("config/architecture/module-boundaries.toml")
         require(Files.isRegularFile(inventory)) { "Missing module-boundary inventory: $inventory" }
         val text = Files.readString(inventory)
-        val modules = PolicyToml.blocks(text, "module").map { block ->
+        val policy = PolicyToml.document(text)
+        val modules = PolicyToml.blocks(policy, "module").map { block ->
             Module(
                 id = PolicyToml.string(block, "id") ?: error("Module inventory entry is missing id"),
                 path = PolicyToml.string(block, "path") ?: error("Module inventory entry is missing path"),
             )
         }
-        val edges = PolicyToml.blocks(text, "allowed_edge").map { block ->
+        val edges = PolicyToml.blocks(policy, "allowed_edge").map { block ->
             Edge(
                 from = PolicyToml.string(block, "from")?.split('|').orEmpty(),
                 to = PolicyToml.string(block, "to")?.split('|').orEmpty(),
@@ -150,7 +151,7 @@ internal object ModuleBoundaryVerifier {
         inventoryText: String,
     ): List<String> {
         val relativeSource = mobileRoot.relativize(sourceFile).toString().replace('\\', '/')
-        val rules = PolicyToml.forbiddenImportRules(inventoryText)
+        val rules = PolicyToml.forbiddenImportRules(PolicyToml.document(inventoryText))
         val applicableRules = rules.filter { rule ->
             when {
                 rule.sourceScope != null -> {

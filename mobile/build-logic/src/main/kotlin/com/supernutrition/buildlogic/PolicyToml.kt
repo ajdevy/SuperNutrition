@@ -35,33 +35,73 @@ internal object PolicyToml {
     )
 
     fun blocks(text: String, name: String): List<String> =
-        parse(text).tables
+        blocks(document(text), name)
             .filter { it.array && it.name == name }
             .map(::renderTable)
 
     fun section(text: String, name: String): String =
-        parse(text).tables
-            .firstOrNull { !it.array && it.name == name }
+        section(document(text), name)
             ?.let(::renderTable)
             .orEmpty()
 
+    /** Parses one immutable policy document for typed consumers. */
+    fun document(text: String): Document = documents[text] ?: synchronized(documents) {
+        documents[text] ?: parseDocument(text).also { documents[text] = it }
+    }
+
+    fun blocks(document: Document, name: String): List<Table> =
+        document.tables.filter { it.array && it.name == name }
+
+    fun section(document: Document, name: String): Table? =
+        document.tables.firstOrNull { !it.array && it.name == name }
+
     fun string(text: String, key: String): String? =
-        (findValue(parse(text), key) as? Value.Text)?.value
+        (findValue(document(text), key) as? Value.Text)?.value
+
+    fun string(document: Document, key: String): String? =
+        (document.root[key] as? Value.Text)?.value
+
+    fun string(table: Table, key: String): String? =
+        (table.values[key] as? Value.Text)?.value
 
     fun integer(text: String, key: String): Int? =
-        (findValue(parse(text), key) as? Value.Number)?.value
+        (findValue(document(text), key) as? Value.Number)?.value
+
+    fun integer(document: Document, key: String): Int? =
+        (document.root[key] as? Value.Number)?.value
+
+    fun integer(table: Table, key: String): Int? =
+        (table.values[key] as? Value.Number)?.value
 
     fun boolean(text: String, key: String): Boolean? =
-        (findValue(parse(text), key) as? Value.Flag)?.value
+        (findValue(document(text), key) as? Value.Flag)?.value
+
+    fun boolean(document: Document, key: String): Boolean? =
+        (document.root[key] as? Value.Flag)?.value
+
+    fun boolean(table: Table, key: String): Boolean? =
+        (table.values[key] as? Value.Flag)?.value
 
     fun stringList(text: String, key: String): List<String> =
-        (findValue(parse(text), key) as? Value.ListValue)
+        stringList(findValue(document(text), key), key)
+
+    fun stringList(document: Document, key: String): List<String> =
+        stringList(document.root[key], key)
+
+    fun stringList(table: Table, key: String): List<String> =
+        stringList(table.values[key], key)
+
+    private fun stringList(value: Value?, key: String): List<String> =
+        (value as? Value.ListValue)
             ?.values
             ?.map { (it as? Value.Text)?.value ?: error("Policy value '$key' must contain strings") }
             .orEmpty()
 
     fun forbiddenImportRules(text: String): List<ForbiddenImportRule> =
-        stringList(text, "forbidden_imports").map { rawRule ->
+        forbiddenImportRules(document(text))
+
+    fun forbiddenImportRules(document: Document): List<ForbiddenImportRule> =
+        stringList(document, "forbidden_imports").map { rawRule ->
             val parts = rawRule.split(" in ", limit = 2)
             require(parts.size == 2) { "Invalid forbidden import rule: $rawRule" }
             val importPrefix = parts[0].trim().removeSuffix("*")
@@ -86,18 +126,18 @@ internal object PolicyToml {
     // Cache the typed representation by source text instead of reparsing each accessor.
     private val documents = Collections.synchronizedMap(WeakHashMap<String, Document>())
 
-    private data class Document(
+    internal data class Document(
         val root: LinkedHashMap<String, Value> = linkedMapOf(),
         val tables: MutableList<Table> = mutableListOf(),
     )
 
-    private data class Table(
+    internal data class Table(
         val name: String,
         val array: Boolean,
         val values: LinkedHashMap<String, Value> = linkedMapOf(),
     )
 
-    private sealed interface Value {
+    internal sealed interface Value {
         data class Text(val value: String) : Value
         data class Number(val value: Int) : Value
         data class Flag(val value: Boolean) : Value
@@ -108,10 +148,6 @@ internal object PolicyToml {
         document.root[key] ?: document.tables.asSequence()
             .mapNotNull { it.values[key] }
             .firstOrNull()
-
-    private fun parse(text: String): Document = documents[text] ?: synchronized(documents) {
-        documents[text] ?: parseDocument(text).also { documents[text] = it }
-    }
 
     private fun parseDocument(text: String): Document {
         val document = Document()
