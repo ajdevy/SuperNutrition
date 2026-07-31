@@ -1,53 +1,52 @@
-## graphify
+# SuperNutrition Agent Guide
 
-This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
+This file is the canonical agent guide. `CLAUDE.md` imports it; keep agent-specific copies out of sync by editing this file only.
 
-When the user types `/graphify`, use the installed graphify skill or instructions before doing anything else.
+## Start every task
 
-Rules:
-- For codebase questions, first run `graphify query "<question>"` when graphify-out/graph.json exists. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. These return a scoped subgraph, usually much smaller than GRAPH_REPORT.md or raw grep output.
-- Dirty graphify-out/ files are expected after hooks or incremental updates; dirty graph files are not a reason to skip graphify. Only skip graphify if the task is about stale or incorrect graph output, or the user explicitly says not to use it.
-- If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
-- Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
-- After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
+- Confirm the real `cwd`, branch, worktree, and `git status --short --branch` before acting. Worktree identity is part of the task: never edit a dirty user checkout to reach another branch.
+- Preserve unrelated changes. Never use `git reset --hard`, broad checkout, recursive deletion, or blanket staging. Stage only files in scope.
+- Read the relevant story/spec and `_bmad-output/planning-artifacts/architecture/architecture-SuperNutrition-2026-07-26/ARCHITECTURE-SPINE.md`. Use `graphify query` for codebase navigation when `graphify-out/graph.json` exists.
+- Use the project-local skill for the task. On a fresh checkout, run `./scripts/setup-agent-tools.sh` only when the required tooling is actually missing.
+- When the next BMAD workflow is unclear, use `bmad-help`. Keep shared BMAD artifacts under `_bmad-output/`; keep team config in `_bmad/config.toml` or `_bmad/custom/`, never `_bmad/config.user.toml`.
 
-## BMAD
+## Product and architecture invariants
 
-This repository vendors the BMAD Method core and BMM skills under `.agents/skills/` and `_bmad/`.
+- Product roots are independent: `mobile/`, `web/landing/`, and `backend/mobile-api/`. Cross-product source, runtime, cache, build-task, generated-code, or deployment dependencies are forbidden; integrate through immutable versioned contracts.
+- Mobile module groups are `apps`, `core`, `domain`, `data`, `inference`, `platform`, `feature`, `testing`, and `evaluation`. Keep domain pure KMP, hosts thin, and native photo/camera bridges behind ports.
+- Product identity is exact: installed name `SuperNutrition`; store listing `SuperNutrition AI nutritionist`. Do not leak the store descriptor into the installed display name.
+- The checked-in mobile lifecycle is currently `active` with `source_digest = "local-only"` and Apple evidence explicitly good-to-have. Re-read `mobile/product-lifecycle.toml` before changing lifecycle policy; do not silently revert to scaffold-pending or make Apple execution a local blocker.
+- Quality entrypoints are read-only: `qualityCheckJvmAndroid` and `qualityCheckApple`. `qualityFormat` is the only autocorrect entrypoint and never runs in CI. Do not add broad baselines, coverage exclusions, wildcard Compose stability entries, or production dependencies on `testing`.
+- Every production source has one coverage denominator; module and aggregate line/branch coverage targets are at least 85%, and changed lines/branch outcomes are 100%. Required Android/native equivalents are executable and expiring. Apple/Xcode evidence remains optional unless a policy explicitly says otherwise.
+- Treat architecture, source-set, scenario, journey, platform-contract, native-gap, and coverage manifests as enforceable inventories. Do not hide required work with task filters, skips, empty modules, stale evidence, or “eligibility.”
+- Low-friction interaction is product-wide: defaults are visible, sourced, editable, reversible, and session-scoped; never silently default remote consent, uncertain identity, medical/allergen conclusions, or provider routing.
+- Do not edit vendored agent prompts without updating `vendor/claude-code-agents/UPSTREAM_COMMIT` and documenting why.
 
-- Use `bmad-help` when the next BMAD workflow is unclear.
-- Use the BMAD planning/architecture skills before implementation work that needs a durable plan.
-- Keep team configuration in `_bmad/config.toml` or `_bmad/custom/`; do not commit `_bmad/config.user.toml`.
-- Store shared BMAD planning and implementation artifacts under `_bmad-output/` when they are created.
+## Review → fix → verify loop
 
-## Agent tooling setup
+1. Convert every concrete review finding into a testable acceptance condition. Fix the highest-impact issue first and keep stable module paths unless boundary evidence proves a rename necessary.
+2. Validate in layers: compile/configuration, focused unit tests, full relevant module tests, then device/native tests. A compile failure means no device test ran; a launch failure means execution was partial; report those states separately.
+3. Re-run the full relevant task after each fix. Do not call a task green from partial output, cached compilation, or a report from a different commit.
+4. If adversarial/edge review agents are unavailable, record that honestly; never present generated prompts or a static scan as completed subagent review.
 
-The skills are committed to this repository. On a fresh checkout, run `./scripts/setup-agent-tools.sh` once to install the local graphify CLI used by the project hook. Node.js 20.12+, Python 3.11+, and `uv` are required by the current BMAD/graphify and typed-TOML validation tooling.
+## Android device evidence
 
-## Claude Code agents
+- Use the project `android-cli` skill and `adb devices -l`. An emulator is not physical-device evidence; an emulator/simulator is never Bluetooth proof.
+- For the complete Android instrumentation suite, run from the repository root:
 
-The repository also vendors the pinned `AlexGladkov/claude-code-agents` marketplace under `vendor/claude-code-agents/`. `.claude/settings.json` enables its `ai-sdlc`, `ai-university`, and `project-coordinator` plugins at project scope so collaborators can use the same agents after trusting the checkout in Claude Code. Do not edit the vendored agent prompts without updating `vendor/claude-code-agents/UPSTREAM_COMMIT` and documenting the reason.
+  `./mobile/gradlew -p mobile :apps:androidApp:connectedAndroidTest --no-configuration-cache --console=plain`
 
-## SuperNutrition monorepo and KMP engineering baseline
+- Disconnect duplicate ADB endpoints before evidence runs. With multiple devices, pass `-Pandroid.testInstrumentationRunnerArguments.deviceSerial=<serial>` and use strict dependency verification when the evidence command requires it. Confirm both `productionDebug` and `uiAcceptanceDebug` ran. Verify the XML reports under `mobile/apps/androidApp/build/outputs/androidTest-results/connected/` show exact `tests`, `failures`, `errors`, and `skipped` counts.
+- Treat ABI/API, lifecycle reflection, permission, camera, UI semantics, and accessibility failures as product failures to fix—not as device noise. When Compose sets `testTagsAsResourceId`, UI Automator must query resource IDs (`By.res`), not descriptions (`By.desc`).
 
-- Treat `_bmad-output/planning-artifacts/architecture/architecture-SuperNutrition-2026-07-26/ARCHITECTURE-SPINE.md` as the source of truth for module dependencies, platform seams, and quality gates.
-- Keep product identity exact: installed/launcher/in-app name `SuperNutrition`;
-  Apple App Store and Google Play listing title
-  `SuperNutrition AI nutritionist`. Store-only descriptors must not leak into
-  the installed display name.
-- The only product implementation roots are `mobile/`, `web/landing/`, and `backend/mobile-api/`. Each independently owns its dependencies and installation, tests, quality entrypoint, caches, artifact, deployment, credentials, rollback, and distinct CODEOWNERS principal. Cross-product source, workspace/package-manager, generated-code, runtime, cache, build-task, and deployment dependencies are forbidden; integrate only through immutable, versioned, language-neutral releases independently owned under `contracts/`. `web/landing/` has no runtime dependency on `backend/mobile-api/`.
-- Inside `mobile/`, use the GiphySearch-derived groups `apps`, `core`, `domain`, `data`, `inference`, `platform`, `feature`, `testing`, and `evaluation`; keep mobile domain pure KMP, Android/iOS local inference separate, and native photo bridges out of app hosts.
-- Mobile begins in fail-closed `scaffold-pending`; its reviewed scaffold story atomically adds `mobile/gradle/libs.versions.toml`, `mobile/build-logic`, a nonempty inventory, real host/device/app evidence, and changes the lifecycle to `active`. This checkout has completed that transition and is currently `active` with an `active-local` quality state: local policy, inventory, coverage, and required Android evidence are authoritative, while Apple/Xcode execution, hosted GitHub enforcement, and production-release readiness remain separate good-to-have or later gates. An active product does not roll back to `scaffold-pending`. Web and backend begin in `preselection`; their reviewed activation stories atomically add a central tool/dependency manifest, frozen lock state, nonempty product inventory, and read-only `quality-check`.
-- `qualityCheckJvmAndroid` and `qualityCheckApple` must be read-only; `qualityFormat` is the only autocorrect entrypoint and never runs in CI. Do not add broad lint baselines, coverage exclusions, wildcard Compose stability entries, or shippable dependencies on `testing`.
-- Treat the architecture/module, source-set, positive-scenario, journey, platform-contract, and native-gap manifests as enforceable inventories once the scaffold creates them; never make required work disappear through task filters, skips, empty modules, stale evidence, optional coverage, or “eligibility.”
-- Every compiled production source has exactly one coverage denominator. Every mobile, web-landing, and backend module and each product's deduplicated aggregate maintain at least 85% unit-test line and branch coverage; changed production lines and branch outcomes maintain 100%. Required Android/native equivalents are executable, approved, and expiring; Apple/Xcode evidence is explicitly good-to-have and never a local activation blocker.
-- Mobile scaffold activation uses only a non-product `bootstrap` robot and packaged launch/DI Maestro smoke. The first photo-analysis product source must atomically and irreversibly switch the UI evidence profile through separate feature, `mobile/config/**`, and `mobile/.maestro/**` invocations. That profile tests shared Compose semantics/state/layout from `commonTest` in `jvmTest` and `connectedAndroidTest`; the optional iOS simulator lane remains available when the Apple toolchain exists. The closed UJ-1 through UJ-4/SM-9 catalog maps each entry to one fingerprinted Maestro 2.7.0 flow on Android/iOS plus binary-bound privacy/network and explicit native-gap evidence.
-- GitHub Actions is an optional adapter. The current checked-in workflow may run only reduced mobile JVM unit coverage; the former six-job matrix, hosted rulesets, trusted same-SHA evidence, and merge-group enforcement are not product gates. Local policy and quality entrypoints remain authoritative. Required Android instrumentation and device evidence remain mandatory for Android camera, permission, OS UI, accessibility, lifecycle, and hardware gaps; Apple/Xcode and physical-iOS records are good-to-have optional evidence.
-- **Low-friction interaction is a product-wide rule for every agent and story.** For user-interaction-affecting work, optimize the shortest safe happy path: minimize taps, scrolls, typing, and choice points; use only fields allowlisted by `contracts/interaction-policy/v1` and the protected mobile policy. Context defaults come from the immutable configuration snapshot; an approved catalog source may provide one atomic serving unit/amount only after canonical-item confirmation and never mutates the snapshot. No user-correction preference is persisted in the MVP. Show every default inline with its provenance, keep it editable and reversible, and preserve corrections only within the approved session scope. `MarketPolicyResolver` owns market-jurisdiction and processing-region resolution; those values must be shown before remote consent and users do not pick provider routing. Never silently default remote upload/consent or materially uncertain food identity. Medical/allergen conclusions are prohibited. User-interaction-affecting stories record required and bounded auxiliary interaction budgets plus proposal/decision IDs, digests, default/override paths, and forbidden-default tests; non-UI stories attest that they do not change them.
+## Policy, CI, and merge evidence
 
-## Shared agent memory and mobile work
+- Parse structured TOML/manifests with the typed parser; keep cached documents immutable, reject duplicate declarations and empty inventories, and fail closed. Do not reintroduce regex parsing or string round-tripping for policy decisions.
+- Local policy and quality checks are authoritative. GitHub Actions is an optional adapter: a zero-step, immediate failure is runner/billing evidence, not Gradle/test evidence. Never call hosted CI green when it is queued, failed, or billing-blocked.
+- Before push/merge, refresh the PR head, base, review state, and checks. Push or merge only when explicitly requested. If an admin merge overrides infrastructure failure, state that clearly and verify `origin/main` plus post-merge runs afterward.
 
-- This file is the canonical repository guide. `CLAUDE.md` imports it; do not duplicate its content between agent-specific files.
-- Store verified long-lived decisions in `docs/decisions/` and link detailed BLE protocol facts from there rather than growing this startup file.
-- Use the project-local `android-cli` skill for Android environment and device work, `$ble-kmp-hil` for BLE or physical-device work, and `$mobile-release` only when release work is explicitly requested.
-- Do not treat emulator or simulator results as Bluetooth proof. Never put signing credentials, store keys, pairing secrets, or raw sensitive BLE logs in repository guidance or skills.
+## Completion handoff
+
+- Run `git diff --check`; run `graphify update .` after code changes. Generated `build/` output is never staged; expected dirty graph files are not a reason to skip graphify.
+- Report exact branch, commit, worktree state, commands, device/host, test counts, reports, and limitations. Link real files with absolute paths when useful.
+- Commit only the intended slice. Leave unrelated WIP untouched. Do not claim completion until the evidence matches the full requested scope.
