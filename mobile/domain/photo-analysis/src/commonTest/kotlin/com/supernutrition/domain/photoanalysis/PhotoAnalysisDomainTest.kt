@@ -81,9 +81,101 @@ class PhotoAnalysisDomainTest {
         assertFailsWith<PhotoPreparationException> {
             PhotoInputNormalizer(maxDimension = 2, digest = { "a".repeat(64) }).normalize(raw(width = 3))
         }
-        assertEquals(2, PhotoInputNormalizer(maxDimension = 2, digest = { "a".repeat(64) })
-            .normalize(raw(width = 2, height = 2)).width)
-        assertFailsWith<PhotoPreparationException> { PhotoInputNormalizer(digest = { "not-a-digest" }).normalize(raw()) }
+        assertEquals(
+            2,
+            PhotoInputNormalizer(maxDimension = 2, digest = { "a".repeat(64) })
+                .normalize(raw(width = 2, height = 2))
+                .width,
+        )
+        assertFailsWith<PhotoPreparationException> {
+            PhotoInputNormalizer(digest = { "not-a-digest" }).normalize(raw())
+        }
+    }
+
+    @Test
+    fun `raw photo value operations compare every protected field`() {
+        val ref = leases.issue(attempt, "raw-value")
+        val otherRef = leases.issue(attempt, "raw-value-other")
+        val photo = RawPhoto(
+            ref = ref,
+            bytes = byteArrayOf(1, 2, 3),
+            width = 10,
+            height = 20,
+            orientation = ImageOrientation.UP,
+            colorSpace = "sRGB",
+            metadataKeys = emptySet(),
+        )
+
+        assertEquals(photo, photo.copy())
+        assertEquals(photo.hashCode(), photo.copy().hashCode())
+        assertContentEquals(byteArrayOf(1, 2, 3), photo.bytes)
+        assertFalse(photo.equals("not-a-photo"))
+        assertFalse(photo == photo.copy(ref = otherRef))
+        assertFalse(photo == photo.copy(bytes = byteArrayOf(9)))
+        assertFalse(photo == photo.copy(width = 11))
+        assertFalse(photo == photo.copy(height = 21))
+        assertFalse(photo == photo.copy(orientation = ImageOrientation.RIGHT))
+        assertFalse(photo == photo.copy(colorSpace = "Display-P3"))
+        assertFalse(photo == photo.copy(metadataKeys = setOf("EXIF")))
+    }
+
+    @Test
+    fun `restore rejects foreign expired and missing session content`() {
+        val foreign = PhotoRef.issue(AttemptId("foreign-attempt"), "foreign-restore")
+        assertEquals(
+            PhotoAnalysisState.Capture,
+            reducer.reduce(
+                PhotoAnalysisState.Capture,
+                PhotoAnalysisEvent.RestoreFromSnapshot(PhotoAnalysisBackgroundSnapshot.Preparing(foreign)),
+            ).state,
+        )
+        assertEquals(
+            PhotoAnalysisState.Capture,
+            reducer.reduce(
+                PhotoAnalysisState.Capture,
+                PhotoAnalysisEvent.RestoreFromSnapshot(PhotoAnalysisBackgroundSnapshot.Ready(foreign)),
+            ).state,
+        )
+        assertEquals(
+            PhotoAnalysisState.Capture,
+            reducer.reduce(
+                PhotoAnalysisState.Capture,
+                PhotoAnalysisEvent.RestoreFromSnapshot(
+                    PhotoAnalysisBackgroundSnapshot.Recovery(RecoveryReason.CANCELLED, foreign),
+                ),
+            ).state,
+        )
+
+        val expired = leases.issue(attempt, "expired-restore")
+        leases.revoke(expired)
+        assertEquals(
+            PhotoAnalysisState.Capture,
+            reducer.reduce(
+                PhotoAnalysisState.Capture,
+                PhotoAnalysisEvent.RestoreFromSnapshot(PhotoAnalysisBackgroundSnapshot.Preparing(expired)),
+            ).state,
+        )
+        assertEquals(
+            PhotoAnalysisState.Recovery(RecoveryReason.CAPTURE_FAILED, expired),
+            reducer.reduce(
+                PhotoAnalysisState.Capture,
+                PhotoAnalysisEvent.RestoreFromSnapshot(PhotoAnalysisBackgroundSnapshot.Ready(expired)),
+            ).state,
+        )
+
+        val activeWithoutSession = leases.issue(attempt, "missing-session-restore")
+        assertEquals(
+            PhotoAnalysisState.Recovery(RecoveryReason.CAPTURE_FAILED, activeWithoutSession),
+            reducer.reduce(
+                PhotoAnalysisState.Capture,
+                PhotoAnalysisEvent.RestoreFromSnapshot(
+                    PhotoAnalysisBackgroundSnapshot.CandidateReview(
+                        activeWithoutSession,
+                        RequestId("missing-session-request"),
+                    ),
+                ),
+            ).state,
+        )
     }
 
     @Test

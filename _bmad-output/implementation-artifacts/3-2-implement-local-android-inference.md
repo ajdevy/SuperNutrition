@@ -1,0 +1,334 @@
+---
+baseline_commit: 84fc6d7e2128b01a45a9b7cec8b37755d04120e6
+---
+
+# Story 3.2: Implement local Android inference
+
+Status: in-progress
+
+<!-- This story is the Android adapter slice for Epic 3. Runtime/model selection and physical-device activation remain gated by G-3. -->
+
+## Story
+
+As an Android local-inference owner,
+I want an Android-specific Local Engine behind the shared contract,
+so that eligible devices can analyze without transmitting Photo Input.
+
+## Acceptance Criteria
+
+1. **Contract and ownership boundary**
+   - Given `mobile/domain/inference` publishes `photo-inference-engine/v1`, when
+     the Android adapter is built, then it implements that exact
+     `PhotoInferenceEngine` contract and emits only contract-v1 capability,
+     candidate, abstention, or typed-failure evidence.
+   - The adapter is owned by `mobile/inference/local-android`; it may depend
+     inward on `domain:inference` and the existing photo-analysis content port,
+     but it does not depend on local iOS, remote inference, UI, Koin global
+     state, or the nutrition catalog.
+   - No new DTO or copied JSON schema is introduced outside
+     `mobile/domain/inference`; the adapter consumes the existing contract
+     types and fixtures unchanged.
+
+2. **Fail-closed capability and local-only execution**
+   - Given an Android runtime reports `ready`, when capability is requested,
+     then the engine returns a ready contract-v1 capability with non-blank
+     engine and immutable model provenance.
+   - Given a missing, downloading, incompatible, unsupported, temporarily
+     unavailable, or over-budget runtime, when capability is requested, then
+     the engine returns the corresponding unavailable contract state and never
+     attempts to read or transmit Photo Input.
+   - Given a ready capability, when an attempt starts, then the adapter reads
+     normalized bytes only through the attempt-scoped photo content port,
+     invokes the injected Android runtime locally, and performs zero network
+     calls or image transfers. This must be asserted with a recording fake,
+     not inferred from configuration.
+
+3. **Evidence and safety semantics**
+   - A successful or abstaining result preserves local route, contract version,
+     engine ID, model version, calibration version, confidence/abstention
+     provenance, and no numeric nutrition fields.
+   - A stale, foreign-attempt, missing, zero-byte, metadata-bearing, or
+     revoked `PhotoRef` is rejected as a typed contract/input failure without
+     invoking the runtime.
+   - `CancellationException` is rethrown. Cancellation invalidates the active
+     attempt before releasing runtime resources; a late runtime callback cannot
+     publish a result.
+   - Photo bytes, filenames, paths, user labels, model prompts/responses, and
+     transport bodies never appear in logs, telemetry, exceptions, or test
+     artifacts.
+
+4. **Model package boundary and evidence**
+   - The adapter consumes a runtime/model boundary that exposes immutable model
+     version, integrity identity, compatibility tier, calibration version, and
+     whether the model is app-managed or platform-managed.
+   - App-managed model activation is atomic and rollback-aware; platform-managed
+     models report the strongest available runtime/OS provenance and are never
+     described as app-rollback-capable. The adapter must fail closed when
+     integrity or compatibility is unverifiable.
+   - No concrete ML runtime, model asset, download origin, or accelerator is
+     selected in this story before the signed G-3 exit artifact names it. A
+     test runtime is sufficient for deterministic adapter tests; it is not
+     production inference evidence.
+   - The story records Android physical-device evidence for local-only network
+     behavior, cancellation/lifecycle, model/resource compatibility, latency,
+     peak memory, thermal, battery, and rollback behavior using the approved
+     G-3 device matrix. Emulator/JVM results cannot satisfy this criterion.
+
+5. **Quality and scope**
+   - The module has colocated focused tests covering all capability states,
+     provenance, candidate/abstention/failure mapping, no-network behavior,
+     bad input, cancellation, late emissions, integrity/compatibility failure,
+     resource-budget failure, and rollback semantics.
+   - Measurable production code meets the repository's 85% line and branch
+     module/product floors and 100% changed-line and changed-branch coverage;
+     native/device behavior is mapped to executable evidence rather than
+     hidden through exclusions.
+   - This non-UI story does not change interaction budgets, defaults, consent
+     copy, navigation, catalog selection, remote routing, iOS code, or the
+     irreversible `photo-analysis` UI evidence profile.
+
+## Tasks / Subtasks
+
+- [x] Establish the Android local-engine module and inward dependency boundary (AC: 1, 5)
+  - [x] Add `mobile/inference/local-android/build.gradle.kts` using the checked-in
+    KMP/Android convention and package namespace; do not add an unapproved
+    runtime dependency or literal version.
+  - [x] Add the adapter's declared source-set/module ownership and lock state
+    through the separately owned mobile build/quality policy handoff; do not
+    weaken or filter the existing manifests.
+  - [x] Verify the module depends only on the shared inference contract and
+    existing inward photo-content/domain ports.
+
+- [x] Define the injectable Android runtime/model boundary (AC: 2, 4)
+  - [x] Create a small adapter-owned runtime port for capability, model
+    provenance, normalized input, typed outcome mapping, cancellation, and
+    resource release.
+  - [x] Represent app-managed versus platform-managed model provenance without
+    claiming app rollback for a platform-managed model.
+  - [x] Make unverifiable digest, compatibility, or budget data fail closed to
+    the shared capability/failure vocabulary.
+
+- [x] Implement `LocalAndroidInferenceEngine` over contract-v1 (AC: 1–3)
+  - [x] Bind `contractVersion` explicitly to
+    `photo-inference-engine/v1` and map runtime output into shared candidate,
+    abstention, and failure types.
+  - [x] Read content through the existing attempt-scoped normalized photo port;
+    never accept a URI, Android `Bitmap`, filesystem path, or raw platform
+    object in the shared contract.
+  - [x] Enforce current attempt/lease and digest lease invariants before runtime
+    invocation; normalized input invariants are enforced by the shared
+    `NormalizedPhotoInput` constructor.
+  - [x] Re-throw coroutine cancellation, release resources, and suppress late
+    emissions after cancellation or input replacement.
+
+- [x] Add deterministic adapter tests first, then implementation (AC: 2–5)
+  - [x] Use recording fakes for the runtime and photo content; prove a ready
+    local attempt has zero network attempts and zero image bytes transmitted.
+  - [x] Cover every capability state and reason, invalid input, provenance,
+    candidate ranking, abstention, typed failures, cancellation, late results,
+    integrity/compatibility/resource rejection, app-managed rollback, and
+    platform-managed non-rollback semantics.
+  - [ ] Add forbidden-artifact/log assertions for raw photo bytes, paths,
+    filenames, labels, prompts, responses, secrets, and headers.
+
+- [ ] Execute quality and Android evidence gates (AC: 4–5)
+  - [x] Run focused local-Android tests, strict dependency/lock/policy validation,
+    Detekt, Android compilation, and changed-code coverage; the aggregate
+    `qualityCheckJvmAndroid` remains blocked by the pre-existing empty BRANCH
+    denominator in `domain:nutrition`.
+  - [ ] Run the dedicated E3.2 physical Android inference scenario and emit
+    evidence bound to commit, APK/module digest, fixture/config/model digests,
+    device/OS, task version, and execution time. The available explicit-serial
+    run completed 15/15 UI/semantics tests on DNY-NX9 / Android 16; it does not
+    exercise local inference, network isolation, or G-3 benchmark behavior.
+    Clean-worktree evidence emission and the signed G-3 exit artifact remain
+    outstanding.
+  - [ ] Update only the story record and owned module/test files plus any
+    separately approved policy/evidence handoff files; do not modify iOS,
+    remote, UI, catalog, root product, or unrelated WIP.
+
+## Dev Notes
+
+### Gate and scope guardrails
+
+- The authoritative Epic E3.2 source is
+  `_bmad-output/planning-artifacts/epics.md` (Story E3.2, traceability
+  FR-6..FR-7, FR-12, FR-24, NFR-2..NFR-3, NFR-7, NFR-9..NFR-12, AR-2..AR-3,
+  AR-7, AR-9, AR-17).
+- Architecture G-3 currently blocks production Android/iOS local-engine
+  activation. Its exit artifact must select the device/OS tiers, runtime,
+  model, download policy, and latency/memory/thermal/battery budgets from a
+  signed real-device benchmark. Until it exists, implement only the
+  deterministic adapter/runtime seam and fail-closed behavior; do not choose
+  LiteRT, ONNX Runtime, Gemini Nano/AICore, MediaPipe, ExecuTorch, or another
+  runtime on behalf of the product.
+- This story owns `mobile/inference/local-android` and its colocated tests as
+  one adapter slice. `mobile/domain/inference` remains the contract owner;
+  `mobile/domain/photo-analysis` remains the owner of routing, consent,
+  fallback, and attempt coordination; `mobile/inference/local-ios` and
+  `mobile/inference/remote` remain independent.
+
+### Existing code and patterns to preserve
+
+- `PhotoInferenceEngine`, `PhotoInferenceRequest`, `PhotoInferenceResult`,
+  `EngineCapability`, `InferenceOutcome`, `InferenceProvenance`, and all enums
+  are already implemented in
+  `mobile/domain/inference/src/commonMain/kotlin/com/supernutrition/domain/inference/`.
+  Use them directly and preserve the immutable v1 fixtures under
+  `contracts/inference/v1`.
+- `PhotoRef` is opaque and attempt-scoped. Normalized content is currently
+  owned by `domain/photo-analysis` through `PhotoSessionStorePort` and
+  `NormalizedPhotoInput`; do not create a second lease/content store or expose
+  Android `Uri`, `Bitmap`, or file paths to common/domain code.
+- The mobile settings registry already declares `:inference:local-android`.
+  The absent directory is intentional until this story materializes it. Any
+  manifest, boundary, denominator, owner, or task registration must use the
+  existing protected schema and its owner-scoped handoff; never make a module
+  invisible by filtering it out.
+- Use the checked-in versions in `mobile/gradle/libs.versions.toml` and the
+  existing convention plugins. Do not upgrade dependencies, add repositories,
+  add a root workspace, or add a provider SDK.
+
+### Required architecture behavior
+
+- Follow AD-1, AD-2, AD-3, AD-4, AD-6, AD-9, AD-10, AD-11, AD-15, AD-17,
+  AD-18, AD-21, AD-22, AD-25 through AD-30, and AD-33. In particular:
+  - route is `LOCAL`; contract is explicitly v1; output contains no numeric
+    nutrition;
+  - one active attempt owns the read and result; cancellation wins over a late
+    callback; `CancellationException` is never mapped to a failure;
+  - model provenance is immutable and reproducible; package integrity,
+    compatibility, atomic activation, and rollback are explicit where the app
+    controls the package;
+  - system-managed model state is capability evidence, not an app rollback
+    promise;
+  - production code receives runtime/content dependencies through constructors;
+    it never reaches into global Koin state;
+  - no photo body, raw response, path, filename, label, secret, header, or
+    transport body is logged or placed in telemetry.
+- The adapter must not own routing or consent. A later E3.4 story consumes the
+  shared engine capability/evidence and decides local-first escalation.
+- No UI or Compose changes are expected. The current UI evidence profile must
+  remain unchanged because this slice does not add a product screen or
+  scenario.
+
+### Testing and evidence requirements
+
+- Start with failing tests and use deterministic fakes. Do not use a live model,
+  live network, provider, or nondeterministic device output as a unit-test
+  oracle.
+- The shared contract suite must run unchanged against the adapter. Adapter
+  fixtures may add Android-specific runtime/model faults but must not edit the
+  canonical contract fixtures.
+- Android device evidence is required for claims about local network isolation,
+  lifecycle/cancellation, latency, memory, thermal, battery, model
+  compatibility, and rollback. Emulator/JVM tests can prove deterministic
+  mapping and cancellation logic only.
+- Quality entrypoints are read-only. Formatting/autocorrection belongs only to
+  `qualityFormat`; do not run it as part of validation or CI.
+- Every generated evidence record must bind commit SHA, binary/module digest,
+  fixture/config/model digests, device/OS identity, task version, and execution
+  time. A missing or stale G-3 artifact is an outstanding gate, not success.
+
+### Interaction-budget attestation
+
+This is a non-UI story. It does not add taps, scrolls, fields, choices,
+text-entry, recovery actions, defaults, consent prompts, or persistence. The
+interaction budget and protected default policy remain unchanged.
+
+### References
+
+- [Source: `_bmad-output/planning-artifacts/epics.md`, Epic E3 and Story E3.2]
+- [Source: `_bmad-output/planning-artifacts/architecture/architecture-SuperNutrition-2026-07-26/ARCHITECTURE-SPINE.md`, AD-1 through AD-11, AD-22, AD-25 through AD-35, G-3]
+- [Source: `_bmad-output/planning-artifacts/architecture/architecture-SuperNutrition-2026-07-26/solution-design.md`, module and shared inference contract sections]
+- [Source: `_bmad-output/planning-artifacts/architecture/architecture-SuperNutrition-2026-07-26/implementation-agent-guide.md`, mandatory project overrides and KMP implementation guidance]
+- [Source: `_bmad-output/implementation-artifacts/3-1-freeze-contract-v1-inference-ports.md`, completed contract-v1 implementation and validation evidence]
+- [Source: `mobile/domain/inference/src/commonMain/kotlin/com/supernutrition/domain/inference/InferenceContract.kt`, request/engine port]
+- [Source: `mobile/domain/inference/src/commonMain/kotlin/com/supernutrition/domain/inference/InferenceModels.kt`, capability/evidence types]
+- [Source: `mobile/domain/photo-analysis/src/commonMain/kotlin/com/supernutrition/domain/photoanalysis/PhotoAnalysisDomain.kt`, attempt-scoped normalized photo store]
+- [Research: https://developer.android.com/ai/overview, Android on-device AI paths and custom-model/LiteRT distinction, consulted 2026-07-31]
+- [Research: https://developer.android.com/ai/gemini-nano, platform-managed AICore model provenance and device-managed model behavior, consulted 2026-07-31]
+- [Research: https://onnxruntime.ai/docs/tutorials/mobile/, mobile runtime packaging and the need to measure size, latency, power, and memory, consulted 2026-07-31]
+
+## Dev Agent Record
+
+### Agent Model Used
+
+GPT-5 / Codex
+
+### Implementation Plan
+
+1. Confirm G-3 status and read the existing contract/content seams.
+2. Write failing deterministic runtime/engine tests for capability, local-only
+   execution, provenance, cancellation, late emissions, and fail-closed model
+   state.
+3. Add the minimal `mobile/inference/local-android` adapter and test doubles,
+   with no unapproved ML runtime dependency.
+4. Run contract, focused, policy, coverage, and Android evidence gates; record
+   any G-3-dependent evidence as outstanding.
+
+### Debug Log References
+
+- 2026-07-31: G-3 exit artifact was not present in the checked-in architecture
+  evidence; runtime/model selection is therefore intentionally deferred.
+
+### Completion Notes List
+
+- Story context created from the authoritative Epic E3.2, architecture spine,
+  completed E3.1 contract slice, and current Android on-device runtime docs.
+- Implemented the injectable Android runtime/model seam and contract-v1 adapter
+  in `mobile/inference/local-android`; no concrete ML runtime or model was
+  selected because the signed G-3 exit artifact is still absent.
+- Added deterministic tests for all capability states, local-only execution,
+  provenance, abstention/failure mapping, input leases, cancellation, late
+  results, rollback ownership, and invalid runtime metadata.
+- Focused module coverage is 99.3151% line and 90.7895% branch; the aggregate
+  quality gate remains blocked by the pre-existing `domain:nutrition` empty
+  BRANCH denominator.
+- The physical Android acceptance task completed 15/15 tests on the explicit
+  `AU3N025429006787` serial after fixing ViewModel reflection visibility and
+  the Compose resource-ID assertion helper. Clean-worktree evidence emission,
+  forbidden-artifact/log assertions, and signed G-3 evidence remain
+  outstanding; this story is not production-ready or complete.
+
+### File List
+
+- `_bmad-output/implementation-artifacts/3-2-implement-local-android-inference.md`
+- `mobile/inference/local-android/build.gradle.kts`
+- `mobile/inference/local-android/gradle.lockfile`
+- `mobile/inference/local-android/src/commonMain/kotlin/com/supernutrition/inference/localandroid/LocalAndroidInference.kt`
+- `mobile/inference/local-android/src/commonTest/kotlin/com/supernutrition/inference/localandroid/LocalAndroidInferenceEngineTest.kt`
+- `mobile/feature/photo-analysis/src/androidMain/kotlin/com/supernutrition/feature/photoanalysis/PhotoAnalysisComposeActivity.kt`
+- `mobile/apps/androidApp/src/androidTest/java/com/supernutrition/android/PhotoAnalysisComposeSemanticsInstrumentationTest.java`
+- `mobile/config/quality/module-matrix.toml`
+- `mobile/config/quality/coverage.toml`
+- `mobile/config/quality/evidence-bindings.toml`
+- `_bmad-output/implementation-artifacts/sprint-status.yaml`
+
+### Change Log
+
+- 2026-07-31: Created the implementation-ready E3.2 story with explicit G-3
+  guardrails, adapter ownership, deterministic test scope, and physical-device
+  evidence requirements.
+- 2026-07-31: Started E3.2 implementation with the fail-closed Android adapter,
+  colocated tests, module/coverage registration, and exact validation status.
+
+### Review Findings
+
+- [x] [Review][Patch] Lease validation, native cancellation, and malformed
+  runtime output are now fail-closed before a result can publish
+  [mobile/inference/local-android/src/commonMain/kotlin/com/supernutrition/inference/localandroid/LocalAndroidInference.kt].
+- [x] [Review][Patch] Ready model provenance now requires explicit verified
+  runtime evidence and preserves app/platform rollback ownership semantics
+  [mobile/inference/local-android/src/commonMain/kotlin/com/supernutrition/inference/localandroid/LocalAndroidInference.kt].
+- [x] [Review][Patch] Runtime exception details are sanitized into the shared
+  typed failure vocabulary; raw payloads are not returned to callers
+  [mobile/inference/local-android/src/commonMain/kotlin/com/supernutrition/inference/localandroid/LocalAndroidInference.kt].
+- [x] [Review][Patch] Host/device test visibility and resource-ID fixes are
+  recorded in this story's file list as validation-support changes; they do
+  not select or activate a production inference runtime
+  [mobile/feature/photo-analysis/src/androidMain/kotlin/com/supernutrition/feature/photoanalysis/PhotoAnalysisComposeActivity.kt].
+- [x] [Review][Defer] Dedicated Epic 3 physical inference/network/G-3 evidence
+  remains deferred because the signed G-3 runtime/model benchmark and clean
+  evidence-producing scenario are not present; the 15/15 run is UI evidence
+  only.

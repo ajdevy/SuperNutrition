@@ -152,7 +152,7 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         super.onStop()
     }
 
-    private class RetainedState : ViewModel() {
+    class RetainedState : ViewModel() {
         val feature = PhotoAnalysisFeature(
             attemptId = AttemptId(AndroidPhotoAttemptIds.CAPTURE),
             leases = PhotoLeaseStore(),
