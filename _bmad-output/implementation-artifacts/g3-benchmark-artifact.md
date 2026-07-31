@@ -167,6 +167,25 @@ requirements.
 | Model integrity | pinned SHA before session creation; mismatch fails closed | pass | pass |
 | Network/privacy | no photo upload or product API call | pass | pass |
 
+### Relaxed local-wait proposal
+
+Product direction for the ingredient/weight experiment allows a long local
+wait when the UI continuously explains the active stage and exposes Cancel.
+The following exploratory tiers capture that direction without signing a
+production G-3 budget:
+
+| Tier | Cold init | Analysis | Peak process memory | Required UX |
+| --- | ---: | ---: | ---: | --- |
+| High | <= 15 s | <= 45 s | <= 512 MB | stage copy, bounded progress refresh, Cancel |
+| Mid | <= 30 s | <= 90 s | <= 768 MB | stage copy, bounded progress refresh, Cancel |
+| Low | no hard promise | dish-only/manual fallback | device-dependent | do not load the heavy stack after a memory gate |
+
+The current Food-101 semantic runner fits the exploratory High resource
+envelope on both measured devices, but it does not emit ingredients or grams.
+FPB/YOLOv12-FoodWeight has not yet been measured on either phone, so these
+tiers must not be treated as FPB device acceptance or as owner-approved G-3
+budgets.
+
 ## Preprocessing and camera decision
 
 The host comparison tested seven preprocessing variants on the five semantic
