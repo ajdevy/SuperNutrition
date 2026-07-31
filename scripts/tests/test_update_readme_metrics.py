@@ -47,6 +47,7 @@ class UpdateReadmeMetricsTest(unittest.TestCase):
         self.assertIn("JVM%20line", section)
         self.assertIn("### Report links", section)
         self.assertIn("run-local-ci.sh jvm", section)
+        self.assertIn("Docker", section)
 
     def test_replace_section_preserves_surrounding_readme(self) -> None:
         readme = f"# Project\n\n{START_MARKER}\nold\n{END_MARKER}\n\n## Next\n"

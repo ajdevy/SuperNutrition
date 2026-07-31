@@ -53,5 +53,8 @@ evidence without charging every pull request. Android SDK installation is
 conditional on incomplete packages and bounded by a timeout, emulator startup
 is bounded and fail-fast, and instrumentation plus APK assembly share one
 Gradle invocation. The exact local equivalents are exposed by
-`scripts/run-local-ci.sh`; `jvm` is the default, while `android`,
-`ios`, and `all` require the corresponding native toolchains.
+`scripts/run-local-ci.sh`; `jvm` is the default, `docker` runs the same Linux
+JVM/report gate in a container, and `android`, `ios`, and `all` require the
+corresponding native toolchains. Docker is intentionally limited to the JVM
+and report lane: iOS requires macOS/Xcode, and Android UI evidence requires a
+host-accelerated emulator.
