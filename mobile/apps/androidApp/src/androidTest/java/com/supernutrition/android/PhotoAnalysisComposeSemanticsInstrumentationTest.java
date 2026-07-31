@@ -28,9 +28,10 @@ public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
                 .getLaunchIntentForPackage(targetContext.getPackageName());
         assertNotNull("the acceptance app must expose a launcher activity", launchIntent);
         launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        targetContext.startActivity(launchIntent);
+        InstrumentationRegistry.getInstrumentation().startActivitySync(launchIntent);
 
         UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        device.waitForIdle();
         assertSemantic(device, UiAutomationIds.INSTANCE.getPHOTO_ANALYSIS_TITLE().getValue(),
                 targetContext.getString(R.string.capture_title));
         assertSemantic(device, UiAutomationIds.INSTANCE.getPHOTO_ANALYSIS_STATUS().getValue(),
