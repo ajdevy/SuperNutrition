@@ -1,14 +1,19 @@
-# Coverage and source-line dashboard
+# Coverage and source-line reporting in README
 
 ## Decision
 
-Publish a static quality dashboard from GitHub Actions to GitHub Pages on each
-push to `main`. The dashboard contains:
+Publish a generated quality snapshot in the repository README. The snapshot
+contains:
 
 - the weighted JVM-host line and branch coverage already enforced by the
   mobile coverage inventory;
-- one Kover HTML report link per committed coverage denominator; and
+- one Kover coverage row per committed coverage denominator; and
 - a tracked-source line counter with an explicit scope and definition.
+
+GitHub Actions rebuilds the report data and fails when the marked README
+section is stale. This keeps the committed README values reviewable in pull
+requests without requiring GitHub Pages, a separate hosting plan, or a
+third-party coverage service.
 
 The dashboard is reporting evidence, not a replacement for the local quality
 policy or native/device evidence. Native-equivalent Kover observations remain
@@ -16,11 +21,6 @@ separate from the JVM-host headline and are not presented as product-wide
 native coverage.
 
 ## Research and trade-offs
-
-GitHub's custom Pages workflow uses a Pages artifact followed by the deploy
-action. The deployment job must grant `pages: write` and `id-token: write`, use
-the `github-pages` environment, and depend on the artifact-build job:
-<https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages>.
 
 Kover 0.9.8 already provides HTML and XML report tasks for Kotlin Multiplatform
 JVM and Android-host variants, so no second coverage engine is introduced:
@@ -38,12 +38,9 @@ important later, `cloc` is the most conservative replacement candidate:
 
 ## Scope and operation
 
-The Pages workflow is separate from `ci-required.yml`, preserving the current
-reduced CI adapter and its policy fingerprint. It runs only on `main` (or an
-explicit manual run), uses full-SHA-pinned actions, and fails if an inventory
-report or its HTML companion is missing. `web/landing` remains preselection and
-does not become the report site.
-
-GitHub repository settings must have Pages enabled with **GitHub Actions** as
-the publishing source. The workflow creates/uses the `github-pages` deployment
-environment; the resulting URL is exposed in the workflow run summary.
+The README workflow is separate from `ci-required.yml`, preserving the current
+reduced CI adapter and its policy fingerprint. It runs on pull requests, pushes
+to `main`, or an explicit manual run, uses a full-SHA-pinned checkout, and
+fails if an inventory report, its HTML companion, or the marked README
+snapshot is missing or stale. `web/landing` remains preselection and does not
+become the report site.
