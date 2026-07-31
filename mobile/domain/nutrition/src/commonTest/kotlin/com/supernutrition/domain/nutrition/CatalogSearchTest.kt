@@ -110,21 +110,22 @@ class CatalogSearchTest {
     }
 
     @Test
-    fun `a regional variant name finds the record it names`() {
+    fun `an alternate name finds the record it names`() {
         val search = CatalogSearch(
             listOf(
                 CatalogRecord(
-                    canonicalItemId = "food:avocado",
-                    displayName = "Aguacate",
-                    alternateNames = listOf("palta", "avocado"),
+                    canonicalItemId = "food:eggplant",
+                    displayName = "Eggplant",
+                    alternateNames = listOf("aubergine", "баклажан"),
                 ),
             ),
         )
 
-        // palta and aguacate are different words for one food, not spellings or
-        // inflections of each other. Both must reach the same canonical id, or
-        // the catalog only serves whichever dialect the record was written in.
-        assertEquals(listOf("food:avocado"), search.search("palta").map { it.canonicalItemId })
+        // aubergine and eggplant are different words for one food, not
+        // spellings or inflections of each other, so nothing but data connects
+        // them. Without this, the catalog serves only the wording its author
+        // happened to choose.
+        assertEquals(listOf("food:eggplant"), search.search("aubergine").map { it.canonicalItemId })
     }
 
     @Test

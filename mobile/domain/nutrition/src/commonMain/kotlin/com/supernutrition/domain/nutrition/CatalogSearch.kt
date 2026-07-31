@@ -5,7 +5,7 @@ package com.supernutrition.domain.nutrition
  *
  * [alternateNames] carries regional variants, alternate spellings, and
  * cross-language names for the same food. They are matched but never displayed:
- * a Chilean typing `palta` and a Mexican typing `aguacate` reach one record, and
+ * someone typing `aubergine` and someone typing `баклажан` reach one record, and
  * both then read the catalog's own name for it rather than a translation the
  * catalog cannot vouch for.
  */

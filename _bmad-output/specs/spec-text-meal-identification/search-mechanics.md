@@ -82,33 +82,32 @@ Each supported market declares a row in a language matrix. The matrix is data, v
 
 English-only behaviour is not a valid default for a market whose catalog is not in English.
 
-### First three languages
+### First two languages
 
-English, Spanish, and Russian. They were chosen as the first targets and they happen to exercise every branch of the matrix, so shipping all three proves the design rather than one path through it:
+English and Russian. Spanish was an earlier target and was dropped from scope; the notes below record what that removes, because a dropped language takes its coverage with it.
 
 | Language | Script | Morphology | Dominant cost |
 | --- | --- | --- | --- |
 | English | Latin | None beyond plurals; synonyms suffice | Baseline |
-| Spanish | Latin with diacritics | Light stemming for gender and number | Regional naming variance |
 | Russian | Cyrillic | Full lemmatization across cases | Inflection plus cross-script entry |
 
-A fourth language that fits one of these three profiles is incremental. One that does not — an unwritten tonal language, a language without whitespace word boundaries — is a new profile and a new decision.
+These two sit at opposite ends of the matrix, which is useful — but they no longer cover the middle. Spanish was the only target needing light stemming with diacritics, so that profile is now designed and untested. A future market landing on it is a new decision, not an increment.
+
+The diacritic fold in query normalization loses its main justification with Spanish gone: Cyrillic does not use Latin-1 accents. It still earns its place through English loanwords such as *café* and *jalapeño*, and through Russian ё/е, but it is close to unexercised and is a deletion candidate if no accented market is ever added.
 
 ### Input language is not catalog language
 
-This is the cost most easily underestimated. An accepted input language does not imply a catalog in that language: a Spanish speaker in the United States searches Spanish against English USDA records, and a Russian speaker there searches Cyrillic against the same English records.
+This is the cost most easily underestimated. An accepted input language does not imply a catalog in that language: a Russian speaker in the United States searches Cyrillic against English USDA records.
 
-So the synonym layer is keyed per **(catalog, input language)** pair, not per language. Adding Spanish input to the US catalog means mapping Spanish food names onto that catalog's canonical IDs; it does not mean shipping a Spanish catalog. Fixtures are keyed the same way — a language proven against one catalog is not proven against another.
+So the synonym layer is keyed per **(catalog, input language)** pair, not per language. Adding Russian input to the US catalog means mapping Russian food names onto that catalog's canonical IDs; it does not mean shipping a Russian catalog. Fixtures are keyed the same way — a language proven against one catalog is not proven against another.
 
 Display always uses the catalog record's own name, so a user who searches in one language and reads results in another sees exactly what the record says rather than a translation the catalog cannot vouch for.
 
-### Regional naming
+### Alternate naming
 
-Spanish is where this bites hardest, and it costs more than Spanish grammar does. Avocado is *palta* across much of South America and *aguacate* in Mexico and Spain. Beans are *frijoles*, *judías*, *porotos*, or *habichuelas* depending on where the speaker is from. None of these is a spelling variant or an inflected form; they are different words for the same food.
+One food answers to more than one word, and no amount of normalization or fuzzy matching connects those words — only data does. English alone shows it: *aubergine* and *eggplant*, *coriander* and *cilantro*. Russian adds regional and Soviet-era names alongside its inflected forms.
 
-The resolution is to accept every regional variant as a synonym onto the same canonical ID rather than selecting a regional dialect per market. Search exists to find things, and inclusiveness costs nothing at query time — a Chilean and a Mexican typing different words reach the same record. Regional preference belongs to display, which already uses the catalog's own name.
-
-The same pattern covers English (*aubergine* and *eggplant*, *coriander* and *cilantro*) and Russian regional and Soviet-era food names.
+The resolution is to accept every variant as a synonym onto the same canonical ID rather than selecting one wording per market. Search exists to find things, and inclusiveness costs nothing at query time. Preference belongs to display, which already uses the catalog's own name.
 
 ### Inflection
 
