@@ -82,6 +82,19 @@ struct PhotoAnalysisComposeHost: UIViewControllerRepresentable {
                 context.coordinator.handle(action: action)
             },
         )
+        let launchMarker = UIView(frame: .zero)
+        launchMarker.isAccessibilityElement = true
+        launchMarker.accessibilityIdentifier = SharedKitAutomationIds.shared.bootstrapLaunchMarker
+        launchMarker.accessibilityLabel = String(localized: "bootstrap.ready")
+        launchMarker.alpha = 0.01
+        launchMarker.translatesAutoresizingMaskIntoConstraints = false
+        controller.view.addSubview(launchMarker)
+        NSLayoutConstraint.activate([
+            launchMarker.leadingAnchor.constraint(equalTo: controller.view.leadingAnchor),
+            launchMarker.topAnchor.constraint(equalTo: controller.view.topAnchor),
+            launchMarker.widthAnchor.constraint(equalToConstant: 1),
+            launchMarker.heightAnchor.constraint(equalToConstant: 1),
+        ])
         context.coordinator.hostViewController = controller
         return controller
     }
@@ -158,7 +171,7 @@ final class PhotoAnalysisPresentationCoordinator {
         )
     }
 
-    private func complete(_ data: NSData?) {
+    private func complete(_ data: Data?) {
         onMain { [weak self] in
             guard let self else { return }
             if let data { session.photoReturned(opaqueId: UUID().uuidString, sourceData: data) }
