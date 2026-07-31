@@ -4,6 +4,7 @@ set -euo pipefail
 ROOT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 : "${ANDROID_DEVICE_SERIAL:?Set ANDROID_DEVICE_SERIAL to one physical adb serial}"
 EXPECTED_MODEL_SHA='9070f8097cda88923f77774d93d9fead7cee344486521c7fc5142806642061df'
+EXPECTED_MEAL_MANIFEST_SHA='d312e9c7408aa474df38ff823d9fd3fc6c8a3a86cffc94df7ce53391c6975292'
 
 "$ROOT_DIR/download-assets.sh"
 adb -s "$ANDROID_DEVICE_SERIAL" get-state | grep -qx device
@@ -28,7 +29,8 @@ for attempt in $(seq 1 "${G3_RESULT_POLL_ATTEMPTS:-180}"); do
   if adb -s "$ANDROID_DEVICE_SERIAL" exec-out run-as \
       com.supernutrition.g3benchmark cat files/result.json > "$RESULT_TMP" 2>/dev/null \
       && jq -e --arg sha "$EXPECTED_MODEL_SHA" \
-        '.status == "success" and .model_sha256 == $sha' "$RESULT_TMP" >/dev/null 2>&1; then
+        --arg meal_sha "$EXPECTED_MEAL_MANIFEST_SHA" \
+        '.status == "success" and .model_sha256 == $sha and .meal_benchmark_manifest_sha256 == $meal_sha and .meal_benchmark_fixture_count == 5 and (.ingredient_benchmark.status | type) == "string" and (.weight_benchmark.status | type) == "string"' "$RESULT_TMP" >/dev/null 2>&1; then
     mv "$RESULT_TMP" "$RESULT_DIR/result.json"
     break
   fi

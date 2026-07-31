@@ -5,6 +5,7 @@ ROOT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 : "${IOS_DEVICE_UDID:?Set IOS_DEVICE_UDID to one physical device UDID}"
 : "${DEVELOPMENT_TEAM:?Set DEVELOPMENT_TEAM to the Apple development team selected in Xcode}"
 EXPECTED_MODEL_SHA='9070f8097cda88923f77774d93d9fead7cee344486521c7fc5142806642061df'
+EXPECTED_MEAL_MANIFEST_SHA='d312e9c7408aa474df38ff823d9fd3fc6c8a3a86cffc94df7ce53391c6975292'
 
 "$ROOT_DIR/download-assets.sh"
 command -v xcodegen >/dev/null
@@ -34,7 +35,8 @@ for attempt in $(seq 1 "${G3_RESULT_POLL_ATTEMPTS:-180}"); do
       --source Library/Caches/result.json --destination "$RESULT_TMP" \
       --quiet >/dev/null 2>&1 \
       && jq -e --arg sha "$EXPECTED_MODEL_SHA" \
-        '.status == "success" and .model_sha256 == $sha' "$RESULT_TMP" >/dev/null 2>&1; then
+        --arg meal_sha "$EXPECTED_MEAL_MANIFEST_SHA" \
+        '.status == "success" and .model_sha256 == $sha and .meal_benchmark_manifest_sha256 == $meal_sha and .meal_benchmark_fixture_count == 5 and (.ingredient_benchmark.status | type) == "string" and (.weight_benchmark.status | type) == "string"' "$RESULT_TMP" >/dev/null 2>&1; then
     mv "$RESULT_TMP" "$RESULT_DIR/result.json"
     cat "$RESULT_DIR/result.json"
     if ! jq -e '.status == "success" and .semantic_pass == true' "$RESULT_DIR/result.json" >/dev/null; then
