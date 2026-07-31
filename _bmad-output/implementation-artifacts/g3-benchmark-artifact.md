@@ -120,6 +120,13 @@ preserves the user's untracked manual-testing presentation; they are
 correctness evidence and do not close the signed runtime/model, ingredient,
 or weight gates.
 
+On 2026-08-01, the same device matrix was rerun against the unchanged
+production code from `5f6c8772`: Android local adapter `4/4`, Android UI
+acceptance `15/15`, iOS Xcode acceptance `5/5`, and iOS arm64 fixtures `5/5`.
+This refreshes platform correctness evidence only; it does not change the
+preliminary resource measurements, add ingredient/grams capability, or supply
+the required Engineering/Product owner signatures.
+
 The latest iOS result was obtained from a freshly installed, automatically
 signed `SuperNutritionG3` app using the configured Apple development team after
 terminating the prior runner process. All ten fixtures were loaded from the

@@ -160,6 +160,12 @@ GPT-5 / Codex
   evidence remains local-only because the user's untracked presentation is
   intentionally preserved. These are bridge/normalization correctness lanes,
   not signed G-3 ingredient/weight quality evidence.
+- 2026-08-01 verification on the unchanged production code from `5f6c8772`
+  (documentation head `6ea5954c`): the physical iPhone 14 Pro acceptance
+  xcresult passed `5/5`, and the signed `iosArm64` fixture runner passed `5/5`
+  (3 normalization, 2 bridge), with exit code 0. The latest xcresult is
+  `mobile/apps/iosApp/build/DerivedData/Logs/Test/Test-SuperNutritionUIAcceptance-2026.08.01_00-29-55-+0300.xcresult`.
+  This remains correctness evidence, not a signed G-3 runtime/model result.
 
 ### File List
 
