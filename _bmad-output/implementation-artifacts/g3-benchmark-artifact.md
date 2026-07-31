@@ -93,12 +93,16 @@ runtime selection is implied by choosing this baseline.
 
 | OS/device tier | Physical device | Runtime and execution provider | Semantic result | Ingredient / weight result | Runtime/resource result |
 | --- | --- | --- | --- | --- |
-| Android broad-tier candidate | Honor DNY-NX9; Android 16/API 36; `arm64-v8a`; explicit ADB mDNS serial `adb-AU3N025429006787-97BOdK._adb-tls-connect._tcp` | ONNX Runtime Android `1.28.0`; CPU; available processor threads | fresh `5/5`, accuracy `1.0` under current `0.55` floor | visible ingredients `unsupported`; plated weight `not-evaluable` | session init `2,922 ms`; p50 `198 ms`; p95 `287 ms`; max `535 ms`; PSS `26,445 -> 271,125 KB`; battery current `-1,287 -> -1,563 µA`; thermal `0 -> 0` |
+| Android broad-tier candidate | Honor DNY-NX9; Android 16/API 36; `arm64-v8a`; explicit ADB mDNS serial `adb-AU3N025429006787-97BOdK._adb-tls-connect._tcp` | ONNX Runtime Android `1.28.0`; CPU; available processor threads | fresh `5/5`, accuracy `1.0` under current `0.55` floor | visible ingredients `unsupported`; plated weight `not-evaluable` | latest fresh run: init `2,611 ms`; p50 `182 ms`; p95 `279 ms`; max `334 ms`; PSS `27,520 -> 273,547 KB`; battery current `-1,355 -> -1,543 µA`; thermal `0 -> 0` |
 | iOS high-tier candidate | iPhone 14 Pro; iOS 26.5.2; `arm64e`; UDID `REDACTED_PHYSICAL_DEVICE_UDID` | ONNX Runtime Objective-C `1.27.0`; XNNPACK; 2 threads | fresh `5/5`, accuracy `1.0` | visible ingredients `unsupported`; plated weight `not-evaluable` | session init `595 ms`; p50 `87 ms`; p95 `89 ms`; max `89 ms`; resident `261,200 -> 252,864 KB`; thermal `0 -> 0`; battery level `0.85 -> 0.85` |
 
 The Android run above is the latest fresh physical run after the device was
-reconnected. The correctly classified sushi fixture scored `0.592399`, so the
-declared floor remains `0.55` rather than `0.60`. In fixture order, the
+reconnected. It was repeated on 2026-08-01 in
+`/tmp/supernutrition-g3-android-20260801`; the result is semantic `5/5`, init
+`2,611 ms`, p50/p95/max `182/279/334 ms`, PSS `27,520 -> 273,547 KB`, battery
+current `-1,355 -> -1,543 µA`, and thermal `0 -> 0`. The correctly classified
+sushi fixture scored `0.592399`, so the declared floor remains `0.55` rather
+than `0.60`. In fixture order, the
 exploratory composite top-1 labels were
 `steak`, `grilled_salmon`, `fried_rice`, `bibimbap`, and `chicken_curry`.
 They remain single dish labels and do not establish ingredient recognition.
@@ -155,9 +159,9 @@ requirements.
 
 | Budget | Proposed bound | Android | iOS |
 | --- | --- | --- | --- |
-| Session initialization | <= 500 ms cold start | **fail**, 2,922 ms | **fail**, 595 ms |
-| Inference latency | p95 <= 100 ms; max <= 150 ms after warm-up | **fail**, 287/535 ms | pass, 89/89 ms |
-| Peak process memory | <= 160 MB Android PSS; <= 160 MB iOS resident | **fail**, 271,125 KB | **fail**, 252,864 KB |
+| Session initialization | <= 500 ms cold start | **fail**, 2,611 ms | **fail**, 595 ms |
+| Inference latency | p95 <= 100 ms; max <= 150 ms after warm-up | **fail**, 279/334 ms | pass, 89/89 ms |
+| Peak process memory | <= 160 MB Android PSS; <= 160 MB iOS resident | **fail**, 273,547 KB | **fail**, 252,864 KB |
 | Thermal | no serious/critical transition | pass, 0 -> 0 | pass, 0 -> 0 |
 | Battery | <= 1% over 50 inferences plus native trace where available | sampled current `-1,287 -> -1,563 µA`; energy/percentage open | level unchanged; current/energy trace open |
 | Model integrity | pinned SHA before session creation; mismatch fails closed | pass | pass |
@@ -184,7 +188,9 @@ linked at the top of this artifact.
 ## Required before `signed`
 
 - Review and accept the fresh Android semantic/resource result, including its
-  failed proposed initialization, latency, and memory budgets.
+  failed proposed initialization, latency, and memory budgets. The latest
+  2026-08-01 run is init `2,611 ms`, p95/max `279/334 ms`, and PSS peak
+  `273,547 KB`.
 - Add iOS battery/energy evidence from an approved native trace or equivalent.
 - Decide and record supported Android and iOS tiers, including low-memory
   behavior.
@@ -201,6 +207,13 @@ linked at the top of this artifact.
 - Record rollback behavior for model download/cache and runtime initialization
   failure.
 - Have the engineering and product owners accept the budgets and sign below.
+
+The 2026-08-01 Android G-3 rerun completed on the same physical Honor device:
+semantic `5/5`, init `2,611 ms`, p50/p95/max `182/279/334 ms`, PSS
+`27,520 -> 273,547 KB`, battery current `-1,355 -> -1,543 µA`, and thermal
+`0 -> 0`. Ingredient capability remains `unsupported` and weight capability
+remains `not-evaluable`. The paired iPhone G-3 rerun was not measurable because
+the physical device was locked and CoreDevice denied application launch.
 
 ## Acceptance and signature
 
