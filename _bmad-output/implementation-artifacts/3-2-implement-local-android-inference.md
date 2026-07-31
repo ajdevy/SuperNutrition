@@ -138,10 +138,10 @@ so that eligible devices can analyze without transmitting Photo Input.
     denominator in `domain:nutrition`.
   - [ ] Run the dedicated E3.2 physical Android inference scenario and emit
     evidence bound to commit, APK/module digest, fixture/config/model digests,
-    device/OS, task version, and execution time. The available explicit-serial
-    run completed 15/15 UI/semantics tests on DNY-NX9 / Android 16; it does not
-    exercise local inference, network isolation, or G-3 benchmark behavior.
-    Clean-worktree evidence emission and the signed G-3 exit artifact remain
+    device/OS, task version, and execution time. A clean current-commit run
+    emitted the Android UI/native-gap records on DNY-NX9 / Android 16 with
+    15/15 tests passing; it does not exercise local inference, network
+    isolation, or G-3 benchmark behavior. The signed G-3 exit artifact remains
     outstanding.
   - [ ] Update only the story record and owned module/test files plus any
     separately approved policy/evidence handoff files; do not modify iOS,
@@ -287,8 +287,9 @@ GPT-5 / Codex
   BRANCH denominator.
 - The physical Android acceptance task completed 15/15 tests on the explicit
   `AU3N025429006787` serial after fixing ViewModel reflection visibility and
-  the Compose resource-ID assertion helper. Clean-worktree evidence emission
-  and signed G-3 evidence remain outstanding; this story is not
+  the Compose resource-ID assertion helper. Clean current-commit Android
+  evidence is now emitted and bound in `mobile/config/quality/evidence-bindings.toml`;
+  signed G-3 evidence remains outstanding, so this story is not
   production-ready or complete.
 - 2026-07-31 device rerun: `connectedUiAcceptanceDebugAndroidTest` completed
   successfully on `DNY-NX9` / Android 16 (API 36), with `tests=15`,
@@ -297,6 +298,10 @@ GPT-5 / Codex
   This is physical Android UI/semantics, capture, normalization, lifecycle,
   and snapshot evidence; it does not satisfy the dedicated local-inference,
   network-isolation, or signed G-3 benchmark requirement.
+- 2026-07-31 clean evidence rerun: rebuilt and installed the acceptance APK
+  from commit `44df3b6e`, ran the explicit-serial device lane from a clean
+  worktree, and emitted five success records with artifact digest
+  `2ab1a039cc31d8907f78acd2cf5b0e2cc91e53f975808847a052b26ecf467d81`.
 
 ### File List
 
