@@ -290,6 +290,13 @@ GPT-5 / Codex
   the Compose resource-ID assertion helper. Clean-worktree evidence emission
   and signed G-3 evidence remain outstanding; this story is not
   production-ready or complete.
+- 2026-07-31 device rerun: `connectedUiAcceptanceDebugAndroidTest` completed
+  successfully on `DNY-NX9` / Android 16 (API 36), with `tests=15`,
+  `failures=0`, `errors=0`, and `skipped=0`. The XML result is
+  `mobile/apps/androidApp/build/outputs/androidTest-results/connected/debug/flavors/uiAcceptance/TEST-DNY-NX9 - 16-_apps_androidApp-uiAcceptance.xml`.
+  This is physical Android UI/semantics, capture, normalization, lifecycle,
+  and snapshot evidence; it does not satisfy the dedicated local-inference,
+  network-isolation, or signed G-3 benchmark requirement.
 
 ### File List
 
@@ -312,6 +319,9 @@ GPT-5 / Codex
   evidence requirements.
 - 2026-07-31: Started E3.2 implementation with the fail-closed Android adapter,
   colocated tests, module/coverage registration, and exact validation status.
+- 2026-07-31: Re-ran the explicit-serial Android acceptance lane on the
+  connected physical device; 15/15 tests passed. The dedicated E3.2
+  local-inference/G-3 evidence gate remains open.
 
 ### Review Findings
 
