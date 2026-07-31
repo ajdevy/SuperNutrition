@@ -191,7 +191,7 @@ def percent(missed: int, covered: int) -> float:
     return covered * 100.0 / (missed + covered)
 
 
-def report_for(project_root: Path, project: str, coverage_kind: str) -> Path:
+def report_for(project_root: Path, project: str, coverage_kind: str) -> Path | None:
     names = ("reportJvm.xml", "reportAndroid.xml")
     if coverage_kind == "native-equivalent":
         names = ("reportAndroid.xml", "reportJvm.xml")
@@ -199,6 +199,10 @@ def report_for(project_root: Path, project: str, coverage_kind: str) -> Path:
         candidate = project_root / "build" / "reports" / "kover" / name
         if candidate.is_file():
             return candidate
+    if coverage_kind == "native-equivalent":
+        # Apple-native evidence is optional on the Linux CI lane. Keep the
+        # denominator visible in the dashboard while reporting it as pending.
+        return None
     raise CoverageSiteError(f"{project}: no Kover XML report found")
 
 
@@ -224,6 +228,19 @@ def coverage_data(repo_root: Path, output_dir: Path) -> dict[str, object]:
         source_path = str(denominator["source_path"])
         coverage_kind = str(denominator["coverage_kind"])
         xml_report = report_for(repo_root / source_path, project, coverage_kind)
+        if xml_report is None:
+            rows.append(
+                {
+                    "id": project,
+                    "source_path": source_path,
+                    "coverage_kind": coverage_kind,
+                    "report_variant": None,
+                    "line_percent": None,
+                    "branch_percent": None,
+                    "html": None,
+                }
+            )
+            continue
         report = ET.parse(xml_report).getroot()
         line_counts = counter(report, "LINE", project)
         branch_counts = counter(report, "BRANCH", project)
@@ -320,6 +337,13 @@ def format_percent(value: object) -> str:
     return "n/a" if value is None else f"{float(value):.2f}%"
 
 
+def report_cell(report_path: object) -> str:
+    if report_path is None:
+        return '<span class="muted">Pending evidence</span>'
+    escaped_path = html.escape(str(report_path))
+    return f'<a href="{escaped_path}">Open HTML report</a>'
+
+
 def render_index(
     metadata: dict[str, str],
     loc: dict[str, object],
@@ -333,7 +357,7 @@ def render_index(
         f"<td>{html.escape(str(row['coverage_kind']))}</td>"
         f"<td>{format_percent(row['line_percent'])}</td>"
         f"<td>{format_percent(row['branch_percent'])}</td>"
-        f"<td><a href=\"{html.escape(str(row['html']))}\">Open HTML report</a></td>"
+        f"<td>{report_cell(row['html'])}</td>"
         "</tr>"
         for row in rows
     )
@@ -381,7 +405,7 @@ def render_index(
     <div class="card"><span class="muted">JVM host branch coverage</span><strong>{format_percent(host['branch_percent'])}</strong></div>
     <div class="card"><span class="muted">Code lines</span><strong>{format_number(int(loc['code_lines']))}</strong><span class="muted">{format_number(int(loc['files']))} tracked source files</span></div>
   </section>
-  <p class="note"><strong>Scope:</strong> the headline coverage is the weighted JVM host denominator from the committed inventory. Native-equivalent rows are shown as separate Kover observations and do not imply physical-device or product-wide native coverage. <code>n/a</code> means the report has an empty denominator; the quality gate remains fail-closed for that case.</p>
+  <p class="note"><strong>Scope:</strong> the headline coverage is the weighted JVM host denominator from the committed inventory. Native-equivalent rows are shown as separate Kover observations and do not imply physical-device or product-wide native coverage. <code>n/a</code> means an optional report is pending or has an empty denominator; the quality gate remains fail-closed for an empty denominator.</p>
   <h2>Module coverage</h2>
   <table>
     <thead><tr><th>Module</th><th>Kind</th><th>Line</th><th>Branch</th><th>Report</th></tr></thead>

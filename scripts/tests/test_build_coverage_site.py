@@ -82,6 +82,33 @@ class BuildCoverageSiteTest(unittest.TestCase):
             with self.assertRaises(CoverageSiteError):
                 write_site(root, root / "site")
 
+    def test_write_site_keeps_missing_native_equivalent_report_pending(self) -> None:
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            self._init_git(root)
+            (root / "mobile/config/quality").mkdir(parents=True)
+            (root / "mobile/config/quality/coverage.toml").write_text(
+                '[[denominator]]\nid = "platform-photo-ios"\n'
+                'source_path = "mobile/platform/photo-ios"\n'
+                'coverage_kind = "native-equivalent"\n',
+                encoding="utf-8",
+            )
+            subprocess.run(["git", "-C", str(root), "add", "."], check=True)
+            subprocess.run(
+                ["git", "-C", str(root), "commit", "--quiet", "-m", "fixture"],
+                check=True,
+            )
+
+            output = root / "site"
+            write_site(root, output)
+
+            index = (output / "index.html").read_text(encoding="utf-8")
+            coverage = json.loads((output / "coverage.json").read_text(encoding="utf-8"))
+            self.assertIn("Pending evidence", index)
+            self.assertIn("n/a", index)
+            self.assertIsNone(coverage["reports"][0]["line_percent"])
+            self.assertIsNone(coverage["reports"][0]["html"])
+
     @staticmethod
     def _init_git(root: Path) -> None:
         subprocess.run(["git", "-C", str(root), "init", "--quiet"], check=True)

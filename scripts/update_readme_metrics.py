@@ -62,8 +62,9 @@ def render_section(loc: dict[str, object], coverage: dict[str, object]) -> str:
             "",
             "Generated from the committed coverage inventory by "
             "[`scripts/build_coverage_site.py`](scripts/build_coverage_site.py). "
-            "`n/a` means that the report has an empty denominator; the quality "
-            "gate remains fail-closed for that case.",
+            "`n/a` means that an optional report is pending or has an empty "
+            "denominator; the quality gate remains fail-closed for an empty "
+            "denominator.",
             END_MARKER,
         ]
     )
