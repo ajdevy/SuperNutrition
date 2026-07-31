@@ -29,4 +29,18 @@ fun interface CatalogServingDefaultSource {
         snapshot: ConfigurationSnapshot,
         confirmation: CanonicalItemConfirmation,
     ): CatalogServingProposal?
+
+    /**
+     * Reject a confirmation from a different immutable attempt before asking
+     * the catalog implementation for a default.
+     */
+    fun standardServingIfBoundToSnapshot(
+        snapshot: ConfigurationSnapshot,
+        confirmation: CanonicalItemConfirmation,
+    ): CatalogServingProposal? =
+        if (snapshot.digest == confirmation.snapshotDigest) {
+            standardServing(snapshot, confirmation)
+        } else {
+            null
+        }
 }
