@@ -1,7 +1,19 @@
 package com.supernutrition.domain.nutrition
 
-/** One canonical catalog record a query can resolve to. */
-data class CatalogRecord(val canonicalItemId: String, val displayName: String)
+/**
+ * One canonical catalog record a query can resolve to.
+ *
+ * [alternateNames] carries regional variants, alternate spellings, and
+ * cross-language names for the same food. They are matched but never displayed:
+ * a Chilean typing `palta` and a Mexican typing `aguacate` reach one record, and
+ * both then read the catalog's own name for it rather than a translation the
+ * catalog cannot vouch for.
+ */
+data class CatalogRecord(
+    val canonicalItemId: String,
+    val displayName: String,
+    val alternateNames: List<String> = emptyList(),
+)
 
 /** One resolved search hit. */
 data class CatalogSearchResult(val canonicalItemId: String)
@@ -48,34 +60,68 @@ class CatalogSearch(records: List<CatalogRecord>) {
  */
 internal enum class MatchTier { EXACT, TOKEN_SUBSET, PREFIX, FUZZY }
 
-/** A record with its normalized form and tokens computed once, not per tier. */
+/**
+ * A record with its searchable forms computed once, not per tier.
+ *
+ * Every name a record answers to is indexed as a separate searchable form, so a
+ * regional variant matches at the same tier its display name would. Flattening
+ * synonyms into one token bag instead would let a query match a word from the
+ * display name and a word from a synonym simultaneously, which is a match no
+ * human wrote.
+ */
 internal class IndexedRecord(record: CatalogRecord) {
     val canonicalItemId: String = record.canonicalItemId
-    val normalizedName: String = normalizeForSearch(record.displayName)
-    val tokens: List<String> = tokenizeNormalized(normalizedName)
+    private val searchableForms: List<String> =
+        (listOf(record.displayName) + record.alternateNames).map(::normalizeForSearch)
+    private val formTokens: List<List<String>> = searchableForms.map(::tokenizeNormalized)
+
+    /** True when any single searchable form satisfies [predicate]. */
+    fun anyForm(predicate: (normalized: String, tokens: List<String>) -> Boolean): Boolean =
+        searchableForms.indices.any { predicate(searchableForms[it], formTokens[it]) }
+
+    val normalizedName: String get() = searchableForms.first()
+    val tokens: List<String> get() = formTokens.first()
 
     /**
      * How much of this record the query accounted for, as a permille integer so
      * ordering never depends on floating-point comparison. A record the query
      * describes completely outranks a more qualified variant of the same food.
+     *
+     * Measured against the best-covered searchable form, not the display name.
+     * A query that matched a regional variant must be scored on the name it
+     * actually matched; scoring it against the display name would rank a
+     * perfect synonym match by how little of an unrelated word it covered.
      */
     fun coverageOf(queryTokens: List<String>): Int {
-        if (tokens.isEmpty()) return 0
-        val accounted = tokens.count { recordToken ->
-            queryTokens.any { recordToken.startsWith(it) || isNearMatch(it, recordToken) }
+        var best = 0
+        forEachForm { _, formTokens ->
+            if (formTokens.isNotEmpty()) {
+                val accounted = formTokens.count { recordToken ->
+                    queryTokens.any { recordToken.startsWith(it) || isNearMatch(it, recordToken) }
+                }
+                val coverage = accounted * COVERAGE_SCALE / formTokens.size
+                if (coverage > best) best = coverage
+            }
         }
-        return accounted * COVERAGE_SCALE / tokens.size
+        return best
+    }
+
+    private inline fun forEachForm(action: (String, List<String>) -> Unit) {
+        for (index in searchableForms.indices) action(searchableForms[index], formTokens[index])
     }
 }
 
 private const val COVERAGE_SCALE = 1000
 
-internal fun MatchTier.matches(query: String, tokens: List<String>, entry: IndexedRecord): Boolean = when (this) {
-    MatchTier.EXACT -> entry.normalizedName == query
-    MatchTier.TOKEN_SUBSET -> tokens.all { it in entry.tokens }
-    MatchTier.PREFIX -> tokens.all { token -> entry.tokens.any { it.startsWith(token) } }
-    MatchTier.FUZZY -> tokens.all { token -> entry.tokens.any { isNearMatch(token, it) } }
-}
+internal fun MatchTier.matches(query: String, tokens: List<String>, entry: IndexedRecord): Boolean =
+    entry.anyForm { formName, formTokens ->
+        when (this) {
+            MatchTier.EXACT -> formName == query
+            MatchTier.TOKEN_SUBSET -> tokens.all { it in formTokens }
+            MatchTier.PREFIX -> tokens.all { token -> formTokens.any { it.startsWith(token) } }
+            MatchTier.FUZZY -> tokens.all { token -> formTokens.any { isNearMatch(token, it) } }
+        }
+    }
 
 /**
  * Bounded near-match. The allowance scales with token length because a fixed
