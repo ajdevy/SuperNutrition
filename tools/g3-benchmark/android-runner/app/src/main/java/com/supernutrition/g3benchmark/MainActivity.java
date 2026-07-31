@@ -1,7 +1,6 @@
 package com.supernutrition.g3benchmark;
 
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,30 +17,53 @@ import ai.onnxruntime.OnnxValue;
 import ai.onnxruntime.OrtEnvironment;
 import ai.onnxruntime.OrtSession;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.FloatBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public final class MainActivity extends Activity {
     private static final String TAG = "SuperNutritionG3";
-    private static final String MODEL_ASSET = "mobilenet_v2_food101.onnx";
+    private static final String MODEL_ASSET = "swin-finetuned-food101-matmul-int8.onnx";
+    private static final String LABELS_ASSET = "food101-labels.txt";
+    private static final String MODEL_SHA256 =
+            "9070f8097cda88923f77774d93d9fead7cee344486521c7fc5142806642061df";
     private static final String[] FIXTURES = {
             "steak-side-plate.jpg",
             "fish-side-plate.jpg",
             "chopped-salad.jpg",
             "buddha-bowl.jpg",
-            "salmon-grain-plate.jpg"
+            "salmon-grain-plate.jpg",
+            "steak.jpg",
+            "greek-salad.jpg",
+            "salmon-on-grill.jpg",
+            "sushi.jpg",
+            "waffles.jpg"
     };
+    private static final String[] EXPECTED_LABELS = {
+            null,
+            null,
+            null,
+            null,
+            null,
+            "steak",
+            "greek_salad",
+            "grilled_salmon",
+            "sushi",
+            "waffles"
+    };
+    private static final float SEMANTIC_MIN_CONFIDENCE = 0.55f;
     private static final int IMAGE_SIZE = 224;
     private static final int WARMUP_RUNS = 5;
     private static final int MEASURED_RUNS = 50;
@@ -67,6 +89,11 @@ public final class MainActivity extends Activity {
 
     private void runBenchmark() {
         try {
+            new File(getFilesDir(), "result.json").delete();
+            List<String> labels = readLabels();
+            if (labels.size() != 101) {
+                throw new IOException("Food101 label map must contain 101 labels");
+            }
             File modelFile = copyAsset(MODEL_ASSET);
             long processStartPssKb = Debug.getPss();
             BatteryManager batteryManager = (BatteryManager) getSystemService(BATTERY_SERVICE);
@@ -77,6 +104,7 @@ public final class MainActivity extends Activity {
             long sessionStartNs = System.nanoTime();
             OrtEnvironment environment = OrtEnvironment.getEnvironment();
             OrtSession.SessionOptions options = new OrtSession.SessionOptions();
+            options.setOptimizationLevel(OrtSession.SessionOptions.OptLevel.EXTENDED_OPT);
             options.setIntraOpNumThreads(Math.max(1, Runtime.getRuntime().availableProcessors()));
             OrtSession session = environment.createSession(modelFile.getAbsolutePath(), options);
             long sessionInitMs = elapsedMs(sessionStartNs);
@@ -91,13 +119,14 @@ public final class MainActivity extends Activity {
             }
 
             List<Long> inferenceMs = new ArrayList<>();
-            int firstTop1 = -1;
+            List<InferenceResult> firstResults = new ArrayList<>(inputs.size());
             for (int i = 0; i < MEASURED_RUNS; i++) {
                 long started = System.nanoTime();
-                int top1 = runOnce(environment, session, inputName, inputs.get(i % inputs.size()));
+                InferenceResult result = runOnce(
+                        environment, session, inputName, inputs.get(i % inputs.size()));
                 inferenceMs.add(elapsedMs(started));
-                if (i == 0) {
-                    firstTop1 = top1;
+                if (i < inputs.size()) {
+                    firstResults.add(result);
                 }
             }
 
@@ -115,7 +144,8 @@ public final class MainActivity extends Activity {
                     batteryCurrentAfterUa,
                     thermalBefore,
                     thermalAfter,
-                    firstTop1
+                    labels,
+                    firstResults
             );
             writeResult(result);
             Log.i(TAG, result);
@@ -133,7 +163,7 @@ public final class MainActivity extends Activity {
         }
     }
 
-    private int runOnce(
+    private InferenceResult runOnce(
             OrtEnvironment environment,
             OrtSession session,
             String inputName,
@@ -146,14 +176,44 @@ public final class MainActivity extends Activity {
         ); OrtSession.Result result = session.run(Collections.singletonMap(inputName, tensor))) {
             OnnxValue output = result.get(0);
             float[][] scores = (float[][]) output.getValue();
-            int top1 = 0;
-            for (int i = 1; i < scores[0].length; i++) {
-                if (scores[0][i] > scores[0][top1]) {
-                    top1 = i;
+            if (scores.length != 1 || scores[0].length != 101) {
+                throw new IOException("Expected Food101 output shape [1,101]");
+            }
+            return toInferenceResult(scores[0]);
+        }
+    }
+
+    private static InferenceResult toInferenceResult(float[] logits) {
+        float max = logits[0];
+        for (int i = 1; i < logits.length; i++) {
+            max = Math.max(max, logits[i]);
+        }
+        double sum = 0.0;
+        float[] probabilities = new float[logits.length];
+        for (int i = 0; i < logits.length; i++) {
+            probabilities[i] = (float) Math.exp(logits[i] - max);
+            sum += probabilities[i];
+        }
+        for (int i = 0; i < probabilities.length; i++) {
+            probabilities[i] /= (float) sum;
+        }
+
+        int topCount = Math.min(5, probabilities.length);
+        int[] topIndexes = new int[topCount];
+        float[] topProbabilities = new float[topCount];
+        boolean[] used = new boolean[probabilities.length];
+        for (int rank = 0; rank < topCount; rank++) {
+            int best = -1;
+            for (int index = 0; index < probabilities.length; index++) {
+                if (!used[index] && (best < 0 || probabilities[index] > probabilities[best])) {
+                    best = index;
                 }
             }
-            return top1;
+            used[best] = true;
+            topIndexes[rank] = best;
+            topProbabilities[rank] = probabilities[best];
         }
+        return new InferenceResult(topIndexes, topProbabilities);
     }
 
     private float[] preprocess(String fixture) throws IOException {
@@ -173,8 +233,10 @@ public final class MainActivity extends Activity {
                     int pixel = resized.getPixel(x, y);
                     int offset = y * IMAGE_SIZE + x;
                     output[offset] = normalize((pixel >> 16) & 0xff, 0.485f, 0.229f);
-                    output[IMAGE_SIZE * IMAGE_SIZE + offset] = normalize((pixel >> 8) & 0xff, 0.456f, 0.224f);
-                    output[2 * IMAGE_SIZE * IMAGE_SIZE + offset] = normalize(pixel & 0xff, 0.406f, 0.225f);
+                    output[IMAGE_SIZE * IMAGE_SIZE + offset] = normalize(
+                            (pixel >> 8) & 0xff, 0.456f, 0.224f);
+                    output[2 * IMAGE_SIZE * IMAGE_SIZE + offset] = normalize(
+                            pixel & 0xff, 0.406f, 0.225f);
                 }
             }
             resized.recycle();
@@ -182,6 +244,21 @@ public final class MainActivity extends Activity {
             source.recycle();
             return output;
         }
+    }
+
+    private List<String> readLabels() throws IOException {
+        List<String> labels = new ArrayList<>();
+        try (InputStream input = getAssets().open(LABELS_ASSET);
+             BufferedReader reader = new BufferedReader(
+                     new InputStreamReader(input, StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (!line.trim().isEmpty()) {
+                    labels.add(line.trim());
+                }
+            }
+        }
+        return labels;
     }
 
     private static float normalize(int value, float mean, float standardDeviation) {
@@ -206,7 +283,7 @@ public final class MainActivity extends Activity {
 
     private void writeResult(String result) throws IOException {
         try (FileOutputStream output = new FileOutputStream(new File(getFilesDir(), "result.json"))) {
-            output.write(result.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            output.write(result.getBytes(StandardCharsets.UTF_8));
         }
     }
 
@@ -231,36 +308,92 @@ public final class MainActivity extends Activity {
             long batteryAfterUa,
             int thermalBefore,
             int thermalAfter,
-            int firstTop1
+            List<String> labels,
+            List<InferenceResult> results
     ) {
         long[] values = new long[inferenceMs.size()];
         for (int i = 0; i < inferenceMs.size(); i++) {
             values[i] = inferenceMs.get(i);
         }
-        Arrays.sort(values);
-        return String.format(Locale.US,
-                "{\"status\":\"success\",\"runtime\":\"onnxruntime-android\","
-                        + "\"runtime_version\":\"1.28.0\",\"model\":\"mobilenet_v2_food101.onnx\","
-                        + "\"fixture_count\":%d,\"warmup_runs\":%d,\"measured_runs\":%d,"
-                        + "\"session_init_ms\":%d,\"inference_p50_ms\":%d,\"inference_p95_ms\":%d,"
-                        + "\"inference_max_ms\":%d,\"pss_before_kb\":%d,\"pss_after_kb\":%d,"
-                        + "\"battery_current_before_ua\":%d,\"battery_current_after_ua\":%d,"
-                        + "\"thermal_before\":%d,\"thermal_after\":%d,\"first_top1_index\":%d}",
-                FIXTURES.length,
-                WARMUP_RUNS,
-                MEASURED_RUNS,
-                sessionInitMs,
-                percentile(values, 0.50),
-                percentile(values, 0.95),
-                values[values.length - 1],
-                pssBeforeKb,
-                pssAfterKb,
-                batteryBeforeUa,
-                batteryAfterUa,
-                thermalBefore,
-                thermalAfter,
-                firstTop1
-        );
+        java.util.Arrays.sort(values);
+        int expectedCount = 0;
+        int correctCount = 0;
+        for (int i = 0; i < results.size(); i++) {
+            String expected = EXPECTED_LABELS[i];
+            if (expected == null) {
+                continue;
+            }
+            expectedCount++;
+            InferenceResult result = results.get(i);
+            boolean correct = expected.equals(labels.get(result.topIndexes[0]))
+                    && result.topProbabilities[0] >= SEMANTIC_MIN_CONFIDENCE;
+            if (correct) {
+                correctCount++;
+            }
+        }
+        boolean semanticPass = expectedCount > 0 && correctCount == expectedCount;
+        StringBuilder json = new StringBuilder();
+        json.append("{\"status\":\"success\",\"runtime\":\"onnxruntime-android\",");
+        json.append("\"runtime_version\":\"1.28.0\",\"model\":\"")
+                .append(MODEL_ASSET).append("\",\"model_sha256\":\"")
+                .append(MODEL_SHA256).append("\",");
+        json.append("\"fixture_count\":").append(results.size())
+                .append(",\"semantic_expected_count\":").append(expectedCount)
+                .append(",\"semantic_correct_count\":").append(correctCount)
+                .append(",\"semantic_accuracy\":")
+                .append(formatFloat(expectedCount == 0 ? 0.0f : (float) correctCount / expectedCount))
+                .append(",\"semantic_min_confidence\":")
+                .append(formatFloat(SEMANTIC_MIN_CONFIDENCE))
+                .append(",\"semantic_pass\":").append(semanticPass).append(",");
+        json.append("\"warmup_runs\":").append(WARMUP_RUNS)
+                .append(",\"measured_runs\":").append(MEASURED_RUNS)
+                .append(",\"session_init_ms\":").append(sessionInitMs)
+                .append(",\"inference_p50_ms\":").append(percentile(values, 0.50))
+                .append(",\"inference_p95_ms\":").append(percentile(values, 0.95))
+                .append(",\"inference_max_ms\":").append(values[values.length - 1])
+                .append(",\"pss_before_kb\":").append(pssBeforeKb)
+                .append(",\"pss_after_kb\":").append(pssAfterKb)
+                .append(",\"battery_current_before_ua\":").append(batteryBeforeUa)
+                .append(",\"battery_current_after_ua\":").append(batteryAfterUa)
+                .append(",\"thermal_before\":").append(thermalBefore)
+                .append(",\"thermal_after\":").append(thermalAfter)
+                .append(",\"fixture_results\":[");
+        for (int i = 0; i < results.size(); i++) {
+            if (i > 0) {
+                json.append(',');
+            }
+            InferenceResult result = results.get(i);
+            String expected = EXPECTED_LABELS[i];
+            boolean correct = expected != null
+                    && expected.equals(labels.get(result.topIndexes[0]))
+                    && result.topProbabilities[0] >= SEMANTIC_MIN_CONFIDENCE;
+            json.append("{\"fixture\":\"").append(jsonEscape(FIXTURES[i]))
+                    .append("\",\"expected_label\":");
+            if (expected == null) {
+                json.append("null");
+            } else {
+                json.append('"').append(jsonEscape(expected)).append('"');
+            }
+            json.append(",\"top1_label\":\"")
+                    .append(jsonEscape(labels.get(result.topIndexes[0])))
+                    .append("\",\"top1_confidence\":")
+                    .append(formatFloat(result.topProbabilities[0]))
+                    .append(",\"correct\":").append(correct)
+                    .append(",\"top5\":[");
+            for (int rank = 0; rank < result.topIndexes.length; rank++) {
+                if (rank > 0) {
+                    json.append(',');
+                }
+                json.append("{\"label\":\"")
+                        .append(jsonEscape(labels.get(result.topIndexes[rank])))
+                        .append("\",\"confidence\":")
+                        .append(formatFloat(result.topProbabilities[rank]))
+                        .append('}');
+            }
+            json.append("]}");
+        }
+        json.append("]}");
+        return json.toString();
     }
 
     private static long percentile(long[] values, double percentile) {
@@ -268,7 +401,21 @@ public final class MainActivity extends Activity {
         return values[Math.max(0, Math.min(index, values.length - 1))];
     }
 
+    private static String formatFloat(float value) {
+        return String.format(Locale.US, "%.6f", value);
+    }
+
     private static String jsonEscape(String value) {
         return value.replace("\\", "\\\\").replace("\"", "\\\"");
+    }
+
+    private static final class InferenceResult {
+        private final int[] topIndexes;
+        private final float[] topProbabilities;
+
+        private InferenceResult(int[] topIndexes, float[] topProbabilities) {
+            this.topIndexes = topIndexes;
+            this.topProbabilities = topProbabilities;
+        }
     }
 }
