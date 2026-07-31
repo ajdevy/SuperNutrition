@@ -390,6 +390,12 @@ GPT-5 / Codex
   or skips. A local-only Android evidence bundle was emitted at
   `/tmp/supernutrition-android-evidence-20260801`; it is intentionally not an
   activation claim while the presentation WIP keeps the checkout dirty.
+- 2026-08-01 fresh G-3 rerun on the same physical Honor device completed the
+  current Food-101 semantic/resource harness with `5/5` semantic cases, init
+  `2,611 ms`, p50/p95/max `182/279/334 ms`, PSS `27,520 -> 273,547 KB`,
+  battery current `-1,355 -> -1,543 µA`, and thermal `0 -> 0`. Ingredient
+  capability remains `unsupported` and weight capability remains
+  `not-evaluable`; this does not select FPB for production or sign G-3.
 
 ### File List
 

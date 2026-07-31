@@ -166,6 +166,10 @@ GPT-5 / Codex
   (3 normalization, 2 bridge), with exit code 0. The latest xcresult is
   `mobile/apps/iosApp/build/DerivedData/Logs/Test/Test-SuperNutritionUIAcceptance-2026.08.01_00-29-55-+0300.xcresult`.
   This remains correctness evidence, not a signed G-3 runtime/model result.
+- 2026-08-01 G-3 rerun attempt: the harness built and installed, but the
+  physical iPhone was locked and CoreDevice denied launching the benchmark
+  app. No iOS resource result is recorded from this attempt; the existing
+  `5/5` UI and `5/5` arm64 fixture results remain correctness evidence only.
 
 ### File List
 
