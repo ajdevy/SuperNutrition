@@ -128,6 +128,11 @@ GPT-5 / Codex
 - Domain tests and Kover pass at 91.7073% line and 85.1301% branch coverage;
   policy validation and graphify update pass. No remote DTO, transport, UI, or
   interaction-policy code was added.
+- 2026-07-31 current-HEAD physical correctness rerun after commit `5f6c8772`:
+  Android local adapter `4/4`, Android UI/capture `15/15`, iOS Xcode
+  acceptance `5/5`, and iOS arm64 bridge/normalization fixtures `5/5` all
+  passed on the paired physical devices. These records do not activate a
+  concrete local runtime or close the signed G-3 ingredient/weight gate.
 
 ### File List
 
