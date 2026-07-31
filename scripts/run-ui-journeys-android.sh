@@ -28,19 +28,26 @@ sdkmanager_bin="${ANDROID_SDKMANAGER:-$sdk_root/cmdline-tools/latest/bin/sdkmana
 avdmanager_bin="${ANDROID_AVDMANAGER:-$sdk_root/cmdline-tools/latest/bin/avdmanager}"
 emulator_bin="${ANDROID_EMULATOR:-$sdk_root/emulator/emulator}"
 adb_bin="${ANDROID_ADB:-$sdk_root/platform-tools/adb}"
-for executable in "$sdkmanager_bin" "$avdmanager_bin" "$emulator_bin" "$adb_bin"; do
+for executable in "$sdkmanager_bin" "$avdmanager_bin"; do
   test -x "$executable" || {
     printf 'missing Android tool: %s\n' "$executable" >&2
     exit 1
   }
 done
 
+yes | "$sdkmanager_bin" --licenses >/dev/null
 "$sdkmanager_bin" --install \
   "platform-tools" \
   "emulator" \
   "platforms;android-36" \
   "system-images;android-36;google_apis;x86_64"
-yes | "$sdkmanager_bin" --licenses >/dev/null
+
+for executable in "$emulator_bin" "$adb_bin"; do
+  test -x "$executable" || {
+    printf 'missing Android tool after SDK setup: %s\n' "$executable" >&2
+    exit 1
+  }
+done
 
 avd_name="supernutrition-api36-x86_64"
 if ! "$avdmanager_bin" list avd | grep -Fq "Name: $avd_name"; then

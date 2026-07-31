@@ -28,6 +28,8 @@ jobs:
           distribution: temurin
           java-version: '21'
           cache: gradle
+      - name: Select Xcode 26.4.1
+        run: sudo xcode-select --switch /Applications/Xcode_26.4.1.app/Contents/Developer
       - name: Run iOS XCTest and Maestro UI tests
         run: scripts/run-ui-journeys-ios.sh
       - name: Upload iOS UI reports
