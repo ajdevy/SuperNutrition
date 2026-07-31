@@ -125,19 +125,29 @@ and `devicectl` only to install, launch, and copy the app-owned result file.
 
 ### Android
 
-Physical run on Honor DNY-NX9, Android 16/API 36, `arm64-v8a`, serial
-`AU3N025429006787`, ONNX Runtime Android `1.28.0`, CPU. The device was
-disconnected during the latest rerun attempt, so this is the previous fresh
-run of the same pinned model; the only later change was lowering the explicit
-semantic confidence floor from `0.60` to `0.55` after observing a correct sushi
-top-1 at `0.592399`.
+Fresh physical run on Honor DNY-NX9, Android 16/API 36, `arm64-v8a`, connected
+over the explicit ADB mDNS serial
+`adb-AU3N025429006787-97BOdK._adb-tls-connect._tcp`, using ONNX Runtime Android
+`1.28.0` on CPU. The pinned model and manifest digests were checked before the
+session. The semantic confidence floor is `0.55`, so the correctly classified
+sushi fixture at `0.592399` is included.
 
 The five semantic top-1 labels were exact: `steak`, `greek_salad`,
 `grilled_salmon`, `sushi`, and `waffles`. Under the current `0.55` contract the
 run is `5/5`, accuracy `1.0`. Its resource measurements were session init
-`1,839 ms`, p50 `187 ms`, p95 `290 ms`, max `310 ms`, and PSS
-`63,914 -> 274,681 KB`. This proves recognition but does not pass the
-proposed resource budgets.
+`3,293 ms`, p50 `181 ms`, p95 `264 ms`, max `299 ms`, and PSS
+`26,278 -> 269,382 KB`; sampled battery current was `-1,429 -> -1,447 µA`
+and thermal status stayed `0 -> 0`. This proves recognition but does not pass
+the proposed initialization, latency, or memory budgets. The exploratory
+composite top-1 labels, in fixture order, were `steak`, `grilled_salmon`,
+`fried_rice`, `bibimbap`, and `chicken_curry`; these are single dish labels,
+not ingredient predictions.
+
+On the same physical device, the rebuilt acceptance APK/test APK were run by
+direct Android instrumentation after Gradle dependency resolution attempted to
+download uncached Compose desktop artifacts. The UI suite passed `15/15` and
+the isolated local-Android adapter suite passed `4/4`; these are physical
+device correctness records, separate from the G-3 model/resource result.
 
 ### iOS
 
@@ -185,11 +195,11 @@ These are proposed acceptance budgets, not signed production requirements.
 
 | Budget | Proposed bound | Android evidence | iOS evidence |
 | --- | --- | --- | --- |
-| Session initialization | <= 500 ms cold start | fail: 1,839 ms | fail: 559 ms |
-| Inference latency | p95 <= 100 ms; max <= 150 ms | fail: 290/310 ms | pass: 85/85 ms |
-| Peak process memory | <= 160 MB | fail: 274,681 KB PSS | fail: 252,016 KB resident |
+| Session initialization | <= 500 ms cold start | fail: 3,293 ms | fail: 559 ms |
+| Inference latency | p95 <= 100 ms; max <= 150 ms | fail: 264/299 ms | pass: 85/85 ms |
+| Peak process memory | <= 160 MB | fail: 269,382 KB PSS | fail: 252,016 KB resident |
 | Thermal | no serious/critical transition | pass: 0 -> 0 | pass: 0 -> 0 |
-| Battery | <= 1% over 50 inferences plus native trace | prior run sampled current; needs fresh rerun | level unchanged; current/energy trace open |
+| Battery | <= 1% over 50 inferences plus native trace | sampled current `-1,429 -> -1,447 µA`; energy/percentage still open | level unchanged; current/energy trace open |
 | Model integrity | pinned SHA before session creation | pass | pass |
 | Network/privacy | no photo upload or product API call | pass | pass |
 
@@ -200,8 +210,8 @@ platforms, but G-3 remains `proposed-preliminary` and unsigned. Recognition
 quality, memory/latency budgets, multi-object recognition, nutrition accuracy,
 and production readiness are separate decisions.
 
-Before signing, the owner must repeat Android after reconnecting the device,
-add an approved iOS energy trace, choose supported low-memory tiers, and run an
+Before signing, the owner must review and accept the fresh Android result, add
+an approved iOS energy trace, choose supported low-memory tiers, and run an
 approved consented multi-component meal corpus. A 10,000-image robustness
 sample can be drawn from the 101,000 Food-101 records, but those are evaluation
 images rather than 10,000 independent technical sources.

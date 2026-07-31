@@ -138,6 +138,12 @@ GPT-5 / Codex
   memory, and thermal evidence. iOS battery/energy evidence and owner
   acceptance remain open in
   `_bmad-output/implementation-artifacts/g3-benchmark-artifact.md`.
+- 2026-07-31 physical-device rerun: the signed Xcode acceptance scheme passed
+  `5/5` tests on iPhone 14 Pro (iOS 26.5.2), and the binary-bound arm64
+  fixture runner passed `5/5` tests (3 normalization, 2 bridge). The emitted
+  evidence is local-only because the checkout still contains the user's
+  untracked presentation work; it is correctness evidence and does not close
+  the signed G-3 runtime/model gate.
 
 ### File List
 
