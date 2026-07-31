@@ -2,7 +2,7 @@
 title: 'Resolve PR #24 seventh-pass review findings'
 type: 'bugfix'
 created: '2026-07-30'
-status: 'in-progress'
+status: 'in-review'
 review_loop_iteration: 7
 baseline_commit: '835472133eb18384c800c3490baa2683bad421a1'
 context:

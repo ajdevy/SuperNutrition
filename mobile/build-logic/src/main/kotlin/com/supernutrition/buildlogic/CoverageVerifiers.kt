@@ -18,11 +18,16 @@ internal object NativeEquivalentEvidenceVerifier {
         val coverage = PolicyToml.document(coverageText)
         val nativeGaps = PolicyToml.document(nativeGapsText)
         val evidence = PolicyToml.document(evidenceText)
-        val referencedIds = PolicyToml.blocks(coverage, "denominator")
+        val denominatorBlocks = PolicyToml.blocks(coverage, "denominator")
+        require(denominatorBlocks.isNotEmpty()) { "Coverage inventory has no denominator blocks" }
+        val referencedIds = denominatorBlocks
             .filter { PolicyToml.string(it, "coverage_kind") == "native-equivalent" }
             .flatMap { PolicyToml.stringList(it, "evidence_ids") }
             .toSet()
         val gapBlocks = PolicyToml.blocks(nativeGaps, "gap")
+        require(gapBlocks.mapNotNull { PolicyToml.string(it, "id") }.let { it.size == it.toSet().size }) {
+            "Native-gap inventory contains duplicate IDs"
+        }
         val optionalIds = gapBlocks
             .filter { PolicyToml.boolean(it, "optional") == true }
             .mapNotNull { PolicyToml.string(it, "id") }
@@ -34,6 +39,9 @@ internal object NativeEquivalentEvidenceVerifier {
         ) return false
 
         val evidenceBlocks = PolicyToml.blocks(evidence, "evidence")
+        require(evidenceBlocks.mapNotNull { PolicyToml.string(it, "id") }.let { it.size == it.toSet().size }) {
+            "Evidence bindings contain duplicate IDs"
+        }
         return requiredIds.all { id ->
             val gap = gapBlocks.firstOrNull { PolicyToml.string(it, "id") == id } ?: return@all false
             val evidence = evidenceBlocks.firstOrNull { PolicyToml.string(it, "id") == id } ?: return@all false

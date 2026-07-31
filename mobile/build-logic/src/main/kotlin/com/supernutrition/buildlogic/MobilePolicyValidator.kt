@@ -112,14 +112,16 @@ object MobilePolicyValidator {
                 "An active lifecycle must declare an active transition"
             }
         }
-        require(PolicyToml.boolean(PolicyToml.section(lifecycle, "activation"), "production_compose_host") == true) {
+        val activation = PolicyToml.section(PolicyToml.document(lifecycle), "activation")
+            ?: error("The lifecycle record is missing the activation table")
+        require(PolicyToml.boolean(activation, "production_compose_host") == true) {
             "The lifecycle record must prove that the production Compose host exists"
         }
-        require(PolicyToml.boolean(PolicyToml.section(lifecycle, "activation"), "apple_evidence_required_for_activation") == false) {
+        require(PolicyToml.boolean(activation, "apple_evidence_required_for_activation") == false) {
             "Apple/Xcode evidence must be explicitly optional for local activation"
         }
         if (lifecycleValue == "scaffold-pending") {
-            require(PolicyToml.boolean(PolicyToml.section(lifecycle, "activation"), "active_inventory_and_denominators") == false) {
+            require(PolicyToml.boolean(activation, "active_inventory_and_denominators") == false) {
                 "A scaffold-pending lifecycle must not claim an active inventory"
             }
         }
@@ -148,7 +150,10 @@ object MobilePolicyValidator {
             requireManifestProperty(identity, key, "SuperNutrition")
         }
         requireManifestProperty(identity, "store_listing_title", "SuperNutrition AI nutritionist")
-        val forbiddenVisibleVariants = PolicyToml.section(identity, "forbidden_visible_variants")
+        val forbiddenVisibleVariants = PolicyToml.section(
+            PolicyToml.document(identity),
+            "forbidden_visible_variants",
+        ) ?: error("Product identity is missing forbidden_visible_variants")
         require(PolicyToml.stringList(forbiddenVisibleVariants, "values").toSet() ==
             setOf("SuperNutrition AI nutritionist", "AI nutritionist")) {
             "Product identity must declare the closed forbidden visible variants"
@@ -173,7 +178,9 @@ object MobilePolicyValidator {
         }
 
         val interaction = files.single { it.first == "config/quality/interaction-policy.toml" }.second
-        val defaults = PolicyToml.section(interaction, "defaults")
+        val interactionDocument = PolicyToml.document(interaction)
+        val defaults = PolicyToml.section(interactionDocument, "defaults")
+            ?: error("Interaction policy is missing defaults")
         require(PolicyToml.stringList(defaults, "allowlist").contains("defaultLocale")) {
             "Interaction policy must declare the closed default allowlist"
         }
@@ -182,11 +189,13 @@ object MobilePolicyValidator {
         )) {
             "Interaction policy allowlist must remain closed"
         }
-        require(PolicyToml.string(PolicyToml.section(interaction, "forbidden_defaults"), "remote_upload") == "never-preselected") {
+        val forbiddenDefaultsTable = PolicyToml.section(interactionDocument, "forbidden_defaults")
+            ?: error("Interaction policy is missing forbidden_defaults")
+        require(PolicyToml.string(forbiddenDefaultsTable, "remote_upload") == "never-preselected") {
             "Remote consent must never be a defaultable interaction field"
         }
         val forbiddenDefaults = PolicyToml.stringList(
-            PolicyToml.section(interaction, "forbidden_defaults"), "fields",
+            forbiddenDefaultsTable, "fields",
         ).toSet()
         require(forbiddenDefaults == setOf(
             "foodIdentity",
@@ -623,7 +632,8 @@ object MobilePolicyValidator {
             "profile",
         ) ?: error("UI evidence profile is missing profile")
         val evidenceBlocks = blocks(evidence, "evidence")
-        require(evidenceBlocks.mapNotNull { extractString(it, "id") }.toSet() == gapIds) {
+        val evidenceIds = evidenceBlocks.mapNotNull { extractString(it, "id") }
+        require(evidenceIds.size == evidenceBlocks.size && evidenceIds.toSet() == gapIds) {
             "Evidence bindings must contain exactly one record for every native gap"
         }
         evidenceBlocks.forEach { block ->
