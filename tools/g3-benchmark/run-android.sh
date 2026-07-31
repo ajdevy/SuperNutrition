@@ -22,7 +22,7 @@ adb -s "$ANDROID_DEVICE_SERIAL" shell dumpsys battery > "$RESULT_DIR/battery-bef
 adb -s "$ANDROID_DEVICE_SERIAL" shell dumpsys thermalservice > "$RESULT_DIR/thermal-before.txt"
 adb -s "$ANDROID_DEVICE_SERIAL" shell dumpsys meminfo com.supernutrition.g3benchmark > "$RESULT_DIR/meminfo-before.txt" || true
 adb -s "$ANDROID_DEVICE_SERIAL" shell am force-stop com.supernutrition.g3benchmark
-adb -s "$ANDROID_DEVICE_SERIAL" shell monkey -p com.supernutrition.g3benchmark 1 >/dev/null
+adb -s "$ANDROID_DEVICE_SERIAL" shell am start -W -n com.supernutrition.g3benchmark/.MainActivity >/dev/null
 
 for attempt in $(seq 1 "${G3_RESULT_POLL_ATTEMPTS:-180}"); do
   RESULT_TMP="$RESULT_DIR/result.json.tmp"

@@ -135,8 +135,8 @@ sushi fixture at `0.592399` is included.
 The five semantic top-1 labels were exact: `steak`, `greek_salad`,
 `grilled_salmon`, `sushi`, and `waffles`. Under the current `0.55` contract the
 run is `5/5`, accuracy `1.0`. Its resource measurements were session init
-`3,293 ms`, p50 `181 ms`, p95 `264 ms`, max `299 ms`, and PSS
-`26,278 -> 269,382 KB`; sampled battery current was `-1,429 -> -1,447 µA`
+`2,142 ms`, p50 `184 ms`, p95 `299 ms`, max `337 ms`, and PSS
+`64,751 -> 276,503 KB`; sampled battery current was `-1,293 -> -1,454 µA`
 and thermal status stayed `0 -> 0`. This proves recognition but does not pass
 the proposed initialization, latency, or memory budgets. The exploratory
 composite top-1 labels, in fixture order, were `steak`, `grilled_salmon`,
@@ -144,10 +144,9 @@ composite top-1 labels, in fixture order, were `steak`, `grilled_salmon`,
 not ingredient predictions.
 
 On the same physical device, the rebuilt acceptance APK/test APK were run by
-direct Android instrumentation after Gradle dependency resolution attempted to
-download uncached Compose desktop artifacts. The UI suite passed `15/15` and
-the isolated local-Android adapter suite passed `4/4`; these are physical
-device correctness records, separate from the G-3 model/resource result.
+the Gradle-connected tasks `connectedUiAcceptanceDebugAndroidTest` (`15/15`)
+and `connectedAndroidDeviceTest` (`4/4`). These are physical-device
+correctness records, separate from the G-3 model/resource result.
 
 ### iOS
 
@@ -195,9 +194,9 @@ These are proposed acceptance budgets, not signed production requirements.
 
 | Budget | Proposed bound | Android evidence | iOS evidence |
 | --- | --- | --- | --- |
-| Session initialization | <= 500 ms cold start | fail: 3,293 ms | fail: 559 ms |
-| Inference latency | p95 <= 100 ms; max <= 150 ms | fail: 264/299 ms | pass: 85/85 ms |
-| Peak process memory | <= 160 MB | fail: 269,382 KB PSS | fail: 252,016 KB resident |
+| Session initialization | <= 500 ms cold start | fail: 2,142 ms | fail: 559 ms |
+| Inference latency | p95 <= 100 ms; max <= 150 ms | fail: 299/337 ms | pass: 85/85 ms |
+| Peak process memory | <= 160 MB | fail: 276,503 KB PSS | fail: 252,016 KB resident |
 | Thermal | no serious/critical transition | pass: 0 -> 0 | pass: 0 -> 0 |
 | Battery | <= 1% over 50 inferences plus native trace | sampled current `-1,429 -> -1,447 µA`; energy/percentage still open | level unchanged; current/energy trace open |
 | Model integrity | pinned SHA before session creation | pass | pass |

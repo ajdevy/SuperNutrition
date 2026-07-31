@@ -155,6 +155,19 @@ so that eligible devices can analyze without transmitting Photo Input.
     runtime asserted zero network attempts, leased-byte-only input, resource
     budget fail-closed behavior without reading photo content, and cancellation
     cleanup with late-result suppression.
+  - [x] Rerun the current Gradle-connected physical suites after syncing
+    `origin/main` and refreshing strict device-test locks: UI/semantics and
+    capture `15/15` via `connectedUiAcceptanceDebugAndroidTest`, and local
+    Android adapter `4/4` via `connectedAndroidDeviceTest`, on Honor DNY-NX9
+    (Android 16/API 36). A cold-start/recomposition race in the UI helper was
+    fixed by re-querying stable nodes and allowing a 15-second cold-start
+    window; no production UI code changed.
+  - [x] Rerun the Android G-3 benchmark on the same physical device with the
+    pinned model and manifest: semantic `5/5`, init `2,142 ms`, p50/p95/max
+    `184/299/337 ms`, PSS `64,751 -> 276,503 KB`, thermal `0 -> 0`, ingredient
+    capability `unsupported`, and plated weight `not-evaluable`. Raw evidence
+    was captured in `/tmp/supernutrition-g3-android-current` and the checked-in
+    interpretation is in `g3-benchmark-artifact.md`.
   - [ ] Extend this evidence to the signed G-3 real-device benchmark for
     runtime/model selection, latency, peak memory, thermal, battery, and
     rollback budgets. The G-3 exit artifact remains outstanding.
