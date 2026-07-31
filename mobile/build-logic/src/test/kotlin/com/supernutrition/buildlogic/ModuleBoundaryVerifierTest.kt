@@ -82,6 +82,38 @@ class ModuleBoundaryVerifierTest {
         }
     }
 
+    @Test
+    fun `forbidden import rules remain active through typed policy access`() {
+        val root = fixture("feature")
+        try {
+            val inventory = root.resolve("config/architecture/module-boundaries.toml")
+            Files.writeString(
+                inventory,
+                "forbidden_imports = [\"android.* in domain/**\"]\n" + Files.readString(inventory),
+            )
+            val source = root.resolve("domain/photo/src/commonMain/kotlin/Bad.kt")
+            Files.createDirectories(source.parent)
+            Files.writeString(source, "package bad\nimport android.foo.Bar\n")
+            assertFailsWith<IllegalArgumentException> { ModuleBoundaryVerifier.validate(root) }
+        } finally {
+            root.toFile().deleteRecursively()
+        }
+    }
+
+    @Test
+    fun `empty module inventory fails closed`() {
+        val root = fixture("feature")
+        try {
+            Files.writeString(
+                root.resolve("config/architecture/module-boundaries.toml"),
+                "[[allowed_edge]]\nfrom = \"feature\"\nto = \"domain\"\nscope = \"production\"",
+            )
+            assertFailsWith<IllegalArgumentException> { ModuleBoundaryVerifier.validate(root) }
+        } finally {
+            root.toFile().deleteRecursively()
+        }
+    }
+
     private fun fixture(source: String): java.nio.file.Path {
         val root = Files.createTempDirectory("module-boundaries")
         Files.createDirectories(root.resolve("config/architecture"))

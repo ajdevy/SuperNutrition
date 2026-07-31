@@ -2,9 +2,9 @@
 title: 'Resolve PR #24 seventh-pass review findings'
 type: 'bugfix'
 created: '2026-07-30'
-status: 'in-progress'
+status: 'in-review'
 review_loop_iteration: 7
-baseline_commit: '765c75e7b7e8f889f74ae7ac4cfac17aa80ce8d7'
+baseline_commit: '835472133eb18384c800c3490baa2683bad421a1'
 context:
   - '{project-root}/AGENTS.md'
   - '{project-root}/_bmad-output/planning-artifacts/architecture/architecture-SuperNutrition-2026-07-26/ARCHITECTURE-SPINE.md'
