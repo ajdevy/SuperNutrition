@@ -2,6 +2,7 @@ package com.supernutrition.platform.photoios
 
 import com.supernutrition.core.ui.UiAutomationIds
 import com.supernutrition.platform.photoios.captureinterop.SNCreateCaptureInput
+import com.supernutrition.platform.photoios.captureinterop.SNConfigureCaptureDevice
 import com.supernutrition.platform.photoios.captureinterop.SNDefaultBackCamera
 import com.supernutrition.platform.photoios.captureinterop.SNFileDataRepresentation
 import com.supernutrition.platform.photoios.captureinterop.SNSetViewAccessibilityIdentifier
@@ -22,6 +23,7 @@ import platform.AVFoundation.AVCapturePhotoCaptureDelegateProtocol
 import platform.AVFoundation.AVCapturePhotoOutput
 import platform.AVFoundation.AVCapturePhotoSettings
 import platform.AVFoundation.AVCaptureSession
+import platform.AVFoundation.AVCaptureSessionPresetPhoto
 import platform.AVFoundation.AVCaptureVideoPreviewLayer
 import platform.AVFoundation.AVLayerVideoGravityResizeAspectFill
 import platform.CoreGraphics.CGRectGetHeight
@@ -300,6 +302,10 @@ private class CameraCaptureViewController(
 
     private fun configureCapture(input: AVCaptureDeviceInput): Boolean {
         captureSession.beginConfiguration()
+        if (captureSession.canSetSessionPreset(AVCaptureSessionPresetPhoto)) {
+            captureSession.sessionPreset = AVCaptureSessionPresetPhoto
+        }
+        SNConfigureCaptureDevice(input.device)
         val configured = captureSession.canAddInput(input) && captureSession.canAddOutput(photoOutput)
         if (configured) {
             captureSession.addInput(input)

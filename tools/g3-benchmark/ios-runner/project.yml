@@ -12,7 +12,9 @@ targets:
     platform: iOS
     sources:
       - path: Sources
-      - path: Resources/mobilenet_v2_food101.onnx
+      - path: Resources/swin-finetuned-food101-matmul-int8.onnx
+        buildPhase: resources
+      - path: Resources/food101-labels.txt
         buildPhase: resources
       - path: Resources/fixtures/steak-side-plate.jpg
         buildPhase: resources
@@ -23,6 +25,16 @@ targets:
       - path: Resources/fixtures/buddha-bowl.jpg
         buildPhase: resources
       - path: Resources/fixtures/salmon-grain-plate.jpg
+        buildPhase: resources
+      - path: Resources/fixtures/steak.jpg
+        buildPhase: resources
+      - path: Resources/fixtures/greek-salad.jpg
+        buildPhase: resources
+      - path: Resources/fixtures/salmon-on-grill.jpg
+        buildPhase: resources
+      - path: Resources/fixtures/sushi.jpg
+        buildPhase: resources
+      - path: Resources/fixtures/waffles.jpg
         buildPhase: resources
     settings:
       PRODUCT_BUNDLE_IDENTIFIER: com.supernutrition.g3
