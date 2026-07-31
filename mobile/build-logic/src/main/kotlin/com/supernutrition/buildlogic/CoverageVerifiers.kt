@@ -15,22 +15,33 @@ internal object NativeEquivalentEvidenceVerifier {
         evidenceText: String,
         now: Instant = Instant.now(),
     ): Boolean {
-        val referencedIds = PolicyToml.blocks(coverageText, "denominator")
+        val coverage = PolicyToml.document(coverageText)
+        val nativeGaps = PolicyToml.document(nativeGapsText)
+        val evidence = PolicyToml.document(evidenceText)
+        val denominatorBlocks = PolicyToml.blocks(coverage, "denominator")
+        require(denominatorBlocks.isNotEmpty()) { "Coverage inventory has no denominator blocks" }
+        val referencedIds = denominatorBlocks
             .filter { PolicyToml.string(it, "coverage_kind") == "native-equivalent" }
             .flatMap { PolicyToml.stringList(it, "evidence_ids") }
             .toSet()
-        val gapBlocks = PolicyToml.blocks(nativeGapsText, "gap")
+        val gapBlocks = PolicyToml.blocks(nativeGaps, "gap")
+        require(gapBlocks.mapNotNull { PolicyToml.string(it, "id") }.let { it.size == it.toSet().size }) {
+            "Native-gap inventory contains duplicate IDs"
+        }
         val optionalIds = gapBlocks
             .filter { PolicyToml.boolean(it, "optional") == true }
             .mapNotNull { PolicyToml.string(it, "id") }
             .toSet()
         val requiredIds = referencedIds - optionalIds
         if (requiredIds.isEmpty()) return true
-        if (PolicyToml.string(nativeGapsText, "lifecycle") != "active" ||
-            PolicyToml.string(evidenceText, "lifecycle") != "active"
+        if (PolicyToml.string(nativeGaps, "lifecycle") != "active" ||
+            PolicyToml.string(evidence, "lifecycle") != "active"
         ) return false
 
-        val evidenceBlocks = PolicyToml.blocks(evidenceText, "evidence")
+        val evidenceBlocks = PolicyToml.blocks(evidence, "evidence")
+        require(evidenceBlocks.mapNotNull { PolicyToml.string(it, "id") }.let { it.size == it.toSet().size }) {
+            "Evidence bindings contain duplicate IDs"
+        }
         return requiredIds.all { id ->
             val gap = gapBlocks.firstOrNull { PolicyToml.string(it, "id") == id } ?: return@all false
             val evidence = evidenceBlocks.firstOrNull { PolicyToml.string(it, "id") == id } ?: return@all false

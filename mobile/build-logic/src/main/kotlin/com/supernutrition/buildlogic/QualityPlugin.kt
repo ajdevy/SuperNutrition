@@ -304,13 +304,17 @@ class QualityPlugin : Plugin<Project> {
 
         val lifecycleText = Files.readString(mobileRoot.resolve("product-lifecycle.toml"))
         val coverageText = Files.readString(mobileRoot.resolve("config/quality/coverage.toml"))
+        val activation = PolicyToml.section(
+            PolicyToml.document(lifecycleText),
+            "activation",
+        ) ?: return false
         return lifecycle(mobileRoot) == "active" &&
             PolicyToml.boolean(coverageText, "quality_claim") == true &&
             nativeEquivalentEvidenceAllowed(mobileRoot) &&
             listOf(
                 "active_inventory_and_denominators",
                 "production_compose_host",
-            ).all { PolicyToml.boolean(PolicyToml.section(lifecycleText, "activation"), it) == true }
+            ).all { PolicyToml.boolean(activation, it) == true }
     }
 
     private fun qualityClaimConfigured(mobileRoot: Path): Boolean =
@@ -361,11 +365,11 @@ class QualityPlugin : Plugin<Project> {
         )
     }
 
-    private fun blocks(text: String, name: String): List<String> =
-        PolicyToml.blocks(text, name)
+    private fun blocks(text: String, name: String): List<PolicyToml.Table> =
+        PolicyToml.blocks(PolicyToml.document(text), name)
 
-    private fun extractString(text: String, key: String): String? =
-        PolicyToml.string(text, key)
+    private fun extractString(table: PolicyToml.Table, key: String): String? =
+        PolicyToml.string(table, key)
 
     private fun lifecycle(mobileRoot: Path): String =
         PolicyToml.string(

@@ -3,6 +3,7 @@ package com.supernutrition.buildlogic
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertFalse
+import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 class NativeEquivalentEvidenceVerifierTest {
@@ -88,6 +89,25 @@ class NativeEquivalentEvidenceVerifierTest {
         assertFalse(
             NativeEquivalentEvidenceVerifier.allowed(coverage, gaps.replace("max_age_days = 30", "max_age_days = 1"), evidence, now),
         )
+    }
+
+    @Test
+    fun `missing denominator inventory fails closed`() {
+        assertFailsWith<IllegalArgumentException> {
+            NativeEquivalentEvidenceVerifier.allowed("lifecycle = \"active\"", "", "", now)
+        }
+    }
+
+    @Test
+    fun `duplicate evidence identifiers fail closed`() {
+        assertFailsWith<IllegalArgumentException> {
+            NativeEquivalentEvidenceVerifier.allowed(
+                coverage,
+                gaps,
+                evidence + "\n[[evidence]]\nid = \"native-bridge\"",
+                now,
+            )
+        }
     }
 
     private companion object {
