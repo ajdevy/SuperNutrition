@@ -8,10 +8,18 @@ import difflib
 import json
 import sys
 from pathlib import Path
+from urllib.parse import quote
 
 
 START_MARKER = "<!-- coverage-report:start -->"
 END_MARKER = "<!-- coverage-report:end -->"
+REPOSITORY = "flexsent-labs/SuperNutrition"
+WORKFLOWS = {
+    "dashboard": "ci-required.yml",
+    "jvm": "ci-required.yml",
+    "android": "android-ui-coverage.yml",
+    "ios": "ios-ui-coverage.yml",
+}
 
 
 class ReadmeMetricsError(ValueError):
@@ -24,6 +32,36 @@ def format_number(value: object) -> str:
 
 def format_percent(value: object) -> str:
     return "n/a" if value is None else f"{float(value):.2f}%"
+
+
+def coverage_badge_color(value: object) -> str:
+    if value is None:
+        return "lightgrey"
+    percent = float(value)
+    if percent >= 85:
+        return "brightgreen"
+    if percent >= 70:
+        return "orange"
+    return "red"
+
+
+def workflow_url(workflow: str) -> str:
+    return f"https://github.com/{REPOSITORY}/actions/workflows/{workflow}"
+
+
+def workflow_badge(label: str, workflow: str) -> str:
+    badge_url = f"{workflow_url(workflow)}/badge.svg?branch=main"
+    return f"[![{label}]({badge_url})]({workflow_url(workflow)})"
+
+
+def metric_badge(label: str, value: str, color: str) -> str:
+    encoded_label = quote(label, safe="")
+    encoded_value = quote(value, safe="")
+    image_url = (
+        f"https://img.shields.io/badge/{encoded_label}-{encoded_value}-{color}"
+        "?style=flat-square"
+    )
+    return f"[![{label}]({image_url})]({workflow_url(WORKFLOWS['dashboard'])})"
 
 
 def load_metrics(site_dir: Path) -> tuple[dict[str, object], dict[str, object]]:
@@ -42,10 +80,38 @@ def render_section(loc: dict[str, object], coverage: dict[str, object]) -> str:
         f"{format_percent(row['line_percent'])} | {format_percent(row['branch_percent'])} |"
         for row in rows
     )
+    workflow_badges = " ".join(
+        [
+            workflow_badge("Coverage dashboard", WORKFLOWS["dashboard"]),
+            workflow_badge("JVM unit coverage", WORKFLOWS["jvm"]),
+            workflow_badge("Android UI coverage", WORKFLOWS["android"]),
+            workflow_badge("iOS UI coverage", WORKFLOWS["ios"]),
+        ]
+    )
+    metric_badges = " ".join(
+        [
+            metric_badge(
+                "JVM line",
+                format_percent(host["line_percent"]),
+                coverage_badge_color(host["line_percent"]),
+            ),
+            metric_badge(
+                "JVM branch",
+                format_percent(host["branch_percent"]),
+                coverage_badge_color(host["branch_percent"]),
+            ),
+            metric_badge("Source files", format_number(loc["files"]), "5865F2"),
+            metric_badge("Code lines", format_number(loc["code_lines"]), "5865F2"),
+        ]
+    )
     return "\n".join(
         [
             START_MARKER,
             "## Quality snapshot",
+            "",
+            workflow_badges,
+            "",
+            metric_badges,
             "",
             "| Metric | Value |",
             "|---|---:|",
@@ -59,6 +125,20 @@ def render_section(loc: dict[str, object], coverage: dict[str, object]) -> str:
             "| Module | Kind | Line | Branch |",
             "|---|---|---:|---:|",
             module_rows,
+            "",
+            "### Report links",
+            "",
+            "| Report | Workflow and artifacts |",
+            "|---|---|",
+            f"| Coverage dashboard | [Open workflow runs and artifacts]({workflow_url(WORKFLOWS['dashboard'])}) |",
+            f"| JVM unit coverage | [Open workflow runs and artifacts]({workflow_url(WORKFLOWS['jvm'])}) |",
+            f"| Android UI coverage | [Open workflow runs and artifacts]({workflow_url(WORKFLOWS['android'])}) |",
+            f"| iOS UI coverage | [Open workflow runs and artifacts]({workflow_url(WORKFLOWS['ios'])}) |",
+            "",
+            "Run the exact local JVM/report gate with "
+            "[`scripts/run-local-ci.sh jvm`](scripts/run-local-ci.sh). "
+            "Use `docker` for the same Linux JVM/report gate in Docker, or `android`, "
+            "`ios`, or `all` when the native toolchains are available.",
             "",
             "Generated from the committed coverage inventory by "
             "[`scripts/build_coverage_site.py`](scripts/build_coverage_site.py). "

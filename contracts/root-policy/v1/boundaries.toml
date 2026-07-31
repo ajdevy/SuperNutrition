@@ -129,6 +129,18 @@ mutates_repository = false
 test_entrypoint = "scripts/run-ui-journeys-ios.sh"
 
 [[executable]]
+path = "scripts/run-local-ci.sh"
+purpose = "reproducible local JVM, Docker, Android, and iOS CI entrypoint"
+mutates_repository = false
+test_entrypoint = "scripts/run-local-ci.sh --help"
+
+[[executable]]
+path = "scripts/run-local-ci-docker.sh"
+purpose = "Linux Docker runner for the local JVM/report CI gate"
+mutates_repository = false
+test_entrypoint = "scripts/run-local-ci-docker.sh"
+
+[[executable]]
 path = "scripts/run-physical-ios-fixtures.sh"
 purpose = "physical iOS arm64 Kotlin/Native fixture runner and evidence producer"
 mutates_repository = false
