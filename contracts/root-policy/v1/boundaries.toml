@@ -105,6 +105,18 @@ mutates_repository = false
 test_entrypoint = "scripts/inference-contract-negative-fixtures.sh"
 
 [[executable]]
+path = "scripts/verify-inference-v2-contract.sh"
+purpose = "read-only inference-engine v2 modality, span, and compatibility validation"
+mutates_repository = false
+test_entrypoint = "scripts/inference-v2-negative-fixtures.sh"
+
+[[executable]]
+path = "scripts/inference-v2-negative-fixtures.sh"
+purpose = "negative fixtures for v2 modality cardinality, source spans, nutrition, and telemetry leakage"
+mutates_repository = false
+test_entrypoint = "scripts/inference-v2-negative-fixtures.sh"
+
+[[executable]]
 path = "scripts/verify-interaction-policy-contract.sh"
 purpose = "read-only interaction-policy v1 schema and forbidden-default validation"
 mutates_repository = false
