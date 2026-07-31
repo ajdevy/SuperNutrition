@@ -18,6 +18,8 @@ jobs:
         run: scripts/verify-inference-contract.sh
       - name: Run inference contract negative fixtures
         run: scripts/inference-contract-negative-fixtures.sh
+      - name: Verify repository root boundaries
+        run: scripts/verify-root-boundaries.sh
       - name: Run mobile JVM unit tests with coverage
         run: >-
           ./mobile/gradlew -p mobile mobileUnitCoverage
