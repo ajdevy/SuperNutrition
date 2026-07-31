@@ -163,11 +163,11 @@ so that eligible devices can analyze without transmitting Photo Input.
     fixed by re-querying stable nodes and allowing a 15-second cold-start
     window; no production UI code changed.
   - [x] Rerun the Android G-3 benchmark on the same physical device with the
-    pinned model and manifest: semantic `5/5`, init `2,142 ms`, p50/p95/max
-    `184/299/337 ms`, PSS `64,751 -> 276,503 KB`, thermal `0 -> 0`, ingredient
+    pinned model and manifest: semantic `5/5`, init `2,922 ms`, p50/p95/max
+    `198/287/535 ms`, PSS `26,445 -> 271,125 KB`, thermal `0 -> 0`, ingredient
     capability `unsupported`, and plated weight `not-evaluable`. Raw evidence
-    was captured in `/tmp/supernutrition-g3-android-current` and the checked-in
-    interpretation is in `g3-benchmark-artifact.md`.
+    was captured in `/tmp/supernutrition-g3-android-current-head` and the
+    checked-in interpretation is in `g3-benchmark-artifact.md`.
   - [ ] Extend this evidence to the signed G-3 real-device benchmark for
     runtime/model selection, latency, peak memory, thermal, battery, and
     rollback budgets. The G-3 exit artifact remains outstanding.
@@ -366,6 +366,13 @@ GPT-5 / Codex
   before execution by uncached Compose desktop dependency resolution, so this
   direct instrumentation run is recorded as device evidence rather than a
   clean Gradle evidence bundle. The signed G-3 gate remains open.
+- 2026-07-31 current-head physical rerun after Android transport recovery:
+  Gradle `connectedAndroidDeviceTest` passed `4/4` and
+  `connectedUiAcceptanceDebugAndroidTest` passed `15/15` on Honor DNY-NX9.
+  The fresh G-3 runner completed semantic `5/5` with init `2,922 ms`,
+  p50/p95/max `198/287/535 ms`, PSS `26,445 -> 271,125 KB`, battery current
+  `-1,287 -> -1,563 µA`, and thermal `0 -> 0`; ingredient remains
+  `unsupported` and weight remains `not-evaluable`.
 
 ### File List
 

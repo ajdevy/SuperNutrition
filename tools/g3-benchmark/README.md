@@ -134,9 +134,9 @@ sushi fixture at `0.592399` is included.
 
 The five semantic top-1 labels were exact: `steak`, `greek_salad`,
 `grilled_salmon`, `sushi`, and `waffles`. Under the current `0.55` contract the
-run is `5/5`, accuracy `1.0`. Its resource measurements were session init
-`2,142 ms`, p50 `184 ms`, p95 `299 ms`, max `337 ms`, and PSS
-`64,751 -> 276,503 KB`; sampled battery current was `-1,293 -> -1,454 µA`
+run is `5/5`, accuracy `1.0`. The latest rerun recorded session init `2,922 ms`,
+p50 `198 ms`, p95 `287 ms`, max `535 ms`, and PSS
+`26,445 -> 271,125 KB`; sampled battery current was `-1,287 -> -1,563 µA`
 and thermal status stayed `0 -> 0`. This proves recognition but does not pass
 the proposed initialization, latency, or memory budgets. The exploratory
 composite top-1 labels, in fixture order, were `steak`, `grilled_salmon`,
@@ -195,11 +195,11 @@ These are proposed acceptance budgets, not signed production requirements.
 
 | Budget | Proposed bound | Android evidence | iOS evidence |
 | --- | --- | --- | --- |
-| Session initialization | <= 500 ms cold start | fail: 2,142 ms | fail: 595 ms |
-| Inference latency | p95 <= 100 ms; max <= 150 ms | fail: 299/337 ms | pass: 89/89 ms |
-| Peak process memory | <= 160 MB | fail: 276,503 KB PSS | fail: 252,864 KB resident |
+| Session initialization | <= 500 ms cold start | fail: 2,922 ms | fail: 595 ms |
+| Inference latency | p95 <= 100 ms; max <= 150 ms | fail: 287/535 ms | pass: 89/89 ms |
+| Peak process memory | <= 160 MB | fail: 271,125 KB PSS | fail: 252,864 KB resident |
 | Thermal | no serious/critical transition | pass: 0 -> 0 | pass: 0 -> 0 |
-| Battery | <= 1% over 50 inferences plus native trace | sampled current `-1,429 -> -1,447 µA`; energy/percentage still open | level unchanged; current/energy trace open |
+| Battery | <= 1% over 50 inferences plus native trace | sampled current `-1,287 -> -1,563 µA`; energy/percentage still open | level unchanged; current/energy trace open |
 | Model integrity | pinned SHA before session creation | pass | pass |
 | Network/privacy | no photo upload or product API call | pass | pass |
 
