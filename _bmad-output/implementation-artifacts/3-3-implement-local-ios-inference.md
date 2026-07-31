@@ -138,6 +138,12 @@ GPT-5 / Codex
   memory, and thermal evidence. iOS battery/energy evidence and owner
   acceptance remain open in
   `_bmad-output/implementation-artifacts/g3-benchmark-artifact.md`.
+- 2026-07-31 controlled physical iOS G-3 rerun: after terminating the prior
+  runner process, the signed `SuperNutritionG3` app completed 50/50 inferences
+  on the paired iPhone 14 Pro with semantic `5/5`, session init `595 ms`,
+  p50/p95/max `87/89/89 ms`, resident memory `261,200 -> 252,864 KB`,
+  thermal `0 -> 0`, and battery level `0.850 -> 0.850`. This refreshes the
+  preliminary evidence but does not sign G-3 or add ingredient/weight support.
 - 2026-07-31 physical-device rerun: the signed Xcode acceptance scheme passed
   `5/5` tests on iPhone 14 Pro (iOS 26.5.2), and the binary-bound arm64
   fixture runner passed `5/5` tests (3 normalization, 2 bridge). The emitted

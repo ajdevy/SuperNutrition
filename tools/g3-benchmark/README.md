@@ -156,9 +156,10 @@ team. Runtime was ONNX Runtime Objective-C `1.27.0` with XNNPACK.
 
 The five semantic top-1 labels were exact: `steak`, `greek_salad`,
 `grilled_salmon`, `sushi`, and `waffles`; semantic accuracy was `5/5` at the
-`0.55` threshold. The latest run recorded session init `559 ms`, p50 `83 ms`,
-p95 `85 ms`, max `85 ms`, and resident memory `260,240 -> 252,016 KB`.
-Thermal status stayed `0 -> 0` and battery level stayed `1.000 -> 1.000`.
+`0.55` threshold. The latest controlled rerun recorded session init `595 ms`,
+p50 `87 ms`, p95 `89 ms`, max `89 ms`, and resident memory
+`261,200 -> 252,864 KB`. Thermal status stayed `0 -> 0` and battery level
+stayed `0.850 -> 0.850`.
 
 The iOS run is therefore semantic-pass and latency-pass, but it exceeds the
 proposed `160 MB` resident-memory budget.
@@ -194,9 +195,9 @@ These are proposed acceptance budgets, not signed production requirements.
 
 | Budget | Proposed bound | Android evidence | iOS evidence |
 | --- | --- | --- | --- |
-| Session initialization | <= 500 ms cold start | fail: 2,142 ms | fail: 559 ms |
-| Inference latency | p95 <= 100 ms; max <= 150 ms | fail: 299/337 ms | pass: 85/85 ms |
-| Peak process memory | <= 160 MB | fail: 276,503 KB PSS | fail: 252,016 KB resident |
+| Session initialization | <= 500 ms cold start | fail: 2,142 ms | fail: 595 ms |
+| Inference latency | p95 <= 100 ms; max <= 150 ms | fail: 299/337 ms | pass: 89/89 ms |
+| Peak process memory | <= 160 MB | fail: 276,503 KB PSS | fail: 252,864 KB resident |
 | Thermal | no serious/critical transition | pass: 0 -> 0 | pass: 0 -> 0 |
 | Battery | <= 1% over 50 inferences plus native trace | sampled current `-1,429 -> -1,447 µA`; energy/percentage still open | level unchanged; current/energy trace open |
 | Model integrity | pinned SHA before session creation | pass | pass |
