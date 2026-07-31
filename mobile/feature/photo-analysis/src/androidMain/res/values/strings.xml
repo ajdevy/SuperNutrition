@@ -1,0 +1,23 @@
+<resources>
+    <string name="capture_title">Capture</string>
+    <string name="capture_shutter">Take meal photo</string>
+    <string name="capture_import">Choose photo</string>
+    <string name="capture_open_settings">Open settings</string>
+    <string name="capture_scan_again">Scan again</string>
+    <string name="capture_cancel">Cancel</string>
+    <string name="capture_status_ready">Ready to capture</string>
+    <string name="capture_status_preparing">Preparing photo</string>
+    <string name="capture_status_ready_photo">Photo ready</string>
+    <string name="capture_status_analyzing">Analyzing photo</string>
+    <string name="capture_status_review">Review candidate</string>
+    <string name="capture_status_restoring">Restoring photo analysis</string>
+    <string name="capture_recovery_permission">Camera permission is required</string>
+    <string name="capture_recovery_unavailable">Camera is unavailable</string>
+    <string name="capture_recovery_failed">Photo capture failed</string>
+    <string name="capture_recovery_quality">Photo quality is too low</string>
+    <string name="capture_recovery_no_food">No food was found in the photo</string>
+    <string name="capture_recovery_offline">Analysis is offline</string>
+    <string name="capture_recovery_cancelled">Analysis cancelled</string>
+    <string name="capture_permission_rationale">Camera access is needed to take a meal photo.</string>
+    <string name="capture_permission_continue">Continue</string>
+</resources>

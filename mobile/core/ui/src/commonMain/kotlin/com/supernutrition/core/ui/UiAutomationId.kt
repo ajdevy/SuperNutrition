@@ -1,18 +1,16 @@
 package com.supernutrition.core.ui
 
+internal val UI_AUTOMATION_ID_PATTERN = Regex("[a-z][a-z0-9]*(?:_[a-z0-9]+)*")
+
 /**
  * Stable, locale-neutral automation identifiers shared by Compose and native
  * platform hosts. Labels remain localized; these values are an API contract.
  */
 data class UiAutomationId(val value: String) {
     init {
-        require(value.matches(IDENTIFIER_PATTERN)) {
+        require(value.matches(UI_AUTOMATION_ID_PATTERN)) {
             "Automation IDs must use lowercase snake_case: $value"
         }
-    }
-
-    private companion object {
-        val IDENTIFIER_PATTERN = Regex("[a-z][a-z0-9]*(?:_[a-z0-9]+)*")
     }
 }
 
@@ -25,7 +23,7 @@ object UiAutomationIds {
     val CAPTURE_SCAN_AGAIN = UiAutomationId("capture_scan_again")
     val CAPTURE_CANCEL = UiAutomationId("capture_cancel")
     val CAPTURE_OPEN_SETTINGS = UiAutomationId("capture_open_settings")
-    val CAPTURE_PERMISSION_RATIONALE = UiAutomationId("capture_permission_rationale")
+    val CAPTURE_NATIVE = UiAutomationId("capture_native")
 
     val all: List<UiAutomationId> = listOf(
         BOOTSTRAP_LAUNCH_DI,
@@ -36,6 +34,6 @@ object UiAutomationIds {
         CAPTURE_SCAN_AGAIN,
         CAPTURE_CANCEL,
         CAPTURE_OPEN_SETTINGS,
-        CAPTURE_PERMISSION_RATIONALE,
+        CAPTURE_NATIVE,
     )
 }

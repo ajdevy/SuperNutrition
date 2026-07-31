@@ -9,7 +9,7 @@ fi
 job_id="$1"
 output_file="$2"
 case "$job_id" in
-  quality-linux|ui-journeys-android|quality-apple|ui-journeys-ios|quality-web-landing|quality-backend)
+  mobile-unit-coverage)
     ;;
   *)
     printf 'unsupported CI fingerprint job: %s\n' "$job_id" >&2
@@ -18,26 +18,10 @@ case "$job_id" in
 esac
 
 repo_root="${SUPERNUTRITION_CI_FINGERPRINT_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib/quality-common.sh"
 git -C "$repo_root" rev-parse --git-dir >/dev/null 2>&1 || {
   printf 'CI fingerprint root is not a Git checkout: %s\n' "$repo_root" >&2
   exit 1
-}
-
-hash_stream() {
-  if command -v sha256sum >/dev/null 2>&1; then
-    sha256sum | awk '{print $1}'
-  else
-    shasum --algorithm 256 | awk '{print $1}'
-  fi
-}
-
-hash_file() {
-  local path="$1"
-  if command -v sha256sum >/dev/null 2>&1; then
-    sha256sum "$path" | awk '{print $1}'
-  else
-    shasum --algorithm 256 "$path" | awk '{print $1}'
-  fi
 }
 
 digest_paths() {
@@ -53,21 +37,6 @@ digest_paths() {
   } | hash_stream
 }
 
-digest_tree() {
-  local root_relative="$1"
-  test -d "$repo_root/$root_relative" || {
-    printf 'missing fingerprint directory: %s\n' "$root_relative" >&2
-    exit 1
-  }
-  {
-    local absolute relative
-    while IFS= read -r absolute; do
-      relative="${absolute#"$repo_root/"}"
-      printf '%s\0%s\0' "$relative" "$(hash_file "$absolute")"
-    done < <(find "$repo_root/$root_relative" -type f -print | LC_ALL=C sort)
-  } | hash_stream
-}
-
 commit_sha="$(git -C "$repo_root" rev-parse HEAD)"
 workflow_sha="${GITHUB_SHA:-local}"
 if test -n "${GITHUB_SHA:-}" && test "$GITHUB_SHA" != "$commit_sha"; then
@@ -75,14 +44,15 @@ if test -n "${GITHUB_SHA:-}" && test "$GITHUB_SHA" != "$commit_sha"; then
   exit 1
 fi
 
-mobile_lifecycle="$(sed -n 's/^lifecycle = "\([^"]*\)"$/\1/p' "$repo_root/mobile/product-lifecycle.toml" | head -n 1)"
-web_lifecycle="$(sed -n 's/^lifecycle = "\([^"]*\)"$/\1/p' "$repo_root/web/landing/product-lifecycle.toml" | head -n 1)"
-backend_lifecycle="$(sed -n 's/^lifecycle = "\([^"]*\)"$/\1/p' "$repo_root/backend/mobile-api/product-lifecycle.toml" | head -n 1)"
+mobile_lifecycle="$(lifecycle_value "$repo_root" mobile/product-lifecycle.toml)"
+web_lifecycle="$(lifecycle_value "$repo_root" web/landing/product-lifecycle.toml)"
+backend_lifecycle="$(lifecycle_value "$repo_root" backend/mobile-api/product-lifecycle.toml)"
 test -n "$mobile_lifecycle" && test -n "$web_lifecycle" && test -n "$backend_lifecycle"
 
 root_boundary_digest="$(digest_paths \
   contracts/root-policy/v1/schema.toml \
   contracts/root-policy/v1/boundaries.toml \
+  contracts/root-policy/v1/ownership.toml \
   scripts/verify-root-boundaries.sh)"
 lifecycle_digest="$(digest_paths \
   mobile/product-lifecycle.toml \
@@ -121,7 +91,7 @@ inventory_digest="$(digest_paths \
   mobile/config/quality/suppression-registry.toml \
   mobile/config/quality/interaction-policy.toml \
   mobile/config/quality/evidence-bindings.toml)"
-flow_fingerprint="$(digest_tree mobile/.maestro)"
+flow_fingerprint="$(digest_tree "$repo_root" mobile/.maestro)"
 
 mkdir -p "$(dirname "$output_file")"
 temporary_file="${output_file}.tmp.$$"

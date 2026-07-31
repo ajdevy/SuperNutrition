@@ -11,11 +11,12 @@ import kotlin.test.assertTrue
 
 class PhotoAnalysisDomainTest {
     private val attempt = AttemptId("attempt-1")
-    private val leases = PhotoLeaseStore()
-    private val sessions = PhotoSessionStore()
+    private val leases: PhotoLeaseStorePort = PhotoLeaseStore()
+    private val sessions: PhotoSessionStorePort = PhotoSessionStore()
     private val reducer = PhotoAnalysisReducer(leases, sessions, attempt)
+    private val normalizer = PhotoInputNormalizer(digest = { "a".repeat(64) })
 
-    private fun normalized(ref: PhotoRef) = PhotoInputNormalizer(digest = { "a".repeat(64) }).normalize(
+    private fun normalized(ref: PhotoRef) = normalizer.normalize(
         RawPhoto(
             ref = ref,
             bytes = byteArrayOf(1, 2, 3),
@@ -48,17 +49,11 @@ class PhotoAnalysisDomainTest {
             metadataKeys: Set<String> = emptySet(),
         ) = RawPhoto(ref, byteArrayOf(1, 2, 3), 7, 11, orientation, colorSpace, metadataKeys)
 
-        assertFailsWith<IllegalArgumentException> {
-            PhotoInputNormalizer(digest = { "a".repeat(64) }).normalize(raw(ImageOrientation.RIGHT))
-        }
-        assertFailsWith<IllegalArgumentException> {
-            PhotoInputNormalizer(digest = { "a".repeat(64) }).normalize(raw(colorSpace = "Display-P3"))
-        }
-        assertFailsWith<IllegalArgumentException> {
-            PhotoInputNormalizer(digest = { "a".repeat(64) }).normalize(raw(metadataKeys = setOf("EXIF")))
-        }
+        assertFailsWith<PhotoPreparationException> { normalizer.normalize(raw(ImageOrientation.RIGHT)) }
+        assertFailsWith<PhotoPreparationException> { normalizer.normalize(raw(colorSpace = "Display-P3")) }
+        assertFailsWith<PhotoPreparationException> { normalizer.normalize(raw(metadataKeys = setOf("EXIF"))) }
 
-        val output = PhotoInputNormalizer(digest = { "a".repeat(64) }).normalize(raw())
+        val output = normalizer.normalize(raw())
         assertEquals(7, output.width)
         assertEquals(11, output.height)
     }
@@ -76,24 +71,19 @@ class PhotoAnalysisDomainTest {
             metadataKeys = emptySet(),
         )
 
-        assertFailsWith<IllegalArgumentException> {
-            PhotoInputNormalizer(digest = { "a".repeat(64) }).normalize(raw(ByteArray(0)))
-        }
-        assertFailsWith<IllegalArgumentException> {
+        assertFailsWith<PhotoPreparationException> { normalizer.normalize(raw(ByteArray(0))) }
+        assertFailsWith<PhotoPreparationException> {
             PhotoInputNormalizer(maxBytes = 1, digest = { "a".repeat(64) }).normalize(raw(byteArrayOf(1, 2)))
         }
-        assertFailsWith<IllegalArgumentException> {
-            PhotoInputNormalizer(digest = { "a".repeat(64) }).normalize(raw(width = 0))
-        }
-        assertFailsWith<IllegalArgumentException> {
-            PhotoInputNormalizer(digest = { "a".repeat(64) }).normalize(raw(height = 0))
-        }
-        assertFailsWith<IllegalArgumentException> {
+        assertEquals(1, PhotoInputNormalizer(maxBytes = 1, digest = { "a".repeat(64) }).normalize(raw()).bytes.size)
+        assertFailsWith<PhotoPreparationException> { normalizer.normalize(raw(width = 0)) }
+        assertFailsWith<PhotoPreparationException> { normalizer.normalize(raw(height = 0)) }
+        assertFailsWith<PhotoPreparationException> {
             PhotoInputNormalizer(maxDimension = 2, digest = { "a".repeat(64) }).normalize(raw(width = 3))
         }
-        assertFailsWith<IllegalArgumentException> {
-            PhotoInputNormalizer(digest = { "not-a-digest" }).normalize(raw())
-        }
+        assertEquals(2, PhotoInputNormalizer(maxDimension = 2, digest = { "a".repeat(64) })
+            .normalize(raw(width = 2, height = 2)).width)
+        assertFailsWith<PhotoPreparationException> { PhotoInputNormalizer(digest = { "not-a-digest" }).normalize(raw()) }
     }
 
     @Test
@@ -129,19 +119,19 @@ class PhotoAnalysisDomainTest {
     fun `unleased photo ref cannot enter the reducer`() {
         val unleased = PhotoRef.issue(attempt, "photo-without-lease")
 
-        assertFailsWith<IllegalStateException> {
-            reducer.dispatch(PhotoAnalysisEvent.PhotoCaptured(unleased))
-        }
+        reducer.dispatch(PhotoAnalysisEvent.PhotoCaptured(unleased))
         assertEquals(PhotoAnalysisState.Capture, reducer.state)
     }
 
     @Test
-    fun `capture rejects a photo from another attempt and permission denial is typed`() {
+    fun `capture rejects a photo from another attempt`() {
         val foreign = PhotoRef.issue(AttemptId("attempt-foreign"), "foreign")
-        assertFailsWith<IllegalStateException> {
-            reducer.dispatch(PhotoAnalysisEvent.PhotoCaptured(foreign))
-        }
+        reducer.dispatch(PhotoAnalysisEvent.PhotoCaptured(foreign))
+        assertEquals(PhotoAnalysisState.Capture, reducer.state)
+    }
 
+    @Test
+    fun `permission denial from capture is typed`() {
         reducer.dispatch(PhotoAnalysisEvent.PermissionDenied)
         assertEquals(
             PhotoAnalysisState.Recovery(RecoveryReason.PERMISSION_DENIED),
@@ -157,9 +147,7 @@ class PhotoAnalysisDomainTest {
         val unleasedReplacement = PhotoRef.issue(attempt, "photo-without-lease")
         reducer.dispatch(PhotoAnalysisEvent.PhotoCaptured(current))
 
-        assertFailsWith<IllegalStateException> {
-            reducer.dispatch(PhotoAnalysisEvent.ReplacePhoto(unleasedReplacement))
-        }
+        reducer.dispatch(PhotoAnalysisEvent.ReplacePhoto(unleasedReplacement))
         assertEquals(PhotoAnalysisState.Preparing(current), reducer.state)
         assertTrue(leases.isActive(current))
     }
@@ -169,9 +157,7 @@ class PhotoAnalysisDomainTest {
         val current = leases.issue(attempt, "photo-current-only")
         reducer.dispatch(PhotoAnalysisEvent.PhotoCaptured(current))
 
-        assertFailsWith<IllegalStateException> {
-            reducer.dispatch(PhotoAnalysisEvent.ReplacePhoto(current))
-        }
+        reducer.dispatch(PhotoAnalysisEvent.ReplacePhoto(current))
         assertEquals(PhotoAnalysisState.Preparing(current), reducer.state)
         assertTrue(leases.isActive(current))
     }
@@ -204,7 +190,7 @@ class PhotoAnalysisDomainTest {
     fun `normalizer owns a stable copy of input bytes`() {
         val ref = leases.issue(attempt, "photo-copy-boundary")
         val source = byteArrayOf(1, 2, 3)
-        val output = PhotoInputNormalizer(digest = { "a".repeat(64) }).normalize(
+        val output = normalizer.normalize(
             RawPhoto(
                 ref = ref,
                 bytes = source,
@@ -219,6 +205,9 @@ class PhotoAnalysisDomainTest {
 
         source[0] = 99
 
+        assertContentEquals(expected, output.bytes)
+        val exposed = output.bytes
+        exposed[0] = 88
         assertContentEquals(expected, output.bytes)
     }
 
@@ -252,13 +241,10 @@ class PhotoAnalysisDomainTest {
     }
 
     @Test
-    fun `capture failure from capture state enters typed recovery`() {
+    fun `preparation failure from capture state is ignored`() {
         reducer.dispatch(PhotoAnalysisEvent.PreparationFailed(RecoveryReason.CAMERA_UNAVAILABLE))
 
-        assertEquals(
-            PhotoAnalysisState.Recovery(RecoveryReason.CAMERA_UNAVAILABLE),
-            reducer.state,
-        )
+        assertEquals(PhotoAnalysisState.Capture, reducer.state)
     }
 
     @Test
@@ -353,7 +339,7 @@ class PhotoAnalysisDomainTest {
     }
 
     @Test
-    fun `restore from analyzing returns to ready and rejects the old callback`() {
+    fun `restore from analyzing preserves the in progress request`() {
         val ref = leases.issue(attempt, "photo-background-analysis")
         val input = normalized(ref)
         reducer.dispatch(PhotoAnalysisEvent.PhotoCaptured(ref))
@@ -362,9 +348,10 @@ class PhotoAnalysisDomainTest {
 
         reducer.dispatch(PhotoAnalysisEvent.Backgrounded)
         reducer.dispatch(PhotoAnalysisEvent.Restored)
+        assertEquals(PhotoAnalysisState.Analyzing(ref, RequestId("request-background")), reducer.state)
         reducer.dispatch(PhotoAnalysisEvent.AnalysisSucceeded(RequestId("request-background")))
 
-        assertEquals(PhotoAnalysisState.Ready(input), reducer.state)
+        assertEquals(PhotoAnalysisState.CandidateReview(ref, RequestId("request-background")), reducer.state)
     }
 
     @Test
@@ -432,6 +419,30 @@ class PhotoAnalysisDomainTest {
         assertEquals(PhotoAnalysisState.Recovery(RecoveryReason.CANCELLED), reducer.state)
         assertFalse(leases.isActive(ref))
         assertNull(sessions.read(ref))
+    }
+
+    @Test
+    fun `revoking one lease does not clear another session`() {
+        val first = leases.issue(attempt, "photo-revoke-one")
+        val second = leases.issue(attempt, "photo-revoke-two")
+        sessions.put(normalized(first))
+        sessions.put(normalized(second))
+
+        val reduction = reducer.reduce(
+            PhotoAnalysisState.Ready(normalized(first)),
+            PhotoAnalysisEvent.Cancel,
+        )
+        assertEquals(PhotoAnalysisState.Recovery(RecoveryReason.CANCELLED), reduction.state)
+        assertEquals(listOf(PhotoAnalysisEffect.RevokePhoto(first)), reduction.effects)
+        reduction.effects.forEach { effect ->
+            if (effect is PhotoAnalysisEffect.RevokePhoto) {
+                leases.revoke(effect.ref)
+                sessions.remove(effect.ref)
+            }
+        }
+
+        assertNull(sessions.read(first))
+        assertEquals(normalized(second), sessions.read(second))
     }
 
     @Test

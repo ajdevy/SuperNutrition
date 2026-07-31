@@ -1,0 +1,60 @@
+package com.supernutrition.domain.photoanalysis
+
+import com.supernutrition.core.config.ConfigurationSnapshot
+
+sealed interface PhotoAnalysisState {
+    data object Capture : PhotoAnalysisState
+    data class Preparing(val ref: PhotoRef) : PhotoAnalysisState
+    data class Ready(val input: NormalizedPhotoInput) : PhotoAnalysisState
+    data class Analyzing(val ref: PhotoRef, val requestId: RequestId) : PhotoAnalysisState
+    data class CandidateReview(val ref: PhotoRef, val requestId: RequestId) : PhotoAnalysisState
+    data class Recovery(val reason: RecoveryReason, val ref: PhotoRef? = null) : PhotoAnalysisState
+    data class Backgrounded(val snapshot: PhotoAnalysisBackgroundSnapshot) : PhotoAnalysisState
+}
+
+/** Process-safe snapshot: opaque identity only; photo bytes stay in the session store. */
+sealed interface PhotoAnalysisBackgroundSnapshot {
+    data object Capture : PhotoAnalysisBackgroundSnapshot
+    data class Preparing(val ref: PhotoRef) : PhotoAnalysisBackgroundSnapshot
+    data class Ready(val ref: PhotoRef) : PhotoAnalysisBackgroundSnapshot
+    data class Analyzing(val ref: PhotoRef, val requestId: RequestId) : PhotoAnalysisBackgroundSnapshot
+    data class CandidateReview(val ref: PhotoRef, val requestId: RequestId) : PhotoAnalysisBackgroundSnapshot
+    data class Recovery(val reason: RecoveryReason, val ref: PhotoRef?) : PhotoAnalysisBackgroundSnapshot
+}
+
+enum class RecoveryReason {
+    PERMISSION_DENIED,
+    CAMERA_UNAVAILABLE,
+    CAPTURE_FAILED,
+    POOR_IMAGE,
+    NO_FOOD,
+    OFFLINE,
+    CANCELLED,
+}
+
+sealed interface PhotoAnalysisEvent {
+    data class PhotoCaptured(val ref: PhotoRef) : PhotoAnalysisEvent
+    data class PreparationSucceeded(val input: NormalizedPhotoInput) : PhotoAnalysisEvent
+    data class PreparationFailed(val reason: RecoveryReason) : PhotoAnalysisEvent
+    data object PermissionDenied : PhotoAnalysisEvent
+    data class AnalysisStarted(val requestId: RequestId) : PhotoAnalysisEvent
+    data class AnalysisSucceeded(val requestId: RequestId) : PhotoAnalysisEvent
+    data class ReplacePhoto(val ref: PhotoRef) : PhotoAnalysisEvent
+    data object Cancel : PhotoAnalysisEvent
+    data object ScanAgain : PhotoAnalysisEvent
+    data object Backgrounded : PhotoAnalysisEvent
+    data object Restored : PhotoAnalysisEvent
+    data class RestoreFromSnapshot(val snapshot: PhotoAnalysisBackgroundSnapshot) : PhotoAnalysisEvent
+}
+
+data class AnalysisAttemptContext(val attemptId: AttemptId, val snapshot: ConfigurationSnapshot)
+
+internal fun PhotoAnalysisState.toBackgroundSnapshot(): PhotoAnalysisBackgroundSnapshot = when (this) {
+    PhotoAnalysisState.Capture -> PhotoAnalysisBackgroundSnapshot.Capture
+    is PhotoAnalysisState.Preparing -> PhotoAnalysisBackgroundSnapshot.Preparing(ref)
+    is PhotoAnalysisState.Ready -> PhotoAnalysisBackgroundSnapshot.Ready(input.ref)
+    is PhotoAnalysisState.Analyzing -> PhotoAnalysisBackgroundSnapshot.Analyzing(ref, requestId)
+    is PhotoAnalysisState.CandidateReview -> PhotoAnalysisBackgroundSnapshot.CandidateReview(ref, requestId)
+    is PhotoAnalysisState.Recovery -> PhotoAnalysisBackgroundSnapshot.Recovery(reason, ref)
+    is PhotoAnalysisState.Backgrounded -> snapshot
+}

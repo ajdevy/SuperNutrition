@@ -5,9 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.view.Gravity
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.FrameLayout
 import androidx.activity.ComponentActivity
 import androidx.camera.core.CameraSelector
@@ -19,6 +17,8 @@ import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import java.io.ByteArrayOutputStream
 import java.io.IOException
+import java.lang.ref.WeakReference
+import android.util.Log
 
 /**
  * Bridge-only CameraX surface. Product presentation remains owned by Compose;
@@ -29,17 +29,25 @@ class AndroidCameraCaptureActivity : ComponentActivity() {
     private var imageCapture: ImageCapture? = null
     private var captureOutput: BoundedCaptureOutputStream? = null
     private var captureStarted = false
+    private var captureRequested = true
+    private var operationId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        operationId = intent.getStringExtra(AndroidPhotoCaptureFiles.EXTRA_OPERATION_ID)
+        captureRequested = savedInstanceState?.getBoolean(CAPTURE_REQUESTED_KEY, true) ?: true
+        val restoredCaptureInFlight = savedInstanceState?.getBoolean(CAPTURE_IN_FLIGHT_KEY, false) ?: false
+        // The in-memory output is intentionally discarded on recreation. If a
+        // one-shot capture was in flight, explicitly schedule exactly one fresh
+        // frame after rebinding instead of relying on an unsaved boolean.
+        if (restoredCaptureInFlight) captureRequested = true
+        captureStarted = false
         if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            finishWithFailure()
+            finishWithFailure(CaptureFailureReason.PERMISSION_DENIED)
             return
         }
 
-        val previewView = PreviewView(this).apply {
-            contentDescription = "camera_capture_preview"
-        }
+        val previewView = PreviewView(this)
         val root = FrameLayout(this).apply {
             addView(
                 previewView,
@@ -49,29 +57,14 @@ class AndroidCameraCaptureActivity : ComponentActivity() {
                 ),
             )
         }
-        val shutter = Button(this).apply {
-            text = "Capture"
-            contentDescription = "camera_capture_shutter"
-            setOnClickListener {
-                if (!captureStarted) {
-                    captureStarted = true
-                    isEnabled = false
-                    capture()
-                }
-            }
-        }
-        root.addView(
-            shutter,
-            FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL,
-            ).apply {
-                bottomMargin = 48
-            },
-        )
         setContentView(root)
         bindCamera(previewView)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putBoolean(CAPTURE_REQUESTED_KEY, captureRequested)
+        outState.putBoolean(CAPTURE_IN_FLIGHT_KEY, captureStarted)
+        super.onSaveInstanceState(outState)
     }
 
     override fun onDestroy() {
@@ -82,68 +75,103 @@ class AndroidCameraCaptureActivity : ComponentActivity() {
 
     private fun bindCamera(previewView: PreviewView) {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
+        val activity = WeakReference(this)
+        val executor = ContextCompat.getMainExecutor(this)
         cameraProviderFuture.addListener({
-            runCatching {
-                val preview = Preview.Builder().build().also {
-                    it.surfaceProvider = previewView.surfaceProvider
-                }
-                val imageCapture = ImageCapture.Builder()
-                    .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
-                    .build()
-                val provider = cameraProviderFuture.get()
-                provider.unbindAll()
-                provider.bindToLifecycle(
-                    this,
-                    CameraSelector.DEFAULT_BACK_CAMERA,
-                    preview,
-                    imageCapture,
-                )
-                cameraProvider = provider
-                this@AndroidCameraCaptureActivity.imageCapture = imageCapture
-            }.onFailure {
-                finishWithFailure()
+            val owner = activity.get() ?: return@addListener
+            if (owner.isFinishing || owner.isChangingConfigurations || owner.isDestroyed) return@addListener
+            owner.bindCameraProvider(cameraProviderFuture, previewView)
+        }, executor)
+    }
+
+    private fun bindCameraProvider(
+        cameraProviderFuture: com.google.common.util.concurrent.ListenableFuture<ProcessCameraProvider>,
+        previewView: PreviewView,
+    ) {
+        runCatching {
+            val preview = Preview.Builder().build().also {
+                it.surfaceProvider = previewView.surfaceProvider
             }
-        }, ContextCompat.getMainExecutor(this))
+            val imageCapture = ImageCapture.Builder()
+                .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
+                .build()
+            val provider = cameraProviderFuture.get()
+            provider.unbindAll()
+            provider.bindToLifecycle(
+                this,
+                CameraSelector.DEFAULT_BACK_CAMERA,
+                preview,
+                imageCapture,
+            )
+            cameraProvider = provider
+            this.imageCapture = imageCapture
+            if (captureRequested && !captureStarted) {
+                captureStarted = true
+                captureRequested = false
+                capture()
+            }
+        }.onFailure { error ->
+            Log.e(TAG, "Camera binding failed", error)
+            finishWithFailure(CaptureFailureReason.CAMERA_UNAVAILABLE)
+        }
     }
 
     private fun capture() {
         val imageCapture = imageCapture ?: run {
-            finishWithFailure()
+            finishWithFailure(CaptureFailureReason.CAMERA_UNAVAILABLE)
             return
         }
         val output = BoundedCaptureOutputStream(MAX_CAPTURE_BYTES)
         captureOutput = output
+        val activity = WeakReference(this)
         imageCapture.takePicture(
             ImageCapture.OutputFileOptions.Builder(output).build(),
             ContextCompat.getMainExecutor(this),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+                    val owner = activity.get() ?: return
+                    if (owner.isFinishing || owner.isDestroyed) return
                     val bytes = output.toByteArray()
                     if (bytes.isEmpty()) {
-                        finishWithFailure()
+                        owner.finishWithFailure(CaptureFailureReason.CAPTURE_FAILED)
                     } else {
-                        setResult(
+                        owner.setResult(
                             Activity.RESULT_OK,
-                            Intent().putExtra(
-                                AndroidPhotoCaptureFiles.EXTRA_CAPTURE_TOKEN,
-                                AndroidPhotoCaptureResultStore.put(bytes),
-                            ),
+                            Intent().apply {
+                                putExtra(
+                                    AndroidPhotoCaptureFiles.EXTRA_CAPTURE_TOKEN,
+                                    AndroidPhotoCaptureResultStore.put(bytes),
+                                )
+                                operationId?.let {
+                                    putExtra(AndroidPhotoCaptureFiles.EXTRA_OPERATION_ID, it)
+                                }
+                            },
                         )
-                        finish()
+                        owner.finish()
                     }
                 }
 
                 override fun onError(exception: ImageCaptureException) {
-                    finishWithFailure()
+                    Log.e(TAG, "Camera capture failed", exception)
+                    val owner = activity.get() ?: return
+                    if (!owner.isFinishing && !owner.isDestroyed) {
+                        owner.finishWithFailure(CaptureFailureReason.CAPTURE_FAILED)
+                    }
                 }
             },
         )
     }
 
-    private fun finishWithFailure() {
+    private fun finishWithFailure(reason: CaptureFailureReason) {
         setResult(
-            Activity.RESULT_CANCELED,
-            Intent().putExtra(AndroidPhotoCaptureFiles.EXTRA_CAPTURE_FAILURE, true),
+            Activity.RESULT_FIRST_USER,
+            Intent().apply {
+                putExtra(AndroidPhotoCaptureFiles.EXTRA_CAPTURE_FAILURE, true)
+                putExtra(AndroidPhotoCaptureFiles.EXTRA_CAPTURE_FAILURE_REASON, reason.wireValue)
+                operationId?.let {
+                    putExtra(AndroidPhotoCaptureFiles.EXTRA_OPERATION_ID, it)
+                }
+            },
         )
         finish()
     }
@@ -177,6 +205,15 @@ class AndroidCameraCaptureActivity : ComponentActivity() {
     }
 
     private companion object {
+        const val TAG = "AndroidCameraCapture"
         const val MAX_CAPTURE_BYTES = 10 * 1024 * 1024
+        const val CAPTURE_REQUESTED_KEY = "photo_analysis.camera.capture_requested"
+        const val CAPTURE_IN_FLIGHT_KEY = "photo_analysis.camera.capture_in_flight"
     }
+}
+
+private enum class CaptureFailureReason(val wireValue: String) {
+    PERMISSION_DENIED("permission-denied"),
+    CAMERA_UNAVAILABLE("camera-unavailable"),
+    CAPTURE_FAILED("capture-failed");
 }

@@ -3,14 +3,9 @@ package com.supernutrition.buildlogic
 import dev.detekt.gradle.Detekt
 import dev.detekt.gradle.extensions.DetektExtension
 import dev.detekt.gradle.plugin.DetektPlugin
-import java.io.StringReader
 import java.nio.file.Files
 import java.nio.file.Path
-import java.time.Instant
-import java.time.temporal.ChronoUnit
 import java.util.Locale
-import javax.xml.XMLConstants
-import javax.xml.parsers.DocumentBuilderFactory
 import kotlinx.kover.gradle.plugin.KoverGradlePlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -18,9 +13,7 @@ import org.gradle.api.Task
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.withType
-import org.w3c.dom.Element
-import org.w3c.dom.Node
-import org.xml.sax.InputSource
+import org.gradle.api.tasks.testing.Test
 
 /**
  * Central, read-only quality entrypoints for the mobile product.
@@ -33,9 +26,6 @@ import org.xml.sax.InputSource
 class QualityPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         val mobileRoot = project.rootProject.projectDir.toPath()
-        val formattingRequested = project.gradle.startParameter.taskNames.any { taskName ->
-            taskName == "qualityFormat" || taskName.endsWith(":qualityFormat")
-        }
         val explicitJvmCoverageRequested = project.providers
             .gradleProperty("supernutrition.runJvmCoverage")
             .map(String::toBoolean)
@@ -58,6 +48,23 @@ class QualityPlugin : Plugin<Project> {
             description = "Runs the read-only Apple quality gate."
             doLast {
                 MobilePolicyValidator.validate(mobileRoot)
+                val xcodeProject = mobileRoot.resolve(
+                    "apps/iosApp/SuperNutritionUIAcceptance.xcodeproj",
+                )
+                require(Files.isDirectory(xcodeProject)) {
+                    "Apple quality gate requires the checked-in Xcode project: $xcodeProject"
+                }
+                if (Files.isExecutable(Path.of("/usr/bin/xcodebuild"))) {
+                    val result = ProcessBuilder(
+                        "/usr/bin/xcodebuild",
+                        "-list",
+                        "-project",
+                        xcodeProject.toString(),
+                    ).directory(mobileRoot.toFile()).inheritIO().start().waitFor()
+                    require(result == 0) { "xcodebuild -list failed for $xcodeProject" }
+                } else {
+                    logger.lifecycle("xcodebuild unavailable; Apple execution remains optional")
+                }
                 logger.lifecycle(
                     "qualityCheckApple validated the local mobile policy; " +
                         "Apple evidence remains good-to-have.",
@@ -89,12 +96,13 @@ class QualityPlugin : Plugin<Project> {
         }
         qualityCheckJvmAndroid.configure { dependsOn(mobileUnitTests) }
         qualityCheckApple.configure { dependsOn(mobileUnitTests) }
-        project.gradle.projectsEvaluated {
-            val jvmUnitTestTasks = project.subprojects.flatMap { subproject ->
-                subproject.tasks.matching { it.name == "jvmTest" }.toList()
+        project.allprojects.forEach { subproject ->
+            subproject.tasks.withType<Test>().configureEach {
+                if (name == "jvmTest" || name.endsWith("UnitTest")) {
+                    mobileUnitTests.configure { dependsOn(this@configureEach) }
+                    mobileUnitCoverage.configure { dependsOn(this@configureEach) }
+                }
             }
-            mobileUnitTests.configure { dependsOn(jvmUnitTestTasks) }
-            mobileUnitCoverage.configure { dependsOn(jvmUnitTestTasks) }
         }
 
         val qualityFormat = project.tasks.register("qualityFormat") {
@@ -107,22 +115,29 @@ class QualityPlugin : Plugin<Project> {
             }
         }
 
-        val detektTaskPaths = project.subprojects
-            .filter { hasKotlinMultiplatformPlugin(it) }
-            .flatMap { detektTaskNames(it).map { taskName -> "${it.path}:$taskName" } }
-        qualityCheckJvmAndroid.configure { dependsOn(detektTaskPaths) }
-        qualityCheckApple.configure { dependsOn(detektTaskPaths) }
-        qualityFormat.configure { dependsOn(detektTaskPaths) }
-
         val productionPaths = productionModulePaths(mobileRoot)
         project.subprojects.forEach { subproject ->
-            if (productionPaths.contains(subproject.path)) {
-                subproject.pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
-                    subproject.pluginManager.apply(KoverGradlePlugin::class.java)
-                }
+            var detektConfigured = false
+            fun configureDetektOnce() {
+                if (detektConfigured) return
+                configureDetekt(subproject, project.rootProject)
+                wireDetektTasks(subproject, qualityCheckJvmAndroid, qualityCheckApple, qualityFormat)
+                detektConfigured = true
             }
-            subproject.pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
-                configureDetekt(subproject, project.rootProject, formattingRequested)
+
+            listOf(
+                "org.jetbrains.kotlin.multiplatform",
+                "com.android.application",
+                "org.jetbrains.kotlin.android",
+            ).forEach { pluginId ->
+                subproject.pluginManager.withPlugin(pluginId) {
+                    if (pluginId == "org.jetbrains.kotlin.multiplatform" &&
+                        productionPaths.contains(subproject.path)
+                    ) {
+                        subproject.pluginManager.apply(KoverGradlePlugin::class.java)
+                    }
+                    configureDetektOnce()
+                }
             }
         }
 
@@ -142,7 +157,7 @@ class QualityPlugin : Plugin<Project> {
         }
     }
 
-    private fun configureDetekt(target: Project, rootProject: Project, autocorrectRequested: Boolean) {
+    private fun configureDetekt(target: Project, rootProject: Project) {
         target.pluginManager.apply(DetektPlugin::class.java)
 
         val catalogs = rootProject.extensions.getByType(VersionCatalogsExtension::class.java)
@@ -158,15 +173,37 @@ class QualityPlugin : Plugin<Project> {
             buildUponDefaultConfig.set(true)
             ignoreFailures.set(false)
             parallel.set(true)
-            autoCorrect.set(autocorrectRequested)
+            autoCorrect.set(false)
         }
         target.tasks.withType<Detekt>().configureEach {
             config.from(configFile)
             buildUponDefaultConfig.set(true)
             ignoreFailures.set(false)
             parallel.set(true)
-            autoCorrect.set(autocorrectRequested)
+            autoCorrect.set(false)
         }
+    }
+
+    private fun wireDetektTasks(
+        target: Project,
+        qualityCheckJvmAndroid: org.gradle.api.tasks.TaskProvider<Task>,
+        qualityCheckApple: org.gradle.api.tasks.TaskProvider<Task>,
+        qualityFormat: org.gradle.api.tasks.TaskProvider<Task>,
+    ) {
+        val formatTask = target.tasks.register("detektFormat", Detekt::class.java) {
+            description = "Formats Kotlin sources for this module through the explicit qualityFormat gate."
+            source(target.fileTree("src") { include("**/*.kt") })
+            classpath.from(target.files())
+            config.from(target.rootProject.file("config/detekt/detekt.yml"))
+            buildUponDefaultConfig.set(true)
+            ignoreFailures.set(false)
+            parallel.set(true)
+            autoCorrect.set(true)
+        }
+        qualityFormat.configure { dependsOn(formatTask) }
+        val analysisTasks = target.tasks.withType<Detekt>().matching { it.name != "detektFormat" }
+        qualityCheckJvmAndroid.configure { dependsOn(analysisTasks) }
+        qualityCheckApple.configure { dependsOn(analysisTasks) }
     }
 
     private fun configureJvmCoverageAggregation(
@@ -188,15 +225,22 @@ class QualityPlugin : Plugin<Project> {
         val reportRoot = rootProject.projectDir.toPath()
         val lifecycleFile = mobileRoot.resolve("product-lifecycle.toml").toFile()
         val coverageFile = mobileRoot.resolve("config/quality/coverage.toml").toFile()
-        val reportFiles = productionProjects.map { path ->
-            JvmCoverageVerifier.reportPath(reportRoot, path).toFile()
+        val reportFiles = productionProjects.flatMap { path ->
+            JvmCoverageVerifier.reportPaths(reportRoot, path).map(Path::toFile)
+        }
+        val reportTaskNames = setOf("koverXmlReportJvm", "koverXmlReportAndroid")
+        val reportTasks = productionProjects.flatMap { path ->
+            rootProject.findProject(path)?.tasks
+                ?.matching { it.name in reportTaskNames }
+                ?.toList()
+                .orEmpty()
         }
 
         qualityCoverageJvm.configure {
             // Keep lifecycle/inventory changes in the configuration-cache
             // input model. Report tasks are always wired, but the reports
             // themselves are skipped until the active claim is authorized.
-            dependsOn(productionProjects.map { "$it:koverXmlReportJvm" })
+            dependsOn(*reportTasks.toTypedArray())
             inputs.files(lifecycleFile, coverageFile, reportFiles)
             doLast {
                 require(coverageClaimAllowed(mobileRoot, localCoverageRequested)) {
@@ -216,7 +260,7 @@ class QualityPlugin : Plugin<Project> {
         }
 
         mobileUnitCoverage.configure {
-            dependsOn(productionProjects.map { "$it:koverXmlReportJvm" })
+            dependsOn(*reportTasks.toTypedArray())
             inputs.files(lifecycleFile, coverageFile, reportFiles)
             doLast {
                 require(localCoverageRequested) {
@@ -237,7 +281,7 @@ class QualityPlugin : Plugin<Project> {
 
         productionProjects.forEach { path ->
             rootProject.findProject(path)?.tasks
-                ?.matching { it.name == "koverXmlReportJvm" }
+                ?.matching { it.name in reportTaskNames }
                 ?.configureEach {
                     onlyIf {
                         lifecycle(mobileRoot) == "active" || localCoverageRequested
@@ -261,17 +305,19 @@ class QualityPlugin : Plugin<Project> {
         val lifecycleText = Files.readString(mobileRoot.resolve("product-lifecycle.toml"))
         val coverageText = Files.readString(mobileRoot.resolve("config/quality/coverage.toml"))
         return lifecycle(mobileRoot) == "active" &&
-            coverageText.contains("quality_claim = true") &&
+            PolicyToml.boolean(coverageText, "quality_claim") == true &&
             nativeEquivalentEvidenceAllowed(mobileRoot) &&
             listOf(
-                "active_inventory_and_denominators = true",
-                "production_compose_host = true",
-            ).all(lifecycleText::contains)
+                "active_inventory_and_denominators",
+                "production_compose_host",
+            ).all { PolicyToml.boolean(PolicyToml.section(lifecycleText, "activation"), it) == true }
     }
 
     private fun qualityClaimConfigured(mobileRoot: Path): Boolean =
-        Files.readString(mobileRoot.resolve("config/quality/coverage.toml"))
-            .contains("quality_claim = true")
+        PolicyToml.boolean(
+            Files.readString(mobileRoot.resolve("config/quality/coverage.toml")),
+            "quality_claim",
+        ) == true
 
     private fun productionModulePaths(mobileRoot: Path): List<String> {
         val denominators = coverageDenominators(mobileRoot)
@@ -316,240 +362,19 @@ class QualityPlugin : Plugin<Project> {
     }
 
     private fun blocks(text: String, name: String): List<String> =
-        Regex("(?ms)^\\[\\[$name]]\\s*\\n(.*?)(?=^\\[\\[|\\z)")
-            .findAll(text)
-            .map { it.groupValues[1] }
-            .toList()
+        PolicyToml.blocks(text, name)
 
     private fun extractString(text: String, key: String): String? =
-        Regex("(?m)^${Regex.escape(key)}\\s*=\\s*\\\"([^\\\"]*)\\\"\\s*$")
-            .find(text)
-            ?.groupValues
-            ?.get(1)
-
-    private fun hasKotlinMultiplatformPlugin(project: Project): Boolean {
-        val buildFile = project.buildFile.toPath()
-        return Files.isRegularFile(buildFile) &&
-            Files.readString(buildFile).contains("libs.plugins.kotlin.multiplatform")
-    }
-
-    private fun detektTaskNames(project: Project): List<String> {
-        val buildFile = project.buildFile.toPath()
-        val buildScript = Files.readString(buildFile)
-        return buildList {
-            add("detektCommonMainSourceSet")
-            add("detektCommonTestSourceSet")
-            add("detektJvmMainSourceSet")
-            add("detektJvmTestSourceSet")
-            if (buildScript.contains("libs.plugins.android.kotlin.multiplatform.library")) {
-                add("detektAndroidMainSourceSet")
-                add("detektMainAndroid")
-            }
-            if (buildScript.contains("libs.plugins.compose")) {
-                add("detektJvmDevSourceSet")
-                add("detektDevJvm")
-            }
-        }
-    }
+        PolicyToml.string(text, key)
 
     private fun lifecycle(mobileRoot: Path): String =
-        Regex("(?m)^lifecycle\\s*=\\s*\\\"([^\\\"]+)\\\"$")
-            .find(Files.readString(mobileRoot.resolve("product-lifecycle.toml")))
-            ?.groupValues
-            ?.get(1)
-            ?: error("Mobile lifecycle is missing")
+        PolicyToml.string(
+            Files.readString(mobileRoot.resolve("product-lifecycle.toml")),
+            "lifecycle",
+        ) ?: error("Mobile lifecycle is missing")
 }
 
 private data class CoverageDenominator(
     val sourcePath: String,
     val coverageKind: String,
 )
-
-internal object NativeEquivalentEvidenceVerifier {
-    fun allowed(
-        coverageText: String,
-        nativeGapsText: String,
-        evidenceText: String,
-        now: Instant = Instant.now(),
-    ): Boolean {
-        val referencedIds = blocks(coverageText, "denominator")
-            .filter { extractString(it, "coverage_kind") == "native-equivalent" }
-            .flatMap { extractStringList(it, "evidence_ids") }
-            .toSet()
-        val gapBlocks = blocks(nativeGapsText, "gap")
-        val optionalIds = gapBlocks
-            .filter { extractBoolean(it, "optional") == true }
-            .mapNotNull { extractString(it, "id") }
-            .toSet()
-        val requiredIds = referencedIds - optionalIds
-        if (requiredIds.isEmpty()) return true
-        if (extractString(nativeGapsText, "lifecycle") != "active" ||
-            extractString(evidenceText, "lifecycle") != "active"
-        ) return false
-
-        val evidenceBlocks = blocks(evidenceText, "evidence")
-        return requiredIds.all { id ->
-            val gap = gapBlocks.firstOrNull { extractString(it, "id") == id } ?: return@all false
-            val evidence = evidenceBlocks.firstOrNull { extractString(it, "id") == id } ?: return@all false
-            if (extractString(evidence, "status") != "success") return@all false
-            if (!Regex("[0-9a-f]{40}").matches(extractString(evidence, "commit_sha").orEmpty())) return@all false
-            if (!Regex("[0-9a-f]{64}").matches(extractString(evidence, "artifact_digest").orEmpty())) return@all false
-            if (!Regex("[0-9a-f]{64}").matches(extractString(evidence, "fixture_digest").orEmpty())) return@all false
-            if (extractString(evidence, "device_os").isNullOrBlank() ||
-                extractString(evidence, "task_version").isNullOrBlank()
-            ) return@all false
-            val executedAt = runCatching { Instant.parse(extractString(evidence, "executed_at")) }
-                .getOrNull() ?: return@all false
-            val maxAge = extractInt(gap, "max_age_days") ?: return@all false
-            executedAt.isAfter(now.minus(maxAge.toLong(), ChronoUnit.DAYS))
-        }
-    }
-
-    private fun blocks(text: String, name: String): List<String> =
-        Regex("(?ms)^\\[\\[$name]]\\s*\\n(.*?)(?=^\\[\\[|\\z)")
-            .findAll(text)
-            .map { it.groupValues[1] }
-            .toList()
-
-    private fun extractString(text: String, key: String): String? =
-        Regex("(?m)^${Regex.escape(key)}\\s*=\\s*\\\"([^\\\"]*)\\\"\\s*$")
-            .find(text)
-            ?.groupValues
-            ?.get(1)
-
-    private fun extractInt(text: String, key: String): Int? =
-        Regex("(?m)^${Regex.escape(key)}\\s*=\\s*(\\d+)\\s*$")
-            .find(text)
-            ?.groupValues
-            ?.get(1)
-            ?.toInt()
-
-    private fun extractBoolean(text: String, key: String): Boolean? =
-        Regex("(?m)^${Regex.escape(key)}\\s*=\\s*(true|false)\\s*$")
-            .find(text)
-            ?.groupValues
-            ?.get(1)
-            ?.toBoolean()
-
-    private fun extractStringList(text: String, key: String): List<String> =
-        Regex("(?m)^${Regex.escape(key)}\\s*=\\s*\\[([^]]*)]")
-            .find(text)
-            ?.groupValues
-            ?.get(1)
-            ?.let { values ->
-                Regex("\\\"([^\\\"]+)\\\"").findAll(values).map { it.groupValues[1] }.toList()
-            }
-            ?: emptyList()
-}
-
-internal data class JvmCoverageSummary(
-    val linePercent: Double,
-    val branchPercent: Double,
-    val moduleCount: Int,
-)
-
-internal object JvmCoverageVerifier {
-    fun reportPath(reportRoot: Path, projectPath: String): Path = reportRoot
-        .resolve(projectPath.removePrefix(":").replace(':', '/'))
-        .resolve("build/reports/kover/reportJvm.xml")
-
-    fun verify(reportRoot: Path, productionProjects: List<String>): JvmCoverageSummary {
-        require(productionProjects.isNotEmpty()) {
-            "JVM host coverage has no production modules"
-        }
-
-        var lineMissed = 0L
-        var lineCovered = 0L
-        var branchMissed = 0L
-        var branchCovered = 0L
-
-        productionProjects.forEach { path ->
-            val report = reportPath(reportRoot, path)
-            require(Files.isRegularFile(report)) {
-                "Missing JVM Kover report for $path: $report"
-            }
-            val text = try {
-                Files.readString(report)
-            } catch (error: Exception) {
-                throw IllegalArgumentException("Unable to read JVM Kover report for $path: $report", error)
-            }
-            val line = counter(text, "LINE", path)
-            val branch = counter(text, "BRANCH", path)
-            lineMissed += line.first
-            lineCovered += line.second
-            branchMissed += branch.first
-            branchCovered += branch.second
-        }
-
-        val linePercent = percentage(lineCovered, lineMissed, "line")
-        val branchPercent = percentage(branchCovered, branchMissed, "branch")
-        require(linePercent >= 85.0) {
-            "JVM host line coverage is ${formatCoverage(linePercent)}%; minimum is 85%"
-        }
-        require(branchPercent >= 85.0) {
-            "JVM host branch coverage is ${formatCoverage(branchPercent)}%; minimum is 85%"
-        }
-        return JvmCoverageSummary(linePercent, branchPercent, productionProjects.size)
-    }
-
-    fun counter(text: String, type: String, projectPath: String): Pair<Long, Long> {
-        val report = parseReport(text, projectPath)
-        val rootCounters = (0 until report.childNodes.length)
-            .map(report.childNodes::item)
-            .filter { node ->
-                node.nodeType == Node.ELEMENT_NODE &&
-                    (node as Element).tagName == "counter" &&
-                    node.getAttribute("type") == type
-            }
-        require(rootCounters.size == 1) {
-            "JVM Kover report for $projectPath must have exactly one report-level $type counter"
-        }
-        val match = rootCounters.single() as Element
-
-        val missed = counterValue(match, "missed", type, projectPath)
-        val covered = counterValue(match, "covered", type, projectPath)
-        require(missed + covered > 0) {
-            "JVM Kover report for $projectPath has an empty $type denominator"
-        }
-        return missed to covered
-    }
-
-    fun percentage(covered: Long, missed: Long, kind: String): Double {
-        val total = covered + missed
-        require(total > 0) { "JVM host $kind coverage has an empty denominator" }
-        return covered.toDouble() * 100.0 / total.toDouble()
-    }
-
-    private fun parseReport(text: String, projectPath: String): Element {
-        try {
-            val factory = DocumentBuilderFactory.newInstance().apply {
-                setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true)
-                setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)
-                setFeature("http://xml.org/sax/features/external-general-entities", false)
-                setFeature("http://xml.org/sax/features/external-parameter-entities", false)
-                isXIncludeAware = false
-                isExpandEntityReferences = false
-            }
-            val document = factory.newDocumentBuilder().parse(InputSource(StringReader(text)))
-            require(document.documentElement?.tagName == "report") {
-                "root element is not <report>"
-            }
-            return document.documentElement
-        } catch (error: IllegalArgumentException) {
-            throw IllegalArgumentException("Malformed JVM Kover report for $projectPath: ${error.message}", error)
-        } catch (error: Exception) {
-            throw IllegalArgumentException("Malformed JVM Kover report for $projectPath", error)
-        }
-    }
-
-    private fun counterValue(element: Element, name: String, type: String, projectPath: String): Long =
-        element.getAttribute(name).toLongOrNull()?.also { value ->
-            require(value >= 0) {
-                "JVM Kover report for $projectPath has a negative $type $name counter"
-            }
-        } ?: throw IllegalArgumentException(
-            "JVM Kover report for $projectPath has an invalid $type $name counter",
-        )
-
-    private fun formatCoverage(value: Double): String = String.format(Locale.ROOT, "%.2f", value)
-}

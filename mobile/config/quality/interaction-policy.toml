@@ -4,7 +4,7 @@ product = "mobile"
 lifecycle = "active"
 source_digest = "local-only"
 contract_release = "contracts/interaction-policy/v1"
-contract_digest = "39536784162e9877a46ba274215f870b3a721b04e2a222ac84a37e7f63c0935a"
+contract_digest = "01ed816e5ed129f780def8aed9ae445058cea616ec35fc31d240fe7feebf724f"
 status = "active-local"
 
 [budgets]

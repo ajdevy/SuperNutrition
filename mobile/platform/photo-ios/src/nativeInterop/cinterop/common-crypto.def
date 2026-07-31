@@ -1,0 +1,2 @@
+headers = common-crypto.h
+package = platform.CommonCrypto

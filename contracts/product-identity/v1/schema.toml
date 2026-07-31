@@ -4,3 +4,43 @@ contract_id = "product-identity"
 release = "v1"
 language_neutral = true
 executable = false
+
+[fields.canonical_name]
+type = "string"
+allowed_values = ["SuperNutrition"]
+
+[fields.installed_display_name]
+type = "string"
+allowed_values = ["SuperNutrition"]
+
+[fields.launcher_name]
+type = "string"
+allowed_values = ["SuperNutrition"]
+
+[fields.in_app_name]
+type = "string"
+allowed_values = ["SuperNutrition"]
+
+[fields.accessibility_name]
+type = "string"
+allowed_values = ["SuperNutrition"]
+
+[fields.store_listing_title]
+type = "string"
+allowed_values = ["SuperNutrition AI nutritionist"]
+
+[fields.android_application_id]
+type = "string"
+allowed_values = ["com.supernutrition.android"]
+
+[fields.ios_bundle_identifier]
+type = "string"
+allowed_values = ["com.supernutrition.ios"]
+
+[fields.acceptance_android_application_id]
+type = "string"
+allowed_values = ["com.supernutrition.android.uiAcceptance"]
+
+[fields.acceptance_ios_bundle_identifier]
+type = "string"
+allowed_values = ["com.supernutrition.ios.uiacceptance"]

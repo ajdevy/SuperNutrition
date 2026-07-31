@@ -42,21 +42,9 @@ class MobilePolicyValidatorTest {
                 )
             }
         }
-        val manifestPaths = listOf(
-            "config/architecture/module-boundaries.toml",
-            "config/quality/module-matrix.toml",
-            "config/quality/ui-evidence-profile.toml",
-            "config/quality/positive-scenarios.toml",
-            "config/quality/journeys.toml",
-            "config/quality/platform-contracts.toml",
-            "config/quality/native-gaps.toml",
-            "config/quality/coverage.toml",
-            "config/quality/suppression-registry.toml",
-            "config/quality/interaction-policy.toml",
-            "config/product-identity.toml",
-            "config/compose-stability.conf",
-            "product-lifecycle.toml",
-        ).sorted()
+        val manifestPaths = PolicyToml.requiredManifests.filterNot {
+            it == "config/quality/evidence-bindings.toml"
+        }.sorted()
         val digest = MessageDigest.getInstance("SHA-256").apply {
             manifestPaths.forEach { relative ->
                 update(relative.toByteArray())
@@ -349,28 +337,19 @@ class MobilePolicyValidatorTest {
     private fun copyPolicyFixtures(root: java.nio.file.Path) {
         val sourceRoot = PathLocator.repoMobileRoot()
         Files.createDirectories(root.resolve("feature/photo-analysis"))
-        listOf(
-            "config/architecture/module-boundaries.toml",
-            "config/quality/module-matrix.toml",
-            "config/quality/ui-evidence-profile.toml",
-            "config/quality/positive-scenarios.toml",
-            "config/quality/journeys.toml",
-            "config/quality/platform-contracts.toml",
-            "config/quality/native-gaps.toml",
-            "config/quality/coverage.toml",
-            "config/quality/suppression-registry.toml",
-            "config/quality/interaction-policy.toml",
-            "config/quality/evidence-bindings.toml",
-            "config/product-identity.toml",
-            "config/compose-stability.conf",
-            "config/detekt/detekt.yml",
-            "product-lifecycle.toml",
-            "gradle/libs.versions.toml",
-        ).forEach { relative ->
+        (PolicyToml.requiredManifests.filterNot { it == "config/compose-stability.conf" } +
+            listOf("config/compose-stability.conf", "config/detekt/detekt.yml", "gradle/libs.versions.toml"))
+            .forEach { relative ->
             val target = root.resolve(relative)
             Files.createDirectories(target.parent)
             Files.copy(sourceRoot.resolve(relative), target)
         }
+        PolicyToml.blocks(
+            Files.readString(root.resolve("config/quality/module-matrix.toml")),
+            "unit",
+        ).mapNotNull { PolicyToml.string(it, "path") }
+            .filter { it.startsWith("mobile/") }
+            .forEach { relative -> Files.createDirectories(root.parent.resolve(relative)) }
         Files.createDirectories(root.resolve("build-logic"))
         Files.copy(
             sourceRoot.resolve("build-logic/gradle.properties"),
@@ -441,5 +420,5 @@ class MobilePolicyValidatorTest {
 
 private object PathLocator {
     fun repoMobileRoot(): java.nio.file.Path =
-        java.nio.file.Path.of(System.getProperty("user.dir")).resolve("..").normalize()
+        java.nio.file.Path.of("").toAbsolutePath().normalize().resolve("..").normalize()
 }

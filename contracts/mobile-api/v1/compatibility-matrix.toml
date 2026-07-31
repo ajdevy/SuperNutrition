@@ -1,7 +1,7 @@
 schema = "supernutrition.mobile-api-compatibility-matrix.v1"
 contract_id = "mobile-api"
 release = "v1"
-digest = "ebda0f5151acb5478489e6a9c32f8e778f9eee2416455a0aed7dc2238f627594"
+digest = "f42c6e319330cc3d7d79df34b3387a8721b46f99bdcc5f23a516cb57869c2c03"
 
 [[supported_pair]]
 producer = "mobile-v1"

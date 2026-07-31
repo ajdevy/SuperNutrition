@@ -1,7 +1,21 @@
 package com.supernutrition.domain.photoanalysis
 
-/** One reducer owns replacement/cancellation and rejects stale engine callbacks. */
-class PhotoAnalysisReducer(leases: PhotoLeaseStore, sessions: PhotoSessionStore, attemptId: AttemptId) {
+sealed interface PhotoAnalysisEffect {
+    data class StoreInput(val input: NormalizedPhotoInput) : PhotoAnalysisEffect
+    data class RevokePhoto(val ref: PhotoRef) : PhotoAnalysisEffect
+}
+
+data class PhotoAnalysisReduction(
+    val state: PhotoAnalysisState,
+    val effects: List<PhotoAnalysisEffect> = emptyList(),
+)
+
+/** Stateful compatibility facade over a pure state/event reduction. */
+class PhotoAnalysisReducer(
+    leases: PhotoLeaseStorePort,
+    sessions: PhotoSessionStorePort,
+    attemptId: AttemptId,
+) {
     private val context = PhotoAnalysisReducerContext(leases, sessions, attemptId)
     private val transitions = PhotoAnalysisReducerTransitions(context)
     private val lifecycle = PhotoAnalysisReducerLifecycle(context)
@@ -13,19 +27,23 @@ class PhotoAnalysisReducer(leases: PhotoLeaseStore, sessions: PhotoSessionStore,
     fun issuePhotoRef(opaqueId: String): PhotoRef = context.leases.issue(context.attemptId, opaqueId)
 
     fun dispatch(event: PhotoAnalysisEvent) {
-        val current = state
-        state = when {
-            event is PhotoAnalysisEvent.Backgrounded && current !is PhotoAnalysisState.Backgrounded ->
-                lifecycle.backgroundSnapshot(current)
+        val reduction = reduce(state, event)
+        state = reduction.state
+        reduction.effects.forEach(context::apply)
+    }
 
-            current is PhotoAnalysisState.Backgrounded && event is PhotoAnalysisEvent.Restored ->
-                lifecycle.restore(current.snapshot)
+    /** Exposes the deterministic transition and effect decision for unit tests and adapters. */
+    fun reduce(current: PhotoAnalysisState, event: PhotoAnalysisEvent): PhotoAnalysisReduction = when {
+        event is PhotoAnalysisEvent.Backgrounded && current !is PhotoAnalysisState.Backgrounded ->
+            PhotoAnalysisReduction(lifecycle.backgroundSnapshot(current))
 
-            current == PhotoAnalysisState.Capture && event is PhotoAnalysisEvent.RestoreFromSnapshot ->
-                lifecycle.restore(event.snapshot)
+        current is PhotoAnalysisState.Backgrounded && event is PhotoAnalysisEvent.Restored ->
+            PhotoAnalysisReduction(lifecycle.restore(current.snapshot))
 
-            else -> transitions.reduce(current, event)
-        }
+        current == PhotoAnalysisState.Capture && event is PhotoAnalysisEvent.RestoreFromSnapshot ->
+            PhotoAnalysisReduction(lifecycle.restore(event.snapshot))
+
+        else -> transitions.reduce(current, event)
     }
 
     /** Returns the opaque lifecycle snapshot without persisting photo bytes or native handles. */
@@ -36,8 +54,8 @@ class PhotoAnalysisReducer(leases: PhotoLeaseStore, sessions: PhotoSessionStore,
 }
 
 internal class PhotoAnalysisReducerContext(
-    val leases: PhotoLeaseStore,
-    val sessions: PhotoSessionStore,
+    val leases: PhotoLeaseStorePort,
+    val sessions: PhotoSessionStorePort,
     val attemptId: AttemptId,
 ) {
     fun isCurrentAttempt(ref: PhotoRef): Boolean = ref.attemptId == attemptId
@@ -46,8 +64,13 @@ internal class PhotoAnalysisReducerContext(
         leases.isActive(ref) &&
         (expected == null || sessions.read(ref) == expected)
 
-    fun revoke(ref: PhotoRef) {
-        leases.revoke(ref)
-        sessions.clearAttempt(attemptId)
+    fun apply(effect: PhotoAnalysisEffect) {
+        when (effect) {
+            is PhotoAnalysisEffect.StoreInput -> sessions.put(effect.input)
+            is PhotoAnalysisEffect.RevokePhoto -> {
+                leases.revoke(effect.ref)
+                sessions.remove(effect.ref)
+            }
+        }
     }
 }

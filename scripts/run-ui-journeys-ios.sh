@@ -3,11 +3,12 @@ set -euo pipefail
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="$(cd "$script_dir/.." && pwd)"
+source "$script_dir/lib/quality-common.sh"
 temp_root="${RUNNER_TEMP:-${TMPDIR:-/tmp}}/supernutrition-ui-ios"
 report_root="$temp_root/report"
 mkdir -p "$report_root/debug"
 
-lifecycle="$(sed -n 's/^lifecycle = "\([^"]*\)"$/\1/p' "$repo_root/mobile/product-lifecycle.toml" | head -n 1)"
+lifecycle="$(lifecycle_value "$repo_root" mobile/product-lifecycle.toml)"
 printf 'lifecycle=%s\n' "$lifecycle" >"$report_root/lifecycle.txt"
 run_optional_apple_quality() {
   printf 'apple_evidence=good-to-have-unavailable\n' >>"$report_root/lifecycle.txt"
@@ -72,33 +73,7 @@ test -n "$ios_app" || {
 }
 xcrun simctl install "$simulator_udid" "$ios_app"
 
-if ! command -v maestro >/dev/null 2>&1; then
-  maestro_archive="$temp_root/maestro.zip"
-  curl --fail --location --silent --show-error \
-    https://github.com/mobile-dev-inc/Maestro/releases/download/cli-2.7.0/maestro.zip \
-    --output "$maestro_archive"
-  expected_maestro_sha256="$(sed -n 's/^sha256=\([0-9a-f]\{64\}\)$/\1/p' "$repo_root/mobile/.maestro/maestro-cli-2.7.0.sha256")"
-  test -n "$expected_maestro_sha256" || {
-    printf 'missing Maestro checksum pin\n' >&2
-    exit 1
-  }
-  if command -v sha256sum >/dev/null 2>&1; then
-    printf '%s  %s\n' "$expected_maestro_sha256" "$maestro_archive" | sha256sum --check --status -
-  else
-    printf '%s  %s\n' "$expected_maestro_sha256" "$maestro_archive" | shasum --algorithm 256 --check --status -
-  fi
-  unzip -q "$maestro_archive" -d "$temp_root/maestro-dist"
-  export PATH="$temp_root/maestro-dist/maestro/bin:$PATH"
-fi
-maestro_bin="$(command -v maestro || true)"
-test -n "$maestro_bin" || {
-  printf 'Maestro CLI is not available after installation\n' >&2
-  exit 1
-}
-"$maestro_bin" --version | grep -Fq '2.7.0' || {
-  printf 'Maestro CLI 2.7.0 is required\n' >&2
-  exit 1
-}
+maestro_bin="$(ensure_maestro_cli "$repo_root" "$temp_root")"
 "$maestro_bin" check-syntax \
   "$repo_root/mobile/.maestro/photo-analysis/photo-analysis-capture-recovery.yaml"
 

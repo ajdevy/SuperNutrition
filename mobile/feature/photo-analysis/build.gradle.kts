@@ -3,13 +3,17 @@ plugins {
     alias(libs.plugins.android.kotlin.multiplatform.library)
     alias(libs.plugins.compose)
     alias(libs.plugins.kotlin.compose)
+    id("com.supernutrition.kmp-apple-targets")
 }
 
 composeCompiler {
     stabilityConfigurationFiles.add(
-        layout.projectDirectory.file("../../config/compose-stability.conf"),
+        rootProject.layout.projectDirectory.file("config/compose-stability.conf"),
     )
 }
+
+val enableIosDeviceTarget = extra["supernutrition.enableIosDeviceTarget"] as Boolean
+val enableIntelX64 = extra["supernutrition.enableIntelX64"] as Boolean
 
 kotlin {
     jvm()
@@ -17,28 +21,43 @@ kotlin {
         namespace = "com.supernutrition.feature.photoanalysis"
         compileSdk = libs.versions.compileSdk.get().toInt()
         minSdk = libs.versions.minSdk.get().toInt()
+        androidResources {
+            enable = true
+        }
     }
 
     sourceSets {
         commonMain.dependencies {
             implementation(project(":feature:photo-analysis-presenter"))
             implementation(project(":feature:photo-analysis-ui"))
+            implementation(project(":domain:photo-analysis"))
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
             implementation(project(":core:ui"))
             implementation(project(":feature:photo-analysis-ui"))
-            implementation(project(":feature:photo-analysis-presenter"))
             implementation(project(":testing:compose-support"))
+            implementation(project(":feature:photo-analysis-presenter"))
         }
         jvmMain.dependencies {
             implementation(compose.runtime)
         }
+        if (enableIosDeviceTarget) {
+            iosMain.dependencies {
+                implementation(libs.compose.ui)
+            }
+        }
+        if (enableIntelX64) {
+            iosX64Main.dependencies {
+                implementation(libs.compose.ui)
+            }
+        }
         androidMain.dependencies {
             implementation(project(":core:config"))
+            implementation(project(":core:ui"))
             implementation(project(":domain:photo-analysis"))
-            implementation(project(":feature:photo-analysis-ui"))
             implementation(libs.androidx.activity)
+            implementation(libs.androidx.activity.compose)
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)

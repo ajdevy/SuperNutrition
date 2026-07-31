@@ -8,6 +8,8 @@ import java.nio.file.attribute.BasicFileAttributes
 import java.security.MessageDigest
 import java.time.Instant
 import java.time.temporal.ChronoUnit
+import java.util.Properties
+import org.w3c.dom.Node
 
 /**
  * Read-only validator for the fail-closed mobile scaffold policy.
@@ -17,27 +19,10 @@ import java.time.temporal.ChronoUnit
  * later product and evidence slices.
  */
 object MobilePolicyValidator {
-    private val requiredManifests = listOf(
-        "config/architecture/module-boundaries.toml",
-        "config/quality/module-matrix.toml",
-        "config/quality/ui-evidence-profile.toml",
-        "config/quality/positive-scenarios.toml",
-        "config/quality/journeys.toml",
-        "config/quality/platform-contracts.toml",
-        "config/quality/native-gaps.toml",
-        "config/quality/coverage.toml",
-        "config/quality/suppression-registry.toml",
-        "config/quality/interaction-policy.toml",
-        "config/quality/evidence-bindings.toml",
-        "config/product-identity.toml",
-        "config/compose-stability.conf",
-        "product-lifecycle.toml",
-    )
-
     fun validate(mobileRoot: Path) {
         require(Files.isDirectory(mobileRoot)) { "Missing mobile root: $mobileRoot" }
 
-        val files = requiredManifests.map { relative ->
+        val files = PolicyToml.requiredManifests.map { relative ->
             val path = mobileRoot.resolve(relative)
             require(Files.isRegularFile(path)) { "Missing policy manifest: $relative" }
             relative to Files.readString(path)
@@ -48,51 +33,51 @@ object MobilePolicyValidator {
         }
 
         val moduleMatrix = files.single { it.first == "config/quality/module-matrix.toml" }.second
-        require(moduleMatrix.contains("[[unit]]")) {
+        require(PolicyToml.blocks(moduleMatrix, "unit").isNotEmpty()) {
             "The scaffold product inventory must contain policy units"
         }
-        require(moduleMatrix.contains("undeclared_executable_policy = \"fail\"")) {
+        require(PolicyToml.string(moduleMatrix, "undeclared_executable_policy") == "fail") {
             "The module inventory must fail on undeclared executables"
         }
 
         val profile = files.single { it.first == "config/quality/ui-evidence-profile.toml" }.second
         val scenarios = files.single { it.first == "config/quality/positive-scenarios.toml" }.second
         val journeys = files.single { it.first == "config/quality/journeys.toml" }.second
-        when {
-            profile.contains("profile = \"bootstrap\"") -> {
-                require(scenarios.contains("profile = \"bootstrap\"")) {
+        when (PolicyToml.string(profile, "profile")) {
+            "bootstrap" -> {
+                require(PolicyToml.string(scenarios, "profile") == "bootstrap") {
                     "Bootstrap scenarios must use the bootstrap profile"
                 }
-                require(journeys.contains("profile = \"bootstrap\"")) {
+                require(PolicyToml.string(journeys, "profile") == "bootstrap") {
                     "Bootstrap journeys must use the bootstrap profile"
                 }
-                require(!profile.contains("profile = \"photo-analysis\"")) {
+                require(PolicyToml.string(profile, "profile") != "photo-analysis") {
                     "Bootstrap profile cannot activate product journeys"
                 }
             }
-            profile.contains("profile = \"photo-analysis\"") -> {
-                require(scenarios.contains("profile = \"photo-analysis\"")) {
+            "photo-analysis" -> {
+                require(PolicyToml.string(scenarios, "profile") == "photo-analysis") {
                     "Photo-analysis scenarios must bind the transitioned profile"
                 }
-                require(journeys.contains("profile = \"photo-analysis\"")) {
+                require(PolicyToml.string(journeys, "profile") == "photo-analysis") {
                     "Photo-analysis journeys must bind the transitioned profile"
                 }
-                require((extractInt(scenarios, "scenario_count") ?: 0) > 0) {
+                require((PolicyToml.integer(scenarios, "scenario_count") ?: 0) > 0) {
                     "Photo-analysis transition requires a non-empty scenario catalog"
                 }
-                require((extractInt(journeys, "journey_count") ?: 0) > 0) {
+                require((PolicyToml.integer(journeys, "journey_count") ?: 0) > 0) {
                     "Photo-analysis transition requires a non-empty journey catalog"
                 }
                 require(Files.exists(mobileRoot.resolve("feature/photo-analysis"))) {
                     "Photo-analysis profile requires the feature source"
                 }
-                require(profile.contains("ios_simulator_task = \"iosSimulatorArm64Test\"")) {
+                require(PolicyToml.string(profile, "ios_simulator_task") == "iosSimulatorArm64Test") {
                     "Photo-analysis profile must keep iosSimulatorArm64Test as the canonical Apple task"
                 }
-                require(profile.contains("local_compatibility_task = \"iosX64Test\"")) {
+                require(PolicyToml.string(profile, "local_compatibility_task") == "iosX64Test") {
                     "Photo-analysis profile must declare the Intel x64 compatibility task separately"
                 }
-                require(profile.contains("local_compatibility_only = true")) {
+                require(PolicyToml.boolean(profile, "local_compatibility_only") == true) {
                     "Intel x64 evidence must never be treated as canonical Apple evidence"
                 }
             }
@@ -103,15 +88,15 @@ object MobilePolicyValidator {
         val lifecycleValue = extractString(lifecycle, "lifecycle")
         val coverage = files.single { it.first == "config/quality/coverage.toml" }.second
         if (lifecycleValue == "scaffold-pending") {
-            require(coverage.contains("quality_claim = false")) {
+            require(PolicyToml.boolean(coverage, "quality_claim") == false) {
                 "Scaffold coverage must not make a product quality claim"
             }
         } else {
-            require(coverage.contains("quality_claim = true")) {
+            require(PolicyToml.boolean(coverage, "quality_claim") == true) {
                 "An active lifecycle must declare an active quality claim"
             }
         }
-        require(coverage.contains("empty_or_zero_denominator = \"fail\"")) {
+        require(PolicyToml.string(coverage, "empty_or_zero_denominator") == "fail") {
             "Zero coverage denominators must fail closed"
         }
 
@@ -119,22 +104,22 @@ object MobilePolicyValidator {
             "The mobile lifecycle must be scaffold-pending or active"
         }
         if (lifecycleValue == "scaffold-pending") {
-            require(lifecycle.contains("transition = \"blocked\"")) {
+            require(PolicyToml.string(lifecycle, "transition") == "blocked") {
                 "A scaffold-pending lifecycle must remain blocked until activation evidence is complete"
             }
         } else {
-            require(lifecycle.contains("transition = \"active\"")) {
+            require(PolicyToml.string(lifecycle, "transition") == "active") {
                 "An active lifecycle must declare an active transition"
             }
         }
-        require(lifecycle.contains("production_compose_host = true")) {
+        require(PolicyToml.boolean(PolicyToml.section(lifecycle, "activation"), "production_compose_host") == true) {
             "The lifecycle record must prove that the production Compose host exists"
         }
-        require(lifecycle.contains("apple_evidence_required_for_activation = false")) {
+        require(PolicyToml.boolean(PolicyToml.section(lifecycle, "activation"), "apple_evidence_required_for_activation") == false) {
             "Apple/Xcode evidence must be explicitly optional for local activation"
         }
         if (lifecycleValue == "scaffold-pending") {
-            require(lifecycle.contains("active_inventory_and_denominators = false")) {
+            require(PolicyToml.boolean(PolicyToml.section(lifecycle, "activation"), "active_inventory_and_denominators") == false) {
                 "A scaffold-pending lifecycle must not claim an active inventory"
             }
         }
@@ -143,8 +128,12 @@ object MobilePolicyValidator {
         validateQualityToolCatalog(mobileRoot)
         validateDependencyLockPolicy(mobileRoot)
 
-        val stability = files.single { it.first == "config/compose-stability.conf" }.second
-        require(!Regex("(^|[.=])\\s*\\*", RegexOption.MULTILINE).containsMatchIn(stability)) {
+        val stabilityPath = mobileRoot.resolve("config/compose-stability.conf")
+        require(Files.isRegularFile(stabilityPath)) {
+            "Missing Compose stability configuration: config/compose-stability.conf"
+        }
+        val stability = Files.readString(stabilityPath)
+        require(stability.lineSequence().none { it.substringBefore('#').contains('*') }) {
             "Wildcard Compose stability entries are forbidden"
         }
 
@@ -159,12 +148,12 @@ object MobilePolicyValidator {
             requireManifestProperty(identity, key, "SuperNutrition")
         }
         requireManifestProperty(identity, "store_listing_title", "SuperNutrition AI nutritionist")
-        val forbiddenVisibleVariants = identity.substringAfter("[forbidden_visible_variants]", "")
-        require(extractStringList(forbiddenVisibleVariants, "values").toSet() ==
+        val forbiddenVisibleVariants = PolicyToml.section(identity, "forbidden_visible_variants")
+        require(PolicyToml.stringList(forbiddenVisibleVariants, "values").toSet() ==
             setOf("SuperNutrition AI nutritionist", "AI nutritionist")) {
             "Product identity must declare the closed forbidden visible variants"
         }
-        require(extractStringList(forbiddenVisibleVariants, "applies_to").toSet() == setOf(
+        require(PolicyToml.stringList(forbiddenVisibleVariants, "applies_to").toSet() == setOf(
             "installed_display_name",
             "launcher_name",
             "in_app_name",
@@ -175,31 +164,29 @@ object MobilePolicyValidator {
         requireManifestProperty(identity, "acceptance_android_application_id", "com.supernutrition.android.uiAcceptance")
         requireManifestProperty(identity, "acceptance_ios_bundle_identifier", "com.supernutrition.ios.uiacceptance")
         val androidStrings = mobileRoot.resolve("apps/androidApp/src/main/res/values/strings.xml")
-        require(Files.isRegularFile(androidStrings) && Regex(
-            "<string\\s+name=\"app_name\"\\s*>SuperNutrition</string>",
-        ).containsMatchIn(Files.readString(androidStrings))) {
+        require(Files.isRegularFile(androidStrings) && xmlResourceValue(androidStrings, "app_name") == "SuperNutrition") {
             "Android visible identity must match the canonical manifest"
         }
         val iosInfo = mobileRoot.resolve("apps/iosApp/Info.plist")
-        require(Files.isRegularFile(iosInfo) && Regex(
-            "<key>CFBundleDisplayName</key>\\s*<string>SuperNutrition</string>",
-        ).containsMatchIn(Files.readString(iosInfo))) {
+        require(Files.isRegularFile(iosInfo) && plistValue(iosInfo, "CFBundleDisplayName") == "SuperNutrition") {
             "iOS visible identity must match the canonical manifest"
         }
 
         val interaction = files.single { it.first == "config/quality/interaction-policy.toml" }.second
-        require(interaction.contains("defaultLocale")) {
+        val defaults = PolicyToml.section(interaction, "defaults")
+        require(PolicyToml.stringList(defaults, "allowlist").contains("defaultLocale")) {
             "Interaction policy must declare the closed default allowlist"
         }
-        require(interaction.contains("allowlist = [\"defaultLocale\", \"measurementSystem\", \"catalogProposal\", \"standardServing\"]")) {
+        require(PolicyToml.stringList(defaults, "allowlist") == listOf(
+            "defaultLocale", "measurementSystem", "catalogProposal", "standardServing",
+        )) {
             "Interaction policy allowlist must remain closed"
         }
-        require(interaction.contains("remote_upload = \"never-preselected\"")) {
+        require(PolicyToml.string(PolicyToml.section(interaction, "forbidden_defaults"), "remote_upload") == "never-preselected") {
             "Remote consent must never be a defaultable interaction field"
         }
-        val forbiddenDefaults = extractStringList(
-            interaction.substringAfter("[forbidden_defaults]", ""),
-            "fields",
+        val forbiddenDefaults = PolicyToml.stringList(
+            PolicyToml.section(interaction, "forbidden_defaults"), "fields",
         ).toSet()
         require(forbiddenDefaults == setOf(
             "foodIdentity",
@@ -228,7 +215,7 @@ object MobilePolicyValidator {
             "Missing build-logic Gradle memory profile: build-logic/gradle.properties"
         }
 
-        val product = Files.readString(productProperties)
+        val product = loadProperties(productProperties)
         requirePropertyContains(product, "org.gradle.jvmargs", "-Xms256m")
         requirePropertyContains(product, "org.gradle.jvmargs", "-Xmx4g")
         requirePropertyContains(product, "org.gradle.jvmargs", "-XX:MaxMetaspaceSize=1536m")
@@ -244,7 +231,7 @@ object MobilePolicyValidator {
         requirePropertyContains(product, "kotlin.daemon.jvmargs", "-XX:+UseG1GC")
         requireProperty(product, "kotlin.daemon.useFallbackStrategy", "false")
 
-        val buildLogic = Files.readString(buildLogicProperties)
+        val buildLogic = loadProperties(buildLogicProperties)
         requirePropertyContains(buildLogic, "org.gradle.jvmargs", "-Xms128m")
         requirePropertyContains(buildLogic, "org.gradle.jvmargs", "-Xmx1g")
         requirePropertyContains(buildLogic, "org.gradle.jvmargs", "-XX:MaxMetaspaceSize=512m")
@@ -293,27 +280,26 @@ object MobilePolicyValidator {
         }
     }
 
-    private fun requireProperty(text: String, key: String, expected: String) {
-        require(Regex("(?m)^${Regex.escape(key)}\\s*=\\s*${Regex.escape(expected)}\\s*$").containsMatchIn(text)) {
+    private fun requireProperty(properties: Properties, key: String, expected: String) {
+        require(properties.getProperty(key)?.trim() == expected) {
             "$key must be set to $expected in the Gradle memory profile"
         }
     }
 
     private fun requireManifestProperty(text: String, key: String, expected: String) {
-        require(Regex("(?m)^${Regex.escape(key)}\\s*=\\s*\\\"${Regex.escape(expected)}\\\"\\s*$")
-            .containsMatchIn(text)) {
+        require(PolicyToml.string(text, key) == expected) {
             "$key must be set to $expected in the product identity manifest"
         }
     }
 
-    private fun requirePropertyContains(text: String, key: String, expected: String) {
-        val value = Regex("(?m)^${Regex.escape(key)}\\s*=\\s*(.*)$")
-            .find(text)
-            ?.groupValues
-            ?.get(1)
-        require(value?.contains(expected) == true) {
+    private fun requirePropertyContains(properties: Properties, key: String, expected: String) {
+        require(properties.getProperty(key)?.contains(expected) == true) {
             "$key must contain $expected in the Gradle memory profile"
         }
+    }
+
+    private fun loadProperties(path: Path): Properties = Properties().also { properties ->
+        Files.newInputStream(path).use(properties::load)
     }
 
     private fun validateDependencyLockPolicy(mobileRoot: Path) {
@@ -341,7 +327,7 @@ object MobilePolicyValidator {
      */
     private fun findProjectDirectories(mobileRoot: Path): List<Path> {
         val projectDirectories = linkedSetOf<Path>()
-        val generatedDirectories = setOf("build", ".gradle", ".git", "graphify-out")
+        val generatedDirectories = setOf("build", ".gradle", ".kotlin", ".git", "graphify-out", "out", "DerivedData")
         Files.walkFileTree(
             mobileRoot,
             object : SimpleFileVisitor<Path>() {
@@ -375,7 +361,7 @@ object MobilePolicyValidator {
 
     private fun validateManifestGraph(mobileRoot: Path, files: List<Pair<String, String>>) {
         val evidencePath = "config/quality/evidence-bindings.toml"
-        val boundPaths = requiredManifests.filterNot { it == evidencePath }.sorted()
+        val boundPaths = PolicyToml.requiredManifests.filterNot { it == evidencePath }.sorted()
         val evidence = files.single { it.first == evidencePath }.second
         require(extractInt(evidence, "manifest_count") == boundPaths.size) {
             "Evidence binding manifest_count must cover every policy manifest"
@@ -385,13 +371,13 @@ object MobilePolicyValidator {
         }
 
         val moduleMatrix = files.single { it.first == "config/quality/module-matrix.toml" }.second
-        require(moduleMatrix.contains("ios_task = \"iosSimulatorArm64Test\"")) {
+        require(PolicyToml.string(moduleMatrix, "ios_task") == "iosSimulatorArm64Test") {
             "Module inventory must keep iosSimulatorArm64Test as the canonical Apple task"
         }
-        require(moduleMatrix.contains("local_compatibility_task = \"iosX64Test\"")) {
+        require(PolicyToml.string(moduleMatrix, "local_compatibility_task") == "iosX64Test") {
             "Module inventory must declare the Intel x64 compatibility task"
         }
-        require(moduleMatrix.contains("local_compatibility_only = true")) {
+        require(PolicyToml.boolean(moduleMatrix, "local_compatibility_only") == true) {
             "Module inventory must not promote Intel x64 compatibility evidence"
         }
         val units = blocks(moduleMatrix, "unit")
@@ -499,9 +485,8 @@ object MobilePolicyValidator {
 
         val scenarios = files.single { it.first == "config/quality/positive-scenarios.toml" }.second
         val journeys = files.single { it.first == "config/quality/journeys.toml" }.second
-        Regex("native_gap_ids\\s*=\\s*\\[([^]]*)]").findAll(scenarios).flatMap { match ->
-            Regex("\"([^\"]+)\"").findAll(match.groupValues[1]).map { it.groupValues[1] }
-        }.forEach { gapId ->
+        blocks(scenarios, "scenario").flatMap { extractStringList(it, "native_gap_ids") }
+            .forEach { gapId ->
             require(gapId in gapIds) { "Scenario references an orphaned native gap: $gapId" }
         }
 
@@ -588,7 +573,7 @@ object MobilePolicyValidator {
                     "$blockName must declare an undo path"
                 }
                 val resolvedDigest = extractString(block, "resolved_value_digest")
-                require(resolvedDigest == "pending" || resolvedDigest?.matches(DIGEST_PATTERN) == true) {
+                require(resolvedDigest == "pending" || resolvedDigest?.isSha256Digest() == true) {
                     "$blockName must bind a resolved-value digest or explicit pending state"
                 }
                 require(extractStringList(block, "forbidden_default_tests").toSet() == setOf(
@@ -655,8 +640,8 @@ object MobilePolicyValidator {
             val status = extractString(block, "status") ?: error("Evidence record $id is missing status")
             if (status == "success") {
                 require(extractString(block, "commit_sha") != "pending")
-                require(extractString(block, "artifact_digest")?.matches(DIGEST_PATTERN) == true)
-                require(extractString(block, "fixture_digest")?.matches(DIGEST_PATTERN) == true)
+                require(extractString(block, "artifact_digest")?.isSha256Digest() == true)
+                require(extractString(block, "fixture_digest")?.isSha256Digest() == true)
                 val executedAt = Instant.parse(extractString(block, "executed_at"))
                 val maxAge = gapBlocks.first { extractString(it, "id") == id }
                     .let { extractInt(it, "max_age_days") ?: error("Gap $id has no max age") }
@@ -668,40 +653,19 @@ object MobilePolicyValidator {
     }
 
     private fun blocks(text: String, name: String): List<String> =
-        Regex("(?ms)^\\[\\[$name]]\\s*\\n(.*?)(?=^\\[\\[|\\z)")
-            .findAll(text)
-            .map { it.groupValues[1] }
-            .toList()
+        PolicyToml.blocks(text, name)
 
     private fun extractString(text: String, key: String): String? =
-        Regex("(?m)^${Regex.escape(key)}\\s*=\\s*\"([^\"]*)\"\\s*$")
-            .find(text)
-            ?.groupValues
-            ?.get(1)
+        PolicyToml.string(text, key)
 
     private fun extractInt(text: String, key: String): Int? =
-        Regex("(?m)^${Regex.escape(key)}\\s*=\\s*(\\d+)\\s*$")
-            .find(text)
-            ?.groupValues
-            ?.get(1)
-            ?.toInt()
+        PolicyToml.integer(text, key)
 
     private fun extractStringList(text: String, key: String): List<String> =
-        Regex("(?m)^${Regex.escape(key)}\\s*=\\s*\\[([^]]*)]")
-            .find(text)
-            ?.groupValues
-            ?.get(1)
-            ?.let { values ->
-                Regex("\"([^\"]+)\"").findAll(values).map { it.groupValues[1] }.toList()
-            }
-            ?: emptyList()
+        PolicyToml.stringList(text, key)
 
     private fun extractBoolean(text: String, key: String): Boolean? =
-        Regex("(?m)^${Regex.escape(key)}\\s*=\\s*(true|false)\\s*$")
-            .find(text)
-            ?.groupValues
-            ?.get(1)
-            ?.toBoolean()
+        PolicyToml.boolean(text, key)
 
     private fun digest(mobileRoot: Path, paths: List<String>): String {
         val digest = MessageDigest.getInstance("SHA-256")
@@ -713,17 +677,40 @@ object MobilePolicyValidator {
         return digest.digest().joinToString("") { "%02x".format(it) }
     }
 
-    private val DIGEST_PATTERN = Regex("[a-f0-9]{64}")
-
     private fun validateCommonManifest(relative: String, text: String) {
-        require(Regex("(?m)^schema\\s*=\\s*\\\"[^\\\"]+\\\"\\s*$").containsMatchIn(text)) {
+        require(!extractString(text, "schema").isNullOrBlank()) {
             "$relative must declare a schema"
         }
-        require(Regex("(?m)^lifecycle\\s*=\\s*\\\"(scaffold-pending|active)\\\"$").containsMatchIn(text)) {
+        require(extractString(text, "lifecycle") in setOf("scaffold-pending", "active")) {
             "$relative must declare scaffold-pending or active lifecycle"
         }
-        require(Regex("(?m)^source_digest\\s*=\\s*\\\"(pending|local-only|[a-f0-9]{64})\\\"$").containsMatchIn(text)) {
+        require(extractString(text, "source_digest") in setOf("pending", "local-only") ||
+            extractString(text, "source_digest")?.isSha256Digest() == true) {
             "$relative must declare a pending, local-only, or content source digest"
         }
     }
+
+    private fun String.isSha256Digest(): Boolean = isLowercaseHexDigest(64)
+
+    private fun xmlResourceValue(path: Path, name: String): String? = runCatching {
+        val document = parseSecureXml(Files.readString(path), disallowDoctype = false)
+        (0 until document.getElementsByTagName("string").length)
+            .asSequence()
+            .map { document.getElementsByTagName("string").item(it) }
+            .firstOrNull { it.attributes?.getNamedItem("name")?.nodeValue == name }
+            ?.textContent
+    }.getOrNull()
+
+    private fun plistValue(path: Path, key: String): String? = runCatching {
+        val document = parseSecureXml(Files.readString(path), disallowDoctype = false)
+        val keys = document.getElementsByTagName("key")
+        (0 until keys.length).asSequence().map { keys.item(it) }
+            .firstOrNull { it.textContent == key }
+            ?.let { keyNode ->
+                var sibling: Node? = keyNode.nextSibling
+                while (sibling != null && sibling.nodeType != Node.ELEMENT_NODE) sibling = sibling.nextSibling
+                sibling?.takeIf { it.nodeName == "string" }?.textContent
+            }
+    }.getOrNull()
+
 }

@@ -19,5 +19,6 @@ class SharedKitBootstrapTest {
         assertEquals("photo_analysis_status", SharedKitAutomationIds.photoAnalysisStatus)
         assertEquals("capture_shutter", SharedKitAutomationIds.captureShutter)
         assertEquals("capture_import", SharedKitAutomationIds.captureImport)
+        assertEquals("capture_native", SharedKitAutomationIds.captureNative)
     }
 }

@@ -23,20 +23,79 @@ enum class PhotoAnalysisPresenterAction {
     ScanAgain,
 }
 
-data class PhotoAnalysisPresenterModel(
+/** Localizable copy is supplied by the product host; the presenter owns no locale lookup. */
+data class PhotoAnalysisPresenterCopy(
+    val capture: CaptureCopy,
+    val status: StatusCopy,
+    val recovery: RecoveryCopy,
+) {
+    init {
+        (capture.values + status.values + recovery.values).forEach { require(it.isNotBlank()) }
+    }
+}
+
+data class CaptureCopy(
     val title: String,
+    val takeMealPhoto: String,
+    val choosePhoto: String,
+    val openSettings: String,
+    val cancel: String,
+) {
+    val values: List<String>
+        get() = listOf(title, takeMealPhoto, choosePhoto, openSettings, cancel)
+}
+
+data class StatusCopy(
+    val readyToCapture: String,
+    val preparingPhoto: String,
+    val photoReady: String,
+    val analyzingPhoto: String,
+    val reviewCandidate: String,
+    val restoringPhotoAnalysis: String,
+) {
+    val values: List<String>
+        get() = listOf(
+            readyToCapture,
+            preparingPhoto,
+            photoReady,
+            analyzingPhoto,
+            reviewCandidate,
+            restoringPhotoAnalysis,
+        )
+}
+
+data class RecoveryCopy(
+    val scanAgain: String,
+    val cameraPermissionRequired: String,
+    val cameraUnavailable: String,
+    val photoCaptureFailed: String,
+    val photoQualityTooLow: String,
+    val noFoodFound: String,
+    val analysisOffline: String,
+    val analysisCancelled: String,
+) {
+    val values: List<String>
+        get() = listOf(
+            scanAgain,
+            cameraPermissionRequired,
+            cameraUnavailable,
+            photoCaptureFailed,
+            photoQualityTooLow,
+            noFoodFound,
+            analysisOffline,
+            analysisCancelled,
+        )
+}
+
+data class PhotoAnalysisPresenterModel(
     val statusLabel: String,
-    val shutterLabel: String,
-    val importLabel: String,
-    val shutterAutomationId: String,
-    val importAutomationId: String,
     val state: PhotoAnalysisPresenterState,
     val actions: List<PhotoAnalysisPresenterAction>,
 ) {
     companion object {
         fun from(
             state: PhotoAnalysisState,
-            surface: CaptureSurfaceUi = CaptureSurfaceUi(),
+            copy: PhotoAnalysisPresenterCopy,
         ): PhotoAnalysisPresenterModel {
             val presenterState = when (state) {
                 PhotoAnalysisState.Capture -> PhotoAnalysisPresenterState.CAPTURE
@@ -48,35 +107,30 @@ data class PhotoAnalysisPresenterModel(
                 is PhotoAnalysisState.Backgrounded -> PhotoAnalysisPresenterState.BACKGROUNDED
             }
             return PhotoAnalysisPresenterModel(
-                title = surface.title,
-                statusLabel = statusLabel(state),
-                shutterLabel = surface.shutterLabel,
-                importLabel = surface.importLabel,
-                shutterAutomationId = surface.shutterAutomationId,
-                importAutomationId = surface.importAutomationId,
+                statusLabel = statusLabel(state, copy),
                 state = presenterState,
                 actions = actions(state),
             )
         }
 
-        private fun statusLabel(state: PhotoAnalysisState): String = when (state) {
-            PhotoAnalysisState.Capture -> "Ready to capture"
-            is PhotoAnalysisState.Preparing -> "Preparing photo"
-            is PhotoAnalysisState.Ready -> "Photo ready"
-            is PhotoAnalysisState.Analyzing -> "Analyzing photo"
-            is PhotoAnalysisState.CandidateReview -> "Review candidate"
-            is PhotoAnalysisState.Recovery -> recoveryLabel(state.reason)
-            is PhotoAnalysisState.Backgrounded -> "Restoring photo analysis"
+        private fun statusLabel(state: PhotoAnalysisState, copy: PhotoAnalysisPresenterCopy): String = when (state) {
+            PhotoAnalysisState.Capture -> copy.status.readyToCapture
+            is PhotoAnalysisState.Preparing -> copy.status.preparingPhoto
+            is PhotoAnalysisState.Ready -> copy.status.photoReady
+            is PhotoAnalysisState.Analyzing -> copy.status.analyzingPhoto
+            is PhotoAnalysisState.CandidateReview -> copy.status.reviewCandidate
+            is PhotoAnalysisState.Recovery -> recoveryLabel(state.reason, copy)
+            is PhotoAnalysisState.Backgrounded -> copy.status.restoringPhotoAnalysis
         }
 
-        private fun recoveryLabel(reason: RecoveryReason): String = when (reason) {
-            RecoveryReason.PERMISSION_DENIED -> "Camera permission is required"
-            RecoveryReason.CAMERA_UNAVAILABLE -> "Camera is unavailable"
-            RecoveryReason.CAPTURE_FAILED -> "Photo capture failed"
-            RecoveryReason.POOR_IMAGE -> "Photo quality is too low"
-            RecoveryReason.NO_FOOD -> "No food was found in the photo"
-            RecoveryReason.OFFLINE -> "Analysis is offline"
-            RecoveryReason.CANCELLED -> "Analysis cancelled"
+        private fun recoveryLabel(reason: RecoveryReason, copy: PhotoAnalysisPresenterCopy): String = when (reason) {
+            RecoveryReason.PERMISSION_DENIED -> copy.recovery.cameraPermissionRequired
+            RecoveryReason.CAMERA_UNAVAILABLE -> copy.recovery.cameraUnavailable
+            RecoveryReason.CAPTURE_FAILED -> copy.recovery.photoCaptureFailed
+            RecoveryReason.POOR_IMAGE -> copy.recovery.photoQualityTooLow
+            RecoveryReason.NO_FOOD -> copy.recovery.noFoodFound
+            RecoveryReason.OFFLINE -> copy.recovery.analysisOffline
+            RecoveryReason.CANCELLED -> copy.recovery.analysisCancelled
         }
 
         private fun actions(state: PhotoAnalysisState): List<PhotoAnalysisPresenterAction> = when (state) {

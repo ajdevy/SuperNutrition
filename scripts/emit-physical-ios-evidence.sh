@@ -8,6 +8,7 @@ fi
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="$(cd "$script_dir/.." && pwd)"
+source "$script_dir/lib/quality-common.sh"
 output_root="$1"
 ios_udid="${IOS_UDID:-}"
 derived_data_root="${IOS_DERIVED_DATA_ROOT:-$repo_root/mobile/apps/iosApp/build/DerivedData}"
@@ -65,17 +66,20 @@ if test -n "$device_details"; then
   device_line="${marketing_name:-physical iOS device} / iOS ${os_version:-unknown} / ${cpu_type:-unknown} / tunnel=${tunnel_state} (${ios_udid})"
 fi
 
-latest_result="$(python3 - "$derived_data_root/Logs/Test" <<'PY'
+latest_result="${IOS_XCRESULT_PATH:-}"
+if test -z "$latest_result"; then
+  latest_result="$(python3 - "$derived_data_root/Logs/Test" <<'PY'
 from pathlib import Path
 import sys
 
 root = Path(sys.argv[1])
-files = sorted(root.rglob("*.xcresult"), key=lambda path: path.stat().st_mtime, reverse=True)
-print(files[0] if files else "")
+files = sorted(root.rglob("*.xcresult"))
+print(files[0] if len(files) == 1 else "")
 PY
-)"
+  )"
+fi
 test -n "$latest_result" || {
-  printf 'physical iOS xcresult is missing; run the physical xcodebuild test first\n' >&2
+  printf 'set IOS_XCRESULT_PATH to the current physical iOS xcresult (or leave exactly one result under DerivedData)\n' >&2
   exit 1
 }
 
@@ -155,53 +159,14 @@ test -f "$framework_binary" || {
   exit 1
 }
 
-hash_stream() {
-  if command -v sha256sum >/dev/null 2>&1; then
-    sha256sum | awk '{print $1}'
-  else
-    shasum --algorithm 256 | awk '{print $1}'
-  fi
-}
-
-hash_file() {
-  local path="$1"
-  if command -v sha256sum >/dev/null 2>&1; then
-    sha256sum "$path" | awk '{print $1}'
-  else
-    shasum --algorithm 256 "$path" | awk '{print $1}'
-  fi
-}
-
-digest_tree() {
-  local root_path="$1"
-  test -d "$root_path" || {
-    printf 'missing evidence directory: %s\n' "$root_path" >&2
-    exit 1
-  }
-  {
-    local absolute
-    while IFS= read -r absolute; do
-      printf '%s\0%s\0' "${absolute#"$repo_root/"}" "$(hash_file "$absolute")"
-    done < <(find "$root_path" -type f -print | LC_ALL=C sort)
-  } | hash_stream
-}
-
-toml_string() {
-  local value="$1"
-  value="${value//\\/\\\\}"
-  value="${value//\"/\\\"}"
-  value="${value//$'\n'/\\n}"
-  printf '"%s"' "$value"
-}
-
 artifact_digest="$({
   printf '%s\0%s\0' "mobile/apps/sharedKit/build/bin/iosArm64/debugFramework/SharedKit.framework/SharedKit" "$(hash_file "$framework_binary")"
   while IFS= read -r absolute; do
     printf '%s\0%s\0' "${absolute#"$repo_root/"}" "$(hash_file "$absolute")"
   done < <(find "$app_path" -type f -print | LC_ALL=C sort)
 } | hash_stream)"
-fixture_digest="$(digest_tree "$repo_root/mobile/platform/photo-ios/src")"
-policy_digest="$(digest_tree "$repo_root/mobile/config/quality")"
+fixture_digest="$(digest_tree "$repo_root" mobile/platform/photo-ios/src)"
+policy_digest="$(digest_tree "$repo_root" mobile/config/quality)"
 commit_sha="$(git -C "$repo_root" rev-parse HEAD)"
 worktree_state="clean"
 if test -n "$(git -C "$repo_root" status --porcelain)"; then

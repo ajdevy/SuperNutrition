@@ -1,7 +1,4 @@
 <resources>
     <string name="app_name">SuperNutrition</string>
     <string name="bootstrap_ready">Bootstrap ready</string>
-    <string name="capture_title">Capture</string>
-    <string name="capture_shutter">Take meal photo</string>
-    <string name="capture_import">Choose photo</string>
 </resources>

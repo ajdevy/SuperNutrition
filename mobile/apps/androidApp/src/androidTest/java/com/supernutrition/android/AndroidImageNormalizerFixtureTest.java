@@ -2,10 +2,10 @@ package com.supernutrition.android;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 
-import com.supernutrition.domain.photoanalysis.AttemptId;
 import com.supernutrition.domain.photoanalysis.ImageOrientation;
 import com.supernutrition.domain.photoanalysis.NormalizedPhotoInput;
-import com.supernutrition.domain.photoanalysis.PhotoRef;
+import com.supernutrition.domain.inference.AttemptId;
+import com.supernutrition.domain.inference.PhotoRef;
 import com.supernutrition.platform.photoandroid.AndroidImageNormalizer;
 
 import org.junit.Test;
@@ -57,13 +57,17 @@ public final class AndroidImageNormalizerFixtureTest {
     }
 
     @Test
-    public void defaultOrientationReaderUsesExifOrientation() throws Exception {
+    public void callerSuppliedOrientationIsApplied() throws Exception {
         PhotoRef ref = PhotoRef.Companion.issue(
                 new AttemptId("fixture-default-orientation"),
                 "fixture-photo"
         );
 
-        NormalizedPhotoInput normalized = new AndroidImageNormalizer().normalize(ref, fixtureBytes());
+        NormalizedPhotoInput normalized = new AndroidImageNormalizer().normalize(
+                ref,
+                fixtureBytes(),
+                ImageOrientation.RIGHT
+        );
 
         assertEquals(4, normalized.getWidth());
         assertEquals(6, normalized.getHeight());
