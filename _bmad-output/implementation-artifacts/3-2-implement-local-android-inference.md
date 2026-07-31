@@ -134,8 +134,8 @@ so that eligible devices can analyze without transmitting Photo Input.
 - [ ] Execute quality and Android evidence gates (AC: 4–5)
   - [x] Run focused local-Android tests, strict dependency/lock/policy validation,
     Detekt, Android compilation, and changed-code coverage. The aggregate
-    `qualityCheckJvmAndroid` now passes with JVM host coverage of 96.33% line and
-    85.88% branch across 8 production modules; branchless modules remain in the
+    `qualityCheckJvmAndroid` now passes with JVM host coverage of 98.01% line and
+    88.03% branch across 8 production modules; branchless modules remain in the
     line denominator without inventing branch outcomes.
   - [x] Run the dedicated E3.2 physical Android inference scenario and bind
     the local-only evidence to committed source `efff22e9dd3db0a5c624657223e303acef822e10`,
@@ -298,7 +298,7 @@ GPT-5 / Codex
   provenance, abstention/failure mapping, input leases, cancellation, late
   results, rollback ownership, and invalid runtime metadata.
 - Focused module coverage is 99.3151% line and 90.7895% branch; the full local
-  `qualityCheckJvmAndroid` gate passes with 96.33% line and 85.88% branch across
+  `qualityCheckJvmAndroid` gate passes with 98.01% line and 88.03% branch across
   8 production modules.
 - The physical Android acceptance task completed 15/15 tests on the explicit
   `AU3N025429006787` serial after fixing ViewModel reflection visibility and
