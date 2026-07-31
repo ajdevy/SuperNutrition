@@ -50,7 +50,7 @@ if ! xcrun simctl list devicetypes 2>/dev/null | grep -Fq "$device_type_id"; the
 fi
 
 simulator_name="SuperNutrition iPhone 17 Pro"
-simulator_udid="$(xcrun simctl list devices available | awk -v name="$simulator_name" '$0 ~ name " \(" {print; exit}' | sed -E 's/.*\(([0-9A-F-]{36})\).*/\1/')"
+simulator_udid="$(xcrun simctl list devices available | awk -v name="$simulator_name" 'index($0, name " (") {print; exit}' | sed -E 's/.*\(([0-9A-F-]{36})\).*/\1/')"
 if test -z "$simulator_udid"; then
   simulator_udid="$(xcrun simctl create "$simulator_name" "$device_type_id" "$runtime_id")"
 fi
