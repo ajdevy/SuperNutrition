@@ -4,4 +4,9 @@
 - Physical iOS fixture/Xcode acceptance is now verified on the paired iPhone
   using the configured local Apple development account; the remaining
   production blocker is the signed G-3 runtime/model benchmark.
+- A preliminary, unsigned G-3 benchmark now records the candidate matrix and
+  proposed resource budgets in
+  `_bmad-output/implementation-artifacts/g3-benchmark-artifact.md`. It does
+  not close G-3: iOS energy evidence, tier/accuracy/rollback decisions, and
+  owner signatures remain required.
 - Concrete local-runtime production wiring remains gated by G-3 and must not be invented in the adapter stories.
