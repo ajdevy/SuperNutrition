@@ -4,6 +4,7 @@ set -euo pipefail
 ROOT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 : "${IOS_DEVICE_UDID:?Set IOS_DEVICE_UDID to one physical device UDID}"
 : "${DEVELOPMENT_TEAM:?Set DEVELOPMENT_TEAM to the Apple development team selected in Xcode}"
+EXPECTED_MODEL_SHA='9070f8097cda88923f77774d93d9fead7cee344486521c7fc5142806642061df'
 
 "$ROOT_DIR/download-assets.sh"
 command -v xcodegen >/dev/null
@@ -25,15 +26,25 @@ xcrun devicectl device process launch --device "$IOS_DEVICE_UDID" \
 
 RESULT_DIR="${G3_RUN_DIR:-$(mktemp -d /tmp/supernutrition-g3-ios.XXXXXX)}"
 mkdir -p "$RESULT_DIR"
-for attempt in $(seq 1 30); do
+rm -f "$RESULT_DIR/result.json" "$RESULT_DIR/result.json.tmp"
+for attempt in $(seq 1 "${G3_RESULT_POLL_ATTEMPTS:-180}"); do
+  RESULT_TMP="$RESULT_DIR/result.json.tmp"
   if xcrun devicectl device copy from --device "$IOS_DEVICE_UDID" \
       --domain-type appDataContainer --domain-identifier com.supernutrition.g3 \
-      --source Library/Caches/result.json --destination "$RESULT_DIR/result.json" \
-      --quiet >/dev/null 2>&1; then
+      --source Library/Caches/result.json --destination "$RESULT_TMP" \
+      --quiet >/dev/null 2>&1 \
+      && jq -e --arg sha "$EXPECTED_MODEL_SHA" \
+        '.status == "success" and .model_sha256 == $sha' "$RESULT_TMP" >/dev/null 2>&1; then
+    mv "$RESULT_TMP" "$RESULT_DIR/result.json"
     cat "$RESULT_DIR/result.json"
+    if ! jq -e '.status == "success" and .semantic_pass == true' "$RESULT_DIR/result.json" >/dev/null; then
+      printf 'iOS semantic acceptance failed.\n' >&2
+      exit 2
+    fi
     printf 'run_dir=%s\n' "$RESULT_DIR"
     exit 0
   fi
+  rm -f "$RESULT_TMP"
   sleep 1
 done
 

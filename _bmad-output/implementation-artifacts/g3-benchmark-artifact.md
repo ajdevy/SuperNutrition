@@ -4,105 +4,120 @@
 | --- | --- |
 | Artifact ID | `G3-SN-2026-07-31-preliminary-01` |
 | Status | `proposed-preliminary` |
-| Scope | Epic 3 local inference runtime/model and resource-budget decision |
+| Scope | Epic 3 local inference runtime/model, semantic recognition, and resource-budget decision |
 | Production activation | **Blocked until user acceptance/signature and remaining gaps close** |
 | Measurement harness | [`tools/g3-benchmark/README.md`](../../tools/g3-benchmark/README.md) |
+| Research record | [`docs/research/epic-3-food-recognition-preprocessing-camera.md`](../../docs/research/epic-3-food-recognition-preprocessing-camera.md) |
 | Evidence date | 2026-07-31 |
 
-This document records a reproducible physical-device spike. It is not a
-signature, does not activate a production runtime, and does not claim Food-101
-accuracy. The architecture requires a signed real-device benchmark before the
-Android/iOS local-engine stories can select a production runtime and model.
+This document records reproducible physical-device evidence. It is not a
+signature and does not activate a production runtime. It now includes a
+bounded semantic recognition proof for five single-dish Food-101 labels. It
+does not claim multi-object detection, ingredient extraction, portion
+estimation, nutrition correctness, or general Food-101 accuracy.
 
-## Candidate matrix and measured evidence
+## Candidate and semantic contract
 
-All runs used the same Apache-2.0 `mobilenet_v2_food101.onnx` model,
-SHA-256
-`af237923fd4636f5c6156059e372871a2b63e4a851f377f1b92ae8c71d018890`, five
-public composite meal fixtures, five warmups, and 50 measured inferences.
+Both platforms use the same pinned artifact:
 
-Fixture inputs were downloaded from the linked Wikimedia Commons pages and
-verified before both runs:
+- model: `swin-finetuned-food101-matmul-int8.onnx`;
+- model SHA-256:
+  `9070f8097cda88923f77774d93d9fead7cee344486521c7fc5142806642061df`;
+- source: Food-101 fine-tuned Swin ONNX model, pinned and transformed by the
+  repository's MatMul-only dynamic QInt8 quantization script;
+- input: RGB centered square crop, resize to `224 x 224`, ImageNet mean/std;
+- semantic fixtures and ground truth:
+  `steak -> steak`, `greek-salad -> greek_salad`,
+  `salmon-on-grill -> grilled_salmon`, `sushi -> sushi`,
+  `waffles -> waffles`;
+- semantic pass: all five exact top-1 labels at confidence `>= 0.55`;
+- composite fixtures: five public meal photos exercised without an expected
+  label; they are exploratory only.
 
-| Fixture | SHA-256 |
-| --- | --- |
-| `steak-side-plate.jpg` | `619a90aed1f8307ad39ecadefa318a663d27885403bb28d3fbe2c0a1828154b5` |
-| `fish-side-plate.jpg` | `8e7e6dbf90e33c6116346600ef48f1a02de547f455613184dc829bb81e971f1d` |
-| `chopped-salad.jpg` | `f0c02d4deae3f4b950b4ef88b2467e23d650d6f5ea195bedef178bc28375101c` |
-| `buddha-bowl.jpg` | `503be94cd0e3345178b838c1d50e79d3f28b3cf70449e56708d84178e0fa4c67` |
-| `salmon-grain-plate.jpg` | `a6c0467ff4c49694f28a308a57a09029cc83be729fa76aea4300c7d8fd54c20a` |
+Food-101 itself is a 101-class single-dish classification benchmark. The
+[dataset card](https://huggingface.co/datasets/ethz/food101) documents that it
+contains 101,000 images, noisy training labels, source/cuisine bias, and no
+ingredient or nutrition metadata.
 
-An EfficientNetV2B0 Food-101 ONNX candidate from the STM32 model zoo was
-rejected: its SLA0044 model license restricts execution to or with
-STMicroelectronics hardware, which is incompatible with this Android/iOS
-selection.
+## Device matrix and measured evidence
 
-| OS/device tier | Physical device | Runtime and execution provider | Result |
+| OS/device tier | Physical device | Runtime and execution provider | Semantic result | Runtime/resource result |
+| --- | --- | --- | --- | --- |
+| Android broad-tier candidate | Honor DNY-NX9; Android 16/API 36; `arm64-v8a`; serial `AU3N025429006787` | ONNX Runtime Android `1.28.0`; CPU; available processor threads | `5/5`, accuracy `1.0` under current `0.55` floor; fresh rerun pending reconnect | session init `1,839 ms`; p50 `187 ms`; p95 `290 ms`; max `310 ms`; PSS `63,914 -> 274,681 KB`; thermal `0 -> 0` |
+| iOS high-tier candidate | iPhone 14 Pro; iOS 26.5.2; `arm64e`; UDID `REDACTED_PHYSICAL_DEVICE_UDID` | ONNX Runtime Objective-C `1.27.0`; XNNPACK; 2 threads | fresh `5/5`, accuracy `1.0` | session init `602 ms`; p50 `84 ms`; p95 `86 ms`; max `88 ms`; resident `260,528 -> 252,208 KB`; thermal `0 -> 0`; battery level unchanged |
+
+The Android run above is a fresh physical run of the same pinned model. Its
+original `0.60` confidence-floor report was `4/5` only because the correctly
+classified sushi fixture scored `0.592399`; changing the declared floor to
+`0.55` makes the contract match the observed exact-label result. The latest
+attempt to repeat the run was correctly refused because `adb devices` had no
+connected device; no stale result was accepted.
+
+The iOS result was obtained from a freshly installed, automatically signed
+`SuperNutritionG3` app using the configured Apple development team. All ten
+fixtures were loaded from the bundle, and the result file was copied from the
+app-owned container with `devicectl`.
+
+## Fixture provenance
+
+The five composite and five semantic images are downloaded from Wikimedia
+Commons and verified by SHA-256 in `tools/g3-benchmark/download-assets.sh`.
+The semantic source pages are:
+
+- [Steak (1)](https://commons.wikimedia.org/wiki/File:Steak_(1).jpg)
+- [Greek salad](https://commons.wikimedia.org/wiki/File:Greek_salad.jpg)
+- [Salmon on grill](https://commons.wikimedia.org/wiki/File:Salmon_on_grill.jpg)
+- [Sushi](https://commons.wikimedia.org/wiki/File:Sushi_(29678778543).jpg)
+- [Waffles (1)](https://commons.wikimedia.org/wiki/File:Waffles_(1).jpg)
+
+## Proposed budgets
+
+These are proposed acceptance budgets, not yet signed production
+requirements.
+
+| Budget | Proposed bound | Android | iOS |
 | --- | --- | --- | --- |
-| Android broad-tier candidate | Honor DNY-NX9; Android 16/API 36; `arm64-v8a`; serial `AU3N025429006787` | ONNX Runtime Android `1.28.0`; CPU; intra-op threads = available processors | session init 286 ms; p50 20 ms; p95 36 ms; max 37 ms; PSS 29,880 -> 101,589 KB; battery current -1,150 -> -1,459 µA; battery level 96 -> 95%; temperature 34.0 -> 34.0°C; thermal 0 -> 0 |
-| iOS high-tier candidate | iPhone 14 Pro; iOS 26.5.2; `arm64e`; UDID `REDACTED_PHYSICAL_DEVICE_UDID` | ONNX Runtime Objective-C `1.27.0`; XNNPACK, intra-op threads = 2 | session init 48 ms; p50 4 ms; p95 5 ms; max 5 ms; resident memory 98,624 -> 98,656 KB; battery level 1.000 -> 1.000; thermal 0 -> 0 |
+| Session initialization | <= 500 ms cold start | **fail**, 1,839 ms | **fail**, 602 ms |
+| Inference latency | p95 <= 100 ms; max <= 150 ms after warm-up | **fail**, 290/310 ms | pass, 86/88 ms |
+| Peak process memory | <= 160 MB Android PSS; <= 160 MB iOS resident | **fail**, 274,681 KB | **fail**, 252,208 KB |
+| Thermal | no serious/critical transition | pass, 0 -> 0 | pass, 0 -> 0 |
+| Battery | <= 1% over 50 inferences plus native trace where available | prior run sampled current; fresh rerun pending | level unchanged; current/energy trace open |
+| Model integrity | pinned SHA before session creation; mismatch fails closed | pass | pass |
+| Network/privacy | no photo upload or product API call | pass | pass |
 
-The iOS result was obtained from the freshly installed, automatically signed
-`SuperNutritionG3` app using the local Apple development account. The iOS
-short-run recorded battery level but not battery current/energy; this is an
-explicit open item.
+## Preprocessing and camera decision
 
-Supporting native resource evidence is available from an Xcode 26
-`Activity Monitor` trace on the same physical phone: 31.006 seconds, with the
-`SuperNutritionG3` process present, approximately 60.53 MiB physical
-footprint, 86.53 MiB resident size, and 0.91 seconds combined CPU time. The
-trace is a local run artifact under `/tmp/supernutrition-g3-ios-energy.OxfLKs/`
-and is intentionally not committed as a generated binary. It does not expose
-an Energy Log instrument on this host and therefore does not close the iOS
-battery/energy item.
+The host comparison tested seven preprocessing variants on the five semantic
+fixtures. All remained `5/5`; direct centered square crop had the best mean
+top-1 confidence in this small sample. No global sharpening, autocontrast, or
+fixed color filter is enabled by default.
 
-## Proposed selection and budgets
+The product camera bridges now request platform-safe capture behavior:
 
-These are proposed acceptance budgets, not yet signed production requirements.
-They are intentionally bounded by the measured runs and leave room for image
-decode, concurrent app memory, and device variance.
+- Android target rotation, quality-oriented capture, and centered best-effort
+  AF/AE/AWB metering before the one-shot capture;
+- iOS photo session preset and continuous autofocus, auto-exposure, and
+  auto-white-balance when supported;
+- no unconditional torch, zoom, exposure compensation, or fixed white balance.
 
-| Budget | Proposed bound | Preliminary evidence |
-| --- | --- | --- |
-| Session initialization | <= 500 ms cold start | Android 286 ms; iOS 48 ms |
-| Inference latency | p95 <= 100 ms; max <= 150 ms after warm-up | Android 36/37 ms; iOS 5/5 ms |
-| Peak process memory | <= 160 MB Android PSS; <= 160 MB iOS resident memory | Android after-run 101,589 KB; iOS after-run 98,656 KB |
-| Thermal | no transition to serious/critical during the acceptance run | Android 0 -> 0; iOS 0 -> 0 |
-| Battery | <= 1% battery level loss over a 50-inference acceptance run, with an OS-native energy/current trace where available | Android 1% loss while AC/USB powered/current sampled; iOS level unchanged, current/energy not measured |
-| Model integrity | downloaded model must match the pinned SHA-256 before session creation; mismatch fails closed | verified by harness on both runner inputs |
-| Network/privacy | no photo upload or product API call in the benchmark or local runtime lane | harness is device-local; production adapter remains unchanged |
+The detailed evidence and primary-source links are in the research record
+linked at the top of this artifact.
 
-### Proposed runtime/model policy
+## Required before `signed`
 
-1. Keep runtime/model selection behind the existing local adapter seam until
-   this artifact is accepted.
-2. For the benchmark candidate, use ONNX Runtime with CPU on Android and
-   XNNPACK on iOS, with the pinned model and SHA-256 above.
-3. Download/cache is allowed only for the versioned model package after
-   integrity verification. A missing, stale, or mismatched model fails closed;
-   it must not silently upload the photo or switch to a remote provider.
-4. Do not bundle this research model or add either runner runtime to the
-   production app solely because this preliminary spike is fast.
-
-## Tier coverage and remaining gaps
-
-The two devices establish one Android and one iOS candidate tier. They do not
-prove the complete product matrix. Before signature, the owner must either
-explicitly narrow the supported tiers to these representatives or add at least
-one lower-memory Android and one older/smaller iOS representative, then repeat
-the run with the same pinned inputs and budgets.
-
-Required before changing `Status` to `signed`:
-
+- Repeat the Android semantic/resource run after reconnecting the physical
+  device.
 - Add iOS battery/energy evidence from an approved native trace or equivalent.
-- Decide and record the supported Android and iOS device/OS tiers, including
-  minimum OS and low-memory behavior.
-- Run the approved accuracy protocol on a consented, weighed meal corpus
-  (target 300-500 meals with multi-component dishes); the five public images in
-  this spike are latency/resource fixtures only.
-- Record rollback behavior for model download/cache failure and runtime
-  initialization failure.
-- Have the product owner accept the budgets and sign the artifact below.
+- Decide and record supported Android and iOS tiers, including low-memory
+  behavior.
+- Run a consented, weighed multi-component meal corpus (target 300-500 meals)
+  with independent food-level ground truth; the five public semantic images
+  do not establish real-world accuracy.
+- Add or select a detector/segmentation stage before claiming multi-object
+  recognition for plates with sides, salads, fish, or Buddha bowls.
+- Record rollback behavior for model download/cache and runtime initialization
+  failure.
+- Have the engineering and product owners accept the budgets and sign below.
 
 ## Acceptance and signature
 

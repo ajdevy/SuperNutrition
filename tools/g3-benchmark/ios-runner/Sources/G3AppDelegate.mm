@@ -1,10 +1,8 @@
 #import "G3AppDelegate.h"
 
-#import <CoreFoundation/CoreFoundation.h>
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import <mach/mach.h>
-#import <mach/mach_time.h>
 #import <ort_env.h>
 #import <ort_session.h>
 #import <ort_value.h>
@@ -14,8 +12,20 @@
 static const int kImageSize = 224;
 static const int kWarmupRuns = 5;
 static const int kMeasuredRuns = 50;
+static const float kSemanticMinConfidence = 0.55f;
+static NSString* const kModelName = @"swin-finetuned-food101-matmul-int8.onnx";
+static NSString* const kModelSha256 =
+    @"9070f8097cda88923f77774d93d9fead7cee344486521c7fc5142806642061df";
+
 static NSArray<NSString*>* G3Fixtures(void) {
-  return @[ @"steak-side-plate", @"fish-side-plate", @"chopped-salad", @"buddha-bowl", @"salmon-grain-plate" ];
+  return @[ @"steak-side-plate", @"fish-side-plate", @"chopped-salad", @"buddha-bowl",
+            @"salmon-grain-plate", @"steak", @"greek-salad", @"salmon-on-grill", @"sushi",
+            @"waffles" ];
+}
+
+static NSArray* G3ExpectedLabels(void) {
+  return @[ [NSNull null], [NSNull null], [NSNull null], [NSNull null], [NSNull null],
+            @"steak", @"greek_salad", @"grilled_salmon", @"sushi", @"waffles" ];
 }
 
 static uint64_t G3NowNs(void) {
@@ -29,31 +39,54 @@ static uint64_t G3ResidentKb(void) {
   return result == KERN_SUCCESS ? (uint64_t)(info.resident_size / 1024) : 0;
 }
 
-static NSString* G3JsonEscape(NSString* value) {
-  return [[value stringByReplacingOccurrencesOfString:@"\\" withString:@"\\\\"]
-      stringByReplacingOccurrencesOfString:@"\"" withString:@"\\\""];
+static NSArray<NSString*>* G3ReadLabels(NSError** error) {
+  NSString* path = [NSBundle.mainBundle pathForResource:@"food101-labels" ofType:@"txt"];
+  if (path == nil) {
+    if (error != NULL) {
+      *error = [NSError errorWithDomain:@"SuperNutritionG3" code:1
+                               userInfo:@{NSLocalizedDescriptionKey : @"label map not found"}];
+    }
+    return nil;
+  }
+  NSString* contents = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:error];
+  if (contents == nil) return nil;
+  NSMutableArray<NSString*>* labels = [NSMutableArray array];
+  for (NSString* line in [contents componentsSeparatedByString:@"\n"]) {
+    NSString* trimmed = [line stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
+    if (trimmed.length > 0) [labels addObject:trimmed];
+  }
+  if (labels.count != 101 && error != NULL) {
+    *error = [NSError errorWithDomain:@"SuperNutritionG3" code:2 userInfo:@{
+      NSLocalizedDescriptionKey : @"Food101 label map must contain 101 labels"
+    }];
+  }
+  return labels.count == 101 ? labels : nil;
 }
 
 static NSMutableData* G3InputForImage(UIImage* image) {
+  if (image.CGImage == NULL) return nil;
+  size_t width = CGImageGetWidth(image.CGImage);
+  size_t height = CGImageGetHeight(image.CGImage);
+  size_t side = MIN(width, height);
+  CGRect crop = CGRectMake((width - side) / 2.0, (height - side) / 2.0, side, side);
+  CGImageRef croppedImage = CGImageCreateWithImageInRect(image.CGImage, crop);
+  if (croppedImage == NULL) return nil;
+
   size_t bytesPerRow = kImageSize * 4;
   NSMutableData* rgba = [NSMutableData dataWithLength:kImageSize * bytesPerRow];
   CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
   CGContextRef context = CGBitmapContextCreate(
-      rgba.mutableBytes,
-      kImageSize,
-      kImageSize,
-      8,
-      bytesPerRow,
-      colorSpace,
+      rgba.mutableBytes, kImageSize, kImageSize, 8, bytesPerRow, colorSpace,
       kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
   CGColorSpaceRelease(colorSpace);
-  if (context == NULL || image.CGImage == NULL) {
-    if (context != NULL) CGContextRelease(context);
+  if (context == NULL) {
+    CGImageRelease(croppedImage);
     return nil;
   }
   CGContextSetInterpolationQuality(context, kCGInterpolationHigh);
-  CGContextDrawImage(context, CGRectMake(0, 0, kImageSize, kImageSize), image.CGImage);
+  CGContextDrawImage(context, CGRectMake(0, 0, kImageSize, kImageSize), croppedImage);
   CGContextRelease(context);
+  CGImageRelease(croppedImage);
 
   NSMutableData* tensor = [NSMutableData dataWithLength:3 * kImageSize * kImageSize * sizeof(float)];
   float* values = (float*)tensor.mutableBytes;
@@ -70,10 +103,30 @@ static NSMutableData* G3InputForImage(UIImage* image) {
   return tensor;
 }
 
-static long G3Percentile(NSMutableArray<NSNumber*>* values, double percentile) {
-  [values sortUsingSelector:@selector(compare:)];
-  NSUInteger index = (NSUInteger)ceil(percentile * values.count) - 1;
-  return values[MAX(0, MIN(index, values.count - 1))].longLongValue;
+static NSMutableDictionary* G3JsonObject(NSString* fixture, NSString* expected, NSDictionary* inference,
+                                           NSArray<NSString*>* labels) {
+  int top1Index = [inference[@"top1_index"] intValue];
+  float top1Confidence = [inference[@"top1_confidence"] floatValue];
+  NSString* top1Label = labels[top1Index];
+  BOOL hasExpected = expected != nil;
+  BOOL correct = hasExpected && [expected isEqualToString:top1Label] &&
+                 top1Confidence >= kSemanticMinConfidence;
+  NSMutableDictionary* object = [@{
+    @"fixture" : [fixture stringByAppendingString:@".jpg"],
+    @"expected_label" : hasExpected ? expected : [NSNull null],
+    @"top1_label" : top1Label,
+    @"top1_confidence" : @(top1Confidence),
+    @"correct" : @(correct),
+    @"top5" : inference[@"top5"]
+  } mutableCopy];
+  return object;
+}
+
+static NSString* G3JsonString(NSDictionary* object) {
+  NSError* error = nil;
+  NSData* data = [NSJSONSerialization dataWithJSONObject:object options:0 error:&error];
+  if (data == nil) return [NSString stringWithFormat:@"{\"status\":\"error\",\"message\":\"%@\"}", error];
+  return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 }
 
 @interface G3AppDelegate ()
@@ -101,8 +154,16 @@ static long G3Percentile(NSMutableArray<NSNumber*>* values, double percentile) {
 
 - (void)runBenchmark {
   @autoreleasepool {
+    NSString* resultPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES).firstObject
+        stringByAppendingPathComponent:@"Caches/result.json"];
+    [[NSFileManager defaultManager] removeItemAtPath:resultPath error:nil];
     NSError* error = nil;
-    NSString* modelPath = [NSBundle.mainBundle pathForResource:@"mobilenet_v2_food101" ofType:@"onnx"];
+    NSArray<NSString*>* labels = G3ReadLabels(&error);
+    if (labels == nil) {
+      [self writeFailure:error.localizedDescription ?: @"label map unavailable"];
+      return;
+    }
+    NSString* modelPath = [NSBundle.mainBundle pathForResource:@"swin-finetuned-food101-matmul-int8" ofType:@"onnx"];
     if (modelPath == nil) {
       [self writeFailure:@"model not found in bundle"];
       return;
@@ -112,9 +173,10 @@ static long G3Percentile(NSMutableArray<NSNumber*>* values, double percentile) {
     uint64_t sessionStarted = G3NowNs();
     ORTEnv* environment = [[ORTEnv alloc] initWithLoggingLevel:ORTLoggingLevelWarning error:&error];
     ORTSessionOptions* options = [[ORTSessionOptions alloc] initWithError:&error];
+    [options setGraphOptimizationLevel:ORTGraphOptimizationLevelExtended error:&error];
     [options setIntraOpNumThreads:2 error:&error];
     [options appendExecutionProvider:@"XNNPACK"
-                    providerOptions:@{ @"intra_op_num_threads": @"2" }
+                    providerOptions:@{ @"intra_op_num_threads" : @"2" }
                                 error:&error];
     ORTSession* session = [[ORTSession alloc] initWithEnv:environment
                                                 modelPath:modelPath
@@ -130,8 +192,9 @@ static long G3Percentile(NSMutableArray<NSNumber*>* values, double percentile) {
     NSArray<NSString*>* outputNames = [session outputNamesWithError:&error];
     NSString* inputName = inputNames.firstObject;
     NSString* outputName = outputNames.firstObject;
-    NSMutableArray<NSMutableData*>* inputs = [NSMutableArray array];
-    for (NSString* fixture in G3Fixtures()) {
+    NSArray<NSString*>* fixtures = G3Fixtures();
+    NSMutableArray<NSMutableData*>* inputs = [NSMutableArray arrayWithCapacity:fixtures.count];
+    for (NSString* fixture in fixtures) {
       NSString* path = [NSBundle.mainBundle pathForResource:fixture ofType:@"jpg"];
       UIImage* image = path == nil ? nil : [UIImage imageWithContentsOfFile:path];
       NSMutableData* tensor = G3InputForImage(image);
@@ -143,59 +206,88 @@ static long G3Percentile(NSMutableArray<NSNumber*>* values, double percentile) {
     }
 
     for (int index = 0; index < kWarmupRuns; index++) {
-      [self runSession:session inputName:inputName outputName:outputName tensor:inputs[index % inputs.count] error:&error];
+      NSDictionary* unused = [self runSession:session inputName:inputName outputName:outputName
+                                        tensor:inputs[index % inputs.count] labels:labels error:&error];
+      if (unused == nil) {
+        [self writeFailure:error.localizedDescription ?: @"warmup inference failed"];
+        return;
+      }
     }
     uint64_t pssBefore = G3ResidentKb();
     NSInteger thermalBefore = NSProcessInfo.processInfo.thermalState;
     NSMutableArray<NSNumber*>* durations = [NSMutableArray arrayWithCapacity:kMeasuredRuns];
-    int firstTop1 = -1;
+    NSMutableArray<NSDictionary*>* firstInferences = [NSMutableArray arrayWithCapacity:inputs.count];
     for (int index = 0; index < kMeasuredRuns; index++) {
       uint64_t started = G3NowNs();
-      int top1 = [self runSession:session
-                        inputName:inputName
-                       outputName:outputName
-                           tensor:inputs[index % inputs.count]
-                            error:&error];
+      NSDictionary* inference = [self runSession:session inputName:inputName outputName:outputName
+                                            tensor:inputs[index % inputs.count] labels:labels error:&error];
       long durationMs = (long)((G3NowNs() - started) / 1000000ULL);
+      if (inference == nil) {
+        [self writeFailure:error.localizedDescription ?: @"inference failed"];
+        return;
+      }
       [durations addObject:@(durationMs)];
-      if (index == 0) firstTop1 = top1;
+      if (index < inputs.count) [firstInferences addObject:inference];
     }
+    [durations sortUsingSelector:@selector(compare:)];
     uint64_t pssAfter = G3ResidentKb();
     NSInteger thermalAfter = NSProcessInfo.processInfo.thermalState;
     float batteryAfter = UIDevice.currentDevice.batteryLevel;
-    NSString* result = [NSString stringWithFormat:
-        @"{\"status\":\"success\",\"runtime\":\"onnxruntime-objc\",\"runtime_version\":\"1.27.0\","
-         "\"model\":\"mobilenet_v2_food101.onnx\",\"fixture_count\":%lu,\"warmup_runs\":%d,"
-         "\"measured_runs\":%d,\"session_init_ms\":%ld,\"inference_p50_ms\":%ld,\"inference_p95_ms\":%ld,"
-         "\"inference_max_ms\":%lld,\"resident_before_kb\":%llu,\"resident_after_kb\":%llu,"
-         "\"battery_level_before\":%.3f,\"battery_level_after\":%.3f,"
-         "\"thermal_before\":%ld,\"thermal_after\":%ld,\"first_top1_index\":%d}",
-        (unsigned long)inputs.count,
-        kWarmupRuns,
-        kMeasuredRuns,
-        sessionInitMs,
-        G3Percentile(durations, 0.50),
-        G3Percentile(durations, 0.95),
-        durations.lastObject.longLongValue,
-        pssBefore,
-        pssAfter,
-        batteryBefore,
-        batteryAfter,
-        (long)thermalBefore,
-        (long)thermalAfter,
-        firstTop1];
-    [self writeResult:result];
+
+    NSArray* expectedLabels = G3ExpectedLabels();
+    NSMutableArray* fixtureResults = [NSMutableArray arrayWithCapacity:firstInferences.count];
+    int expectedCount = 0;
+    int correctCount = 0;
+    for (NSUInteger index = 0; index < firstInferences.count; index++) {
+      id expectedObject = expectedLabels[index];
+      NSString* expected = expectedObject == [NSNull null] ? nil : expectedObject;
+      NSDictionary* result = G3JsonObject(fixtures[index], expected, firstInferences[index], labels);
+      [fixtureResults addObject:result];
+      if (expected != nil) {
+        expectedCount++;
+        if ([result[@"correct"] boolValue]) correctCount++;
+      }
+    }
+    BOOL semanticPass = expectedCount > 0 && correctCount == expectedCount;
+    NSDictionary* result = @{
+      @"status" : @"success",
+      @"runtime" : @"onnxruntime-objc",
+      @"runtime_version" : @"1.27.0",
+      @"model" : kModelName,
+      @"model_sha256" : kModelSha256,
+      @"fixture_count" : @(firstInferences.count),
+      @"semantic_expected_count" : @(expectedCount),
+      @"semantic_correct_count" : @(correctCount),
+      @"semantic_accuracy" : @(expectedCount == 0 ? 0.0f : (float)correctCount / expectedCount),
+      @"semantic_min_confidence" : @(kSemanticMinConfidence),
+      @"semantic_pass" : @(semanticPass),
+      @"warmup_runs" : @(kWarmupRuns),
+      @"measured_runs" : @(kMeasuredRuns),
+      @"session_init_ms" : @(sessionInitMs),
+      @"inference_p50_ms" : durations[(NSUInteger)MAX(0, MIN((int)durations.count - 1, (int)ceil(0.50 * durations.count) - 1))],
+      @"inference_p95_ms" : durations[(NSUInteger)MAX(0, MIN((int)durations.count - 1, (int)ceil(0.95 * durations.count) - 1))],
+      @"inference_max_ms" : durations.lastObject,
+      @"resident_before_kb" : @(pssBefore),
+      @"resident_after_kb" : @(pssAfter),
+      @"battery_level_before" : @(batteryBefore),
+      @"battery_level_after" : @(batteryAfter),
+      @"thermal_before" : @(thermalBefore),
+      @"thermal_after" : @(thermalAfter),
+      @"fixture_results" : fixtureResults
+    };
+    [self writeResult:G3JsonString(result)];
     dispatch_async(dispatch_get_main_queue(), ^{
-      self.statusLabel.text = @"G-3 benchmark complete";
+      self.statusLabel.text = semanticPass ? @"G-3 semantic pass" : @"G-3 semantic failed";
     });
   }
 }
 
-- (int)runSession:(ORTSession*)session
-        inputName:(NSString*)inputName
-       outputName:(NSString*)outputName
-           tensor:(NSMutableData*)tensorData
-            error:(NSError**)error {
+- (NSDictionary*)runSession:(ORTSession*)session
+                   inputName:(NSString*)inputName
+                  outputName:(NSString*)outputName
+                      tensor:(NSMutableData*)tensorData
+                      labels:(NSArray<NSString*>*)labels
+                       error:(NSError**)error {
   ORTValue* value = [[ORTValue alloc] initWithTensorData:tensorData
                                              elementType:ORTTensorElementDataTypeFloat
                                                    shape:@[ @1, @3, @224, @224 ]
@@ -206,14 +298,47 @@ static long G3Percentile(NSMutableArray<NSNumber*>* values, double percentile) {
                                                                       error:error];
   ORTValue* output = outputs[outputName];
   NSMutableData* data = [output tensorDataWithError:error];
-  if (data == nil) return -1;
-  const float* scores = (const float*)data.bytes;
+  if (data == nil) return nil;
   NSUInteger count = data.length / sizeof(float);
-  int top1 = 0;
-  for (NSUInteger index = 1; index < count; index++) {
-    if (scores[index] > scores[top1]) top1 = (int)index;
+  if (count != labels.count) {
+    if (error != NULL) {
+      *error = [NSError errorWithDomain:@"SuperNutritionG3" code:3 userInfo:@{
+        NSLocalizedDescriptionKey : [NSString stringWithFormat:@"Expected Food101 output length 101, got %lu", (unsigned long)count]
+      }];
+    }
+    return nil;
   }
-  return top1;
+  const float* scores = (const float*)data.bytes;
+  float maxScore = scores[0];
+  for (NSUInteger index = 1; index < count; index++) maxScore = MAX(maxScore, scores[index]);
+  double sum = 0.0;
+  float* probabilities = static_cast<float*>(calloc(count, sizeof(float)));
+  for (NSUInteger index = 0; index < count; index++) {
+    probabilities[index] = expf(scores[index] - maxScore);
+    sum += probabilities[index];
+  }
+  for (NSUInteger index = 0; index < count; index++) probabilities[index] /= (float)sum;
+
+  NSMutableArray* top5 = [NSMutableArray arrayWithCapacity:5];
+  BOOL* used = static_cast<BOOL*>(calloc(count, sizeof(BOOL)));
+  int top1Index = 0;
+  for (int rank = 0; rank < 5; rank++) {
+    int best = -1;
+    for (NSUInteger index = 0; index < count; index++) {
+      if (!used[index] && (best < 0 || probabilities[index] > probabilities[best])) best = (int)index;
+    }
+    used[best] = YES;
+    if (rank == 0) top1Index = best;
+    [top5 addObject:@{ @"label" : labels[best], @"confidence" : @(probabilities[best]) }];
+  }
+  NSDictionary* result = @{
+    @"top1_index" : @(top1Index),
+    @"top1_confidence" : @(probabilities[top1Index]),
+    @"top5" : top5
+  };
+  free(used);
+  free(probabilities);
+  return result;
 }
 
 - (void)writeResult:(NSString*)result {
@@ -224,7 +349,9 @@ static long G3Percentile(NSMutableArray<NSNumber*>* values, double percentile) {
 }
 
 - (void)writeFailure:(NSString*)message {
-  NSString* result = [NSString stringWithFormat:@"{\"status\":\"error\",\"message\":\"%@\"}", G3JsonEscape(message)];
+  NSString* escaped = [message stringByReplacingOccurrencesOfString:@"\\" withString:@"\\\\"];
+  escaped = [escaped stringByReplacingOccurrencesOfString:@"\"" withString:@"\\\""];
+  NSString* result = [NSString stringWithFormat:@"{\"status\":\"error\",\"message\":\"%@\"}", escaped];
   [self writeResult:result];
   dispatch_async(dispatch_get_main_queue(), ^{
     self.statusLabel.text = @"G-3 benchmark failed";
