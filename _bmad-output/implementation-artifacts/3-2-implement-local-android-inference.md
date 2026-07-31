@@ -340,6 +340,19 @@ GPT-5 / Codex
   budgets are recorded in
   `_bmad-output/implementation-artifacts/g3-benchmark-artifact.md`; this does
   not select or activate a production runtime.
+- 2026-07-31 reconnect rerun: the fresh G-3 harness run on the Honor DNY-NX9
+  (`Android 16/API 36`) completed semantic recognition `5/5` at the `0.55`
+  floor. It recorded session init `3,293 ms`, p50/p95/max `181/264/299 ms`,
+  PSS `26,278 -> 269,382 KB`, battery current `-1,429 -> -1,447 µA`, and
+  thermal `0 -> 0`; ingredient capability remains `unsupported` and weight
+  capability remains `not-evaluable`.
+- 2026-07-31 physical instrumentation rerun on the same connected device:
+  the rebuilt acceptance APK/test APK passed `15/15` UI/semantics/capture
+  tests, and the isolated local-Android adapter APK passed `4/4` tests, all
+  with zero failures, errors, or skips. The Gradle connected task was blocked
+  before execution by uncached Compose desktop dependency resolution, so this
+  direct instrumentation run is recorded as device evidence rather than a
+  clean Gradle evidence bundle. The signed G-3 gate remains open.
 
 ### File List
 
