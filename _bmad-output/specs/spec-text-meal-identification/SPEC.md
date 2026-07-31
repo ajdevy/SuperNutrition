@@ -56,7 +56,7 @@ Typing what you ate is also a better interaction than paging a result list, and 
 
 - id: CAP-9
   intent: A user can search and describe food in the languages of the supported markets, including where the app's language differs from the food database's language and where the two use different scripts.
-  success: English, Spanish, and Russian each pass a documented query set keyed to the catalog they are searching, covering inflected forms, regional name variants, and cross-script entry; Spanish resolves regional variants of one food to one canonical ID, and Russian resolves inflected noun forms and Latin-script entry of Cyrillic records.
+  success: English and Russian each pass a documented query set keyed to the catalog they are searching; English resolves alternate names of one food to one canonical ID, and Russian resolves inflected noun forms and Latin-script entry of Cyrillic records. Spanish was an earlier target and was dropped, which removes the only case exercising light stemming with diacritics.
 
 ## Constraints
 
