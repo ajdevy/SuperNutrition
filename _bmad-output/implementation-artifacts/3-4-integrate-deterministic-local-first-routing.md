@@ -52,10 +52,10 @@ silently uploads a photo.
   branches, terminal-result ownership, high-confidence non-escalation, and
   explicit consent semantics.
 - [x] Run all domain/inference tests, policy/coverage/quality gates, graphify,
-  and available Android/native evidence lanes. The available Android physical
-  UI acceptance is 15/15 on the explicit device but is not Epic 3 inference
-  evidence; local quality passes, while physical iOS signing and G-3 remain
-  unavailable.
+  and available Android/native evidence lanes. Android physical acceptance is
+  15/15 and the signed iOS acceptance/fixture lanes are 5/5 each; these are
+  platform correctness evidence, while the signed G-3 runtime/model benchmark
+  remains the production gate.
 
 ## Dev Notes
 
@@ -160,5 +160,5 @@ GPT-5 / Codex
   [mobile/domain/photo-analysis/src/commonMain/kotlin/com/supernutrition/domain/photoanalysis/PhotoAnalysisReducer.kt].
 - [x] [Review][Defer] Concrete Android/iOS production wiring, G-3 model/runtime
   selection, and platform privacy/network inference evidence remain deferred by
-  the signed-gate constraints; the available Android 15/15 run is UI evidence,
-  not local-inference evidence.
+  the signed-gate constraints; the Android/iOS device records in this branch
+  cover host/bridge correctness, not a production inference benchmark.
