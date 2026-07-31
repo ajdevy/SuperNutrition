@@ -11,7 +11,13 @@ from tempfile import TemporaryDirectory
 SCRIPT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(SCRIPT_ROOT))
 
-from build_coverage_site import CoverageSiteError, count_text, write_site  # noqa: E402
+from build_coverage_site import (  # noqa: E402
+    CoverageSiteError,
+    count_text,
+    git_commit,
+    tracked_source_files,
+    write_site,
+)
 
 
 class BuildCoverageSiteTest(unittest.TestCase):
@@ -81,6 +87,21 @@ class BuildCoverageSiteTest(unittest.TestCase):
             )
             with self.assertRaises(CoverageSiteError):
                 write_site(root, root / "site")
+
+    def test_docker_manifest_and_commit_overrides_work_without_git_metadata(self) -> None:
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "mobile/core/config/src/main/kotlin/Foo.kt"
+            source.parent.mkdir(parents=True)
+            source.write_text("fun foo() = 1\n", encoding="utf-8")
+            manifest = root / "source-files.txt"
+            manifest.write_text("mobile/core/config/src/main/kotlin/Foo.kt\n", encoding="utf-8")
+
+            self.assertEqual(
+                tracked_source_files(root, manifest),
+                [source.relative_to(root)],
+            )
+            self.assertEqual(git_commit(root, "docker-fixture"), "docker-fixture")
 
     def test_write_site_keeps_missing_native_equivalent_report_pending(self) -> None:
         with TemporaryDirectory() as directory:

@@ -1,0 +1,44 @@
+name: ios-ui-coverage
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-ui-coverage-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ios-ui-coverage:
+    runs-on: macos-26
+    timeout-minutes: 30
+    env:
+      SUPERNUTRITION_REQUIRE_UI_TESTS: '1'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Set up JDK 21
+        uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
+      - name: Select Xcode 26.4.1
+        run: sudo xcode-select --switch /Applications/Xcode_26.4.1.app/Contents/Developer
+      - name: Run iOS XCTest and Maestro UI tests
+        run: scripts/run-ui-journeys-ios.sh
+      - name: Upload iOS UI reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: ios-ui-reports-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/supernutrition-ui-ios/report/junit.xml
+            ${{ runner.temp }}/supernutrition-ui-ios/report/xctest-summary.json
+            ${{ runner.temp }}/supernutrition-ui-ios/report/*.xcresult
+          if-no-files-found: error
+          retention-days: 14
