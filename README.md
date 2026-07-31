@@ -5,23 +5,25 @@
 
 | Metric | Value |
 |---|---:|
-| JVM host line coverage | 97.45% |
-| JVM host branch coverage | 87.88% |
-| Tracked source files | 165 |
-| Code lines | 24,066 |
+| JVM host line coverage | 98.01% |
+| JVM host branch coverage | 88.03% |
+| Tracked source files | 175 |
+| Code lines | 26,752 |
 
 ### Coverage by denominator
 
 | Module | Kind | Line | Branch |
 |---|---|---:|---:|
 | `domain-inference` | jvm | 100.00% | 79.58% |
-| `core-config` | jvm | 97.66% | 92.99% |
-| `domain-photo-analysis` | jvm | 97.38% | 88.68% |
+| `core-config` | jvm | 97.65% | 92.92% |
+| `domain-photo-analysis` | jvm | 98.49% | 89.05% |
+| `inference-local-android` | jvm | 98.32% | 87.50% |
+| `inference-local-ios` | jvm | 98.31% | 87.50% |
 | `core-ui` | jvm | 75.76% | 100.00% |
 | `platform-photo-android` | native-equivalent | 0.00% | 0.00% |
 | `platform-photo-ios` | native-equivalent | n/a | n/a |
 | `feature-photo-analysis-ui` | native-equivalent | 84.13% | 40.00% |
-| `feature-photo-analysis-presenter` | jvm | 99.05% | 85.11% |
+| `feature-photo-analysis-presenter` | jvm | 99.02% | 85.11% |
 | `feature-photo-analysis` | native-equivalent | 0.00% | 0.76% |
 | `domain-nutrition` | jvm | 92.31% | 100.00% |
 
