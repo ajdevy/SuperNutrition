@@ -39,6 +39,7 @@ class MobilePolicyPluginTest {
             assertNotNull(project.tasks.findByName("qualityCoverageJvm"))
             assertNotNull(project.tasks.findByName("mobileUnitTests"))
             assertNotNull(project.tasks.findByName("mobileUnitCoverage"))
+            assertNotNull(project.tasks.findByName("mobileCoverageReports"))
             assertNotNull(project.tasks.findByName("qualityFormat"))
         } finally {
             fixture.toFile().deleteRecursively()
