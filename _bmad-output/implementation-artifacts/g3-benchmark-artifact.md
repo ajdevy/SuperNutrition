@@ -47,6 +47,15 @@ The iOS result was obtained from the freshly installed, automatically signed
 short-run recorded battery level but not battery current/energy; this is an
 explicit open item.
 
+Supporting native resource evidence is available from an Xcode 26
+`Activity Monitor` trace on the same physical phone: 31.006 seconds, with the
+`SuperNutritionG3` process present, approximately 60.53 MiB physical
+footprint, 86.53 MiB resident size, and 0.91 seconds combined CPU time. The
+trace is a local run artifact under `/tmp/supernutrition-g3-ios-energy.OxfLKs/`
+and is intentionally not committed as a generated binary. It does not expose
+an Energy Log instrument on this host and therefore does not close the iOS
+battery/energy item.
+
 ## Proposed selection and budgets
 
 These are proposed acceptance budgets, not yet signed production requirements.
