@@ -16,6 +16,58 @@ classifier-only model can return one dish label for a plate containing several
 foods; it does not establish independent detection, ingredient extraction,
 portion estimation, or nutrition correctness.
 
+## Ingredient and weight benchmark
+
+The five composite fixtures also form the first meal-composition corpus:
+[`meal-benchmark-manifest.json`](meal-benchmark-manifest.json). Its ingredient
+labels are conservative, manually reviewed *visible components* only. They do
+not claim hidden recipe ingredients, oil, dressing composition, or nutrition
+values.
+
+The manifest is an oracle-ready benchmark for a future detector/segmenter and
+mass estimator. It measures ingredient-set precision/recall/F1 per meal,
+per-ingredient mass MAE/p90 absolute error, and optional total plated-mass MAE
+plus p90 absolute error in grams. The current Food-101
+runner intentionally emits an explicit capability result instead of a fake
+score:
+
+- `ingredient_benchmark.status = unsupported`: the model returns one dish
+  label and no ingredient candidates, boxes, or masks;
+- `weight_benchmark.status = not-evaluable`: the public photos have no
+  calibrated scale reading and the model returns no mass estimate.
+
+Evaluate future predictions with the dependency-free host evaluator:
+
+```bash
+python3 tools/g3-benchmark/evaluate-meal-benchmark.py \
+  --manifest tools/g3-benchmark/meal-benchmark-manifest.json
+```
+
+Predictions, when a component model exists, use one object per fixture:
+
+```json
+{
+  "cases": {
+    "steak-side-plate": {
+      "ingredients": ["beef_steak", "quinoa", "green_bean"],
+      "ingredient_masses_g": {
+        "beef_steak": 180,
+        "quinoa": 120,
+        "green_bean": 70
+      },
+      "total_mass_g": 420
+    }
+  }
+}
+```
+
+Weight scoring remains blocked until each image is captured with tared scale
+records for every visible ingredient, plus the optional total. The controlled
+protocol is: tare the empty vessel, plate the exact meal, weigh each component
+before plating and the final plate, record scale resolution, then capture
+overview and oblique photos on each device tier. Do not infer grams from pixels
+or from a generic dish label.
+
 | Fixture group | Fixtures | Acceptance meaning |
 | --- | --- | --- |
 | Exploratory composite | steak with side plate, fish with side plate, chopped salad, Buddha bowl, salmon/grain plate | exercised on-device; no expected label and no accuracy claim |
@@ -95,12 +147,18 @@ team. Runtime was ONNX Runtime Objective-C `1.27.0` with XNNPACK.
 
 The five semantic top-1 labels were exact: `steak`, `greek_salad`,
 `grilled_salmon`, `sushi`, and `waffles`; semantic accuracy was `5/5` at the
-`0.55` threshold. The run recorded session init `602 ms`, p50 `84 ms`, p95
-`86 ms`, max `88 ms`, and resident memory `260,528 -> 252,208 KB`. Thermal
-status stayed `0 -> 0` and battery level stayed `1.000 -> 1.000`.
+`0.55` threshold. The latest run recorded session init `559 ms`, p50 `83 ms`,
+p95 `85 ms`, max `85 ms`, and resident memory `260,240 -> 252,016 KB`.
+Thermal status stayed `0 -> 0` and battery level stayed `1.000 -> 1.000`.
 
 The iOS run is therefore semantic-pass and latency-pass, but it exceeds the
 proposed `160 MB` resident-memory budget.
+
+For transparency, the same iOS run's composite top-1 dish labels were
+`filet_mignon` for the steak plate, `grilled_salmon` for the fish plate,
+`fried_rice` for the chopped salad, `bibimbap` for the Buddha bowl, and
+`chicken_curry` for the fish/grain plate. These are single dish labels, not
+ingredient predictions; they are recorded as exploratory outputs only.
 
 ## Preprocessing and camera findings
 
@@ -127,9 +185,9 @@ These are proposed acceptance budgets, not signed production requirements.
 
 | Budget | Proposed bound | Android evidence | iOS evidence |
 | --- | --- | --- | --- |
-| Session initialization | <= 500 ms cold start | fail: 1,839 ms | fail: 602 ms |
-| Inference latency | p95 <= 100 ms; max <= 150 ms | fail: 290/310 ms | pass: 86/88 ms |
-| Peak process memory | <= 160 MB | fail: 274,681 KB PSS | fail: 252,208 KB resident |
+| Session initialization | <= 500 ms cold start | fail: 1,839 ms | fail: 559 ms |
+| Inference latency | p95 <= 100 ms; max <= 150 ms | fail: 290/310 ms | pass: 85/85 ms |
+| Peak process memory | <= 160 MB | fail: 274,681 KB PSS | fail: 252,016 KB resident |
 | Thermal | no serious/critical transition | pass: 0 -> 0 | pass: 0 -> 0 |
 | Battery | <= 1% over 50 inferences plus native trace | prior run sampled current; needs fresh rerun | level unchanged; current/energy trace open |
 | Model integrity | pinned SHA before session creation | pass | pass |

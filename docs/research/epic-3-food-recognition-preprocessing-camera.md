@@ -85,3 +85,23 @@ The two arXiv papers are research evidence for augmentation and illumination rob
 ## Acceptance impact
 
 The camera configuration changes are low-risk platform plumbing and require Android and physical-iOS capture evidence. The preprocessing baseline remains unchanged until a larger, stratified experiment demonstrates a statistically meaningful gain. G-3 can now prove five exact single-dish semantic labels on-device, but it still cannot claim multi-object recognition, ingredient extraction, portion estimation, or nutrition correctness.
+
+## Ingredient and weight benchmark boundary
+
+The Epic 3 G-3 harness now carries a separate
+[`meal-benchmark-manifest.json`](../../tools/g3-benchmark/meal-benchmark-manifest.json)
+for five complex meals: steak with sides, fish with vegetables, chopped salad,
+a Buddha bowl, and a fish/grain plate. The annotation target is deliberately
+limited to visibly separable components. Hidden recipe ingredients, oil,
+dressing composition, and nutrition values are not image ground truth.
+
+The current Food-101 model emits one dish class, so its device result must
+report ingredient capability as `unsupported`; a single class cannot be
+converted into an ingredient set, boxes, or masks. The public images also have
+no scale readings, so plated weight is `not-evaluable`, not zero and not an
+estimate. A future component model can be scored with per-meal set
+precision/recall/F1. A future mass model needs a consented controlled corpus
+where the empty vessel is tared, each visible ingredient is weighed before
+plating, the final meal is weighed, and all scale readings are bound to the
+photo ID. Per-ingredient and total weight are then scored with MAE, relative
+MAE, and p90 absolute error in grams.

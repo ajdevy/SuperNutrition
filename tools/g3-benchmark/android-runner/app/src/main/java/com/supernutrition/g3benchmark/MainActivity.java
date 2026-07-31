@@ -39,6 +39,8 @@ public final class MainActivity extends Activity {
     private static final String LABELS_ASSET = "food101-labels.txt";
     private static final String MODEL_SHA256 =
             "9070f8097cda88923f77774d93d9fead7cee344486521c7fc5142806642061df";
+    private static final String MEAL_MANIFEST_SHA256 =
+            "d312e9c7408aa474df38ff823d9fd3fc6c8a3a86cffc94df7ce53391c6975292";
     private static final String[] FIXTURES = {
             "steak-side-plate.jpg",
             "fish-side-plate.jpg",
@@ -336,7 +338,8 @@ public final class MainActivity extends Activity {
         json.append("{\"status\":\"success\",\"runtime\":\"onnxruntime-android\",");
         json.append("\"runtime_version\":\"1.28.0\",\"model\":\"")
                 .append(MODEL_ASSET).append("\",\"model_sha256\":\"")
-                .append(MODEL_SHA256).append("\",");
+                .append(MODEL_SHA256).append("\",\"meal_benchmark_manifest_sha256\":\"")
+                .append(MEAL_MANIFEST_SHA256).append("\",\"meal_benchmark_fixture_count\":5,");
         json.append("\"fixture_count\":").append(results.size())
                 .append(",\"semantic_expected_count\":").append(expectedCount)
                 .append(",\"semantic_correct_count\":").append(correctCount)
@@ -344,7 +347,19 @@ public final class MainActivity extends Activity {
                 .append(formatFloat(expectedCount == 0 ? 0.0f : (float) correctCount / expectedCount))
                 .append(",\"semantic_min_confidence\":")
                 .append(formatFloat(SEMANTIC_MIN_CONFIDENCE))
-                .append(",\"semantic_pass\":").append(semanticPass).append(",");
+                .append(",\"semantic_pass\":").append(semanticPass).append(",")
+                .append("\"ingredient_benchmark\":{")
+                .append("\"status\":\"unsupported\",")
+                .append("\"scope\":\"visible_ingredient_set\",")
+                .append("\"ground_truth_case_count\":5,")
+                .append("\"predicted_case_count\":0,")
+                .append("\"reason\":\"Food-101 runner emits one dish label and no ingredient candidates, boxes, or masks.\"},")
+                .append("\"weight_benchmark\":{")
+                .append("\"status\":\"not-evaluable\",")
+                .append("\"scope\":\"plated_mass_g\",")
+                .append("\"ground_truth_case_count\":0,")
+                .append("\"predicted_case_count\":0,")
+                .append("\"reason\":\"Fixtures have no calibrated scale ground truth and the current model emits no mass estimate.\"},");
         json.append("\"warmup_runs\":").append(WARMUP_RUNS)
                 .append(",\"measured_runs\":").append(MEASURED_RUNS)
                 .append(",\"session_init_ms\":").append(sessionInitMs)
