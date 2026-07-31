@@ -1,5 +1,33 @@
 # SuperNutrition
 
+<!-- coverage-report:start -->
+## Quality snapshot
+
+| Metric | Value |
+|---|---:|
+| JVM host line coverage | 92.94% |
+| JVM host branch coverage | n/a |
+| Tracked source files | 165 |
+| Code lines | 23,911 |
+
+### Coverage by denominator
+
+| Module | Kind | Line | Branch |
+|---|---|---:|---:|
+| `domain-inference` | jvm | 100.00% | 79.58% |
+| `core-config` | jvm | 97.66% | 92.99% |
+| `domain-photo-analysis` | jvm | 82.62% | 72.64% |
+| `core-ui` | jvm | 75.76% | 100.00% |
+| `platform-photo-android` | native-equivalent | 0.00% | 0.00% |
+| `platform-photo-ios` | native-equivalent | n/a | n/a |
+| `feature-photo-analysis-ui` | native-equivalent | 84.13% | 40.00% |
+| `feature-photo-analysis-presenter` | jvm | 99.05% | 85.11% |
+| `feature-photo-analysis` | native-equivalent | 0.00% | 0.76% |
+| `domain-nutrition` | jvm | 100.00% | n/a |
+
+Generated from the committed coverage inventory by [`scripts/build_coverage_site.py`](scripts/build_coverage_site.py). `n/a` means that the report has an empty denominator; the quality gate remains fail-closed for that case.
+<!-- coverage-report:end -->
+
 ## Agent tooling
 
 This repository includes project-local BMAD Method skills and the graphify skill so agent workflows travel with the codebase rather than depending on one developer's home directory.
