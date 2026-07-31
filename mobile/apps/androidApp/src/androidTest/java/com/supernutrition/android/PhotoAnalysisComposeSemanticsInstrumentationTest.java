@@ -14,6 +14,8 @@ import com.supernutrition.feature.photoanalysis.R;
 
 import org.junit.Test;
 
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -40,8 +42,18 @@ public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
     }
 
     private static void assertSemantic(UiDevice device, String id, String label) {
-        UiObject2 node = device.wait(Until.findObject(By.desc(id)), 5_000L);
+        UiObject2 node = device.wait(Until.findObject(By.res(id)), 5_000L);
         assertNotNull("missing Compose semantic id: " + id, node);
-        assertEquals("wrong label for Compose semantic id: " + id, label, node.getText());
+        String text = node.getText();
+        if (text == null) {
+            List<UiObject2> children = node.getChildren();
+            for (UiObject2 child : children) {
+                if (child.getText() != null) {
+                    text = child.getText();
+                    break;
+                }
+            }
+        }
+        assertEquals("wrong label for Compose semantic id: " + id, label, text);
     }
 }

@@ -24,7 +24,7 @@
 #   - done: Retrospective has been completed
 
 generated: 2026-07-27
-last_updated: 2026-07-29
+last_updated: 2026-07-31
 project: SuperNutrition
 project_key: NOKEY
 tracking_system: file-system
@@ -47,9 +47,9 @@ development_status:
 
   epic-3: in-progress
   3-1-freeze-contract-v1-inference-ports: done
-  3-2-implement-local-android-inference: backlog
-  3-3-implement-local-ios-inference: backlog
-  3-4-integrate-deterministic-local-first-routing: backlog
+  3-2-implement-local-android-inference: in-progress
+  3-3-implement-local-ios-inference: in-progress
+  3-4-integrate-deterministic-local-first-routing: in-progress
   epic-3-retrospective: optional
 
   epic-4: backlog
