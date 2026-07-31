@@ -69,6 +69,12 @@ Android also recorded battery current `-1150 -> -1459 µA`, battery level
 iOS recorded battery level `1.000 -> 1.000`, but not current/energy; a signed
 artifact must add an iOS energy trace or an approved equivalent measurement.
 
+An iOS Xcode 26 `Activity Monitor` trace was also captured for 31.0 seconds
+while launching the runner on the physical phone. It includes the
+`SuperNutritionG3` process and reports approximately 60.53 MiB physical
+footprint, 86.53 MiB resident size, and 0.91 seconds combined CPU time. This
+is supporting native resource evidence, not a battery/energy measurement.
+
 These results are preliminary evidence only. See
 `_bmad-output/implementation-artifacts/g3-benchmark-artifact.md` for the
 unsigned decision record, proposed budgets, and remaining acceptance gaps.
