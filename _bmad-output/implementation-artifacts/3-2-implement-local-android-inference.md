@@ -329,6 +329,12 @@ GPT-5 / Codex
   cleanup/late-result suppression. This remains bounded adapter evidence, not
   a concrete ML runtime or signed G-3 performance/thermal/battery/rollback
   benchmark.
+- 2026-07-31 preliminary G-3 spike: the separate research harness completed
+  50/50 inferences on the same explicit Android device and recorded latency,
+  PSS, thermal, and battery-current evidence. The unsigned matrix and proposed
+  budgets are recorded in
+  `_bmad-output/implementation-artifacts/g3-benchmark-artifact.md`; this does
+  not select or activate a production runtime.
 
 ### File List
 
@@ -358,6 +364,8 @@ GPT-5 / Codex
 - 2026-07-31: Bound the final clean Android acceptance run to commit
   `7dc777d2`; the UI/native-gap records pass, while dedicated local-inference
   network-isolation and signed G-3 benchmark evidence remain outstanding.
+- 2026-07-31: Added a reproducible, unsigned G-3 physical benchmark spike;
+  production runtime/model selection remains gated on artifact acceptance.
 
 ### Review Findings
 
