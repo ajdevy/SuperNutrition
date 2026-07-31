@@ -128,7 +128,7 @@ so that eligible devices can analyze without transmitting Photo Input.
     candidate ranking, abstention, typed failures, cancellation, late results,
     integrity/compatibility/resource rejection, app-managed rollback, and
     platform-managed non-rollback semantics.
-  - [ ] Add forbidden-artifact/log assertions for raw photo bytes, paths,
+  - [x] Add forbidden-artifact/log assertions for raw photo bytes, paths,
     filenames, labels, prompts, responses, secrets, and headers.
 
 - [ ] Execute quality and Android evidence gates (AC: 4–5)
@@ -287,9 +287,9 @@ GPT-5 / Codex
   BRANCH denominator.
 - The physical Android acceptance task completed 15/15 tests on the explicit
   `AU3N025429006787` serial after fixing ViewModel reflection visibility and
-  the Compose resource-ID assertion helper. Clean-worktree evidence emission,
-  forbidden-artifact/log assertions, and signed G-3 evidence remain
-  outstanding; this story is not production-ready or complete.
+  the Compose resource-ID assertion helper. Clean-worktree evidence emission
+  and signed G-3 evidence remain outstanding; this story is not
+  production-ready or complete.
 
 ### File List
 
@@ -324,6 +324,10 @@ GPT-5 / Codex
 - [x] [Review][Patch] Runtime exception details are sanitized into the shared
   typed failure vocabulary; raw payloads are not returned to callers
   [mobile/inference/local-android/src/commonMain/kotlin/com/supernutrition/inference/localandroid/LocalAndroidInference.kt].
+- [x] [Review][Patch] Runtime diagnostic assertions reject raw bytes, paths,
+  labels, prompts, responses, secrets, and authorization headers from the
+  typed failure surface
+  [mobile/inference/local-android/src/commonTest/kotlin/com/supernutrition/inference/localandroid/LocalAndroidInferenceEngineTest.kt].
 - [x] [Review][Patch] Host/device test visibility and resource-ID fixes are
   recorded in this story's file list as validation-support changes; they do
   not select or activate a production inference runtime
