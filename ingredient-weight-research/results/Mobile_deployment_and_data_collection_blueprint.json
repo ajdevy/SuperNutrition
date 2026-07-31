@@ -1,0 +1,693 @@
+{
+  "repositories_and_sources": {
+    "scope": "Primary runtime documentation, official GitHub examples, calibration/depth references, annotation tooling, measurement guidance, and the current SuperNutrition G-3 evidence.",
+    "access_date": "2026-07-31",
+    "primary_sources": [
+      {
+        "name": "LiteRT for Android",
+        "type": "official runtime documentation",
+        "platforms": ["Android"],
+        "url": "https://developers.google.com/edge/litert/android",
+        "relevance": "Documents the CompiledModel API, legacy Interpreter API, Android minimum SDKs, CPU/GPU/NPU execution, preallocated buffers, and official segmentation sample paths.",
+        "deployment_anchor": "Use a pinned LiteRT version and the CompiledModel API for a new Android classical-vision path; keep Interpreter only where compatibility requires it.",
+        "license_or_terms": "Google developer documentation and code samples are separately licensed; inspect the runtime and model terms before distribution."
+      },
+      {
+        "name": "Google AI Edge LiteRT samples",
+        "type": "official GitHub repository",
+        "platforms": ["Android", "iOS"],
+        "url": "https://github.com/google-ai-edge/litert-samples",
+        "relevance": "Official Android Kotlin/Java and iOS Swift/Objective-C examples for object detection and image segmentation, with Interpreter API and CompiledModel API variants.",
+        "deployment_anchor": "Use the sample app structure as a smoke-test harness for model loading, preprocessing, delegate selection, and result postprocessing before integrating into the KMP adapters.",
+        "license_or_terms": "Apache License 2.0 for the repository; sample assets and model files can carry separate terms."
+      },
+      {
+        "name": "MediaPipe Object Detector Android and iOS guides",
+        "type": "official runtime documentation and GitHub example",
+        "platforms": ["Android", "iOS"],
+        "urls": [
+          "https://developers.google.com/edge/mediapipe/solutions/vision/object_detector/android",
+          "https://developers.google.com/edge/mediapipe/solutions/vision/object_detector/ios",
+          "https://github.com/google-ai-edge/mediapipe-samples/tree/main/examples/object_detection"
+        ],
+        "relevance": "Shows physical-device camera inference, still/video/live-stream modes, model assets, score thresholds, category filters, asynchronous listeners, and Android/iOS project structure.",
+        "deployment_anchor": "Use live-stream mode only with a background listener/worker and explicit timestamp handling; use image mode for the G-3 one-shot meal capture path.",
+        "caveat": "The current guides label MediaPipe Solutions as Preview, so pin the dependency and retain a fallback runtime path."
+      },
+      {
+        "name": "MediaPipe Image Segmenter Android and iOS guides",
+        "type": "official runtime documentation and GitHub example",
+        "platforms": ["Android", "iOS"],
+        "urls": [
+          "https://developers.google.com/edge/mediapipe/solutions/vision/image_segmenter/android",
+          "https://developers.google.com/edge/mediapipe/solutions/vision/image_segmenter/ios",
+          "https://github.com/google-ai-edge/mediapipe-samples/tree/main/examples/image_segmentation"
+        ],
+        "relevance": "Provides category-mask and confidence-mask examples, MPImage conversion from Android camera frames or iOS CVPixelBuffer/UIImage, and camera/gallery execution paths.",
+        "deployment_anchor": "A category mask is the minimum useful output for visible ingredient regions; retain confidence masks for abstention and QA rather than collapsing every pixel to a hard label."
+      },
+      {
+        "name": "ONNX Runtime mobile deployment documentation",
+        "type": "official runtime documentation",
+        "platforms": ["Android", "iOS"],
+        "urls": [
+          "https://onnxruntime.ai/docs/tutorials/mobile/",
+          "https://onnxruntime.ai/docs/tutorials/mobile/deploy-android.html",
+          "https://onnxruntime.ai/docs/tutorials/mobile/deploy-ios.html",
+          "https://onnxruntime.ai/docs/performance/model-optimizations/quantization.html"
+        ],
+        "relevance": "Documents ONNX as the mobile input format, Android and iOS packages, CPU/XNNPACK/NNAPI/Core ML execution providers, quantization, ORT format conversion, reduced operator builds, and performance measurement.",
+        "deployment_anchor": "Start with CPU for quantized models and XNNPACK for unquantized models; try NNAPI/Core ML only after device measurement because unsupported operators can partition a graph and reduce performance.",
+        "current_project_evidence": "SuperNutrition already has a physical Android/iOS ONNX Runtime G-3 runner, making this the lowest-risk baseline for a new component model."
+      },
+      {
+        "name": "Microsoft ONNX Runtime inference examples",
+        "type": "official GitHub repository",
+        "platforms": ["Android", "iOS"],
+        "urls": [
+          "https://github.com/microsoft/onnxruntime-inference-examples",
+          "https://github.com/microsoft/onnxruntime-inference-examples/tree/main/mobile/examples/image_classification/android",
+          "https://github.com/microsoft/onnxruntime-inference-examples/tree/main/mobile/examples/object_detection/ios"
+        ],
+        "relevance": "Contains runnable Android classification and iOS object-detection samples, model preparation scripts, and mobile packaging patterns.",
+        "deployment_anchor": "Use it for a narrow Android/iOS parity spike and for comparing full ONNX Runtime with an ORT-format minimal build.",
+        "license_or_terms": "The examples repository is MIT licensed; embedded model/data assets and ONNX Runtime third-party notices remain separate review items."
+      },
+      {
+        "name": "ExecuTorch quick start, quantization, and mobile backends",
+        "type": "official runtime documentation and GitHub repository",
+        "platforms": ["Android", "iOS"],
+        "urls": [
+          "https://docs.pytorch.org/executorch/stable/pathway-quickstart.html",
+          "https://docs.pytorch.org/executorch/stable/quantization-overview.html",
+          "https://docs.pytorch.org/executorch/stable/ios-xnnpack.html",
+          "https://github.com/pytorch/executorch"
+        ],
+        "relevance": "Documents torch.export to .pte, backend-specific quantizers, calibration/evaluation/lowering, Android XNNPACK/Vulkan/QNN choices, and iOS Core ML/MPS/XNNPACK choices.",
+        "deployment_anchor": "Prefer this when the training team owns a PyTorch model and needs one export pipeline for vision plus a later multimodal experiment; do not introduce it into G-3 until the simpler ORT/LiteRT path is measured.",
+        "license_or_terms": "The source repository uses a BSD-style license; backend binaries and model checkpoints have additional dependency and model terms."
+      },
+      {
+        "name": "LiteRT-LM",
+        "type": "official GitHub repository and multimodal runtime reference",
+        "platforms": ["Android", "iOS"],
+        "url": "https://github.com/google-ai-edge/LiteRT-LM",
+        "relevance": "Provides a cross-platform LLM orchestration layer with vision/audio multimodality, Android Kotlin support, iOS Swift support in early preview, and CPU/GPU/NPU backends where available.",
+        "deployment_anchor": "Reserve for a later ambiguity/candidate-generation tier; the model package sizes documented in the repository are much larger than a detector or segmenter and are not a substitute for mass ground truth.",
+        "license_or_terms": "Apache-2.0 for the framework repository; Gemma, Llama, Phi, Qwen, or other weights carry their own terms."
+      },
+      {
+        "name": "Core ML Tools and Core ML compression guides",
+        "type": "official Apple runtime/conversion documentation and GitHub repository",
+        "platforms": ["iOS"],
+        "urls": [
+          "https://developer.apple.com/documentation/CoreML",
+          "https://apple.github.io/coremltools/docs-guides/",
+          "https://apple.github.io/coremltools/docs-guides/source/quantization-neural-network.html",
+          "https://apple.github.io/coremltools/docs-guides/source/opt-palettization-overview.html",
+          "https://github.com/apple/coremltools"
+        ],
+        "relevance": "Documents conversion from PyTorch/TensorFlow, Core ML model packaging, weight quantization, pruning, and palettization; Core ML is the native iOS accelerator path and the Core ML execution provider for ONNX Runtime.",
+        "deployment_anchor": "Convert with explicit image input metadata and minimum deployment target, compare float32/float16/8-bit candidates, and validate output parity on physical devices before enabling Neural Engine/GPU execution.",
+        "license_or_terms": "Core ML Tools is BSD-3-Clause; converted model weights and third-party model licenses are not automatically covered by that code license."
+      },
+      {
+        "name": "Apple ARKit scene depth and camera calibration APIs",
+        "type": "official Apple runtime documentation",
+        "platforms": ["iOS"],
+        "urls": [
+          "https://developer.apple.com/documentation/arkit/arframe/scenedepth",
+          "https://developer.apple.com/documentation/arkit/ardepthdata",
+          "https://developer.apple.com/documentation/arkit/arcamera/intrinsics",
+          "https://developer.apple.com/documentation/arkit/arcamera/imageresolution",
+          "https://developer.apple.com/documentation/arkit/arconfiguration/framesemantics-swift.struct/scenedepth"
+        ],
+        "relevance": "ARKit sceneDepth is LiDAR-based, exposes depthMap in meters and a confidenceMap, and requires support checking; ARCamera exposes intrinsics and native image resolution.",
+        "deployment_anchor": "Persist the frame timestamp, image resolution, intrinsics, orientation, depth units, and confidence mask with every RGB/depth record. Treat non-LiDAR devices as depth-unavailable rather than silently producing metric depth."
+      },
+      {
+        "name": "ARCore Depth API and Android camera intrinsics",
+        "type": "official Google/Android runtime documentation",
+        "platforms": ["Android"],
+        "urls": [
+          "https://developers.google.com/ar/develop/depth",
+          "https://developer.android.com/reference/android/hardware/camera2/CameraCharacteristics"
+        ],
+        "relevance": "ARCore depth is synchronized to the camera timestamp and field-of-view intrinsics, uses motion and available hardware depth, and is most accurate at ordinary tabletop distances; Camera2 exposes optional intrinsic, distortion, pose, and multi-camera synchronization metadata.",
+        "deployment_anchor": "Request motion-aware capture, store device capability and depth-quality state, and do not treat missing or featureless-surface depth as a valid scale measurement."
+      },
+      {
+        "name": "Apple ARKitScenes",
+        "type": "primary GitHub RGB-D dataset and reproducibility reference",
+        "platforms": ["iOS"],
+        "urls": [
+          "https://github.com/apple/ARKitScenes",
+          "https://github.com/apple/ARKitScenes/blob/main/DATA.md"
+        ],
+        "relevance": "Demonstrates a reproducible RGB-D data layout with RGB, millimeter depth, confidence, per-frame intrinsics, camera trajectories, annotations, and explicit train/validation download scripts.",
+        "deployment_anchor": "Adopt its principle of storing calibration and confidence alongside every frame, while keeping SuperNutrition's food and participant data private and separately governed.",
+        "license_or_terms": "Dataset use requires reviewing the repository LICENSE and contacting Apple for additional license questions; do not assume commercial redistribution."
+      },
+      {
+        "name": "CVAT",
+        "type": "primary GitHub annotation tool and official documentation",
+        "platforms": ["Platform independent"],
+        "urls": [
+          "https://github.com/cvat-ai/cvat",
+          "https://docs.cvat.ai/docs/",
+          "https://docs.cvat.ai/docs/qa-analytics/consensus/"
+        ],
+        "relevance": "Supports image/video/3D annotation, dataset import/export, COCO-compatible formats, QA, analytics, validation, and consensus replicas.",
+        "deployment_anchor": "Use self-hosted CVAT Community for sensitive raw images, configure a visible-component label taxonomy, and reserve consensus replicas for a small ground-truth slice and disputed cases.",
+        "license_or_terms": "CVAT Community is MIT licensed, but bundled FFmpeg and other third-party components have separate notices and may include LGPL/GPL terms."
+      },
+      {
+        "name": "COCO API",
+        "type": "primary GitHub annotation format reference",
+        "platforms": ["Platform independent"],
+        "url": "https://github.com/cocodataset/cocoapi",
+        "relevance": "Provides the established image/category/annotation schema and APIs for detection, instance segmentation, and mask/RLE evaluation; it is a useful interchange format, not a food taxonomy.",
+        "deployment_anchor": "Export detector/instance-mask labels to COCO instances, and keep mass, calibration, consent, and provenance in a versioned sidecar keyed by image and instance IDs."
+      },
+      {
+        "name": "NIST Handbook 44 current edition",
+        "type": "official measurement guidance",
+        "platforms": ["Platform independent"],
+        "url": "https://www.nist.gov/pml/owm/nist-handbook-44-current-edition",
+        "relevance": "Provides specifications, tolerances, and technical requirements for weighing and measuring devices; use it as a metrology reference for scale verification and recordkeeping.",
+        "deployment_anchor": "Record scale identity, resolution, verification/calibration state, test weight checks, tare behavior, and operator/date in the corpus metadata; apply local legal metrology requirements where relevant."
+      },
+      {
+        "name": "HHS OHRP informed-consent FAQs",
+        "type": "official human-subject consent guidance",
+        "platforms": ["Platform independent"],
+        "url": "https://www.hhs.gov/ohrp/regulations-and-policy/guidance/faq/informed-consent/index.html",
+        "relevance": "Explains prospective, documented informed consent and the need for understandable purpose, duration, procedures, risks, benefits, alternatives, and ongoing questions where human-subject research rules apply.",
+        "deployment_anchor": "Treat the corpus consent version and date as a first-class record; obtain local legal/IRB/privacy review because whether a product corpus is human-subject research depends on the actual activity and jurisdiction."
+      },
+      {
+        "name": "SuperNutrition G-3 local evidence",
+        "type": "repository-local research and benchmark artifacts",
+        "platforms": ["Android", "iOS"],
+        "paths": [
+          "/Users/aj/.codex/worktrees/d550/SuperNutrition/docs/research/epic-3-food-recognition-preprocessing-camera.md",
+          "/Users/aj/.codex/worktrees/d550/SuperNutrition/tools/g3-benchmark/README.md",
+          "/Users/aj/.codex/worktrees/d550/SuperNutrition/tools/g3-benchmark/meal-benchmark-manifest.json"
+        ],
+        "relevance": "Defines the current G-3 boundary: Food-101/Swin classification proves five single-dish labels on physical devices but does not establish multi-ingredient detection, segmentation, mass, or nutrition correctness.",
+        "deployment_anchor": "Use the existing physical-device runner and manifest as the baseline harness, then add a consented weighed component corpus before signing a mass-capable G-3 exit."
+      }
+    ],
+    "source_selection_notes": [
+      "Technical claims use vendor-maintained documentation or the vendor's own GitHub repository whenever possible.",
+      "The weighed-corpus numbers and SuperNutrition staging are recommendations/inferences, not claims that an existing public dataset already satisfies the product contract.",
+      "The repository is accessed on 2026-07-31; runtime versions, model licenses, device support, and preview status must be rechecked before release."
+    ]
+  },
+  "maintenance_and_reproducibility": {
+    "documented_status": "LiteRT, MediaPipe, ONNX Runtime, ExecuTorch, Core ML Tools, ARKit, ARCore, and CVAT have active public documentation or repositories as of the access date. MediaPipe object detection and segmentation guides explicitly describe Solutions as Preview; LiteRT-LM labels its iOS Swift API as early preview. Exact production readiness for a particular model, operator graph, device, and app toolchain is [uncertain].",
+    "reproducibility_controls": [
+      "Pin repository commit/tag, runtime version, model file digest, label-map digest, preprocessing contract, postprocessing code, and minimum OS/API level.",
+      "Keep a conversion manifest with source framework/version, export command, sample input shape, dynamic/static shape decision, supported operators, quantizer configuration, calibration set digest, and output-parity tolerance.",
+      "Run the same golden RGB fixtures through the training framework, converted artifact, host runtime, Android runtime, and iOS runtime; compare top-k labels, boxes/masks, confidence scores, and numeric outputs.",
+      "Benchmark cold initialization separately from warm inference and record p50, p95, maximum latency, peak memory, binary/model size, battery or energy proxy, and thermal state on physical devices.",
+      "Store device model, SoC, ABI/architecture, OS build, camera lens, image resolution, runtime backend, delegate/EP, thread count, and model cache state with every benchmark.",
+      "Use immutable dataset snapshots and split manifests; never let a later annotation correction silently change the reported test set."
+    ],
+    "known_caveats": [
+      "Hardware accelerators are operator- and device-specific. ONNX Runtime warns that NNAPI/Core ML graph partitioning can reduce performance, and MediaPipe live-stream calls can ignore frames while the task is busy.",
+      "Depth availability and quality differ by device: ARKit scene depth is LiDAR-only, while ARCore depth needs motion and can be imprecise on featureless or reflective surfaces.",
+      "Large multimodal models may require remote model download, substantial disk/RAM, first-load compilation, and selective device gating; exact fleet thresholds are [uncertain].",
+      "A permissive runtime license does not grant rights to a checkpoint, dataset image, food photograph, person, brand, or embedded third-party asset."
+    ],
+    "maintenance_recommendation": "Treat runtime choice as a versioned adapter decision. Keep ONNX Runtime as the current G-3 baseline, evaluate LiteRT/MediaPipe for a compact detector/segmenter, and keep ExecuTorch/LiteRT-LM as isolated experiments until physical-device evidence is comparable."
+  },
+  "license_and_usage": {
+    "runtime_code": [
+      "LiteRT and official LiteRT samples are Apache-2.0; MediaPipe and its official samples are Apache-2.0 according to their repositories.",
+      "ONNX Runtime is MIT; the ONNX Runtime inference examples repository is MIT.",
+      "Core ML Tools is BSD-3-Clause.",
+      "ExecuTorch source is BSD-style; verify the exact LICENSE and notices for the pinned release and enabled backends.",
+      "CVAT Community is MIT, but bundled libraries such as FFmpeg and any model-assisted integrations require separate notice/license review.",
+      "Apple and Google documentation samples may have a code-sample license distinct from the page content license. Preserve notices in distributable artifacts."
+    ],
+    "model_weights_and_checkpoints": [
+      "Do not infer checkpoint rights from the runtime repository license. Review every model card, weight URL, training-data license, acceptable-use clause, attribution requirement, and redistribution restriction.",
+      "The model license for a future food detector/segmenter must permit commercial mobile inference and any intended fine-tuning; a research-only or non-commercial checkpoint is not an acceptable G-3 production candidate.",
+      "Gemma, Llama, Phi, Qwen, MobileCLIP, and other multimodal weights have model-specific terms; framework compatibility does not imply commercial permission.",
+      "Dataset images and participant-submitted food photos need separate consent and release rules even when annotations are exported in an open format."
+    ],
+    "data_and_annotations": [
+      "Keep raw participant images and depth private; a public COCO export should contain only approved de-identified examples and the correct data license.",
+      "Record consent purpose, model-training permission, retention period, processing region, withdrawal/deletion route, and whether derived masks/embeddings may remain after raw deletion.",
+      "For research use, obtain an appropriate ethics/privacy determination before collection; HHS guidance is a reference, not a substitute for jurisdiction-specific advice."
+    ],
+    "commercial_gate": "Legal review of model and dataset terms is required before using any external checkpoint or public image source in SuperNutrition. The complete commercial compatibility of future food checkpoints and participant-data releases is [uncertain] until their exact licenses are selected and reviewed."
+  },
+  "task_and_labels": {
+    "recommended_target": "A staged visible-component contract: detect or segment each visibly separable food component, attach a canonical ingredient candidate and calibrated confidence, optionally estimate mass only when the capture has valid scale/depth evidence, and keep hidden recipe ingredients, oil, salt, and dressing composition out of image ground truth.",
+    "model_outputs": {
+      "detector": "Per-instance class candidate, score, bounding box, optional mask reference, occlusion/truncation flags, model/version/provenance, and an abstention reason when no component is reliable.",
+      "segmenter": "Per-pixel category or instance mask plus confidence mask. Prefer instance masks for separately countable components and semantic masks for one visible region that is not separable into instances.",
+      "depth": "RGB-aligned depth or relative depth with units, timestamp, camera intrinsics, orientation, device capability, confidence/validity mask, and calibration version. Missing or invalid depth must be represented explicitly.",
+      "mass_head": "Per-component mass estimate in grams only with an uncertainty/range, input evidence, scale/geometry assumptions, and a terminal state such as estimated, abstained, or not-evaluable.",
+      "multimodal": "Candidate generation, visible-component explanation, or ambiguity resolution from a compact vision-language model. It must not be the authority for grams, calories, macros, allergens, or hidden ingredients."
+    },
+    "annotation_schema": [
+      "image_id, session_id, participant_pseudonym, consent_version, capture_timestamp, device_model, OS/build, camera_lens, image_resolution, orientation, and file digest.",
+      "For each visible component: canonical label, alias/free-text note kept outside the training label, instance_id, bbox, polygon or RLE mask, visibility/occlusion state, truncation state, ambiguity state, and annotator/reviewer IDs.",
+      "For each mass record: ingredient_instance_id where resolvable, grams, scale reading ID, tare state, scale resolution, operator, timestamp, and whether the number is pre-plating component mass or final plated total.",
+      "For depth: depth format and units, depth resolution, intrinsics, distortion or calibration reference, RGB-depth timestamp relation, confidence distribution, and device capability state.",
+      "For every derived artifact: dataset version, split, annotation revision, model input contract, model digest, runtime, conversion/quantization manifest, and source consent reference."
+    ],
+    "label_policy": [
+      "Annotate only what is visually separable in the captured view; do not create labels for hidden ingredients that were not visible.",
+      "Use one canonical taxonomy version with stable IDs and aliases; never use a free-text label as the nutrition catalog ID.",
+      "Allow composite or mixed_dish labels when a region cannot be separated reliably; do not force false component boundaries.",
+      "Use explicit unknown, ambiguous, out_of_taxonomy, and not_visible states instead of guessing.",
+      "Store sauce/garnish labels only when they are visible and the product policy permits them; keep recipe composition and nutrition assumptions in separate catalog data."
+    ],
+    "mapping_to_supernutrition": [
+      "Map model candidates into the existing PhotoInferenceEngine contract v1 as evidence and provenance, not as nutrition numbers.",
+      "Map a user-confirmed canonical item to the versioned nutrition catalog before displaying nutrient values.",
+      "Keep local Android, local iOS, remote, and evaluation adapters separate; share only the immutable contract and fixtures.",
+      "Expose capability states for depth-unavailable, mass-not-evaluable, model-abstained, and remote-consent-required instead of silently substituting a result."
+    ]
+  },
+  "dataset_scale_and_domain": {
+    "existing_g3_baseline": {
+      "current_fixtures": "Five exploratory composite meals: steak with sides, fish with vegetables, chopped salad, Buddha bowl, and fish/grain plate; five single-dish semantic fixtures are used for the current Food-101 classification proof.",
+      "current_labels": "The meal manifest labels only visible separable components and excludes hidden recipe ingredients, oil, salt, dressing composition, and nutrition values.",
+      "current_weight_status": "The public composite photos have no calibrated scale readings, so their plated weight is not-evaluable rather than zero or estimated.",
+      "current_device_evidence": "The local README reports a physical Honor Android API 36 run with ONNX Runtime Android 1.28.0 CPU and an iPhone 14 Pro run with ONNX Runtime Objective-C 1.27.0/XNNPACK. The classifier achieved 5/5 single-dish labels, but the candidate is not a detector/segmenter and exceeds proposed memory or cold-start budgets.",
+      "source": "/Users/aj/.codex/worktrees/d550/SuperNutrition/tools/g3-benchmark/README.md"
+    },
+    "proposed_corpus": {
+      "initial_scale": "Start with approximately 300-500 consented meal sessions [uncertain], then expand by error strata rather than treating the first sample as a general accuracy proof.",
+      "capture_structure": "Each session should include one overhead or near-overhead overview and one oblique view of the same plated meal, captured on at least two Android/iOS device tiers when available; record an optional RGB-depth pair on supported devices.",
+      "domain_axes": [
+        "cuisine and ingredient family",
+        "single components, separated sides, overlapping foods, chopped salads, mixed dishes, sauces, liquids, and garnishes",
+        "portion size and plate/bowl geometry",
+        "lighting, white balance, glare, shadows, background, camera distance, and oblique angle",
+        "device model, camera lens, OS/API, native resolution, and depth capability",
+        "occlusion, translucency, similar-color ingredients, and visually ambiguous boundaries",
+        "fresh, cooked, mixed, packaged, and partially consumed food where the product intends to support it"
+      ],
+      "target_distribution": "Stratify the collection plan before capture and report counts per axis; exact quotas should be approved after the first pilot [uncertain].",
+      "split_policy": "Use participant-, household-, meal/recipe-, and capture-session-disjoint train/validation/test manifests. A provisional 70/15/15 split is [uncertain] and should be changed if the rarest strata cannot support a meaningful holdout."
+    },
+    "coverage_matrix": [
+      "Visible-component segmentation: per-ingredient instance masks and a reviewer-approved semantic union mask.",
+      "Mass: pre-plating component grams and final plated total grams, with reconciliation to the vessel tare and scale record.",
+      "Geometry: plate/bowl boundary, known diameter or fiducial when used, camera distance/pose, RGB intrinsics, depth map, depth confidence, and calibration version.",
+      "Human factors: capture retakes, blur/brightness rejection, user framing compliance, and manual correction actions.",
+      "Privacy: people/faces/background identifiers absent or removed, EXIF/GPS scrubbed, participant key separated from data IDs, and deletion status tracked."
+    ],
+    "recommended_benchmarks": [
+      "Ingredient set precision, recall, and F1 per meal and macro-averaged across meals.",
+      "Instance mask AP or a clearly specified IoU/mIoU protocol, with an explicit small-object and occlusion slice.",
+      "Per-component and total-mass MAE in grams, relative MAE, bias, p90 absolute error in grams, and coverage/error curves when the model abstains.",
+      "All metrics stratified by device, view, depth availability, lighting, cuisine, ingredient family, portion range, occlusion, and mixed-dish status.",
+      "Runtime metrics per device tier: cold initialization, warm p50/p95/max latency, peak memory, model/app size, thermal state, and battery/energy proxy."
+    ]
+  },
+  "expected_ingredient_quality": {
+    "evidence_backed_strengths": [
+      "Official MediaPipe and LiteRT examples provide ready-to-adapt detector/segmenter camera paths on both mobile platforms.",
+      "ONNX Runtime already has a reproducible physical-device baseline in this repository and exposes CPU, XNNPACK, NNAPI, and Core ML execution paths.",
+      "Visible-component labels are more defensible than hidden recipe labels because they can be checked against the image and tied to a mask.",
+      "Consensus annotation and a small high-quality ground-truth slice can reduce annotator bias and reveal taxonomy problems before scaling."
+    ],
+    "quality_expectation": "A component model should be expected to perform unevenly across foods, views, occlusion, and mixed dishes; exact ingredient quality is [uncertain] until the consented corpus is collected and held-out device strata are evaluated.",
+    "likely_failure_modes": [
+      "A classifier-only model emits one dish label for a plate and cannot establish independent ingredient detection or segmentation.",
+      "Overlapping or chopped foods create ambiguous instance boundaries; forcing a mask can be less truthful than composite or unknown.",
+      "Sauces, oil, salt, dressings, and hidden recipe ingredients are generally not identifiable from a single RGB image.",
+      "Similar-color foods, glare, shadows, transparent containers, and low light cause missed or merged components.",
+      "Scale and mass are not directly identifiable from pixels without geometry, density assumptions, or an independent measurement; monocular depth can be relative or device-dependent.",
+      "Model confidence can be miscalibrated across cuisines, devices, and new ingredient families; use abstention and calibration slices rather than a universal score threshold."
+    ],
+    "quality_gates": [
+      "No public accuracy claim until the test split is participant/meal/device disjoint and the annotation version is frozen.",
+      "No grams claim until every scored image has linked tared scale ground truth or an explicitly valid mass reference.",
+      "No model replacement without output-parity, model-digest, runtime, memory, latency, and thermal evidence on the signed device matrix.",
+      "No remote fallback without the existing explicit consent receipt and deletion/retention controls."
+    ],
+    "honest_claim_boundary": "The first G-3 component milestone can claim visible-ingredient evidence and bounded benchmark performance. It cannot claim full recipe understanding, exact calories, allergen absence, or kitchen-scale accuracy from a photo alone."
+  },
+  "weight_ground_truth": {
+    "ground_truth_types": [
+      "Component grams from a calibrated or verified scale after taring the empty vessel and before plating the photographed meal.",
+      "Final plated food mass in grams after taring the empty vessel, recorded after the exact photographed meal is assembled.",
+      "Optional RGB-D geometric ground truth with depth in known units, camera intrinsics, confidence, and pose; depth is an input/evaluation reference, not a substitute for grams.",
+      "Known plate/bowl dimensions or fiducial scale reference when a controlled geometry condition is used; record it as an assumption, never as hidden truth."
+    ],
+    "recommended_weighing_protocol": [
+      "Assign a unique session and meal fixture ID before any photo or weighing begins.",
+      "Verify the scale with documented check weights or an equivalent repeatability procedure; record scale model, serial/asset ID, resolution, units, verification/calibration date, operator, and ambient notes.",
+      "Place the empty plate or bowl on the scale and tare it; retain the tare event or a photo/log of the zero reading.",
+      "Weigh each ingredient/component immediately before plating, including visible garnish and sauce when the component is part of the label policy; record grams and a stable ingredient_instance_id.",
+      "Plate the exact meal without removing or adding anything, record final total food mass, and capture the overview and oblique views while the meal state is unchanged.",
+      "Repeat the total or a component subset independently on a quality-control fraction and pre-register a reconciliation tolerance based on scale resolution and repeatability [uncertain].",
+      "Bind all scale readings, photos, depth frames, and annotations by immutable IDs and hashes; do not rely on filenames alone."
+    ],
+    "metadata_per_mass_record": [
+      "session_id, meal_id, ingredient_instance_id, ingredient taxonomy version, mass_g, scale_reading_id, pre_plating_or_final_total, timestamp, operator pseudonym, scale ID, scale resolution, tare state, verification/calibration state, and QC status.",
+      "If a component cannot be weighed separately because it is mixed or hidden, store mass as mixed_dish_total or not-evaluable rather than inventing per-ingredient grams.",
+      "If weight reconciliation fails, preserve the raw records, mark the session invalid or disputed, and do not silently normalize the totals."
+    ],
+    "depth_and_geometry_ground_truth": [
+      "For iOS ARKit, store sceneDepth/depthMap, confidenceMap, ARCamera intrinsics, imageResolution, frame timestamp, orientation, and support-check result; scene depth requires LiDAR-capable hardware.",
+      "For Android ARCore, store synchronized depth timestamp/FOV relation, device capability, motion/track quality, camera intrinsics where available, and invalid-depth masks; depth from motion needs device movement and is weak on featureless surfaces.",
+      "For non-AR RGB-only captures, store camera model, lens, focal metadata when available, distance/pose protocol, plate geometry or fiducial, and a mass-reference state of unavailable."
+    ],
+    "mass_identifiability": "Do not present a model-derived gram value as ground truth. Density, hidden food, compression, overlap, camera scale, depth confidence, and plate geometry can all dominate error; the degree to which a future model can generalize beyond the controlled corpus is [uncertain]."
+  },
+  "portion_method_and_metrics": {
+    "candidate_input_paths": [
+      "RGB-only detector/instance segmenter for visible components; fastest baseline and broadest device support, but no reliable metric scale.",
+      "RGB plus AR depth where supported; use mask pixels and camera intrinsics to estimate geometry, with confidence filtering and device-specific calibration.",
+      "RGB plus controlled capture geometry such as a visible plate boundary or fiducial; use it as a scale constraint and show the assumption to the user.",
+      "Component masks plus a learned mass head trained on tared grams; include device/capture metadata only if the metadata is stable, available, and privacy-approved.",
+      "A compact multimodal model for candidate/ambiguity explanation after segmentation; not an independent source of numeric mass or nutrition."
+    ],
+    "runtime_and_conversion_options": [
+      {
+        "runtime": "ONNX Runtime Mobile",
+        "conversion": "Export PyTorch/TensorFlow to ONNX, validate shapes and outputs, quantize with ONNX Runtime tooling, optionally convert to ORT format and generate a reduced operator config for a custom runtime.",
+        "quantization": "Start with float32 or float16 for parity; try dynamic or static int8 with a representative, stratified calibration subset; compare masks and mass head outputs separately because small mask boundaries can be more sensitive than classification logits.",
+        "metric_relevance": "Best fit for the current G-3 harness and a shared model artifact if the model's operators are supported on both platforms."
+      },
+      {
+        "runtime": "LiteRT/MediaPipe",
+        "conversion": "Convert TensorFlow or compatible PyTorch models to .tflite with LiteRT tooling; add task metadata and use MediaPipe Task APIs for detector/segmenter input/output contracts.",
+        "quantization": "Compare dynamic-range, full-integer, float16, and quantization-aware candidates; use representative calibration data for static integer paths and validate CPU/GPU/NPU delegate parity.",
+        "metric_relevance": "Strong candidate for compact camera segmentation and task-level Android/iOS plumbing, with a preview/compatibility caveat and device-specific delegate coverage."
+      },
+      {
+        "runtime": "Core ML",
+        "conversion": "Convert PyTorch or TensorFlow with coremltools, define image input metadata and deployment target, package as .mlmodel/.mlpackage, and validate output parity in Swift and Python.",
+        "quantization": "Use float16 first; then evaluate 8-bit or lower weight quantization, pruning, or palettization where supported. Core ML Tools documents weight-only compression and palettization; do not assume all activations or custom ops are accelerated.",
+        "metric_relevance": "Use for iOS-specific optimization or as ONNX Runtime's Core ML execution provider after the common ONNX baseline is proven."
+      },
+      {
+        "runtime": "ExecuTorch",
+        "conversion": "Export with torch.export, configure a backend partitioner, lower to .pte, and build the Android/iOS runtime with only the needed operators/backends.",
+        "quantization": "Use backend-specific torchao PT2E quantizers, prepare and calibrate on representative data, convert/evaluate in PyTorch, then lower and re-evaluate on device.",
+        "metric_relevance": "Good PyTorch-native option for later detector/depth/multimodal experiments; introduce only with an owner who can maintain backend and toolchain compatibility."
+      }
+    ],
+    "evaluation_metrics": [
+      "Detection: per-class precision/recall, AP at specified IoU, small-object and occlusion slices, and abstention coverage.",
+      "Segmentation: instance AP or class-specific IoU/mIoU, boundary quality, visible-pixel recall, and mask quality versus annotator consensus.",
+      "Ingredient identity: set precision/recall/F1 per meal, macro-F1, case-level F1, and unknown/out-of-taxonomy rate.",
+      "Mass: per-component MAE in grams, relative MAE, p90 absolute error in grams, signed bias, total-meal MAE, and coverage-risk curves for abstention.",
+      "Calibration: confidence reliability, expected calibration error or an approved alternative, threshold stability across device/cuisine strata, and error after manual correction.",
+      "Runtime: model size, app size contribution, cold/warm initialization, p50/p95/max latency, peak PSS/resident memory, thermal transitions, battery/energy proxy, and offline behavior."
+    ],
+    "benchmark_protocol": [
+      "Evaluate original and converted artifacts on the same frozen fixtures and a held-out consented device/capture split.",
+      "Run at least warm-up and repeated inference counts sufficient to report p50/p95/max; record cold initialization separately.",
+      "Compare CPU/XNNPACK first for stability, then one hardware-accelerated backend at a time; retain a fallback if an operator partitions or fails.",
+      "Report metrics separately for RGB-only, valid-depth, invalid-depth, and manual/abstention paths.",
+      "Do not aggregate Android and iOS into one mean that hides platform-specific failures."
+    ],
+    "portion_output_policy": "Show a range or abstention state with assumptions and user correction, not a naked exact gram number. Nutrition calculation remains catalog-grounded after candidate confirmation and serving/mass correction."
+  },
+  "weight_limitations": {
+    "identifiability_limits": [
+      "Mass cannot be recovered reliably from a single RGB image when different densities, hidden ingredients, thicknesses, and overlaps produce similar pixels.",
+      "A mask area is not volume; a volume estimate needs a metric scale, surface/depth quality, food-shape assumptions, or training data that covers the target domain.",
+      "Mixed dishes and sauces are not decomposable into exact ingredient grams from image evidence alone.",
+      "A high-confidence food identity does not imply correct portion size or nutrition values."
+    ],
+    "camera_and_depth_calibration": [
+      "Preserve native sensor orientation and map display coordinates back to captured-image coordinates; Apple documents imageResolution in native sensor orientation.",
+      "Store camera intrinsics and distortion for each image/depth configuration. Android Camera2 reports intrinsic and distortion keys only where the device provides them; ARKit exposes intrinsics per camera frame.",
+      "Align RGB and depth by timestamp, field of view, resolution mapping, and device pose; filter by depth confidence and discard invalid regions.",
+      "Do not compare depth values across devices without unit and calibration checks. ARKit depth is meters; Apple ARKitScenes stores depth PNG values in millimeters; SuperNutrition must choose and record one internal representation.",
+      "For ARCore depth, prompt enough movement for tracking and avoid treating featureless, reflective, or absorbent surfaces as high-confidence depth.",
+      "For iOS scene depth, gate on supportsFrameSemantics and record LiDAR availability; do not silently emulate missing scene depth with monocular estimates."
+    ],
+    "mobile_constraints": [
+      "Model and runtime must fit device disk and memory; quantization changes both size and numerical behavior.",
+      "Accelerators differ by SoC and OS. Unsupported operators may fall back to CPU or partition a graph, so a host benchmark is not mobile evidence.",
+      "Large segmentation masks and depth buffers increase memory pressure; reuse/preallocate buffers and avoid copying full-resolution frames across layers.",
+      "Camera capture, preprocessing, inference, and mask rendering must be off the UI thread; live-stream backpressure must be explicit.",
+      "Thermal throttling, battery state, model-cache warmup, and camera ISP behavior can change p95 latency after a few minutes."
+    ],
+    "safety_and_product_limits": [
+      "Never infer allergen absence, medical safety, or exact nutrition from uncertain image evidence.",
+      "Require visible assumptions and user correction for serving size, cooking state, sauces, oil, and mixed dishes.",
+      "A remote fallback needs explicit per-attempt consent, region/provider policy, retention/deletion evidence, and an honest statement that already-transferred bytes cannot be recalled.",
+      "The current G-3 target is a capability/device exit artifact, not permission to ship unvalidated gram estimates."
+    ]
+  },
+  "mobile_runtime_path": {
+    "decision_summary": "Use ONNX Runtime Mobile as the first common physical-device baseline because SuperNutrition already has an ONNX G-3 runner. Evaluate LiteRT/MediaPipe as the compact detector/segmenter candidate, Core ML as an iOS optimization path, and ExecuTorch/LiteRT-LM only as separately owned later experiments.",
+    "runtime_matrix": [
+      {
+        "candidate": "ONNX Runtime Mobile",
+        "android": "onnxruntime-android; CPU/XNNPACK baseline; NNAPI after measurement.",
+        "ios": "onnxruntime-c or Objective-C; CPU/XNNPACK baseline; Core ML after model/operator validation.",
+        "model_artifact": "ONNX initially; ORT format plus reduced operator runtime only after the operator set is frozen.",
+        "best_use": "Common detector/segmenter baseline and direct extension of the current G-3 harness.",
+        "main_risk": "Large runtime unless minimized; device-specific EP partitioning; custom operators or unsupported postprocessing."
+      },
+      {
+        "candidate": "LiteRT/MediaPipe",
+        "android": "LiteRT CompiledModel API for CPU/GPU/NPU, or MediaPipe Tasks Vision for detector/segmenter task plumbing.",
+        "ios": "LiteRT sample/runtime or MediaPipeTasksVision with CVPixelBuffer/UIImage input; verify exact pinned iOS packaging path.",
+        "model_artifact": ".tflite or .task with metadata and label map.",
+        "best_use": "Small low-latency component segmentation with ready-made camera/live-stream examples.",
+        "main_risk": "Preview APIs and delegate/operator differences; the task model contract may constrain custom food outputs."
+      },
+      {
+        "candidate": "Core ML",
+        "android": "Not an Android runtime; use only for the iOS adapter or through a separate cross-platform artifact path.",
+        "ios": "Native Core ML with CPU/GPU/Neural Engine scheduling, or ONNX Runtime Core ML execution provider.",
+        "model_artifact": ".mlmodel or .mlpackage generated by pinned coremltools.",
+        "best_use": "iOS-specific optimization and a controlled comparison against ONNX/XNNPACK.",
+        "main_risk": "Conversion unsupported ops, deployment-target constraints, and no common artifact with Android."
+      },
+      {
+        "candidate": "ExecuTorch",
+        "android": "Java/C++ runtime with XNNPACK; Vulkan or Qualcomm QNN only on selected device tiers.",
+        "ios": "Swift/Objective-C runtime with Core ML, MPS, or XNNPACK.",
+        "model_artifact": ".pte lowered for a pinned backend and runtime.",
+        "best_use": "PyTorch-native later-stage vision/depth/multimodal experiments.",
+        "main_risk": "Backend/toolchain churn and a second conversion/deployment stack to maintain."
+      },
+      {
+        "candidate": "LiteRT-LM",
+        "android": "Kotlin API with CPU/GPU/NPU options where model/device support exists.",
+        "ios": "Swift API is early preview in the current repository; validate before using as a product dependency.",
+        "model_artifact": ".litertlm, often quantized 4-bit or 8-bit depending on the model.",
+        "best_use": "Later candidate generation, explanation, or ambiguity-resolution tier with explicit local/remote policy.",
+        "main_risk": "Model size, memory, first-load cost, and non-deterministic/free-form outputs are inappropriate for grams or catalog authority."
+      }
+    ],
+    "conversion_quantization_steps": [
+      "Freeze the input/output contract, taxonomy version, preprocessing, postprocessing, and golden fixtures before conversion.",
+      "Export one FP32 reference artifact from the training framework; check shapes, dynamic dimensions, output ordering, mask encoding, and deterministic inference.",
+      "Convert to the target artifact with a pinned toolchain and write the command plus dependency lock into a conversion manifest.",
+      "Run numerical and semantic parity tests on the host, then run the same tests in Android and iOS runtime wrappers.",
+      "Prepare a representative calibration set that covers cuisine, lighting, device, view, size, occlusion, and depth-validity strata; do not calibrate only on curated single-dish fixtures.",
+      "Compare float32, float16, dynamic-range, static int8, and quantization-aware candidates appropriate to the runtime; for Core ML also compare weight quantization/palettization where supported.",
+      "Reject a compressed candidate if segmentation boundary quality, rare-class recall, mass-head error, confidence calibration, or abstention behavior regresses beyond a pre-registered limit.",
+      "Benchmark physical devices with cold/warm runs, memory, thermal, power proxy, model size, app size, and backend/EP details; then sign the selected model digest and rollback target.",
+      "Only after the graph is stable, generate a reduced runtime or selective build to reduce binary size."
+    ],
+    "camera_depth_capture_contract": [
+      "Capture RGB with a visible plate/food framing guide and a quality gate for blur, exposure, glare, and occlusion.",
+      "If depth is available, capture RGB/depth from the same frame or a timestamp-linked frame and persist intrinsics, resolution, orientation, units, pose, confidence, and support state.",
+      "If depth is unavailable or invalid, emit a capability/abstention state and use the RGB-only component path without claiming metric mass.",
+      "Require the user to keep the meal unchanged between capture and scale record in corpus mode; in product mode, make any geometry assumptions visible and editable."
+    ],
+    "device_matrix": [
+      "Android: low-, mid-, and high-tier physical ARM64 devices; record API level, SoC/GPU/NPU, ABI, camera intrinsics availability, depth availability, and thermal behavior.",
+      "iOS: at least one non-LiDAR and one LiDAR-capable physical device tier; record iOS build, chip family, camera/lens, scene-depth support, and Core ML compute-unit choice.",
+      "Per tier: repeat the same model artifact and fixture set, use the same input contract, and report separate pass/fail for semantic quality, component quality, mass quality, latency, memory, thermal, and privacy/offline behavior.",
+      "Emulators and simulators may be used for UI/contract smoke tests but do not establish camera, depth, performance, or local-inference support."
+    ],
+    "model_package_strategy": [
+      "Bundle a small baseline detector/segmenter only if it fits the lowest supported tier; otherwise use an app-managed, checksum-verified package with atomic activation and rollback.",
+      "Keep quantized model, label map, preprocessing metadata, calibration version, runtime/backend requirement, and digest in one immutable manifest.",
+      "Do not bundle or download a large multimodal model in the first G-3 production candidate; gate it by capability, storage, battery, policy, and explicit experiment configuration.",
+      "Never let a model package contain or depend on the nutrition catalog; candidate IDs are mapped to the versioned catalog after user confirmation."
+    ],
+    "recommended_first_spike": "Implement one visible-component detector or segmenter in the existing local Android and local iOS ownership slices using the current G-3 harness conventions. Compare the same small model in ONNX Runtime and LiteRT/MediaPipe, then select by physical-device evidence rather than framework preference."
+  },
+  "consented_corpus_blueprint": {
+    "scope_and_size": {
+      "pilot": "Collect a small consented pilot first to test consent comprehension, scale repeatability, annotation ambiguity, and end-to-end deletion before scaling.",
+      "initial_training_evaluation_corpus": "Use approximately 300-500 meal sessions [uncertain] as the first controlled benchmark, with a pre-registered expansion rule based on rare classes and error strata.",
+      "unit_of_sampling": "The independent unit is a participant-session-meal combination, not an individual image. Multiple views of one meal stay grouped for split and leakage control.",
+      "exclusions_for_first_release": "Exclude minors, identifiable people, medical-diet claims, and uncontrolled restaurant/background captures from the first corpus unless a reviewed protocol explicitly covers them."
+    },
+    "consent_fields": [
+      "Plain-language purpose, expected duration, procedures, foreseeable risks/discomforts, benefits, alternatives, contact, and the voluntary nature of participation.",
+      "Separate choices for raw RGB collection, depth/AR metadata, derived masks/embeddings, model training/fine-tuning, evaluation-only use, product improvement, remote-provider testing, and commercial use.",
+      "Data categories, storage region, access roles, retention period, deletion/withdrawal method, whether derived artifacts may remain after raw deletion, and the limits of deleting already-exported aggregate results.",
+      "Consent version, participant pseudonym, date/time, jurisdiction/market policy, age/eligibility confirmation, and operator who obtained consent.",
+      "A separate remote-transfer consent receipt bound to the scrubbed payload digest if any photo leaves the device; local-only collection must remain possible."
+    ],
+    "capture_record": [
+      "Generate session_id, meal_id, image_id, and immutable file digests before annotation; keep participant identity in a separate access-controlled table.",
+      "Capture one overview and one oblique image of the same meal, plus optional close-up component images only when the protocol allows them.",
+      "Record device model, OS/API, camera lens, resolution, orientation, timestamp, app/model/runtime versions, focus/exposure/white-balance state, and quality-gate result.",
+      "Strip EXIF/GPS and unnecessary metadata before annotation or transfer; detect and reject faces, documents, addresses, or other identifying background content.",
+      "For RGB-D captures, store timestamp-linked depth, units, intrinsics, pose, confidence, and valid-pixel ratio; never upsample a low-confidence depth map and label it as measured truth."
+    ],
+    "weighing_and_reconciliation": [
+      "Use one identified scale per capture station, with documented verification/calibration and resolution; use traceable or documented check weights where practicable.",
+      "Tare the empty plate/bowl, weigh each visible ingredient before plating, record each component mass, plate the exact photographed meal, and record final total food mass.",
+      "Photograph immediately after final weighing and record the photo IDs in the scale session log; no substitutions, garnish removal, or later plating changes.",
+      "Independently repeat total mass or a component subset on a fixed QC fraction and resolve discrepancies by preserving both readings and a reviewer decision.",
+      "Check that the sum of recorded component masses plus explicitly recorded unweighed/mixed components reconciles to final total within a tolerance derived from scale resolution and repeatability [uncertain].",
+      "Set weight_ground_truth_status to valid, disputed, mixed_dish_total_only, or not-evaluable; never replace missing grams with an image-derived estimate in ground truth."
+    ],
+    "annotation_workflow": [
+      "Create a versioned ontology with canonical visible-component labels, unknown/ambiguous/out-of-taxonomy states, composite/mixed_dish states, and explicit occlusion/truncation flags.",
+      "Use CVAT self-hosted on private infrastructure for boxes, polygons/RLE masks, image attributes, review, and COCO export; keep mass and consent in sidecar tables keyed by IDs.",
+      "Have an annotator mark visible component instances, a reviewer validate taxonomy and boundaries, and a second reviewer resolve disputed or mixed regions.",
+      "Use 3- or 5-fold consensus on a small high-quality ground-truth slice and on new labels/edge cases; CVAT documents this as a way to reduce bias and improve ground truth quality.",
+      "Export COCO instances for detector/segmenter training, a semantic mask export for class masks, and a separate mass/calibration sidecar. Validate IDs, boxes, masks, areas, image dimensions, and taxonomy version in CI.",
+      "Do not label hidden recipe ingredients, oil, salt, or dressing composition unless a separate non-image recipe record is intentionally collected and kept out of image-ground-truth scoring."
+    ],
+    "quality_control": [
+      "Automated checks: image/depth hash, schema, dimensions, orientation, mask bounds, non-empty masks, category IDs, duplicate IDs, impossible masses, timestamp ordering, EXIF/GPS removal, and consent-to-record linkage.",
+      "Measurement checks: scale verification record exists, tare event exists, component/total reconciliation passes or is disputed, and repeatability QC is within the pre-registered tolerance.",
+      "Annotation checks: annotator agreement, mask IoU on consensus samples, unknown/mixed rate, rare-class coverage, reviewer override rate, and systematic device/cuisine disagreement.",
+      "Capture checks: blur, exposure, glare, framing, occlusion, depth valid-pixel ratio, RGB-depth alignment, and whether the meal changed between weigh and photo.",
+      "Release checks: participant-disjoint split audit, no near-duplicate sequence leakage, license/consent audit, approved raw-data access list, and dataset manifest digest."
+    ],
+    "split_and_release": [
+      "Split by participant, household, recipe/menu, and meal session before augmentation; all views and repeated captures of one meal stay in one split.",
+      "Stratify the holdout by device tier, cuisine, ingredient family, lighting, portion range, occlusion, depth support, and mixed-dish status.",
+      "Keep the full raw corpus private and versioned; release only de-identified samples whose consent, license, and privacy review expressly permit release.",
+      "Keep test annotations immutable and publish model/conversion/runtime manifests alongside metrics; corrections create a new dataset version and do not rewrite historical reports.",
+      "Use a separate evaluation-only set for final G-3 sign-off so training/quantization/calibration cannot consume it."
+    ],
+    "privacy_and_retention": [
+      "Use opaque participant IDs, role-based access, encrypted storage and transport, short-lived working copies, and auditable deletion jobs.",
+      "Do not put photos, depth maps, free-text food descriptions, filenames, GPS, or participant IDs in analytics or logs.",
+      "Separate raw RGB/depth from derived masks, embeddings, scale readings, and aggregate metrics; document which derived artifacts are deleted on withdrawal.",
+      "Require explicit consent before remote upload; scrub the payload first and bind the receipt to its digest, purpose, jurisdiction, provider/region, retention version, and deletion state.",
+      "Have privacy/legal review approve the final retention, cross-border processing, participant rights, and model-training policy before collection at scale."
+    ],
+    "workflow_exit_artifacts": [
+      "Consent form and consent schema version.",
+      "Capture app build/model/runtime manifest and device capability report.",
+      "Scale station verification record and weighing SOP.",
+      "Ontology, annotation guide, CVAT task configuration, reviewer/consensus policy, and COCO export validator.",
+      "Immutable train/validation/test split manifests and dataset digests.",
+      "Quality report with missingness, agreement, reconciliation, privacy checks, and per-stratum counts."
+    ]
+  },
+  "recommendation_for_supernutrition": {
+    "staged_plan": [
+      {
+        "stage": "G-3.0: Freeze the evidence contract",
+        "deliverables": [
+          "Extend the current G-3 manifest with visible-component detection/segmentation outputs, depth capability states, mass ground-truth states, and provenance fields.",
+          "Keep the current Food-101/Swin ONNX runner as a single-dish regression baseline only; do not relabel its output as ingredient evidence.",
+          "Freeze the image preprocessing, taxonomy, mask encoding, model manifest, device matrix, benchmark counters, and no-upload privacy behavior."
+        ],
+        "exit_evidence": [
+          "Physical Android and iOS runs with model and fixture digests verified.",
+          "Contract tests for candidates, abstention, not-evaluable mass, depth unavailable, cancellation, and provenance.",
+          "A signed owner decision that G-3 remains preliminary until the weighed corpus exists."
+        ],
+        "non_goals": ["No grams estimate, nutrition claim, or multi-ingredient accuracy claim from the classifier baseline."]
+      },
+      {
+        "stage": "G-3.1: Collect and annotate the consented weighed corpus",
+        "deliverables": [
+          "Pilot the consent, tared weighing, paired-view capture, optional depth, privacy scrub, and deletion workflow.",
+          "Scale to approximately 300-500 meal sessions [uncertain] with participant/meal/device-disjoint splits and coverage across visible components, mixed dishes, lighting, and device tiers.",
+          "Create COCO-compatible instance/semantic labels plus a mass/calibration sidecar and immutable dataset digest."
+        ],
+        "exit_evidence": [
+          "Consent/withdrawal and raw-data access audit passes.",
+          "Scale verification, tare, component-to-total reconciliation, and repeatability QC pass or are explicitly disputed.",
+          "Annotation agreement, consensus-slice review, and split-leakage audit are reported."
+        ],
+        "non_goals": ["Do not train on or release records whose consent, scale linkage, or visible-component label is invalid."]
+      },
+      {
+        "stage": "G-3.2: Ship a compact visible-component model spike",
+        "deliverables": [
+          "Train or fine-tune one detector/instance-segmenter with a fixed taxonomy and an explicit unknown/abstain output.",
+          "Export a common ONNX candidate and a LiteRT/MediaPipe candidate if conversion is supported; keep Android and iOS adapters independently owned.",
+          "Run float and quantized variants through host parity, Android physical-device, and iOS physical-device tests."
+        ],
+        "exit_evidence": [
+          "Frozen held-out set with ingredient set F1 and mask metrics by device/cuisine/occlusion strata.",
+          "Cold/warm latency, memory, thermal, battery proxy, binary/model size, and offline evidence on each supported tier.",
+          "Model digest, conversion manifest, rollback target, and capability matrix are signed."
+        ],
+        "non_goals": ["No metric mass UI and no automatic nutrition totals yet; segmentation evidence is not mass evidence."]
+      },
+      {
+        "stage": "G-3.3: Add depth/geometry only where valid",
+        "deliverables": [
+          "Implement ARKit LiDAR scene-depth capability and ARCore Depth capability as optional adapters with units, intrinsics, timestamps, confidence, and invalid states.",
+          "Add user framing/quality guidance and a controlled plate/fiducial geometry condition for the corpus.",
+          "Train/evaluate a mass head only against tared grams and report range/abstention behavior."
+        ],
+        "exit_evidence": [
+          "RGB-depth alignment and calibration tests pass for each supported depth tier.",
+          "Mass metrics are reported only on valid scale-linked ground truth, with RGB-only and invalid-depth results separated.",
+          "A product policy defines when the UI says estimated, not-evaluable, or asks for manual serving input."
+        ],
+        "non_goals": ["No cross-device calibration claim without per-device evidence; no monocular grams fallback presented as measured."]
+      },
+      {
+        "stage": "G-3.4: Optional multimodal ambiguity tier",
+        "deliverables": [
+          "Prototype LiteRT-LM or ExecuTorch multimodal inference only for candidate ranking, visible-component explanation, or difficult-case routing.",
+          "Keep model download, storage, latency, consent, and offline capability states explicit; evaluate remote fallback separately.",
+          "Map accepted candidates through the versioned catalog and retain user confirmation."
+        ],
+        "exit_evidence": [
+          "Physical device and memory matrix for the selected multimodal model/backend.",
+          "Evidence that the multimodal tier improves corrected component accuracy or abstention utility on the held-out set.",
+          "No numeric nutrition or mass output is accepted unless it comes from the validated mass/catalog path."
+        ],
+        "non_goals": ["No free-form model output as nutrition authority, allergen guarantee, or substitute for weighing."]
+      }
+    ],
+    "provisional_acceptance_metrics": {
+      "ingredient_macro_f1": "At least 0.85, matching the current local G-3 manifest as a provisional starting gate [uncertain]; approve or revise under G-5 after corpus pilot evidence.",
+      "ingredient_case_f1": "At least 0.80 as the current provisional case-level starting gate [uncertain].",
+      "weight_relative_mae": "At most 0.15 on valid scale-linked held-out records as a provisional starting gate [uncertain].",
+      "weight_p90_absolute_error_g": "At most 50 g as the current provisional starting gate [uncertain]; stratify by portion range because a fixed gram bound is not equally meaningful for small and large meals.",
+      "runtime": "Retain the current proposed G-3 hypotheses until re-approved: cold initialization <=500 ms, p95 inference <=100 ms, max <=150 ms, peak process memory <=160 MB, no serious/critical thermal transition, and model integrity/privacy pass. These are evaluation hypotheses, not current achieved results.",
+      "confidence_and_abstention": "Report calibration and coverage-risk curves; do not accept a single confidence threshold as universal across devices and foods."
+    },
+    "architecture_fit": [
+      "Keep domain/photo-analysis pure and own routing, consent, fallback, and attempt lifecycle; adapters own LiteRT, ONNX Runtime, Core ML, ARKit, and ARCore details.",
+      "Keep local Android, local iOS, and remote inference modules independent; share the versioned PhotoInferenceEngine contract and immutable fixtures only.",
+      "Keep raw photos and depth ephemeral, EXIF/GPS-scrubbed before any transfer, and excluded from telemetry.",
+      "Use catalog grounding for nutrients after user confirmation; model outputs remain identity/portion evidence with assumptions and provenance.",
+      "Make model package activation checksum-verified, atomic, rollback-capable, and compatible with the current configuration snapshot."
+    ],
+    "stop_conditions": [
+      "Stop and redesign if component annotations cannot reach stable reviewer agreement for a food class or mixed-dish policy.",
+      "Stop mass claims if scale reconciliation, depth calibration, or participant/device split integrity fails.",
+      "Stop a runtime candidate if physical-device memory/thermal/latency evidence fails without a documented fallback and no accuracy-preserving optimization remains.",
+      "Stop external model/data use until licenses, consent, retention, and commercial terms are approved.",
+      "Stop automatic routing if confidence is uncalibrated or the model's errors materially increase after a device/cuisine shift."
+    ],
+    "final_recommendation": "For SuperNutrition G-3, build the smallest defensible proof first: a consented, tared, visibly annotated component corpus; one compact detector/segmenter; physical Android/iOS parity and resource evidence; and an explicit not-evaluable mass state. Add calibrated RGB-D geometry and a mass head only after scale-linked evaluation passes. Keep multimodal inference as a later ambiguity tier, and never let any mobile model bypass user confirmation or the catalog-grounded nutrition contract. The exact corpus size, final thresholds, supported device tiers, and commercial model choice remain [uncertain] until the pilot and G-3 signed review are complete."
+  },
+  "uncertain": [
+    "maintenance_and_reproducibility",
+    "license_and_usage",
+    "expected_ingredient_quality",
+    "consented_corpus_blueprint",
+    "recommendation_for_supernutrition"
+  ]
+}
