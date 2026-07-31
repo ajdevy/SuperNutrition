@@ -7,9 +7,10 @@ max_workers="${SUPERNUTRITION_MAX_WORKERS:-1}"
 
 usage() {
   cat >&2 <<'USAGE'
-Usage: scripts/run-local-ci.sh [jvm|android|ios|all]
+Usage: scripts/run-local-ci.sh [jvm|docker|android|ios|all]
 
   jvm      Run the exact reduced GitHub quality/report job locally (default).
+  docker   Build and run the same JVM/report gate in Linux Docker.
   android  Run the Android instrumentation and Maestro lane locally.
   ios      Run the required iOS XCTest and Maestro lane locally.
   all      Run jvm, android, and ios in sequence.
@@ -47,6 +48,11 @@ run_android() {
   printf 'local-ci: Android UI gate passed\n'
 }
 
+run_docker() {
+  "$script_dir/run-local-ci-docker.sh"
+  printf 'local-ci: Docker JVM gate passed\n'
+}
+
 run_ios() {
   SUPERNUTRITION_REQUIRE_UI_TESTS=1 "$script_dir/run-ui-journeys-ios.sh"
   printf 'local-ci: iOS UI gate passed\n'
@@ -56,6 +62,9 @@ mode="${1:-jvm}"
 case "$mode" in
   jvm)
     run_jvm
+    ;;
+  docker)
+    run_docker
     ;;
   android)
     run_android
