@@ -85,11 +85,14 @@ development_status:
   # -- the deterministic one runs on any device and an LLM becomes a swap
   # behind the same port. An on-device model remains desirable and remains a
   # G-3 decision; it is an enhancement, not a prerequisite.
-  epic-7: done
-  7-1-release-inference-contract-v2-with-identification-modality: done
-  7-2-deliver-the-deterministic-catalog-search-floor: done
-  7-3-add-the-per-market-language-matrix: done
-  7-4-add-on-device-typed-identification: done
-  7-5-add-segmentation-review-and-correction: done
-  7-6-add-remote-typed-identification: done
+  # Reopened. A nine-angle adversarial review found 3 critical and 25 high
+  # defects, including two independent reasons the SPEC success signal fails
+  # end to end. Marking this done was premature.
+  epic-7: in-progress
+  7-1-release-inference-contract-v2-with-identification-modality: in-progress
+  7-2-deliver-the-deterministic-catalog-search-floor: in-progress
+  7-3-add-the-per-market-language-matrix: review
+  7-4-add-on-device-typed-identification: in-progress
+  7-5-add-segmentation-review-and-correction: in-progress
+  7-6-add-remote-typed-identification: in-progress
   epic-7-retrospective: optional
