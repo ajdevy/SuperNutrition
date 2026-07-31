@@ -8,7 +8,7 @@
 | JVM host line coverage | 92.94% |
 | JVM host branch coverage | n/a |
 | Tracked source files | 165 |
-| Code lines | 23,911 |
+| Code lines | 23,917 |
 
 ### Coverage by denominator
 
