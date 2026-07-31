@@ -78,11 +78,16 @@ development_status:
   # Added to epics.md after this file was generated, so it was untracked while
   # story 7.2 was already being implemented. 7.2 depends on the catalog rather
   # than on any Engine, which is why it is in flight ahead of 7.1.
+  # Domain layer complete; two integration points are open and cannot be
+  # closed by writing code here. 7.1's Kotlin binding waits for PR #29 to stop
+  # editing mobile/domain/inference, and 7.4 has no on-device model because
+  # G-3's device matrix is deferred. Stories that depend on those stay in
+  # review rather than done.
   epic-7: in-progress
-  7-1-release-inference-contract-v2-with-identification-modality: backlog
-  7-2-deliver-the-deterministic-catalog-search-floor: in-progress
-  7-3-add-the-per-market-language-matrix: backlog
-  7-4-add-on-device-typed-identification: backlog
-  7-5-add-segmentation-review-and-correction: backlog
-  7-6-add-remote-typed-identification: backlog
+  7-1-release-inference-contract-v2-with-identification-modality: review
+  7-2-deliver-the-deterministic-catalog-search-floor: review
+  7-3-add-the-per-market-language-matrix: review
+  7-4-add-on-device-typed-identification: review
+  7-5-add-segmentation-review-and-correction: review
+  7-6-add-remote-typed-identification: review
   epic-7-retrospective: optional
