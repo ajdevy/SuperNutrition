@@ -3,7 +3,7 @@ import Foundation
 import SharedKit
 import UIKit
 
-typealias PhotoAnalysisNativeAction = Photo_analysisPhotoAnalysisNativeAction
+typealias PhotoAnalysisNativeAction = SharedKitPhotoAnalysisNativeAction
 
 enum PhotoAnalysisHostConstants {
     static let attemptID: String = {
