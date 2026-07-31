@@ -4,7 +4,7 @@ set -euo pipefail
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="${SUPERNUTRITION_ROOT_BOUNDARIES_ROOT:-$(cd "$script_dir/.." && pwd)}"
 
-for required_tool in find grep python3 rg; do
+for required_tool in find grep python3; do
   command -v "$required_tool" >/dev/null 2>&1 || {
     printf 'root-boundaries: missing required tool: %s\n' "$required_tool" >&2
     exit 1
@@ -104,6 +104,33 @@ PY
 # edge. Generated local build metadata is excluded from this read-only scan;
 # product-owned manifests and checked-in configuration remain covered.
 PRODUCT_ROOTS=(mobile web/landing backend/mobile-api)
+
+search_product_root() {
+  local pattern="$1"
+  local product_path="$2"
+  if command -v rg >/dev/null 2>&1; then
+    rg --hidden -n -S \
+      --glob '!**/build/**' \
+      --glob '!**/.gradle/**' \
+      --glob '!**/.idea/**' \
+      --glob '!**/.kotlin/**' \
+      --glob '!**/node_modules/**' \
+      --glob '!**/*.jar' \
+      --glob '!**/*.bin' \
+      "$pattern" "$product_path"
+  else
+    grep -R -n -I -E \
+      --exclude-dir=build \
+      --exclude-dir=.gradle \
+      --exclude-dir=.idea \
+      --exclude-dir=.kotlin \
+      --exclude-dir=node_modules \
+      --exclude='*.jar' \
+      --exclude='*.bin' \
+      "$pattern" "$product_path"
+  fi
+}
+
 for product_root in "${PRODUCT_ROOTS[@]}"; do
   case "$product_root" in
     mobile)
@@ -117,15 +144,7 @@ for product_root in "${PRODUCT_ROOTS[@]}"; do
       ;;
   esac
 
-  if rg --hidden -n -S \
-    --glob '!**/build/**' \
-    --glob '!**/.gradle/**' \
-    --glob '!**/.idea/**' \
-    --glob '!**/.kotlin/**' \
-    --glob '!**/node_modules/**' \
-    --glob '!**/*.jar' \
-    --glob '!**/*.bin' \
-    "$forbidden_pattern" "$repo_root/$product_root"; then
+  if search_product_root "$forbidden_pattern" "$repo_root/$product_root"; then
     printf 'forbidden cross-product edge in %s\n' "$product_root" >&2
     exit 1
   fi
