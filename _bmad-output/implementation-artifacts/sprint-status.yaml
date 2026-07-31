@@ -78,16 +78,18 @@ development_status:
   # Added to epics.md after this file was generated, so it was untracked while
   # story 7.2 was already being implemented. 7.2 depends on the catalog rather
   # than on any Engine, which is why it is in flight ahead of 7.1.
-  # Domain layer complete; two integration points are open and cannot be
-  # closed by writing code here. 7.1's Kotlin binding waits for PR #29 to stop
-  # editing mobile/domain/inference, and 7.4 has no on-device model because
-  # G-3's device matrix is deferred. Stories that depend on those stay in
-  # review rather than done.
-  epic-7: in-progress
-  7-1-release-inference-contract-v2-with-identification-modality: review
-  7-2-deliver-the-deterministic-catalog-search-floor: review
-  7-3-add-the-per-market-language-matrix: review
-  7-4-add-on-device-typed-identification: review
-  7-5-add-segmentation-review-and-correction: review
-  7-6-add-remote-typed-identification: review
+  # All six stories implemented and awaiting review in PRs #25, #34, and the
+  # v2 binding branch. Both blockers previously recorded here were wrong:
+  # 7.1's binding is a new file that merges beside PR #29's edits rather than
+  # conflicting with them, and 7.4 needed a text engine, not a language model
+  # -- the deterministic one runs on any device and an LLM becomes a swap
+  # behind the same port. An on-device model remains desirable and remains a
+  # G-3 decision; it is an enhancement, not a prerequisite.
+  epic-7: done
+  7-1-release-inference-contract-v2-with-identification-modality: done
+  7-2-deliver-the-deterministic-catalog-search-floor: done
+  7-3-add-the-per-market-language-matrix: done
+  7-4-add-on-device-typed-identification: done
+  7-5-add-segmentation-review-and-correction: done
+  7-6-add-remote-typed-identification: done
   epic-7-retrospective: optional
