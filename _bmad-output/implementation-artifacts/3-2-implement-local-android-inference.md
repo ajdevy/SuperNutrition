@@ -138,26 +138,27 @@ so that eligible devices can analyze without transmitting Photo Input.
     85.88% branch across 8 production modules; branchless modules remain in the
     line denominator without inventing branch outcomes.
   - [x] Run the dedicated E3.2 physical Android inference scenario and bind
-    the local-only evidence to committed source `3516acd7e91eb9d964211bdf541789faa576ecfb`,
+    the local-only evidence to committed source `08d0002e9a349eca845cd0fe3226f4a62e2fb9a1`,
     test APK digest
-    `72916281b00af192ed584218821b587f6cfe01e5d3926bae13bcb0a5bca00394`,
+    `1d73e3262b6908e7b718e683e3a09426826028c9a03797b7176464057daf1403`,
     fixture/model test-source digest
-    `e8ffaddaa26935bff8735456d9b654003ffb4fdbca7acde29b8d03d8042500af`,
+    `f50af530bb01eb1c9a87c963f8167219b5a57d221499e8e90020d9b67b03109e`,
     module build/lock digests
     `86952f61ae6e0e156ee9d10ec349ab47539f321a3390befc1010fae507b3fc22` /
     `b2d887723bdd54849e5ef7affcf2ce5b6e586ddc37975c466afda8dfb7b5069f`,
     policy digest `61b92987320bd6d26a616a62e8d7202fef3b966da6eb744d9196afd02dbde4e6`,
     device `HONOR-DNY-NX9-android-16-api-36`, task
     `connectedAndroidDeviceTest-gradle-9.5.0`, and execution
-    `2026-07-31T09:48:14Z`. The result XML is
+    `2026-07-31T10:05:16Z`. The result XML is
     `mobile/inference/local-android/build/outputs/androidTest-results/connected/androidMain/TEST-DNY-NX9 - 16-_inference_local-android-.xml`;
-    it reports 2 tests, 0 failures, 0 errors, and 0 skipped. The recording
-    runtime asserted zero network attempts, leased-byte-only input, and
-    fail-closed behavior without reading photo content when unavailable.
+    it reports 4 tests, 0 failures, 0 errors, and 0 skipped. The recording
+    runtime asserted zero network attempts, leased-byte-only input, resource
+    budget fail-closed behavior without reading photo content, and cancellation
+    cleanup with late-result suppression.
   - [ ] Extend this evidence to the signed G-3 real-device benchmark for
     runtime/model selection, latency, peak memory, thermal, battery, and
     rollback budgets. The G-3 exit artifact remains outstanding.
-  - [ ] Update only the story record and owned module/test files plus any
+  - [x] Update only the story record and owned module/test files plus any
     separately approved policy/evidence handoff files; do not modify iOS,
     remote, UI, catalog, root product, or unrelated WIP.
 
@@ -321,11 +322,13 @@ GPT-5 / Codex
 - 2026-07-31 dedicated local-Android adapter device rerun: committed
   `connectedAndroidDeviceTest` for the isolated `androidDeviceTest` source set,
   ran it on `AU3N025429006787` (`DNY-NX9`, Android 16 / API 36), and completed
-  2/2 tests with 0 failures, errors, or skips. The test APK digest is
-  `72916281b00af192ed584218821b587f6cfe01e5d3926bae13bcb0a5bca00394`; the
-  run timestamp is `2026-07-31T09:48:14Z`. This is bounded adapter evidence
-  for local-only input and fail-closed behavior, not a concrete ML runtime or
-  signed G-3 performance/thermal/battery/rollback benchmark.
+  4/4 tests with 0 failures, errors, or skips. The test APK digest is
+  `1d73e3262b6908e7b718e683e3a09426826028c9a03797b7176464057daf1403`; the
+  run timestamp is `2026-07-31T10:05:16Z`. The physical scenario now covers
+  local-only input, resource-budget fail-closed behavior, and cancellation
+  cleanup/late-result suppression. This remains bounded adapter evidence, not
+  a concrete ML runtime or signed G-3 performance/thermal/battery/rollback
+  benchmark.
 
 ### File List
 
