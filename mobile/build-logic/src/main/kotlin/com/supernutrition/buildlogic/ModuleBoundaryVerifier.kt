@@ -26,6 +26,7 @@ internal object ModuleBoundaryVerifier {
                 scope = PolicyToml.string(block, "scope") ?: error("Allowed edge is missing scope"),
             )
         }
+        require(modules.isNotEmpty()) { "Module-boundary inventory contains no modules" }
         require(modules.map { it.id }.distinct().size == modules.size) {
             "Module-boundary inventory contains duplicate module IDs"
         }

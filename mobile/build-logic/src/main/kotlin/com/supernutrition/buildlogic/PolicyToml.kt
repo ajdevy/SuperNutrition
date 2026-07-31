@@ -34,16 +34,6 @@ internal object PolicyToml {
         "product-lifecycle.toml",
     )
 
-    fun blocks(text: String, name: String): List<String> =
-        blocks(document(text), name)
-            .filter { it.array && it.name == name }
-            .map(::renderTable)
-
-    fun section(text: String, name: String): String =
-        section(document(text), name)
-            ?.let(::renderTable)
-            .orEmpty()
-
     /** Parses one immutable policy document for typed consumers. */
     fun document(text: String): Document = documents[text] ?: synchronized(documents) {
         documents[text] ?: parseDocument(text).also { documents[text] = it }
@@ -59,7 +49,7 @@ internal object PolicyToml {
         (findValue(document(text), key) as? Value.Text)?.value
 
     fun string(document: Document, key: String): String? =
-        (document.root[key] as? Value.Text)?.value
+        (findValue(document, key) as? Value.Text)?.value
 
     fun string(table: Table, key: String): String? =
         (table.values[key] as? Value.Text)?.value
@@ -68,7 +58,7 @@ internal object PolicyToml {
         (findValue(document(text), key) as? Value.Number)?.value
 
     fun integer(document: Document, key: String): Int? =
-        (document.root[key] as? Value.Number)?.value
+        (findValue(document, key) as? Value.Number)?.value
 
     fun integer(table: Table, key: String): Int? =
         (table.values[key] as? Value.Number)?.value
@@ -77,7 +67,7 @@ internal object PolicyToml {
         (findValue(document(text), key) as? Value.Flag)?.value
 
     fun boolean(document: Document, key: String): Boolean? =
-        (document.root[key] as? Value.Flag)?.value
+        (findValue(document, key) as? Value.Flag)?.value
 
     fun boolean(table: Table, key: String): Boolean? =
         (table.values[key] as? Value.Flag)?.value
@@ -86,7 +76,7 @@ internal object PolicyToml {
         stringList(findValue(document(text), key), key)
 
     fun stringList(document: Document, key: String): List<String> =
-        stringList(document.root[key], key)
+        stringList(findValue(document, key), key)
 
     fun stringList(table: Table, key: String): List<String> =
         stringList(table.values[key], key)
@@ -126,15 +116,15 @@ internal object PolicyToml {
     // Cache the typed representation by source text instead of reparsing each accessor.
     private val documents = Collections.synchronizedMap(WeakHashMap<String, Document>())
 
-    internal data class Document(
-        val root: LinkedHashMap<String, Value> = linkedMapOf(),
-        val tables: MutableList<Table> = mutableListOf(),
+    internal class Document internal constructor(
+        internal val root: Map<String, Value>,
+        internal val tables: List<Table>,
     )
 
-    internal data class Table(
+    internal class Table internal constructor(
         val name: String,
         val array: Boolean,
-        val values: LinkedHashMap<String, Value> = linkedMapOf(),
+        internal val values: Map<String, Value>,
     )
 
     internal sealed interface Value {
@@ -150,8 +140,9 @@ internal object PolicyToml {
             .firstOrNull()
 
     private fun parseDocument(text: String): Document {
-        val document = Document()
-        var current: Table? = null
+        val root = linkedMapOf<String, Value>()
+        val tables = mutableListOf<MutableTable>()
+        var current: MutableTable? = null
         val pending = StringBuilder()
         var bracketDepth = 0
         var inString = false
@@ -171,7 +162,9 @@ internal object PolicyToml {
             val key = assignment.substring(0, separator).trim()
             require(key.isNotEmpty()) { "Policy assignment key must not be empty" }
             val value = parseValue(assignment.substring(separator + 1).trim())
-            (current?.values ?: document.root)[key] = value
+            val target = current?.values ?: root
+            require(key !in target) { "Duplicate policy key '$key'" }
+            target[key] = value
             resetValueState()
         }
 
@@ -182,13 +175,16 @@ internal object PolicyToml {
             if (pending.isEmpty() && line.startsWith("[[") && line.endsWith("]]")) {
                 val name = line.substring(2, line.length - 2).trim()
                 require(name.isNotEmpty()) { "Policy array-table name must not be empty" }
-                current = Table(name = name, array = true).also(document.tables::add)
+                current = MutableTable(name = name, array = true).also(tables::add)
                 return@forEach
             }
             if (pending.isEmpty() && line.startsWith("[") && line.endsWith("]")) {
                 val name = line.substring(1, line.length - 1).trim()
                 require(name.isNotEmpty()) { "Policy table name must not be empty" }
-                current = Table(name = name, array = false).also(document.tables::add)
+                require(tables.none { !it.array && it.name == name }) {
+                    "Duplicate policy table '$name'"
+                }
+                current = MutableTable(name = name, array = false).also(tables::add)
                 return@forEach
             }
 
@@ -214,8 +210,23 @@ internal object PolicyToml {
         }
 
         require(pending.isEmpty()) { "Policy contains an unterminated assignment: $pending" }
-        return document
+        return Document(
+            root = Collections.unmodifiableMap(LinkedHashMap(root)),
+            tables = Collections.unmodifiableList(tables.map { table ->
+                Table(
+                    table.name,
+                    table.array,
+                    Collections.unmodifiableMap(LinkedHashMap(table.values)),
+                )
+            }),
+        )
     }
+
+    private class MutableTable(
+        val name: String,
+        val array: Boolean,
+        val values: LinkedHashMap<String, Value> = linkedMapOf(),
+    )
 
     private fun parseValue(raw: String): Value {
         require(raw.isNotEmpty()) { "Policy value must not be empty" }
@@ -258,7 +269,7 @@ internal object PolicyToml {
     private fun parseArray(raw: String): List<Value> {
         val content = raw.substring(1, raw.length - 1).trim()
         if (content.isEmpty()) return emptyList()
-        return splitArrayElements(content).map(::parseValue)
+        return Collections.unmodifiableList(splitArrayElements(content).map(::parseValue))
     }
 
     private fun splitArrayElements(content: String): List<String> {
@@ -341,14 +352,4 @@ internal object PolicyToml {
         return -1
     }
 
-    private fun renderTable(table: Table): String = table.values.entries.joinToString("\n") { (key, value) ->
-        "$key = ${renderValue(value)}"
-    }
-
-    private fun renderValue(value: Value): String = when (value) {
-        is Value.Text -> "\"${value.value.replace("\\", "\\\\").replace("\"", "\\\"")}\""
-        is Value.Number -> value.value.toString()
-        is Value.Flag -> value.value.toString()
-        is Value.ListValue -> value.values.joinToString(prefix = "[", postfix = "]", separator = ", ", transform = ::renderValue)
-    }
 }

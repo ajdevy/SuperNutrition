@@ -345,7 +345,7 @@ class MobilePolicyValidatorTest {
             Files.copy(sourceRoot.resolve(relative), target)
         }
         PolicyToml.blocks(
-            Files.readString(root.resolve("config/quality/module-matrix.toml")),
+            PolicyToml.document(Files.readString(root.resolve("config/quality/module-matrix.toml"))),
             "unit",
         ).mapNotNull { PolicyToml.string(it, "path") }
             .filter { it.startsWith("mobile/") }
