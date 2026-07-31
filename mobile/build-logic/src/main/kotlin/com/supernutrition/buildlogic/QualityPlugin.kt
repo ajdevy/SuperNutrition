@@ -221,6 +221,8 @@ class QualityPlugin : Plugin<Project> {
         val inventoryProjects = jvmCoverageModulePaths(mobileRoot)
         val productionProjects = inventoryProjects
             .filter { rootProject.findProject(it) != null }
+        val allProductionProjects = productionModulePaths(mobileRoot)
+            .filter { rootProject.findProject(it) != null }
         val unresolvedInventoryProjects = inventoryProjects - productionProjects.toSet()
         val reportRoot = rootProject.projectDir.toPath()
         val lifecycleFile = mobileRoot.resolve("product-lifecycle.toml").toFile()
@@ -229,18 +231,47 @@ class QualityPlugin : Plugin<Project> {
             JvmCoverageVerifier.reportPaths(reportRoot, path).map(Path::toFile)
         }
         val reportTaskNames = setOf("koverXmlReportJvm", "koverXmlReportAndroid")
-        val reportTasks = productionProjects.flatMap { path ->
-            rootProject.findProject(path)?.tasks
-                ?.matching { it.name in reportTaskNames }
-                ?.toList()
-                .orEmpty()
+        val htmlReportTaskNames = setOf("koverHtmlReportJvm", "koverHtmlReportAndroid")
+        val mobileCoverageReports = rootProject.tasks.register("mobileCoverageReports") {
+            group = "verification"
+            description = "Generates XML and HTML Kover reports without changing the quality gate."
+        }
+
+        // Kover registers its report tasks from plugin callbacks. Resolve the
+        // task collections after all project scripts have been evaluated so
+        // the verifier cannot run before its report-producing dependencies.
+        rootProject.gradle.projectsEvaluated {
+            productionProjects.forEach { path ->
+                rootProject.findProject(path)?.tasks
+                    ?.matching { it.name in reportTaskNames }
+                    ?.forEach { reportTask ->
+                        qualityCoverageJvm.configure { dependsOn(reportTask) }
+                        mobileUnitCoverage.configure { dependsOn(reportTask) }
+                        mobileCoverageReports.configure { dependsOn(reportTask) }
+                    }
+            }
+            allProductionProjects.forEach { path ->
+                rootProject.findProject(path)?.tasks
+                    ?.matching { it.name in reportTaskNames + htmlReportTaskNames }
+                    ?.forEach { reportTask ->
+                        mobileCoverageReports.configure { dependsOn(reportTask) }
+                    }
+            }
+            allProductionProjects.forEach { path ->
+                rootProject.findProject(path)?.tasks
+                    ?.matching { it.name in reportTaskNames + htmlReportTaskNames }
+                    ?.forEach { reportTask ->
+                        reportTask.onlyIf {
+                            lifecycle(mobileRoot) == "active" || localCoverageRequested
+                        }
+                    }
+            }
         }
 
         qualityCoverageJvm.configure {
             // Keep lifecycle/inventory changes in the configuration-cache
             // input model. Report tasks are always wired, but the reports
             // themselves are skipped until the active claim is authorized.
-            dependsOn(*reportTasks.toTypedArray())
             inputs.files(lifecycleFile, coverageFile, reportFiles)
             doLast {
                 require(coverageClaimAllowed(mobileRoot, localCoverageRequested)) {
@@ -260,7 +291,6 @@ class QualityPlugin : Plugin<Project> {
         }
 
         mobileUnitCoverage.configure {
-            dependsOn(*reportTasks.toTypedArray())
             inputs.files(lifecycleFile, coverageFile, reportFiles)
             doLast {
                 require(localCoverageRequested) {
@@ -279,13 +309,10 @@ class QualityPlugin : Plugin<Project> {
             }
         }
 
-        productionProjects.forEach { path ->
+        allProductionProjects.forEach { path ->
             rootProject.findProject(path)?.tasks
-                ?.matching { it.name in reportTaskNames }
+                ?.matching { it.name in reportTaskNames + htmlReportTaskNames }
                 ?.configureEach {
-                    onlyIf {
-                        lifecycle(mobileRoot) == "active" || localCoverageRequested
-                    }
                     inputs.files(lifecycleFile, coverageFile)
                 }
         }

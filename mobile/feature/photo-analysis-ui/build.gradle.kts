@@ -5,6 +5,15 @@ plugins {
     id("com.supernutrition.kmp-apple-targets")
 }
 
+dependencyLocking {
+    // Skiko publishes one native runtime module per host OS/architecture. The
+    // JVM test dependency below selects the current host, so these artifacts
+    // cannot share one cross-platform lock entry. Their versions remain pinned
+    // by the version catalog and their artifacts remain covered by Gradle
+    // dependency verification.
+    ignoredDependencies.add("org.jetbrains.skiko:skiko-awt-runtime-*")
+}
+
 composeCompiler {
     stabilityConfigurationFiles.add(
         rootProject.layout.projectDirectory.file("config/compose-stability.conf"),
