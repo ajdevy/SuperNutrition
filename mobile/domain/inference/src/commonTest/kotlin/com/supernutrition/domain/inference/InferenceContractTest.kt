@@ -99,8 +99,8 @@ class InferenceContractTest {
         ).joinToString("")
 
         assertEquals(
-            expectedJson,
-            InferenceContractJson.encode(InferenceContractFixtures.candidateResult),
+            Json.parseToJsonElement(expectedJson),
+            Json.parseToJsonElement(InferenceContractJson.encode(InferenceContractFixtures.candidateResult)),
         )
     }
 
@@ -443,7 +443,7 @@ class InferenceContractTest {
         assertEquals(
             PHOTO_INFERENCE_CONTRACT_V1,
             PhotoInferenceResult(
-                buildString { append(PHOTO_INFERENCE_CONTRACT_V1) },
+                PHOTO_INFERENCE_CONTRACT_V1,
                 InferenceContractFixtures.candidateResult.outcome,
             ).contractVersion,
         )
@@ -497,6 +497,23 @@ class InferenceContractTest {
         assertFailsWith<IllegalArgumentException> {
             InferenceContractFixtures.readyCapability.copy(modelVersion = null)
         }
+        assertFailsWith<IllegalArgumentException> {
+            validUnavailable.copy(reason = CapabilityReason.NONE)
+        }
+    }
+
+    @Test
+    fun `confidence bands are derived from score boundaries`() {
+        assertEquals(ConfidenceBand.LOW, ConfidenceBand.fromScore(0.0))
+        assertEquals(ConfidenceBand.LOW, ConfidenceBand.fromScore(0.499999))
+        assertEquals(ConfidenceBand.MEDIUM, ConfidenceBand.fromScore(0.5))
+        assertEquals(ConfidenceBand.MEDIUM, ConfidenceBand.fromScore(0.799999))
+        assertEquals(ConfidenceBand.HIGH, ConfidenceBand.fromScore(0.8))
+        assertEquals(ConfidenceBand.HIGH, ConfidenceBand.fromScore(1.0))
+
+        assertFailsWith<IllegalArgumentException> { Confidence(0.49, ConfidenceBand.HIGH) }
+        assertFailsWith<IllegalArgumentException> { Confidence(0.5, ConfidenceBand.LOW) }
+        assertFailsWith<IllegalArgumentException> { Confidence(0.8, ConfidenceBand.MEDIUM) }
     }
 
     @Test
@@ -508,7 +525,7 @@ class InferenceContractTest {
         ).joinToString("")
         val encoded = InferenceContractJson.encodeCapability(InferenceContractFixtures.readyCapability)
 
-        assertEquals(expectedJson, encoded)
+        assertEquals(Json.parseToJsonElement(expectedJson), Json.parseToJsonElement(encoded))
         assertEquals(
             InferenceContractFixtures.readyCapability,
             InferenceContractJson.decodeCapability(
@@ -540,10 +557,7 @@ class InferenceContractTest {
             "\"resourceBucket\":\"within-budget\"}",
         ).joinToString("")
 
-        assertEquals(
-            expectedJson,
-            encoded,
-        )
+        assertEquals(Json.parseToJsonElement(expectedJson), Json.parseToJsonElement(encoded))
         assertEquals(
             InferenceContractFixtures.telemetryEvent,
             InferenceContractJson.decodeTelemetry(

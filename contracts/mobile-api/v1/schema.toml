@@ -1,5 +1,6 @@
 schema = "supernutrition.mobile-api-contract.v1"
 schema_version = 1
+contract_id = "mobile-api"
 release = "v1"
 language_neutral = true
 executable = false

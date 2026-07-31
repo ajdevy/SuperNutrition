@@ -15,13 +15,16 @@ root = Path(sys.argv[1]).resolve()
 schema_path = root / "schema.toml"
 matrix_path = root / "compatibility-matrix.toml"
 fixture_path = root / "fixtures" / "empty-analysis-request.toml"
-for path in (schema_path, matrix_path, fixture_path):
+release_path = root / "RELEASE.md"
+for path in (schema_path, matrix_path, fixture_path, release_path):
     if not path.is_file():
         raise SystemExit(f"missing mobile-api contract file: {path}")
 
 schema = tomllib.loads(schema_path.read_text())
 matrix = tomllib.loads(matrix_path.read_text())
 fixture = tomllib.loads(fixture_path.read_text())
+if schema.get("contract_id") != "mobile-api":
+    raise SystemExit("mobile-api schema must declare the top-level contract_id")
 if schema.get("language_neutral") is not True or schema.get("executable") is not False:
     raise SystemExit("mobile-api contract must remain language-neutral and non-executable")
 if schema.get("release") != "v1" or matrix.get("release") != "v1":
@@ -52,6 +55,7 @@ for relative, content in sorted(
     (
         ("compatibility-matrix.toml", matrix_bytes),
         ("fixtures/empty-analysis-request.toml", fixture_path.read_bytes()),
+        ("RELEASE.md", release_path.read_bytes()),
         ("schema.toml", schema_path.read_bytes()),
     )
 ):

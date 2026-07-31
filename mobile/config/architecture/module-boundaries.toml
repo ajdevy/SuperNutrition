@@ -65,6 +65,29 @@ kind = "compose-feature-group"
 source_sets = ["commonMain", "commonTest", "jvmTest", "androidDeviceTest", "iosSimulatorArm64Test", "iosX64Test"]
 production = false
 
+# These exact host roles keep the stable feature paths while making their
+# composition-root and presentation dependencies auditable.
+[[module]]
+id = "feature-host"
+path = "mobile/feature/photo-analysis"
+kind = "composition-root"
+source_sets = ["commonMain", "commonTest", "jvmTest", "androidMain", "androidDeviceTest", "iosMain", "iosSimulatorArm64Test", "iosX64Test"]
+production = false
+
+[[module]]
+id = "feature-presenter"
+path = "mobile/feature/photo-analysis-presenter"
+kind = "presentation"
+source_sets = ["commonMain", "commonTest", "jvmTest", "iosMain", "iosSimulatorArm64Test", "iosX64Test"]
+production = false
+
+[[module]]
+id = "feature-ui"
+path = "mobile/feature/photo-analysis-ui"
+kind = "compose-ui"
+source_sets = ["commonMain", "commonTest", "jvmTest", "iosMain", "iosSimulatorArm64Test", "iosX64Test"]
+production = false
+
 [[module]]
 id = "testing"
 path = "mobile/testing"
@@ -81,7 +104,27 @@ production = false
 
 [[allowed_edge]]
 from = "apps"
-to = "feature|platform|inference|data|core"
+to = "feature|feature-host|feature-presenter|feature-ui|platform|inference|data|core"
+scope = "production"
+
+[[allowed_edge]]
+from = "apps"
+to = "domain|testing|platform"
+scope = "test-only"
+
+[[allowed_edge]]
+from = "feature-host"
+to = "feature-presenter|feature-ui|platform|domain|core"
+scope = "production"
+
+[[allowed_edge]]
+from = "feature-ui"
+to = "feature-presenter|domain|core"
+scope = "production"
+
+[[allowed_edge]]
+from = "feature-presenter"
+to = "domain|core"
 scope = "production"
 
 [[allowed_edge]]
@@ -101,7 +144,12 @@ scope = "production"
 
 [[allowed_edge]]
 from = "testing|evaluation"
-to = "declared-tested-module"
+to = "declared-tested-module|testing"
+scope = "test-only"
+
+[[allowed_edge]]
+from = "feature-host"
+to = "feature-ui|feature-presenter|core|testing"
 scope = "test-only"
 
 forbidden_imports = [

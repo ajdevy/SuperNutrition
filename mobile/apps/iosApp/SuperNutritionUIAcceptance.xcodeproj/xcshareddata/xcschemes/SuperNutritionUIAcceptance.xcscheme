@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "A50000010000000000000001"
+               BlueprintIdentifier = "T50000010000000000000001"
                BuildableName = "SuperNutritionUIAcceptance.app"
                BlueprintName = "SuperNutritionUIAcceptance"
                ReferencedContainer = "container:SuperNutritionUIAcceptance.xcodeproj">
@@ -32,7 +32,7 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "A50000010000000000000002"
+               BlueprintIdentifier = "T50000010000000000000002"
                BuildableName = "SuperNutritionUIAcceptanceTests.xctest"
                BlueprintName = "SuperNutritionUIAcceptanceTests"
                ReferencedContainer = "container:SuperNutritionUIAcceptance.xcodeproj">
@@ -53,7 +53,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "A50000010000000000000001"
+            BlueprintIdentifier = "T50000010000000000000001"
             BuildableName = "SuperNutritionUIAcceptance.app"
             BlueprintName = "SuperNutritionUIAcceptance"
             ReferencedContainer = "container:SuperNutritionUIAcceptance.xcodeproj">
@@ -70,7 +70,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "A50000010000000000000001"
+            BlueprintIdentifier = "T50000010000000000000001"
             BuildableName = "SuperNutritionUIAcceptance.app"
             BlueprintName = "SuperNutritionUIAcceptance"
             ReferencedContainer = "container:SuperNutritionUIAcceptance.xcodeproj">

@@ -7,7 +7,7 @@ entry_count = 0
 wildcards_allowed = false
 package_wide_entries_allowed = false
 expired_entries_fail = true
-status = "pending"
+status = "active-local-empty"
 
 # Future entries must name an exact rule and file/symbol, owner, independent
 # approval, issue, creation/expiry dates, maximum count, and removal condition.

@@ -15,7 +15,8 @@ root = Path(sys.argv[1]).resolve()
 schema_path = root / "schema.toml"
 compatibility_path = root / "compatibility.toml"
 fixture_path = root / "fixtures" / "defaults.toml"
-for path in (schema_path, compatibility_path, fixture_path):
+release_path = root / "RELEASE.md"
+for path in (schema_path, compatibility_path, fixture_path, release_path):
     if not path.is_file():
         raise SystemExit(f"missing interaction-policy contract file: {path}")
 
@@ -84,6 +85,7 @@ for relative, content in sorted(
     (
         ("compatibility.toml", compatibility_bytes),
         ("fixtures/defaults.toml", fixture_path.read_bytes()),
+        ("RELEASE.md", release_path.read_bytes()),
         ("schema.toml", schema_path.read_bytes()),
     )
 ):

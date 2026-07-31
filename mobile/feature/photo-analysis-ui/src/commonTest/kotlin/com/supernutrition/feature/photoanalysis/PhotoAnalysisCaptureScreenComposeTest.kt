@@ -2,10 +2,12 @@ package com.supernutrition.feature.photoanalysis
 
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.v2.runComposeUiTest
 import com.supernutrition.core.ui.UiAutomationIds
+import com.supernutrition.core.ui.UiAutomationId
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -14,33 +16,34 @@ import kotlin.test.assertEquals
 class PhotoAnalysisCaptureScreenComposeTest {
     @Test
     fun `capture screen exposes the shared semantic contract`() = runComposeUiTest {
+        val copy = PhotoAnalysisPresenterCopyFixtures.localized()
         setContent {
             PhotoAnalysisCaptureScreen(
                 model = PhotoAnalysisPresenterModel.from(
                     com.supernutrition.domain.photoanalysis.PhotoAnalysisState.Capture,
+                    copy,
                 ),
                 onAction = {},
-                bootstrapLaunchMarker = true,
+                surface = PhotoAnalysisCaptureSurface(presenterCopy = copy),
             )
         }
 
-        onNodeWithTag("bootstrap_shell_launch_di").assertIsDisplayed()
-        onNodeWithTag("photo_analysis_title").assertIsDisplayed()
-        onNodeWithTag("photo_analysis_status").assertIsDisplayed()
-        onNodeWithTag("capture_shutter").assertIsDisplayed()
-        onNodeWithTag("capture_import").assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_TITLE.value).assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_TITLE.value).assertTextEquals(copy.capture.title)
+        onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_STATUS.value).assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_STATUS.value).assertTextEquals(copy.status.readyToCapture)
+        onNodeWithTag(UiAutomationIds.CAPTURE_SHUTTER.value).assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.CAPTURE_SHUTTER.value).assertTextEquals(copy.capture.takeMealPhoto)
+        onNodeWithTag(UiAutomationIds.CAPTURE_IMPORT.value).assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.CAPTURE_IMPORT.value).assertTextEquals(copy.capture.choosePhoto)
     }
 
     @Test
     fun `screen renders and dispatches every bounded action`() = runComposeUiTest {
+        val copy = PhotoAnalysisPresenterCopyFixtures.localized()
         val clicked = mutableListOf<PhotoAnalysisPresenterAction>()
         val model = PhotoAnalysisPresenterModel(
-            title = "Meal",
-            statusLabel = "Recovery",
-            shutterLabel = "Take",
-            importLabel = "Import",
-            shutterAutomationId = "custom_shutter",
-            importAutomationId = "custom_import",
+            statusLabel = copy.recovery.photoCaptureFailed,
             state = PhotoAnalysisPresenterState.RECOVERY,
             actions = PhotoAnalysisPresenterAction.entries,
         )
@@ -48,7 +51,13 @@ class PhotoAnalysisCaptureScreenComposeTest {
             PhotoAnalysisCaptureScreen(
                 model = model,
                 onAction = clicked::add,
-                bootstrapLaunchMarker = false,
+                surface = PhotoAnalysisCaptureSurface(
+                    presenterCopy = copy,
+                    automationIds = PhotoAnalysisCaptureAutomationIds(
+                        shutter = UiAutomationId("custom_shutter"),
+                        import = UiAutomationId("custom_import"),
+                    ),
+                ),
             )
         }
 
@@ -65,20 +74,16 @@ class PhotoAnalysisCaptureScreenComposeTest {
 
     @Test
     fun `screen remains a stable status surface when no action is available`() = runComposeUiTest {
+        val copy = PhotoAnalysisPresenterCopyFixtures.localized()
         setContent {
             PhotoAnalysisCaptureScreen(
                 model = PhotoAnalysisPresenterModel(
-                    title = "Restoring",
-                    statusLabel = "Restoring photo analysis",
-                    shutterLabel = "Take",
-                    importLabel = "Import",
-                    shutterAutomationId = "unused_shutter",
-                    importAutomationId = "unused_import",
+                    statusLabel = copy.status.restoringPhotoAnalysis,
                     state = PhotoAnalysisPresenterState.BACKGROUNDED,
                     actions = emptyList(),
                 ),
                 onAction = {},
-                bootstrapLaunchMarker = false,
+                surface = PhotoAnalysisCaptureSurface(presenterCopy = copy),
             )
         }
 

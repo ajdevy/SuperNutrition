@@ -65,8 +65,10 @@ class InteractionBudgetEvidenceTest {
             evidence().copy(required = RequiredInteractionCounts(2, 0, 1, 0)),
             evidence().copy(required = RequiredInteractionCounts(2, 0, 0, 1)),
         )
-        required.forEach { observed ->
-            assertFailsWith<IllegalArgumentException> { maxima.assertContains(observed) }
+        required.forEachIndexed { index, observed ->
+            assertFailsWith<IllegalArgumentException>("required dimension $index must be bounded") {
+                maxima.assertContains(observed)
+            }
         }
 
         val auxiliary = listOf(
@@ -77,8 +79,10 @@ class InteractionBudgetEvidenceTest {
             evidence().copy(auxiliary = AuxiliaryInteractionCounts(0, 0, 0, 0, 2, 0)),
             evidence().copy(auxiliary = AuxiliaryInteractionCounts(0, 0, 0, 0, 0, 2)),
         )
-        auxiliary.forEach { observed ->
-            assertFailsWith<IllegalArgumentException> { maxima.assertContains(observed) }
+        auxiliary.forEachIndexed { index, observed ->
+            assertFailsWith<IllegalArgumentException>("auxiliary dimension $index must be bounded") {
+                maxima.assertContains(observed)
+            }
         }
     }
 

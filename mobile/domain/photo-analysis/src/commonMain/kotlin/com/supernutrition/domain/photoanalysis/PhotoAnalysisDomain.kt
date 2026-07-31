@@ -1,30 +1,47 @@
 package com.supernutrition.domain.photoanalysis
 
-import com.supernutrition.core.config.ConfigurationSnapshot
+import com.supernutrition.domain.inference.isSha256Digest
 
 typealias AttemptId = com.supernutrition.domain.inference.AttemptId
 typealias PhotoRef = com.supernutrition.domain.inference.PhotoRef
 
-data class RequestId(val value: String) {
+class RequestId(val value: String) {
     init {
-        require(value.isNotBlank())
+        require(value.isNotBlank()) { "Request ID must not be blank" }
     }
+
+    override fun equals(other: Any?): Boolean = other is RequestId && value == other.value
+    override fun hashCode(): Int = value.hashCode()
+    override fun toString(): String = "RequestId(redacted)"
 }
 
-class PhotoLeaseStore {
+/** Port for attempt-scoped opaque photo leases. */
+interface PhotoLeaseStorePort {
+    fun issue(attemptId: AttemptId, opaqueId: String): PhotoRef
+    fun isActive(ref: PhotoRef): Boolean
+    fun revoke(ref: PhotoRef): Boolean
+    fun revokeAttempt(attemptId: AttemptId): Int
+}
+
+/** Single-reducer in-memory lease store retained under the original public name. */
+class PhotoLeaseStore : PhotoLeaseStorePort {
     private val active = mutableSetOf<PhotoRef>()
 
-    fun issue(attemptId: AttemptId, opaqueId: String): PhotoRef = PhotoRef.issue(attemptId, opaqueId).also(active::add)
+    override fun issue(attemptId: AttemptId, opaqueId: String): PhotoRef {
+        val ref = PhotoRef.issue(attemptId, opaqueId)
+        active += ref
+        return ref
+    }
 
-    fun isActive(ref: PhotoRef): Boolean = ref in active
+    override fun isActive(ref: PhotoRef): Boolean = ref in active
 
     /** Returns false on repeated cleanup; repeated cleanup is still safe. */
-    fun revoke(ref: PhotoRef): Boolean = active.remove(ref)
+    override fun revoke(ref: PhotoRef): Boolean = active.remove(ref)
 
-    fun revokeAttempt(attemptId: AttemptId): Int {
-        val before = active.size
-        active.removeAll { it.attemptId == attemptId }
-        return before - active.size
+    override fun revokeAttempt(attemptId: AttemptId): Int {
+        val revoked = active.filterTo(mutableSetOf()) { it.attemptId == attemptId }
+        active.removeAll(revoked)
+        return revoked.size
     }
 }
 
@@ -35,31 +52,108 @@ enum class ImageOrientation {
     LEFT,
 }
 
-data class RawPhoto(
+/** Byte values are copied at the boundary and on every read. */
+class RawPhoto(
     val ref: PhotoRef,
-    val bytes: ByteArray,
+    bytes: ByteArray,
     val width: Int,
     val height: Int,
     val orientation: ImageOrientation,
     val colorSpace: String,
-    val metadataKeys: Set<String>,
-)
-
-data class NormalizedPhotoInput(
-    val ref: PhotoRef,
-    val bytes: ByteArray,
-    val width: Int,
-    val height: Int,
-    val orientation: ImageOrientation,
-    val colorSpace: String,
-    val metadataKeys: Set<String>,
-    val contentDigest: String,
+    metadataKeys: Set<String>,
 ) {
+    private val storedBytes = bytes.copyOf()
+    val bytes: ByteArray get() = storedBytes.copyOf()
+    val metadataKeys: Set<String> = metadataKeys.toSet()
+
+    fun copy(
+        ref: PhotoRef = this.ref,
+        bytes: ByteArray = this.bytes,
+        width: Int = this.width,
+        height: Int = this.height,
+        orientation: ImageOrientation = this.orientation,
+        colorSpace: String = this.colorSpace,
+        metadataKeys: Set<String> = this.metadataKeys,
+    ): RawPhoto = RawPhoto(ref, bytes, width, height, orientation, colorSpace, metadataKeys)
+
+    override fun equals(other: Any?): Boolean = other is RawPhoto &&
+        ref == other.ref && bytes.contentEquals(other.bytes) && width == other.width && height == other.height &&
+        orientation == other.orientation && colorSpace == other.colorSpace && metadataKeys == other.metadataKeys
+
+    override fun hashCode(): Int {
+        var result = ref.hashCode()
+        result = 31 * result + bytes.contentHashCode()
+        result = 31 * result + width
+        result = 31 * result + height
+        result = 31 * result + orientation.hashCode()
+        result = 31 * result + colorSpace.hashCode()
+        return 31 * result + metadataKeys.hashCode()
+    }
+}
+
+/** Trusted output produced by [PhotoInputNormalizer], with defensive byte access. */
+class NormalizedPhotoInput(
+    val ref: PhotoRef,
+    bytes: ByteArray,
+    val width: Int,
+    val height: Int,
+    val orientation: ImageOrientation,
+    val colorSpace: String,
+    metadataKeys: Set<String>,
+    contentDigest: String,
+) {
+    private val storedBytes = bytes.copyOf()
+    val bytes: ByteArray get() = storedBytes.copyOf()
+    val metadataKeys: Set<String> = metadataKeys.toSet()
+    val contentDigest: String = contentDigest
+
     init {
-        require(orientation == ImageOrientation.UP)
-        require(colorSpace == "sRGB")
-        require(metadataKeys.isEmpty())
-        require(contentDigest.matches(Regex("[a-f0-9]{64}")))
+        require(storedBytes.isNotEmpty()) { "Normalized photo bytes must not be empty" }
+        require(width > 0 && height > 0) { "Normalized photo dimensions must be positive" }
+        require(orientation == ImageOrientation.UP) { "Normalized photo orientation must be UP" }
+        require(colorSpace == "sRGB") { "Normalized photo color space must be sRGB" }
+        require(this.metadataKeys.isEmpty()) { "Normalized photo metadata must be empty" }
+        require(isSha256Digest(contentDigest)) { "Normalized photo digest must be SHA-256" }
+    }
+
+    fun copy(
+        ref: PhotoRef = this.ref,
+        bytes: ByteArray = this.bytes,
+        width: Int = this.width,
+        height: Int = this.height,
+        orientation: ImageOrientation = this.orientation,
+        colorSpace: String = this.colorSpace,
+        metadataKeys: Set<String> = this.metadataKeys,
+        contentDigest: String = this.contentDigest,
+    ): NormalizedPhotoInput = NormalizedPhotoInput(
+        ref,
+        bytes,
+        width,
+        height,
+        orientation,
+        colorSpace,
+        metadataKeys,
+        contentDigest,
+    )
+
+    internal fun wipeBytes() {
+        storedBytes.fill(0)
+    }
+
+    override fun equals(other: Any?): Boolean = other is NormalizedPhotoInput &&
+        ref == other.ref && bytes.contentEquals(other.bytes) && width == other.width && height == other.height &&
+        orientation == other.orientation && colorSpace == other.colorSpace && metadataKeys == other.metadataKeys &&
+        contentDigest == other.contentDigest
+
+    override fun hashCode(): Int {
+        var result = ref.hashCode()
+        result = 31 * result + bytes.contentHashCode()
+        result = 31 * result + width
+        result = 31 * result + height
+        result = 31 * result + orientation.hashCode()
+        result = 31 * result + colorSpace.hashCode()
+        result = 31 * result + metadataKeys.hashCode()
+        return 31 * result + contentDigest.hashCode()
     }
 }
 
@@ -67,35 +161,39 @@ class PhotoPreparationException(message: String) : IllegalArgumentException(mess
 
 /**
  * Common deterministic preparation boundary. Platform adapters must decode,
- * orient, bound, and re-encode bytes before entering this layer; the common
- * layer validates those invariants and owns the remaining size/digest bounds.
- * It never relabels unsanitized bytes as metadata-free output.
+ * orient, bound, and re-encode bytes before entering this layer.
  */
 class PhotoInputNormalizer(
     private val maxBytes: Int = 10 * 1024 * 1024,
     private val maxDimension: Int = 4096,
     private val digest: (ByteArray) -> String,
 ) {
-    fun normalize(raw: RawPhoto): NormalizedPhotoInput {
-        require(raw.bytes.isNotEmpty()) { "Photo bytes must not be empty" }
-        require(raw.bytes.size <= maxBytes) { "Photo exceeds the size bound" }
-        require(raw.width in 1..maxDimension) { "Photo width is outside the bound" }
-        require(raw.height in 1..maxDimension) { "Photo height is outside the bound" }
-        require(raw.orientation == ImageOrientation.UP) {
-            "Platform adapter must apply orientation before common normalization"
-        }
-        require(raw.colorSpace == "sRGB") {
-            "Platform adapter must convert the photo to sRGB before common normalization"
-        }
-        require(raw.metadataKeys.isEmpty()) {
-            "Platform adapter must strip metadata before common normalization"
-        }
+    init {
+        require(maxBytes > 0) { "Photo byte bound must be positive" }
+        require(maxDimension > 0) { "Photo dimension bound must be positive" }
+    }
 
-        val normalizedBytes = raw.bytes.copyOf()
+    fun normalize(raw: RawPhoto): NormalizedPhotoInput {
+        prepareRequire(raw.bytes.isNotEmpty(), "Photo bytes must not be empty")
+        prepareRequire(raw.bytes.size <= maxBytes, "Photo exceeds the size bound")
+        prepareRequire(raw.width in 1..maxDimension, "Photo width is outside the bound")
+        prepareRequire(raw.height in 1..maxDimension, "Photo height is outside the bound")
+        prepareRequire(
+            raw.orientation == ImageOrientation.UP,
+            "Platform adapter must apply orientation before common normalization",
+        )
+        prepareRequire(
+            raw.colorSpace == "sRGB",
+            "Platform adapter must convert the photo to sRGB before common normalization",
+        )
+        prepareRequire(
+            raw.metadataKeys.isEmpty(),
+            "Platform adapter must strip metadata before common normalization",
+        )
+
+        val normalizedBytes = raw.bytes
         val normalizedDigest = digest(normalizedBytes)
-        require(normalizedDigest.matches(Regex("[a-f0-9]{64}"))) {
-            "Platform digest must be SHA-256"
-        }
+        prepareRequire(isSha256Digest(normalizedDigest), "Platform digest must be SHA-256")
         return NormalizedPhotoInput(
             ref = raw.ref,
             bytes = normalizedBytes,
@@ -107,71 +205,40 @@ class PhotoInputNormalizer(
             contentDigest = normalizedDigest,
         )
     }
+
+    private fun prepareRequire(condition: Boolean, message: String) {
+        if (!condition) throw PhotoPreparationException(message)
+    }
 }
 
-class PhotoSessionStore {
+/** Port for attempt-scoped normalized photo content. */
+interface PhotoSessionStorePort {
+    fun put(input: NormalizedPhotoInput)
+    fun read(ref: PhotoRef): NormalizedPhotoInput?
+    fun remove(ref: PhotoRef): Boolean
+    fun clearAttempt(attemptId: AttemptId): Int
+}
+
+/** Single-reducer in-memory content store with explicit secure cleanup. */
+class PhotoSessionStore : PhotoSessionStorePort {
     private val contents = mutableMapOf<PhotoRef, NormalizedPhotoInput>()
 
-    fun put(input: NormalizedPhotoInput) {
+    override fun put(input: NormalizedPhotoInput) {
         contents[input.ref] = input
     }
 
-    fun read(ref: PhotoRef): NormalizedPhotoInput? = contents[ref]
+    override fun read(ref: PhotoRef): NormalizedPhotoInput? = contents[ref]
 
-    /** Idempotent terminal cleanup for success, failure, cancellation, and replacement. */
-    fun clearAttempt(attemptId: AttemptId): Int {
-        contents.values
-            .filter { it.ref.attemptId == attemptId }
-            .forEach { it.bytes.fill(0) }
-        val before = contents.size
-        contents.keys.removeAll { it.attemptId == attemptId }
-        return before - contents.size
+    override fun remove(ref: PhotoRef): Boolean {
+        val removed = contents.remove(ref) ?: return false
+        removed.wipeBytes()
+        return true
+    }
+
+    /** Idempotent terminal cleanup that zeroes sensitive photo bytes before release. */
+    override fun clearAttempt(attemptId: AttemptId): Int {
+        val refs = contents.keys.filter { it.attemptId == attemptId }
+        refs.forEach { ref -> contents.remove(ref)?.wipeBytes() }
+        return refs.size
     }
 }
-
-sealed interface PhotoAnalysisState {
-    data object Capture : PhotoAnalysisState
-    data class Preparing(val ref: PhotoRef) : PhotoAnalysisState
-    data class Ready(val input: NormalizedPhotoInput) : PhotoAnalysisState
-    data class Analyzing(val ref: PhotoRef, val requestId: RequestId) : PhotoAnalysisState
-    data class CandidateReview(val ref: PhotoRef, val requestId: RequestId) : PhotoAnalysisState
-    data class Recovery(val reason: RecoveryReason, val ref: PhotoRef? = null) : PhotoAnalysisState
-    data class Backgrounded(val snapshot: PhotoAnalysisBackgroundSnapshot) : PhotoAnalysisState
-}
-
-/** Process-safe snapshot: opaque identity only; photo bytes stay in the session store. */
-sealed interface PhotoAnalysisBackgroundSnapshot {
-    data object Capture : PhotoAnalysisBackgroundSnapshot
-    data class Preparing(val ref: PhotoRef) : PhotoAnalysisBackgroundSnapshot
-    data class Ready(val ref: PhotoRef) : PhotoAnalysisBackgroundSnapshot
-    data class Analyzing(val ref: PhotoRef, val requestId: RequestId) : PhotoAnalysisBackgroundSnapshot
-    data class CandidateReview(val ref: PhotoRef, val requestId: RequestId) : PhotoAnalysisBackgroundSnapshot
-    data class Recovery(val reason: RecoveryReason, val ref: PhotoRef?) : PhotoAnalysisBackgroundSnapshot
-}
-
-enum class RecoveryReason {
-    PERMISSION_DENIED,
-    CAMERA_UNAVAILABLE,
-    CAPTURE_FAILED,
-    POOR_IMAGE,
-    NO_FOOD,
-    OFFLINE,
-    CANCELLED,
-}
-
-sealed interface PhotoAnalysisEvent {
-    data class PhotoCaptured(val ref: PhotoRef) : PhotoAnalysisEvent
-    data class PreparationSucceeded(val input: NormalizedPhotoInput) : PhotoAnalysisEvent
-    data class PreparationFailed(val reason: RecoveryReason) : PhotoAnalysisEvent
-    data object PermissionDenied : PhotoAnalysisEvent
-    data class AnalysisStarted(val requestId: RequestId) : PhotoAnalysisEvent
-    data class AnalysisSucceeded(val requestId: RequestId) : PhotoAnalysisEvent
-    data class ReplacePhoto(val ref: PhotoRef) : PhotoAnalysisEvent
-    data object Cancel : PhotoAnalysisEvent
-    data object ScanAgain : PhotoAnalysisEvent
-    data object Backgrounded : PhotoAnalysisEvent
-    data object Restored : PhotoAnalysisEvent
-    data class RestoreFromSnapshot(val snapshot: PhotoAnalysisBackgroundSnapshot) : PhotoAnalysisEvent
-}
-
-data class AnalysisAttemptContext(val attemptId: AttemptId, val snapshot: ConfigurationSnapshot)

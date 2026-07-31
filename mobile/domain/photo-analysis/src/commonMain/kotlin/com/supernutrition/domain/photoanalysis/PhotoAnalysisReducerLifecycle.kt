@@ -2,29 +2,7 @@ package com.supernutrition.domain.photoanalysis
 
 internal class PhotoAnalysisReducerLifecycle(private val context: PhotoAnalysisReducerContext) {
     fun backgroundSnapshot(current: PhotoAnalysisState): PhotoAnalysisState.Backgrounded =
-        PhotoAnalysisState.Backgrounded(
-            snapshot = when (current) {
-                PhotoAnalysisState.Capture -> PhotoAnalysisBackgroundSnapshot.Capture
-
-                is PhotoAnalysisState.Preparing -> PhotoAnalysisBackgroundSnapshot.Preparing(current.ref)
-
-                is PhotoAnalysisState.Ready -> PhotoAnalysisBackgroundSnapshot.Ready(current.input.ref)
-
-                is PhotoAnalysisState.Analyzing -> PhotoAnalysisBackgroundSnapshot.Analyzing(
-                    current.ref,
-                    current.requestId,
-                )
-
-                is PhotoAnalysisState.CandidateReview -> PhotoAnalysisBackgroundSnapshot.CandidateReview(
-                    current.ref,
-                    current.requestId,
-                )
-
-                is PhotoAnalysisState.Recovery -> PhotoAnalysisBackgroundSnapshot.Recovery(current.reason, current.ref)
-
-                is PhotoAnalysisState.Backgrounded -> current.snapshot
-            },
-        )
+        PhotoAnalysisState.Backgrounded(current.toBackgroundSnapshot())
 
     fun restore(snapshot: PhotoAnalysisBackgroundSnapshot): PhotoAnalysisState = when (snapshot) {
         PhotoAnalysisBackgroundSnapshot.Capture -> PhotoAnalysisState.Capture
@@ -33,7 +11,9 @@ internal class PhotoAnalysisReducerLifecycle(private val context: PhotoAnalysisR
 
         is PhotoAnalysisBackgroundSnapshot.Ready -> restoreInput(snapshot.ref, PhotoAnalysisState::Ready)
 
-        is PhotoAnalysisBackgroundSnapshot.Analyzing -> restoreInput(snapshot.ref, PhotoAnalysisState::Ready)
+        is PhotoAnalysisBackgroundSnapshot.Analyzing -> restoreInput(snapshot.ref) {
+            PhotoAnalysisState.Analyzing(snapshot.ref, snapshot.requestId)
+        }
 
         is PhotoAnalysisBackgroundSnapshot.CandidateReview -> restoreInput(snapshot.ref) {
             PhotoAnalysisState.CandidateReview(snapshot.ref, snapshot.requestId)

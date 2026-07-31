@@ -1,30 +1,21 @@
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.compose)
     alias(libs.plugins.kotlin.compose)
+    id("com.supernutrition.kmp-apple-targets")
 }
 
 composeCompiler {
     stabilityConfigurationFiles.add(
-        layout.projectDirectory.file("../../config/compose-stability.conf"),
+        rootProject.layout.projectDirectory.file("config/compose-stability.conf"),
     )
 }
 
+val enableIosDeviceTarget = extra["supernutrition.enableIosDeviceTarget"] as Boolean
+val enableIntelX64 = extra["supernutrition.enableIntelX64"] as Boolean
+
 kotlin {
     jvm()
-
-    val isIntelMac =
-        System.getProperty("os.name") == "Mac OS X" &&
-            System.getProperty("os.arch") == "x86_64"
-    val enableIosDeviceTarget =
-        !isIntelMac ||
-            providers.gradleProperty("supernutrition.enableIosDeviceTarget").orNull == "true"
-
-    if (enableIosDeviceTarget) {
-        iosArm64()
-        if (!isIntelMac) {
-            iosSimulatorArm64()
-        }
-    }
 
     sourceSets {
         commonMain.dependencies {
@@ -49,10 +40,10 @@ kotlin {
             // Compose UI Test v2 uses Skiko for the JVM host. The native
             // runtime is test-only and selected for the executing CI host.
             val skikoRuntime = when {
-                System.getProperty("os.name") == "Mac OS X" &&
-                    System.getProperty("os.arch") == "x86_64" ->
+                providers.systemProperty("os.name").orNull == "Mac OS X" &&
+                    providers.systemProperty("os.arch").orNull == "x86_64" ->
                     libs.skiko.awt.runtime.macos.x64
-                System.getProperty("os.name") == "Mac OS X" ->
+                providers.systemProperty("os.name").orNull == "Mac OS X" ->
                     libs.skiko.awt.runtime.macos.arm64
                 else -> libs.skiko.awt.runtime.linux.x64
             }

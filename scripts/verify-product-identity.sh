@@ -40,6 +40,40 @@ if contract.get("source_manifest") != "mobile/config/product-identity.toml":
     fail("identity contract must bind the mobile source manifest")
 if schema.get("contract_id") != "product-identity" or schema.get("release") != "v1":
     fail("product-identity schema release is invalid")
+visible_keys = (
+    "canonical_name",
+    "installed_display_name",
+    "launcher_name",
+    "in_app_name",
+    "accessibility_name",
+)
+field_schema = schema.get("fields", {})
+expected_field_values = {
+    "canonical_name": "SuperNutrition",
+    "installed_display_name": "SuperNutrition",
+    "launcher_name": "SuperNutrition",
+    "in_app_name": "SuperNutrition",
+    "accessibility_name": "SuperNutrition",
+    "store_listing_title": "SuperNutrition AI nutritionist",
+    "android_application_id": "com.supernutrition.android",
+    "ios_bundle_identifier": "com.supernutrition.ios",
+    "acceptance_android_application_id": "com.supernutrition.android.uiAcceptance",
+    "acceptance_ios_bundle_identifier": "com.supernutrition.ios.uiacceptance",
+}
+if set(field_schema) != set(expected_field_values):
+    fail("product-identity schema fields are incomplete or unexpected")
+for key, expected_value in expected_field_values.items():
+    definition = field_schema.get(key)
+    if definition.get("type") != "string" or definition.get("allowed_values") != [expected_value]:
+        fail(f"product-identity schema constraint is invalid for {key}")
+schema_values = {
+    **{key: contract.get(key) for key in visible_keys},
+    "store_listing_title": contract.get("store", {}).get("apple", {}).get("listing_title"),
+    **contract.get("technical", {}),
+}
+for key, value in schema_values.items():
+    if value not in field_schema[key]["allowed_values"]:
+        fail(f"product-identity schema rejected contract value for {key}")
 if compatibility.get("contract_id") != "product-identity" or compatibility.get("release") != "v1":
     fail("product-identity compatibility metadata is invalid")
 if compatibility.get("source_manifest") != "mobile/config/product-identity.toml":
@@ -76,13 +110,6 @@ for relative, content in sorted(
 if compatibility.get("digest") != release_digest.hexdigest():
     fail("product-identity compatibility digest is stale")
 
-visible_keys = (
-    "canonical_name",
-    "installed_display_name",
-    "launcher_name",
-    "in_app_name",
-    "accessibility_name",
-)
 for key in visible_keys:
     if mobile.get(key) != "SuperNutrition" or contract.get(key) != "SuperNutrition":
         fail(f"visible identity mismatch for {key}")
@@ -160,6 +187,17 @@ production_product_names = set(re.findall(
     r'PRODUCT_BUNDLE_IDENTIFIER = "com\.supernutrition\.ios"; PRODUCT_NAME = "([^"]+)"',
     ios_project,
 ))
+native_target_ids = {
+    name: identifier
+    for identifier, name in re.findall(
+        r'(?ms)^\s*([A-Za-z0-9]+) /\* ([^*]+) \*/ = \{\s*isa = PBXNativeTarget;',
+        ios_project,
+    )
+}
+acceptance_target_id = native_target_ids.get("SuperNutritionUIAcceptance")
+production_target_id = native_target_ids.get("SuperNutrition")
+if acceptance_target_id is None or production_target_id is None:
+    fail("iOS Xcode native target names are missing")
 if len(acceptance_product_names) != 1 or acceptance_product_names != {"SuperNutritionUIAcceptance"}:
     fail("iOS acceptance target product name is missing or collides with production")
 if len(production_product_names) != 1 or production_product_names != {"SuperNutrition"}:
@@ -174,10 +212,10 @@ production_scheme_path = scheme_root / "SuperNutrition.xcscheme"
 if not production_scheme_path.is_file():
     fail("iOS production shared scheme is missing")
 production_scheme = production_scheme_path.read_text(encoding="utf-8")
-if 'BlueprintIdentifier = "A50000010000000000000001"' not in acceptance_scheme or \
+if f'BlueprintIdentifier = "{acceptance_target_id}"' not in acceptance_scheme or \
         'BuildableName = "SuperNutritionUIAcceptance.app"' not in acceptance_scheme:
     fail("iOS acceptance scheme does not build the acceptance product")
-if 'BlueprintIdentifier = "A50000010000000000000003"' not in production_scheme or \
+if f'BlueprintIdentifier = "{production_target_id}"' not in production_scheme or \
         'BuildableName = "SuperNutrition.app"' not in production_scheme:
     fail("iOS production scheme does not build the production product")
 

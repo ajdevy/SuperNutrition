@@ -1,22 +1,130 @@
 #!/usr/bin/env bash
+# Read-only preselection gate for the backend product root.
+#
+# The backend is intentionally not activated yet. This entrypoint validates
+# typed TOML metadata and rejects any undeclared product material without
+# depending on formatting-sensitive grep/find pipelines.
 set -euo pipefail
 
 root_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 manifest="$root_dir/product-lifecycle.toml"
-test -f "$manifest"
-grep -q '^lifecycle = "preselection"$' "$manifest"
-grep -q '^quality_claim = false$' "$manifest"
-grep -q '^production_source_count = 0$' "$manifest"
-grep -q '^dependency_manifest = "absent"$' "$manifest"
-grep -q '^lock_state = "absent"$' "$manifest"
-grep -q '^runtime = "unselected"$' "$manifest"
-grep -q '^deployable_artifact = "absent"$' "$manifest"
-grep -q '^quality_entrypoint = "quality-check"$' "$manifest"
-grep -q '^executable_inventory = \["quality-check"\]$' "$manifest"
-
-if find "$root_dir" -mindepth 1 -type f ! -name product-lifecycle.toml ! -name quality-check -print -quit | grep -q .; then
-  printf '%s\n' 'backend mobile-api preselection contains undeclared product material' >&2
+if ! command -v python3 >/dev/null 2>&1; then
+  printf '%s\n' 'backend mobile-api quality-check requires python3 for TOML validation' >&2
   exit 1
 fi
+test -f "$manifest" || {
+  printf 'backend mobile-api: missing lifecycle manifest: %s\n' "$manifest" >&2
+  exit 1
+}
+
+BACKEND_ROOT="$root_dir" BACKEND_MANIFEST="$manifest" python3 - <<'PY'
+import ast
+import os
+from pathlib import Path
+
+try:
+    import tomllib
+except ModuleNotFoundError:  # Python 3.10 has no stdlib TOML reader.
+    tomllib = None
+
+root = Path(os.environ["BACKEND_ROOT"])
+manifest = Path(os.environ["BACKEND_MANIFEST"])
+def read_manifest(path: Path) -> dict:
+    """Parse the root-only preselection manifest on Python 3.10+."""
+    if tomllib is not None:
+        parsed = tomllib.loads(path.read_text(encoding="utf-8"))
+        return {key: value for key, value in parsed.items() if not isinstance(value, dict)}
+
+    def without_comment(raw: str) -> str:
+        quote = None
+        escaped = False
+        for index, char in enumerate(raw):
+            if escaped:
+                escaped = False
+            elif quote and char == "\\":
+                escaped = True
+            elif char in {"'", '"'}:
+                quote = None if quote == char else (char if quote is None else quote)
+            elif char == "#" and quote is None:
+                return raw[:index]
+        if quote is not None:
+            raise ValueError("unterminated string")
+        return raw
+
+    data = {}
+    pending = ""
+    depth = 0
+    in_table = False
+    for raw_line in path.read_text(encoding="utf-8").splitlines():
+        line = without_comment(raw_line).strip()
+        if not line:
+            continue
+        if line.startswith("[") and depth == 0:
+            if not (line.endswith("]") and not line.startswith("[[")):
+                raise ValueError("unsupported table declaration")
+            in_table = True
+            continue
+        if in_table:
+            continue
+        pending = f"{pending} {line}".strip()
+        depth += line.count("[") - line.count("]")
+        if depth < 0:
+            raise ValueError("array closes before it opens")
+        if depth:
+            continue
+        if "=" not in pending:
+            raise ValueError("assignment is missing '='")
+        key, _, raw_value = pending.partition("=")
+        value = raw_value.strip()
+        if value in {"true", "false"}:
+            parsed = value == "true"
+        else:
+            try:
+                parsed = ast.literal_eval(value)
+            except (SyntaxError, ValueError) as error:
+                raise ValueError(f"unsupported TOML value for {key.strip()}") from error
+        data[key.strip()] = parsed
+        pending = ""
+    if pending or depth:
+        raise ValueError("unterminated array assignment")
+    return data
+
+try:
+    data = read_manifest(manifest)
+except (OSError, ValueError) as error:
+    raise SystemExit(f"backend mobile-api: invalid lifecycle TOML: {error}") from error
+
+expected = {
+    "schema": "supernutrition.backend.product-lifecycle.v1",
+    "schema_version": 1,
+    "product": "mobile-api",
+    "lifecycle": "preselection",
+    "source_digest": "pending",
+    "quality_claim": False,
+    "production_source_count": 0,
+    "dependency_manifest": "absent",
+    "lock_state": "absent",
+    "runtime": "unselected",
+    "deployable_artifact": "absent",
+    "quality_entrypoint": "quality-check",
+    "executable_inventory": ["quality-check"],
+}
+for key, value in expected.items():
+    if data.get(key) != value:
+        raise SystemExit(f"backend mobile-api: {key} must be {value!r}, got {data.get(key)!r}")
+
+declared_files = {"product-lifecycle.toml", "quality-check"}
+actual_files = {
+    path.relative_to(root).as_posix()
+    for path in root.rglob("*")
+    if path.is_file()
+}
+unexpected = sorted(actual_files - declared_files)
+if unexpected:
+    raise SystemExit(
+        "backend mobile-api preselection contains undeclared product material: "
+        + ", ".join(unexpected)
+    )
+PY
 
 printf '%s\n' 'backend mobile-api: preselection verified (no production material)'

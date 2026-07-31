@@ -9,8 +9,12 @@ import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject2;
 import androidx.test.uiautomator.Until;
 
+import com.supernutrition.core.ui.UiAutomationIds;
+import com.supernutrition.feature.photoanalysis.R;
+
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /** Physical-device semantic contract for the production Compose capture surface. */
@@ -25,16 +29,19 @@ public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
         targetContext.startActivity(launchIntent);
 
         UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
-        assertSemantic(device, "photo_analysis_title", "Capture");
-        assertSemantic(device, "photo_analysis_status", "Ready to capture");
-        assertSemantic(device, "capture_shutter", "Take meal photo");
-        assertSemantic(device, "capture_import", "Choose photo");
+        assertSemantic(device, UiAutomationIds.INSTANCE.getPHOTO_ANALYSIS_TITLE().getValue(),
+                targetContext.getString(R.string.capture_title));
+        assertSemantic(device, UiAutomationIds.INSTANCE.getPHOTO_ANALYSIS_STATUS().getValue(),
+                targetContext.getString(R.string.capture_status_ready));
+        assertSemantic(device, UiAutomationIds.INSTANCE.getCAPTURE_SHUTTER().getValue(),
+                targetContext.getString(R.string.capture_shutter));
+        assertSemantic(device, UiAutomationIds.INSTANCE.getCAPTURE_IMPORT().getValue(),
+                targetContext.getString(R.string.capture_import));
     }
 
     private static void assertSemantic(UiDevice device, String id, String label) {
         UiObject2 node = device.wait(Until.findObject(By.desc(id)), 5_000L);
         assertNotNull("missing Compose semantic id: " + id, node);
-        assertNotNull("missing Compose semantic label: " + label,
-                device.wait(Until.findObject(By.text(label)), 5_000L));
+        assertEquals("wrong label for Compose semantic id: " + id, label, node.getText());
     }
 }
