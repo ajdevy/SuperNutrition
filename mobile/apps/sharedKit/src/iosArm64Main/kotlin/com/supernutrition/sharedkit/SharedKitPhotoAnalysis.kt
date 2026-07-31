@@ -9,6 +9,16 @@ import platform.UIKit.UIViewController
 public object SharedKitPhotoAnalysis {
     public fun viewController(
         session: SharedKitPhotoAnalysisSession,
-        onNativeAction: (PhotoAnalysisNativeAction) -> Unit,
-    ): UIViewController = PhotoAnalysisViewController(session.feature, session.presenterCopy, onNativeAction)
+        onNativeAction: (SharedKitPhotoAnalysisNativeAction) -> Unit,
+    ): UIViewController = PhotoAnalysisViewController(
+        session.feature,
+        session.presenterCopy,
+    ) { action -> onNativeAction(action.toSharedKitAction()) }
 }
+
+private fun PhotoAnalysisNativeAction.toSharedKitAction(): SharedKitPhotoAnalysisNativeAction =
+    when (this) {
+        PhotoAnalysisNativeAction.TakePhoto -> SharedKitPhotoAnalysisNativeAction.TakePhoto
+        PhotoAnalysisNativeAction.ImportPhoto -> SharedKitPhotoAnalysisNativeAction.ImportPhoto
+        PhotoAnalysisNativeAction.OpenSettings -> SharedKitPhotoAnalysisNativeAction.OpenSettings
+    }
