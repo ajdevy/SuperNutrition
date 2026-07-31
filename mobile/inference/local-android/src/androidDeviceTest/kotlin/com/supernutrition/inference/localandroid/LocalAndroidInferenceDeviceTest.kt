@@ -13,11 +13,15 @@ import com.supernutrition.domain.photoanalysis.ImageOrientation
 import com.supernutrition.domain.photoanalysis.NormalizedPhotoInput
 import com.supernutrition.domain.photoanalysis.PhotoLeaseStore
 import com.supernutrition.domain.photoanalysis.PhotoSessionStorePort
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import java.security.MessageDigest
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertIs
 
 /** Physical Android adapter evidence using a deterministic injected runtime. */
@@ -64,6 +68,46 @@ class LocalAndroidInferenceDeviceTest {
         assertEquals(0, store.reads)
         assertEquals(0, runtime.invocations)
         assertEquals(0, runtime.networkAttempts)
+    }
+
+    @Test
+    fun resourceBudgetCapabilityFailsClosedWithoutReadingPhotoContent() = runBlocking {
+        val fixture = Fixture()
+        val runtime = RecordingRuntime(
+            AndroidRuntimeCapability.Unavailable(
+                state = CapabilityState.TEMPORARILY_UNAVAILABLE,
+                reason = CapabilityReason.RESOURCE_BUDGET,
+            ),
+        )
+        val store = RecordingPhotoStore(fixture.input)
+        val result = LocalAndroidInferenceEngine(
+            photos = store,
+            leases = fixture.leases,
+            runtime = runtime,
+            digest = ::sha256,
+        ).analyze(fixture.request)
+
+        val failure = assertIs<InferenceOutcome.Failure>(result.outcome)
+        assertEquals(InferenceFailureCode.MODEL_UNAVAILABLE, failure.code)
+        assertEquals(0, store.reads)
+        assertEquals(0, runtime.invocations)
+        assertEquals(0, runtime.networkAttempts)
+    }
+
+    @Test
+    fun cancelledAttemptReleasesRuntimeAndRejectsLateResult() = runBlocking {
+        val fixture = Fixture()
+        val runtime = BlockingRuntime(fixture.model)
+        val engine = fixture.engine(runtime)
+        val pending = async { engine.analyze(fixture.request) }
+
+        runtime.started.await()
+        engine.cancel(fixture.attempt)
+        runtime.release.complete(Unit)
+
+        assertFailsWith<CancellationException> { pending.await() }
+        assertEquals(2, runtime.cancelCalls)
+        assertEquals(1, runtime.releaseCalls)
     }
 
     private class Fixture {
@@ -134,6 +178,36 @@ class LocalAndroidInferenceDeviceTest {
         override fun release(token: AndroidInferenceAttemptToken) = Unit
 
         override fun cancel(token: AndroidInferenceAttemptToken) = Unit
+    }
+
+    private class BlockingRuntime(private val model: AndroidModelProvenance) : AndroidLocalInferenceRuntime {
+        val started = CompletableDeferred<Unit>()
+        val release = CompletableDeferred<Unit>()
+        var cancelCalls = 0
+        var releaseCalls = 0
+
+        override suspend fun capability(): AndroidRuntimeCapability = AndroidRuntimeCapability.Ready(model)
+
+        override suspend fun analyze(
+            input: NormalizedPhotoInput,
+            token: AndroidInferenceAttemptToken,
+        ): AndroidRuntimeOutcome {
+            started.complete(Unit)
+            release.await()
+            return AndroidRuntimeOutcome.Failure(
+                code = InferenceFailureCode.TEMPORARY_UNAVAILABLE,
+                retryable = true,
+                userMessageKey = "inference.failure.temporary_unavailable",
+            )
+        }
+
+        override fun release(token: AndroidInferenceAttemptToken) {
+            releaseCalls += 1
+        }
+
+        override fun cancel(token: AndroidInferenceAttemptToken) {
+            cancelCalls += 1
+        }
     }
 
     private class RecordingPhotoStore(private val input: NormalizedPhotoInput) : PhotoSessionStorePort {
