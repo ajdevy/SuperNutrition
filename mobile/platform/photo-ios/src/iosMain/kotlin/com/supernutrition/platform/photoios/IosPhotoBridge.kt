@@ -129,17 +129,13 @@ class IosPhotoBridge :
             failPresentation(onFailure)
             return
         }
-        val configuration = PHPickerConfiguration(
-            photoLibrary = platform.Photos.PHPhotoLibrary.sharedPhotoLibrary(),
-        ).apply {
+        val configuration = PHPickerConfiguration().apply {
             filter = platform.PhotosUI.PHPickerFilter.imagesFilter()
             selectionLimit = 1
         }
         val weakBridge = WeakReference(this)
         lateinit var delegate: PhotoPickerDelegate
-        val picker = TrackedPhotoPickerViewController(configuration) {
-            delegate.presentationDismissed()
-        }
+        val picker = PHPickerViewController(configuration = configuration)
         delegate = PhotoPickerDelegate(
             onResult = { data -> deliver(onResult, data) },
             onFailure = { failPresentation(onFailure) },
@@ -335,23 +331,6 @@ private class CameraCaptureViewController(
 }
 
 @OptIn(ExperimentalForeignApi::class)
-private class TrackedPhotoPickerViewController(
-    configuration: PHPickerConfiguration,
-    private val onDismissed: () -> Unit,
-) : PHPickerViewController(configuration = configuration) {
-    private var programmaticDismissal = false
-
-    fun markProgrammaticDismissal() {
-        programmaticDismissal = true
-    }
-
-    override fun viewDidDisappear(animated: Boolean) {
-        super.viewDidDisappear(animated)
-        if (!programmaticDismissal) onDismissed()
-    }
-}
-
-@OptIn(ExperimentalForeignApi::class)
 private class PhotoPickerDelegate(
     private val onResult: (NSData?) -> Unit,
     private val onFailure: () -> Unit,
@@ -359,10 +338,6 @@ private class PhotoPickerDelegate(
 ) : NSObject(),
     PHPickerViewControllerDelegateProtocol {
     private var completed = false
-
-    fun presentationDismissed() {
-        complete { onResult(null) }
-    }
 
     override fun picker(picker: PHPickerViewController, didFinishPicking: List<*>) {
         if (completed) return
@@ -397,7 +372,6 @@ private class PhotoPickerDelegate(
     }
 
     private fun dismissPicker(picker: PHPickerViewController, action: () -> Unit) {
-        (picker as? TrackedPhotoPickerViewController)?.markProgrammaticDismissal()
         picker.dismissViewControllerAnimated(true) { complete(action) }
     }
 }
