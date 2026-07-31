@@ -1,7 +1,6 @@
 name: android-ui-coverage
 
 on:
-  pull_request:
   push:
     branches:
       - main

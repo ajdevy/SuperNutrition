@@ -15,7 +15,7 @@ START_MARKER = "<!-- coverage-report:start -->"
 END_MARKER = "<!-- coverage-report:end -->"
 REPOSITORY = "flexsent-labs/SuperNutrition"
 WORKFLOWS = {
-    "dashboard": "coverage-readme.yml",
+    "dashboard": "ci-required.yml",
     "jvm": "ci-required.yml",
     "android": "android-ui-coverage.yml",
     "ios": "ios-ui-coverage.yml",

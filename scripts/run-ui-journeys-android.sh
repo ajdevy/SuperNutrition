@@ -35,12 +35,41 @@ for executable in "$sdkmanager_bin" "$avdmanager_bin"; do
   }
 done
 
-"$sdkmanager_bin" --licenses < <(yes) >/dev/null
-"$sdkmanager_bin" --install \
-  "platform-tools" \
-  "emulator" \
-  "platforms;android-36" \
-  "system-images;android-36;google_apis;x86_64"
+sdk_packages=()
+test -x "$adb_bin" || sdk_packages+=("platform-tools")
+test -x "$emulator_bin" || sdk_packages+=("emulator")
+test -d "$sdk_root/platforms/android-36" || sdk_packages+=("platforms;android-36")
+test -f "$sdk_root/system-images/android-36/google_apis/x86_64/source.properties" ||
+  sdk_packages+=("system-images;android-36;google_apis;x86_64")
+if (("${#sdk_packages[@]}" > 0)); then
+  sdk_install_timeout="${SUPERNUTRITION_SDK_INSTALL_TIMEOUT_SECONDS:-600}"
+  python3 - "$sdkmanager_bin" "$sdk_install_timeout" "${sdk_packages[@]}" <<'PY'
+import subprocess
+import sys
+
+sdkmanager, timeout, *packages = sys.argv[1:]
+timeout_seconds = float(timeout)
+try:
+    subprocess.run(
+        [sdkmanager, "--licenses"],
+        check=True,
+        input=("y\n" * 64).encode(),
+        stdout=subprocess.DEVNULL,
+        timeout=timeout_seconds,
+    )
+    subprocess.run(
+        [sdkmanager, "--install", *packages],
+        check=True,
+        timeout=timeout_seconds,
+    )
+except subprocess.TimeoutExpired:
+    print(
+        f"Android SDK installation exceeded {timeout_seconds:g} seconds",
+        file=sys.stderr,
+    )
+    raise SystemExit(124)
+PY
+fi
 
 for executable in "$emulator_bin" "$adb_bin"; do
   test -x "$executable" || {
@@ -62,7 +91,7 @@ fi
   -no-audio \
   -no-boot-anim \
   -no-snapshot \
-  -gpu swiftshader_indirect >"$temp_root/emulator.log" 2>&1 &
+  -gpu swiftshader >"$temp_root/emulator.log" 2>&1 &
 emulator_pid=$!
 cleanup() {
   kill "$emulator_pid" 2>/dev/null || true
@@ -70,28 +99,34 @@ cleanup() {
 trap cleanup EXIT
 
 "$adb_bin" start-server >/dev/null
-"$adb_bin" wait-for-device
+device_serial=""
 for _ in $(seq 1 90); do
-  boot_completed="$("$adb_bin" shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')"
-  if test "$boot_completed" = "1"; then
-    break
+  if ! kill -0 "$emulator_pid" 2>/dev/null; then
+    printf 'Android emulator exited before boot completed\n' >&2
+    tail -n 80 "$temp_root/emulator.log" >&2 || true
+    exit 1
+  fi
+  device_serial="$("$adb_bin" devices | awk 'NR > 1 && $1 ~ /^emulator-/ && $2 == "device" {print $1; exit}')"
+  if test -n "$device_serial"; then
+    boot_completed="$("$adb_bin" -s "$device_serial" shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')"
+    if test "$boot_completed" = "1"; then
+      break
+    fi
   fi
   sleep 2
 done
-test "$("$adb_bin" shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" = "1" || {
+test -n "$device_serial" &&
+  test "$("$adb_bin" -s "$device_serial" shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" = "1" || {
   printf 'Android emulator did not finish booting\n' >&2
+  tail -n 80 "$temp_root/emulator.log" >&2 || true
   exit 1
 }
 
-device_serial="$("$adb_bin" devices | awk 'NR > 1 && $2 == "device" {print $1; exit}')"
-test -n "$device_serial" || {
-  printf 'no online Android device was discovered\n' >&2
-  exit 1
-}
 export ANDROID_SERIAL="$device_serial"
 
 "$repo_root/mobile/gradlew" -p "$repo_root/mobile" \
   :apps:androidApp:connectedUiAcceptanceDebugAndroidTest \
+  :apps:androidApp:assembleUiAcceptanceDebug \
   -Pandroid.testInstrumentationRunnerArguments.deviceSerial="$device_serial" \
   --dependency-verification=strict \
   --no-daemon \
@@ -104,11 +139,6 @@ python3 "$repo_root/scripts/verify_ui_test_reports.py" \
   --junit-root "$repo_root/mobile/apps/androidApp/build/outputs/androidTest-results" \
   --label "Android instrumentation"
 
-"$repo_root/mobile/gradlew" -p "$repo_root/mobile" \
-  :apps:androidApp:assembleUiAcceptanceDebug \
-  --dependency-verification=strict \
-  --no-daemon \
-  --no-configuration-cache
 apk_path="$(find "$repo_root/mobile/apps/androidApp/build/outputs/apk" -type f \
   -name '*uiAcceptance*debug.apk' ! -name '*androidTest*' -print -quit)"
 test -n "$apk_path" || {
