@@ -6,6 +6,7 @@ import platform.UIKit.UIViewController
 
 /** Shared Apple composition-root entry point; UI only renders the supplied state stream. */
 @OptIn(ExperimentalForeignApi::class)
+@Suppress("FunctionNaming")
 fun PhotoAnalysisViewController(
     feature: PhotoAnalysisFeature,
     copy: PhotoAnalysisPresenterCopy,

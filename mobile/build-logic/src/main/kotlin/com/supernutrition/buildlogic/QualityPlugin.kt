@@ -228,19 +228,20 @@ class QualityPlugin : Plugin<Project> {
         val reportFiles = productionProjects.flatMap { path ->
             JvmCoverageVerifier.reportPaths(reportRoot, path).map(Path::toFile)
         }
-        val reportTaskNames = setOf("koverXmlReportJvm", "koverXmlReportAndroid")
-        val reportTasks = productionProjects.flatMap { path ->
-            rootProject.findProject(path)?.tasks
-                ?.matching { it.name in reportTaskNames }
-                ?.toList()
-                .orEmpty()
+        // Resolve report tasks by path instead of eagerly enumerating
+        // subproject tasks. Kover registers its report tasks during target
+        // configuration, which can happen after this root plugin is applied;
+        // eager lookup otherwise leaves a clean checkout with no report
+        // dependencies and makes the gate depend on stale build outputs.
+        val reportTaskPaths = productionProjects.map { path ->
+            "$path:koverXmlReportJvm"
         }
 
         qualityCoverageJvm.configure {
             // Keep lifecycle/inventory changes in the configuration-cache
             // input model. Report tasks are always wired, but the reports
             // themselves are skipped until the active claim is authorized.
-            dependsOn(*reportTasks.toTypedArray())
+            dependsOn(*reportTaskPaths.toTypedArray())
             inputs.files(lifecycleFile, coverageFile, reportFiles)
             doLast {
                 require(coverageClaimAllowed(mobileRoot, localCoverageRequested)) {
@@ -260,7 +261,7 @@ class QualityPlugin : Plugin<Project> {
         }
 
         mobileUnitCoverage.configure {
-            dependsOn(*reportTasks.toTypedArray())
+            dependsOn(*reportTaskPaths.toTypedArray())
             inputs.files(lifecycleFile, coverageFile, reportFiles)
             doLast {
                 require(localCoverageRequested) {
@@ -279,16 +280,6 @@ class QualityPlugin : Plugin<Project> {
             }
         }
 
-        productionProjects.forEach { path ->
-            rootProject.findProject(path)?.tasks
-                ?.matching { it.name in reportTaskNames }
-                ?.configureEach {
-                    onlyIf {
-                        lifecycle(mobileRoot) == "active" || localCoverageRequested
-                    }
-                    inputs.files(lifecycleFile, coverageFile)
-                }
-        }
     }
 
     /**

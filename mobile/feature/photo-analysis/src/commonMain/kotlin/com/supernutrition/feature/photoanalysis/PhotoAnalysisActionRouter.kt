@@ -1,3 +1,5 @@
+@file:Suppress("MatchingDeclarationName")
+
 package com.supernutrition.feature.photoanalysis
 
 import com.supernutrition.domain.photoanalysis.PhotoAnalysisEvent
@@ -9,10 +11,7 @@ enum class PhotoAnalysisNativeAction {
     OpenSettings,
 }
 
-fun PhotoAnalysisFeature.route(
-    action: PhotoAnalysisPresenterAction,
-    onNative: (PhotoAnalysisNativeAction) -> Unit,
-) {
+fun PhotoAnalysisFeature.route(action: PhotoAnalysisPresenterAction, onNative: (PhotoAnalysisNativeAction) -> Unit) {
     when (action) {
         PhotoAnalysisPresenterAction.Cancel -> dispatch(PhotoAnalysisEvent.Cancel)
         PhotoAnalysisPresenterAction.ScanAgain -> dispatch(PhotoAnalysisEvent.ScanAgain)

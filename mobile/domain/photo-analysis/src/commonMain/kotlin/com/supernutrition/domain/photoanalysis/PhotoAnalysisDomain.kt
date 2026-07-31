@@ -53,6 +53,7 @@ enum class ImageOrientation {
 }
 
 /** Byte values are copied at the boundary and on every read. */
+@Suppress("LongParameterList")
 class RawPhoto(
     val ref: PhotoRef,
     bytes: ByteArray,
@@ -66,6 +67,7 @@ class RawPhoto(
     val bytes: ByteArray get() = storedBytes.copyOf()
     val metadataKeys: Set<String> = metadataKeys.toSet()
 
+    @Suppress("LongParameterList")
     fun copy(
         ref: PhotoRef = this.ref,
         bytes: ByteArray = this.bytes,
@@ -92,6 +94,7 @@ class RawPhoto(
 }
 
 /** Trusted output produced by [PhotoInputNormalizer], with defensive byte access. */
+@Suppress("LongParameterList")
 class NormalizedPhotoInput(
     val ref: PhotoRef,
     bytes: ByteArray,
@@ -116,6 +119,7 @@ class NormalizedPhotoInput(
         require(isSha256Digest(contentDigest)) { "Normalized photo digest must be SHA-256" }
     }
 
+    @Suppress("LongParameterList")
     fun copy(
         ref: PhotoRef = this.ref,
         bytes: ByteArray = this.bytes,
