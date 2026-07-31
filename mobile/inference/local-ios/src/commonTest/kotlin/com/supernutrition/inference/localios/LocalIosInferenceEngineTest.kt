@@ -207,6 +207,29 @@ class LocalIosInferenceEngineTest {
     }
 
     @Test
+    fun `runtime diagnostics expose none of the forbidden payload surface`() = runTest {
+        val forbidden = listOf(
+            "raw-photo-bytes",
+            "/tmp/photo.jpg",
+            "Apple",
+            "prompt text",
+            "model response",
+            "secret-token",
+            "Authorization: Bearer",
+        )
+        val runtime = RecordingRuntime(
+            IosRuntimeCapability.Ready(model),
+            thrown = IllegalStateException(forbidden.joinToString("|")),
+        )
+
+        val failure = assertIs<InferenceOutcome.Failure>(engine(runtime).analyze(request).outcome)
+        val diagnostic = failure.toString()
+
+        forbidden.forEach { value -> assertFalse(diagnostic.contains(value)) }
+        assertEquals("inference.failure.runtime", failure.userMessageKey)
+    }
+
+    @Test
     fun `malformed runtime candidates become typed fail-closed output`() = runTest {
         val runtime = RecordingRuntime(
             IosRuntimeCapability.Ready(model),
