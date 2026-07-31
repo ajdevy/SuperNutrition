@@ -1,0 +1,34 @@
+name: SuperNutritionG3
+
+options:
+  bundleIdPrefix: com.supernutrition
+  deploymentTarget:
+    iOS: "15.1"
+  createIntermediateGroups: true
+
+targets:
+  SuperNutritionG3:
+    type: application
+    platform: iOS
+    sources:
+      - path: Sources
+      - path: Resources/mobilenet_v2_food101.onnx
+        buildPhase: resources
+      - path: Resources/fixtures/steak-side-plate.jpg
+        buildPhase: resources
+      - path: Resources/fixtures/fish-side-plate.jpg
+        buildPhase: resources
+      - path: Resources/fixtures/chopped-salad.jpg
+        buildPhase: resources
+      - path: Resources/fixtures/buddha-bowl.jpg
+        buildPhase: resources
+      - path: Resources/fixtures/salmon-grain-plate.jpg
+        buildPhase: resources
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.supernutrition.g3
+      PRODUCT_NAME: SuperNutritionG3
+      SWIFT_OBJC_BRIDGING_HEADER: ""
+      CODE_SIGN_STYLE: Automatic
+      GENERATE_INFOPLIST_FILE: YES
+      INFOPLIST_KEY_UILaunchScreen_Generation: YES
+      TARGETED_DEVICE_FAMILY: "1"
