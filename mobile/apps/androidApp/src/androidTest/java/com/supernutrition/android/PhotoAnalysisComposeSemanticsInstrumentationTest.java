@@ -40,8 +40,15 @@ public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
     }
 
     private static void assertSemantic(UiDevice device, String id, String label) {
-        UiObject2 node = device.wait(Until.findObject(By.desc(id)), 5_000L);
+        UiObject2 node = device.wait(Until.findObject(By.res(id)), 5_000L);
         assertNotNull("missing Compose semantic id: " + id, node);
-        assertEquals("wrong label for Compose semantic id: " + id, label, node.getText());
+        if (node.getText() != null) {
+            assertEquals("wrong label for Compose semantic id: " + id, label, node.getText());
+        } else {
+            assertNotNull(
+                    "wrong label for Compose semantic id: " + id,
+                    node.findObject(By.text(label))
+            );
+        }
     }
 }
