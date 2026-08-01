@@ -43,8 +43,17 @@ import {
   MealControllerImpl,
   type MealCommandDeps,
 } from './modules/meals/index.js';
+import { USDAProvider, SearchFoodHandler, LookupFoodHandler } from './modules/nutrition/index.js';
 import { DrizzleUserRepositoryAdapter } from './modules/users/infrastructure/index.js';
 import { TransferStateTracker } from './routes/gateway/index.js';
+
+const USDA_CONFIG = {
+  baseUrl: 'https://api.nal.usda.gov/fdc/v1',
+  connectTimeoutMs: 3000,
+  totalTimeoutMs: 5000,
+  maxRetries: 2,
+  circuitBreakerThreshold: 5,
+} as const;
 
 /**
  * Composition root — the only place concrete adapters are chosen (AD-1, AD-10).
@@ -142,6 +151,14 @@ export const buildApplication = async (
     listMeals: new ListMealEventsHandler(meals),
   });
 
+  // USDA catalog provider — credentials isolated, same pattern as OpenRouter.
+  const usdaKey = process.env['USDA_API_KEY'] ?? '';
+  const usdaProvider = new USDAProvider(usdaKey, USDA_CONFIG, 'SR Legacy 2021-10');
+  const searchFood = new SearchFoodHandler(usdaProvider);
+  // LookupFoodHandler is wired but not routed yet (catalog/items/:foodId is
+  // still 501 until a future stage adds the item lookup endpoint).
+  void LookupFoodHandler; // suppress unused-import lint if tree-shaken
+
   const productAuthenticator = new TestModeProductAuthenticator(testAuthenticator, {
     resolve: async (externalRef) => {
       const user = await users.ensureByExternalRef(externalRef);
@@ -192,6 +209,7 @@ export const buildApplication = async (
     },
     product: {
       meals: mealController,
+      searchFood,
       authenticate: async (request) => {
         if (config.auth.testMode) {
           return productAuthenticator.authenticate(request.headers.authorization);
