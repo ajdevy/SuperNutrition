@@ -1,6 +1,5 @@
 package com.supernutrition.sharedkit
 
-import com.supernutrition.feature.photoanalysis.PhotoAnalysisNativeAction
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.UIKit.UIViewController
 
@@ -14,6 +13,6 @@ public object SharedKitPhotoAnalysis {
     @Suppress("UnusedParameter")
     public fun viewController(
         session: SharedKitPhotoAnalysisSession,
-        onNativeAction: (PhotoAnalysisNativeAction) -> Unit,
+        onNativeAction: (SharedKitPhotoAnalysisNativeAction) -> Unit,
     ): UIViewController = error("Compose iOS UI is unavailable on the iosX64 compatibility lane")
 }

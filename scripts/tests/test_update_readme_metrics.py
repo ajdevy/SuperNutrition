@@ -40,6 +40,14 @@ class UpdateReadmeMetricsTest(unittest.TestCase):
         self.assertIn("3,456", section)
         self.assertIn("domain-nutrition", section)
         self.assertIn("n/a", section)
+        self.assertIn("ci-required.yml", section)
+        self.assertNotIn("coverage-readme.yml", section)
+        self.assertIn("android-ui-coverage.yml", section)
+        self.assertIn("ios-ui-coverage.yml", section)
+        self.assertIn("JVM%20line", section)
+        self.assertIn("### Report links", section)
+        self.assertIn("run-local-ci.sh jvm", section)
+        self.assertIn("Docker", section)
 
     def test_replace_section_preserves_surrounding_readme(self) -> None:
         readme = f"# Project\n\n{START_MARKER}\nold\n{END_MARKER}\n\n## Next\n"
