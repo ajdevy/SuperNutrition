@@ -108,7 +108,7 @@ internal val QUANTITY_WORDS: Set<String> = setOf(
     "half", "quarter",
     "slice", "slices", "piece", "pieces", "serving", "servings", "portion", "portions",
     "cup", "cups", "bowl", "bowls", "plate", "plates", "glass", "glasses",
-    "gram", "grams", "g", "kg", "ml", "l", "oz", "lb",
+    "gram", "grams", "g", "mg", "kg", "ml", "l", "oz", "lb",
     "tbsp", "tsp", "tablespoon", "tablespoons", "teaspoon", "teaspoons",
 )
 
@@ -143,9 +143,12 @@ internal fun stripQuantityWords(query: String): String {
 private fun isQuantityToken(token: String): Boolean {
     if (token in QUANTITY_WORDS) return true
     if (token.isNotEmpty() && token.all(Char::isDigit)) return true
-    // "200g", "500ml": a number glued to its unit is still one quantity.
+    // "200g", "2tbsp": a number glued to its unit is still one quantity. It
+    // consults QUANTITY_WORDS rather than a units list of its own — the two
+    // vocabularies drifted apart immediately when they were separate, so
+    // "500mg rice" resolved while "500 mg rice" did not, and "2 tbsp rice"
+    // resolved while "2tbsp rice" did not. Whether a space was typed is not a
+    // distinction the catalog should notice.
     val digits = token.takeWhile(Char::isDigit)
-    return digits.isNotEmpty() && token.drop(digits.length) in QUANTITY_UNITS
+    return digits.isNotEmpty() && token.drop(digits.length) in QUANTITY_WORDS
 }
-
-private val QUANTITY_UNITS: Set<String> = setOf("g", "kg", "mg", "ml", "l", "oz", "lb")
