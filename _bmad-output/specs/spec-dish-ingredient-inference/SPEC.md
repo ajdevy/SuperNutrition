@@ -167,3 +167,14 @@ handed and `MealSearch` decides the bands.
 Still open: nothing here builds a surface. These are the domain shapes a UI
 needs, and the UI will surface the third question this spec has not answered —
 what to show when a dish and one of its own ingredients both match.
+
+**A dish and an ingredient it contains are both offered.**
+Typing "bean" reaches the black bean bowl and black beans. Both are shown. They
+are different things — one is a meal, one is an item — and someone who ate only
+the beans is as real as someone who ate the bowl. Suppressing either guesses
+which, and the row label already distinguishes them, so hiding one buys a
+shorter list at the cost of being wrong for whoever wanted it.
+
+Pinned by test rather than left to judgement, because deduplicating a list that
+looks redundant is exactly the kind of tidying a later change makes in good
+faith.
