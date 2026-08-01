@@ -154,12 +154,15 @@ shipping.
 | --- | --- | --- | --- | --- |
 | Food-101 Swin INT8 | Physical Android and iOS G-3 harness | `unsupported`: one dish label, no components | `not-evaluable` | Retain only as the dish-classification baseline |
 | FPB / YOLOv12-FoodWeight | Reproducible CPU run, 640 px, 0.25 confidence; raw predictions and G-3 evaluator record included | `0.0` macro F1; 0 exact components across 8 boxes | Raw head present; quality `not-evaluable` without scale truth | Reject for the current v2 candidate screen; research evidence only |
-| FoodSAM | Installation audited; official setup pins Python 3.7, PyTorch 1.8/CUDA 11.1, SAM ViT-H, FoodSeg103, and UniDet checkpoints | Not run locally — no comparable output | No mass head | Offline teacher/annotation candidate, not an immediate mobile runtime |
-| FoodSeg103 / ReLeM | Official semantic benchmark and model zoo audited | Not run locally — semantic masks, not instances | No mass head | Pretraining/teacher candidate only pending dataset terms |
-| MobileSAM | Promptable mask project audited | Not a food identifier; masks have no ingredient labels | No mass head | Use only for user-corrected masks or annotation, not automatic recognition |
-| YOLO-World v2 | Local library bootstrap succeeded; the 24.7 MB checkpoint transfer did not complete under the available network throughput, so no inference result exists | Not run — would use the same visible-component prompts | No mass head | Open-vocabulary detector worth a later screen, but the Ultralytics AGPL/Enterprise boundary blocks direct shipping |
+| FoodSAM | Official research stack audited; no supported Android artifact for its SAM + semantic + detector composition | No Android score | No mass head | Offline teacher/annotation candidate, not an immediate mobile runtime |
+| FoodSeg103 / ReLeM | Official semantic benchmark and model zoo audited; no Android-compatible artifact in this checkout | No Android score; semantic masks are not instances | No mass head | Pretraining/teacher candidate only pending dataset terms |
+| MobileSAM | **Physical Android run:** ONNX encoder/decoder completed all five complex meals | Not a food identifier; prompted class-agnostic masks, so ingredient F1 is unsupported | No mass head | Use only for user-corrected masks or annotation; p95 `2,060 ms`, PSS `729,305 KB` |
+| YOLO-World v2 | **Physical Android run:** exported 640 px ONNX with embedded COCO-80 vocabulary | Exact visible-component macro F1 `0.2233`; some `broccoli`/`carrot`, many false COCO food labels | No mass head | Reject for current ingredient UX; p95 `581 ms`, PSS `245,411 KB`; prompt and licence gates remain |
 
 The report is intentionally not a model leaderboard: the models do not share a
 taxonomy, an instance contract, or weighed ground truth. Only matched tasks are
 scored, and a candidate without a mass head or calibrated masses cannot receive
 a grams score.
+
+The reproducible Android result and its explicit non-execution reasons are in
+[`android-candidate-device-evidence-2026-08-01.json`](android-candidate-device-evidence-2026-08-01.json).
