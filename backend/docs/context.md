@@ -19,18 +19,23 @@ This project is worked on by Claude Code as an **uninterrupted continuation of t
 
 ## Next stage (current objective)
 
-- Stages 1–4 done (architecture, skeleton, contracts, E4.3 gateway — see below). Stage 5 meals-product-api is written as spec (`backend/05-meals-product-api.md`).
-- **NEXT: Stage 6 USDA integration — spec at `backend/06-usda-integration.md`** (also read `backend/mobile-api/docs/08-usda-integration.md`). Implement the USDA FoodData Central provider: catalog lookup (facts only, no server-side nutrition math per AD-7/AD-19 and docs/08 §8.4), `NutritionProvider.search`, catalog search route, wiring in composition root, tests.
-- After Stage 6: `backend/07-goals-progress.md`, then `backend/08-achievements-coach-journey.md`.
+- Stages 1–6 are done (architecture, skeleton, contracts, E4.3 gateway, meals product API, USDA catalog).
+- **NEXT: Stage 7 goals and progress — spec at `backend/07-goals-progress.md`.** Read `backend/AGENTS.md` → this digest → that spec before writing code. After Stage 7: `backend/08-achievements-coach-journey.md`.
 
-## Current focus: E4.3 first-party inference gateway
+## Current focus: Stage 6 USDA catalog — DONE (2026-08-01)
 
-The E4.3 work is COMPLETE and shipped as PR stack. Stage 4 of the backend plan is done.
+Implementation landed in `09d2d05`; the test surface landed in `ec48c3d`. Both are committed, **not pushed**.
+
+- `USDAProvider` (real HTTP over an injectable fetch, retry on 5xx/timeout only, circuit breaker, 7-day in-memory lookup cache, `#apiKey` isolation), `LookupFoodHandler`/`SearchFoodHandler`, `GET /api/v1/catalog/search`, wiring in `main.ts` with dataset version `SR Legacy 2021-10`.
+- `LookupFoodHandler` is wired but intentionally NOT routed — `GET /api/v1/catalog/items/:foodId` stays 501 until a later stage. Do not "fix" that.
+- `NutritionCalculator` stays unimplemented on purpose (docs/08 §8.4 keeps the server-side calculation path disabled until the golden-fixtures contract release).
+- Tests: **827 passing (was 753 passing + 2 red), 49 files.** 95.69% lines / 93.44% branches overall; `usda.provider.ts` 100% lines / 95.06% branches. `npm run typecheck`, `npm run lint`, `npm run format:check`, coverage thresholds, and `verify-{mobile-api,inference,interaction-policy}-contract`, `verify-root-boundaries`, `verify-product-identity` all pass.
+- Two non-test changes came with the test commit: `extractNutrients` now reads `NUTRIENT_MAP` instead of duplicating the nutrient ids inline (eslint failed on the dead map; behaviour identical), and prettier was run over the three Stage 6 files that had never been formatted (`domain/index.ts`, `usda.provider.ts`, `routes/product/index.ts`).
 
 ## Git / PR state
 
-- Branch `feat/e43-gateway-impl` is committed, pushed, in sync with origin.
-- HEAD commit: `24d5137 feat(backend): implement the E4.3 first-party inference gateway` (51 files, +6124/-88).
+- Branch `feat/e43-gateway-impl`. **Two local commits are ahead of origin and unpushed:** `09d2d05` (Stage 5/6 implementation, "backup … (auto)") and `ec48c3d` (Stage 6 tests). Push only when the user asks — paid Actions quota.
+- Last pushed commit: `24d5137 feat(backend): implement the E4.3 first-party inference gateway` (51 files, +6124/-88).
 - **PR #27 OPEN**: `feat/e43-gateway-impl` → `feat/e43-gateway` (stacked on #26).
 - PR stack: #27 → #26 (contract-only `feat/e43-gateway`) → #23 (stage-2 skeleton) → #22 (stage-1 architecture) → main.
 - `docs/12-api-testing-guide.md` was approved and is included in PR #27.
@@ -53,10 +58,15 @@ The E4.3 work is COMPLETE and shipped as PR stack. Stage 4 of the backend plan i
 - **Production ships an empty market policy**: every real market resolves `unresolved` and fails closed until G-1/G-4 supply a reviewed posture. Code-complete, but no real market permits a transfer — that's intended (AD-41 MP-1).
 - `analyze` port gained a second param (`InferenceAttemptOptions`, for `AbortSignal` per AD-6 cancellation); `PayloadRef` gained a `PayloadSource` resolver (orchestrator never touches image bytes).
 
-## Working tree state (dirty, NOT committed, DO NOT sweep into PRs)
+## Stage 6 risks the tests could not settle (read before Stage 7 touches the catalog)
 
-- 16 modified `backend/benchmark/results/**` files (re-run deltas: latency/tokens/cost shifted; dirty since before the E4.3 session).
-- 5 untracked backend docs: `05-meals-product-api.md`, `06-usda-integration.md`, `07-goals-progress.md`, `08-achievements-coach-journey.md` — new spec work; plus untracked `backend/AGENTS.md` and `backend/docs/` (agent protocol + this digest, NOT for commit unless asked).
+1. **`search` may parse nothing from the real FDC API.** `extractNutrients` reads `foodNutrients[].nutrient.id` / `.amount`, which is the `/food/{fdcId}` detail shape. The public `/foods/search` response uses the abridged shape (`nutrientId` / `value`), so against the live API every candidate would be skipped as malformed and search would always return an empty list. Not provable offline (no key, no network in the session), so no code was changed. Fix, if confirmed: make `extractNutrients` accept both shapes. Verify with one real `/foods/search` call before Stage 7.
+2. **`GET /api/v1/catalog/search` is unauthenticated.** Every other Surface B route calls `deps.authenticate`; the catalog route does not, so anonymous callers can spend the USDA quota. The Stage 6 spec does not mention auth for it, so it was left as implemented and is flagged here for a decision.
+
+## Working tree state (verified 2026-08-01 after the Stage 6 test commit)
+
+- Only two dirty paths, both pre-existing and NOT ours: modified `.claude/settings.json` and untracked `.claude/hooks/gate.log`. Do not sweep them into a backend commit.
+- Earlier entries here are now stale and resolved: the 16 modified `backend/benchmark/results/**` files are no longer dirty, and `backend/AGENTS.md`, `backend/docs/`, and the Stage 5–8 spec files are committed (`bc87798`).
 - DeepSeek benchmark files were REMOVED from the worktree (10 untracked files, not recoverable via git — intentional, on request).
 
 ## Other in-flight work from older sessions (not finished)
@@ -79,10 +89,12 @@ The E4.3 work is COMPLETE and shipped as PR stack. Stage 4 of the backend plan i
 
 ## Open decisions (ask the user)
 
-1. What to do with the **16 modified benchmark result files**: commit as their own branch/PR, or regenerate `BENCHMARK-REPORT.md` first so they land consistent. (`BENCHMARK-REPORT.md` is currently unmodified and consistent with disk.)
+1. ~~What to do with the 16 modified benchmark result files~~ — moot as of 2026-08-01: they are no longer dirty in the worktree.
 2. Whether to merge PR #27 (or the whole stack) — or keep the gateway contract-only until G-1/G-4 posture reviews.
 3. Fix the PHPicker images-only filter bug in IosPhotoBridge.kt (offered, not done).
 4. Re-run the `food-weight-api-research/` deep research (folder lost) if the Passio/LogMeal/CalorieMama/LLM-API comparison is still needed — food-photo-recognition-research is intact as a base.
+5. Confirm the `/foods/search` nutrient shape against the live FDC API and decide whether `extractNutrients` should accept both shapes (see "Stage 6 risks" above).
+6. Decide whether `GET /api/v1/catalog/search` must authenticate like the rest of Surface B (see "Stage 6 risks" above).
 
 ## Token economy (set 2026-08-01, shared quota across bot + CLI + code-server)
 
