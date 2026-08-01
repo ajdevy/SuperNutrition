@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.activity.ComponentActivity
@@ -18,7 +19,6 @@ import androidx.core.content.ContextCompat
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.lang.ref.WeakReference
-import android.util.Log
 
 /**
  * Bridge-only CameraX surface. Product presentation remains owned by Compose;
@@ -215,5 +215,5 @@ class AndroidCameraCaptureActivity : ComponentActivity() {
 private enum class CaptureFailureReason(val wireValue: String) {
     PERMISSION_DENIED("permission-denied"),
     CAMERA_UNAVAILABLE("camera-unavailable"),
-    CAPTURE_FAILED("capture-failed");
+    CAPTURE_FAILED("capture-failed"),
 }

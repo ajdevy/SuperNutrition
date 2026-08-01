@@ -12,7 +12,6 @@ import com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterCopy
 import com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterModel
 import com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterState
 import com.supernutrition.platform.photoios.IosImageNormalizer
-import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSData
 
 /** Shared Apple session facade; only the renderer differs between Apple targets. */
@@ -28,7 +27,10 @@ public class SharedKitPhotoAnalysisSession private constructor(
         sessions = PhotoSessionStore(),
     )
 
-    public fun presenterState(): PhotoAnalysisPresenterState = PhotoAnalysisPresenterModel.from(feature.state, presenterCopy).state
+    public fun presenterState(): PhotoAnalysisPresenterState = PhotoAnalysisPresenterModel.from(
+        feature.state,
+        presenterCopy,
+    ).state
 
     public fun statusLabel(): String = PhotoAnalysisPresenterModel.from(feature.state, presenterCopy).statusLabel
 

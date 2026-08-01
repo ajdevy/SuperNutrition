@@ -13,11 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 /** Composition-root feature coordinator; presenter and UI remain reusable seams. */
-class PhotoAnalysisFeature(
-    attemptId: AttemptId,
-    leases: PhotoLeaseStorePort,
-    sessions: PhotoSessionStorePort,
-) {
+class PhotoAnalysisFeature(attemptId: AttemptId, leases: PhotoLeaseStorePort, sessions: PhotoSessionStorePort) {
     private val reducer = PhotoAnalysisReducer(
         leases = leases,
         sessions = sessions,
