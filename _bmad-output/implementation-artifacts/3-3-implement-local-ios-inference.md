@@ -170,6 +170,13 @@ GPT-5 / Codex
   physical iPhone was locked and CoreDevice denied launching the benchmark
   app. No iOS resource result is recorded from this attempt; the existing
   `5/5` UI and `5/5` arm64 fixture results remain correctness evidence only.
+- 2026-08-01 successful physical G-3 rerun after the iPhone was unlocked:
+  `/tmp/supernutrition-g3-ios-20260801-r3` completed semantic `5/5`, init
+  `560 ms`, p50/p95/max `83/85/85 ms`, resident memory
+  `261,360 -> 253,008 KB`, thermal `0 -> 0`, and battery level `1 -> 1` on
+  iPhone 14 Pro / iOS 26.5.2. Ingredient capability remains `unsupported`
+  and weight remains `not-evaluable`; the result is preliminary and does not
+  supply owner signatures.
 
 ### File List
 
