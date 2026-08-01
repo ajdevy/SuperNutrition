@@ -57,18 +57,23 @@ sealed interface TextIdentificationOutcome {
  */
 class TextIdentification(private val floor: CatalogSearch, private val engine: (String) -> TextEngineOutcome) {
     fun identify(description: String): TextIdentificationOutcome {
-        val trimmed = description.trim()
         // Checked before the engine runs: invoking a model on an empty string
         // costs battery and time on exactly the devices that can least afford it.
-        if (trimmed.isEmpty()) return TextIdentificationOutcome.Empty
+        if (description.isBlank()) return TextIdentificationOutcome.Empty
 
-        return when (val outcome = engine(trimmed)) {
-            is TextEngineOutcome.Segmented -> acceptOrFallBack(outcome.items, trimmed)
+        // The description is passed through untrimmed so that every span indexes
+        // the string the caller holds. Trimming first shifted every offset by
+        // the leading whitespace — which a paste or a mobile keyboard supplies
+        // routinely — and because the spans were then validated against the
+        // trimmed copy too, the guard below could not see that they were wrong.
+        // TextFragments trims each fragment's own edges, so nothing is lost.
+        return when (val outcome = engine(description)) {
+            is TextEngineOutcome.Segmented -> acceptOrFallBack(outcome.items, description)
 
             // An abstention is the engine being honest, not the journey failing.
-            is TextEngineOutcome.Abstained -> fallBack(trimmed)
+            is TextEngineOutcome.Abstained -> fallBack(description)
 
-            is TextEngineOutcome.Unavailable -> fallBack(trimmed)
+            is TextEngineOutcome.Unavailable -> fallBack(description)
         }
     }
 
