@@ -131,8 +131,8 @@ export const registerProductRoutes = async (
       const q = typeof qs['q'] === 'string' ? qs['q'].trim() : '';
       const country = typeof qs['country'] === 'string' ? qs['country'].trim() : '';
       const rawLimit = typeof qs['limit'] === 'string' ? Number(qs['limit']) : 5;
-      const limit = Number.isFinite(rawLimit) && rawLimit >= 1 && rawLimit <= 25
-        ? Math.floor(rawLimit) : 5;
+      const limit =
+        Number.isFinite(rawLimit) && rawLimit >= 1 && rawLimit <= 25 ? Math.floor(rawLimit) : 5;
 
       if (!q) {
         throw AppError.validation('Missing required query parameter.', [
@@ -150,11 +150,13 @@ export const registerProductRoutes = async (
         const failureMap: Record<string, () => AppError> = {
           'not-found': () => AppError.validation('No catalog source matched.', []),
           'rate-limited': () => new AppError('RATE_LIMITED', 'Catalog rate limit reached.'),
-          'timeout': () => new AppError('PROVIDER_TIMEOUT', 'Catalog lookup timed out.'),
-          'provider-unavailable': () => new AppError('PROVIDER_UNAVAILABLE', 'Catalog provider unavailable.'),
-          'unsupported-country': () => AppError.validation('Unsupported catalog country.', [
-            { field: 'country', issue: 'unsupported' },
-          ]),
+          timeout: () => new AppError('PROVIDER_TIMEOUT', 'Catalog lookup timed out.'),
+          'provider-unavailable': () =>
+            new AppError('PROVIDER_UNAVAILABLE', 'Catalog provider unavailable.'),
+          'unsupported-country': () =>
+            AppError.validation('Unsupported catalog country.', [
+              { field: 'country', issue: 'unsupported' },
+            ]),
         };
         throw (failureMap[result.error] ?? (() => AppError.internal()))();
       }

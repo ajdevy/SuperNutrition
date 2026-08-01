@@ -71,7 +71,10 @@ export interface NutritionProvider {
   readonly id: CatalogSourceKind;
   readonly datasetVersion: string;
   lookup(request: FoodLookupRequest): Promise<Result<FoodLookupResult, NutritionFailure>>;
-  search(query: string, country: string): Promise<Result<readonly CatalogMatch[], NutritionFailure>>;
+  search(
+    query: string,
+    country: string,
+  ): Promise<Result<readonly CatalogMatch[], NutritionFailure>>;
 }
 
 export interface NutritionTotals {
