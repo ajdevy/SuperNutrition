@@ -4,8 +4,8 @@ product = "mobile"
 lifecycle = "active"
 source_digest = "local-only"
 quality_claim = true
-production_source_count = 10
-denominator_count = 10
+production_source_count = 11
+denominator_count = 11
 minimum_line_percent = 85
 minimum_branch_percent = 85
 changed_line_percent = 100
@@ -122,6 +122,20 @@ changed_branch_minimum_percent = 100
 observed_line_percent = "pending"
 observed_branch_percent = "pending"
 status = "active"
+
+[[denominator]]
+id = "feature-meal-search-presenter"
+unit_id = "feature-meal-search-presenter"
+source_path = "mobile/feature/meal-search-presenter"
+coverage_kind = "jvm"
+test_task = ":feature:meal-search-presenter:jvmTest"
+line_minimum_percent = 85
+branch_minimum_percent = 85
+changed_line_minimum_percent = 100
+changed_branch_minimum_percent = 100
+observed_line_percent = "100.00"
+observed_branch_percent = "100.00"
+status = "local-verified"
 
 [[denominator]]
 id = "feature-photo-analysis-presenter"
