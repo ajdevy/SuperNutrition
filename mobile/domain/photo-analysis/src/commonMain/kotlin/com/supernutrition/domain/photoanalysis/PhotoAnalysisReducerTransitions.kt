@@ -128,15 +128,19 @@ internal class PhotoAnalysisReducerTransitions(private val context: PhotoAnalysi
             reduction(PhotoAnalysisState.Preparing(replacement), PhotoAnalysisEffect.RevokePhoto(old))
         }
     }
-
-    private fun cancel(ref: PhotoRef): PhotoAnalysisReduction =
-        reduction(PhotoAnalysisState.Recovery(RecoveryReason.CANCELLED), PhotoAnalysisEffect.RevokePhoto(ref))
-
-    private fun clearAndCapture(ref: PhotoRef): PhotoAnalysisReduction =
-        reduction(PhotoAnalysisState.Capture, PhotoAnalysisEffect.RevokePhoto(ref))
-
-    private fun unchanged(state: PhotoAnalysisState) = PhotoAnalysisReduction(state)
-
-    private fun reduction(state: PhotoAnalysisState, effect: PhotoAnalysisEffect) =
-        PhotoAnalysisReduction(state, listOf(effect))
 }
+
+// These four construct a reduction and nothing else — none of them reads the
+// reducer's context. Keeping them at file level says so, and leaves the class
+// holding only the transitions that actually depend on lease and session state.
+
+private fun cancel(ref: PhotoRef): PhotoAnalysisReduction =
+    reduction(PhotoAnalysisState.Recovery(RecoveryReason.CANCELLED), PhotoAnalysisEffect.RevokePhoto(ref))
+
+private fun clearAndCapture(ref: PhotoRef): PhotoAnalysisReduction =
+    reduction(PhotoAnalysisState.Capture, PhotoAnalysisEffect.RevokePhoto(ref))
+
+private fun unchanged(state: PhotoAnalysisState) = PhotoAnalysisReduction(state)
+
+private fun reduction(state: PhotoAnalysisState, effect: PhotoAnalysisEffect) =
+    PhotoAnalysisReduction(state, listOf(effect))

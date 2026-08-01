@@ -35,7 +35,17 @@ enum class RecoveryReason {
 sealed interface PhotoAnalysisEvent {
     data class PhotoCaptured(val ref: PhotoRef) : PhotoAnalysisEvent
     data class PreparationSucceeded(val input: NormalizedPhotoInput) : PhotoAnalysisEvent
-    data class PreparationFailed(val reason: RecoveryReason) : PhotoAnalysisEvent
+
+    /**
+     * [diagnostic] records what actually went wrong. It is for support and
+     * telemetry, never for display — [reason] is what the user is shown, and a
+     * decoder's message is not a sentence anyone should read in a capture flow.
+     *
+     * It exists because the Android host caught preparation failures and
+     * dropped them, so a failed capture reached the user as a bare reason with
+     * no record of its cause anywhere.
+     */
+    data class PreparationFailed(val reason: RecoveryReason, val diagnostic: String? = null) : PhotoAnalysisEvent
     data object PermissionDenied : PhotoAnalysisEvent
     data class AnalysisStarted(val requestId: RequestId) : PhotoAnalysisEvent
     data class AnalysisSucceeded(val requestId: RequestId) : PhotoAnalysisEvent

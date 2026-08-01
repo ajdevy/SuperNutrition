@@ -4,6 +4,7 @@ import com.supernutrition.core.config.PhotoNormalizationDefaults
 import com.supernutrition.core.config.withoutJpegApplicationMetadata
 import com.supernutrition.domain.photoanalysis.ImageOrientation
 import com.supernutrition.domain.photoanalysis.NormalizedPhotoInput
+import com.supernutrition.domain.photoanalysis.PhotoFormat
 import com.supernutrition.domain.photoanalysis.PhotoInputNormalizer
 import com.supernutrition.domain.photoanalysis.PhotoPreparationException
 import com.supernutrition.domain.photoanalysis.PhotoRef
@@ -37,16 +38,37 @@ class IosImageNormalizer(
 ) {
     private val common = PhotoInputNormalizer(maxDimension = maxDimension, digest = digest)
 
-    fun normalize(ref: PhotoRef, sourceData: NSData): NormalizedPhotoInput {
+    /**
+     * The source-shape failures, kept together and away from [normalize]. They
+     * are about the bytes we were handed rather than about normalizing them.
+     */
+    private fun requireUsableSource(sourceData: NSData) {
         if (sourceData.length == 0uL) {
             throw PhotoPreparationException("Photo bytes must not be empty")
         }
         if (sourceData.length > MAX_SOURCE_BYTES.toULong()) {
             throw PhotoPreparationException("Photo bytes exceed the iOS source limit")
         }
+    }
 
-        val image = SNCreateBoundedImage(sourceData, maxDimension.toUInt())
-            ?: throw PhotoPreparationException("iOS could not decode the selected image")
+    private fun decodeBounded(sourceData: NSData): UIImage = SNCreateBoundedImage(sourceData, maxDimension.toUInt())
+        ?: throw PhotoPreparationException("iOS could not decode the selected image")
+
+    /** Render and encode, the two ways producing the output image can fail. */
+    private fun encodeNormalized(image: UIImage, width: Double, height: Double, scale: Double): ByteArray {
+        val normalizedImage = drawOnMainThread(image, width, height, scale)
+            ?: throw PhotoPreparationException("iOS could not render the selected image")
+        val normalizedData = UIImageJPEGRepresentation(
+            image = normalizedImage,
+            compressionQuality = PhotoNormalizationDefaults.JPEG_QUALITY / 100.0,
+        ) ?: throw PhotoPreparationException("iOS could not encode the normalized JPEG")
+        return normalizedData.toByteArray()
+    }
+
+    fun normalize(ref: PhotoRef, sourceData: NSData): NormalizedPhotoInput {
+        requireUsableSource(sourceData)
+
+        val image = decodeBounded(sourceData)
         val (sourceWidth, sourceHeight) = image.size.useContents { width to height }
         if (sourceWidth <= 0.0 || sourceHeight <= 0.0) {
             throw PhotoPreparationException("iOS image has no drawable dimensions")
@@ -58,14 +80,7 @@ class IosImageNormalizer(
         )
         val outputWidth = maxOf(1, (sourceWidth * renderScale).toInt())
         val outputHeight = maxOf(1, (sourceHeight * renderScale).toInt())
-        val normalizedImage = drawOnMainThread(image, sourceWidth, sourceHeight, renderScale)
-            ?: throw PhotoPreparationException("iOS could not render the selected image")
-
-        val normalizedData = UIImageJPEGRepresentation(
-            image = normalizedImage,
-            compressionQuality = PhotoNormalizationDefaults.JPEG_QUALITY / 100.0,
-        ) ?: throw PhotoPreparationException("iOS could not encode the normalized JPEG")
-        val rawBytes = normalizedData.toByteArray()
+        val rawBytes = encodeNormalized(image, sourceWidth, sourceHeight, renderScale)
 
         return common.normalize(
             RawPhoto(
@@ -73,9 +88,11 @@ class IosImageNormalizer(
                 bytes = rawBytes.withoutJpegApplicationMetadata(),
                 width = outputWidth,
                 height = outputHeight,
-                orientation = ImageOrientation.UP,
-                colorSpace = PhotoNormalizationDefaults.COLOR_SPACE,
-                metadataKeys = PhotoNormalizationDefaults.METADATA_KEYS,
+                format = PhotoFormat(
+                    ImageOrientation.UP,
+                    PhotoNormalizationDefaults.COLOR_SPACE,
+                    PhotoNormalizationDefaults.METADATA_KEYS,
+                ),
             ),
         )
     }

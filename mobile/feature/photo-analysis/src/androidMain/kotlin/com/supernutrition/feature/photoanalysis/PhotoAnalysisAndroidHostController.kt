@@ -6,22 +6,36 @@ import com.supernutrition.core.ui.CameraAvailability
 import com.supernutrition.core.ui.CameraPermissionState
 import com.supernutrition.domain.photoanalysis.PhotoAnalysisEvent
 import com.supernutrition.domain.photoanalysis.PhotoPreparationException
+import com.supernutrition.domain.photoanalysis.PhotoRef
 import com.supernutrition.domain.photoanalysis.RecoveryReason
 import com.supernutrition.platform.photoandroid.AndroidPhotoBridgePort
 import com.supernutrition.platform.photoandroid.AndroidPhotoCaptureFiles
 import com.supernutrition.platform.photoandroid.AndroidPhotoNormalizerPort
+import java.io.IOException
 import java.util.UUID
+
+/**
+ * What the host can do on the controller's behalf.
+ *
+ * These five are all one thing — how the Activity surfaces something to the
+ * user — and they are what made the controller's constructor a list rather than
+ * a signature. Grouping them separates them from the collaborators the
+ * controller reasons with.
+ */
+class PhotoAnalysisHostCallbacks(
+    val requestCameraPermission: () -> Unit,
+    val showCameraPermissionRationale: (onContinue: () -> Unit) -> Unit,
+    val launchCamera: (String) -> Unit,
+    val launchImport: () -> Unit,
+    val launchSettings: () -> Unit,
+)
 
 /** Typed Android effect coordinator kept outside the Activity and platform bridge. */
 class PhotoAnalysisAndroidHostController(
     private val feature: PhotoAnalysisFeature,
     private val photoBridge: AndroidPhotoBridgePort,
     private val normalizer: AndroidPhotoNormalizerPort,
-    private val requestCameraPermission: () -> Unit,
-    private val showCameraPermissionRationale: (onContinue: () -> Unit) -> Unit,
-    private val launchCamera: (String) -> Unit,
-    private val launchImport: () -> Unit,
-    private val launchSettings: () -> Unit,
+    private val callbacks: PhotoAnalysisHostCallbacks,
     private val captureOperation: CaptureOperationState,
 ) {
     fun initialize() {
@@ -43,37 +57,7 @@ class PhotoAnalysisAndroidHostController(
     }
 
     fun onActivityResult(resultCode: Int, data: Intent?, isCamera: Boolean) {
-        if (isCamera) {
-            val expectedOperation = captureOperation.pendingOperationId
-            if (expectedOperation == null) {
-                feature.dispatch(
-                    PhotoAnalysisEvent.PreparationFailed(
-                        if (resultCode == Activity.RESULT_OK) {
-                            RecoveryReason.CAPTURE_FAILED
-                        } else {
-                            RecoveryReason.CANCELLED
-                        },
-                    ),
-                )
-                return
-            }
-            val returnedOperation = data?.getStringExtra(AndroidPhotoCaptureFiles.EXTRA_OPERATION_ID)
-            captureOperation.pendingOperationId = null
-            if (returnedOperation != expectedOperation) {
-                feature.dispatch(
-                    PhotoAnalysisEvent.PreparationFailed(
-                        if (resultCode ==
-                            Activity.RESULT_OK
-                        ) {
-                                RecoveryReason.CAPTURE_FAILED
-                            } else {
-                                RecoveryReason.CANCELLED
-                            },
-                    ),
-                )
-                return
-            }
-        }
+        if (isCamera && !isOurCapture(resultCode, data)) return
         if (resultCode != Activity.RESULT_OK) {
             feature.dispatch(
                 PhotoAnalysisEvent.PreparationFailed(
@@ -94,21 +78,63 @@ class PhotoAnalysisAndroidHostController(
             feature.dispatch(PhotoAnalysisEvent.PreparationFailed(RecoveryReason.CAPTURE_FAILED))
             return
         }
+        prepare(ref, sourceBytes)
+    }
 
+    /**
+     * Whether this result belongs to the capture we launched. A missing pending
+     * operation, or one that does not match what came back, dispatches its own
+     * failure — the caller only has to stop.
+     */
+    private fun isOurCapture(resultCode: Int, data: Intent?): Boolean {
+        val expectedOperation = captureOperation.pendingOperationId
+        if (expectedOperation == null) {
+            feature.dispatch(PhotoAnalysisEvent.PreparationFailed(failedUnlessCancelled(resultCode)))
+            return false
+        }
+        val returnedOperation = data?.getStringExtra(AndroidPhotoCaptureFiles.EXTRA_OPERATION_ID)
+        captureOperation.pendingOperationId = null
+        if (returnedOperation != expectedOperation) {
+            feature.dispatch(PhotoAnalysisEvent.PreparationFailed(failedUnlessCancelled(resultCode)))
+            return false
+        }
+        return true
+    }
+
+    /**
+     * A result that arrived OK but does not belong to us is a failure; anything
+     * else at this point is the user backing out.
+     */
+    private fun failedUnlessCancelled(resultCode: Int): RecoveryReason =
+        if (resultCode == Activity.RESULT_OK) RecoveryReason.CAPTURE_FAILED else RecoveryReason.CANCELLED
+
+    private fun prepare(ref: PhotoRef, sourceBytes: ByteArray) {
         try {
             feature.dispatch(PhotoAnalysisEvent.PreparationSucceeded(normalizer.normalize(ref, sourceBytes)))
         } catch (error: PhotoPreparationException) {
-            feature.dispatch(PhotoAnalysisEvent.PreparationFailed(RecoveryReason.POOR_IMAGE))
-        } catch (error: Exception) {
-            feature.dispatch(PhotoAnalysisEvent.PreparationFailed(RecoveryReason.CAPTURE_FAILED))
+            feature.dispatch(
+                PhotoAnalysisEvent.PreparationFailed(RecoveryReason.POOR_IMAGE, error.message),
+            )
+        } catch (error: IllegalArgumentException) {
+            feature.dispatch(
+                PhotoAnalysisEvent.PreparationFailed(RecoveryReason.CAPTURE_FAILED, error.message),
+            )
+        } catch (error: IllegalStateException) {
+            feature.dispatch(
+                PhotoAnalysisEvent.PreparationFailed(RecoveryReason.CAPTURE_FAILED, error.message),
+            )
+        } catch (error: IOException) {
+            feature.dispatch(
+                PhotoAnalysisEvent.PreparationFailed(RecoveryReason.CAPTURE_FAILED, error.message),
+            )
         }
     }
 
     private fun handleNativeAction(action: PhotoAnalysisNativeAction) {
         when (action) {
             PhotoAnalysisNativeAction.TakePhoto -> openCamera()
-            PhotoAnalysisNativeAction.ImportPhoto -> launchImport()
-            PhotoAnalysisNativeAction.OpenSettings -> launchSettings()
+            PhotoAnalysisNativeAction.ImportPhoto -> callbacks.launchImport()
+            PhotoAnalysisNativeAction.OpenSettings -> callbacks.launchSettings()
         }
     }
 
@@ -120,7 +146,7 @@ class PhotoAnalysisAndroidHostController(
                 if (captureOperation.pendingOperationId == null) {
                     UUID.randomUUID().toString().also { operationId ->
                         captureOperation.pendingOperationId = operationId
-                        launchCamera(operationId)
+                        callbacks.launchCamera(operationId)
                     }
                 }
             }
@@ -129,7 +155,7 @@ class PhotoAnalysisAndroidHostController(
             CameraPermissionState.DENIED,
             -> requestPermission()
 
-            CameraPermissionState.RATIONALE -> showCameraPermissionRationale(::requestPermission)
+            CameraPermissionState.RATIONALE -> callbacks.showCameraPermissionRationale(::requestPermission)
 
             CameraPermissionState.PERMANENTLY_DENIED,
             CameraPermissionState.RESTRICTED,
@@ -141,7 +167,7 @@ class PhotoAnalysisAndroidHostController(
         if (!captureOperation.permissionRequestInFlight) {
             captureOperation.permissionRequestInFlight = true
             photoBridge.markCameraPermissionRequestStarted()
-            requestCameraPermission()
+            callbacks.requestCameraPermission()
         }
     }
 }

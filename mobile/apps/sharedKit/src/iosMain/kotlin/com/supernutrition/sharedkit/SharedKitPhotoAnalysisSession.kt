@@ -14,7 +14,14 @@ import com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterState
 import com.supernutrition.platform.photoios.IosImageNormalizer
 import platform.Foundation.NSData
 
-/** Shared Apple session facade; only the renderer differs between Apple targets. */
+/**
+ * Shared Apple session facade; only the renderer differs between Apple targets.
+ *
+ * Deliberately flat: every function here is one call the Swift host makes, so
+ * the count is the size of that published surface rather than a class doing too
+ * much. Splitting it would split the API Swift already calls.
+ */
+@Suppress("TooManyFunctions")
 public class SharedKitPhotoAnalysisSession private constructor(
     attemptId: String,
     public val presenterCopy: PhotoAnalysisPresenterCopy = localizedPhotoAnalysisCopy(),
