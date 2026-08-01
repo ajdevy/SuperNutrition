@@ -72,8 +72,17 @@ object SeedCatalog {
             displayName = "Bread, rye",
             alternateNames = listOf(
                 "rye bread",
+                // Toast is how this bread gets named at breakfast, and every
+                // tier requires all query tokens to land on one record, so a
+                // preparation word the catalog does not know sinks the whole
+                // query. Naming it here is the narrow fix: a licensed package
+                // may well carry toast as its own record, and should, since
+                // toasting drives off water and moves the per-gram numbers.
+                "rye toast",
+                "toasted rye",
                 "ржаной хлеб",
                 "хлеб ржаной",
+                "ржаной тост",
             ),
         ),
         CatalogRecord(
