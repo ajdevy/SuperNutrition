@@ -52,6 +52,17 @@ export interface FoodLookupResult {
   readonly servingOptions: readonly ServingOption[];
 }
 
+/**
+ * A search result from the catalog — matches, not verdicts. The client
+ * confirms food identity; auto-selecting is a forbidden default (AD-40).
+ */
+export interface CatalogMatch {
+  readonly foodRef: FoodRef;
+  readonly displayName: string;
+  readonly factsPer100g: NutritionFact;
+  readonly servingOptions: readonly ServingOption[];
+}
+
 export type NutritionFailure =
   'not-found' | 'provider-unavailable' | 'timeout' | 'rate-limited' | 'unsupported-country';
 
@@ -60,6 +71,7 @@ export interface NutritionProvider {
   readonly id: CatalogSourceKind;
   readonly datasetVersion: string;
   lookup(request: FoodLookupRequest): Promise<Result<FoodLookupResult, NutritionFailure>>;
+  search(query: string, country: string): Promise<Result<readonly CatalogMatch[], NutritionFailure>>;
 }
 
 export interface NutritionTotals {
