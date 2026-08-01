@@ -2,7 +2,7 @@ schema = "supernutrition.inference-engine-compatibility-matrix.v2"
 contract_id = "inference-engine"
 release = "v2"
 previous_release = "photo-inference-engine/v1"
-digest = "6986d144819c77824d84b52f0b0af9f66178f5c2ac07d99a7608a20b34707b7e"
+digest = "9690d31f743b94d9627e7fca09628301d08a5372088bb81a144643614941fc74"
 
 # v1 remains published. Consumers migrate release by release rather than in one
 # step, so both releases are supported simultaneously and v1 is retired only

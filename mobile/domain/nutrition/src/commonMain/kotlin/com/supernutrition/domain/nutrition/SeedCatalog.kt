@@ -15,9 +15,12 @@ package com.supernutrition.domain.nutrition
  * English alone still needs them — aubergine and eggplant are the same food.
  *
  * Spanish entries carry regional variants — aguacate and palta are the same
- * avocado in different countries — and rely on the diacritic fold for berenjena
- * and its accented neighbours. Spanish is the only target on the light-stemming
- * profile, which is what makes that fold load-bearing rather than incidental.
+ * avocado in different countries. None of them is accented: berenjena, aguacate
+ * and palta all match without the diacritic fold, so nothing here exercises it.
+ * The fold matters for the Spanish words a real package will bring — plátano,
+ * jalapeño — and until one arrives it is covered by `CatalogSearchTest` alone.
+ * Spanish is the only target on the light-stemming profile, which is what will
+ * make the fold load-bearing once those records exist.
  *
  * Russian entries carry inflected forms explicitly rather than relying on a
  * stemmer. Russian nouns decline across six cases, and enumerating the forms
