@@ -37,7 +37,7 @@ sealed interface TextIdentificationOutcome {
      * the leftovers is what lets the caller show them and lets the user add them
      * back (CAP-7) instead of silently reaching a grounded result for half a meal.
      */
-    data class Floor(val canonicalItemIds: List<String>, val unresolvedFragments: List<String> = emptyList()) :
+    data class Floor(val items: List<DetectedItem>, val unresolvedFragments: List<String> = emptyList()) :
         TextIdentificationOutcome
 }
 
@@ -102,6 +102,13 @@ class TextIdentification(private val floor: CatalogSearch, private val engine: (
      * The description is therefore segmented the same way the engine segments
      * it, and each fragment resolved on its own.
      *
+     * The floor answers with the same shape the engine does — items carrying the
+     * span they came from — because the user reviews and corrects both the same
+     * way (CAP-7), and an item without provenance cannot be reviewed at all.
+     * Duplicates are kept rather than collapsed: a description naming one food
+     * twice is two items, which is what the engine path already reports, and
+     * two paths that disagree about that is the drift this class exists to stop.
+     *
      * Unlike the engine, partial resolution is kept rather than abstained on.
      * The engine proposes a split and must be all-or-nothing, but the floor is
      * the last resort: returning the foods it did recognise beats returning
@@ -110,12 +117,16 @@ class TextIdentification(private val floor: CatalogSearch, private val engine: (
      * alongside what did rather than dropped.
      */
     private fun fallBack(description: String): TextIdentificationOutcome {
-        val resolved = mutableListOf<String>()
+        val resolved = mutableListOf<DetectedItem>()
         val unresolved = mutableListOf<String>()
         for (fragment in TextFragments.of(description)) {
             val hit = floor.search(fragment.text).firstOrNull()
-            if (hit == null) unresolved += fragment.text else resolved += hit.canonicalItemId
+            if (hit == null) {
+                unresolved += fragment.text
+            } else {
+                resolved += DetectedItem(hit.canonicalItemId, fragment.span)
+            }
         }
-        return TextIdentificationOutcome.Floor(resolved.distinct(), unresolved)
+        return TextIdentificationOutcome.Floor(resolved, unresolved)
     }
 }
