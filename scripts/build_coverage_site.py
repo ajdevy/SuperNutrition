@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import html
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -104,17 +105,31 @@ def count_text(text: str, language: str) -> LineStats:
     return LineStats(1, lines, code, comments, blanks)
 
 
-def tracked_source_files(repo_root: Path) -> list[Path]:
-    result = subprocess.run(
-        ["git", "-C", str(repo_root), "ls-files", "-z"],
-        check=True,
-        capture_output=True,
-    )
+def tracked_source_files(
+    repo_root: Path,
+    source_manifest: Path | None = None,
+) -> list[Path]:
+    manifest_path = source_manifest
+    if manifest_path:
+        relative_paths = Path(manifest_path).read_text(encoding="utf-8").splitlines()
+    else:
+        result = subprocess.run(
+            ["git", "-C", str(repo_root), "ls-files", "-z"],
+            check=True,
+            capture_output=True,
+        )
+        relative_paths = [
+            raw_path.decode("utf-8")
+            for raw_path in result.stdout.split(b"\0")
+            if raw_path
+        ]
     files: list[Path] = []
-    for raw_path in result.stdout.split(b"\0"):
+    for raw_path in relative_paths:
         if not raw_path:
             continue
-        relative = Path(raw_path.decode("utf-8"))
+        relative = Path(raw_path)
+        if relative.is_absolute() or not (repo_root / relative).is_file():
+            raise CoverageSiteError(f"source manifest contains an invalid path: {relative}")
         if is_excluded(relative):
             continue
         if language_for(relative) is not None:
@@ -122,10 +137,13 @@ def tracked_source_files(repo_root: Path) -> list[Path]:
     return files
 
 
-def count_loc(repo_root: Path) -> dict[str, object]:
+def count_loc(
+    repo_root: Path,
+    source_manifest: Path | None = None,
+) -> dict[str, object]:
     totals = LineStats(0, 0, 0, 0, 0)
     by_language: dict[str, LineStats] = defaultdict(lambda: LineStats(0, 0, 0, 0, 0))
-    for relative in tracked_source_files(repo_root):
+    for relative in tracked_source_files(repo_root, source_manifest):
         language = language_for(relative)
         assert language is not None
         stats = count_text((repo_root / relative).read_text(encoding="utf-8"), language)
@@ -301,7 +319,9 @@ def coverage_data(repo_root: Path, output_dir: Path) -> dict[str, object]:
     }
 
 
-def git_commit(repo_root: Path) -> str:
+def git_commit(repo_root: Path, configured_commit: str | None = None) -> str:
+    if configured_commit:
+        return configured_commit
     return subprocess.run(
         ["git", "-C", str(repo_root), "rev-parse", "HEAD"],
         check=True,
@@ -310,12 +330,17 @@ def git_commit(repo_root: Path) -> str:
     ).stdout.strip()
 
 
-def write_site(repo_root: Path, output_dir: Path) -> None:
+def write_site(
+    repo_root: Path,
+    output_dir: Path,
+    source_manifest: Path | None = None,
+    configured_commit: str | None = None,
+) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
-    loc = count_loc(repo_root)
+    loc = count_loc(repo_root, source_manifest)
     coverage = coverage_data(repo_root, output_dir)
     metadata = {
-        "commit": git_commit(repo_root),
+        "commit": git_commit(repo_root, configured_commit),
         "generated_at": datetime.now(timezone.utc).isoformat(),
     }
     (output_dir / "loc.json").write_text(json.dumps(loc, indent=2) + "\n", encoding="utf-8")
@@ -429,7 +454,14 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--output-dir", type=Path, required=True)
     args = parser.parse_args(argv)
     try:
-        write_site(args.repo_root.resolve(), args.output_dir.resolve())
+        source_manifest = os.environ.get("SUPERNUTRITION_SOURCE_FILES")
+        configured_commit = os.environ.get("SUPERNUTRITION_COMMIT")
+        write_site(
+            args.repo_root.resolve(),
+            args.output_dir.resolve(),
+            Path(source_manifest) if source_manifest else None,
+            configured_commit,
+        )
     except (CoverageSiteError, OSError, ET.ParseError, ValueError, subprocess.CalledProcessError) as error:
         print(f"coverage-site: {error}", file=sys.stderr)
         return 1

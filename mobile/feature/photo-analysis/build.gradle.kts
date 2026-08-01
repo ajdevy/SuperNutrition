@@ -1,3 +1,12 @@
+val platformLockFile = when {
+    System.getProperty("os.name").contains("Linux", ignoreCase = true) -> "gradle-linux.lockfile"
+    else -> "gradle.lockfile"
+}
+
+dependencyLocking {
+    lockFile = file(platformLockFile)
+}
+
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.kotlin.multiplatform.library)
