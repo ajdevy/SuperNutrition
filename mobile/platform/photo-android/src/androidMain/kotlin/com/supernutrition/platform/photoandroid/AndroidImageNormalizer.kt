@@ -7,6 +7,7 @@ import com.supernutrition.core.config.PhotoNormalizationDefaults
 import com.supernutrition.core.config.withoutJpegApplicationMetadata
 import com.supernutrition.domain.photoanalysis.ImageOrientation
 import com.supernutrition.domain.photoanalysis.NormalizedPhotoInput
+import com.supernutrition.domain.photoanalysis.PhotoFormat
 import com.supernutrition.domain.photoanalysis.PhotoInputNormalizer
 import com.supernutrition.domain.photoanalysis.PhotoPreparationException
 import com.supernutrition.domain.photoanalysis.PhotoRef
@@ -23,18 +24,21 @@ class AndroidImageNormalizer(private val maxDimension: Int = PhotoNormalizationD
     AndroidPhotoNormalizerPort {
     private val common = PhotoInputNormalizer(digest = ::sha256)
 
-    @Suppress("ThrowsCount")
-    override fun normalize(
-        ref: PhotoRef,
-        sourceBytes: ByteArray,
-        sourceOrientation: ImageOrientation,
-    ): NormalizedPhotoInput {
+    /**
+     * Reads the bounds first so the full decode can be sampled down, which is
+     * what keeps a large capture from allocating its full-resolution bitmap.
+     *
+     * Split out of [normalize] because the two unreadable-input cases belong to
+     * decoding rather than to normalization, and keeping them here leaves
+     * [normalize] with the single failure that is actually its own.
+     */
+    private fun decodeSampled(sourceBytes: ByteArray): Bitmap {
         val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
         BitmapFactory.decodeByteArray(sourceBytes, 0, sourceBytes.size, bounds)
         if (bounds.outWidth <= 0 || bounds.outHeight <= 0) {
             throw PhotoPreparationException("Unable to read captured image dimensions")
         }
-        val decoded = BitmapFactory.decodeByteArray(
+        return BitmapFactory.decodeByteArray(
             sourceBytes,
             0,
             sourceBytes.size,
@@ -42,8 +46,15 @@ class AndroidImageNormalizer(private val maxDimension: Int = PhotoNormalizationD
                 inSampleSize = sampleSizeFor(bounds.outWidth, bounds.outHeight)
                 inPreferredConfig = Bitmap.Config.ARGB_8888
             },
-        )
-            ?: throw PhotoPreparationException("Unable to decode captured image")
+        ) ?: throw PhotoPreparationException("Unable to decode captured image")
+    }
+
+    override fun normalize(
+        ref: PhotoRef,
+        sourceBytes: ByteArray,
+        sourceOrientation: ImageOrientation,
+    ): NormalizedPhotoInput {
+        val decoded = decodeSampled(sourceBytes)
         val oriented = rotate(decoded, sourceOrientation)
         val bounded = bound(oriented)
         return try {
@@ -57,9 +68,11 @@ class AndroidImageNormalizer(private val maxDimension: Int = PhotoNormalizationD
                     bytes = output.toByteArray().withoutJpegApplicationMetadata(),
                     width = bounded.width,
                     height = bounded.height,
-                    orientation = ImageOrientation.UP,
-                    colorSpace = PhotoNormalizationDefaults.COLOR_SPACE,
-                    metadataKeys = PhotoNormalizationDefaults.METADATA_KEYS,
+                    format = PhotoFormat(
+                        ImageOrientation.UP,
+                        PhotoNormalizationDefaults.COLOR_SPACE,
+                        PhotoNormalizationDefaults.METADATA_KEYS,
+                    ),
                 ),
             )
         } finally {

@@ -4,7 +4,15 @@ import androidx.compose.ui.window.ComposeUIViewController
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.UIKit.UIViewController
 
-/** Shared Apple composition-root entry point; UI only renders the supplied state stream. */
+/**
+ * Shared Apple composition-root entry point; UI only renders the supplied state stream.
+ *
+ * PascalCase is the Compose/Apple interop convention for a factory that returns a
+ * UIViewController — it mirrors `ComposeUIViewController`, and the name is part of
+ * the surface Swift calls. Renaming it to satisfy the pattern would rename the
+ * published entry point, so the rule is suppressed here rather than obeyed.
+ */
+@Suppress("FunctionNaming")
 @OptIn(ExperimentalForeignApi::class)
 @Suppress("FunctionNaming")
 fun PhotoAnalysisViewController(

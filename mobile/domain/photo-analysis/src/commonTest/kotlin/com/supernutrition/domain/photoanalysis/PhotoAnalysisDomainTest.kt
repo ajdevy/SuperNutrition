@@ -22,9 +22,7 @@ class PhotoAnalysisDomainTest {
             bytes = byteArrayOf(1, 2, 3),
             width = 100,
             height = 200,
-            orientation = ImageOrientation.UP,
-            colorSpace = "sRGB",
-            metadataKeys = emptySet(),
+            format = PhotoFormat.NORMALIZED,
         ),
     )
 
@@ -47,7 +45,7 @@ class PhotoAnalysisDomainTest {
             orientation: ImageOrientation = ImageOrientation.UP,
             colorSpace: String = "sRGB",
             metadataKeys: Set<String> = emptySet(),
-        ) = RawPhoto(ref, byteArrayOf(1, 2, 3), 7, 11, orientation, colorSpace, metadataKeys)
+        ) = RawPhoto(ref, byteArrayOf(1, 2, 3), 7, 11, PhotoFormat(orientation, colorSpace, metadataKeys))
 
         assertFailsWith<PhotoPreparationException> { normalizer.normalize(raw(ImageOrientation.RIGHT)) }
         assertFailsWith<PhotoPreparationException> { normalizer.normalize(raw(colorSpace = "Display-P3")) }
@@ -66,9 +64,7 @@ class PhotoAnalysisDomainTest {
             bytes = bytes,
             width = width,
             height = height,
-            orientation = ImageOrientation.UP,
-            colorSpace = "sRGB",
-            metadataKeys = emptySet(),
+            format = PhotoFormat.NORMALIZED,
         )
 
         assertFailsWith<PhotoPreparationException> { normalizer.normalize(raw(ByteArray(0))) }
@@ -84,7 +80,7 @@ class PhotoAnalysisDomainTest {
         assertEquals(
             2,
             PhotoInputNormalizer(maxDimension = 2, digest = { "a".repeat(64) })
-            .normalize(raw(width = 2, height = 2)).width
+                .normalize(raw(width = 2, height = 2)).width,
         )
         assertFailsWith<PhotoPreparationException> {
             PhotoInputNormalizer(
@@ -94,7 +90,7 @@ class PhotoAnalysisDomainTest {
     }
 
     @Test
-    fun `domain value objects keep defensive equality and reject invalid normalized values`() {
+    fun `RawPhoto keeps defensive equality`() {
         val ref = leases.issue(attempt, "value-object-ref")
         val otherRef = leases.issue(attempt, "value-object-other-ref")
         val raw = RawPhoto(
@@ -102,9 +98,7 @@ class PhotoAnalysisDomainTest {
             bytes = byteArrayOf(1, 2, 3),
             width = 100,
             height = 200,
-            orientation = ImageOrientation.UP,
-            colorSpace = "sRGB",
-            metadataKeys = emptySet(),
+            format = PhotoFormat.NORMALIZED,
         )
 
         assertEquals(raw, raw.copy())
@@ -113,20 +107,23 @@ class PhotoAnalysisDomainTest {
         assertFalse(raw == raw.copy(bytes = byteArrayOf(9)))
         assertFalse(raw == raw.copy(width = 101))
         assertFalse(raw == raw.copy(height = 201))
-        assertFalse(raw == raw.copy(orientation = ImageOrientation.RIGHT))
-        assertFalse(raw == raw.copy(colorSpace = "Display-P3"))
-        assertFalse(raw == raw.copy(metadataKeys = setOf("EXIF")))
+        assertFalse(raw == raw.copy(format = raw.format.copy(orientation = ImageOrientation.RIGHT)))
+        assertFalse(raw == raw.copy(format = raw.format.copy(colorSpace = "Display-P3")))
+        assertFalse(raw == raw.copy(format = raw.format.copy(metadataKeys = setOf("EXIF"))))
         assertFalse((raw as Any).equals("raw"))
+    }
 
+    @Test
+    fun `NormalizedPhotoInput keeps defensive equality`() {
+        val ref = leases.issue(attempt, "value-object-ref")
+        val otherRef = leases.issue(attempt, "value-object-other-ref")
         val input = normalized(ref)
         val otherInput = NormalizedPhotoInput(
             ref = otherRef,
             bytes = byteArrayOf(1, 2, 3),
             width = 100,
             height = 200,
-            orientation = ImageOrientation.UP,
-            colorSpace = "sRGB",
-            metadataKeys = emptySet(),
+            format = PhotoFormat.NORMALIZED,
             contentDigest = "a".repeat(64),
         )
         assertEquals(input, input.copy())
@@ -138,25 +135,39 @@ class PhotoAnalysisDomainTest {
         assertFalse(input == input.copy(contentDigest = "b".repeat(64)))
         assertFalse(input == otherInput)
         assertFalse((input as Any).equals("input"))
+    }
+
+    @Test
+    fun `NormalizedPhotoInput rejects malformed bytes dimensions and digest`() {
+        val ref = leases.issue(attempt, "value-object-ref")
 
         assertFailsWith<IllegalArgumentException> {
-            NormalizedPhotoInput(ref, ByteArray(0), 100, 200, ImageOrientation.UP, "sRGB", emptySet(), "a".repeat(64))
+            NormalizedPhotoInput(
+                ref,
+                ByteArray(0),
+                100,
+                200,
+                PhotoFormat(ImageOrientation.UP, "sRGB", emptySet()),
+                "a".repeat(64),
+            )
         }
         assertFailsWith<IllegalArgumentException> {
-            NormalizedPhotoInput(ref, byteArrayOf(1), 0, 200, ImageOrientation.UP, "sRGB", emptySet(), "a".repeat(64))
-        }
-        assertFailsWith<IllegalArgumentException> {
-            NormalizedPhotoInput(ref, byteArrayOf(1), 100, 0, ImageOrientation.UP, "sRGB", emptySet(), "a".repeat(64))
+            NormalizedPhotoInput(
+                ref,
+                byteArrayOf(1),
+                0,
+                200,
+                PhotoFormat(ImageOrientation.UP, "sRGB", emptySet()),
+                "a".repeat(64),
+            )
         }
         assertFailsWith<IllegalArgumentException> {
             NormalizedPhotoInput(
                 ref,
                 byteArrayOf(1),
                 100,
-                200,
-                ImageOrientation.RIGHT,
-                "sRGB",
-                emptySet(),
+                0,
+                PhotoFormat(ImageOrientation.UP, "sRGB", emptySet()),
                 "a".repeat(64),
             )
         }
@@ -166,9 +177,23 @@ class PhotoAnalysisDomainTest {
                 byteArrayOf(1),
                 100,
                 200,
-                ImageOrientation.UP,
-                "Display-P3",
-                emptySet(),
+                PhotoFormat(ImageOrientation.UP, "sRGB", emptySet()),
+                "not-a-digest",
+            )
+        }
+    }
+
+    @Test
+    fun `NormalizedPhotoInput rejects a format the normalizer should have applied`() {
+        val ref = leases.issue(attempt, "value-object-ref")
+
+        assertFailsWith<IllegalArgumentException> {
+            NormalizedPhotoInput(
+                ref,
+                byteArrayOf(1),
+                100,
+                200,
+                PhotoFormat(ImageOrientation.RIGHT, "sRGB", emptySet()),
                 "a".repeat(64),
             )
         }
@@ -178,27 +203,46 @@ class PhotoAnalysisDomainTest {
                 byteArrayOf(1),
                 100,
                 200,
-                ImageOrientation.UP,
-                "sRGB",
-                setOf("EXIF"),
+                PhotoFormat(ImageOrientation.UP, "Display-P3", emptySet()),
                 "a".repeat(64),
             )
         }
         assertFailsWith<IllegalArgumentException> {
-            NormalizedPhotoInput(ref, byteArrayOf(1), 100, 200, ImageOrientation.UP, "sRGB", emptySet(), "not-a-digest")
+            NormalizedPhotoInput(
+                ref,
+                byteArrayOf(1),
+                100,
+                200,
+                PhotoFormat(ImageOrientation.UP, "sRGB", setOf("EXIF")),
+                "a".repeat(64),
+            )
         }
+    }
+
+    @Test
+    fun `RequestId compares by value and redacts its content`() {
         assertFailsWith<IllegalArgumentException> { RequestId(" ") }
         assertEquals(RequestId("request-value"), RequestId("request-value"))
         assertFalse(RequestId("request-value") == RequestId("other-request"))
         assertFalse((RequestId("request-value") as Any).equals("request-value"))
         assertEquals(RequestId("request-value").hashCode(), RequestId("request-value").value.hashCode())
         assertEquals("RequestId(redacted)", RequestId("request-value").toString())
+    }
+
+    @Test
+    fun `PhotoInputNormalizer rejects non-positive bounds`() {
         assertFailsWith<IllegalArgumentException> {
             PhotoInputNormalizer(maxBytes = 0, digest = { "a".repeat(64) })
         }
         assertFailsWith<IllegalArgumentException> {
             PhotoInputNormalizer(maxDimension = 0, digest = { "a".repeat(64) })
         }
+    }
+
+    @Test
+    fun `the session store reports a miss rather than inventing one`() {
+        val ref = leases.issue(attempt, "value-object-ref")
+
         assertFalse(sessions.remove(ref))
         assertEquals(0, sessions.clearAttempt(AttemptId("no-session")))
     }
@@ -313,9 +357,7 @@ class PhotoAnalysisDomainTest {
                 bytes = source,
                 width = 3,
                 height = 2,
-                orientation = ImageOrientation.UP,
-                colorSpace = "sRGB",
-                metadataKeys = emptySet(),
+                format = PhotoFormat.NORMALIZED,
             ),
         )
         val expected = source.copyOf()
