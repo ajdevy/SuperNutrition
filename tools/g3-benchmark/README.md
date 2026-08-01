@@ -121,6 +121,36 @@ The scripts print the redacted JSON result. They do not upload photos, call a
 product API, or use UI automation. The iOS script uses local Xcode signing
 and `devicectl` only to install, launch, and copy the app-owned result file.
 
+### Research-only Android candidate activities
+
+`MobileSamActivity` and `YoloWorldActivity` are separate from the G-3
+Food-101 runner. They are manual, research-only activities that write an
+app-owned JSON record after local ONNX Runtime CPU inference; they do not call
+an API or run UI automation. Their non-production model assets are deliberately
+not the selected runtime:
+
+| Activity | Asset contract | Capability boundary |
+| --- | --- | --- |
+| `MobileSamActivity` | MobileSAM encoder SHA-256 `580f5fb648ea1062c0aabc26217aed56921985f03f0cbbd852bba81d760cc749`; decoder SHA-256 `8976b90a87ba50a6a72217a5ff994f7d25ce16f2229fcc1ed259e1294c622ffe` | Point-prompted class-agnostic masks only; no ingredient identity or mass |
+| `YoloWorldActivity` | 640 px YOLO-World v2 ONNX SHA-256 `ef272175d4db2216cde08082f1accf120bdf5ee03b5bc2ba5f51735cda1e9cbc`; embedded COCO-80 vocabulary | Detector-only; no complete ingredient vocabulary, normalization, or mass |
+
+For an explicit connected device, launch one activity and retrieve its local
+record with an ADB serial supplied by the operator:
+
+```bash
+ANDROID_DEVICE_SERIAL=your-adb-serial
+adb -s "$ANDROID_DEVICE_SERIAL" shell am start -W \
+  -n com.supernutrition.g3benchmark/.MobileSamActivity
+adb -s "$ANDROID_DEVICE_SERIAL" exec-out run-as com.supernutrition.g3benchmark \
+  cat files/mobile-sam-result.json
+```
+
+Replace `MobileSamActivity`/`mobile-sam-result.json` with
+`YoloWorldActivity`/`yolo-world-v2-result.json` for the detector screen. The
+physical Android outcomes and the explicit unexecuted statuses for FoodSAM and
+FoodSeg103 are recorded in
+[`ingredient-weight-research/android-candidate-device-evidence-2026-08-01.json`](../../ingredient-weight-research/android-candidate-device-evidence-2026-08-01.json).
+
 ## Meaningful recognition evidence
 
 ### Android
