@@ -5,17 +5,10 @@ sealed interface PhotoAnalysisEffect {
     data class RevokePhoto(val ref: PhotoRef) : PhotoAnalysisEffect
 }
 
-data class PhotoAnalysisReduction(
-    val state: PhotoAnalysisState,
-    val effects: List<PhotoAnalysisEffect> = emptyList(),
-)
+data class PhotoAnalysisReduction(val state: PhotoAnalysisState, val effects: List<PhotoAnalysisEffect> = emptyList())
 
 /** Stateful compatibility facade over a pure state/event reduction. */
-class PhotoAnalysisReducer(
-    leases: PhotoLeaseStorePort,
-    sessions: PhotoSessionStorePort,
-    attemptId: AttemptId,
-) {
+class PhotoAnalysisReducer(leases: PhotoLeaseStorePort, sessions: PhotoSessionStorePort, attemptId: AttemptId) {
     private val context = PhotoAnalysisReducerContext(leases, sessions, attemptId)
     private val transitions = PhotoAnalysisReducerTransitions(context)
     private val lifecycle = PhotoAnalysisReducerLifecycle(context)
@@ -67,6 +60,7 @@ internal class PhotoAnalysisReducerContext(
     fun apply(effect: PhotoAnalysisEffect) {
         when (effect) {
             is PhotoAnalysisEffect.StoreInput -> sessions.put(effect.input)
+
             is PhotoAnalysisEffect.RevokePhoto -> {
                 leases.revoke(effect.ref)
                 sessions.remove(effect.ref)

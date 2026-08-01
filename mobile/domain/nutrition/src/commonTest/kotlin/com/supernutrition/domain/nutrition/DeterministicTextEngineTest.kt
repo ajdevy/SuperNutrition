@@ -93,8 +93,7 @@ class DeterministicTextEngineTest {
         // Counting them by eye produced an off-by-one here and again in the v2
         // fixtures; a span that is wrong by one character still looks right in
         // a diff and misreports which words produced an item.
-        fun spanOf(phrase: String) =
-            description.indexOf(phrase).let { TextSpan(it, it + phrase.length) }
+        fun spanOf(phrase: String) = description.indexOf(phrase).let { TextSpan(it, it + phrase.length) }
 
         assertEquals(
             TextIdentificationOutcome.Items(

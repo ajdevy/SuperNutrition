@@ -24,11 +24,7 @@ enum class PhotoAnalysisPresenterAction {
 }
 
 /** Localizable copy is supplied by the product host; the presenter owns no locale lookup. */
-data class PhotoAnalysisPresenterCopy(
-    val capture: CaptureCopy,
-    val status: StatusCopy,
-    val recovery: RecoveryCopy,
-) {
+data class PhotoAnalysisPresenterCopy(val capture: CaptureCopy, val status: StatusCopy, val recovery: RecoveryCopy) {
     init {
         (capture.values + status.values + recovery.values).forEach { require(it.isNotBlank()) }
     }
@@ -93,10 +89,7 @@ data class PhotoAnalysisPresenterModel(
     val actions: List<PhotoAnalysisPresenterAction>,
 ) {
     companion object {
-        fun from(
-            state: PhotoAnalysisState,
-            copy: PhotoAnalysisPresenterCopy,
-        ): PhotoAnalysisPresenterModel {
+        fun from(state: PhotoAnalysisState, copy: PhotoAnalysisPresenterCopy): PhotoAnalysisPresenterModel {
             val presenterState = when (state) {
                 PhotoAnalysisState.Capture -> PhotoAnalysisPresenterState.CAPTURE
                 is PhotoAnalysisState.Preparing -> PhotoAnalysisPresenterState.PREPARING

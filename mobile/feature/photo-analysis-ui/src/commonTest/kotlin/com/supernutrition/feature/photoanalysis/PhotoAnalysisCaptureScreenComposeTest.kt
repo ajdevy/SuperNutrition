@@ -6,8 +6,8 @@ import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.v2.runComposeUiTest
-import com.supernutrition.core.ui.UiAutomationIds
 import com.supernutrition.core.ui.UiAutomationId
+import com.supernutrition.core.ui.UiAutomationIds
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

@@ -5,11 +5,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.supernutrition.domain.photoanalysis.AttemptId
 import com.supernutrition.domain.photoanalysis.PhotoLeaseStore
 import com.supernutrition.domain.photoanalysis.PhotoSessionStore
@@ -166,5 +166,4 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         const val PENDING_OPERATION_ID_KEY = "photo_analysis.pending_operation_id"
         const val PERMISSION_REQUEST_IN_FLIGHT_KEY = "photo_analysis.permission_request_in_flight"
     }
-
 }

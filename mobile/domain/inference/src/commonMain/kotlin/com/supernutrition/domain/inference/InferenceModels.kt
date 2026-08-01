@@ -159,7 +159,9 @@ enum class ConfidenceBand {
     MEDIUM,
 
     @SerialName("high")
-    HIGH;
+    HIGH,
+
+    ;
 
     companion object {
         fun fromScore(score: Double): ConfidenceBand = when {
