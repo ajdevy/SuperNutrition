@@ -203,4 +203,16 @@ class ReviewRegressionTest {
             outcome,
         )
     }
+
+    @Test
+    fun `Spanish reaches the catalog, with and without its accents`() {
+        // Spanish is a declared target again, and it is the only one on the
+        // light-stemming-with-diacritics profile — which is what makes the
+        // accent fold load-bearing rather than incidental. A user typing
+        // without accents must still reach the record.
+        assertEquals(listOf("food:eggplant-raw"), floor.search("berenjena").map { it.canonicalItemId })
+        assertEquals(listOf("food:avocado-raw"), floor.search("aguacate").map { it.canonicalItemId })
+        assertEquals(listOf("food:avocado-raw"), floor.search("palta").map { it.canonicalItemId })
+        assertEquals(listOf("food:rice-white-cooked"), floor.search("arroz").map { it.canonicalItemId })
+    }
 }

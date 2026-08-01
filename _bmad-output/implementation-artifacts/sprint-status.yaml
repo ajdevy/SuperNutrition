@@ -95,7 +95,8 @@ development_status:
   # end to end. Marking this done was premature.
   epic-7: in-progress
   7-1-release-inference-contract-v2-with-identification-modality: in-progress
-  7-2-deliver-the-deterministic-catalog-search-floor: in-progress
+  # Work complete and verified on PR #25; awaiting human review, not self-declared done.
+  7-2-deliver-the-deterministic-catalog-search-floor: review
   7-3-add-the-per-market-language-matrix: review
   7-4-add-on-device-typed-identification: in-progress
   7-5-add-segmentation-review-and-correction: in-progress
