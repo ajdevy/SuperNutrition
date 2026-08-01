@@ -12,10 +12,7 @@ package com.supernutrition.domain.nutrition
  * correction cannot partially apply and leave the session in a state no user
  * asked for.
  */
-class SegmentationReview private constructor(
-    val items: List<DetectedItem>,
-    private val confirmedIds: Set<String>,
-) {
+class SegmentationReview private constructor(val items: List<DetectedItem>, private val confirmedIds: Set<String>) {
     /** Items the user has explicitly confirmed, in the order they appear in the split. */
     val confirmedItems: List<DetectedItem> get() = items.filter { it.canonicalItemId in confirmedIds }
 
@@ -26,19 +23,17 @@ class SegmentationReview private constructor(
      */
     val isConfirmable: Boolean get() = items.isNotEmpty()
 
-    fun add(item: DetectedItem): SegmentationReview =
-        SegmentationReview(items + item, confirmedIds)
+    fun add(item: DetectedItem): SegmentationReview = SegmentationReview(items + item, confirmedIds)
 
     /**
      * Removing an item drops its confirmation with it. A confirmation that
      * outlived its item would let the meal aggregate a food no longer in the
      * split.
      */
-    fun remove(canonicalItemId: String): SegmentationReview =
-        SegmentationReview(
-            items.filterNot { it.canonicalItemId == canonicalItemId },
-            confirmedIds - canonicalItemId,
-        )
+    fun remove(canonicalItemId: String): SegmentationReview = SegmentationReview(
+        items.filterNot { it.canonicalItemId == canonicalItemId },
+        confirmedIds - canonicalItemId,
+    )
 
     fun confirm(canonicalItemId: String): SegmentationReview =
         if (items.none { it.canonicalItemId == canonicalItemId }) {
@@ -81,7 +76,6 @@ class SegmentationReview private constructor(
     }
 
     companion object {
-        fun of(items: List<DetectedItem>): SegmentationReview =
-            SegmentationReview(items, emptySet())
+        fun of(items: List<DetectedItem>): SegmentationReview = SegmentationReview(items, emptySet())
     }
 }

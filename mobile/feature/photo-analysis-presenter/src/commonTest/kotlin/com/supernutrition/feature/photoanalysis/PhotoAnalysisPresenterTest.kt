@@ -34,10 +34,7 @@ class PhotoAnalysisPresenterTest {
 
         assertEquals(
             copy.status.readyToCapture,
-            PhotoAnalysisPresenterModel.from(
-                PhotoAnalysisState.Capture,
-                copy,
-            ).statusLabel,
+            PhotoAnalysisPresenterModel.from(PhotoAnalysisState.Capture, copy).statusLabel,
         )
         assertEquals(
             copy.recovery.cameraPermissionRequired,

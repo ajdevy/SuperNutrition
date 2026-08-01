@@ -77,9 +77,9 @@ internal class PhotoAnalysisReducerTransitions(private val context: PhotoAnalysi
         is PhotoAnalysisEvent.AnalysisSucceeded -> when {
             event.requestId != current.requestId -> unchanged(current)
 
-            context.isLive(current.ref) -> unchanged(
-                PhotoAnalysisState.CandidateReview(current.ref, current.requestId),
-            )
+            context.isLive(
+                current.ref,
+            ) -> unchanged(PhotoAnalysisState.CandidateReview(current.ref, current.requestId))
 
             else -> {
                 reduction(
@@ -134,9 +134,9 @@ internal class PhotoAnalysisReducerTransitions(private val context: PhotoAnalysi
 
     private fun clearAndCapture(ref: PhotoRef): PhotoAnalysisReduction =
         reduction(PhotoAnalysisState.Capture, PhotoAnalysisEffect.RevokePhoto(ref))
+
+    private fun unchanged(state: PhotoAnalysisState) = PhotoAnalysisReduction(state)
+
+    private fun reduction(state: PhotoAnalysisState, effect: PhotoAnalysisEffect) =
+        PhotoAnalysisReduction(state, listOf(effect))
 }
-
-private fun unchanged(state: PhotoAnalysisState) = PhotoAnalysisReduction(state)
-
-private fun reduction(state: PhotoAnalysisState, effect: PhotoAnalysisEffect) =
-    PhotoAnalysisReduction(state, listOf(effect))
