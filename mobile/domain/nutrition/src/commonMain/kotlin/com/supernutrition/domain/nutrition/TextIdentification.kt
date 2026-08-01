@@ -2,8 +2,7 @@ package com.supernutrition.domain.nutrition
 
 /** Where in the user's description an item was found. */
 data class TextSpan(val start: Int, val end: Int) {
-    fun indexes(description: String): Boolean =
-        start >= 0 && end > start && end <= description.length
+    fun indexes(description: String): Boolean = start >= 0 && end > start && end <= description.length
 }
 
 /** One food the engine believes the description named, and the words it came from. */
@@ -27,8 +26,19 @@ sealed interface TextIdentificationOutcome {
     /** The engine proposed a split the user can review and correct. */
     data class Items(val items: List<DetectedItem>) : TextIdentificationOutcome
 
-    /** No usable engine result; the deterministic floor answered instead. */
-    data class Floor(val canonicalItemIds: List<String>) : TextIdentificationOutcome
+    /**
+     * No usable engine result; the deterministic floor answered instead.
+     *
+     * [unresolvedFragments] carries the pieces of the description the floor could
+     * not match. FM-6 is a failure about what a result omits rather than what it
+     * shows, so reporting only the matches would be that failure exactly: "two
+     * eggs and toast" resolving to one item is indistinguishable from a
+     * one-item meal unless the dropped fragment travels with the result. Naming
+     * the leftovers is what lets the caller show them and lets the user add them
+     * back (CAP-7) instead of silently reaching a grounded result for half a meal.
+     */
+    data class Floor(val canonicalItemIds: List<String>, val unresolvedFragments: List<String> = emptyList()) :
+        TextIdentificationOutcome
 }
 
 /**
@@ -45,10 +55,7 @@ sealed interface TextIdentificationOutcome {
  * Nothing here produces a nutrition number. Both paths resolve identity only;
  * numbers come later from a confirmed catalog record.
  */
-class TextIdentification(
-    private val floor: CatalogSearch,
-    private val engine: (String) -> TextEngineOutcome,
-) {
+class TextIdentification(private val floor: CatalogSearch, private val engine: (String) -> TextEngineOutcome) {
     fun identify(description: String): TextIdentificationOutcome {
         val trimmed = description.trim()
         // Checked before the engine runs: invoking a model on an empty string
@@ -57,8 +64,10 @@ class TextIdentification(
 
         return when (val outcome = engine(trimmed)) {
             is TextEngineOutcome.Segmented -> acceptOrFallBack(outcome.items, trimmed)
+
             // An abstention is the engine being honest, not the journey failing.
             is TextEngineOutcome.Abstained -> fallBack(trimmed)
+
             is TextEngineOutcome.Unavailable -> fallBack(trimmed)
         }
     }
@@ -68,10 +77,7 @@ class TextIdentification(
      * would be shown provenance claiming words that are not there. Such a result
      * is discarded whole rather than partially trusted.
      */
-    private fun acceptOrFallBack(
-        items: List<DetectedItem>,
-        description: String,
-    ): TextIdentificationOutcome {
+    private fun acceptOrFallBack(items: List<DetectedItem>, description: String): TextIdentificationOutcome {
         if (items.isEmpty()) return fallBack(description)
         val everySpanIndexes = items.all { it.sourceSpan.indexes(description) }
         return if (everySpanIndexes) {
@@ -81,8 +87,30 @@ class TextIdentification(
         }
     }
 
-    private fun fallBack(description: String): TextIdentificationOutcome =
-        TextIdentificationOutcome.Floor(
-            floor.search(description).map { it.canonicalItemId },
-        )
+    /**
+     * The floor resolves one record per query, so handing it a whole meal was a
+     * category error: every tier requires all query tokens to be satisfied by a
+     * single record, and no record contains "and". A multi-item description
+     * matched nothing and the journey ended in silence — the failure this class
+     * exists to prevent.
+     *
+     * The description is therefore segmented the same way the engine segments
+     * it, and each fragment resolved on its own.
+     *
+     * Unlike the engine, partial resolution is kept rather than abstained on.
+     * The engine proposes a split and must be all-or-nothing, but the floor is
+     * the last resort: returning the foods it did recognise beats returning
+     * nothing. What FM-6 forbids is not partial grounding, it is *invisible*
+     * partial grounding, so anything that failed to resolve is reported
+     * alongside what did rather than dropped.
+     */
+    private fun fallBack(description: String): TextIdentificationOutcome {
+        val resolved = mutableListOf<String>()
+        val unresolved = mutableListOf<String>()
+        for (fragment in TextFragments.of(description)) {
+            val hit = floor.search(fragment.text).firstOrNull()
+            if (hit == null) unresolved += fragment.text else resolved += hit.canonicalItemId
+        }
+        return TextIdentificationOutcome.Floor(resolved.distinct(), unresolved)
+    }
 }
