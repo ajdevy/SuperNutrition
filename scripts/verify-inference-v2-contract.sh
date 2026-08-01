@@ -132,6 +132,59 @@ telemetry = fixtures["telemetry-event.json"]
 if "description" in json.dumps(telemetry):
     raise SystemExit("telemetry fixture must not carry a user-authored description")
 
+# The telemetry allowlist is checked against the fixture rather than merely
+# declared. A field list nothing validates drifts from the shape actually
+# emitted, and the drift is invisible until a description shows up in a log.
+telemetry_schema = schema.get("telemetry", {})
+allowed_fields = telemetry_schema.get("emitted_fields", [])
+if not allowed_fields:
+    raise SystemExit("v2 must declare the telemetry fields a producer may emit")
+if telemetry_schema.get("unlisted_field") != "reject":
+    raise SystemExit("an allowlist that admits unlisted fields is not an allowlist")
+if telemetry_schema.get("raw_payload") != "forbidden":
+    raise SystemExit("telemetry must forbid raw payloads")
+if set(telemetry) - set(allowed_fields):
+    raise SystemExit(f"telemetry fixture emits unlisted fields: {sorted(set(telemetry) - set(allowed_fields))}")
+if set(allowed_fields) - set(telemetry):
+    raise SystemExit(f"telemetry fixture omits declared fields: {sorted(set(allowed_fields) - set(telemetry))}")
+
+# Every vocabulary is checked against the value the fixture actually carries, so
+# a binding written from the fixture and a binding written from the schema
+# cannot disagree about what the wire value is.
+VOCABULARIES = {
+    "eventName": "event_name",
+    "route": "route",
+    "capabilityTier": "capability_tier",
+    "durationBucket": "duration_bucket",
+    "resourceBucket": "resource_bucket",
+    "terminalOutcome": "terminal_outcome",
+    "itemGroupCountBucket": "item_group_count_bucket",
+}
+for field, key in VOCABULARIES.items():
+    values = telemetry_schema.get(key, [])
+    if not values:
+        raise SystemExit(f"v2 must declare the {field} vocabulary")
+    if telemetry[field] not in values:
+        raise SystemExit(f"telemetry fixture {field}={telemetry[field]!r} is outside its declared vocabulary")
+
+# Modality is validated against the release's own modality list rather than a
+# telemetry-local copy. It is checked at all because the two agreement rules
+# below are string equality: an unrecognised modality makes both of them False,
+# which silently disables the only structural enforcement of the rule this
+# section exists for. A guard that a typo can switch off is not a guard.
+if telemetry["modality"] not in modality.get("values", []):
+    raise SystemExit(f"telemetry fixture modality={telemetry['modality']!r} is not a declared modality")
+
+# The route a modality cannot have produced. Asserted structurally because the
+# text case is the whole reason `local-text` exists: a text attempt reported as
+# `local` is indistinguishable in a log from an on-device photo attempt.
+if telemetry_schema.get("modality_route_agreement") != "reject-mismatch":
+    raise SystemExit("telemetry must reject a route its modality cannot have produced")
+if telemetry["modality"] == "text" and telemetry["route"] == "local":
+    raise SystemExit("a text attempt reported as 'local' is the flattening local-text exists to prevent")
+if telemetry["modality"] == "photo" and telemetry["route"] == "local-text":
+    raise SystemExit("a photo attempt cannot have been answered by the text engine")
+
 matrix_bytes = re.sub(
     rb'(?m)^digest\s*=\s*"(?:[a-f0-9]{64}|pending)"\s*$',
     b'digest = "<release-digest>"',

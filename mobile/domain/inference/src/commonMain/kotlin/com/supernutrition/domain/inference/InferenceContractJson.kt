@@ -36,4 +36,10 @@ object InferenceContractJson {
 
     fun decodeTelemetry(payload: String): InferenceTelemetryEvent =
         json.decodeFromString(InferenceTelemetryEvent.serializer(), payload)
+
+    fun encodeTelemetryV2(event: InferenceTelemetryEventV2): String =
+        json.encodeToString(InferenceTelemetryEventV2.serializer(), event)
+
+    fun decodeTelemetryV2(payload: String): InferenceTelemetryEventV2 =
+        json.decodeFromString(InferenceTelemetryEventV2.serializer(), payload)
 }

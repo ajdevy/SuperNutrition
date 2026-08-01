@@ -94,13 +94,13 @@ test_entrypoint = "scripts/mobile-api-contract-negative-fixtures.sh"
 
 [[executable]]
 path = "scripts/verify-inference-contract.sh"
-purpose = "read-only inference contract v1 and v2 schema, evidence, and coexistence validation"
+purpose = "read-only photo-inference-engine v1 schema and compatibility validation"
 mutates_repository = false
 test_entrypoint = "scripts/verify-inference-contract.sh"
 
 [[executable]]
 path = "scripts/inference-contract-negative-fixtures.sh"
-purpose = "negative fixtures for inference v1/v2 compatibility, mass-evidence, and nutrition drift"
+purpose = "negative fixtures for photo-inference-engine compatibility and nutrition drift"
 mutates_repository = false
 test_entrypoint = "scripts/inference-contract-negative-fixtures.sh"
 
@@ -115,6 +115,36 @@ path = "scripts/inference-v2-negative-fixtures.sh"
 purpose = "negative fixtures for v2 modality cardinality, source spans, nutrition, and telemetry leakage"
 mutates_repository = false
 test_entrypoint = "scripts/inference-v2-negative-fixtures.sh"
+
+[[executable]]
+path = "scripts/verify-inference-v2-binding.sh"
+purpose = "read-only check that the Kotlin binding emits exactly the telemetry fields and wire values inference-engine v2 declares"
+mutates_repository = false
+test_entrypoint = "scripts/inference-v2-binding-negative-fixtures.sh"
+
+[[executable]]
+path = "scripts/inference-v2-binding-negative-fixtures.sh"
+purpose = "negative fixtures for schema-to-binding vocabulary drift in both directions, plus telemetry field-list order"
+mutates_repository = false
+test_entrypoint = "scripts/inference-v2-binding-negative-fixtures.sh"
+
+[[executable]]
+path = "scripts/verify-release-immutability.sh"
+purpose = "cross-revision gate proving no published contract release or catalog entry changed since the base revision"
+mutates_repository = false
+test_entrypoint = "scripts/release-immutability-negative-fixtures.sh"
+
+[[executable]]
+path = "scripts/release-immutability-negative-fixtures.sh"
+purpose = "negative fixtures for in-place release mutation, catalog rewrite, and deletion, plus a publishing positive control"
+mutates_repository = false
+test_entrypoint = "scripts/release-immutability-negative-fixtures.sh"
+
+[[executable]]
+path = "scripts/emit-release-digest.sh"
+purpose = "single shared implementation that prints a computed contract release digest"
+mutates_repository = false
+test_entrypoint = "scripts/release-immutability-negative-fixtures.sh"
 
 [[executable]]
 path = "scripts/verify-interaction-policy-contract.sh"

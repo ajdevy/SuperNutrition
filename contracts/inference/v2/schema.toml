@@ -37,6 +37,66 @@ band_medium_below = 0.8
 band_high_from = 0.8
 band_mismatch = "reject"
 
+# Telemetry carries the route because "which engine answered" is the operational
+# question this product actually has, and `local` alone cannot answer it: an
+# on-device vision engine and an on-device text engine are different engines with
+# different budgets and different failures. Flattening `local-text` to `local` at
+# the telemetry boundary loses exactly the distinction FR-6 reports separately,
+# so the field list and its vocabularies are fixed here rather than left to each
+# binding to invent. The confidence bands were previously in one binding's Kotlin
+# and a second implementation had no way to learn the rule existed; this section
+# exists so telemetry does not repeat that.
+#
+# `emitted_fields` is closed at the producer, which is a different rule from
+# `compatibility.unknown_fields = "ignore"` and does not contradict it. A decoder
+# tolerating an unknown field is forward compatibility; a producer adding one is
+# how free text reaches logs, one convenient extra at a time. The tolerance
+# belongs to the reader, never to the writer.
+[telemetry]
+emitted_fields = [
+  "contractVersion",
+  "modality",
+  "eventName",
+  "route",
+  "capabilityTier",
+  "durationBucket",
+  "resourceBucket",
+  "terminalOutcome",
+  "itemGroupCountBucket",
+  "engineId",
+  "modelVersion",
+]
+unlisted_field = "reject"
+raw_payload = "forbidden"
+# Only the attempt event is declared. v1's capability event keeps v1's shape
+# until something needs it here: a vocabulary nothing emits is a claim, not a
+# contract, and this release should not pin one on speculation.
+event_name = ["inference.attempt.completed"]
+route = ["local", "local-text", "remote"]
+capability_tier = [
+  "unavailable",
+  "model-required",
+  "downloading",
+  "ready",
+  "temporarily-unavailable",
+  "unsupported",
+]
+duration_bucket = ["under-2s", "2-to-5s", "over-5s"]
+# Absolute magnitude rather than v1's budget-relative naming. Per-device-tier
+# budgets are not set yet, so a budget-relative label would bake in a threshold
+# nobody has decided and could not be un-baked in a released contract. An
+# absolute bucket can be compared against a budget once one exists.
+resource_bucket = ["low", "moderate", "high"]
+terminal_outcome = ["candidates", "abstention", "failure", "cancelled"]
+# Bucketed, not exact. "This person logged seven items" is closer to a diary
+# entry than to an operational measurement, and the operational question is only
+# whether segmentation produced one item or many.
+item_group_count_bucket = ["none", "1", "2-3", "4-plus"]
+# A text attempt may not report `local`, and a photo attempt may not report
+# `local-text`. Either would be a route the modality cannot have produced, and
+# the text case is precisely the flattening this section exists to prevent.
+modality_route_agreement = "reject-mismatch"
+
 [compatibility]
 unknown_fields = "ignore"
 missing_required_fields = "reject"
