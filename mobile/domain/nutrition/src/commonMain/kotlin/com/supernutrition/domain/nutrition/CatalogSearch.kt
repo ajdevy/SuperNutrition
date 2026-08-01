@@ -27,6 +27,7 @@ data class CatalogRecord(
  */
 data class CatalogSearchResult(
     val canonicalItemId: String,
+    val displayName: String = "",
     val unmatchedPreparation: List<String> = emptyList(),
     val strength: MatchStrength = MatchStrength.WEAKEST,
 )
@@ -139,6 +140,7 @@ class CatalogSearch(records: List<CatalogRecord>) {
                     .map {
                         CatalogSearchResult(
                             canonicalItemId = it.canonicalItemId,
+                            displayName = it.displayName,
                             strength = MatchStrength(tier, it.coverageOf(tier, normalizedQuery, queryTokens)),
                         )
                     }
@@ -168,6 +170,7 @@ internal enum class MatchTier { EXACT, TOKEN_SUBSET, PREFIX, FUZZY }
  */
 internal class IndexedRecord(record: CatalogRecord) {
     val canonicalItemId: String = record.canonicalItemId
+    val displayName: String = record.displayName
     private val searchableForms: List<String> =
         (listOf(record.displayName) + record.alternateNames).map(::normalizeForSearch)
     private val formTokens: List<List<String>> = searchableForms.map(::tokenizeNormalized)
