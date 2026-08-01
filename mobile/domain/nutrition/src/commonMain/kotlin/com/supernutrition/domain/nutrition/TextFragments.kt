@@ -76,6 +76,77 @@ object TextFragments {
     }
 
     /**
+     * A span shrunk to the words it names, dropping the separators that joined
+     * it to its neighbours. Null when it names no words at all.
+     *
+     * Owned here because this is where separator knowledge lives. An earlier
+     * version of `SegmentationReview.split` shared only the conjunction list and
+     * kept its own whitespace trimming, which meant it agreed with [separatorAt]
+     * about "and" and disagreed about ",". The result was a half whose
+     * provenance read "chicken," — a span this segmenter would never produce.
+     * Sharing one list and re-implementing the rest is the drift AGENTS.md warns
+     * about, one level down.
+     *
+     * The loop runs to a fixed point because separators combine: "chicken , and
+     * rice" joins with a comma *and* a conjunction, and trimming either one
+     * exposes the other.
+     */
+    internal fun trimSeparators(description: String, start: Int, end: Int): TextSpan? {
+        var from = start
+        var to = end
+        var previousFrom = -1
+        var previousTo = -1
+        while (from < to && (from != previousFrom || to != previousTo)) {
+            previousFrom = from
+            previousTo = to
+            from = skipSeparatorsForward(description, from, to)
+            to = skipSeparatorsBackward(description, from, to)
+            from = skipLeadingConjunction(description, from, to)
+            to = skipTrailingConjunction(description, from, to)
+        }
+        return if (from < to) TextSpan(from, to) else null
+    }
+
+    /**
+     * Whether this position separates two foods rather than sitting inside one.
+     *
+     * The rule a surface must respect when it offers a split: a cut through the
+     * middle of a word hands each half a fragment of it.
+     */
+    internal fun separatesWords(description: String, at: Int): Boolean =
+        (at > 0 && isSeparatorCharacter(description[at - 1])) ||
+            (at < description.length && isSeparatorCharacter(description[at]))
+
+    private fun skipSeparatorsForward(description: String, from: Int, limit: Int): Int {
+        var at = from
+        while (at < limit && isSeparatorCharacter(description[at])) at++
+        return at
+    }
+
+    private fun skipSeparatorsBackward(description: String, floor: Int, from: Int): Int {
+        var at = from
+        while (at > floor && isSeparatorCharacter(description[at - 1])) at--
+        return at
+    }
+
+    private fun skipLeadingConjunction(description: String, from: Int, limit: Int): Int {
+        var wordEnd = from
+        while (wordEnd < limit && !isSeparatorCharacter(description[wordEnd])) wordEnd++
+        return if (wordEnd > from && isConjunction(description.substring(from, wordEnd))) wordEnd else from
+    }
+
+    private fun skipTrailingConjunction(description: String, floor: Int, to: Int): Int {
+        var wordStart = to
+        while (wordStart > floor && !isSeparatorCharacter(description[wordStart - 1])) wordStart--
+        return if (wordStart < to && isConjunction(description.substring(wordStart, to))) wordStart else to
+    }
+
+    /** Whitespace and the comma [separatorAt] already treats as a separator on its own. */
+    private fun isSeparatorCharacter(character: Char): Boolean = character.isWhitespace() || character == ','
+
+    private fun isConjunction(word: String): Boolean = word.lowercase() in CONJUNCTIONS
+
+    /**
      * Deliberately small and English-only. A separator list is language-specific
      * data and belongs with the per-market language matrix rather than here.
      */
