@@ -103,11 +103,11 @@ class CatalogServingDefaultSourceTest {
             source.standardServingIfBoundToSnapshot(
                 snapshot,
                 CanonicalItemConfirmation(
-                    "food:apple",
-                    "confirmation-other",
-                    "b".repeat(64),
-                ),
-            ),
+            "food:apple",
+            "confirmation-other",
+            "b".repeat(64),
+        )
+            )
         )
     }
 }

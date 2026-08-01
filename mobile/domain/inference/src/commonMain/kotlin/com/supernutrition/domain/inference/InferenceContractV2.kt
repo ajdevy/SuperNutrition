@@ -1,10 +1,26 @@
 package com.supernutrition.domain.inference
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
 /** The modality-neutral release this binding implements. */
 const val INFERENCE_CONTRACT_V2: String = "inference-engine/v2"
 
-/** Which payload an inference request carries. */
-enum class InferenceModality { PHOTO, TEXT }
+/**
+ * Which payload an inference request carries.
+ *
+ * Serial names are lowercase because the contract fixes the wire values as
+ * `["photo", "text"]`. Without them the enum encodes as `PHOTO`/`TEXT` and
+ * cannot round-trip the very fixtures it was written against.
+ */
+@Serializable
+enum class InferenceModality {
+    @SerialName("photo")
+    PHOTO,
+
+    @SerialName("text")
+    TEXT,
+}
 
 /**
  * Kotlin binding for `contracts/inference/v2`.
@@ -51,14 +67,12 @@ sealed interface InferenceRequestV2 {
          * address typed by mistake — and anything that interpolates a request
          * into a log line or crash report would otherwise leak it.
          */
-        override fun toString(): String =
-            "InferenceRequestV2.Text(description=redacted, inputLocale=$inputLocale)"
+        override fun toString(): String = "InferenceRequestV2.Text(description=redacted, inputLocale=$inputLocale)"
 
-        override fun equals(other: Any?): Boolean =
-            other is Text &&
-                description == other.description &&
-                inputLocale == other.inputLocale &&
-                attemptContext == other.attemptContext
+        override fun equals(other: Any?): Boolean = other is Text &&
+            description == other.description &&
+            inputLocale == other.inputLocale &&
+            attemptContext == other.attemptContext
 
         override fun hashCode(): Int {
             var result = description.hashCode()
@@ -97,5 +111,13 @@ interface InferenceEngineV2 {
     /** Which modalities this engine can serve. An engine may support only one. */
     val supportedModalities: Set<InferenceModality>
 
-    suspend fun analyze(request: InferenceRequestV2): PhotoInferenceResult
+    /**
+     * Returns [InferenceResultV2] rather than v1's `PhotoInferenceResult`.
+     *
+     * The interface accepted a text request and could only answer in a
+     * photo-shaped result, which had no way to carry the per-item spans a typed
+     * description produces — so the modality this contract exists to add was
+     * representable on the way in and lost on the way out.
+     */
+    suspend fun analyze(request: InferenceRequestV2): InferenceResultV2
 }
