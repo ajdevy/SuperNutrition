@@ -82,18 +82,19 @@ Each supported market declares a row in a language matrix. The matrix is data, v
 
 English-only behaviour is not a valid default for a market whose catalog is not in English.
 
-### First two languages
+### First three languages
 
-English and Russian. Spanish was an earlier target and was dropped from scope; the notes below record what that removes, because a dropped language takes its coverage with it.
+English, Russian, and Spanish. Spanish was dropped on 2026-07-31 and restored on 2026-08-01; the notes below record what its absence had removed, because the reasoning explains why it is worth carrying.
 
 | Language | Script | Morphology | Dominant cost |
 | --- | --- | --- | --- |
 | English | Latin | None beyond plurals; synonyms suffice | Baseline |
+| Spanish | Latin with diacritics | Light stemming | Gender and number agreement, regional variants |
 | Russian | Cyrillic | Full lemmatization across cases | Inflection plus cross-script entry |
 
-These two sit at opposite ends of the matrix, which is useful — but they no longer cover the middle. Spanish was the only target needing light stemming with diacritics, so that profile is now designed and untested. A future market landing on it is a new decision, not an increment.
+These three cover the matrix rather than only its ends. English needs nothing beyond plurals and Russian needs full lemmatization, and Spanish sits between them on light stemming with diacritics — the profile that was designed and untested while Spanish was out of scope. Restoring it means every declared morphology profile has a language exercising it.
 
-The diacritic fold in query normalization loses its main justification with Spanish gone: Cyrillic does not use Latin-1 accents. It still earns its place through English loanwords such as *café* and *jalapeño*, and through Russian ё/е, but it is close to unexercised and is a deletion candidate if no accented market is ever added.
+The diacritic fold in query normalization is load-bearing again. It was close to unexercised with Spanish out of scope — Cyrillic does not use Latin-1 accents — and was recorded then as a deletion candidate. Spanish restores its main justification: *berenjena*, *plátano*, and *jalapeño* all depend on it, and a user typing without accents must still reach the record.
 
 ### Input language is not catalog language
 
