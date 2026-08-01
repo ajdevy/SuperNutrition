@@ -1,10 +1,10 @@
 package com.supernutrition.feature.photoanalysis
 
 import com.supernutrition.domain.photoanalysis.AttemptId
-import com.supernutrition.domain.photoanalysis.ImageOrientation
 import com.supernutrition.domain.photoanalysis.NormalizedPhotoInput
 import com.supernutrition.domain.photoanalysis.PhotoAnalysisBackgroundSnapshot
 import com.supernutrition.domain.photoanalysis.PhotoAnalysisState
+import com.supernutrition.domain.photoanalysis.PhotoFormat
 import com.supernutrition.domain.photoanalysis.PhotoRef
 import com.supernutrition.domain.photoanalysis.RecoveryReason
 import com.supernutrition.domain.photoanalysis.RequestId
@@ -21,9 +21,7 @@ class PhotoAnalysisPresenterTest {
             bytes = byteArrayOf(1),
             width = 1,
             height = 1,
-            orientation = ImageOrientation.UP,
-            colorSpace = "sRGB",
-            metadataKeys = emptySet(),
+            format = PhotoFormat.NORMALIZED,
             contentDigest = "a".repeat(64),
         )
         val baseCopy = PhotoAnalysisPresenterCopyFixtures.localized()

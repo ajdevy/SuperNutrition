@@ -11,6 +11,7 @@ import platform.UIKit.UIViewController
  */
 @OptIn(ExperimentalForeignApi::class)
 public object SharedKitPhotoAnalysis {
+    @Suppress("UnusedParameter")
     public fun viewController(
         session: SharedKitPhotoAnalysisSession,
         onNativeAction: (PhotoAnalysisNativeAction) -> Unit,

@@ -79,10 +79,10 @@ data class PhotoInferenceResult(val contractVersion: String, val outcome: Infere
 }
 
 @Serializable
-sealed class InferenceOutcome {
+sealed interface InferenceOutcome {
     @Serializable
     @SerialName("candidates")
-    data class Candidates(val candidates: List<InferenceCandidate>) : InferenceOutcome() {
+    data class Candidates(val candidates: List<InferenceCandidate>) : InferenceOutcome {
         init {
             require(candidates.isNotEmpty()) { "Candidate outcome must not be empty" }
             require(candidates.map(InferenceCandidate::rank).toSet().size == candidates.size) {
@@ -103,7 +103,7 @@ sealed class InferenceOutcome {
         val reason: AbstentionReason,
         val userMessageKey: String,
         val provenance: InferenceProvenance,
-    ) : InferenceOutcome() {
+    ) : InferenceOutcome {
         init {
             requireNonBlankValue(userMessageKey, "Abstention message key must not be blank")
         }
@@ -116,7 +116,7 @@ sealed class InferenceOutcome {
         val retryable: Boolean,
         val userMessageKey: String,
         val provenance: InferenceProvenance,
-    ) : InferenceOutcome() {
+    ) : InferenceOutcome {
         init {
             requireNonBlankValue(userMessageKey, "Failure message key must not be blank")
         }
