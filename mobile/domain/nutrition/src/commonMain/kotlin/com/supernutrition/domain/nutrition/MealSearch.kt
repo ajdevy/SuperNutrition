@@ -13,6 +13,7 @@ sealed interface MealSearchHit {
 
     data class Food(
         val canonicalItemId: String,
+        val displayName: String,
         val unmatchedPreparation: List<String>,
         override val strength: MatchStrength,
     ) : MealSearchHit
@@ -50,7 +51,7 @@ class MealSearch(
 ) {
     fun search(query: String, locale: DishLocale = DishLocale.Unspecified): List<MealSearchHit> {
         val foodHits = foods.search(query).map {
-            MealSearchHit.Food(it.canonicalItemId, it.unmatchedPreparation, it.strength)
+            MealSearchHit.Food(it.canonicalItemId, it.displayName, it.unmatchedPreparation, it.strength)
         }
         val dishHits = localePreference.prefer(dishes.expand(query), locale).map {
             MealSearchHit.Dish(it.canonicalDishId, it.dishDisplayName, it.ingredients, it.strength)
