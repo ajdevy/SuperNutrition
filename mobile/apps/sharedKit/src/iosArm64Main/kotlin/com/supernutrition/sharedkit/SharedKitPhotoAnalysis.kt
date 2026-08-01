@@ -16,9 +16,8 @@ public object SharedKitPhotoAnalysis {
     ) { action -> onNativeAction(action.toSharedKitAction()) }
 }
 
-private fun PhotoAnalysisNativeAction.toSharedKitAction(): SharedKitPhotoAnalysisNativeAction =
-    when (this) {
-        PhotoAnalysisNativeAction.TakePhoto -> SharedKitPhotoAnalysisNativeAction.TakePhoto
-        PhotoAnalysisNativeAction.ImportPhoto -> SharedKitPhotoAnalysisNativeAction.ImportPhoto
-        PhotoAnalysisNativeAction.OpenSettings -> SharedKitPhotoAnalysisNativeAction.OpenSettings
-    }
+private fun PhotoAnalysisNativeAction.toSharedKitAction(): SharedKitPhotoAnalysisNativeAction = when (this) {
+    PhotoAnalysisNativeAction.TakePhoto -> SharedKitPhotoAnalysisNativeAction.TakePhoto
+    PhotoAnalysisNativeAction.ImportPhoto -> SharedKitPhotoAnalysisNativeAction.ImportPhoto
+    PhotoAnalysisNativeAction.OpenSettings -> SharedKitPhotoAnalysisNativeAction.OpenSettings
+}

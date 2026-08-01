@@ -37,10 +37,9 @@ fun interface CatalogServingDefaultSource {
     fun standardServingIfBoundToSnapshot(
         snapshot: ConfigurationSnapshot,
         confirmation: CanonicalItemConfirmation,
-    ): CatalogServingProposal? =
-        if (snapshot.digest == confirmation.snapshotDigest) {
-            standardServing(snapshot, confirmation)
-        } else {
-            null
-        }
+    ): CatalogServingProposal? = if (snapshot.digest == confirmation.snapshotDigest) {
+        standardServing(snapshot, confirmation)
+    } else {
+        null
+    }
 }
