@@ -143,6 +143,20 @@ In fixture order, the composite top-1 dish labels were `filet_mignon`,
 exploratory single-label outputs, not ingredient predictions, and are not used
 as ingredient quality scores.
 
+A subsequent trace-bound physical run was captured with Xcode Instruments
+`Power Profiler` against iPhone 14 Pro / iOS 26.5.2. Its copied result completed
+semantic `5/5`, init `572 ms`, p50/p95/max `83/84/84 ms`, resident memory
+`255,744 -> 247,360 KB`, thermal `0 -> 0`, and battery level `1 -> 1`. The
+local-only trace is
+`/tmp/supernutrition-ios-power-20260801.trace`; its table of contents records
+the physical UDID, `SuperNutritionG3` process exit `0`, a 32.486 s capture, and
+the `Power Profiler` template. The exported `ProcessSubsystemPowerImpact`
+table contains CPU-impact samples for the app and reports `0 Bytes` for every
+Wi-Fi and cellular receive/transmit field. This is native energy/network trace
+evidence, but the current export does not expose a calibrated joule or battery
+percentage delta, so the numeric battery budget remains unaccepted rather than
+being marked as a pass.
+
 ## Fixture provenance
 
 The five composite and five semantic images are downloaded from Wikimedia
@@ -166,7 +180,7 @@ requirements.
 | Inference latency | p95 <= 100 ms; max <= 150 ms after warm-up | **fail**, 279/334 ms | pass, 85/85 ms |
 | Peak process memory | <= 160 MB Android PSS; <= 160 MB iOS resident | **fail**, 273,547 KB | **fail**, 253,008 KB |
 | Thermal | no serious/critical transition | pass, 0 -> 0 | pass, 0 -> 0 |
-| Battery | <= 1% over 50 inferences plus native trace where available | sampled current `-1,287 -> -1,563 µA`; energy/percentage open | level unchanged; current/energy trace open |
+| Battery | <= 1% over 50 inferences plus native trace where available | sampled current `-1,287 -> -1,563 µA`; energy/percentage open | native `Power Profiler` trace captured; calibrated energy/percentage open |
 | Model integrity | pinned SHA before session creation; mismatch fails closed | pass | pass |
 | Network/privacy | no photo upload or product API call | pass | pass |
 
@@ -213,7 +227,9 @@ linked at the top of this artifact.
   failed proposed initialization, latency, and memory budgets. The latest
   2026-08-01 run is init `2,611 ms`, p95/max `279/334 ms`, and PSS peak
   `273,547 KB`.
-- Add iOS battery/energy evidence from an approved native trace or equivalent.
+- Review and accept the captured iOS `Power Profiler` trace, or add an
+  approved calibrated energy/percentage reading if that trace is insufficient
+  for the selected battery budget.
 - Decide and record supported Android and iOS tiers, including low-memory
   behavior.
 - Run a consented, weighed multi-component meal corpus (target 300-500 meals)
