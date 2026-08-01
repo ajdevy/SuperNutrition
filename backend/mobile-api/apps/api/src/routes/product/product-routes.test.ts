@@ -27,6 +27,7 @@ import {
   type MealEventRepository,
   type MealRepositoryFailure,
 } from '../../modules/meals/index.js';
+import { SearchFoodHandler, USDAProvider, type FetchLike } from '../../modules/nutrition/index.js';
 
 /**
  * Surface B end to end against a real Fastify instance.
@@ -178,6 +179,33 @@ const nutrition = {
   ],
 };
 
+const DATASET = 'SR Legacy 2021-10';
+
+const usdaFood = (fdcId: number, description: string) => ({
+  fdcId,
+  description,
+  foodNutrients: [
+    { nutrient: { id: 1008 }, amount: 89 },
+    { nutrient: { id: 1003 }, amount: 1.09 },
+  ],
+  foodPortions: [{ amount: 1, gramWeight: 118, measureUnit: { name: 'medium' } }],
+});
+
+/**
+ * The catalog transport is a double that records every call, so a test can
+ * prove a call did *not* happen — the meal path must never reach USDA.
+ */
+let usdaCalls: string[];
+let usdaReply: () => Response;
+
+const catalogFetch: FetchLike = async (url) => {
+  usdaCalls.push(url);
+  return usdaReply();
+};
+
+const usdaJson = (body: unknown, status = 200): Response =>
+  new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
+
 const meal = (over: Record<string, unknown> = {}) => ({
   occurredAt: '2026-07-29T12:30:00Z',
   localDate: '2026-07-29',
@@ -201,6 +229,8 @@ let repository: InMemoryMealRepository;
 
 beforeEach(async () => {
   repository = new InMemoryMealRepository();
+  usdaCalls = [];
+  usdaReply = () => usdaJson({ foods: [usdaFood(171705, 'Bananas, raw')] });
 
   const commandDeps = { repository, now: () => new Date('2026-07-29T12:30:04Z'), uuid: randomUUID };
   const controller = new MealControllerImpl({
@@ -231,6 +261,23 @@ beforeEach(async () => {
     } as never,
     product: {
       meals: controller,
+      // The real provider and use case, with only the transport doubled: the
+      // catalog contract a client sees includes the provenance the provider
+      // stamps on every fact.
+      searchFood: new SearchFoodHandler(
+        new USDAProvider(
+          'usda-test-key',
+          {
+            baseUrl: 'https://example.invalid/fdc/v1',
+            connectTimeoutMs: 1000,
+            totalTimeoutMs: 2000,
+            maxRetries: 0,
+            circuitBreakerThreshold: 5,
+          },
+          DATASET,
+          catalogFetch,
+        ),
+      ),
       authenticate: (request) => authenticator.authenticate(request.headers.authorization),
     },
   });
@@ -547,13 +594,187 @@ describe('deleting a meal', () => {
   });
 });
 
+describe('catalog search', () => {
+  it('returns matches carrying source and dataset version', async () => {
+    const response = await get('/api/v1/catalog/search?q=banana&country=US');
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toEqual({
+      query: 'banana',
+      country: 'US',
+      data: [
+        {
+          foodRef: 'usda:fdc:171705',
+          displayName: 'Bananas, raw',
+          factsPer100g: {
+            catalogSource: 'usda',
+            datasetVersion: DATASET,
+            servingBasis: { unit: 'g', amount: '100', gramWeight: '100' },
+            calories: '89',
+            proteinG: '1.09',
+            fatG: null,
+            carbG: null,
+            fiberG: null,
+            sugarG: null,
+            sodiumMg: null,
+          },
+          servingOptions: [{ unit: 'medium', amount: '1', gramWeight: '118' }],
+        },
+      ],
+    });
+  });
+
+  // Matches, not verdicts (docs/06 §6.6): the response is a list even when the
+  // catalog is confident, because auto-selecting a food identity is a forbidden
+  // default under AD-40.
+  it('returns every candidate rather than one auto-selected food', async () => {
+    usdaReply = () =>
+      usdaJson({ foods: [usdaFood(171705, 'Bananas, raw'), usdaFood(173944, 'Banana chips')] });
+
+    const response = await get('/api/v1/catalog/search?q=banana&country=US');
+
+    expect(response.json().data).toHaveLength(2);
+  });
+
+  it('honours the requested limit', async () => {
+    usdaReply = () =>
+      usdaJson({ foods: [usdaFood(171705, 'Bananas, raw'), usdaFood(173944, 'Banana chips')] });
+
+    const response = await get('/api/v1/catalog/search?q=banana&country=US&limit=1');
+
+    expect(response.json().data).toHaveLength(1);
+  });
+
+  // Nothing matched is an answer, not a failure — the client can offer manual
+  // entry instead of showing an error.
+  it('answers 200 with an empty data array when nothing matched', async () => {
+    usdaReply = () => usdaJson({ foods: [] });
+
+    const response = await get('/api/v1/catalog/search?q=quux&country=US');
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toEqual({ data: [], query: 'quux', country: 'US' });
+  });
+
+  it.each([
+    ['a missing search term', '/api/v1/catalog/search?country=US', 'q'],
+    ['a blank search term', '/api/v1/catalog/search?q=%20%20&country=US', 'q'],
+    ['a missing country', '/api/v1/catalog/search?q=banana', 'country'],
+    [
+      'a country that is not ISO 3166-1 alpha-2',
+      '/api/v1/catalog/search?q=banana&country=usa',
+      'country',
+    ],
+  ])('rejects %s', async (_case, url, field) => {
+    const response = await get(url);
+
+    expect(response.statusCode).toBe(400);
+    const body = response.json();
+    expect(body.error.code).toBe('VALIDATION_FAILED');
+    expect(body.error.details[0].field).toBe(field);
+    expect(body.error).not.toHaveProperty('gatewayCode');
+  });
+
+  it('does not call the catalog for a request it has already rejected', async () => {
+    await get('/api/v1/catalog/search?country=US');
+
+    expect(usdaCalls).toEqual([]);
+  });
+
+  it.each([
+    ['is unavailable', 500, 502, 'PROVIDER_UNAVAILABLE'],
+    ['is rate limiting us', 429, 429, 'RATE_LIMITED'],
+  ])('reports that the catalog %s', async (_case, upstream, expected, code) => {
+    usdaReply = () => usdaJson({ error: 'usda' }, upstream);
+
+    const response = await get('/api/v1/catalog/search?q=banana&country=US');
+
+    expect(response.statusCode).toBe(expected);
+    expect(response.json().error.code).toBe(code);
+  });
+
+  it('reports a catalog timeout as a timeout', async () => {
+    usdaReply = () => {
+      const error = new Error('The operation was aborted due to timeout');
+      error.name = 'TimeoutError';
+      throw error;
+    };
+
+    const response = await get('/api/v1/catalog/search?q=banana&country=US');
+
+    expect(response.statusCode).toBe(504);
+    expect(response.json().error.code).toBe('PROVIDER_TIMEOUT');
+  });
+
+  it('never leaks the catalog API key to a client', async () => {
+    const response = await get('/api/v1/catalog/search?q=banana&country=US');
+
+    expect(response.body).not.toContain('usda-test-key');
+  });
+});
+
+/**
+ * AD-7 / AD-19 and docs/08 §8.4: the server does not calculate nutrition and
+ * does not fill a meal in from the catalog. These assertions fail the moment a
+ * calculation path is wired into meal creation.
+ */
+describe('meal creation is isolated from the catalog', () => {
+  it.each([
+    ['manual', '/api/v1/meals/manual', meal()],
+    [
+      'photo',
+      '/api/v1/meals/photo',
+      meal({ attemptId: 'att_01J8X4Q2K7R9M3P5', configurationVersion: 'cfg/1' }),
+    ],
+    ['voice', '/api/v1/meals/voice', meal({ transcript: 'a banana' })],
+  ])('never calls USDA when a %s meal is created', async (_source, url, payload) => {
+    const response = await post(url, payload);
+
+    expect(response.statusCode).toBe(201);
+    expect(usdaCalls).toEqual([]);
+  });
+
+  // The device owns calculation, so a meal without nutrition is incomplete —
+  // the server rejects it rather than looking the food up and filling it in.
+  it('still requires nutrition rather than sourcing it from the catalog', async () => {
+    const { nutrition: _dropped, ...withoutNutrition } = meal();
+    const response = await post('/api/v1/meals/manual', withoutNutrition);
+
+    expect(response.statusCode).toBe(400);
+    expect(response.json().error.code).toBe('VALIDATION_FAILED');
+    expect(usdaCalls).toEqual([]);
+  });
+
+  it('persists the client nutrition verbatim, down to the dataset it came from', async () => {
+    const created = await post('/api/v1/meals/photo', {
+      ...meal({ attemptId: 'att_01J8X4Q2K7R9M3P5', configurationVersion: 'cfg/1' }),
+    });
+    const read = await get(`/api/v1/meals/${created.json().id}`);
+
+    expect(read.statusCode).toBe(200);
+    expect(read.json().nutrition).toMatchObject(nutrition);
+    // Not the dataset version the catalog provider is pinned to — the meal
+    // carries the client's provenance, unrewritten.
+    expect(read.json().nutrition.datasetVersion).toBe('usda-2026.1');
+    expect(usdaCalls).toEqual([]);
+  });
+
+  it('leaves the confirmed items exactly as the client sent them', async () => {
+    const created = await post('/api/v1/meals/manual', meal());
+    const read = await get(`/api/v1/meals/${created.json().id}`);
+
+    expect(read.json().items).toMatchObject(meal().items);
+    expect(usdaCalls).toEqual([]);
+  });
+});
+
 describe('the rest of Surface B', () => {
   it.each([
     ['GET', '/api/v1/goals'],
     ['GET', '/api/v1/journey'],
     ['GET', '/api/v1/progress'],
     ['GET', '/api/v1/achievements'],
-    ['GET', '/api/v1/catalog/search'],
+    ['GET', '/api/v1/catalog/items/usda:fdc:171705'],
   ])('says %s %s is not implemented rather than 404-ing', async (method, url) => {
     const response = await server.app.inject({ method: method as 'GET', url });
 

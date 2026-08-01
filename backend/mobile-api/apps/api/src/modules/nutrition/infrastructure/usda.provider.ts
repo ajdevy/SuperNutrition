@@ -50,10 +50,12 @@ interface UsdaSearchResponse {
 
 // ── Nutrient-ID → NutritionFact field mapping ──────────────────────────────
 
-const NUTRIENT_MAP: ReadonlyMap<number, keyof Pick<
+type NutrientField = keyof Pick<
   NutritionFact,
   'calories' | 'proteinG' | 'fatG' | 'carbG' | 'fiberG' | 'sugarG' | 'sodiumMg'
->> = new Map([
+>;
+
+const NUTRIENT_MAP: ReadonlyMap<number, NutrientField> = new Map([
   [1008, 'calories'],
   [1003, 'proteinG'],
   [1004, 'fatG'],
@@ -88,23 +90,25 @@ const parseFdcId = (ref: string): string | null => {
  */
 const extractNutrients = (
   raw: readonly UsdaNutrient[],
-): Pick<NutritionFact, 'calories' | 'proteinG' | 'fatG' | 'carbG' | 'fiberG' | 'sugarG' | 'sodiumMg'> | null => {
-  const byId = new Map<number, number>();
+): Pick<NutritionFact, NutrientField> | null => {
+  const found: Partial<Record<NutrientField, string>> = {};
   for (const n of raw) {
-    if (n.amount !== undefined && n.amount !== null) byId.set(n.nutrient.id, n.amount);
+    const field = NUTRIENT_MAP.get(n.nutrient.id);
+    // A nutrient USDA lists without an amount is absent, not zero (§8.7).
+    if (field === undefined || n.amount === undefined || n.amount === null) continue;
+    found[field] = toDecimal(n.amount);
   }
 
-  const cal = byId.get(1008);
-  if (cal === undefined) return null; // calories required
+  if (found.calories === undefined) return null; // calories required
 
   return {
-    calories: toDecimal(cal),
-    proteinG: byId.has(1003) ? toDecimal(byId.get(1003)!) : null,
-    fatG: byId.has(1004) ? toDecimal(byId.get(1004)!) : null,
-    carbG: byId.has(1005) ? toDecimal(byId.get(1005)!) : null,
-    fiberG: byId.has(1079) ? toDecimal(byId.get(1079)!) : null,
-    sugarG: byId.has(2000) ? toDecimal(byId.get(2000)!) : null,
-    sodiumMg: byId.has(1093) ? toDecimal(byId.get(1093)!) : null,
+    calories: found.calories,
+    proteinG: found.proteinG ?? null,
+    fatG: found.fatG ?? null,
+    carbG: found.carbG ?? null,
+    fiberG: found.fiberG ?? null,
+    sugarG: found.sugarG ?? null,
+    sodiumMg: found.sodiumMg ?? null,
   };
 };
 
@@ -149,12 +153,7 @@ export class USDAProvider implements NutritionProvider {
   #consecutiveFailures = 0;
   #circuitOpenedAt: number | null = null;
 
-  constructor(
-    apiKey: string,
-    config: UsdaConfig,
-    datasetVersion: string,
-    fetchImpl?: FetchLike,
-  ) {
+  constructor(apiKey: string, config: UsdaConfig, datasetVersion: string, fetchImpl?: FetchLike) {
     this.#apiKey = apiKey;
     this.#config = config;
     this.datasetVersion = datasetVersion;
@@ -202,7 +201,10 @@ export class USDAProvider implements NutritionProvider {
 
   // ── search ─────────────────────────────────────────────────────────────
 
-  async search(query: string, _country: string): Promise<Result<readonly CatalogMatch[], NutritionFailure>> {
+  async search(
+    query: string,
+    _country: string,
+  ): Promise<Result<readonly CatalogMatch[], NutritionFailure>> {
     const blocked = this.#checkCircuit();
     if (blocked) return blocked;
 
