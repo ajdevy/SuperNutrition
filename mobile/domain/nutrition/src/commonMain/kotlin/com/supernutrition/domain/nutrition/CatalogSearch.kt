@@ -28,6 +28,17 @@ class CatalogSearch(records: List<CatalogRecord>) {
     private val indexed = records.map(::IndexedRecord)
 
     fun search(query: String): List<CatalogSearchResult> {
+        val direct = searchExact(query)
+        if (direct.isNotEmpty()) return direct
+        // People type "two boiled eggs", not "egg, boiled". Every tier requires
+        // all query tokens to be satisfied by one record, so a single counting
+        // word makes the fragment unresolvable. Retry without them, second so
+        // that a food whose real name contains such a word still wins outright.
+        val stripped = stripQuantityWords(query)
+        return if (stripped == query) emptyList() else searchExact(stripped)
+    }
+
+    private fun searchExact(query: String): List<CatalogSearchResult> {
         val normalizedQuery = normalizeForSearch(query)
         val queryTokens = tokenizeNormalized(normalizedQuery)
         if (queryTokens.isEmpty()) return emptyList()
