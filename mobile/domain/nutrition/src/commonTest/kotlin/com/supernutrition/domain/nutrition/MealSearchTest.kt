@@ -97,6 +97,16 @@ class MealSearchTest {
 
         assertEquals(listOf("grilled"), hit.unmatchedPreparation)
     }
+
+    @Test
+    fun `a food hit carries a name a surface can show`() {
+        // A result identified only by canonical id cannot be rendered, and the
+        // gap only appears when something tries to draw it.
+        val hit = search.search("boiled egg").filterIsInstance<MealSearchHit.Food>().first()
+
+        assertEquals("food:egg-boiled", hit.canonicalItemId)
+        assertEquals("Egg, boiled", hit.displayName)
+    }
 }
 
 class DishPortionTest {
