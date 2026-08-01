@@ -156,16 +156,14 @@ team. Runtime was ONNX Runtime Objective-C `1.27.0` with XNNPACK.
 
 The five semantic top-1 labels were exact: `steak`, `greek_salad`,
 `grilled_salmon`, `sushi`, and `waffles`; semantic accuracy was `5/5` at the
-`0.55` threshold. The latest controlled rerun recorded session init `595 ms`,
-p50 `87 ms`, p95 `89 ms`, max `89 ms`, and resident memory
-`261,200 -> 252,864 KB`. Thermal status stayed `0 -> 0` and battery level
-stayed `0.850 -> 0.850`.
+`0.55` threshold. The latest trace-bound rerun recorded session init `572 ms`,
+p50 `83 ms`, p95 `84 ms`, max `84 ms`, and resident memory
+`255,744 -> 247,360 KB`. Thermal status stayed `0 -> 0` and battery level
+stayed `1 -> 1`.
 
 The iOS run is therefore semantic-pass and latency-pass, but it exceeds the
-proposed `160 MB` resident-memory budget. A subsequent trace-bound physical run
-completed semantic `5/5`, init `572 ms`, p50/p95/max `83/84/84 ms`, resident
-memory `255,744 -> 247,360 KB`, thermal `0 -> 0`, and battery level `1 -> 1`.
-The native Xcode Instruments `Power Profiler` trace is at
+proposed `160 MB` resident-memory budget. The native Xcode Instruments `Power
+Profiler` trace for that run is at
 `/tmp/supernutrition-ios-power-20260801.trace`; its process power table shows
 zero Wi-Fi and cellular receive/transmit bytes. The trace does not expose a
 calibrated joule or battery-percentage delta in the current export, so the
@@ -198,13 +196,14 @@ The product camera bridges now also:
 
 ## Proposed budgets
 
-These are proposed acceptance budgets, not signed production requirements.
+The strict budgets below remain comparison targets, not the approved runtime
+envelope.
 
 | Budget | Proposed bound | Android evidence | iOS evidence |
 | --- | --- | --- | --- |
-| Session initialization | <= 500 ms cold start | fail: 2,922 ms | fail: 595 ms |
-| Inference latency | p95 <= 100 ms; max <= 150 ms | fail: 287/535 ms | pass: 89/89 ms |
-| Peak process memory | <= 160 MB | fail: 271,125 KB PSS | fail: 252,864 KB resident |
+| Session initialization | <= 500 ms cold start | fail: 2,611 ms | fail: 572 ms |
+| Inference latency | p95 <= 100 ms; max <= 150 ms | fail: 279/334 ms | pass: 84/84 ms |
+| Peak process memory | <= 160 MB | fail: 273,547 KB PSS | fail: 247,360 KB resident |
 | Thermal | no serious/critical transition | pass: 0 -> 0 | pass: 0 -> 0 |
 | Battery | <= 1% over 50 inferences plus native trace | sampled current `-1,287 -> -1,563 µA`; energy/percentage still open | native `Power Profiler` trace captured; calibrated energy/percentage open |
 | Model integrity | pinned SHA before session creation | pass | pass |
@@ -213,13 +212,22 @@ These are proposed acceptance budgets, not signed production requirements.
 ## Current decision
 
 The harness now proves meaningful single-dish recognition on both physical
-platforms, but G-3 remains `proposed-preliminary` and unsigned. Recognition
-quality, memory/latency budgets, multi-object recognition, nutrition accuracy,
-and production readiness are separate decisions.
+platforms. Engineering owner AJ (`ajdevy`) approved the High local-wait tier
+for the current dish-only harness: cold init <= 15 s, analysis <= 45 s, and
+peak process memory <= 512 MB on the measured device matrix. This is a
+staged/cancellable engineering envelope, not acceptance of the stricter
+comparison budgets.
 
-Before signing, the owner must review and accept the fresh Android result,
-review and accept the iOS `Power Profiler` trace (or add a calibrated energy
-reading if required), choose supported low-memory tiers, and run an
-approved consented multi-component meal corpus. A 10,000-image robustness
-sample can be drawn from the 101,000 Food-101 records, but those are evaluation
-images rather than 10,000 independent technical sources.
+G-3 remains `engineering-approved-pending-product`. Recognition quality,
+multi-object recognition, nutrition accuracy, and production readiness are
+separate decisions. The approval does not select FPB/YOLOv12 for mobile,
+approve ingredient/grams capability, or apply to unmeasured devices.
+
+Before final product sign-off, the product owner must accept or reject the
+High tier, decide whether the native iOS trace is sufficient for the numeric
+battery expectation, choose supported low-memory behavior, and decide whether
+ingredient/grams remains a later contract/story. That capability still needs a
+consented, weighed multi-component meal corpus and a detector/segmenter. A
+10,000-image robustness sample can be drawn from the 101,000 Food-101 records,
+but those are evaluation images rather than 10,000 independent technical
+sources.
