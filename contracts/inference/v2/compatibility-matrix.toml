@@ -1,7 +1,12 @@
-schema = "supernutrition.inference-evidence-compatibility-matrix.v2"
-contract_id = "inference-evidence"
+schema = "supernutrition.inference-engine-compatibility-matrix.v2"
+contract_id = "inference-engine"
 release = "v2"
-digest = "e84995d1198597b83d1550b9e641b58b09448ed8b6a571bebbc91b8b6fa1aed5"
+previous_release = "photo-inference-engine/v1"
+digest = "3d9d1aa1e9ef44e4e97d024c651f852c7e9ef6b7a0a47e22953be50186d3d131"
+
+# v1 remains published. Consumers migrate release by release rather than in one
+# step, so both releases are supported simultaneously and v1 is retired only
+# when no implementation remains.
 
 [[supported_pair]]
 producer = "domain-inference-v2"
@@ -17,7 +22,13 @@ expected = "accepted"
 
 [[supported_pair]]
 producer = "domain-inference-v2"
-consumer = "text-v2"
+consumer = "local-text-v2"
+direction = "forward"
+expected = "accepted"
+
+[[supported_pair]]
+producer = "domain-inference-v2"
+consumer = "remote-v2"
 direction = "forward"
 expected = "accepted"
 
@@ -27,12 +38,11 @@ consumer = "evaluation-v2"
 direction = "forward"
 expected = "accepted"
 
-[[coexistence_pair]]
-first_release = "photo-inference-engine/v1"
-second_release = "inference-evidence/v2"
-requirement = "separate-ports-required"
-
-[[coexistence_pair]]
-first_release = "inference-evidence/v2"
-second_release = "photo-inference-engine/v1"
-requirement = "separate-ports-required"
+# A v1 consumer cannot read a v2 text request: the modality discriminator and
+# text payload do not exist in v1, and v1 requires a photo. Recorded explicitly
+# so the migration cannot be mistaken for transparent.
+[[supported_pair]]
+producer = "domain-inference-v2"
+consumer = "local-android-v1"
+direction = "backward"
+expected = "rejected"
