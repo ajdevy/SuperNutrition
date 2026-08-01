@@ -37,9 +37,14 @@ data class DishMarkets(val canonicalDishId: String, val markets: Set<String>)
  * results would make the failure invisible instead of merely inconvenient
  * (DFM-3).
  *
- * The reordering is stable: proposals that rank equally keep the order the
- * deterministic catalog search gave them, so locale breaks ties rather than
- * replacing the ranking underneath it.
+ * The reordering is stable, so dishes with the same market standing keep the
+ * order the deterministic search gave them.
+ *
+ * This reorders within whatever set it is handed; it does not outrank a better
+ * match. [MealSearch] sorts the combined list by match tier, so a market
+ * preference orders dishes that matched equally well and can never lift a weak
+ * match above a strong one — which would be the silent bias DFM-3 forbids
+ * rather than the visible preference DC-4 allows.
  */
 class DishLocalePreference(attributions: List<DishMarkets>) {
     private val marketsByDish = attributions.associate { it.canonicalDishId to it.markets }

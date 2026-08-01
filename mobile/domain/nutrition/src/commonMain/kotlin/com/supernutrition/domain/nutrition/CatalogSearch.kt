@@ -25,7 +25,49 @@ data class CatalogRecord(
  * cooked chicken differ per 100g through water loss), so a result that quietly
  * ignored it would hand back numbers for a food the user did not eat.
  */
-data class CatalogSearchResult(val canonicalItemId: String, val unmatchedPreparation: List<String> = emptyList())
+data class CatalogSearchResult(
+    val canonicalItemId: String,
+    val unmatchedPreparation: List<String> = emptyList(),
+    val strength: MatchStrength = MatchStrength.WEAKEST,
+)
+
+/**
+ * How well a query matched, comparable across different record sets.
+ *
+ * Exposed because foods and dishes are searched separately and shown in one
+ * list: without a shared scale the merge would need a precedence rule — dishes
+ * always first, or foods always first — and both are wrong. "chicken" should
+ * reach the food and "chicken curry" the dish, which falls out of match
+ * strength and does not fall out of any fixed ordering.
+ *
+ * Tier dominates coverage deliberately. An exact match on a short name beats a
+ * partial match on a long one, which is the same first-tier-wins rule the
+ * catalog already applies within one record set.
+ */
+class MatchStrength internal constructor(internal val tier: MatchTier, internal val coverage: Int) :
+    Comparable<MatchStrength> {
+    // Deliberately not a data class: that would generate a public copy() and
+    // componentN() exposing MatchTier, which is an implementation detail of how
+    // matching works. Callers need to compare strengths, not read them apart.
+    override fun compareTo(other: MatchStrength): Int =
+        // Tiers are declared strongest-first, so a lower ordinal is a better match.
+        compareValuesBy(other, this, { it.tier.ordinal }, { -it.coverage })
+
+    override fun equals(other: Any?): Boolean =
+        other is MatchStrength && tier == other.tier && coverage == other.coverage
+
+    override fun hashCode(): Int = 31 * tier.hashCode() + coverage
+
+    override fun toString(): String = "MatchStrength($tier, $coverage)"
+
+    /** True when both matched at the same tier, whatever their coverage. */
+    fun sameTier(other: MatchStrength): Boolean = tier == other.tier
+
+    companion object {
+        /** Weaker than any real match; the default before a search has run. */
+        val WEAKEST: MatchStrength = MatchStrength(MatchTier.FUZZY, 0)
+    }
+}
 
 /**
  * Deterministic catalog search over an in-memory record set.
@@ -94,7 +136,12 @@ class CatalogSearch(records: List<CatalogRecord>) {
                         compareByDescending<IndexedRecord> { it.coverageOf(tier, normalizedQuery, queryTokens) }
                             .thenBy { it.canonicalItemId },
                     )
-                    .map { CatalogSearchResult(it.canonicalItemId) }
+                    .map {
+                        CatalogSearchResult(
+                            canonicalItemId = it.canonicalItemId,
+                            strength = MatchStrength(tier, it.coverageOf(tier, normalizedQuery, queryTokens)),
+                        )
+                    }
             }
         }
         return emptyList()
