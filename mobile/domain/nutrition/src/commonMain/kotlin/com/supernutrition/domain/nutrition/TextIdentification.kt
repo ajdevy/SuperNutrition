@@ -5,8 +5,20 @@ data class TextSpan(val start: Int, val end: Int) {
     fun indexes(description: String): Boolean = start >= 0 && end > start && end <= description.length
 }
 
-/** One food the engine believes the description named, and the words it came from. */
-data class DetectedItem(val canonicalItemId: String, val sourceSpan: TextSpan)
+/**
+ * One food the engine believes the description named, and the words it came from.
+ *
+ * [unmatchedPreparation] carries preparation the description asked for that the
+ * matched record does not have — "grilled" resolving to a record that only
+ * exists raw. It travels with the item for the same reason unresolved fragments
+ * travel with a floor result: preparation moves the numbers, so an item that
+ * quietly dropped it would be confidently wrong rather than usefully partial.
+ */
+data class DetectedItem(
+    val canonicalItemId: String,
+    val sourceSpan: TextSpan,
+    val unmatchedPreparation: List<String> = emptyList(),
+)
 
 /** FR-6 capability states, as reported by a text engine. */
 enum class TextEngineState { UNAVAILABLE, MODEL_REQUIRED, DOWNLOADING, READY, TEMPORARILY_UNAVAILABLE, UNSUPPORTED }
@@ -124,7 +136,7 @@ class TextIdentification(private val floor: CatalogSearch, private val engine: (
             if (hit == null) {
                 unresolved += fragment.text
             } else {
-                resolved += DetectedItem(hit.canonicalItemId, fragment.span)
+                resolved += DetectedItem(hit.canonicalItemId, fragment.span, hit.unmatchedPreparation)
             }
         }
         return TextIdentificationOutcome.Floor(resolved, unresolved)

@@ -15,8 +15,17 @@ data class CatalogRecord(
     val alternateNames: List<String> = emptyList(),
 )
 
-/** One resolved search hit. */
-data class CatalogSearchResult(val canonicalItemId: String)
+/**
+ * One resolved search hit.
+ *
+ * [unmatchedPreparation] names preparation words the query used that this record
+ * does not carry — "grilled" against a record that only exists raw. The hit is
+ * still returned, because the food is right and refusing to answer helps nobody,
+ * but the word is never dropped in silence: preparation moves nutrition (raw and
+ * cooked chicken differ per 100g through water loss), so a result that quietly
+ * ignored it would hand back numbers for a food the user did not eat.
+ */
+data class CatalogSearchResult(val canonicalItemId: String, val unmatchedPreparation: List<String> = emptyList())
 
 /**
  * Deterministic catalog search over an in-memory record set.
@@ -27,15 +36,45 @@ data class CatalogSearchResult(val canonicalItemId: String)
 class CatalogSearch(records: List<CatalogRecord>) {
     private val indexed = records.map(::IndexedRecord)
 
+    /**
+     * Three attempts, weakest last, so a stronger reading always wins outright.
+     *
+     * Note the difference between the two relaxations. Quantity words are
+     * *removed*: "two" tells the catalog nothing and the amount is asked for
+     * again at serving confirmation. Preparation words are *kept and reported*:
+     * "grilled" is part of what the food is, so dropping it silently would be a
+     * wrong answer rather than a cleaned query.
+     */
     fun search(query: String): List<CatalogSearchResult> {
         val direct = searchExact(query)
         if (direct.isNotEmpty()) return direct
+
         // People type "two boiled eggs", not "egg, boiled". Every tier requires
         // all query tokens to be satisfied by one record, so a single counting
         // word makes the fragment unresolvable. Retry without them, second so
         // that a food whose real name contains such a word still wins outright.
         val stripped = stripQuantityWords(query)
-        return if (stripped == query) emptyList() else searchExact(stripped)
+        val withoutQuantity = if (stripped == query) emptyList() else searchExact(stripped)
+        if (withoutQuantity.isNotEmpty()) return withoutQuantity
+
+        return searchRelaxingPreparation(stripped)
+    }
+
+    /**
+     * Last resort: match on the food alone and report the preparation that did
+     * not land. Only reached when the query failed as written, so a catalog that
+     * carries the preparation — as a licensed package will — never gets here.
+     */
+    private fun searchRelaxingPreparation(query: String): List<CatalogSearchResult> {
+        val tokens = tokenizeNormalized(normalizeForSearch(query))
+        val preparation = tokens.filter { it in PREPARATION_WORDS }
+        val food = tokens.filterNot { it in PREPARATION_WORDS }
+        if (preparation.isEmpty() || food.isEmpty()) return emptyList()
+
+        return searchExact(food.joinToString(" ")).map { hit ->
+            val record = indexed.first { it.canonicalItemId == hit.canonicalItemId }
+            hit.copy(unmatchedPreparation = preparation.filterNot { record.mentions(it) })
+        }
     }
 
     private fun searchExact(query: String): List<CatalogSearchResult> {
@@ -89,6 +128,9 @@ internal class IndexedRecord(record: CatalogRecord) {
     /** True when any single searchable form satisfies [predicate]. */
     fun anyForm(predicate: (normalized: String, tokens: List<String>) -> Boolean): Boolean =
         searchableForms.indices.any { predicate(searchableForms[it], formTokens[it]) }
+
+    /** Whether any searchable form of this record uses [token]. */
+    fun mentions(token: String): Boolean = formTokens.any { form -> form.any { it == token } }
 
     val normalizedName: String get() = searchableForms.first()
     val tokens: List<String> get() = formTokens.first()
@@ -208,6 +250,25 @@ internal fun isPluralPair(left: String, right: String): Boolean = isPluralOf(lef
 
 private fun isPluralOf(plural: String, singular: String): Boolean =
     singular.isNotEmpty() && (plural == singular + "s" || plural == singular + "es")
+
+/**
+ * Words naming how a food was prepared.
+ *
+ * Unlike [QUANTITY_WORDS] these are never stripped. Preparation discriminates
+ * between real records — "Egg, boiled" and a raw egg are different foods with
+ * different numbers — so a query naming one is asking for something specific.
+ * They earn a relaxation rather than a deletion: match the food, report the
+ * preparation that the catalog could not honour, and let the user decide.
+ *
+ * English-only, on the same terms as the other search vocabularies: Russian
+ * ships in E7.3, and all of them belong in the per-market language matrix as
+ * data rather than as constants here.
+ */
+internal val PREPARATION_WORDS: Set<String> = setOf(
+    "raw", "fresh", "cooked", "boiled", "poached", "steamed",
+    "grilled", "griddled", "roasted", "baked", "fried", "seared", "sauteed",
+    "toasted", "smoked", "cured", "pickled", "dried", "frozen", "canned",
+)
 
 private const val FUZZY_MIN_TOKEN_LENGTH = 4
 private const val FUZZY_LONG_TOKEN_LENGTH = 8
