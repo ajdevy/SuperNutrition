@@ -21,7 +21,7 @@ class TextIdentificationTest {
         val outcome = identification.identify("boiled egg")
 
         assertEquals(
-            TextIdentificationOutcome.Floor(listOf("food:egg-boiled")),
+            TextIdentificationOutcome.Floor(listOf(DetectedItem("food:egg-boiled", TextSpan(0, 10)))),
             outcome,
         )
     }
@@ -62,7 +62,10 @@ class TextIdentificationTest {
 
         val outcome = identification.identify("rye bread")
 
-        assertEquals(TextIdentificationOutcome.Floor(listOf("food:bread-rye")), outcome)
+        assertEquals(
+            TextIdentificationOutcome.Floor(listOf(DetectedItem("food:bread-rye", TextSpan(0, 9)))),
+            outcome,
+        )
     }
 
     @Test

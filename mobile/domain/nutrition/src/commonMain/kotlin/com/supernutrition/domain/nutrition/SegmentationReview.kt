@@ -11,10 +11,17 @@ package com.supernutrition.domain.nutrition
  * Every operation returns a new review rather than mutating this one, so a
  * correction cannot partially apply and leave the session in a state no user
  * asked for.
+ *
+ * Edits identify an item by the item, never by its canonical record id. A
+ * description can name the same food twice — "rye toast and rye bread" segments
+ * into two items that both resolve to one record — and keying on the id made
+ * those two indistinguishable: removing one removed both, and confirming one
+ * confirmed both. The span is what tells them apart, and it is also the
+ * provenance the user is shown, so it is the right identity for an edit.
  */
-class SegmentationReview private constructor(val items: List<DetectedItem>, private val confirmedIds: Set<String>) {
+class SegmentationReview private constructor(val items: List<DetectedItem>, private val confirmed: Set<DetectedItem>) {
     /** Items the user has explicitly confirmed, in the order they appear in the split. */
-    val confirmedItems: List<DetectedItem> get() = items.filter { it.canonicalItemId in confirmedIds }
+    val confirmedItems: List<DetectedItem> get() = items.filter { it in confirmed }
 
     /**
      * False for an empty split. Emptying the split is a legitimate way to say
@@ -23,24 +30,18 @@ class SegmentationReview private constructor(val items: List<DetectedItem>, priv
      */
     val isConfirmable: Boolean get() = items.isNotEmpty()
 
-    fun add(item: DetectedItem): SegmentationReview = SegmentationReview(items + item, confirmedIds)
+    fun add(item: DetectedItem): SegmentationReview = SegmentationReview(items + item, confirmed)
 
     /**
      * Removing an item drops its confirmation with it. A confirmation that
      * outlived its item would let the meal aggregate a food no longer in the
      * split.
      */
-    fun remove(canonicalItemId: String): SegmentationReview = SegmentationReview(
-        items.filterNot { it.canonicalItemId == canonicalItemId },
-        confirmedIds - canonicalItemId,
-    )
+    fun remove(item: DetectedItem): SegmentationReview =
+        SegmentationReview(items.filterNot { it == item }, confirmed - item)
 
-    fun confirm(canonicalItemId: String): SegmentationReview =
-        if (items.none { it.canonicalItemId == canonicalItemId }) {
-            this
-        } else {
-            SegmentationReview(items, confirmedIds + canonicalItemId)
-        }
+    fun confirm(item: DetectedItem): SegmentationReview =
+        if (item !in items) this else SegmentationReview(items, confirmed + item)
 
     /**
      * Replaces two items with one. The replacement spans everything the
@@ -50,14 +51,8 @@ class SegmentationReview private constructor(val items: List<DetectedItem>, priv
      * The replacement is unconfirmed even if both originals were confirmed: it
      * is a different food from either, and nobody has agreed to it yet.
      */
-    fun merge(
-        firstCanonicalItemId: String,
-        secondCanonicalItemId: String,
-        mergedCanonicalItemId: String,
-    ): SegmentationReview {
-        val first = items.firstOrNull { it.canonicalItemId == firstCanonicalItemId }
-        val second = items.firstOrNull { it.canonicalItemId == secondCanonicalItemId }
-        if (first == null || second == null) return this
+    fun merge(first: DetectedItem, second: DetectedItem, mergedCanonicalItemId: String): SegmentationReview {
+        if (first !in items || second !in items) return this
 
         val merged = DetectedItem(
             canonicalItemId = mergedCanonicalItemId,
@@ -66,13 +61,8 @@ class SegmentationReview private constructor(val items: List<DetectedItem>, priv
                 end = maxOf(first.sourceSpan.end, second.sourceSpan.end),
             ),
         )
-        val remaining = items.filterNot {
-            it.canonicalItemId == firstCanonicalItemId || it.canonicalItemId == secondCanonicalItemId
-        }
-        return SegmentationReview(
-            remaining + merged,
-            confirmedIds - firstCanonicalItemId - secondCanonicalItemId,
-        )
+        val remaining = items.filterNot { it == first || it == second }
+        return SegmentationReview(remaining + merged, confirmed - first - second)
     }
 
     companion object {

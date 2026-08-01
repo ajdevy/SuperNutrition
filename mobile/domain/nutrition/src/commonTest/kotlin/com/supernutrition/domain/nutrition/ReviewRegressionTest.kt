@@ -79,7 +79,12 @@ class ReviewRegressionTest {
         )
 
         assertEquals(
-            TextIdentificationOutcome.Floor(listOf("food:egg-boiled", "food:bread-rye")),
+            TextIdentificationOutcome.Floor(
+                listOf(
+                    DetectedItem("food:egg-boiled", TextSpan(0, 10)),
+                    DetectedItem("food:bread-rye", TextSpan(11, 20)),
+                ),
+            ),
             identification.identify("boiled egg\nrye bread"),
         )
     }
@@ -96,7 +101,12 @@ class ReviewRegressionTest {
         )
 
         assertEquals(
-            TextIdentificationOutcome.Floor(listOf("food:egg-boiled", "food:bread-rye")),
+            TextIdentificationOutcome.Floor(
+                listOf(
+                    DetectedItem("food:egg-boiled", TextSpan(0, 10)),
+                    DetectedItem("food:bread-rye", TextSpan(15, 24)),
+                ),
+            ),
             identification.identify("boiled egg\nand rye bread"),
         )
     }

@@ -34,7 +34,7 @@ class SuccessSignalTest {
 
         val resolved = when (outcome) {
             is TextIdentificationOutcome.Items -> outcome.items.map { it.canonicalItemId }
-            is TextIdentificationOutcome.Floor -> outcome.canonicalItemIds
+            is TextIdentificationOutcome.Floor -> outcome.items.map { it.canonicalItemId }
             TextIdentificationOutcome.Empty -> emptyList()
         }
         assertEquals(listOf("food:egg-boiled", "food:bread-rye"), resolved)
@@ -88,7 +88,7 @@ class SuccessSignalTest {
 
         assertEquals(
             TextIdentificationOutcome.Floor(
-                canonicalItemIds = listOf("food:egg-boiled"),
+                items = listOf(DetectedItem("food:egg-boiled", TextSpan(0, 10))),
                 unresolvedFragments = listOf("quinoa"),
             ),
             outcome,
@@ -108,7 +108,12 @@ class SuccessSignalTest {
         val outcome = identification.identify("boiled egg and rye bread")
 
         assertEquals(
-            TextIdentificationOutcome.Floor(listOf("food:egg-boiled", "food:bread-rye")),
+            TextIdentificationOutcome.Floor(
+                listOf(
+                    DetectedItem("food:egg-boiled", TextSpan(0, 10)),
+                    DetectedItem("food:bread-rye", TextSpan(15, 24)),
+                ),
+            ),
             outcome,
         )
     }
