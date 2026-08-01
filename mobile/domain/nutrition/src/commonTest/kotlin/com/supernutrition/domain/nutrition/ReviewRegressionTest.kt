@@ -150,4 +150,57 @@ class ReviewRegressionTest {
         assertEquals(rice, floor.search("2tbsp rice").map { it.canonicalItemId })
         assertEquals(rice, floor.search("200grams rice").map { it.canonicalItemId })
     }
+
+    @Test
+    fun `a preparation the catalog cannot honour is reported, not dropped`() {
+        // "grilled chicken breast" used to resolve to nothing at all, because
+        // every tier needs all query tokens on one record. Matching the food and
+        // reporting the preparation is the honest middle: the user sees that a
+        // raw record was matched and that "grilled" did not land, instead of
+        // getting raw-chicken numbers for a grilled meal.
+        val hits = floor.search("grilled chicken breast")
+
+        assertEquals(listOf("food:chicken-breast-raw"), hits.map { it.canonicalItemId })
+        assertEquals(listOf("grilled"), hits.single().unmatchedPreparation)
+    }
+
+    @Test
+    fun `a preparation the catalog does carry is matched, not reported`() {
+        // The relaxation is a last resort. A record that carries the
+        // preparation must match on it outright and report nothing.
+        for (query in listOf("boiled egg", "raw chicken breast", "cooked white rice")) {
+            val hits = floor.search(query)
+            assertTrue(hits.isNotEmpty(), "$query should resolve")
+            assertEquals(emptyList(), hits.single().unmatchedPreparation, "$query matched its preparation")
+        }
+    }
+
+    @Test
+    fun `preparation is never silently stripped the way a quantity word is`() {
+        // The two vocabularies are treated differently on purpose. A quantity
+        // word is deleted because the amount is asked for again at serving
+        // confirmation; a preparation word is part of what the food is.
+        val quantity = floor.search("two boiled eggs").single()
+        val preparation = floor.search("smoked rye bread").single()
+
+        assertEquals(emptyList(), quantity.unmatchedPreparation, "a stripped quantity reports nothing")
+        assertEquals(listOf("smoked"), preparation.unmatchedPreparation, "an unhonoured preparation is reported")
+    }
+
+    @Test
+    fun `the floor carries unmatched preparation to the item the user reviews`() {
+        val identification = TextIdentification(
+            floor = floor,
+            engine = { TextEngineOutcome.Unavailable(TextEngineState.UNSUPPORTED) },
+        )
+
+        val outcome = identification.identify("grilled chicken breast")
+
+        assertEquals(
+            TextIdentificationOutcome.Floor(
+                listOf(DetectedItem("food:chicken-breast-raw", TextSpan(0, 22), listOf("grilled"))),
+            ),
+            outcome,
+        )
+    }
 }
