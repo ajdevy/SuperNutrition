@@ -94,6 +94,26 @@ v2 runtime candidate**. Its repository/data license boundary and phone-photo
 generalization remain unresolved, and no G-3 signature or production runtime
 selection is implied by the research artifacts.
 
+### Android research-candidate screen (not a G-3 selection)
+
+On 2026-08-01, two additional candidates were exercised on the physical Android
+research device through ONNX Runtime Android CPU. This is a deployment screen,
+not a shared acceptance test and does not change the signed Food-101 model,
+the G-3 state, or the product runtime.
+
+| Candidate | Actual Android result | Ingredient conclusion | Weight conclusion |
+| --- | --- | --- | --- |
+| MobileSAM | encoder and prompted decoder completed all five complex fixtures; p95 `2,060 ms`; PSS `729,305 KB` | `unsupported`: four masks/fixture are class-agnostic and prompt-dependent | `not-evaluable`: no mass output and no tared public-photo ground truth |
+| YOLO-World v2 | exported `640 x 640` ONNX completed all five fixtures; p95 `581 ms`; PSS `245,411 KB` | COCO-80 exact-label subset macro F1 `0.2233`; it found some carrots/broccoli but also false food labels | `not-evaluable`: no mass head and no tared public-photo ground truth |
+
+FoodSAM and FoodSeg103/ReLeM were not run on the phone: their released research
+implementations do not supply a complete Android-compatible artifact in this
+checkout. FoodSAM is a SAM + semantic-segmenter + detector stack; FoodSeg103 is
+semantic segmentation and does not yield separate repeated components or mass.
+Neither omission receives an invented device metric. Full candidate provenance,
+checksums, and fixture outputs are in
+[`ingredient-weight-research/android-candidate-device-evidence-2026-08-01.json`](../../ingredient-weight-research/android-candidate-device-evidence-2026-08-01.json).
+
 ## Device matrix and measured evidence
 
 | OS/device tier | Physical device | Runtime and execution provider | Semantic result | Ingredient / weight result | Runtime/resource result |
