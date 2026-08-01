@@ -179,4 +179,30 @@ class InferenceResultV2ValidationTest {
         assertFailsWith<IllegalArgumentException> { InferenceRequestV2.text("   ", "en-US", context) }
         assertFailsWith<IllegalArgumentException> { InferenceRequestV2.text("eggs", " ", context) }
     }
+
+    @Test
+    fun `the band thresholds match the ones the contract publishes`() {
+        // contracts/inference/v2/schema.toml [result.confidence] states
+        // band_low_below = 0.5, band_medium_below = 0.8, band_high_from = 0.8.
+        // The rule now lives in two places, so it needs something that fails
+        // when they disagree — otherwise the contract documents one rule and
+        // the binding enforces another, which is worse than the contract having
+        // stayed silent.
+        assertEquals(ConfidenceBand.LOW, ConfidenceBand.fromScore(0.0))
+        assertEquals(ConfidenceBand.LOW, ConfidenceBand.fromScore(0.49))
+        assertEquals(ConfidenceBand.MEDIUM, ConfidenceBand.fromScore(0.5))
+        assertEquals(ConfidenceBand.MEDIUM, ConfidenceBand.fromScore(0.79))
+        assertEquals(ConfidenceBand.HIGH, ConfidenceBand.fromScore(0.8))
+        assertEquals(ConfidenceBand.HIGH, ConfidenceBand.fromScore(1.0))
+
+        // band_mismatch = "reject": a band that disagrees with its score never
+        // constructs, so a miscalibrated engine cannot show high confidence
+        // over a low number.
+        assertFailsWith<IllegalArgumentException> { Confidence(0.2, ConfidenceBand.HIGH) }
+        assertFailsWith<IllegalArgumentException> { Confidence(0.9, ConfidenceBand.LOW) }
+
+        // score_range = "0.0-1.0-inclusive"
+        assertFailsWith<IllegalArgumentException> { Confidence(1.1, ConfidenceBand.HIGH) }
+        assertFailsWith<IllegalArgumentException> { Confidence(-0.1, ConfidenceBand.LOW) }
+    }
 }
