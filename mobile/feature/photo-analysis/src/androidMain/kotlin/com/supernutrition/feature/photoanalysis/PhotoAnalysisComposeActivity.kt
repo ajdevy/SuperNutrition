@@ -91,21 +91,23 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
             feature = feature,
             photoBridge = photoBridge,
             normalizer = AndroidImageNormalizer(),
-            requestCameraPermission = { permissionLauncher.launch(Manifest.permission.CAMERA) },
-            showCameraPermissionRationale = { onContinue ->
-                permissionRationale?.dismiss()
-                if (!isFinishing && !isDestroyed) {
-                    permissionRationale = android.app.AlertDialog.Builder(this)
-                        .setMessage(R.string.capture_permission_rationale)
-                        .setNegativeButton(R.string.capture_cancel, null)
-                        .setPositiveButton(R.string.capture_permission_continue) { _, _ -> onContinue() }
-                        .create()
-                        .also { it.show() }
-                }
-            },
-            launchCamera = { operationId -> cameraLauncher.launch(photoBridge.cameraCaptureIntent(operationId)) },
-            launchImport = { importLauncher.launch(photoBridge.photoPickerIntent()) },
-            launchSettings = { startActivity(photoBridge.settingsIntent()) },
+            callbacks = PhotoAnalysisHostCallbacks(
+                requestCameraPermission = { permissionLauncher.launch(Manifest.permission.CAMERA) },
+                showCameraPermissionRationale = { onContinue ->
+                    permissionRationale?.dismiss()
+                    if (!isFinishing && !isDestroyed) {
+                        permissionRationale = android.app.AlertDialog.Builder(this)
+                            .setMessage(R.string.capture_permission_rationale)
+                            .setNegativeButton(R.string.capture_cancel, null)
+                            .setPositiveButton(R.string.capture_permission_continue) { _, _ -> onContinue() }
+                            .create()
+                            .also { it.show() }
+                    }
+                },
+                launchCamera = { operationId -> cameraLauncher.launch(photoBridge.cameraCaptureIntent(operationId)) },
+                launchImport = { importLauncher.launch(photoBridge.photoPickerIntent()) },
+                launchSettings = { startActivity(photoBridge.settingsIntent()) },
+            ),
             captureOperation = retainedState.captureOperation,
         ).also { it.initialize() }
 

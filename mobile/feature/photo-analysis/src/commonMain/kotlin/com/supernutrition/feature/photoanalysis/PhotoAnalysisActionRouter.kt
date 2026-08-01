@@ -4,13 +4,6 @@ package com.supernutrition.feature.photoanalysis
 
 import com.supernutrition.domain.photoanalysis.PhotoAnalysisEvent
 
-/** Native effects exposed as a closed, cross-language vocabulary at the host boundary. */
-enum class PhotoAnalysisNativeAction {
-    TakePhoto,
-    ImportPhoto,
-    OpenSettings,
-}
-
 fun PhotoAnalysisFeature.route(action: PhotoAnalysisPresenterAction, onNative: (PhotoAnalysisNativeAction) -> Unit) {
     when (action) {
         PhotoAnalysisPresenterAction.Cancel -> dispatch(PhotoAnalysisEvent.Cancel)

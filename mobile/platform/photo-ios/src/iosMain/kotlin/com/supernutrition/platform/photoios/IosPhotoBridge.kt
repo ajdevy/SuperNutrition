@@ -159,21 +159,6 @@ class IosPhotoBridge :
         return true
     }
 
-    private fun failPresentation(onFailure: () -> Unit) {
-        dispatch_async(dispatch_get_main_queue()) { onFailure() }
-    }
-
-    private fun <T> deliver(callback: (T) -> Unit, value: T) {
-        dispatch_async(dispatch_get_main_queue()) { callback(value) }
-    }
-
-    private fun cameraDevice(): AVCaptureDevice? = SNDefaultBackCamera()
-
-    private fun usageDescription(key: String): String =
-        checkNotNull(NSBundle.mainBundle.objectForInfoDictionaryKey(key) as? String) {
-            "Missing required Info.plist key: $key"
-        }
-
     private companion object {
         const val CAMERA_USAGE_KEY = "NSCameraUsageDescription"
         const val PHOTO_LIBRARY_USAGE_KEY = "NSPhotoLibraryUsageDescription"
@@ -317,7 +302,7 @@ private class CameraCaptureViewController(
         finished = true
         dispatch_async(captureSessionQueue) { captureSession.stopRunning() }
         dismissOnMain(this) {
-            clear();
+            clear()
             onResult(data)
         }
     }
@@ -327,7 +312,7 @@ private class CameraCaptureViewController(
         finished = true
         dispatch_async(captureSessionQueue) { captureSession.stopRunning() }
         dismissOnMain(this) {
-            clear();
+            clear()
             onFailure()
         }
     }
@@ -402,6 +387,28 @@ private class PhotoPickerDelegate(
 }
 
 @OptIn(ExperimentalForeignApi::class)
+// None of these four touch the bridge's state — they hop to the main queue, ask
+// the system for a device, or read Info.plist. At file level the class is left
+// holding only the presentation flow it actually coordinates.
+
+private fun failPresentation(onFailure: () -> Unit) {
+    dispatch_async(dispatch_get_main_queue()) { onFailure() }
+}
+
+private fun <T> deliver(callback: (T) -> Unit, value: T) {
+    dispatch_async(dispatch_get_main_queue()) { callback(value) }
+}
+
+// Carried explicitly now: the opt-in used to come from the enclosing class, and
+// moving this out of it took that with it.
+@OptIn(ExperimentalForeignApi::class)
+private fun cameraDevice(): AVCaptureDevice? = SNDefaultBackCamera()
+
+private fun usageDescription(key: String): String =
+    checkNotNull(NSBundle.mainBundle.objectForInfoDictionaryKey(key) as? String) {
+        "Missing required Info.plist key: $key"
+    }
+
 private fun dismissOnMain(picker: UIViewController, onDismissed: () -> Unit) {
     dispatch_async(dispatch_get_main_queue()) {
         picker.dismissViewControllerAnimated(true, completion = onDismissed)

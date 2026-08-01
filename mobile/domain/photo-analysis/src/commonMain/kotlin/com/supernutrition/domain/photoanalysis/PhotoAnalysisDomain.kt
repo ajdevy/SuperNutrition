@@ -52,93 +52,112 @@ enum class ImageOrientation {
     LEFT,
 }
 
-/** Byte values are copied at the boundary and on every read. */
-@Suppress("LongParameterList")
-class RawPhoto(
-    val ref: PhotoRef,
-    bytes: ByteArray,
-    val width: Int,
-    val height: Int,
-    val orientation: ImageOrientation,
-    val colorSpace: String,
-    metadataKeys: Set<String>,
-) {
-    private val storedBytes = bytes.copyOf()
-    val bytes: ByteArray get() = storedBytes.copyOf()
+/**
+ * How the pixels are encoded, as opposed to what they contain.
+ *
+ * These three travel together everywhere and mean one thing: the format the
+ * bytes are in. Grouping them is what lets a normalized input state its whole
+ * requirement as a single equality against [NORMALIZED], rather than as three
+ * separate invariants that a reader has to reassemble.
+ */
+class PhotoFormat(val orientation: ImageOrientation, val colorSpace: String, metadataKeys: Set<String>) {
     val metadataKeys: Set<String> = metadataKeys.toSet()
 
-    @Suppress("LongParameterList")
+    fun copy(
+        orientation: ImageOrientation = this.orientation,
+        colorSpace: String = this.colorSpace,
+        metadataKeys: Set<String> = this.metadataKeys,
+    ): PhotoFormat = PhotoFormat(orientation, colorSpace, metadataKeys)
+
+    override fun equals(other: Any?): Boolean = other is PhotoFormat &&
+        orientation == other.orientation && colorSpace == other.colorSpace && metadataKeys == other.metadataKeys
+
+    override fun hashCode(): Int {
+        var result = orientation.hashCode()
+        result = 31 * result + colorSpace.hashCode()
+        return 31 * result + metadataKeys.hashCode()
+    }
+
+    override fun toString(): String = "PhotoFormat($orientation, $colorSpace, keys=${metadataKeys.size})"
+
+    companion object {
+        /** The only format a [NormalizedPhotoInput] may carry. */
+        val NORMALIZED = PhotoFormat(ImageOrientation.UP, "sRGB", emptySet())
+    }
+}
+
+/** Byte values are copied at the boundary and on every read. */
+class RawPhoto(val ref: PhotoRef, bytes: ByteArray, val width: Int, val height: Int, val format: PhotoFormat) {
+    private val storedBytes = bytes.copyOf()
+    val bytes: ByteArray get() = storedBytes.copyOf()
+
+    val orientation: ImageOrientation get() = format.orientation
+    val colorSpace: String get() = format.colorSpace
+    val metadataKeys: Set<String> get() = format.metadataKeys
+
     fun copy(
         ref: PhotoRef = this.ref,
         bytes: ByteArray = this.bytes,
         width: Int = this.width,
         height: Int = this.height,
-        orientation: ImageOrientation = this.orientation,
-        colorSpace: String = this.colorSpace,
-        metadataKeys: Set<String> = this.metadataKeys,
-    ): RawPhoto = RawPhoto(ref, bytes, width, height, orientation, colorSpace, metadataKeys)
+        format: PhotoFormat = this.format,
+    ): RawPhoto = RawPhoto(ref, bytes, width, height, format)
 
     override fun equals(other: Any?): Boolean = other is RawPhoto &&
         ref == other.ref && bytes.contentEquals(other.bytes) && width == other.width && height == other.height &&
-        orientation == other.orientation && colorSpace == other.colorSpace && metadataKeys == other.metadataKeys
+        format == other.format
 
     override fun hashCode(): Int {
         var result = ref.hashCode()
         result = 31 * result + bytes.contentHashCode()
         result = 31 * result + width
         result = 31 * result + height
-        result = 31 * result + orientation.hashCode()
-        result = 31 * result + colorSpace.hashCode()
-        return 31 * result + metadataKeys.hashCode()
+        return 31 * result + format.hashCode()
     }
 }
 
 /** Trusted output produced by [PhotoInputNormalizer], with defensive byte access. */
-@Suppress("LongParameterList")
 class NormalizedPhotoInput(
     val ref: PhotoRef,
     bytes: ByteArray,
     val width: Int,
     val height: Int,
-    val orientation: ImageOrientation,
-    val colorSpace: String,
-    metadataKeys: Set<String>,
+    val format: PhotoFormat,
     contentDigest: String,
 ) {
     private val storedBytes = bytes.copyOf()
     val bytes: ByteArray get() = storedBytes.copyOf()
-    val metadataKeys: Set<String> = metadataKeys.toSet()
     val contentDigest: String = contentDigest
+
+    val orientation: ImageOrientation get() = format.orientation
+    val colorSpace: String get() = format.colorSpace
+    val metadataKeys: Set<String> get() = format.metadataKeys
 
     init {
         require(storedBytes.isNotEmpty()) { "Normalized photo bytes must not be empty" }
         require(width > 0 && height > 0) { "Normalized photo dimensions must be positive" }
-        require(orientation == ImageOrientation.UP) { "Normalized photo orientation must be UP" }
-        require(colorSpace == "sRGB") { "Normalized photo color space must be sRGB" }
-        require(this.metadataKeys.isEmpty()) { "Normalized photo metadata must be empty" }
+        // One equality in place of three separate checks. The three messages are
+        // kept apart because each names a distinct thing a platform adapter
+        // failed to do, and that is what makes the failure actionable.
+        require(format.orientation == ImageOrientation.UP) { "Normalized photo orientation must be UP" }
+        require(format.colorSpace == "sRGB") { "Normalized photo color space must be sRGB" }
+        require(format.metadataKeys.isEmpty()) { "Normalized photo metadata must be empty" }
         require(isSha256Digest(contentDigest)) { "Normalized photo digest must be SHA-256" }
     }
 
-    @Suppress("LongParameterList")
+    /**
+     * Format is deliberately not a parameter. It is invariant for this type —
+     * anything other than [PhotoFormat.NORMALIZED] fails construction — so
+     * offering it as something to vary would only advertise a copy that always
+     * throws.
+     */
     fun copy(
         ref: PhotoRef = this.ref,
         bytes: ByteArray = this.bytes,
         width: Int = this.width,
         height: Int = this.height,
-        orientation: ImageOrientation = this.orientation,
-        colorSpace: String = this.colorSpace,
-        metadataKeys: Set<String> = this.metadataKeys,
         contentDigest: String = this.contentDigest,
-    ): NormalizedPhotoInput = NormalizedPhotoInput(
-        ref,
-        bytes,
-        width,
-        height,
-        orientation,
-        colorSpace,
-        metadataKeys,
-        contentDigest,
-    )
+    ): NormalizedPhotoInput = NormalizedPhotoInput(ref, bytes, width, height, format, contentDigest)
 
     internal fun wipeBytes() {
         storedBytes.fill(0)
@@ -146,17 +165,14 @@ class NormalizedPhotoInput(
 
     override fun equals(other: Any?): Boolean = other is NormalizedPhotoInput &&
         ref == other.ref && bytes.contentEquals(other.bytes) && width == other.width && height == other.height &&
-        orientation == other.orientation && colorSpace == other.colorSpace && metadataKeys == other.metadataKeys &&
-        contentDigest == other.contentDigest
+        format == other.format && contentDigest == other.contentDigest
 
     override fun hashCode(): Int {
         var result = ref.hashCode()
         result = 31 * result + bytes.contentHashCode()
         result = 31 * result + width
         result = 31 * result + height
-        result = 31 * result + orientation.hashCode()
-        result = 31 * result + colorSpace.hashCode()
-        result = 31 * result + metadataKeys.hashCode()
+        result = 31 * result + format.hashCode()
         return 31 * result + contentDigest.hashCode()
     }
 }
@@ -203,9 +219,7 @@ class PhotoInputNormalizer(
             bytes = normalizedBytes,
             width = raw.width,
             height = raw.height,
-            orientation = ImageOrientation.UP,
-            colorSpace = "sRGB",
-            metadataKeys = emptySet(),
+            format = PhotoFormat.NORMALIZED,
             contentDigest = normalizedDigest,
         )
     }
