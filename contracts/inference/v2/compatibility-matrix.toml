@@ -1,0 +1,38 @@
+schema = "supernutrition.inference-evidence-compatibility-matrix.v2"
+contract_id = "inference-evidence"
+release = "v2"
+digest = "e84995d1198597b83d1550b9e641b58b09448ed8b6a571bebbc91b8b6fa1aed5"
+
+[[supported_pair]]
+producer = "domain-inference-v2"
+consumer = "local-android-v2"
+direction = "forward"
+expected = "accepted"
+
+[[supported_pair]]
+producer = "domain-inference-v2"
+consumer = "local-ios-v2"
+direction = "forward"
+expected = "accepted"
+
+[[supported_pair]]
+producer = "domain-inference-v2"
+consumer = "text-v2"
+direction = "forward"
+expected = "accepted"
+
+[[supported_pair]]
+producer = "domain-inference-v2"
+consumer = "evaluation-v2"
+direction = "forward"
+expected = "accepted"
+
+[[coexistence_pair]]
+first_release = "photo-inference-engine/v1"
+second_release = "inference-evidence/v2"
+requirement = "separate-ports-required"
+
+[[coexistence_pair]]
+first_release = "inference-evidence/v2"
+second_release = "photo-inference-engine/v1"
+requirement = "separate-ports-required"

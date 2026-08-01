@@ -3,7 +3,7 @@ name: SuperNutrition
 description: Calm, evidence-aware nutrition estimation for Android and iOS.
 status: final
 created: 2026-07-26
-updated: 2026-07-26
+updated: 2026-08-01
 sources:
   - ../../prds/prd-SuperNutrition-2026-07-26/prd.md
 colors:
@@ -231,12 +231,18 @@ metaphor; no other control copies it.
   without upload, Edit, and Cancel.
 - **Candidate card** — `{components.candidate-card}`. Food name, Confidence
   wording, source route, serving assumption, alternatives, remove/edit action.
+  A v2 visible component also shows its visible-region/ambiguity state and an
+  editable `Estimated range` in grams or `Not enough visual evidence`; neither
+  is presented as measured weight or numeric nutrition.
 - **Nutrition card** — `{components.nutrition-card}`. Confirmed food and serving
   precede calories/macros; source/version and estimate language remain visible.
 - **State chip** — `{components.state-chip}`. Text plus optional icon for Local,
   Remote, Manual, Needs review, or Offline. Never color-only.
 - **Analyzing treatment** — Frozen photo with a low-opacity neutral scrim,
-  progress label, cancel action, and no countdown or anxious animation.
+  truthful stage label, one bounded progress refresh per real stage, cancel
+  action, and no countdown or anxious animation. The permitted long local path
+  uses `Preparing photo`, `Finding visible foods`, `Estimating portions`, and
+  `Checking results`; it never simulates progress beyond completed work.
 - **Consent sheet** — Purpose, data sent, retention, provider-category wording,
   alternatives, and two `{components.consent-action}` actions with equal size,
   weight, keyboard/focus access, and no preselection. “Continue without upload”
