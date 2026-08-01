@@ -110,4 +110,44 @@ class ReviewRegressionTest {
             identification.identify("boiled egg\nand rye bread"),
         )
     }
+
+    @Test
+    fun `coverage is measured on the form that matched, not the best form`() {
+        // coverageOf took the maximum over every searchable form, including
+        // forms that failed the tier. A record carrying a short synonym was
+        // therefore scored on that synonym even when a different form won,
+        // which inverts search-mechanics.md's rule that "rye bread" ranks
+        // `bread, rye` above `bread, rye, reduced sodium, toasted`.
+        val search = CatalogSearch(
+            listOf(
+                CatalogRecord("food:rice-white-cooked", "Rice, white, cooked"),
+                CatalogRecord(
+                    "food:rice-white-restaurant",
+                    "Rice, white, cooked, salted, restaurant style",
+                    alternateNames = listOf("rice"),
+                ),
+            ),
+        )
+
+        assertEquals(
+            listOf("food:rice-white-cooked", "food:rice-white-restaurant"),
+            search.search("white rice").map { it.canonicalItemId },
+            "the staple must outrank the qualified variant; the bare synonym did not win the tier",
+        )
+    }
+
+    @Test
+    fun `a unit quantifies whether or not a space precedes it`() {
+        // Two vocabularies had grown apart: the glued form was checked against a
+        // 7-entry unit list and the spaced form against the ~30-entry quantity
+        // list. "500mg rice" resolved and "500 mg rice" did not; "2 tbsp rice"
+        // resolved and "2tbsp rice" did not. Whether the user typed a space is
+        // not a distinction the catalog should notice.
+        val rice = listOf("food:rice-white-cooked")
+        assertEquals(rice, floor.search("500 mg rice").map { it.canonicalItemId })
+        assertEquals(rice, floor.search("500mg rice").map { it.canonicalItemId })
+        assertEquals(rice, floor.search("2 tbsp rice").map { it.canonicalItemId })
+        assertEquals(rice, floor.search("2tbsp rice").map { it.canonicalItemId })
+        assertEquals(rice, floor.search("200grams rice").map { it.canonicalItemId })
+    }
 }
