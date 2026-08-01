@@ -5,16 +5,24 @@ import type {
   LocalDate,
   Page,
   PageRequest,
+  MealTypeKind,
+  MealSourceKind,
 } from '@supernutrition/shared';
 import type { MealEvent } from './meal-event.entity.js';
 
-export type MealRepositoryFailure = 'not-found' | 'conflict' | 'storage-unavailable';
+/**
+ * `invalid-cursor` is a repository failure rather than a thrown error: a cursor
+ * is client input, and the only component that can judge whether an opaque
+ * string is one of its own is the adapter that issued it.
+ */
+export type MealRepositoryFailure =
+  'not-found' | 'conflict' | 'invalid-cursor' | 'storage-unavailable';
 
 export interface MealEventFilters {
   readonly from?: LocalDate;
   readonly to?: LocalDate;
-  readonly mealType?: string;
-  readonly source?: string;
+  readonly mealType?: MealTypeKind;
+  readonly source?: MealSourceKind;
 }
 
 /** Port. The Drizzle adapter implementing it lives in packages/database. */

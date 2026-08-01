@@ -119,9 +119,62 @@ scripts/verify-mobile-api-contract.sh
 scripts/mobile-api-contract-negative-fixtures.sh
 ```
 
-## Product API (stub)
+## Product API — meals
+
+Every `/api/v1` request needs a bearer token. In test mode the token is also the
+installation identity, so reuse ONE token for a session: a new token is a new
+account, and the meals you just logged belong to the old one.
 
 ```bash
-curl http://localhost:3000/api/v1/meals
+TOKEN=$(curl -sX POST http://localhost:3000/gw/v1/session | jq -r .accessToken)
+AUTH="Authorization: Bearer $TOKEN"
+```
+
+An unauthenticated request is `401 UNAUTHENTICATED`, not an empty list.
+
+```bash
+# Create. Nutrition is required and persisted verbatim; a snapshot without
+# catalogSource or datasetVersion is 400 VALIDATION_FAILED (AD-7).
+curl -sX POST http://localhost:3000/api/v1/meals/manual -H "$AUTH" \
+  -H 'Content-Type: application/json' -d '{
+    "occurredAt":"2026-07-29T12:30:00Z","localDate":"2026-07-29",
+    "timezone":"Europe/Berlin","mealType":"lunch",
+    "items":[{"foodRef":"usda:fdc:171705","displayName":"Banana, raw",
+              "servingUnit":"g","servingAmount":"118","confirmedByUser":true}],
+    "nutrition":{"origin":"client-grounded","catalogSource":"usda",
+      "datasetVersion":"usda-2026.1",
+      "servingBasis":{"unit":"g","amount":"118","gramWeight":"118"},
+      "calories":"105.000","proteinG":"1.290","fatG":null,"carbG":null,
+      "fiberG":null,"sugarG":null,"sodiumMg":null,
+      "perItem":[{"foodRef":"usda:fdc:171705","calories":"105.000",
+                  "proteinG":null,"fatG":null,"carbG":null,"partial":false}]}}'
+# → 201, rewards and coachMessage null until the subscribers exist
+
+# List. Cursor paging; filters from, to, mealType, source.
+curl -s "http://localhost:3000/api/v1/meals?limit=20" -H "$AUTH"
+curl -s "http://localhost:3000/api/v1/meals?mealType=lunch&from=2026-07-01" -H "$AUTH"
+
+curl -s http://localhost:3000/api/v1/meals/$ID -H "$AUTH"     # → 200, or 404 MEAL_NOT_FOUND
+
+# Correct. Writes revision N+1; the original is retained but leaves the feed.
+curl -sX PATCH http://localhost:3000/api/v1/meals/$ID -H "$AUTH" \
+  -H 'Content-Type: application/json' -d '{"items":[...],"nutrition":{...}}'
+
+curl -sX DELETE http://localhost:3000/api/v1/meals/$ID -H "$AUTH"   # → 204, then 404
+```
+
+`POST /api/v1/meals/photo` adds `attemptId` and `configurationVersion`;
+`POST /api/v1/meals/voice` adds `transcript`. Both accept an `evidence` array,
+which is validated and not yet persisted. Photo bytes never reach this surface —
+they went to the gateway.
+
+Product errors use the Product API taxonomy (`{"error":{"code":…}}`), not the
+gateway one. A meal owned by another user answers `404 MEAL_NOT_FOUND`, never
+403.
+
+## The rest of Surface B (stub)
+
+```bash
+curl http://localhost:3000/api/v1/goals
 # → 501 Not Implemented
 ```

@@ -1,5 +1,10 @@
-import { randomBytes } from 'node:crypto';
+import { randomBytes, randomUUID } from 'node:crypto';
 import { resolve } from 'node:path';
+import {
+  createDatabase,
+  DrizzleMealEventRepository,
+  DrizzleUserRepository,
+} from '@supernutrition/database';
 import {
   loadConfig,
   testModeBanner,
@@ -16,6 +21,7 @@ import {
   PRODUCTION_MARKET_POLICY,
   StaticMarketPolicyResolver,
   TestModeAuthenticator,
+  TestModeProductAuthenticator,
   generateOpaqueId,
   generateRefreshToken,
   type RateLimitRule,
@@ -27,6 +33,17 @@ import {
   TwoPassInferenceOrchestrator,
   type InferenceRunRecorder,
 } from './modules/inference/index.js';
+import {
+  CorrectMealEventHandler,
+  CreateMealEventHandler,
+  DeleteMealEventHandler,
+  DrizzleMealEventRepositoryAdapter,
+  GetMealEventHandler,
+  ListMealEventsHandler,
+  MealControllerImpl,
+  type MealCommandDeps,
+} from './modules/meals/index.js';
+import { DrizzleUserRepositoryAdapter } from './modules/users/infrastructure/index.js';
 import { TransferStateTracker } from './routes/gateway/index.js';
 
 /**
@@ -103,7 +120,36 @@ export const buildApplication = async (
 
   const testAuthenticator = new TestModeAuthenticator(config.env);
 
-  return buildServer({
+  // Surface B. The connection is constructed lazily and is not opened here, so
+  // a database outage delays the first product request rather than preventing
+  // the gateway from serving at all (AD-8: the gateway has no database edge).
+  const { db, close: closeDatabase } = createDatabase(config.database);
+
+  const meals = new DrizzleMealEventRepositoryAdapter(new DrizzleMealEventRepository(db));
+  const users = new DrizzleUserRepositoryAdapter(new DrizzleUserRepository(db));
+
+  const commandDeps: MealCommandDeps = {
+    repository: meals,
+    now: () => new Date(),
+    uuid: () => randomUUID(),
+  };
+
+  const mealController = new MealControllerImpl({
+    createMeal: new CreateMealEventHandler(commandDeps),
+    correctMeal: new CorrectMealEventHandler(commandDeps),
+    deleteMeal: new DeleteMealEventHandler(meals),
+    getMeal: new GetMealEventHandler(meals),
+    listMeals: new ListMealEventsHandler(meals),
+  });
+
+  const productAuthenticator = new TestModeProductAuthenticator(testAuthenticator, {
+    resolve: async (externalRef) => {
+      const user = await users.ensureByExternalRef(externalRef);
+      return user.ok ? user.value.id : null;
+    },
+  });
+
+  const server = await buildServer({
     config,
     logger,
     gateway: {
@@ -144,7 +190,29 @@ export const buildApplication = async (
         };
       },
     },
+    product: {
+      meals: mealController,
+      authenticate: async (request) => {
+        if (config.auth.testMode) {
+          return productAuthenticator.authenticate(request.headers.authorization);
+        }
+        throw new TestModeFenceError(
+          'production authentication requires an attestation verifier (G-4)',
+        );
+      },
+    },
   });
+
+  // The database handle is owned here, so it is released here. A close that
+  // only shuts the HTTP server leaves the pool draining after the process
+  // believes it stopped.
+  return {
+    ...server,
+    close: async () => {
+      await server.close();
+      await closeDatabase();
+    },
+  };
 };
 
 const main = async (): Promise<void> => {

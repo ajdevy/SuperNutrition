@@ -155,6 +155,14 @@ beforeEach(async () => {
         authMode: 'test-mode',
       }),
     },
+    // Surface B behaviour is asserted in routes/product; here it only has to be
+    // registered, so the controller is a double.
+    product: {
+      meals: {
+        listMeals: async () => ({ data: [], page: { nextCursor: null, hasMore: false } }),
+      } as never,
+      authenticate: async () => ({ userId: 'user-1' }),
+    },
   });
 });
 
@@ -375,11 +383,19 @@ describe('POST /gw/v1/session', () => {
   });
 });
 
-describe('product surface is stubbed, not silently missing', () => {
-  it('returns 501 rather than 404', async () => {
-    const response = await server.app.inject({ method: 'GET', url: '/api/v1/meals' });
+describe('product surface', () => {
+  // The rest of Surface B belongs to later stages. It says so rather than
+  // 404-ing, which would be indistinguishable from a typo in the path.
+  it('returns 501 rather than 404 for a route no stage has implemented', async () => {
+    const response = await server.app.inject({ method: 'GET', url: '/api/v1/goals' });
     expect(response.statusCode).toBe(501);
     expect(response.json().error.userMessageKey).toBe('error.not_implemented');
+  });
+
+  it('serves the meals routes instead of stubbing them', async () => {
+    const response = await server.app.inject({ method: 'GET', url: '/api/v1/meals' });
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toEqual({ data: [], page: { nextCursor: null, hasMore: false } });
   });
 });
 

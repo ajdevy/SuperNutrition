@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { mapError, toGatewayError } from './error-handler.js';
+import { AppError } from '@supernutrition/shared';
+import { mapError, toGatewayError, toProductError } from './error-handler.js';
 import { GatewayError, GATEWAY_CODES } from '../security/gateway-errors.js';
 
 describe('mapping to the B-5 taxonomy', () => {
@@ -90,5 +91,54 @@ describe('response shaping', () => {
   it('reports the taxonomy status', () => {
     expect(mapError(new GatewayError(GATEWAY_CODES.RATE_LIMITED), 'c').status).toBe(429);
     expect(mapError(new GatewayError(GATEWAY_CODES.KILL_SWITCH), 'c').status).toBe(503);
+  });
+});
+
+/**
+ * The two surfaces map thrown errors separately. A gateway code returned from
+ * `/api/v1` would be a code the product client has never heard of.
+ */
+describe('mapping to the Product API taxonomy', () => {
+  it('passes an AppError through unchanged', () => {
+    const error = AppError.unauthenticated();
+    expect(toProductError(error)).toBe(error);
+  });
+
+  it.each([
+    ['FST_ERR_CTP_BODY_TOO_LARGE', 'PAYLOAD_TOO_LARGE', 413],
+    ['FST_REQ_FILE_TOO_LARGE', 'PAYLOAD_TOO_LARGE', 413],
+    ['FST_ERR_CTP_INVALID_MEDIA_TYPE', 'UNSUPPORTED_MEDIA_TYPE', 415],
+    ['FST_ERR_CTP_EMPTY_JSON_BODY', 'VALIDATION_FAILED', 400],
+    ['FST_ERR_VALIDATION', 'VALIDATION_FAILED', 400],
+  ])('maps Fastify %s to %s', (code, expected, status) => {
+    const mapped = toProductError(Object.assign(new Error('x'), { code }));
+    expect([mapped.code, mapped.status]).toEqual([expected, status]);
+  });
+
+  // A body the client sent wrong is the client's fault. Answering 500 would
+  // invite a retry of a request that cannot succeed.
+  it('maps any other content-type-parser fault to VALIDATION_FAILED', () => {
+    const mapped = toProductError(
+      Object.assign(new SyntaxError('Unexpected end of JSON input'), {
+        code: 'FST_ERR_CTP_INVALID_JSON',
+      }),
+    );
+    expect(mapped.code).toBe('VALIDATION_FAILED');
+    expect(mapped.details).toEqual([{ field: 'body', issue: 'unparseable' }]);
+  });
+
+  it('maps a client abort to CLIENT_CANCELLED', () => {
+    const mapped = toProductError(Object.assign(new Error('aborted'), { name: 'AbortError' }));
+    expect([mapped.code, mapped.status]).toEqual(['CLIENT_CANCELLED', 499]);
+  });
+
+  it.each([
+    ['an unrecognised throwable', new Error('boom')],
+    ['a thrown string', 'boom'],
+    ['null', null],
+  ])('maps %s to INTERNAL_ERROR and serializes nothing internal', (_name, thrown) => {
+    const mapped = toProductError(thrown);
+    expect(mapped.code).toBe('INTERNAL_ERROR');
+    expect(JSON.stringify(mapped.toResponse('c1'))).not.toContain('boom');
   });
 });
