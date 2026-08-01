@@ -26,7 +26,7 @@ class DeterministicTextEngine(private val catalog: CatalogSearch) {
                 // meal while looking authoritative. Abstain for the whole
                 // description instead, and let the floor answer.
                 ?: return TextEngineOutcome.Abstained("fragment-unresolved")
-            items += DetectedItem(resolved.canonicalItemId, fragment.span)
+            items += DetectedItem(resolved.canonicalItemId, fragment.span, resolved.unmatchedPreparation)
         }
         return TextEngineOutcome.Segmented(items)
     }
