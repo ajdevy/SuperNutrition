@@ -17,24 +17,28 @@ This project is worked on by Claude Code as an **uninterrupted continuation of t
 7. **Git discipline:** work on the current branch (`feat/e43-gateway-impl` for E4.3 stack) or a new branch per stage; commit per coherent unit with `feat(backend): ...` style; DO NOT commit the dirty benchmark files or unrelated docs; push rarely and deliberately (paid GitHub Actions quota — see AGENTS.md).
 8. **Deep context:** full old session transcripts are at `~/.claude/projects/-Users-jj-Work-SuperNutrition/` (imported from the local machine). If this digest lacks a detail, search those transcripts for how the local agent decided it.
 
-## Next stage (current objective)
+## Next step (current objective) — NOT Stage 7
 
 - Stages 1–6 are done (architecture, skeleton, contracts, E4.3 gateway, meals product API, USDA catalog).
-- **NEXT: Stage 7 goals and progress — spec at `backend/07-goals-progress.md`.** Read `backend/AGENTS.md` → this digest → that spec before writing code. After Stage 7: `backend/08-achievements-coach-journey.md`.
+- **NEXT: the photo-flow curl test — end to end, by hand, against the running API:** photo → inference → candidate confirm → USDA facts → meal save → history. This is the next task, decided 2026-08-01.
+- **Do NOT start Stage 7** (`backend/07-goals-progress.md`) until the photo-flow curl test is done. Stage 8 (`backend/08-achievements-coach-journey.md`) comes after Stage 7.
+- The curl run is also where open decision 5 gets settled: it is the first traffic against the live USDA API, so it is the moment to check whether `/foods/search` actually parses (see "Stage 6 risks" below).
 
 ## Current focus: Stage 6 USDA catalog — DONE (2026-08-01)
 
-Implementation landed in `09d2d05`; the test surface landed in `ec48c3d`. Both are committed, **not pushed**.
+Implementation landed in `09d2d05`, the test surface in `ec48c3d`, and the catalog-auth fix in the commit this digest ships with. All committed, **not pushed**.
 
 - `USDAProvider` (real HTTP over an injectable fetch, retry on 5xx/timeout only, circuit breaker, 7-day in-memory lookup cache, `#apiKey` isolation), `LookupFoodHandler`/`SearchFoodHandler`, `GET /api/v1/catalog/search`, wiring in `main.ts` with dataset version `SR Legacy 2021-10`.
 - `LookupFoodHandler` is wired but intentionally NOT routed — `GET /api/v1/catalog/items/:foodId` stays 501 until a later stage. Do not "fix" that.
 - `NutritionCalculator` stays unimplemented on purpose (docs/08 §8.4 keeps the server-side calculation path disabled until the golden-fixtures contract release).
-- Tests: **827 passing (was 753 passing + 2 red), 49 files.** 95.69% lines / 93.44% branches overall; `usda.provider.ts` 100% lines / 95.06% branches. `npm run typecheck`, `npm run lint`, `npm run format:check`, coverage thresholds, and `verify-{mobile-api,inference,interaction-policy}-contract`, `verify-root-boundaries`, `verify-product-identity` all pass.
+- `GET /api/v1/catalog/search` authenticates like every other Surface B route (fixed 2026-08-01 — see "Stage 6 risks" 2).
+- Tests: **830 passing (was 753 passing + 2 red), 49 files.** 95.70% lines / 93.44% branches overall; `usda.provider.ts` 100% lines / 95.06% branches. `npm run typecheck`, `npm run lint`, `npm run format:check`, coverage thresholds, and `verify-{mobile-api,inference,interaction-policy}-contract`, `verify-root-boundaries`, `verify-product-identity` all pass.
 - Two non-test changes came with the test commit: `extractNutrients` now reads `NUTRIENT_MAP` instead of duplicating the nutrient ids inline (eslint failed on the dead map; behaviour identical), and prettier was run over the three Stage 6 files that had never been formatted (`domain/index.ts`, `usda.provider.ts`, `routes/product/index.ts`).
 
 ## Git / PR state
 
-- Branch `feat/e43-gateway-impl`. **Two local commits are ahead of origin and unpushed:** `09d2d05` (Stage 5/6 implementation, "backup … (auto)") and `ec48c3d` (Stage 6 tests). Push only when the user asks — paid Actions quota.
+- Branch `feat/e43-gateway-impl`. **Six local commits are ahead of origin and unpushed** (oldest first): `bc87798` (Stage 5–8 specs + backend AGENTS.md), `4ac78d4` (meals domain and product API), `09d2d05` (Stage 5/6 implementation, "backup … (auto)"), `ec48c3d` (Stage 6 tests), `e00a2ef` (this digest, Stage 6 completion), `adfbc5b` (catalog auth + these decisions). Push only when the user asks — paid Actions quota. Confirmed 2026-08-01: do not push.
+- `origin/feat/e43-gateway-impl` still points at `24d5137`; the local remote ref was last fetched 2026-07-30, so re-fetch before trusting the count.
 - Last pushed commit: `24d5137 feat(backend): implement the E4.3 first-party inference gateway` (51 files, +6124/-88).
 - **PR #27 OPEN**: `feat/e43-gateway-impl` → `feat/e43-gateway` (stacked on #26).
 - PR stack: #27 → #26 (contract-only `feat/e43-gateway`) → #23 (stage-2 skeleton) → #22 (stage-1 architecture) → main.
@@ -58,10 +62,10 @@ Implementation landed in `09d2d05`; the test surface landed in `ec48c3d`. Both a
 - **Production ships an empty market policy**: every real market resolves `unresolved` and fails closed until G-1/G-4 supply a reviewed posture. Code-complete, but no real market permits a transfer — that's intended (AD-41 MP-1).
 - `analyze` port gained a second param (`InferenceAttemptOptions`, for `AbortSignal` per AD-6 cancellation); `PayloadRef` gained a `PayloadSource` resolver (orchestrator never touches image bytes).
 
-## Stage 6 risks the tests could not settle (read before Stage 7 touches the catalog)
+## Stage 6 risks
 
-1. **`search` may parse nothing from the real FDC API.** `extractNutrients` reads `foodNutrients[].nutrient.id` / `.amount`, which is the `/food/{fdcId}` detail shape. The public `/foods/search` response uses the abridged shape (`nutrientId` / `value`), so against the live API every candidate would be skipped as malformed and search would always return an empty list. Not provable offline (no key, no network in the session), so no code was changed. Fix, if confirmed: make `extractNutrients` accept both shapes. Verify with one real `/foods/search` call before Stage 7.
-2. **`GET /api/v1/catalog/search` is unauthenticated.** Every other Surface B route calls `deps.authenticate`; the catalog route does not, so anonymous callers can spend the USDA quota. The Stage 6 spec does not mention auth for it, so it was left as implemented and is flagged here for a decision.
+1. **OPEN — `search` may parse nothing from the real FDC API.** `extractNutrients` reads `foodNutrients[].nutrient.id` / `.amount`, which is the `/food/{fdcId}` detail shape. The public `/foods/search` response uses the abridged shape (`nutrientId` / `value`), so against the live API every candidate could be skipped as malformed and search would always return an empty list. **Decision 2026-08-01: do NOT change the code now.** Validate it against the live USDA API during the photo-flow curl test; only then decide whether `extractNutrients` should accept both shapes. Tracked as open decision 5.
+2. **CLOSED — `GET /api/v1/catalog/search` now authenticates.** It was the one Surface B route that did not call `deps.authenticate`, so anonymous callers could spend the USDA quota. Fixed 2026-08-01: the route authenticates first, before the query is parsed, so an anonymous caller gets 401 rather than a validation error that would tell them which parameters were wrong. Covered by three tests in `product-routes.test.ts` (anonymous search refused with no upstream call; anonymous + invalid answers 401 not 400; the route joined the shared "refuses without a credential" table).
 
 ## Working tree state (verified 2026-08-01 after the Stage 6 test commit)
 
@@ -93,8 +97,8 @@ Implementation landed in `09d2d05`; the test surface landed in `ec48c3d`. Both a
 2. Whether to merge PR #27 (or the whole stack) — or keep the gateway contract-only until G-1/G-4 posture reviews.
 3. Fix the PHPicker images-only filter bug in IosPhotoBridge.kt (offered, not done).
 4. Re-run the `food-weight-api-research/` deep research (folder lost) if the Passio/LogMeal/CalorieMama/LLM-API comparison is still needed — food-photo-recognition-research is intact as a base.
-5. Confirm the `/foods/search` nutrient shape against the live FDC API and decide whether `extractNutrients` should accept both shapes (see "Stage 6 risks" above).
-6. Decide whether `GET /api/v1/catalog/search` must authenticate like the rest of Surface B (see "Stage 6 risks" above).
+5. **OPEN:** confirm the `/foods/search` nutrient shape against the live FDC API **during the photo-flow curl test**, then decide whether `extractNutrients` should accept both shapes. Deliberately not fixed in advance (see "Stage 6 risks" above).
+6. ~~Whether `GET /api/v1/catalog/search` must authenticate~~ — **decided and done 2026-08-01:** it must, and it now does.
 
 ## Token economy (set 2026-08-01, shared quota across bot + CLI + code-server)
 

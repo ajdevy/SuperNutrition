@@ -127,6 +127,11 @@ export const registerProductRoutes = async (
     // (docs/06 §6.6; auto-selecting food identity is a forbidden default
     // under AD-40).
     scope.get('/api/v1/catalog/search', async (request, reply) => {
+      // Authenticated like the rest of Surface B, and before the query is even
+      // parsed: an anonymous caller must not be able to spend the catalog
+      // provider's quota, nor learn which parameters a request is missing.
+      await deps.authenticate(request);
+
       const qs = request.query as Record<string, unknown>;
       const q = typeof qs['q'] === 'string' ? qs['q'].trim() : '';
       const country = typeof qs['country'] === 'string' ? qs['country'].trim() : '';

@@ -376,6 +376,7 @@ describe('authentication', () => {
     ['GET', '/api/v1/meals/3f7c1a2e-0000-4000-8000-000000000001'],
     ['PATCH', '/api/v1/meals/3f7c1a2e-0000-4000-8000-000000000001'],
     ['DELETE', '/api/v1/meals/3f7c1a2e-0000-4000-8000-000000000001'],
+    ['GET', '/api/v1/catalog/search?q=banana&country=US'],
   ])('refuses %s %s without a credential', async (method, url) => {
     const response = await server.app.inject({
       method: method as 'GET',
@@ -678,6 +679,26 @@ describe('catalog search', () => {
   it('does not call the catalog for a request it has already rejected', async () => {
     await get('/api/v1/catalog/search?country=US');
 
+    expect(usdaCalls).toEqual([]);
+  });
+
+  // The catalog costs quota per call. An anonymous caller must not be able to
+  // spend it, and must not learn from the error which parameters were wrong.
+  it('refuses an anonymous search before it reaches the catalog', async () => {
+    const response = await server.app.inject({
+      method: 'GET',
+      url: '/api/v1/catalog/search?q=banana&country=US',
+    });
+
+    expect(response.statusCode).toBe(401);
+    expect(response.json().error.code).toBe('UNAUTHENTICATED');
+    expect(usdaCalls).toEqual([]);
+  });
+
+  it('answers 401 rather than 400 when an anonymous request is also invalid', async () => {
+    const response = await server.app.inject({ method: 'GET', url: '/api/v1/catalog/search' });
+
+    expect(response.statusCode).toBe(401);
     expect(usdaCalls).toEqual([]);
   });
 
