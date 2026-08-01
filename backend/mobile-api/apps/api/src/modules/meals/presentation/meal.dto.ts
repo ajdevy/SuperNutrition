@@ -23,7 +23,7 @@ export interface NutritionResponse {
   readonly fiberG: string | null;
   readonly sugarG: string | null;
   readonly sodiumMg: string | null;
-  readonly perItem: readonly unknown[];
+  readonly perItem: readonly PerItemNutritionResponse[];
 }
 
 /** Best-effort. Null when a subscriber failed; the meal is still created. */
@@ -37,6 +37,16 @@ export interface CoachMessageResponse {
   readonly type: string;
   readonly messageKey: string;
   readonly params: Readonly<Record<string, unknown>>;
+}
+
+export interface PerItemNutritionResponse {
+  readonly foodRef: string;
+  readonly calories: string;
+  readonly proteinG: string | null;
+  readonly fatG: string | null;
+  readonly carbG: string | null;
+  /** Absent is not zero. A partial item flags the aggregate (docs/08 §8.7). */
+  readonly partial: boolean;
 }
 
 export interface MealEventResponse {
@@ -54,4 +64,10 @@ export interface MealEventResponse {
   readonly rewards: RewardsResponse | null;
   readonly coachMessage: CoachMessageResponse | null;
   readonly createdAt: string;
+}
+
+/** Cursor page (docs/06 §6.4). The cursor is opaque and validated on receipt. */
+export interface MealPageResponse {
+  readonly data: readonly MealEventResponse[];
+  readonly page: { readonly nextCursor: string | null; readonly hasMore: boolean };
 }

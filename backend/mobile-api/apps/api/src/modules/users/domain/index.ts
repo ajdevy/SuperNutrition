@@ -39,6 +39,14 @@ export type UserFailure = 'not-found' | 'already-exists' | 'storage-unavailable'
 
 export interface UserRepository {
   findById(id: UserId): Promise<Result<User, UserFailure>>;
+  /** The external ref is the installation identifier from the auth context. */
+  findByExternalRef(externalRef: string): Promise<Result<User, UserFailure>>;
+  /**
+   * First-access provisioning for a client with no account-creation flow: the
+   * user exists after the first authenticated request, not before it. An erased
+   * account is reported `not-found` rather than resurrected.
+   */
+  ensureByExternalRef(externalRef: string): Promise<Result<User, UserFailure>>;
   create(user: User): Promise<Result<User, UserFailure>>;
   softDelete(id: UserId): Promise<Result<void, UserFailure>>;
 }

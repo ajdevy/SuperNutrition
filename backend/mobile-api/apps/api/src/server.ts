@@ -1,8 +1,4 @@
-import Fastify, {
-  type FastifyBaseLogger,
-  type FastifyInstance,
-  type FastifyRequest,
-} from 'fastify';
+import Fastify, { type FastifyBaseLogger, type FastifyInstance } from 'fastify';
 import multipart from '@fastify/multipart';
 import type { AppConfig } from './config/index.js';
 import type { AppLogger } from './logging/index.js';
@@ -10,6 +6,7 @@ import { MIDDLEWARE_ORDER, mapError, resolveCorrelationId } from './middleware/i
 import { GATEWAY_CODES, GatewayError } from './security/index.js';
 import { GATEWAY_ROUTES, PRODUCT_ROUTES } from './routes/index.js';
 import { registerGatewayRoutes, type GatewayRouteDeps } from './routes/gateway/routes.js';
+import { registerProductRoutes, type ProductRouteDeps } from './routes/product/index.js';
 import { MAX_PAYLOAD_BYTES } from './routes/gateway/inference.handler.js';
 
 /**
@@ -25,6 +22,7 @@ export interface ServerDeps {
   readonly config: AppConfig;
   readonly logger: AppLogger;
   readonly gateway: GatewayRouteDeps;
+  readonly product: ProductRouteDeps;
 }
 
 export interface ServerHandle {
@@ -99,25 +97,10 @@ export const buildServer = async (deps: ServerDeps): Promise<ServerHandle> => {
 
   await registerGatewayRoutes(app, deps.gateway);
 
-  // Surface B is out of scope for this stage. It says so honestly rather than
-  // 404-ing, which would be indistinguishable from a typo in the path.
-  for (const route of PRODUCT_ROUTES) {
-    app.route({
-      method: route.method as 'GET',
-      url: route.path,
-      handler: async (request: FastifyRequest, reply) =>
-        reply.status(501).send({
-          error: {
-            gatewayCode: 'internal-error',
-            userMessageKey: 'error.not_implemented',
-            recoverable: false,
-            retryAfter: 0,
-            correlationId: String(request.id),
-            details: [{ field: 'surface', issue: 'product_api_not_implemented' }],
-          },
-        }),
-    });
-  }
+  // Surface B registers itself, including which of its routes are still
+  // unimplemented. The server does not stub product routes in a loop any more:
+  // a route list here and a handler list there is how the two drift apart.
+  await registerProductRoutes(app, deps.product);
 
   return {
     app,

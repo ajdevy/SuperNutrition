@@ -169,6 +169,9 @@ export {
 } from './auth.js';
 export type { AuthContext, TokenPair, TokenIssuerConfig } from './auth.js';
 
+export { TestModeProductAuthenticator } from './product-auth.js';
+export type { ProductPrincipal, InstallationUserResolver } from './product-auth.js';
+
 export {
   RedisRateLimiter,
   InMemoryRateLimiter,

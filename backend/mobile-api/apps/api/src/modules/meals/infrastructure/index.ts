@@ -1,11 +1,17 @@
 /**
  * Adapter bindings for the meals module.
  *
- * The Drizzle implementation of `MealEventRepository` lives in
- * packages/database/src/repositories. This file re-exports the port so the
- * composition root has one import site per module.
+ * The Drizzle row-level implementation lives in packages/database; the adapter
+ * here binds it to the `MealEventRepository` port so the composition root has
+ * one import site per module and nothing above this layer sees a row.
  */
 export type {
   MealEventRepository,
   MealRepositoryFailure,
 } from '../domain/meal-event.repository.js';
+
+export {
+  DrizzleMealEventRepositoryAdapter,
+  toDomainMealEvent,
+  toWriteRows,
+} from './meal-event.adapter.js';
