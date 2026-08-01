@@ -71,6 +71,27 @@ class MealSearchTest {
     }
 
     @Test
+    fun `a dish and an ingredient it contains are both offered`() {
+        // "bean" reaches the bowl and the beans. They are different things —
+        // one is a meal, one is an item — and someone who ate only beans is as
+        // real as someone who ate the bowl. Suppressing either guesses which,
+        // and the row label already tells them apart, so there is nothing to
+        // disambiguate by hiding.
+        val hits = search.search("bean")
+        val dish = hits.filterIsInstance<MealSearchHit.Dish>()
+            .firstOrNull { it.canonicalDishId == "dish:black-bean-bowl" }
+        val food = hits.filterIsInstance<MealSearchHit.Food>()
+            .firstOrNull { it.canonicalItemId == "food:bean-black" }
+
+        assertTrue(dish != null, "expected the bowl")
+        assertTrue(food != null, "expected the beans")
+        assertTrue(
+            dish.ingredients.any { it.canonicalItemId == "food:bean-black" },
+            "and the food offered separately is genuinely one of the dish's ingredients",
+        )
+    }
+
+    @Test
     fun `an unmatched preparation still travels on a food hit`() {
         val hit = assertIs<MealSearchHit.Food>(search.search("grilled chicken breast").first())
 
