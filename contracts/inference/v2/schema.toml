@@ -17,6 +17,26 @@ mass = "estimated-finite-ordered-gram-range-or-typed-not-evaluable-or-typed-abst
 provenance = "route-engine-model-taxonomy-calibration-contract"
 telemetry = "versioned-allowlisted-operational-buckets-without-raw-payload-or-component-values"
 
+# The band is derived from the score, not chosen alongside it. Stated here
+# because it was previously only in one binding's Kotlin, where a second
+# implementation had no way to learn the rule existed and would have picked its
+# own thresholds — a v2 result whose band disagreed with its score would then be
+# valid on one platform and rejected on another.
+#
+# Derived rather than engine-supplied on purpose. A calibrated band is more
+# expressive, and it is also the shape in which a miscalibrated engine can show
+# "high confidence" over a score of 0.2 with nothing to catch it. A derived band
+# cannot lie about its own number, and a mismatch fails loudly at construction
+# rather than quietly in front of a user. If calibrated bands are wanted later
+# they are a new major release, not a relaxation of this one.
+[result.confidence]
+score_range = "0.0-1.0-inclusive"
+band = "derived-from-score"
+band_low_below = 0.5
+band_medium_below = 0.8
+band_high_from = 0.8
+band_mismatch = "reject"
+
 [compatibility]
 unknown_fields = "ignore"
 missing_required_fields = "reject"
