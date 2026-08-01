@@ -177,6 +177,15 @@ GPT-5 / Codex
   iPhone 14 Pro / iOS 26.5.2. Ingredient capability remains `unsupported`
   and weight remains `not-evaluable`; the result is preliminary and does not
   supply owner signatures.
+- 2026-08-01 native energy evidence: a trace-bound physical run completed
+  semantic `5/5`, init `572 ms`, p50/p95/max `83/84/84 ms`, resident memory
+  `255,744 -> 247,360 KB`, thermal `0 -> 0`, and battery level `1 -> 1` on the
+  same iPhone. Xcode Instruments `Power Profiler` captured
+  `/tmp/supernutrition-ios-power-20260801.trace`; the trace records process
+  exit `0` and a 32.486 s capture, and its exported process power table reports
+  zero Wi-Fi and cellular receive/transmit bytes. It supplies native trace
+  evidence, but not a calibrated joule or battery-percentage delta, so the
+  numeric battery budget and owner acceptance remain open.
 
 ### File List
 
