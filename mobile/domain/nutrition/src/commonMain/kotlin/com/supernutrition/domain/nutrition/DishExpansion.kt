@@ -37,6 +37,7 @@ data class DishProposal(
     val canonicalDishId: String,
     val dishDisplayName: String,
     val ingredients: List<DishIngredient>,
+    val strength: MatchStrength = MatchStrength.WEAKEST,
 )
 
 /**
@@ -69,6 +70,6 @@ class DishExpansion(dishes: List<DishRecord>) {
      */
     fun expand(query: String): List<DishProposal> = search.search(query).map { hit ->
         val dish = byId.getValue(hit.canonicalItemId)
-        DishProposal(dish.canonicalDishId, dish.displayName, dish.ingredients)
+        DishProposal(dish.canonicalDishId, dish.displayName, dish.ingredients, hit.strength)
     }
 }
