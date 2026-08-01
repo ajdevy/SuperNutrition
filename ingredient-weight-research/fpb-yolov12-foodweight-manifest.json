@@ -1,6 +1,6 @@
 {
   "schema_version": "fpb-yolov12-foodweight/research-v1",
-  "status": "research-only",
+  "status": "research-only-composite-screen-failed",
   "source": {
     "repository": "https://github.com/IS2AI/Multitask-Food-Portion-Estimation",
     "commit": "307a903d49ab073ed83f01c527981aafe5da59b3",
@@ -51,5 +51,14 @@
     "p90_absolute_weight_error_grams": 110.4830622559,
     "not_acceptance": true,
     "runtime_caveat": "The pinned repository code and published YOLOv12S checkpoint are not directly compatible; the smoke evidence uses current Ultralytics plus a temporary grams-head compatibility shim."
+  },
+  "composite_screen": {
+    "status": "failed",
+    "evidence": "fpb-yolov12-foodweight-composite-evidence.json",
+    "fixtures": 5,
+    "raw_detections": 8,
+    "macro_visible_component_f1": 0.0,
+    "mass_quality": "not-evaluable: public fixtures have no calibrated scale ground truth",
+    "decision": "not a current v2 ingredient or mass candidate; retain only as attributed research evidence"
   }
 }

@@ -117,9 +117,9 @@ analysis budget and preserve a manual/dish-only fallback.
 
 No current G-3 status or owner signature is changed by this research note.
 
-## Selected research baseline
+## FPB research baseline
 
-FPB/YOLOv12-FoodWeight is now the selected first baseline. The pinned
+FPB/YOLOv12-FoodWeight was the first baseline. The pinned
 provenance and license boundary are in
 [`fpb-yolov12-foodweight-manifest.json`](fpb-yolov12-foodweight-manifest.json).
 Its CSV output can be converted into the existing G-3 evaluator shape with
@@ -136,3 +136,30 @@ repository code because that code lacks `C3k2`; the smoke run therefore uses
 current Ultralytics plus a temporary compatibility shim that preserves the
 extra grams channel. This is evidence that the research artifact can emit
 food classes, boxes, and grams on FPB samples, not a product or G-3 claim.
+
+The follow-up five-photo complex-meal screen is recorded in
+[`fpb-yolov12-foodweight-composite-evidence.json`](fpb-yolov12-foodweight-composite-evidence.json).
+At the fixed `0.25` confidence threshold it produced eight boxes, but none of
+the raw FPB labels matched the conservative visible-component taxonomy:
+macro ingredient F1 is `0.0/1.0` across all five meals. The raw grams output
+is retained for audit only; it has no tared scale ground truth in these public
+photos, so mass MAE is deliberately `not-evaluable`. FPB is therefore **not a
+current v2 ingredient or mass candidate**. Its AGPL-3.0 repository and
+non-commercial dataset boundary also remain incompatible with direct mobile
+shipping.
+
+## Comparative candidate status — 2026-08-01
+
+| Candidate | What was actually exercised | Visible ingredients on five complex meals | Grams | Current decision |
+| --- | --- | --- | --- | --- |
+| Food-101 Swin INT8 | Physical Android and iOS G-3 harness | `unsupported`: one dish label, no components | `not-evaluable` | Retain only as the dish-classification baseline |
+| FPB / YOLOv12-FoodWeight | Reproducible CPU run, 640 px, 0.25 confidence; raw predictions and G-3 evaluator record included | `0.0` macro F1; 0 exact components across 8 boxes | Raw head present; quality `not-evaluable` without scale truth | Reject for the current v2 candidate screen; research evidence only |
+| FoodSAM | Installation audited; official setup pins Python 3.7, PyTorch 1.8/CUDA 11.1, SAM ViT-H, FoodSeg103, and UniDet checkpoints | Not run locally — no comparable output | No mass head | Offline teacher/annotation candidate, not an immediate mobile runtime |
+| FoodSeg103 / ReLeM | Official semantic benchmark and model zoo audited | Not run locally — semantic masks, not instances | No mass head | Pretraining/teacher candidate only pending dataset terms |
+| MobileSAM | Promptable mask project audited | Not a food identifier; masks have no ingredient labels | No mass head | Use only for user-corrected masks or annotation, not automatic recognition |
+| YOLO-World v2 | Local library bootstrap succeeded; the 24.7 MB checkpoint transfer did not complete under the available network throughput, so no inference result exists | Not run — would use the same visible-component prompts | No mass head | Open-vocabulary detector worth a later screen, but the Ultralytics AGPL/Enterprise boundary blocks direct shipping |
+
+The report is intentionally not a model leaderboard: the models do not share a
+taxonomy, an instance contract, or weighed ground truth. Only matched tasks are
+scored, and a candidate without a mass head or calibrated masses cannot receive
+a grams score.
