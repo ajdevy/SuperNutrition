@@ -3,15 +3,16 @@
 | Field | Value |
 | --- | --- |
 | Artifact ID | `G3-SN-2026-07-31-preliminary-01` |
-| Status | `proposed-preliminary` |
+| Status | `engineering-approved-pending-product` |
 | Scope | Epic 3 local inference runtime/model, semantic recognition, ingredient capability, weight capability, and resource-budget decision |
 | Production activation | **Blocked until user acceptance/signature and remaining gaps close** |
 | Measurement harness | [`tools/g3-benchmark/README.md`](../../tools/g3-benchmark/README.md) |
 | Research record | [`docs/research/epic-3-food-recognition-preprocessing-camera.md`](../../docs/research/epic-3-food-recognition-preprocessing-camera.md) |
-| Evidence date | 2026-07-31 |
+| Evidence date | 2026-08-01 |
 
-This document records reproducible physical-device evidence. It is not a
-signature and does not activate a production runtime. It now includes a
+This document records reproducible physical-device evidence. Evidence alone is
+not a signature; this revision also records one scoped Engineering approval,
+while Product approval and production activation remain blocked. It includes a
 bounded semantic recognition proof for five single-dish Food-101 labels. It
 does not claim multi-object detection, ingredient extraction, portion
 estimation, nutrition correctness, or general Food-101 accuracy. The meal
@@ -171,8 +172,8 @@ The semantic source pages are:
 
 ## Proposed budgets
 
-These are proposed acceptance budgets, not yet signed production
-requirements.
+The strict budgets below remain comparison targets, not the approved runtime
+envelope.
 
 | Budget | Proposed bound | Android | iOS |
 | --- | --- | --- | --- |
@@ -184,12 +185,12 @@ requirements.
 | Model integrity | pinned SHA before session creation; mismatch fails closed | pass | pass |
 | Network/privacy | no photo upload or product API call | pass | pass |
 
-### Relaxed local-wait proposal
+### Relaxed local-wait rationale
 
 Product direction for the ingredient/weight experiment allows a long local
 wait when the UI continuously explains the active stage and exposes Cancel.
-The following exploratory tiers capture that direction without signing a
-production G-3 budget:
+The following tiers provided the basis for the scoped Engineering approval;
+they do not by themselves activate a production G-3 runtime:
 
 | Tier | Cold init | Analysis | Peak process memory | Required UX |
 | --- | ---: | ---: | ---: | --- |
@@ -200,8 +201,28 @@ production G-3 budget:
 The current Food-101 semantic runner fits the exploratory High resource
 envelope on both measured devices, but it does not emit ingredients or grams.
 FPB/YOLOv12-FoodWeight has not yet been measured on either phone, so these
-tiers must not be treated as FPB device acceptance or as owner-approved G-3
-budgets.
+tiers must not be treated as FPB device acceptance.
+
+### Engineering-approved G-3 budget
+
+On 2026-08-01, Engineering owner AJ (`ajdevy`) approved the **High** tier for
+the current pinned Food-101 semantic-research harness on the measured Android
+and iOS candidate devices:
+
+| Budget | Engineering-approved bound | Current Android | Current iOS |
+| --- | ---: | ---: | ---: |
+| Cold initialization | <= 15 s | 2.611 s | 0.572 s |
+| Analysis completion | <= 45 s | p95 279 ms | p95 84 ms |
+| Peak process memory | <= 512 MB | 273,547 KB PSS | 255,744 KB resident |
+| Thermal | no serious/critical transition | 0 -> 0 | 0 -> 0 |
+| Network/privacy | no photo upload or product API call | pass | native trace: zero Wi-Fi/cellular bytes |
+
+The approval is intentionally narrow: it accepts a staged, cancellable local
+wait for the **dish-only** v1 semantic capability. Product integration must
+show stage copy and Cancel before it can rely on this envelope. It does not
+approve the failed strict budget, a production FPB/YOLOv12 integration,
+ingredient-set extraction, gram estimation, nutrition output, or a device tier
+outside the measured matrix.
 
 ## Preprocessing and camera decision
 
@@ -221,7 +242,7 @@ The product camera bridges now request platform-safe capture behavior:
 The detailed evidence and primary-source links are in the research record
 linked at the top of this artifact.
 
-## Required before `signed`
+## Required before final product sign-off
 
 - Review and accept the fresh Android semantic/resource result, including its
   failed proposed initialization, latency, and memory budgets. The latest
@@ -244,7 +265,8 @@ linked at the top of this artifact.
   recognition for plates with sides, salads, fish, or Buddha bowls.
 - Record rollback behavior for model download/cache and runtime initialization
   failure.
-- Have the engineering and product owners accept the budgets and sign below.
+- Have the Product owner accept or reject the scoped Engineering budget and
+  sign below.
 
 The 2026-08-01 Android G-3 rerun completed on the same physical Honor device:
 semantic `5/5`, init `2,611 ms`, p50/p95/max `182/279/334 ms`, PSS
@@ -259,7 +281,7 @@ attempt, but the successful unlocked rerun completed semantic `5/5`, init
 
 | Role | Name | Decision | Date | Signature/reference |
 | --- | --- | --- | --- | --- |
-| Engineering owner | pending | pending | pending | pending |
+| Engineering owner | AJ (`ajdevy`) | approved: scoped High local-wait budget for current dish-only v1 harness | 2026-08-01 | user-authorized in this task; PR #29 |
 | Product owner | pending | pending | pending | pending |
 
 Until both rows are completed, G-3 remains open and E3.2/E3.3/E3.4 remain
