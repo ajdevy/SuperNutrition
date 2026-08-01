@@ -2,7 +2,7 @@
 name: SuperNutrition
 status: final
 created: 2026-07-26
-updated: 2026-07-26
+updated: 2026-08-01
 sources:
   - ../../prds/prd-SuperNutrition-2026-07-26/prd.md
 design: DESIGN.md
@@ -56,7 +56,7 @@ consents to the resulting transfer rather than choosing provider routing.
 | --- | --- | --- |
 | Capture | App open / Scan again / Retake | Live camera preview, photo import, privacy route indicator |
 | Permission rationale | Capture when unresolved | Explain camera need before platform prompt |
-| Analyzing | Capture or retry | Frozen-frame progress, current route, cancel |
+| Analyzing | Capture or retry | Frozen-frame truthful stage, current route, Cancel; stages are Preparing photo, Finding visible foods, Estimating portions, and Checking results when a v2 component attempt is active |
 | Remote consent | Local Abstention/unavailable/low confidence | Explain upload and allow informed accept or decline |
 | Candidate review | Engine result or manual search | Confirm, remove, replace, or add visible foods |
 | Food search | Candidate review / no Engine path | Select a versioned Nutrition Source record |
@@ -94,7 +94,7 @@ Microcopy is calm, direct, and nonjudgmental. Brand posture lives in `DESIGN.md`
 | --- | --- | --- |
 | Capture controls | Capture | Shutter is primary; import is secondary; disabled state explains why |
 | Route indicator | Capture, Analyzing, Result | Text semantics for Local/Remote/Manual; never technical IDs |
-| Candidate list | Candidate review | Ranked initially; after user edit, preserve user order; every item removable |
+| Candidate list | Candidate review | Ranked initially; after user edit, preserve user order; every item removable. A visible component exposes region/ambiguity, confidence, and editable estimated grams or an honest no-estimate state; it never auto-confirms nutrition. |
 | Confidence explanation | Candidate review | Map Engine values to plain language; link to “Why this needs review” |
 | Food search | Manual/correction | Search normalized country-aware catalog; source/version retained silently then visible in details |
 | Serving editor | Confirmation | Amount, unit, optional range; validate without erasing input; expose recipe/oil/sauce questions only when relevant |
@@ -147,7 +147,7 @@ Microcopy is calm, direct, and nonjudgmental. Brand posture lives in `DESIGN.md`
 | Poor image | Keep photo visible; specific guidance (blur, darkness, no food); Retake primary |
 | Local model required/downloading | Show size/network/storage if known; allow remote offer or manual path |
 | Local unavailable | Explain local limitation; do not imply upload consent |
-| Analyzing | Frozen frame, route label, indeterminate progress, Cancel |
+| Analyzing | Frozen frame, route label, truthful current stage, one bounded announcement per stage, and Cancel; no countdown or simulated completion. |
 | Low Confidence/Abstention | Plain reason; Remote analysis, Retake, or Manual search |
 | Remote consent declined | Return to recovery with Retake and Manual search; no nag loop |
 | Remote consent accepted before transfer | User can cancel; no bytes are sent and the flow returns to recovery |

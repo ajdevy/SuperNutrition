@@ -1,0 +1,23 @@
+schema = "supernutrition.inference-evidence-contract.v2"
+schema_version = 1
+contract_id = "inference-evidence"
+release = "v2"
+language_neutral = true
+executable = false
+canonical_json = true
+numeric_nutrition = false
+canonical_fixture_kinds = ["capability", "result", "telemetry"]
+
+[ports]
+request = "closed-photo-ref-or-text-plus-immutable-attempt-context"
+capability = "typed-state-reason-user-safe-message-key-with-model-taxonomy-calibration"
+result = "visible-component-evidence-or-abstention-or-typed-failure"
+component = "localized-candidate-calibrated-confidence-visibility-ambiguity-optional-normalized-region"
+mass = "estimated-finite-ordered-gram-range-or-typed-not-evaluable-or-typed-abstained"
+provenance = "route-engine-model-taxonomy-calibration-contract"
+telemetry = "versioned-allowlisted-operational-buckets-without-raw-payload-or-component-values"
+
+[compatibility]
+unknown_fields = "ignore"
+missing_required_fields = "reject"
+incompatible_change = "new-major-release"

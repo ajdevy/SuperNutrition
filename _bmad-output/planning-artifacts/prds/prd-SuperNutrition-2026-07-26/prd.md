@@ -2,7 +2,7 @@
 title: SuperNutrition Product Requirements Document
 status: final
 created: 2026-07-26
-updated: 2026-07-26
+updated: 2026-08-01
 sources:
   - ../../briefs/brief-SuperNutrition-2026-07-26/brief.md
   - ../../briefs/brief-SuperNutrition-2026-07-26/addendum.md
@@ -847,4 +847,61 @@ path cannot be release-ready until its corresponding gate closes.
   before public claims.
 - **A-4 (§7 SM-2):** The two-second camera target is a spike hypothesis.
 - **A-5 (§7 SM-3):** The four-second local and ten-second remote targets are spike
-  hypotheses until the physical-device and network matrix is selected.
+hypotheses until the physical-device and network matrix is selected.
+
+## 14. Approved product-direction amendment — visible ingredients and gram estimates
+
+**Approved:** 2026-08-01 by Product owner Anastasia. This amendment supersedes
+only the earlier interpretation that all automatic portion output is outside
+the MVP. It does not change the prohibition on exact automatic mass, hidden
+recipe reconstruction, ungrounded nutrition, medical, or allergen claims.
+
+### Amendment scope
+
+The MVP may return an explicitly labelled, user-confirmable **estimated gram
+range** for a visibly separable component when a versioned component/mass model,
+calibration, and capture evidence support it. It is never described as a
+measured or exact weight. The engine must return `not_evaluable` or abstain when
+visual evidence, geometry, confidence, or model capability is insufficient.
+Hidden ingredients, oil, sauces, recipe composition, allergens, calories, and
+macronutrients remain outside image inference. Numeric nutrition still requires
+explicit identity and serving confirmation plus a versioned Nutrition Source.
+
+### Added functional requirements
+
+- **FR-32: Visible-component evidence.** A photo engine can return a set of
+  visibly separable food-component candidates with calibrated confidence,
+  optional visible-region evidence, ambiguity state, and model/taxonomy
+  provenance. It does not invent hidden recipe ingredients.
+- **FR-33: Bounded mass estimate.** A photo engine can return an optional
+  estimated gram range for a visible component only with model/calibration
+  provenance and `estimated`, `not_evaluable`, or `abstained` status. The UI
+  preserves the range and assumptions as editable evidence, not fact.
+- **FR-34: Component and serving confirmation.** A user can remove, correct,
+  add, merge, or split visible component candidates and edit the proposed gram
+  range/serving before any nutrition result is calculated.
+- **FR-35: Truthful staged local analysis.** A long local analysis reports its
+  actual stage, refreshes progress on bounded state changes, remains cancellable,
+  and never uses a fake countdown or simulated completion progress.
+- **FR-36: Component/mass evaluation.** A versioned evaluation runner reports
+  component-set, region/mask, scale-linked mass, abstention, parity, resource,
+  and device-slice results separately from catalog-grounded nutrition error.
+
+### Added non-functional requirement
+
+- **NFR-28: Component/mass activation safety.** A component or mass model is
+  activated only with an immutable model/taxonomy/preprocessing/calibration
+  manifest, a compatible rollback target, a consented weighed corpus, physical
+  Android/iOS evidence, and approved G-3/G-5 thresholds. Public corpora,
+  including Nutrition5k, may support attributed pretraining and benchmark
+  design after license review, but do not replace the consented phone-photo
+  acceptance corpus and are never shipped as an application asset.
+
+### Revised G-3/G-5 evidence
+
+The current Food-101/Swin result remains a dish-only baseline. The revised G-3
+exit additionally requires a v2 contract and model manifest, visible-component
+quality, scale-linked component and total-mass error, device/runtime/resource
+evidence, staged-and-cancellable UX evidence, and rollback. G-5 approves the
+claim wording, confidence/abstention, and quality thresholds after the corpus
+pilot; provisional targets are not public claims.

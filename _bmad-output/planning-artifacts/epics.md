@@ -314,6 +314,12 @@ profile transition is only allowed when the production graph is present. Each
 story is one bounded agent slice and one pull request, as required by AR-31 and
 AR-33.
 
+The approved ingredient/grams direction prioritizes E3.5 before further engine
+work, E3.6 before any mass claim, E3.7 and E3.8 as independent physical-device
+spikes, then E3.9, E5 component confirmation, and E6 v2 evaluation. The v1
+Food-101 adapter may remain an explicit single-dish fallback but cannot close
+these stories.
+
 E7 is sequenced around one product decision and one decaying cost. The decision:
 E7.2 delivers the deterministic search floor first, depends on the catalog
 rather than on any Engine, and is therefore unblocked by the contract question
@@ -567,8 +573,10 @@ UX-DR10..UX-DR11, UX-DR19..UX-DR20, UX-DR23..UX-DR24.
 
 ## Epic E3: Shared inference and local engines
 
-Freeze the contract-v1 evidence vocabulary and deliver capability-aware local
-inference as independent Android and iOS tracks.
+Preserve the contract-v1 evidence vocabulary and deliver capability-aware local
+inference as independent Android and iOS tracks. The approved v2 track adds
+visible-component evidence and bounded gram estimates without reinterpreting a
+single dish label as ingredients or mass.
 
 ### Story E3.1: Freeze contract-v1 inference ports
 
@@ -638,6 +646,120 @@ AR-20, AR-25, UX-DR15..UX-DR16, UX-DR37.
   Abstention, or a Gate G-5 low-confidence threshold; a successful high-
   confidence local result cannot be escalated by arbitrary configuration.
 - **And** every route decision exposes a typed eligibility reason.
+
+### Story E3.5: Release v2 visible-component and mass-evidence contract
+
+As the contract owner,
+I want one immutable v2 release for photo component evidence and optional mass
+estimates,
+so that Android, iOS, text identification, and evaluation cannot create
+competing schemas or fabricate nutrition.
+
+**Traceability:** FR-5..FR-7, FR-12, FR-32..FR-36, NFR-2..NFR-3, NFR-7,
+NFR-9..NFR-12, NFR-28, AR-33, AR-48..AR-49.
+
+**Acceptance Criteria:**
+
+- **Given** the immutable `contracts/inference/v1` release, **when** component
+  and mass evidence is added, **then** it ships in the already planned,
+  modality-neutral `contracts/inference/v2`; v1 files and digest remain
+  unchanged and both releases verify in the compatibility matrix.
+- **Then** a v2 photo result has `VisibleComponent` evidence (candidate,
+  confidence, optional box/mask reference, visibility/ambiguity, provenance)
+  and an optional `MassEstimate` (gram range, calibration/model assumptions,
+  and `estimated`/`not_evaluable`/`abstained` state).
+- **And** no v2 Engine result contains calories, macros, or a canonical catalog
+  binding; text identification returns mass `not_evaluable` unless a separately
+  approved measurement modality exists.
+- **And** fixtures fail closed for invalid mass ranges, absent provenance,
+  unsupported/unknown values, stale attempt output, and an attempt to map an
+  Engine result directly to nutrition.
+
+### Story E3.6: Establish the consented weighed component corpus
+
+As an evaluation owner,
+I want a consented, tared, leakage-resistant component corpus,
+so that grams and visible ingredients have valid ground truth.
+
+**Traceability:** FR-23..FR-24, FR-32..FR-36, NFR-1..NFR-4, NFR-9..NFR-12,
+NFR-28.
+
+**Acceptance Criteria:**
+
+- **Given** a scored meal, **when** it enters the corpus, **then** the empty
+  vessel, each visible component before plating, and final plate are weighed;
+  scale identity, resolution, verification, consent reference, photo digest,
+  taxonomy, and QC status are recorded.
+- **Then** component boxes/masks label only visibly separable food; hidden
+  ingredients and inseparable mixtures are explicit `not_evaluable` states.
+- **And** train, calibration, and held-out sets prevent meal, participant,
+  restaurant, capture-session, and device leakage and report all declared
+  device/cuisine/view/lighting/occlusion/portion strata.
+- **And** Nutrition5k, when license-reviewed, is used only as attributed
+  pretraining/benchmark-design data through a training-side metadata index and
+  selected-shard mirror; it is never shipped to the app or treated as product
+  acceptance evidence.
+
+### Story E3.7: Spike local Android visible-component and mass inference
+
+As the Android local-inference owner,
+I want a compact v2 detector/segmenter and optional mass head behind the shared
+contract,
+so that a compatible Android phone returns components and bounded estimates
+without network transfer.
+
+**Traceability:** FR-6..FR-7, FR-32..FR-36, NFR-1..NFR-3, NFR-7,
+NFR-9..NFR-12, NFR-28.
+
+**Acceptance Criteria:**
+
+- **Given** a selected commercial-use-cleared model manifest, **when** Android
+  analyzes a valid photo, **then** it emits v2 component/mass evidence or a
+  typed abstention with no network attempt.
+- **Then** cancellation, preprocessing/output parity, checksum activation,
+  rollback, low-memory gating, and both valid/invalid mass states are covered
+  by tests and Honor physical-device evidence.
+
+### Story E3.8: Spike local iOS visible-component and mass inference
+
+As the iOS local-inference owner,
+I want the same v2 component/mass evidence on iOS,
+so that iOS is not a semantic-only fork.
+
+**Traceability:** FR-6..FR-7, FR-32..FR-36, NFR-1..NFR-3, NFR-7,
+NFR-9..NFR-12, NFR-28.
+
+**Acceptance Criteria:**
+
+- **Given** the same selected component artifact and v2 fixtures, **when** iOS
+  analyzes a valid photo, **then** it emits parity-equivalent evidence or a
+  typed abstention without remote transfer.
+- **Then** depth availability, runtime/EP selection, cancellation, rollback,
+  and iPhone physical-device resource evidence are recorded separately from
+  Android.
+
+### Story E3.9: Integrate staged component review and local wait UX
+
+As a user,
+I want the app to explain a longer local analysis and let me review ingredients
+and grams,
+so that I can trust, correct, or cancel the result.
+
+**Traceability:** FR-11, FR-13..FR-15, FR-32..FR-35, NFR-2, NFR-13..NFR-16,
+NFR-28, UX-DR13..UX-DR16, UX-DR37.
+
+**Acceptance Criteria:**
+
+- **Given** a local component attempt, **when** work changes stage, **then** the
+  UI shows factual `Preparing photo`, `Finding visible foods`, `Estimating
+  portions`, or `Checking results` copy with bounded updates and one accessible
+  Cancel action, never a countdown.
+- **Then** every visible component shows confidence, route/provenance, an
+  editable estimated gram range or `not enough visual evidence`, and Remove,
+  Edit, Add, Merge, or Split before nutrition confirmation.
+- **And** the story records Android/iOS accessibility and interaction-budget
+  evidence for success, correction, abstention, model-unavailable, and
+  cancellation paths.
 
 ## Epic E4: Remote inference and consent
 
@@ -736,6 +858,8 @@ NFR-15..NFR-16, AR-7, AR-19, UX-DR13..UX-DR20, UX-DR37.
 - **And** the story records tap, scroll, field, choice, text-entry,
   choice-surface, and recovery-event budgets plus proposal/decision IDs and
   default provenance for default, override, Undo, and forbidden-default paths.
+- **And** a v2 estimated gram range is visible editable evidence, never a
+  `DefaultProposal`, measured fact, or canonical catalog binding.
 
 ### Story E5.2: Implement country-aware nutrition catalog selection
 
@@ -779,6 +903,9 @@ AR-29, UX-DR14, UX-DR20..UX-DR21, UX-DR37.
 - **And** the defaulted serving path and an override/Undo path are both covered
   by journey evidence with tap/scroll/field/choice counts, auxiliary maxima,
   atomic proposal/decision IDs, resolved-value digest, and default provenance.
+- **And** a component-mass estimate can seed an editable serving review only
+  when its v2 provenance/status is valid; `not_evaluable` and `abstained` values
+  leave manual serving available without a fabricated number.
 
 ## Epic E6: Journey evidence and evaluation
 
@@ -836,6 +963,10 @@ AR-2, AR-7, AR-9, AR-17, AR-19, AR-26, UX-DR34.
   cost, and representative Tier-1 slices are reported.
 - **Then** Gate G-5 approves thresholds before confidence-based hybrid routing
   becomes release-ready.
+- **And** the v2 report separately records visible-component set precision,
+  recall, F1, region/mask metrics, valid scale-linked component/total mass MAE,
+  relative MAE, p90 absolute error, bias, calibration, coverage-risk, and all
+  declared device/cuisine/view/lighting/occlusion/portion slices.
 
 ### Story E6.4: Maintain the quality and release evidence gates
 
@@ -886,6 +1017,9 @@ so that typed identification is a modality rather than a second subsystem.
 - **Then** capability states, Candidate, Abstention, provenance, and typed-error
   shapes are identical across modalities and unchanged from v1, and no modality
   returns numeric nutrition.
+- **And** v2 photo output is extended by E3.5 with visible-component evidence
+  and optional bounded mass estimates; text output must state mass
+  `not_evaluable` rather than inventing grams.
 - **And** the compatibility matrix declares both releases, v2 publishes its own
   canonical fixtures for both modalities, every v1 fixture still passes against
   v1, and `scripts/verify-inference-contract.sh` verifies both.
