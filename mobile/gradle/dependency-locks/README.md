@@ -21,6 +21,7 @@ Refresh is explicit and local-only:
   :feature:photo-analysis:dependencies \
   :feature:photo-analysis-presenter:dependencies \
   :feature:photo-analysis-ui:dependencies \
+  :feature:meal-search-presenter:dependencies \
   :platform:photo-android:dependencies :platform:photo-ios:dependencies \
   :testing:compose-support:dependencies :testing:scaffold-probe:dependencies
 ```
