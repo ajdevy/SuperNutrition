@@ -43,7 +43,11 @@ object SeedCatalog {
         ),
         CatalogRecord(
             canonicalItemId = "food:chicken-breast-raw",
-            displayName = "Курица, грудка",
+            // The id said raw and no searchable form did, so "raw chicken
+            // breast" missed while plain "chicken breast" silently returned a
+            // record that is specifically raw. Preparation belongs in the name
+            // the user confirms, the way "Egg, boiled" already carries it.
+            displayName = "Курица, грудка, сырая",
             alternateNames = listOf(
                 // Nominative plus the oblique forms a user actually types.
                 "курица",
@@ -55,6 +59,7 @@ object SeedCatalog {
                 "kuritsa",
                 "kuritsa grudka",
                 "chicken breast",
+                "chicken breast raw",
             ),
         ),
         CatalogRecord(
@@ -87,11 +92,12 @@ object SeedCatalog {
         ),
         CatalogRecord(
             canonicalItemId = "food:eggplant-raw",
-            displayName = "Eggplant",
+            displayName = "Eggplant, raw",
             alternateNames = listOf(
                 // Same food, different English. A British user typing aubergine
                 // must not miss a record written in American English.
                 "aubergine",
+                "aubergine raw",
                 "баклажан",
             ),
         ),

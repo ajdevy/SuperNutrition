@@ -7,11 +7,11 @@ import com.supernutrition.core.ui.CameraPermissionState
 import com.supernutrition.domain.photoanalysis.PhotoAnalysisEvent
 import com.supernutrition.domain.photoanalysis.PhotoPreparationException
 import com.supernutrition.domain.photoanalysis.PhotoRef
+import com.supernutrition.domain.photoanalysis.PreparationEscalation
 import com.supernutrition.domain.photoanalysis.RecoveryReason
 import com.supernutrition.platform.photoandroid.AndroidPhotoBridgePort
 import com.supernutrition.platform.photoandroid.AndroidPhotoCaptureFiles
 import com.supernutrition.platform.photoandroid.AndroidPhotoNormalizerPort
-import java.io.IOException
 import java.util.UUID
 
 /**
@@ -108,26 +108,44 @@ class PhotoAnalysisAndroidHostController(
     private fun failedUnlessCancelled(resultCode: Int): RecoveryReason =
         if (resultCode == Activity.RESULT_OK) RecoveryReason.CAPTURE_FAILED else RecoveryReason.CANCELLED
 
+    /**
+     * Preparation never ends the journey.
+     *
+     * This is a camera boundary: whatever the decoder does, the user must land
+     * somewhere they can act. An earlier version caught only the four
+     * exceptions normalization was known to raise, which let anything else
+     * propagate and take the capture flow down — trading a recoverable failure
+     * for a crash to satisfy a lint rule. The catch is deliberately broad and
+     * the rule is suppressed here rather than obeyed.
+     *
+     * Recoverable does not mean silent. Every failure is reported with its
+     * cause, and a run of them escalates through [PreparationEscalation] so a
+     * persistent pipeline problem stops being reported as a bad photo.
+     */
+    @Suppress("TooGenericExceptionCaught")
     private fun prepare(ref: PhotoRef, sourceBytes: ByteArray) {
         try {
             feature.dispatch(PhotoAnalysisEvent.PreparationSucceeded(normalizer.normalize(ref, sourceBytes)))
+            captureOperation.consecutivePreparationFailures = 0
         } catch (error: PhotoPreparationException) {
-            feature.dispatch(
-                PhotoAnalysisEvent.PreparationFailed(RecoveryReason.POOR_IMAGE, error.message),
-            )
-        } catch (error: IllegalArgumentException) {
-            feature.dispatch(
-                PhotoAnalysisEvent.PreparationFailed(RecoveryReason.CAPTURE_FAILED, error.message),
-            )
-        } catch (error: IllegalStateException) {
-            feature.dispatch(
-                PhotoAnalysisEvent.PreparationFailed(RecoveryReason.CAPTURE_FAILED, error.message),
-            )
-        } catch (error: IOException) {
-            feature.dispatch(
-                PhotoAnalysisEvent.PreparationFailed(RecoveryReason.CAPTURE_FAILED, error.message),
-            )
+            reportFailure(RecoveryReason.POOR_IMAGE, error.message)
+        } catch (error: Throwable) {
+            // Throwable rather than Exception: an OutOfMemoryError decoding a
+            // large capture is exactly the case where dropping the user out of
+            // the flow helps least, and it is an Error rather than an Exception.
+            reportFailure(RecoveryReason.CAPTURE_FAILED, error.message ?: error::class.simpleName)
         }
+    }
+
+    private fun reportFailure(reason: RecoveryReason, diagnostic: String?) {
+        val failures = captureOperation.consecutivePreparationFailures + 1
+        captureOperation.consecutivePreparationFailures = failures
+        feature.dispatch(
+            PhotoAnalysisEvent.PreparationFailed(
+                PreparationEscalation.reasonFor(reason, failures),
+                diagnostic?.let { "$it (attempt $failures)" },
+            ),
+        )
     }
 
     private fun handleNativeAction(action: PhotoAnalysisNativeAction) {
@@ -175,4 +193,11 @@ class PhotoAnalysisAndroidHostController(
 class CaptureOperationState {
     var pendingOperationId: String? = null
     var permissionRequestInFlight: Boolean = false
+
+    /**
+     * Reset by a successful preparation, so the streak means "in a row" rather
+     * than "ever". Retained with the rest of the host state, because a
+     * configuration change mid-capture is not a fresh start for the user.
+     */
+    var consecutivePreparationFailures: Int = 0
 }
