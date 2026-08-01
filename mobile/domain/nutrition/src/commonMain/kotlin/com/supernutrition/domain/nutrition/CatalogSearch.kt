@@ -139,11 +139,24 @@ internal fun MatchTier.matches(query: String, tokens: List<String>, entry: Index
  * allowance is meaningless on short tokens: at three characters, distance one
  * reaches `ray`, `rice`, `rum` and `dry` from `rye`, which is not a filter at
  * all. Short tokens therefore get no fuzzy allowance.
+ *
+ * The allowance is keyed on the *shorter* of the two tokens, not on the query
+ * alone. Keying it on the query let a four-character query reach a
+ * three-character record at distance one, which is the same unbounded behaviour
+ * measured from the other end: `ribs` reached `ris`, the Latin-script entry for
+ * рис, and proposed white rice to someone typing ribs.
+ *
+ * Plurals are matched as morphology rather than as edit distance. They are not
+ * near-misses — they are the same word — and the language matrix puts English
+ * at "none beyond plurals", so folding them here is what lets the fuzzy tier be
+ * tightened without taking the commonest English case with it.
  */
 internal fun isNearMatch(queryToken: String, recordToken: String): Boolean {
+    if (queryToken == recordToken) return true
+    if (isPluralPair(queryToken, recordToken)) return true
     val allowance = when {
-        queryToken.length < FUZZY_MIN_TOKEN_LENGTH -> return queryToken == recordToken
-        queryToken.length < FUZZY_LONG_TOKEN_LENGTH -> 1
+        minOf(queryToken.length, recordToken.length) < FUZZY_MIN_TOKEN_LENGTH -> return false
+        minOf(queryToken.length, recordToken.length) < FUZZY_LONG_TOKEN_LENGTH -> 1
         else -> 2
     }
     if (recordToken.length - queryToken.length > allowance) return false
@@ -173,6 +186,16 @@ internal fun editDistance(left: String, right: String): Int {
     }
     return previous[right.length]
 }
+
+/**
+ * English plural folding, applied symmetrically so it does not matter which
+ * side carries the plural: a query may be plural against a singular record name
+ * or the reverse.
+ */
+internal fun isPluralPair(left: String, right: String): Boolean = isPluralOf(left, right) || isPluralOf(right, left)
+
+private fun isPluralOf(plural: String, singular: String): Boolean =
+    singular.isNotEmpty() && (plural == singular + "s" || plural == singular + "es")
 
 private const val FUZZY_MIN_TOKEN_LENGTH = 4
 private const val FUZZY_LONG_TOKEN_LENGTH = 8

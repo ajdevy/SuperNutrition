@@ -44,25 +44,42 @@ object TextFragments {
     /**
      * Length of the separator starting at [index], or 0 if none starts there.
      *
-     * The word separators carry their own surrounding spaces, which is what
-     * keeps them from matching inside a word: " and " cannot occur within
-     * "sandwich". An earlier version added a boundary check on top and rejected
-     * every real separator, because the character before the leading space is
-     * the last letter of the preceding word.
+     * Conjunctions are matched as whole words between runs of whitespace rather
+     * than as literals carrying their own spaces. The literal form only matched
+     * a single space on each side, so "boiled egg\nand rye bread" separated
+     * nowhere and "and" leaked into the query as a token no record satisfies,
+     * taking the whole description down with it. Matching the word between
+     * whitespace runs keeps the property the literals were there for — " and "
+     * cannot occur inside "sandwich" — without being fooled by which whitespace
+     * character the user typed.
      */
     private fun separatorAt(description: String, index: Int): Int {
         if (description[index] == ',') return 1
-        return SEPARATOR_WORDS
-            .firstOrNull { description.startsWith(it, index, ignoreCase = true) }
-            ?.length
-            ?: 0
+        if (!description[index].isWhitespace()) return 0
+
+        val wordStart = skipWhitespace(description, index)
+        var wordEnd = wordStart
+        while (wordEnd < description.length && !description[wordEnd].isWhitespace()) wordEnd++
+        if (description.substring(wordStart, wordEnd).lowercase() in CONJUNCTIONS) {
+            return skipWhitespace(description, wordEnd) - index
+        }
+
+        // A line break separates on its own: a list typed one item per line is
+        // still a list, and nothing else in the description says so.
+        return if (description.substring(index, wordStart).any { it == '\n' }) wordStart - index else 0
+    }
+
+    private fun skipWhitespace(description: String, from: Int): Int {
+        var at = from
+        while (at < description.length && description[at].isWhitespace()) at++
+        return at
     }
 
     /**
      * Deliberately small and English-only. A separator list is language-specific
      * data and belongs with the per-market language matrix rather than here.
      */
-    private val SEPARATOR_WORDS = listOf(" and ", " with ", " plus ", " & ")
+    private val CONJUNCTIONS = setOf("and", "with", "plus", "&")
 }
 
 /**
@@ -106,9 +123,29 @@ internal fun stripQuantityWords(query: String): String {
     val tokens = tokenizeNormalized(normalizeForSearch(query))
     var from = 0
     var to = tokens.size
-    while (from < to && tokens[from] in QUANTITY_WORDS) from++
-    while (to > from && tokens[to - 1] in QUANTITY_WORDS) to--
+    while (from < to && isQuantityToken(tokens[from])) from++
+    while (to > from && isQuantityToken(tokens[to - 1])) to--
     if (from == 0 && to == tokens.size) return query
     if (from >= to) return query
     return tokens.subList(from, to).joinToString(" ")
 }
+
+/**
+ * Whether a token quantifies rather than names.
+ *
+ * Digits are handled as a token class rather than as list entries, which is the
+ * difference between a rule and an endless vocabulary. Without this, "2 boiled
+ * eggs" resolved to nothing while "two boiled eggs" resolved fine — a
+ * distinction no user would predict, and one keystroke from the spec's own
+ * success signal. A leading digit also halted the strip loop, so every quantity
+ * word behind it survived too.
+ */
+private fun isQuantityToken(token: String): Boolean {
+    if (token in QUANTITY_WORDS) return true
+    if (token.isNotEmpty() && token.all(Char::isDigit)) return true
+    // "200g", "500ml": a number glued to its unit is still one quantity.
+    val digits = token.takeWhile(Char::isDigit)
+    return digits.isNotEmpty() && token.drop(digits.length) in QUANTITY_UNITS
+}
+
+private val QUANTITY_UNITS: Set<String> = setOf("g", "kg", "mg", "ml", "l", "oz", "lb")
