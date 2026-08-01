@@ -52,7 +52,7 @@ class CatalogSearch(records: List<CatalogRecord>) {
                 // carries the meaning; canonical id only breaks remaining ties.
                 return hits
                     .sortedWith(
-                        compareByDescending<IndexedRecord> { it.coverageOf(queryTokens) }
+                        compareByDescending<IndexedRecord> { it.coverageOf(tier, normalizedQuery, queryTokens) }
                             .thenBy { it.canonicalItemId },
                     )
                     .map { CatalogSearchResult(it.canonicalItemId) }
@@ -98,15 +98,17 @@ internal class IndexedRecord(record: CatalogRecord) {
      * ordering never depends on floating-point comparison. A record the query
      * describes completely outranks a more qualified variant of the same food.
      *
-     * Measured against the best-covered searchable form, not the display name.
-     * A query that matched a regional variant must be scored on the name it
-     * actually matched; scoring it against the display name would rank a
-     * perfect synonym match by how little of an unrelated word it covered.
+     * Scored only on forms that actually satisfied [tier]. Taking the best over
+     * every form scored a record on a name that never matched: a record whose
+     * synonyms include the bare word `rice` was credited with covering it in
+     * full even when the query won the tier through a long display name, so a
+     * qualified variant outranked the staple — the inverse of the ranking rule
+     * this exists to implement.
      */
-    fun coverageOf(queryTokens: List<String>): Int {
+    fun coverageOf(tier: MatchTier, query: String, queryTokens: List<String>): Int {
         var best = 0
-        forEachForm { _, formTokens ->
-            if (formTokens.isNotEmpty()) {
+        forEachForm { formName, formTokens ->
+            if (formTokens.isNotEmpty() && tier.matchesForm(query, queryTokens, formName, formTokens)) {
                 val accounted = formTokens.count { recordToken ->
                     queryTokens.any { recordToken.startsWith(it) || isNearMatch(it, recordToken) }
                 }
@@ -125,14 +127,24 @@ internal class IndexedRecord(record: CatalogRecord) {
 private const val COVERAGE_SCALE = 1000
 
 internal fun MatchTier.matches(query: String, tokens: List<String>, entry: IndexedRecord): Boolean =
-    entry.anyForm { formName, formTokens ->
-        when (this) {
-            MatchTier.EXACT -> formName == query
-            MatchTier.TOKEN_SUBSET -> tokens.all { it in formTokens }
-            MatchTier.PREFIX -> tokens.all { token -> formTokens.any { it.startsWith(token) } }
-            MatchTier.FUZZY -> tokens.all { token -> formTokens.any { isNearMatch(token, it) } }
-        }
-    }
+    entry.anyForm { formName, formTokens -> matchesForm(query, tokens, formName, formTokens) }
+
+/**
+ * Whether one specific form satisfies this tier. Separate from [matches] because
+ * ranking needs to know *which* form matched, and collapsing that to a boolean is
+ * what let a record be scored on a name the query never reached.
+ */
+internal fun MatchTier.matchesForm(
+    query: String,
+    tokens: List<String>,
+    formName: String,
+    formTokens: List<String>,
+): Boolean = when (this) {
+    MatchTier.EXACT -> formName == query
+    MatchTier.TOKEN_SUBSET -> tokens.all { it in formTokens }
+    MatchTier.PREFIX -> tokens.all { token -> formTokens.any { it.startsWith(token) } }
+    MatchTier.FUZZY -> tokens.all { token -> formTokens.any { isNearMatch(token, it) } }
+}
 
 /**
  * Bounded near-match. The allowance scales with token length because a fixed
