@@ -13,7 +13,6 @@ import com.supernutrition.platform.photoandroid.AndroidPhotoNormalizerPort
 import java.util.UUID
 
 /** Typed Android effect coordinator kept outside the Activity and platform bridge. */
-@Suppress("LongParameterList")
 class PhotoAnalysisAndroidHostController(
     private val feature: PhotoAnalysisFeature,
     private val photoBridge: AndroidPhotoBridgePort,
@@ -43,7 +42,6 @@ class PhotoAnalysisAndroidHostController(
         }
     }
 
-    @Suppress("SwallowedException", "TooGenericExceptionCaught")
     fun onActivityResult(resultCode: Int, data: Intent?, isCamera: Boolean) {
         if (isCamera) {
             val expectedOperation = captureOperation.pendingOperationId
@@ -64,11 +62,13 @@ class PhotoAnalysisAndroidHostController(
             if (returnedOperation != expectedOperation) {
                 feature.dispatch(
                     PhotoAnalysisEvent.PreparationFailed(
-                        if (resultCode == Activity.RESULT_OK) {
-                            RecoveryReason.CAPTURE_FAILED
-                        } else {
-                            RecoveryReason.CANCELLED
-                        },
+                        if (resultCode ==
+                            Activity.RESULT_OK
+                        ) {
+                                RecoveryReason.CAPTURE_FAILED
+                            } else {
+                                RecoveryReason.CANCELLED
+                            },
                     ),
                 )
                 return
@@ -97,9 +97,9 @@ class PhotoAnalysisAndroidHostController(
 
         try {
             feature.dispatch(PhotoAnalysisEvent.PreparationSucceeded(normalizer.normalize(ref, sourceBytes)))
-        } catch (_: PhotoPreparationException) {
+        } catch (error: PhotoPreparationException) {
             feature.dispatch(PhotoAnalysisEvent.PreparationFailed(RecoveryReason.POOR_IMAGE))
-        } catch (_: RuntimeException) {
+        } catch (error: Exception) {
             feature.dispatch(PhotoAnalysisEvent.PreparationFailed(RecoveryReason.CAPTURE_FAILED))
         }
     }

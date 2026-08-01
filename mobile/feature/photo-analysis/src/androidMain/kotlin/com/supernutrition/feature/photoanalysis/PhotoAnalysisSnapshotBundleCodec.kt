@@ -60,8 +60,9 @@ object PhotoAnalysisSnapshotBundleCodec {
     }
 
     @JvmStatic
-    fun decode(savedState: Bundle?, expectedAttempt: AttemptId): PhotoAnalysisBackgroundSnapshot? =
-        runCatching { decodeInternal(savedState, expectedAttempt) }.getOrNull()
+    fun decode(savedState: Bundle?, expectedAttempt: AttemptId): PhotoAnalysisBackgroundSnapshot? = runCatching {
+        decodeInternal(savedState, expectedAttempt)
+    }.getOrNull()
 
     private fun decodeInternal(savedState: Bundle?, expectedAttempt: AttemptId): PhotoAnalysisBackgroundSnapshot? {
         val state = savedState ?: return null

@@ -52,7 +52,9 @@ object RemoteTextEligibility {
     fun decide(localOutcome: TextEngineOutcome, market: MarketTextPolicy): RemoteTextDecision {
         val reason = when (localOutcome) {
             is TextEngineOutcome.Unavailable -> RemoteEligibilityReason.LOCAL_UNAVAILABLE
+
             is TextEngineOutcome.Abstained -> RemoteEligibilityReason.LOCAL_ABSTENTION
+
             // A local result that succeeded is a terminal answer. Escalating it
             // would widen AD-6's closed trigger set and turn every meal into an
             // upload prompt.
