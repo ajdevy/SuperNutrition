@@ -32,7 +32,10 @@ class PhotoAnalysisPresenterTest {
             capture = baseCopy.capture.copy(openSettings = "Impostazioni"),
         )
 
-        assertEquals(copy.status.readyToCapture, PhotoAnalysisPresenterModel.from(PhotoAnalysisState.Capture, copy).statusLabel)
+        assertEquals(
+            copy.status.readyToCapture,
+            PhotoAnalysisPresenterModel.from(PhotoAnalysisState.Capture, copy).statusLabel,
+        )
         assertEquals(
             copy.recovery.cameraPermissionRequired,
             PhotoAnalysisPresenterModel.from(

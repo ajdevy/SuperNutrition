@@ -4,11 +4,6 @@ import com.supernutrition.domain.photoanalysis.AttemptId
 import com.supernutrition.domain.photoanalysis.ImageOrientation
 import com.supernutrition.domain.photoanalysis.PhotoRef
 import com.supernutrition.platform.photoios.fixtureinterop.SNMakeDataFromBase64
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNotEquals
-import kotlin.test.assertTrue
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
@@ -16,6 +11,11 @@ import kotlinx.cinterop.reinterpret
 import kotlinx.cinterop.usePinned
 import platform.Foundation.NSData
 import platform.posix.memcpy
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
+import kotlin.test.assertTrue
 
 private const val FIXTURE_SHA256 =
     "4371a3c8d33d1503cc8904b5a9e78687194daa5525c6d8322e4e7be3d619120c"
@@ -58,8 +58,8 @@ class IosImageNormalizerFixtureTest {
         )
     }
 
-    private fun ByteArray.hasJpegMetadataApplicationSegment(): Boolean {
-        return jpegApplicationMarkers().any { it in 0xe1..0xef }
+    private fun ByteArray.hasJpegMetadataApplicationSegment(): Boolean = jpegApplicationMarkers().any {
+        it in 0xe1..0xef
     }
 
     private fun ByteArray.jpegApplicationMarkers(): List<Int> {

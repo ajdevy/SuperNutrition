@@ -27,25 +27,30 @@ internal class PhotoAnalysisReducerTransitions(private val context: PhotoAnalysi
         else -> unchanged(PhotoAnalysisState.Capture)
     }
 
-    private fun reducePreparing(current: PhotoAnalysisState.Preparing, event: PhotoAnalysisEvent): PhotoAnalysisReduction =
-        when (event) {
-            is PhotoAnalysisEvent.PreparationSucceeded -> if (
-                event.input.ref == current.ref && context.leases.isActive(event.input.ref)
-            ) {
-                PhotoAnalysisReduction(PhotoAnalysisState.Ready(event.input), listOf(PhotoAnalysisEffect.StoreInput(event.input)))
-            } else {
-                unchanged(current)
-            }
-
-            is PhotoAnalysisEvent.PreparationFailed ->
-                reduction(PhotoAnalysisState.Recovery(event.reason), PhotoAnalysisEffect.RevokePhoto(current.ref))
-
-            is PhotoAnalysisEvent.ReplacePhoto -> replace(current, current.ref, event.ref)
-
-            PhotoAnalysisEvent.Cancel -> cancel(current.ref)
-
-            else -> unchanged(current)
+    private fun reducePreparing(
+        current: PhotoAnalysisState.Preparing,
+        event: PhotoAnalysisEvent,
+    ): PhotoAnalysisReduction = when (event) {
+        is PhotoAnalysisEvent.PreparationSucceeded -> if (
+            event.input.ref == current.ref && context.leases.isActive(event.input.ref)
+        ) {
+            PhotoAnalysisReduction(
+                PhotoAnalysisState.Ready(event.input),
+                listOf(PhotoAnalysisEffect.StoreInput(event.input)),
+            )
+        } else {
+            unchanged(current)
         }
+
+        is PhotoAnalysisEvent.PreparationFailed ->
+            reduction(PhotoAnalysisState.Recovery(event.reason), PhotoAnalysisEffect.RevokePhoto(current.ref))
+
+        is PhotoAnalysisEvent.ReplacePhoto -> replace(current, current.ref, event.ref)
+
+        PhotoAnalysisEvent.Cancel -> cancel(current.ref)
+
+        else -> unchanged(current)
+    }
 
     private fun reduceReady(current: PhotoAnalysisState.Ready, event: PhotoAnalysisEvent): PhotoAnalysisReduction =
         when (event) {
@@ -65,27 +70,31 @@ internal class PhotoAnalysisReducerTransitions(private val context: PhotoAnalysi
             else -> unchanged(current)
         }
 
-    private fun reduceAnalyzing(current: PhotoAnalysisState.Analyzing, event: PhotoAnalysisEvent): PhotoAnalysisReduction =
-        when (event) {
-            is PhotoAnalysisEvent.AnalysisSucceeded -> when {
-                event.requestId != current.requestId -> unchanged(current)
+    private fun reduceAnalyzing(
+        current: PhotoAnalysisState.Analyzing,
+        event: PhotoAnalysisEvent,
+    ): PhotoAnalysisReduction = when (event) {
+        is PhotoAnalysisEvent.AnalysisSucceeded -> when {
+            event.requestId != current.requestId -> unchanged(current)
 
-                context.isLive(current.ref) -> unchanged(PhotoAnalysisState.CandidateReview(current.ref, current.requestId))
+            context.isLive(
+                current.ref,
+            ) -> unchanged(PhotoAnalysisState.CandidateReview(current.ref, current.requestId))
 
-                else -> {
-                    reduction(
-                        PhotoAnalysisState.Recovery(RecoveryReason.CAPTURE_FAILED),
-                        PhotoAnalysisEffect.RevokePhoto(current.ref),
-                    )
-                }
+            else -> {
+                reduction(
+                    PhotoAnalysisState.Recovery(RecoveryReason.CAPTURE_FAILED),
+                    PhotoAnalysisEffect.RevokePhoto(current.ref),
+                )
             }
-
-            is PhotoAnalysisEvent.ReplacePhoto -> replace(current, current.ref, event.ref)
-
-            PhotoAnalysisEvent.Cancel -> cancel(current.ref)
-
-            else -> unchanged(current)
         }
+
+        is PhotoAnalysisEvent.ReplacePhoto -> replace(current, current.ref, event.ref)
+
+        PhotoAnalysisEvent.Cancel -> cancel(current.ref)
+
+        else -> unchanged(current)
+    }
 
     private fun reduceCandidateReview(
         current: PhotoAnalysisState.CandidateReview,
@@ -97,18 +106,16 @@ internal class PhotoAnalysisReducerTransitions(private val context: PhotoAnalysi
         else -> unchanged(current)
     }
 
-    private fun reduceRecovery(current: PhotoAnalysisState.Recovery, event: PhotoAnalysisEvent): PhotoAnalysisReduction =
-        when (event) {
-            is PhotoAnalysisEvent.ReplacePhoto -> replace(current, current.ref, event.ref)
-            PhotoAnalysisEvent.ScanAgain -> current.ref?.let(::clearAndCapture) ?: unchanged(PhotoAnalysisState.Capture)
-            else -> unchanged(current)
-        }
+    private fun reduceRecovery(
+        current: PhotoAnalysisState.Recovery,
+        event: PhotoAnalysisEvent,
+    ): PhotoAnalysisReduction = when (event) {
+        is PhotoAnalysisEvent.ReplacePhoto -> replace(current, current.ref, event.ref)
+        PhotoAnalysisEvent.ScanAgain -> current.ref?.let(::clearAndCapture) ?: unchanged(PhotoAnalysisState.Capture)
+        else -> unchanged(current)
+    }
 
-    private fun replace(
-        fallback: PhotoAnalysisState,
-        old: PhotoRef?,
-        replacement: PhotoRef,
-    ): PhotoAnalysisReduction {
+    private fun replace(fallback: PhotoAnalysisState, old: PhotoRef?, replacement: PhotoRef): PhotoAnalysisReduction {
         if (replacement.attemptId != context.attemptId ||
             !context.leases.isActive(replacement) ||
             replacement == old

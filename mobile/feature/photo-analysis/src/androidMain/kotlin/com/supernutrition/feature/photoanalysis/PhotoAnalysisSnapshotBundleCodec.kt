@@ -60,14 +60,11 @@ object PhotoAnalysisSnapshotBundleCodec {
     }
 
     @JvmStatic
-    fun decode(savedState: Bundle?, expectedAttempt: AttemptId): PhotoAnalysisBackgroundSnapshot? {
-        return runCatching { decodeInternal(savedState, expectedAttempt) }.getOrNull()
-    }
+    fun decode(savedState: Bundle?, expectedAttempt: AttemptId): PhotoAnalysisBackgroundSnapshot? = runCatching {
+        decodeInternal(savedState, expectedAttempt)
+    }.getOrNull()
 
-    private fun decodeInternal(
-        savedState: Bundle?,
-        expectedAttempt: AttemptId,
-    ): PhotoAnalysisBackgroundSnapshot? {
+    private fun decodeInternal(savedState: Bundle?, expectedAttempt: AttemptId): PhotoAnalysisBackgroundSnapshot? {
         val state = savedState ?: return null
         if (state.getInt(SNAPSHOT_SCHEMA_VERSION_KEY, -1) != SNAPSHOT_SCHEMA_VERSION) return null
         val kind = state.getString(SNAPSHOT_KIND_KEY) ?: return null

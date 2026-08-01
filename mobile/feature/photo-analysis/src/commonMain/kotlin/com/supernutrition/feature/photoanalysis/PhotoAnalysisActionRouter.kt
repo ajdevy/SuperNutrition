@@ -9,10 +9,7 @@ enum class PhotoAnalysisNativeAction {
     OpenSettings,
 }
 
-fun PhotoAnalysisFeature.route(
-    action: PhotoAnalysisPresenterAction,
-    onNative: (PhotoAnalysisNativeAction) -> Unit,
-) {
+fun PhotoAnalysisFeature.route(action: PhotoAnalysisPresenterAction, onNative: (PhotoAnalysisNativeAction) -> Unit) {
     when (action) {
         PhotoAnalysisPresenterAction.Cancel -> dispatch(PhotoAnalysisEvent.Cancel)
         PhotoAnalysisPresenterAction.ScanAgain -> dispatch(PhotoAnalysisEvent.ScanAgain)

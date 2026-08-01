@@ -98,10 +98,16 @@ class CatalogServingDefaultSourceTest {
             CanonicalItemConfirmation("food:apple", "confirmation-match", snapshot.digest),
         )
         assertEquals("food:apple", result?.canonicalItemId)
-        assertEquals(null, source.standardServingIfBoundToSnapshot(snapshot, CanonicalItemConfirmation(
+        assertEquals(
+            null,
+            source.standardServingIfBoundToSnapshot(
+                snapshot,
+                CanonicalItemConfirmation(
             "food:apple",
             "confirmation-other",
             "b".repeat(64),
-        )))
+        )
+            )
+        )
     }
 }

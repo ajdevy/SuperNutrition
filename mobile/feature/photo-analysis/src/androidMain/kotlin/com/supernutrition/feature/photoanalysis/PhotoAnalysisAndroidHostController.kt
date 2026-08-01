@@ -8,8 +8,8 @@ import com.supernutrition.domain.photoanalysis.PhotoAnalysisEvent
 import com.supernutrition.domain.photoanalysis.PhotoPreparationException
 import com.supernutrition.domain.photoanalysis.RecoveryReason
 import com.supernutrition.platform.photoandroid.AndroidPhotoBridgePort
-import com.supernutrition.platform.photoandroid.AndroidPhotoNormalizerPort
 import com.supernutrition.platform.photoandroid.AndroidPhotoCaptureFiles
+import com.supernutrition.platform.photoandroid.AndroidPhotoNormalizerPort
 import java.util.UUID
 
 /** Typed Android effect coordinator kept outside the Activity and platform bridge. */
@@ -62,7 +62,13 @@ class PhotoAnalysisAndroidHostController(
             if (returnedOperation != expectedOperation) {
                 feature.dispatch(
                     PhotoAnalysisEvent.PreparationFailed(
-                        if (resultCode == Activity.RESULT_OK) RecoveryReason.CAPTURE_FAILED else RecoveryReason.CANCELLED,
+                        if (resultCode ==
+                            Activity.RESULT_OK
+                        ) {
+                                RecoveryReason.CAPTURE_FAILED
+                            } else {
+                                RecoveryReason.CANCELLED
+                            },
                     ),
                 )
                 return
@@ -124,6 +130,7 @@ class PhotoAnalysisAndroidHostController(
             -> requestPermission()
 
             CameraPermissionState.RATIONALE -> showCameraPermissionRationale(::requestPermission)
+
             CameraPermissionState.PERMANENTLY_DENIED,
             CameraPermissionState.RESTRICTED,
             -> feature.dispatch(PhotoAnalysisEvent.PermissionDenied)
@@ -133,8 +140,8 @@ class PhotoAnalysisAndroidHostController(
     private fun requestPermission() {
         if (!captureOperation.permissionRequestInFlight) {
             captureOperation.permissionRequestInFlight = true
-                photoBridge.markCameraPermissionRequestStarted()
-                requestCameraPermission()
+            photoBridge.markCameraPermissionRequestStarted()
+            requestCameraPermission()
         }
     }
 }

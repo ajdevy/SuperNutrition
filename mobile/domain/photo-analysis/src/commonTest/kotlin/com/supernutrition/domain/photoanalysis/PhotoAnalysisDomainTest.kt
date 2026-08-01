@@ -81,9 +81,16 @@ class PhotoAnalysisDomainTest {
         assertFailsWith<PhotoPreparationException> {
             PhotoInputNormalizer(maxDimension = 2, digest = { "a".repeat(64) }).normalize(raw(width = 3))
         }
-        assertEquals(2, PhotoInputNormalizer(maxDimension = 2, digest = { "a".repeat(64) })
-            .normalize(raw(width = 2, height = 2)).width)
-        assertFailsWith<PhotoPreparationException> { PhotoInputNormalizer(digest = { "not-a-digest" }).normalize(raw()) }
+        assertEquals(
+            2,
+            PhotoInputNormalizer(maxDimension = 2, digest = { "a".repeat(64) })
+            .normalize(raw(width = 2, height = 2)).width
+        )
+        assertFailsWith<PhotoPreparationException> {
+            PhotoInputNormalizer(
+                digest = { "not-a-digest" },
+            ).normalize(raw())
+        }
     }
 
     @Test
@@ -142,13 +149,40 @@ class PhotoAnalysisDomainTest {
             NormalizedPhotoInput(ref, byteArrayOf(1), 100, 0, ImageOrientation.UP, "sRGB", emptySet(), "a".repeat(64))
         }
         assertFailsWith<IllegalArgumentException> {
-            NormalizedPhotoInput(ref, byteArrayOf(1), 100, 200, ImageOrientation.RIGHT, "sRGB", emptySet(), "a".repeat(64))
+            NormalizedPhotoInput(
+                ref,
+                byteArrayOf(1),
+                100,
+                200,
+                ImageOrientation.RIGHT,
+                "sRGB",
+                emptySet(),
+                "a".repeat(64),
+            )
         }
         assertFailsWith<IllegalArgumentException> {
-            NormalizedPhotoInput(ref, byteArrayOf(1), 100, 200, ImageOrientation.UP, "Display-P3", emptySet(), "a".repeat(64))
+            NormalizedPhotoInput(
+                ref,
+                byteArrayOf(1),
+                100,
+                200,
+                ImageOrientation.UP,
+                "Display-P3",
+                emptySet(),
+                "a".repeat(64),
+            )
         }
         assertFailsWith<IllegalArgumentException> {
-            NormalizedPhotoInput(ref, byteArrayOf(1), 100, 200, ImageOrientation.UP, "sRGB", setOf("EXIF"), "a".repeat(64))
+            NormalizedPhotoInput(
+                ref,
+                byteArrayOf(1),
+                100,
+                200,
+                ImageOrientation.UP,
+                "sRGB",
+                setOf("EXIF"),
+                "a".repeat(64),
+            )
         }
         assertFailsWith<IllegalArgumentException> {
             NormalizedPhotoInput(ref, byteArrayOf(1), 100, 200, ImageOrientation.UP, "sRGB", emptySet(), "not-a-digest")
