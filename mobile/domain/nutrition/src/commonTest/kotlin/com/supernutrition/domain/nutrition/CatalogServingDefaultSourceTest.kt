@@ -98,16 +98,11 @@ class CatalogServingDefaultSourceTest {
             CanonicalItemConfirmation("food:apple", "confirmation-match", snapshot.digest),
         )
         assertEquals("food:apple", result?.canonicalItemId)
-        assertEquals(
-            null,
-            source.standardServingIfBoundToSnapshot(
-                snapshot,
-                CanonicalItemConfirmation(
-                    "food:apple",
-                    "confirmation-other",
-                    "b".repeat(64),
-                ),
-            ),
+        val otherAttempt = CanonicalItemConfirmation(
+            canonicalItemId = "food:apple",
+            confirmationId = "confirmation-other",
+            snapshotDigest = "b".repeat(64),
         )
+        assertEquals(null, source.standardServingIfBoundToSnapshot(snapshot, otherAttempt))
     }
 }
