@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Artifact ID | `G3-SN-2026-07-31-preliminary-01` |
-| Status | `engineering-approved-pending-product` |
+| Status | `v1-engineering-approved; product-approved-v2-replan; v2 G-3 open` |
 | Scope | Epic 3 local inference runtime/model, semantic recognition, ingredient capability, weight capability, and resource-budget decision |
 | Production activation | **Blocked until user acceptance/signature and remaining gaps close** |
 | Measurement harness | [`tools/g3-benchmark/README.md`](../../tools/g3-benchmark/README.md) |
@@ -11,8 +11,9 @@
 | Evidence date | 2026-08-01 |
 
 This document records reproducible physical-device evidence. Evidence alone is
-not a signature; this revision also records one scoped Engineering approval,
-while Product approval and production activation remain blocked. It includes a
+not a signature; this revision records one scoped Engineering approval and a
+Product-approved v2 replan, while the component/mass Product and Engineering
+G-3 signatures and production activation remain blocked. It includes a
 bounded semantic recognition proof for five single-dish Food-101 labels. It
 does not claim multi-object detection, ingredient extraction, portion
 estimation, nutrition correctness, or general Food-101 accuracy. The meal
@@ -265,8 +266,10 @@ linked at the top of this artifact.
   recognition for plates with sides, salads, fish, or Buddha bowls.
 - Record rollback behavior for model download/cache and runtime initialization
   failure.
-- Have the Product owner accept or reject the scoped Engineering budget and
-  sign below.
+- Product direction is now approved for the v2 visible-component/gram-estimate
+  track. This is deliberately **not** acceptance of a dish-only v1 product
+  capability: select and benchmark the v2 runtime/model, corpus, thresholds,
+  and staged-Cancel UX before a new Product and Engineering G-3 signature.
 
 The 2026-08-01 Android G-3 rerun completed on the same physical Honor device:
 semantic `5/5`, init `2,611 ms`, p50/p95/max `182/279/334 ms`, PSS
@@ -282,7 +285,7 @@ attempt, but the successful unlocked rerun completed semantic `5/5`, init
 | Role | Name | Decision | Date | Signature/reference |
 | --- | --- | --- | --- | --- |
 | Engineering owner | AJ (`ajdevy`) | approved: scoped High local-wait budget for current dish-only v1 harness | 2026-08-01 | user-authorized in this task; PR #29 |
-| Product owner | pending | pending | pending | pending |
+| Product owner | Anastasia | approved: v2 visible-component and estimated-grams direction; v1 dish-only is not product acceptance | 2026-08-01 | user approval in this task; v2 G-3 signature remains pending evidence |
 
 Until both rows are completed, G-3 remains open and E3.2/E3.3/E3.4 remain
 implementation-ready/in-progress rather than production-complete.

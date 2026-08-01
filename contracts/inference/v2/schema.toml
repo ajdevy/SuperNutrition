@@ -1,67 +1,23 @@
-schema = "supernutrition.inference-engine-contract.v2"
-schema_version = 2
-contract_id = "inference-engine"
+schema = "supernutrition.inference-evidence-contract.v2"
+schema_version = 1
+contract_id = "inference-evidence"
 release = "v2"
-previous_release = "photo-inference-engine/v1"
 language_neutral = true
 executable = false
 canonical_json = true
 numeric_nutrition = false
-canonical_fixture_kinds = ["request", "capability", "result", "telemetry"]
-
-# v2 exists because v1's request port admits only a PhotoRef and its contract_id
-# names the photo. A text engine cannot satisfy that shape without claiming a
-# photo it does not have. v1 is released and immutable, and its own
-# incompatible_change rule requires a new major release, so modality arrives
-# here rather than as an edit to v1.
-#
-# The contract_id is modality-neutral because "photo-inference-engine" cannot
-# name a contract that also accepts text. That rename is the reason this is a
-# major release rather than an additive one.
+canonical_fixture_kinds = ["capability", "result", "telemetry"]
 
 [ports]
-request = "exactly-one-of-photo-ref-or-text-description-plus-immutable-attempt-context"
-capability = "typed-state-reason-user-safe-message-key"
-result = "ranked-identification-evidence-or-abstention-or-typed-failure"
-provenance = "route-engine-model-calibration-contract"
-telemetry = "versioned-allowlisted-operational-buckets-without-raw-payload"
-
-# Exactly one payload. A request carrying neither or both fails closed as a
-# typed contract error rather than defaulting to a modality: an ambiguous
-# request is a defect, not an input.
-[modality]
-values = ["photo", "text"]
-cardinality = "exactly-one"
-neither_or_both = "reject"
-
-[modality.photo]
-payload = "opaque-photo-ref"
-
-[modality.text]
-payload = "user-authored-description-plus-input-locale"
-# inputLocale is distinct from countryProfileId because catalog country is
-# independent of language. A description may be typed in a language the
-# activated catalog is not written in.
-input_locale = "required"
-# Free text is treated as sensitive by default. It can carry more identifying
-# detail than a food photo, and the v1 telemetry allowlist never anticipated it.
-loggable = false
-telemetry_eligible = false
-
-# Text identification returns one candidate group per detected food item,
-# mirroring the multi-item shape the photo path already produces. Each group
-# carries the span of the description it derived from, which is what makes the
-# split editable with visible provenance rather than a black box.
-[result.segmentation]
-applies_to = "text"
-grouping = "one-candidate-group-per-detected-item"
-source_span = "required"
-partial_segmentation = "reject"
+request = "closed-photo-ref-or-text-plus-immutable-attempt-context"
+capability = "typed-state-reason-user-safe-message-key-with-model-taxonomy-calibration"
+result = "visible-component-evidence-or-abstention-or-typed-failure"
+component = "localized-candidate-calibrated-confidence-visibility-ambiguity-optional-normalized-region"
+mass = "estimated-finite-ordered-gram-range-or-typed-not-evaluable-or-typed-abstained"
+provenance = "route-engine-model-taxonomy-calibration-contract"
+telemetry = "versioned-allowlisted-operational-buckets-without-raw-payload-or-component-values"
 
 [compatibility]
 unknown_fields = "ignore"
 missing_required_fields = "reject"
 incompatible_change = "new-major-release"
-# v1 remains published and verifiable. Producers and consumers migrate release
-# by release; v1 is retired only when no implementation remains.
-coexists_with = "photo-inference-engine/v1"

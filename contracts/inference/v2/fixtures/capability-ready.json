@@ -1,1 +1,1 @@
-{"contractVersion":"inference-engine/v2","modality":"text","state":"ready","reason":"none","userMessageKey":"inference.capability.ready","engineId":"fixture-engine","modelVersion":"fixture-model-1"}
+{"contractVersion":"inference-evidence/v2","state":"ready","reason":"none","userMessageKey":"inference.capability.ready","engineId":"fixture-component-engine","modelVersion":"fixture-component-model-1","taxonomyVersion":"fixture-ingredient-taxonomy-1","calibrationVersion":"fixture-mass-calibration-1"}
