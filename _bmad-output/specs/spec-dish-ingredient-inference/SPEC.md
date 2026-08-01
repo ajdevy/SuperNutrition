@@ -124,3 +124,46 @@ wrong.
   is undefined.
 - **DOQ-3** — Which market list G-1 will actually approve, and therefore how many
   dish sets the first release carries.
+
+## Decisions
+
+**DOQ-1 — a dish carries one serving; ingredients are adjustable behind an action.**
+Answered for fewest interactions: the default is one serving of the whole dish
+and no per-ingredient decisions, because that is right almost every time and
+should cost nothing. An "adjust ingredients" action reveals per-ingredient
+control for the case the default gets wrong, such as a biryani with extra
+chicken.
+
+Two properties of `DishPortion` are load-bearing rather than incidental. An
+ingredient override *replaces* the dish serving instead of compounding with it —
+"double the chicken" must mean double, not double-of-whatever-the-dish-scale
+happens to be, or the same words mean different amounts depending on an
+unrelated earlier choice. And a portion is a multiplier, never a weight: the
+catalog carries no grams until an approved package supplies them, so storing a
+figure now would invent the number the grounding chain exists to prevent, in a
+place that looks like arithmetic rather than a guess. Scaling to zero is
+rejected, because removing an ingredient is an edit to the split rather than a
+scale of nothing.
+
+**DOQ-2 — one list, ranked by match tier, with dish rows labelled.**
+Foods and dishes appear together because that is one search box and no rule to
+learn. They stay separate types so a surface can say `Chicken curry · 4
+ingredients` before the tap: a food adds one item and a dish adds several, and
+the difference should be visible in advance rather than discovered.
+
+Ranked rather than ordered by kind. Both fixed precedences get a common case
+wrong — "chicken" means the food and "chicken curry" means the dish — and match
+strength separates them with no new ranking rule, since both catalogs already
+rank identically.
+
+The merge sorts by *tier*, not by full strength. A stronger tier must win
+whatever the market, or a locale preference could outrank an exact match, which
+is the silent bias DFM-3 forbids rather than the visible preference DC-4 allows.
+Coverage within a tier is frequently an artifact of how many words a record's
+name happens to carry, and is a weak enough signal that a market preference may
+order it. That is why `DishLocalePreference` reorders within the set it is
+handed and `MealSearch` decides the bands.
+
+Still open: nothing here builds a surface. These are the domain shapes a UI
+needs, and the UI will surface the third question this spec has not answered —
+what to show when a dish and one of its own ingredients both match.
