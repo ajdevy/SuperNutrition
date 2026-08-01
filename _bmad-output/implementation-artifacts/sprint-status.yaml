@@ -24,7 +24,7 @@
 #   - done: Retrospective has been completed
 
 generated: 2026-07-27
-last_updated: 2026-07-31
+last_updated: 2026-08-01
 project: SuperNutrition
 project_key: NOKEY
 tracking_system: file-system
@@ -54,6 +54,11 @@ development_status:
   3-2-implement-local-android-inference: in-progress
   3-3-implement-local-ios-inference: in-progress
   3-4-integrate-deterministic-local-first-routing: in-progress
+  3-5-release-v2-visible-component-and-mass-evidence-contract: review
+  3-6-establish-consented-weighed-component-corpus: backlog
+  3-7-spike-local-android-visible-component-and-mass-inference: backlog
+  3-8-spike-local-ios-visible-component-and-mass-inference: backlog
+  3-9-integrate-staged-component-review-and-local-wait-ux: backlog
   epic-3-retrospective: optional
 
   epic-4: backlog
