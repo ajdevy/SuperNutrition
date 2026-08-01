@@ -69,9 +69,9 @@ vessel, weigh each visible ingredient before plating, weigh the final plate,
 record scale readings and resolution, then capture overview and oblique device
 photos. Pixels and a dish class are not a valid gram oracle.
 
-### Selected research baseline for ingredient and weight work
+### FPB research baseline for ingredient and weight work
 
-FPB/YOLOv12-FoodWeight is the selected first research baseline for the next
+FPB/YOLOv12-FoodWeight was the first research baseline for the
 multi-component experiment. Its pinned repository/checkpoint/dataset
 provenance, AGPL-3.0 repository boundary, adapter, and smoke evidence are
 recorded in
@@ -84,12 +84,15 @@ The five-image CPU smoke produced detections on `5/5` cases, class accuracy
 with current Ultralytics because the pinned repository cannot load its
 `C3k2` layer; this is not a production mobile integration.
 
-Therefore FPB is now the implementation/evaluation starting point for
-ingredient candidates, boxes, and grams, but it does not change this artifact's
-current capability result: the product contract still emits a single dish
-candidate, the smoke has no masks, and the repository/dataset license and
-phone-photo generalization remain unresolved. No G-3 signature or production
-runtime selection is implied by choosing this baseline.
+The follow-up five-complex-meal CPU screen is recorded in
+[`ingredient-weight-research/fpb-yolov12-foodweight-composite-evidence.json`](../../ingredient-weight-research/fpb-yolov12-foodweight-composite-evidence.json).
+At confidence `0.25` it emitted eight raw FPB boxes, but no label matched a
+conservative visible-component annotation; macro component F1 is `0.0` across
+all five meals. The public fixtures have no tared mass record, so the raw grams
+head remains `not-evaluable` for mass MAE. FPB is consequently **not a current
+v2 runtime candidate**. Its repository/data license boundary and phone-photo
+generalization remain unresolved, and no G-3 signature or production runtime
+selection is implied by the research artifacts.
 
 ## Device matrix and measured evidence
 
