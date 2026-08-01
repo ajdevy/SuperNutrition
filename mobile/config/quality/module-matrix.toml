@@ -5,8 +5,8 @@ lifecycle = "active"
 inventory_state = "local-verified"
 source_digest = "local-only"
 quality_claim = true
-production_source_count = 10
-coverage_denominator_count = 10
+production_source_count = 11
+coverage_denominator_count = 11
 undeclared_executable_policy = "fail"
 
 # Active local inventory: every production source has an explicit quality
@@ -99,6 +99,14 @@ kind = "production-feature-ui"
 production = true
 quality_task = "feature:photo-analysis-ui:jvmTest"
 status = "active"
+
+[[unit]]
+id = "feature-meal-search-presenter"
+path = "mobile/feature/meal-search-presenter"
+kind = "production-feature-presenter"
+production = true
+quality_task = "feature:meal-search-presenter:jvmTest"
+status = "local-verified"
 
 [[unit]]
 id = "feature-photo-analysis-presenter"
