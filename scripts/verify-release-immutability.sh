@@ -20,6 +20,16 @@ set -euo pipefail
 
 target_root="${1:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
 catalog_path="contracts/release-catalog/v1/digests.toml"
+# The root boundary inventory sits under a versioned path and so matches the
+# release shape, but it is not a contract release: its schema declares it an
+# inventory, the release catalog carries no entry for it, and no other product
+# consumes it. It is the list of executables in this repository, which grows
+# whenever a script is added — freezing it would mean no new validator could
+# ever be registered without a policy version bump, and this gate's own change
+# adds three. The failure class these rules exist for is a published contract
+# edited together with every digest describing it; an inventory of local scripts
+# is not that, and scripts/verify-root-boundaries.sh is what holds it honest.
+inventory_path="contracts/root-policy/v1/boundaries.toml"
 
 cd "$target_root"
 
@@ -56,6 +66,7 @@ while IFS=$'\t' read -r state path _rest; do
     # normal act of publishing, so it is governed by the append-only rule below
     # rather than by byte-freezing.
     test "$path" != "$catalog_path" || continue
+    test "$path" != "$inventory_path" || continue
     case "$path" in
         contracts/*/v[0-9]*/*) ;;
         *) continue ;;
