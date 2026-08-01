@@ -45,6 +45,13 @@ more identifying detail than a food photo — a dish name, a restaurant, an addr
 typed by mistake — and v1's telemetry allowlist was written for a photo-only
 product.
 
+**Telemetry declares its own fields and vocabularies.** The producer's field list
+is closed and every bucketed value is enumerated, so a second binding cannot pick
+its own wire values. The route travels with the event and a text attempt may not
+report `local`: flattening `local-text` at the telemetry boundary would make an
+on-device text attempt indistinguishable from an on-device photo attempt, which
+is the distinction the route exists to carry.
+
 ## What did not change
 
 Capability states, abstention shape, provenance, typed errors, and the rule that

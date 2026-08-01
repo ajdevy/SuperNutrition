@@ -117,6 +117,18 @@ mutates_repository = false
 test_entrypoint = "scripts/inference-v2-negative-fixtures.sh"
 
 [[executable]]
+path = "scripts/verify-inference-v2-binding.sh"
+purpose = "read-only check that the Kotlin binding emits exactly the telemetry fields and wire values inference-engine v2 declares"
+mutates_repository = false
+test_entrypoint = "scripts/inference-v2-binding-negative-fixtures.sh"
+
+[[executable]]
+path = "scripts/inference-v2-binding-negative-fixtures.sh"
+purpose = "negative fixtures for schema-to-binding vocabulary drift in both directions, plus telemetry field-list order"
+mutates_repository = false
+test_entrypoint = "scripts/inference-v2-binding-negative-fixtures.sh"
+
+[[executable]]
 path = "scripts/verify-release-immutability.sh"
 purpose = "cross-revision gate proving no published contract release or catalog entry changed since the base revision"
 mutates_repository = false
