@@ -162,7 +162,14 @@ p50 `87 ms`, p95 `89 ms`, max `89 ms`, and resident memory
 stayed `0.850 -> 0.850`.
 
 The iOS run is therefore semantic-pass and latency-pass, but it exceeds the
-proposed `160 MB` resident-memory budget.
+proposed `160 MB` resident-memory budget. A subsequent trace-bound physical run
+completed semantic `5/5`, init `572 ms`, p50/p95/max `83/84/84 ms`, resident
+memory `255,744 -> 247,360 KB`, thermal `0 -> 0`, and battery level `1 -> 1`.
+The native Xcode Instruments `Power Profiler` trace is at
+`/tmp/supernutrition-ios-power-20260801.trace`; its process power table shows
+zero Wi-Fi and cellular receive/transmit bytes. The trace does not expose a
+calibrated joule or battery-percentage delta in the current export, so the
+numeric battery budget remains open.
 
 For transparency, the same iOS run's composite top-1 dish labels were
 `filet_mignon` for the steak plate, `grilled_salmon` for the fish plate,
@@ -199,7 +206,7 @@ These are proposed acceptance budgets, not signed production requirements.
 | Inference latency | p95 <= 100 ms; max <= 150 ms | fail: 287/535 ms | pass: 89/89 ms |
 | Peak process memory | <= 160 MB | fail: 271,125 KB PSS | fail: 252,864 KB resident |
 | Thermal | no serious/critical transition | pass: 0 -> 0 | pass: 0 -> 0 |
-| Battery | <= 1% over 50 inferences plus native trace | sampled current `-1,287 -> -1,563 µA`; energy/percentage still open | level unchanged; current/energy trace open |
+| Battery | <= 1% over 50 inferences plus native trace | sampled current `-1,287 -> -1,563 µA`; energy/percentage still open | native `Power Profiler` trace captured; calibrated energy/percentage open |
 | Model integrity | pinned SHA before session creation | pass | pass |
 | Network/privacy | no photo upload or product API call | pass | pass |
 
@@ -210,8 +217,9 @@ platforms, but G-3 remains `proposed-preliminary` and unsigned. Recognition
 quality, memory/latency budgets, multi-object recognition, nutrition accuracy,
 and production readiness are separate decisions.
 
-Before signing, the owner must review and accept the fresh Android result, add
-an approved iOS energy trace, choose supported low-memory tiers, and run an
+Before signing, the owner must review and accept the fresh Android result,
+review and accept the iOS `Power Profiler` trace (or add a calibrated energy
+reading if required), choose supported low-memory tiers, and run an
 approved consented multi-component meal corpus. A 10,000-image robustness
 sample can be drawn from the 101,000 Food-101 records, but those are evaluation
 images rather than 10,000 independent technical sources.
