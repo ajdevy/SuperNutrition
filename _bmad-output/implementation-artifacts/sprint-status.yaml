@@ -98,7 +98,13 @@ development_status:
   # Work complete and verified on PR #25; awaiting human review, not self-declared done.
   7-2-deliver-the-deterministic-catalog-search-floor: review
   7-3-add-the-per-market-language-matrix: review
-  7-4-add-on-device-typed-identification: in-progress
+  # Five of six criteria implemented and verified on branch feat/e7-meal-search-ui
+  # (a30f9f70, d22a1239); no PR is open yet. The sixth -- per-device-tier resource
+  # budgets -- is not implementable here: the measurement is G-3's exit artifact.
+  # The mechanism for it exists and is deliberately inert, and
+  # _bmad-output/specs/spec-gate-readiness/G-3-device-matrix.md says what the
+  # benchmark must supply. Not done: gate-blocked is not the same as complete.
+  7-4-add-on-device-typed-identification: review
   7-5-add-segmentation-review-and-correction: in-progress
   7-6-add-remote-typed-identification: in-progress
   epic-7-retrospective: optional
