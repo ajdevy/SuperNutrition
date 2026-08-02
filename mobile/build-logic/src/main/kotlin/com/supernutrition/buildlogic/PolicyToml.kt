@@ -29,6 +29,10 @@ internal object PolicyToml {
         "config/quality/coverage.toml",
         "config/quality/suppression-registry.toml",
         "config/quality/interaction-policy.toml",
+        // AR-53 calls the market policy instance protected. Protection here means
+        // digested: a processing position that can change without any gate
+        // noticing is not protected by being called so.
+        "config/quality/market-policy.toml",
         "config/quality/evidence-bindings.toml",
         "config/product-identity.toml",
         "product-lifecycle.toml",
