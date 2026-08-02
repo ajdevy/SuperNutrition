@@ -33,11 +33,11 @@ data class InferenceV2Capability(
         requireContractV2(contractVersion, "Capability must use inference-evidence/v2")
         requireV2Identifier(userMessageKey, "Capability message key must be a bounded identifier")
         requireV2Identifier(engineId, "Capability engine ID must be a bounded identifier")
-        if (state == CapabilityState.READY) {
-            requireV2(reason == CapabilityReason.NONE, "Ready capability must not report an unavailable reason")
-        } else {
-            requireV2(reason != CapabilityReason.NONE, "Unavailable capability must report an unavailable reason")
-        }
+        // READY must pair with NONE; every unavailable state must carry a reason.
+        requireV2(
+            !((state == CapabilityState.READY) xor (reason == CapabilityReason.NONE)),
+            "Capability state and reason must agree",
+        )
         requireNonBlankValue(modelVersion, "Capability must identify its model version or explicit unavailable value")
         requireNonBlankValue(
             taxonomyVersion,
@@ -58,18 +58,16 @@ data class InferenceV2Result(
 ) {
     init {
         requireContractV2(contractVersion, "Inference result must use inference-evidence/v2")
-        if (inputModality == InferenceInputModality.TEXT) {
-            if (outcome is InferenceV2Outcome.Components) {
-                outcome.components.forEach { component ->
-                    requireV2(
-                        component.region == null,
-                        "Text input must never carry visual region evidence",
-                    )
-                    requireV2(
-                        component.mass is MassEvidence.NotEvaluable,
-                        "Text input must never carry an estimated or abstained mass state",
-                    )
-                }
+        if (inputModality == InferenceInputModality.TEXT && outcome is InferenceV2Outcome.Components) {
+            outcome.components.forEach { component ->
+                requireV2(
+                    component.region == null,
+                    "Text input must never carry visual region evidence",
+                )
+                requireV2(
+                    component.mass is MassEvidence.NotEvaluable,
+                    "Text input must never carry an estimated or abstained mass state",
+                )
             }
         }
     }

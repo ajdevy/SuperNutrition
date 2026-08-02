@@ -178,6 +178,23 @@ class InferenceModelBranchCoverageTest {
         assertFailsWith<IllegalArgumentException> { NormalizedVisibleRegion(0.0, 0.8, 0.1, 0.3) }
     }
 
+    @Test
+    fun `v2 capability rejects ready and unavailable reason mismatches`() {
+        val ready = InferenceV2ContractFixtures.readyCapability
+        val unavailable = ready.copy(
+            state = CapabilityState.MODEL_REQUIRED,
+            reason = CapabilityReason.MODEL_MISSING,
+        )
+
+        assertEquals(CapabilityState.MODEL_REQUIRED, unavailable.state)
+        assertFailsWith<IllegalArgumentException> {
+            ready.copy(reason = CapabilityReason.MODEL_MISSING)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            ready.copy(state = CapabilityState.MODEL_REQUIRED, reason = CapabilityReason.NONE)
+        }
+    }
+
     private fun assertRejected(
         expected: ComponentModelActivationFailure,
         actual: ComponentModelActivationResult,
