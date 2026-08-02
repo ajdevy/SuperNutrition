@@ -132,13 +132,61 @@ class TextIdentification(private val floor: CatalogSearch, private val engine: (
         val resolved = mutableListOf<DetectedItem>()
         val unresolved = mutableListOf<String>()
         for (fragment in TextFragments.of(description)) {
-            val hit = floor.search(fragment.text).firstOrNull()
-            if (hit == null) {
-                unresolved += fragment.text
-            } else {
-                resolved += DetectedItem(hit.canonicalItemId, fragment.span, hit.unmatchedPreparation)
-            }
+            resolveFragment(fragment, resolved, unresolved)
         }
         return TextIdentificationOutcome.Floor(resolved, unresolved)
+    }
+
+    /**
+     * Resolves a fragment whole before considering splitting it further.
+     *
+     * The joining word of a compound food name is the same word that separates
+     * two foods, in every language checked: English `with` in "macaroni with
+     * cheese", Spanish `con` in "arroz con pollo", Russian `с` in "кофе с
+     * молоком". Treating it as a separator always is what broke English —
+     * measured, `macaroni with cheese` segmented to `[macaroni, cheese]` and the
+     * dish became unreachable. Spanish and Russian escaped only by accident,
+     * because `con` and `с` were never added to the conjunction list.
+     *
+     * Splitting on failure rather than never splitting is what keeps the other
+     * direction working: "eggs with rye toast" names no single record, so it
+     * still becomes two items. The catalog decides, not a list of exceptions
+     * someone has to maintain per language.
+     *
+     * `arroz con pollo` is why this matters more than a missed match. Both
+     * halves are foods, so an unconditional split *succeeds* and returns a
+     * plausible two-item meal with intact provenance — the failure mode that
+     * looks right. A miss is recoverable; a confident wrong answer is not.
+     */
+    private fun resolveFragment(
+        fragment: TextFragment,
+        resolved: MutableList<DetectedItem>,
+        unresolved: MutableList<String>,
+    ) {
+        val whole = floor.search(fragment.text).firstOrNull()
+        if (whole != null) {
+            resolved += DetectedItem(whole.canonicalItemId, fragment.span, whole.unmatchedPreparation)
+            return
+        }
+
+        val parts = TextFragments.splitOnWeakSeparators(fragment)
+        if (parts.size <= 1) {
+            unresolved += fragment.text
+            return
+        }
+        // Every part must resolve, or the split was the wrong reading. Keeping a
+        // half-resolved split would report one real food and one invented
+        // fragment as if the description had named them separately. Collected
+        // into a local list first so a late failure adds nothing.
+        val splitItems = mutableListOf<DetectedItem>()
+        for (part in parts) {
+            val hit = floor.search(part.text).firstOrNull()
+            if (hit == null) {
+                unresolved += fragment.text
+                return
+            }
+            splitItems += DetectedItem(hit.canonicalItemId, part.span, hit.unmatchedPreparation)
+        }
+        resolved += splitItems
     }
 }
