@@ -104,6 +104,71 @@ For the current example, `pork_chop` is a dish hypothesis; broccoli can be `COMP
 
 <!-- Content will be appended sequentially through research workflow steps -->
 
+## Current SuperNutrition Contract and Baseline
+
+This recommendation is a delta against the current SuperNutrition artifacts, not
+a proposal for a second production evidence contract.
+
+### Existing `inference-evidence/v2` is the production boundary
+
+The current v2 contract already defines the production result shape and
+provenance boundary:
+
+- `InferenceV2Result` returns `Components`, `Abstention`, or typed `Failure`;
+- `VisibleComponent.confidence` is the existing `CalibratedConfidence` field
+  for a visual component claim;
+- `ComponentVisibility` currently means `VISIBLE` or `PARTIALLY_OCCLUDED`;
+- `ComponentAmbiguity` and `V2AbstentionReason` already cover identity,
+  mixed-content, image-quality, and unsupported-content outcomes; and
+- `InferenceV2Provenance` already carries route, engine, model, taxonomy,
+  calibration, and contract versions.
+
+The fusion proposal must therefore not introduce a parallel production
+`evidenceState` enum. `VISUAL_DETECTED` maps to a v2 `VisibleComponent` with a
+calibrated `confidence` and the appropriate `ComponentVisibility`. It must not
+be represented by a dish prior alone. `COMPOSITION_PLAUSIBLE`,
+`VISUAL_PROPOSAL_LOW_CONFIDENCE`, and `REJECTED_ARTIFACT` are fusion/review
+states for candidates that are not necessarily v2 visual components; they must
+stay out of the primary visual overlay and retain v2 provenance when carried in
+debug or review evidence.
+
+`compositionSupport` is therefore a separate fusion feature, not a replacement
+for `CalibratedConfidence`. If composition-only candidates must become part of
+the canonical result, the implementation should propose an additive optional
+v2-compatible extension (for example, a separate composition-candidate
+collection) and update fixtures first. It must not add a required field or
+reinterpret `ComponentVisibility`/`V2AbstentionReason`; the current compatibility
+policy is `unknown_fields = "ignore"`, `missing_required_fields = "reject"`,
+and incompatible changes require a new major release.
+
+Authoritative references: [`contracts/inference/v2/schema.toml`](../../../contracts/inference/v2/schema.toml),
+[`InferenceV2Models.kt`](../../../mobile/domain/inference/src/commonMain/kotlin/com/supernutrition/domain/inference/InferenceV2Models.kt),
+and [`InferenceV2Contract.kt`](../../../mobile/domain/inference/src/commonMain/kotlin/com/supernutrition/domain/inference/InferenceV2Contract.kt).
+
+### Existing G-3 baseline is the starting point for fusion evaluation
+
+The project already has a measured baseline dated 2026-08-02. The current v2
+runtime proves only single-dish Food-101 semantics: five exact semantic
+fixtures pass at the declared `0.55` floor, while visible ingredients remain
+`unsupported` and plated mass remains `not-evaluable`. The component/mass G-3
+gate and production activation remain open.
+
+| Evidence layer | Current measured result | Interpretation |
+|---|---|---|
+| Android Food-101 semantic runner | Honor DNY-NX9, CPU; p50/p95/max `182/279/334 ms`; PSS `27,520 -> 273,547 KB` | semantic baseline; Android misses the proposed p95/max runtime and memory comparison budgets |
+| iOS Food-101 semantic runner | iPhone 14 Pro, XNNPACK; p50/p95/max `83/85/85 ms`; resident `261,360 -> 253,008 KB` | latency comparison passes; memory comparison budget still fails |
+| YOLO-World v2 candidate screen | exact visible-component macro F1 `0.2233`; p95 `670 ms`; PSS `244,432 KB` | research candidate only; COCO-80 vocabulary and false positives prevent production selection |
+| MobileSAM candidate screen | p95 `2,003 ms`; PSS `733,237 KB` | class-agnostic masks, no ingredient identity or mass head; research candidate only |
+
+The current comparison targets are p95 `<= 100 ms`, max `<= 150 ms`, and
+`<= 160 MB` process memory. These are existing G-3 comparison budgets, not new
+fusion thresholds. Fusion-specific score thresholds and risk-coverage targets
+still require the ablation/calibration run proposed below.
+
+Authoritative references: [`g3-benchmark-artifact.md`](../../implementation-artifacts/g3-benchmark-artifact.md),
+[`android-component-mass-benchmark-2026-08-02.json`](../../../ingredient-weight-research/android-component-mass-benchmark-2026-08-02.json),
+and [`android-candidate-device-evidence-2026-08-02.json`](../../../ingredient-weight-research/android-candidate-device-evidence-2026-08-02.json).
+
 ## Technology Stack Analysis
 
 ### Programming Languages
@@ -527,9 +592,19 @@ _Source:_ [NIST AI RMF Core](https://airc.nist.gov/airmf-resources/airmf/5-sec-c
 
 ### Implementation Roadmap
 
-**R1 — Freeze semantics before weights.** Add the typed evidence states and provenance fields; keep the existing detector and prior outputs available in debug fixtures.
+**R1 — Freeze semantics as a delta against `inference-evidence/v2`.** Do not
+create a second production evidence enum. Reuse v2 `CalibratedConfidence`,
+`ComponentVisibility`, `ComponentAmbiguity`, `V2AbstentionReason`, and
+`InferenceV2Provenance` for visual results. Keep composition-only and rejected
+detector candidates in a versioned fusion/review envelope until an additive
+optional v2 extension is designed and fixture-validated.
 
-**R2 — Build the ablation harness.** Run no-prior, hard-prior, top-1-soft, top-k-soft, and calibrated-fusion policies on fixed public-data and curated conflict slices.
+**R2 — Build the ablation harness from the existing G-3 baseline.** Pin the
+current Food-101 semantic result, Android/iOS runtime measurements, and the
+YOLO-World/MobileSAM candidate screen as the starting evidence boundary. Then
+run no-prior, hard-prior, top-1-soft, top-k-soft, and calibrated-fusion policies
+on fixed public-data and curated conflict slices; do not treat the existing
+single-dish score or candidate screen as ingredient-quality evidence.
 
 **R3 — Calibrate separately.** Fit dish calibration and detector/region calibration independently; never add raw Food-101 and COCO scores directly.
 
@@ -576,7 +651,11 @@ The release gate should track:
 8. percentage of outputs with complete provenance and contract-valid evidence states;
 9. zero stale-result or lifecycle regressions in UI/device tests.
 
-Threshold values should be set from a baseline run and product risk tolerance, not invented before the first slice report.
+Fusion score thresholds should be set from the existing G-3 baseline plus a
+fusion-specific slice report and product risk tolerance, not invented before
+calibration. The runtime/resource comparison budgets are already recorded in
+the G-3 artifact; they remain comparison targets and do not imply production
+activation.
 
 ## 1. Technical Research Introduction and Methodology
 
@@ -686,6 +765,15 @@ The future opportunity is not to make the app guess a longer ingredient list. It
 - [W3C PROV-DM](https://www.w3.org/TR/prov-dm/)
 - [OWASP MASVS](https://mas.owasp.org/MASVS/02-Frontispiece/)
 - [NIST AI RMF Core](https://airc.nist.gov/airmf-resources/airmf/5-sec-core/)
+
+### Project Evidence and Contract References
+
+- [`inference-evidence/v2 schema`](../../../contracts/inference/v2/schema.toml)
+- [`InferenceV2Models.kt`](../../../mobile/domain/inference/src/commonMain/kotlin/com/supernutrition/domain/inference/InferenceV2Models.kt)
+- [`InferenceV2Contract.kt`](../../../mobile/domain/inference/src/commonMain/kotlin/com/supernutrition/domain/inference/InferenceV2Contract.kt)
+- [`G-3 local capability and device matrix`](../../implementation-artifacts/g3-benchmark-artifact.md)
+- [`Android component/mass benchmark`](../../../ingredient-weight-research/android-component-mass-benchmark-2026-08-02.json)
+- [`Android candidate device evidence`](../../../ingredient-weight-research/android-candidate-device-evidence-2026-08-02.json)
 
 ### Limitations
 
