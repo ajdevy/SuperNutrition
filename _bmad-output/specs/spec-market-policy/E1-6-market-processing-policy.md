@@ -62,18 +62,40 @@ store footprint can be as wide as the stores allow while remote processing stays
 gated per jurisdiction — and it means leaving a market unresolved costs a feature
 rather than the product, which is what makes it safe not to rush this gate.
 
-## Two findings from building it
+## The two findings from building it, and where they stand
 
-**The existing `MarketPolicyResolver` does not resolve market policy.** At
-`mobile/core/config/.../InteractionDefaults.kt:84` it copies four fields off a
-`ConfigurationSnapshot` into a `PolicyContext` — no policy lookup, no approver, no
-expiry. Worse, `ConfigurationSnapshot` requires `marketJurisdiction` and
-`processingRegion` to be non-blank, so **`unresolved` is currently
-unrepresentable** — the exact opposite of the contract's default. Wiring the
-resolver to the contract is the next slice and is not done.
+**Fixed.** `MarketPolicyResolver` did not resolve market policy — it copied four
+fields off a `ConfigurationSnapshot` with no lookup, approver or expiry — and
+`ConfigurationSnapshot` requires its jurisdiction and region non-blank, so the
+contract's default state was not representable at all. A default that cannot be
+expressed is a default nothing can fail closed to.
 
-**`MarketTextPolicy` is a second, narrower policy type.** It lives in
-`domain/nutrition` with three fields and no expiry, and `RemoteTextEligibility`
-reads it. Once the resolver reads the contract, these are two sources of truth
-for one legal position — the pattern this repository keeps paying for. They
-should become one.
+`MarketPolicyRegistry` in `mobile/core/config/.../MarketPolicy.kt` is now the
+contract-backed resolver AR-53 names. The old class was renamed
+`PolicyContextResolver`, which is what it always was. Twelve tests cover every
+negative case story E1.6 lists, including the one G-4's readiness document
+flagged as spec-text-only: **presenting one modality's consent copy for the other
+now fails closed.** `mayTransfer` takes the copy the surface actually presented
+as an argument rather than reading it off the policy — reading it would compare
+the answer with itself and pass always, which is exactly how a photo disclosure
+could otherwise authorise a text transfer.
+
+`MarketPolicyRegistry.unresolved` is empty, so every market resolves to
+`Unresolved(ABSENT)` and every transfer is refused, for both modalities.
+
+**Still open.** Two things, deliberately not done here.
+
+Nothing loads the TOML instance into the registry. The contract verifier
+validates the file at build time and the registry is constructed in code, so the
+two agree today by being empty together. Wiring them needs a runtime parser this
+module does not have, and inventing one to read a file with no rows would be
+mechanism without a purpose. It becomes real work the moment a market is
+approved, and should be done then.
+
+`MarketTextPolicy` in `domain/nutrition` remains a second, narrower policy type —
+three fields, no expiry, no per-modality split — read by `RemoteTextEligibility`.
+It should be replaced by the registry, but `domain/nutrition` does not depend on
+`core/config` and adding that edge is an architecture decision rather than a
+refactor. Until then these are two sources of truth for one legal position, which
+is the pattern this repository keeps paying for. Recorded so the next person does
+not have to rediscover it.
