@@ -33,7 +33,7 @@ package com.supernutrition.domain.nutrition
  * source's own, ascending NDB number, so widening either bound yields a
  * strict superset.
  *
- * 1964 of these records carry alternate names: 1304 terms across
+ * 1964 of these records carry alternate names: 1305 terms across
  * 222 shared lists, joined to 208 AGROVOC concepts on an exact
  * fold of the name's head segment -- the text before the first comma.
  * The alternates are the English, Spanish and Russian words people
@@ -83,6 +83,7 @@ internal object GeneratedNames0 {
         "mantequilla",
         "mantequilla de vaca",
         "сливочное масло",
+        "масло",
         "масло коровье",
         "масло сливочное",
     )

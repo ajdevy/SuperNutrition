@@ -123,7 +123,16 @@
     "ru": 8
    },
    "dropped_no_display": 0
-  }
+  },
+  "curated_terms_applied_offline": [
+   {
+    "concept": "agrovoc:c_1162",
+    "lang": "ru",
+    "term": "масло",
+    "reason": "the ordinary Russian word for butter; AGROVOC has only the qualified `сливочное масло`, and the lemma fold sent the bare word to the oils concept c_5334 instead. Verified 2026-08-02 against GeneratedCatalog.kt: fan-out 0, no record carried it.",
+    "applied_utc": "2026-08-02T19:37:36Z"
+   }
+  ]
  },
  "languages": [
   "en",
@@ -964,6 +973,7 @@
    "ru": {
     "display": "сливочное масло",
     "match": [
+     "масло",
      "масло коровье",
      "масло сливочное"
     ]

@@ -342,6 +342,38 @@ MANUAL_WIKIDATA_LINKS: Tuple[Tuple[str, str, str], ...] = (
     ("c_5638", "Q13202263", "peach; supplies es melocotón, a regional variant"),
 )
 
+# --------------------------------------------------------------------------
+# Curated additive terms
+# --------------------------------------------------------------------------
+# The inverse of JUNK_ALIASES, on the same terms: reviewed, reasoned, dated.
+# AGROVOC and Wikidata between them do not always carry the bare colloquial
+# word a person actually types, and the matcher's Russian lemma fold makes the
+# gap dangerous rather than merely incomplete: a missing word that is ALSO an
+# inflected form of some OTHER concept's name gets folded onto that concept
+# with full confidence instead of failing to match at all.
+#
+# `масло` is the case that motivated this table. AGROVOC's only Russian name
+# for butter (c_1162) is the qualified `сливочное масло`; the oils concept
+# (c_5334) carries the bare plural `масла` as its sole Russian name. The lemma
+# table (built once, offline, from OpenCorpora) folds the singular `масло`
+# onto `масла`'s paradigm, so the ordinary word for butter answered soybean
+# oil at coverage 1000 against butter's qualified name at 500. Verified
+# against the shipped catalog before being added: `масло` had fan-out 0 --
+# no record carried it at all.
+#
+# TO EXTEND: check the word's fan-out in GeneratedCatalog.kt first (a term
+# already reachable needs no entry here), then add
+# (agrovoc_id, lang, term, reason-and-date).
+MANUAL_TERMS: Tuple[Tuple[str, str, str, str], ...] = (
+    (
+        "c_1162", "ru", "масло",
+        "the ordinary Russian word for butter; AGROVOC has only the qualified "
+        "`сливочное масло`, and the lemma fold sent the bare word to the oils "
+        "concept c_5334 instead. Verified 2026-08-02 against GeneratedCatalog.kt: "
+        "fan-out 0, no record carried it.",
+    ),
+)
+
 
 # --------------------------------------------------------------------------
 # HTTP with cache, rate limit and backoff
@@ -663,11 +695,11 @@ def agrovoc_version(client: SparqlClient) -> str:
 def build(client: SparqlClient, args) -> Tuple[List[Concept], dict]:
     stats: dict = {}
 
-    print("Stage 0/5  reading AGROVOC dataset version ...")
+    print("Stage 0/6  reading AGROVOC dataset version ...")
     stats["agrovoc_modified"] = agrovoc_version(client)
     print(f"           dct:modified = {stats['agrovoc_modified']}")
 
-    print("Stage 1/5  resolving AGROVOC subset from FOOD_ROOTS ...")
+    print("Stage 1/6  resolving AGROVOC subset from FOOD_ROOTS ...")
     subset, per_root = resolve_subset(client, FOOD_ROOTS, args.report_roots)
     if args.max_concepts:
         subset = subset[: args.max_concepts]
@@ -677,7 +709,7 @@ def build(client: SparqlClient, args) -> Tuple[List[Concept], dict]:
 
     concepts: Dict[str, Concept] = {cid: Concept(cid) for cid in subset}
 
-    print("Stage 2/5  AGROVOC prefLabel + altLabel ...")
+    print("Stage 2/6  AGROVOC prefLabel + altLabel ...")
     pref_count = {lang: 0 for lang in LANGUAGES}
     alt_count = {lang: 0 for lang in LANGUAGES}
     raw_pref: Dict[str, Dict[str, str]] = {}
@@ -758,7 +790,7 @@ def build(client: SparqlClient, args) -> Tuple[List[Concept], dict]:
     print("           prefLabels " + ", ".join(f"{l}={pref_count[l]}" for l in LANGUAGES))
     print("           altLabels  " + ", ".join(f"{l}={alt_count[l]}" for l in LANGUAGES))
 
-    print("Stage 3/5  Wikidata labels + aliases via P8061 ...")
+    print("Stage 3/6  Wikidata labels + aliases via P8061 ...")
     wd_count = {lang: 0 for lang in LANGUAGES}
     wd_items: Dict[str, Set[str]] = {}
     for batch in chunked(subset, args.batch):
@@ -782,7 +814,7 @@ def build(client: SparqlClient, args) -> Tuple[List[Concept], dict]:
     derived_count = {lang: 0 for lang in LANGUAGES}
     derived_pairs = 0
     if not args.no_derived:
-        print("Stage 4/5  AGROVOC isDerivedFrom -> Wikidata source-organism hop ...")
+        print("Stage 4/6  AGROVOC isDerivedFrom -> Wikidata source-organism hop ...")
         src_of: Dict[str, Set[str]] = {}
         for batch in chunked(subset, args.batch):
             payload = client.query(AGROVOC_SPARQL, q_derived_from(batch), f"derivedFrom x{len(batch)}")
@@ -818,14 +850,14 @@ def build(client: SparqlClient, args) -> Tuple[List[Concept], dict]:
                     concepts[cid].sources.add(f"agrovoc:{sid}->wikidata:{item}")
         print("           terms      " + ", ".join(f"{l}={derived_count[l]}" for l in LANGUAGES))
     else:
-        print("Stage 4/5  skipped (--no-derived)")
+        print("Stage 4/6  skipped (--no-derived)")
     stats["derived_terms"] = derived_count
     stats["derived_pairs"] = derived_pairs
 
     manual_count = {lang: 0 for lang in LANGUAGES}
     manual_applied = 0
     if not args.no_manual:
-        print("Stage 5/5  manually verified AGROVOC -> Wikidata links ...")
+        print("Stage 5/6  manually verified AGROVOC -> Wikidata links ...")
         wanted = [(cid, qid) for cid, qid, _note in MANUAL_WIKIDATA_LINKS if cid in concepts]
         missing = [cid for cid, _q, _n in MANUAL_WIKIDATA_LINKS if cid not in concepts]
         if missing:
@@ -856,9 +888,26 @@ def build(client: SparqlClient, args) -> Tuple[List[Concept], dict]:
         print(f"           {manual_applied}/{len(MANUAL_WIKIDATA_LINKS)} links applied")
         print("           terms      " + ", ".join(f"{l}={manual_count[l]}" for l in LANGUAGES))
     else:
-        print("Stage 5/5  skipped (--no-manual)")
+        print("Stage 5/6  skipped (--no-manual)")
     stats["manual_links_applied"] = manual_applied
     stats["manual_terms"] = manual_count
+
+    curated_count = {lang: 0 for lang in LANGUAGES}
+    curated_applied = 0
+    if not args.no_curated:
+        print("Stage 6/6  curated additive terms ...")
+        for cid, lang, term, _reason in MANUAL_TERMS:
+            if cid not in concepts:
+                print(f"           ! curated term for {cid} ({lang}): concept not in subset")
+                continue
+            if concepts[cid].add_match(lang, term):
+                curated_count[lang] += 1
+                curated_applied += 1
+        print(f"           {curated_applied}/{len(MANUAL_TERMS)} curated terms applied")
+    else:
+        print("Stage 6/6  skipped (--no-curated)")
+    stats["curated_terms_applied"] = curated_applied
+    stats["curated_terms"] = curated_count
 
     if args.ru_yo_variants:
         added = 0
@@ -1062,6 +1111,61 @@ def emit(concepts: List[Concept], stats: dict, args) -> Tuple[str, int]:
     return data_path, os.path.getsize(data_path)
 
 
+def apply_curated_terms_offline(path: str) -> int:
+    """
+    Applies MANUAL_TERMS to an on-disk food-synonyms.json in place, touching
+    only the concepts it names and contacting neither AGROVOC nor Wikidata.
+
+    A full run re-crawls both endpoints for all 997 subset concepts to change
+    one reviewed string, and if either endpoint has drifted since the file's
+    own provenance.generated_utc, the resulting diff mixes that drift in with
+    the term being added -- which is unrelated noise a reviewer cannot easily
+    separate from the actual change. This function cannot introduce that
+    noise: it does not query anything, so nothing outside the named concepts'
+    match lists can move.
+
+    Idempotent by the same rule add_match uses elsewhere in this file: a term
+    already present (case- and whitespace-folded, checked against the display
+    string too) is left alone, so a second run changes nothing and reports 0.
+    """
+    with open(path, "r", encoding="utf-8") as fh:
+        document = json.load(fh)
+
+    by_id = {con["id"]: con for con in document["concepts"]}
+    applied_utc = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+    applied: List[dict] = []
+
+    for cid, lang, term, reason in MANUAL_TERMS:
+        full_id = f"agrovoc:{cid}"
+        con = by_id.get(full_id)
+        if con is None:
+            print(f"  ! {full_id} ({lang}): concept not in this file", file=sys.stderr)
+            continue
+        entry = con.setdefault(lang, {})
+        matches: List[str] = entry.setdefault("match", [])
+        taken = {fold(m) for m in matches}
+        display = entry.get("display")
+        if display:
+            taken.add(fold(display))
+        if fold(term) in taken:
+            continue
+        matches.append(term)
+        matches.sort(key=lambda s: (fold(s), s))
+        applied.append({"concept": full_id, "lang": lang, "term": term, "reason": reason})
+
+    if applied:
+        document.setdefault("provenance", {}).setdefault("curated_terms_applied_offline", []).extend(
+            {**row, "applied_utc": applied_utc} for row in applied
+        )
+        tmp = path + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as fh:
+            json.dump(document, fh, ensure_ascii=False, indent=1, sort_keys=False)
+            fh.write("\n")
+        os.replace(tmp, path)
+
+    return len(applied)
+
+
 # --------------------------------------------------------------------------
 # Reporting
 # --------------------------------------------------------------------------
@@ -1152,6 +1256,19 @@ def main(argv: Optional[List[str]] = None) -> int:
                         help="disable the isDerivedFrom source-organism alias tier")
     parser.add_argument("--no-manual", action="store_true",
                         help="disable the manually verified AGROVOC->Wikidata link tier")
+    parser.add_argument("--no-curated", action="store_true",
+                        help="disable the curated additive term tier (MANUAL_TERMS)")
+    parser.add_argument(
+        "--apply-curated-terms-offline", metavar="FILE",
+        help=(
+            "apply MANUAL_TERMS to an existing food-synonyms.json IN PLACE, "
+            "with no network access at all, and exit. For adding one reviewed "
+            "term without re-crawling both SPARQL endpoints for all 997 "
+            "concepts -- a live run's diff would mix in whatever has drifted "
+            "upstream since the file's own generated_utc, which is unrelated "
+            "noise the term being added did not cause."
+        ),
+    )
     parser.add_argument("--ru-yo-variants", action="store_true",
                         help="also emit е-spellings of Russian terms containing ё")
     parser.add_argument("--max-concepts", type=int, default=0, help="cap subset size (0 = no cap)")
@@ -1167,6 +1284,12 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     if args.print_plan:
         print_plan()
+        return 0
+
+    if args.apply_curated_terms_offline:
+        applied = apply_curated_terms_offline(args.apply_curated_terms_offline)
+        print(f"{applied} curated term(s) applied to {args.apply_curated_terms_offline}")
+        print("no network access performed")
         return 0
 
     print(f"cache    {args.cache}")
