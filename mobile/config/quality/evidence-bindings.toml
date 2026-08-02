@@ -3,8 +3,8 @@ schema_version = 1
 product = "mobile"
 lifecycle = "active"
 source_digest = "local-only"
-manifest_count = 12
-manifest_digest = "f3af1cc6138054b45df50b3eae3e3b67375649352b13ed807098a5d54b983d34"
+manifest_count = 13
+manifest_digest = "31011dff8c22b22afca20875b692e7bde4217632019b549b02a14d11f15b0891"
 # This counts the bound policy manifests (excluding this file), not the native
 # evidence records below.
 profile = "photo-analysis"

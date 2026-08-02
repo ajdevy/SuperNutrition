@@ -1,0 +1,21 @@
+schema = "supernutrition.market-policy-compatibility.v1"
+contract_id = "market-policy"
+release = "v1"
+digest = "pending"
+
+# The mobile instance is the only declared consumer today. It is protected: a
+# product may read policy state and may not write it.
+[[supported_pair]]
+producer = "market-policy-contract"
+consumer = "mobile-market-policy-resolver"
+direction = "forward"
+expected = "accepted"
+
+# Recorded so that a future backend consumer is a declared migration rather than
+# an assumption. A gateway deciding its own processing region from anything but
+# this contract is the failure AR-53 names.
+[[supported_pair]]
+producer = "market-policy-contract"
+consumer = "backend-gateway"
+direction = "forward"
+expected = "not-yet-implemented"
