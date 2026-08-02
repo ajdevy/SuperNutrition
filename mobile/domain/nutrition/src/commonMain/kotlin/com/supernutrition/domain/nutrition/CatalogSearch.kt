@@ -89,6 +89,10 @@ class CatalogSearch(records: List<CatalogRecord>) {
      * wrong answer rather than a cleaned query.
      */
     fun search(query: String): List<CatalogSearchResult> {
+        // Before any tier: a query of only separators and counting words names
+        // no food, and every tier below would happily find one for it.
+        if (namesNoFood(query)) return emptyList()
+
         val direct = searchExact(query)
         if (direct.isNotEmpty()) return direct
 
