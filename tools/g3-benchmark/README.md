@@ -68,6 +68,37 @@ before plating and the final plate, record scale resolution, then capture
 overview and oblique photos on each device tier. Do not infer grams from pixels
 or from a generic dish label.
 
+### Real 300+ case evidence
+
+The public five-fixture evaluator above is not the production-quality path.
+For the consented weighed corpus, first validate the redacted manifest:
+
+```bash
+python3 tools/g3-benchmark/validate_weighed_corpus.py \
+  --require-g3 /path/to/redacted-corpus.json
+```
+
+Then score a strict `supernutrition.g3-corpus-predictions.v1` handoff with:
+
+```bash
+python3 tools/g3-benchmark/evaluate_consented_corpus.py \
+  --require-g3 \
+  --manifest /path/to/redacted-corpus.json \
+  --predictions /path/to/redacted-predictions.json \
+  --output /path/to/mass-quality-evidence.json
+```
+
+The evaluator matches visible components one-to-one by canonical label and
+normalized-box IoU. It reports ingredient macro/case F1, component and total
+mass MAE/relative MAE/p90/bias, coverage, abstention, and partition/device/
+lighting/angle slices. It rejects missing/unknown cases, duplicate prediction
+IDs, raw paths, invalid boxes, and missing model/calibration provenance. The
+command is fail-closed: `pass` is the quantitative evidence layer, while
+model/legal/corpus/rollback and Product/Engineering approval remain separate
+activation requirements. The schemas are
+[`consented-weighed-corpus.schema.json`](consented-weighed-corpus.schema.json)
+and [`g3-corpus-predictions.schema.json`](g3-corpus-predictions.schema.json).
+
 | Fixture group | Fixtures | Acceptance meaning |
 | --- | --- | --- |
 | Exploratory composite | steak with side plate, fish with side plate, chopped salad, Buddha bowl, salmon/grain plate | exercised on-device; no expected label and no accuracy claim |
@@ -151,16 +182,48 @@ physical Android outcomes and the explicit unexecuted statuses for FoodSAM and
 FoodSeg103 are recorded in
 [`ingredient-weight-research/android-candidate-device-evidence-2026-08-01.json`](../../ingredient-weight-research/android-candidate-device-evidence-2026-08-01.json).
 
+### Full photo-to-grid research PoC
+
+The standalone runner also contains `PocActivity`, a manual, research-only
+vertical slice:
+
+`camera photo -> dish top-5 -> 3x3 grid hints -> bounded region proposals -> prompted mask overlay`.
+
+It deliberately keeps the model capabilities visible in the UI:
+
+- Food-101 supplies a single dish classification, not a decomposition of the
+  dish into ingredients.
+- YOLO-World uses its embedded COCO-80 vocabulary, filtered to a small set of
+  component-like labels such as `carrot` and `broccoli`; composite labels such
+  as `pizza` and `sandwich` are excluded and the result is still not a
+  complete ingredient inventory.
+- MobileSAM refines a selected proposal or grid cell into a class-agnostic
+  mask; the mask does not prove the ingredient identity.
+- No model in this PoC estimates grams. The mass state is explicitly
+  `unavailable` until a calibrated/tared weighing protocol and a selected mass
+  model exist.
+
+Build and launch it on an unlocked Android device:
+
+```bash
+ANDROID_DEVICE_SERIAL=your-adb-serial \
+  tools/g3-benchmark/run-poc-android.sh
+```
+
+The PoC is intentionally outside the production mobile roots and does not
+change the Product/Engineering G-3 activation decision.
+
 ## Meaningful recognition evidence
 
 ### Android
 
-Fresh physical run on Honor DNY-NX9, Android 16/API 36, `arm64-v8a`, connected
-over the explicit ADB mDNS serial
-`adb-AU3N025429006787-97BOdK._adb-tls-connect._tcp`, using ONNX Runtime Android
-`1.28.0` on CPU. The pinned model and manifest digests were checked before the
-session. The semantic confidence floor is `0.55`, so the correctly classified
-sushi fixture at `0.592399` is included.
+Fresh physical run on the approved Honor DNY-NX9 Android 16/API 36
+`arm64-v8a` tier, connected over an explicit operator-supplied ADB serial and
+using ONNX Runtime Android `1.28.0` on CPU. The exact device serial is bound in
+the local-only evidence record, not this repository guide. The pinned model
+and manifest digests were checked before the session. The semantic confidence
+floor is `0.55`, so the correctly classified sushi fixture at `0.592399` is
+included.
 
 The five semantic top-1 labels were exact: `steak`, `greek_salad`,
 `grilled_salmon`, `sushi`, and `waffles`. Under the current `0.55` contract the
@@ -180,9 +243,10 @@ correctness records, separate from the G-3 model/resource result.
 
 ### iOS
 
-Fresh physical run on iPhone 14 Pro, iOS 26.5.2, `arm64e`, UDID
-`REDACTED_PHYSICAL_DEVICE_UDID`, automatically signed with the local development
-team. Runtime was ONNX Runtime Objective-C `1.27.0` with XNNPACK.
+Fresh physical run on the approved iPhone 14 Pro iOS 26.5.2 `arm64e` tier,
+automatically signed with the local development team. The exact UDID is bound
+in the local-only evidence record, not this repository guide. Runtime was ONNX
+Runtime Objective-C `1.27.0` with XNNPACK.
 
 The five semantic top-1 labels were exact: `steak`, `greek_salad`,
 `grilled_salmon`, `sushi`, and `waffles`; semantic accuracy was `5/5` at the
@@ -192,12 +256,11 @@ p50 `83 ms`, p95 `84 ms`, max `84 ms`, and resident memory
 stayed `1 -> 1`.
 
 The iOS run is therefore semantic-pass and latency-pass, but it exceeds the
-proposed `160 MB` resident-memory budget. The native Xcode Instruments `Power
-Profiler` trace for that run is at
-`/tmp/supernutrition-ios-power-20260801.trace`; its process power table shows
-zero Wi-Fi and cellular receive/transmit bytes. The trace does not expose a
-calibrated joule or battery-percentage delta in the current export, so the
-numeric battery budget remains open.
+proposed `160 MB` resident-memory budget. A native Xcode Instruments `Power
+Profiler` trace was captured in the operator's local temporary evidence store;
+its process power table shows zero Wi-Fi and cellular receive/transmit bytes.
+The trace does not expose a calibrated joule or battery-percentage delta in the
+current export, so the numeric battery budget remains open.
 
 For transparency, the same iOS run's composite top-1 dish labels were
 `filet_mignon` for the steak plate, `grilled_salmon` for the fish plate,

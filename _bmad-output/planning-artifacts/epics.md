@@ -61,11 +61,11 @@ FR-14: The user can replace or add a Candidate by manually searching available v
 
 FR-15: The user can confirm or adjust the amount, unit or range, and relevant recipe assumptions used as the Serving Assumption.
 
-FR-16: The system reproducibly calculates calories and supported nutrients from the confirmed versioned Nutrition Source record, serving conversion, and Serving Assumption while preserving per-item and aggregate provenance.
+FR-16: The system reproducibly calculates the supported nutrient, vitamin, and mineral profile plus catalog-backed descriptive food properties from the confirmed versioned Nutrition Source record, serving conversion, and Serving Assumption while preserving per-item and aggregate provenance. The core UI omits a calorie total.
 
 FR-17: The system never displays model-generated calories, macronutrients, or other numeric nutrition as a Grounded Nutrition Result; unresolved matches remain partial or unknown.
 
-FR-18: The user can view confirmed food, Serving Assumption, calories, supported macronutrients, source/version, uncertainty, and Inference Route with estimate—not medical, allergen, or exact-measurement—language.
+FR-18: The user can view confirmed food, Serving Assumption, supported nutrients, vitamins/minerals, catalog-backed descriptive food properties, source/version, uncertainty, and Inference Route with estimate—not medical, allergen, health-effect, or exact-measurement—language, on the same photo-first review screen.
 
 FR-19: The user can end the current Analysis Session, clear session-scoped photo and inference state, and return to capture with one primary Scan again action.
 
@@ -211,7 +211,7 @@ NFR-27: Remote processing of user content is permitted only where a named, appro
 
 UX-DR1: Compose Multiplatform owns every product screen on Android and iOS; native CameraX/AVFoundation/PhotosUI, permission, picker, and host surfaces are bridges only and must not become parallel product UIs.
 
-UX-DR2: Implement Capture, permission rationale, preparation/analyzing, remote consent, Candidate review, Food search, Country and catalog, Serving confirmation, Grounded result, Recovery, and debug-only diagnostics as the complete first-release information architecture, with no tab bar, drawer, account, diary, or general settings hierarchy.
+UX-DR2: Implement one stateful photo-analysis surface whose capture state becomes preparation/analyzing, Candidate review, and its in-place nutrient profile without replacing the captured photo. Permission rationale, Food search, Country and catalog, optional Serving editor, Recovery, and debug-only diagnostics support that free/default flow; no tab bar, drawer, account, diary, or general settings hierarchy. Paid Remote consent is a separately deferred E4 surface and is absent from this flow.
 
 UX-DR3: Implement the Photo Analysis experience as one component state machine. Native Back/edge gestures return to the last safe state or require confirmation before discarding data and never submit, upload, or save.
 
@@ -241,7 +241,7 @@ UX-DR15: Implement text-semantic State chips/route indicators for Local, Remote,
 
 UX-DR16: Implement Analyzing as a frozen photo, neutral low-opacity scrim, one announced indeterminate progress label, visible route, and Cancel, without countdown, pulsing urgency, repeated announcements, or anxious animation.
 
-UX-DR17: Implement the Remote consent sheet with purpose, data sent, retention, provider category/region, alternatives, cancellation limits, and policy detail; “Continue without upload” precedes “Send photo for remote analysis,” both use equal unfilled visual/focus treatment, and neither is preselected.
+UX-DR17: For the later paid E4 release only, implement the Remote consent sheet with purpose, data sent, retention, provider category/region, alternatives, cancellation limits, and policy detail. It is unreachable without entitlement and an explicit paid-route action; “Continue without upload” precedes “Send photo for remote analysis,” both use equal unfilled visual/focus treatment, and neither is preselected.
 
 UX-DR18: Implement the Country and catalog sheet as contextual configuration available on first use, Capture, and Food search. Suggest a system-region catalog proposal, require confirmation, persist only the confirmed `CatalogCountry` for the next attempt, show current catalog, and provide Not listed/manual recovery without silently choosing the United States; never persist or let the user choose `MarketJurisdiction` or `ProcessingRegion`.
 
@@ -257,13 +257,13 @@ UX-DR23: Implement typed Recovery panels with no more than three relevant next a
 
 UX-DR24: Implement explicit poor-image, model-required/downloading, local-unavailable, low-Confidence/Abstention, remote-declined, timeout/rate-limit/offline, Candidate ambiguity, source miss, empty Candidate list, cancellation, and completed treatments exactly as specified in EXPERIENCE.md.
 
-UX-DR25: Implement action-scoped transfer behavior across consent accepted before transfer, transfer in progress, and transfer completed, using copy and effects that never claim already-sent bytes were recalled.
+UX-DR25: For the later paid E4 release only, implement action-scoped transfer behavior across consent accepted before transfer, transfer in progress, and transfer completed, using copy and effects that never claim already-sent bytes were recalled.
 
 UX-DR26: Implement the full transition table in EXPERIENCE.md, including single invocation of native permission/local analysis/remote transfer, request-ID invalidation, old-Candidate clearing on replacement, preservation of user edits, and cleanup of unnecessary Photo Input artifacts after grounding.
 
 UX-DR27: Support tap, native pinch-to-zoom/tap-to-focus, keyboard Next/Done, explicit accessible removal, and optional restrained confirmation haptics; no required swipe or gesture-only action.
 
-UX-DR28: Ban automatic remote upload, preselected consent, progress countdowns, calorie score rings, infinite carousels, gesture-only controls, modal stacks deeper than one, gradients, confetti, streaks, and celebratory or disciplinary nutrition feedback.
+UX-DR28: Ban automatic remote upload, preselected consent, progress countdowns, calorie totals and score rings in the core UI, infinite carousels, gesture-only controls, modal stacks deeper than one, gradients, confetti, streaks, and celebratory or disciplinary nutrition feedback.
 
 UX-DR29: Label every capture control, Candidate, edit action, route, uncertainty, progress state, and nutrition value for VoiceOver and TalkBack; focus follows reading order and moves to the first changed heading when state advances.
 
@@ -277,13 +277,13 @@ UX-DR33: Keep phone portrait primary, but make landscape, tablet, and foldable l
 
 UX-DR34: Store canonical quantities separately from localized display units, support metric weights throughout the Tier 1 reference cohort, use configuration-backed jurisdictional privacy copy, and include regional foods in evaluation and empty-state examples.
 
-UX-DR35: Before visual Compose implementation, approve responsive/accessibility-annotated mocks for Capture, Remote consent, Candidate review, Serving confirmation, and Grounded result; DESIGN.md and EXPERIENCE.md remain authoritative if a mock conflicts.
+UX-DR35: Before visual Compose implementation, approve responsive/accessibility-annotated mocks for the unified photo-analysis surface (Capture → retained photo → Candidate review → in-place nutrient profile) and the optional Serving editor; DESIGN.md and EXPERIENCE.md remain authoritative if a mock conflicts. Paid Remote consent needs its own later E4 approval and is not part of the free/default visual gate.
 
 UX-DR36: Render `SuperNutrition` as the installed, launcher, accessibility-product, and in-app brand. Use `SuperNutrition AI nutritionist` only in Apple App Store and Google Play acquisition metadata; never repeat the store-only descriptor in app chrome or ordinary product copy.
 
-UX-DR37: Apply a low-friction interaction budget to every screen and positive journey. Prefer one clear primary action on ordinary decision surfaces, inline visible defaults, and Edit/Undo over choice-first sheets, unnecessary scrolling, or repeated typing. Sensitive consent surfaces are an explicit exception: remote consent actions remain equal and unselected as specified in DESIGN.md. Label allowlisted deterministic defaults with their source, preserve user overrides within approved scope, and auto-advance only reversible local/UI steps. A standard serving default is one atomic unit-and-amount proposal and is available only after canonical-item confirmation from the catalog source. Never preselect remote consent/upload or materially uncertain food identity; medical/allergen conclusions are prohibited; show policy-resolved processing jurisdiction before consent, never derive or silently change it from locale/catalog, and do not make users select provider routing. Test defaulted, override, and forbidden-default paths on Android/iOS with accessibility semantics intact.
+UX-DR37: Apply a low-friction interaction budget to every screen and positive journey. Prefer one clear primary action on ordinary decision surfaces, inline visible defaults, and Edit/Undo over choice-first sheets, unnecessary scrolling, or repeated typing. Later paid Remote consent is an explicit exception: its actions remain equal and unselected as specified in DESIGN.md. Label allowlisted deterministic defaults with their source, preserve user overrides within approved scope, and auto-advance only reversible local/UI steps. A standard serving default is one atomic unit-and-amount proposal and is available only after canonical-item confirmation from the catalog source. Never preselect remote consent/upload or materially uncertain food identity; medical/allergen conclusions and health-effect claims are prohibited; show policy-resolved processing jurisdiction before later paid consent, never derive or silently change it from locale/catalog, and do not make users select provider routing. Test defaulted, override, and forbidden-default paths on Android/iOS with accessibility semantics intact.
 
-UX-DR38: Implement a text-entry path into identification from Capture, Candidate review, and every Recovery surface that currently offers manual search. Show which language the catalog is being searched in rather than implying it follows the app language, and keep entry reachable in one action whenever an Engine is unavailable, abstains, or is declined.
+UX-DR38: Implement a text-entry path into identification from the photo-analysis capture/review states and every Recovery surface that currently offers manual search. Show which language the catalog is being searched in rather than implying it follows the app language, and keep entry reachable in one action whenever an Engine is unavailable, abstains, or is declined.
 
 UX-DR39: Present search results with a stated maximum count rather than infinite scroll, showing for each result the qualifier that distinguishes it from its near-neighbours. On no match, withhold numbers and offer at most three next actions — refine, change country/catalog, or end — and never a nearest guess or a Retry that cannot change the outcome.
 
@@ -632,19 +632,22 @@ NFR-9..NFR-12, AR-2..AR-3, AR-7, AR-9, AR-17.
 ### Story E3.4: Integrate deterministic local-first routing
 
 As a product owner,
-I want local-first routing with bounded escalation,
-so that remote analysis is offered only when it can change the outcome.
+I want a local/manual default route with paid-only remote escalation,
+so that a free/default user never sees or triggers a remote transfer.
 
 **Traceability:** FR-9..FR-10, FR-12, NFR-2, NFR-5, NFR-11, AR-6, AR-13,
 AR-20, AR-25, UX-DR15..UX-DR16, UX-DR37.
 
 **Acceptance Criteria:**
 
-- **Given** a ready Local Engine, **when** the user has not explicitly selected
-  another permitted route, **then** local analysis runs before remote is offered.
-- **Then** post-local remote escalation is limited to local unavailability,
-  Abstention, or a Gate G-5 low-confidence threshold; a successful high-
-  confidence local result cannot be escalated by arbitrary configuration.
+- **Given** a free/default session or a user who has not explicitly invoked an
+  entitled paid route, **when** local analysis completes, abstains, or is
+  unavailable, **then** the app stays local/manual and does not show Remote
+  consent, an upgrade prompt, or initiate transfer.
+- **Then** the later paid remote path is limited to an explicit entitled user
+  action after local unavailability, Abstention, or a Gate G-5 low-confidence
+  threshold; a successful high-confidence local result cannot be escalated by
+  arbitrary configuration.
 - **And** every route decision exposes a typed eligibility reason.
 
 ### Story E3.5: Release v2 visible-component and mass-evidence contract
@@ -700,6 +703,11 @@ NFR-28.
   selected-shard mirror; it is never shipped to the app or treated as product
   acceptance evidence.
 
+**2026-08-02 pre-release scope amendment:** E3.6's schema, validator, and
+collection handoff close the pre-release implementation. The actual consented
+300+ meal pilot is deferred to a separate post-release upload/consent feature;
+its corpus remains mandatory before production v2 G3 activation.
+
 ### Story E3.7: Spike local Android visible-component and mass inference
 
 As the Android local-inference owner,
@@ -720,6 +728,11 @@ NFR-9..NFR-12, NFR-28.
   rollback, low-memory gating, and both valid/invalid mass states are covered
   by tests and Honor physical-device evidence.
 
+Under the approved 2026-08-02 post-release scope amendment, E3.7 closes its
+manifest, activation, adapter, and fail-closed pre-release seams. The selected
+commercial model and physical component/mass benchmark are post-release G3
+gates and are not replaced by public research results.
+
 ### Story E3.8: Spike local iOS visible-component and mass inference
 
 As the iOS local-inference owner,
@@ -738,11 +751,16 @@ NFR-9..NFR-12, NFR-28.
   and iPhone physical-device resource evidence are recorded separately from
   Android.
 
-### Story E3.9: Integrate staged component review and local wait UX
+Under the approved 2026-08-02 post-release scope amendment, E3.8 closes its
+independent adapter and host correctness seam before model activation. The
+selected artifact and physical component/mass benchmark remain post-release
+G3 gates.
+
+### Story E3.9: Integrate staged component evidence and local wait UX
 
 As a user,
-I want the app to explain a longer local analysis and let me review ingredients
-and grams,
+I want the app to explain a longer local analysis and show me the evidence it
+found,
 so that I can trust, correct, or cancel the result.
 
 **Traceability:** FR-11, FR-13..FR-15, FR-32..FR-35, NFR-2, NFR-13..NFR-16,
@@ -754,23 +772,36 @@ NFR-28, UX-DR13..UX-DR16, UX-DR37.
   UI shows factual `Preparing photo`, `Finding visible foods`, `Estimating
   portions`, or `Checking results` copy with bounded updates and one accessible
   Cancel action, never a countdown.
-- **Then** every visible component shows confidence, route/provenance, an
-  editable estimated gram range or `not enough visual evidence`, and Remove,
-  Edit, Add, Merge, or Split before nutrition confirmation.
+- **Then** v1 ranked candidates appear only as main-dish proposals, while v2
+  `VisibleComponent` instances appear only as visibly separable `From this
+  photo` evidence. A dish label is never decomposed into ingredients, and the
+  absence of v2 components produces an honest recovery/no-component state.
+- **And** every visible component shows confidence, route/provenance, an
+  editable estimated gram range or `not enough visual evidence`. E3.9 renders
+  the evidence and hands explicit selection/correction authority to E5.1; it
+  does not access a dish-composition database, create a serving, or calculate
+  nutrition.
 - **And** the story records Android/iOS accessibility and interaction-budget
   evidence for success, correction, abstention, model-unavailable, and
   cancellation paths.
+- E3.9 closes at the typed coordinator, presenter/Compose evidence surface, and
+  Android/iOS lifecycle seam. Production runtime composition and physical
+  staged-result evidence remain Epic 3 G3 exit gates: hosts must remain
+  unbound until a `ComponentModelManifest` passes the production activation
+  requirements and the complete approval/corpus/benchmark/rollback bundle is
+  approved.
 
-## Epic E4: Remote inference and consent
+## Epic E4: Paid remote inference and consent (deferred)
 
-Deliver the optional remote path through the first-party gateway with explicit
-consent, jurisdiction controls, and provider isolation.
+Deliver a later paid-only remote path through the first-party gateway with
+explicit consent, jurisdiction controls, provider isolation, and entitlement
+gating. It is disabled and absent from the free/default MVP.
 
 ### Story E4.1: Implement remote consent and transfer states
 
 As a user,
-I want to understand and control every photo upload,
-so that remote analysis never happens by surprise.
+I want to understand and control every paid remote photo upload,
+so that it never happens by surprise or appears in the free/default flow.
 
 **Traceability:** FR-8, FR-10..FR-12, FR-22, FR-25, NFR-4..NFR-8,
 NFR-11, AR-6, AR-8, AR-13, AR-18, AR-20..AR-22, AR-24, UX-DR17,
@@ -781,6 +812,9 @@ UX-DR25, UX-DR37.
 - **Given** a permitted remote trigger, **when** the consent sheet opens, **then**
   purpose, data sent, provider category/region, retention, and offline/manual
   alternatives are visible before either choice.
+- **And** the sheet is unreachable without a verified paid entitlement and an
+  explicit paid-route action; it is not an automatic recovery after a local
+  failure and is absent from free/default UI.
 - **Then** PreTransfer cancellation sends zero bytes; Transferring cancellation
   aborts transport; Transferred cancellation requests downstream deletion
   without claiming already-sent bytes were recalled.
@@ -835,10 +869,11 @@ NFR-11, AR-13, AR-21, AR-24, UX-DR17, UX-DR25.
 Turn model evidence into a user-confirmed, catalog-grounded result without
 letting inference fabricate nutrient values.
 
-### Story E5.1: Implement Candidate review and correction
+### Story E5.1: Implement minimal candidate review and correction
 
 As a user,
-I want to inspect, remove, replace, or search candidates,
+I want to explicitly confirm a proposed main dish and only the ingredients I
+recognize,
 so that I remain the authority over what the photo means.
 
 **Traceability:** FR-13..FR-15, FR-17..FR-18, FR-20..FR-21, NFR-12,
@@ -846,8 +881,19 @@ NFR-15..NFR-16, AR-7, AR-19, UX-DR13..UX-DR20, UX-DR37.
 
 **Acceptance Criteria:**
 
-- **Given** candidates or abstention, **when** review opens, **then** confidence,
-  route, assumptions, alternatives, and recovery actions are visible.
+- **Given** v1 dish candidates or an abstention, **when** review opens, **then**
+  at most three distinct ranked main-dish possibilities, confidence, route,
+  assumptions, alternatives, and recovery actions are visible. No dish is
+  selected by default; `None of these` and manual search remain available.
+- **Given** v2 component evidence, **when** review opens, **then** only its
+  `VisibleComponent` instances appear as separately labelled `From this photo`
+  ingredient icons/chips. Each starts unselected, exposes confidence and
+  ambiguity through text/semantics rather than colour alone, and is reversible
+  within the active Analysis Session. A v1 dish candidate never fabricates a
+  component chip.
+- **Then** a single explicit `Confirm foods` action preserves only the person's
+  selected dish and ingredients for E5.3. It does not auto-bind a catalog record
+  or calculate nutrition.
 - **Then** manual search remains available when engines are unavailable and
   numeric nutrition is withheld until a catalog record is selected.
 - **And** only after a canonical catalog item is confirmed, the catalog serving
@@ -884,20 +930,24 @@ AR-26, UX-DR18..UX-DR19, UX-DR34, UX-DR37.
 - **And** the story records the catalog-choice budget and no-provider-routing
   path, with all four dimensions and choice-surface/recovery maxima.
 
-### Story E5.3: Implement serving confirmation and grounded result
+### Story E5.3: Implement optional serving editor and grounded nutrient profile
 
 As a user,
-I want to confirm serving amount and assumptions before seeing nutrition,
-so that estimates are transparent and correctable.
+I want to edit serving only when needed and then see catalog-grounded nutrients
+on my photo-first review screen,
+so that estimates are transparent, correctable, and not calorie-first.
 
 **Traceability:** FR-15, FR-16, FR-17, FR-18, NFR-12, NFR-15..NFR-16, AR-7, AR-19,
 AR-29, UX-DR14, UX-DR20..UX-DR21, UX-DR37.
 
 **Acceptance Criteria:**
 
-- **Given** a selected canonical item, **when** serving confirmation succeeds,
-  **then** deterministic catalog math produces calories/macros with source,
-  version, serving basis, assumptions, and estimate language.
+- **Given** selected canonical items and usable serving values, **when** an
+  explicit calculation succeeds, **then** deterministic catalog math produces
+  the supported nutrient/vitamin/mineral profile and catalog-backed descriptive
+  food properties with source, version, serving basis, assumptions, and estimate
+  language on the same photo-first review screen. The core UI omits calorie
+  total and makes no health-effect, medical, allergen, or outcome claim.
 - **Then** unresolved matches remain partial/unknown and no model-generated
   numeric value is displayed.
 - **And** the defaulted serving path and an override/Undo path are both covered
@@ -906,6 +956,32 @@ AR-29, UX-DR14, UX-DR20..UX-DR21, UX-DR37.
 - **And** a component-mass estimate can seed an editable serving review only
   when its v2 provenance/status is valid; `not_evaluable` and `abstained` values
   leave manual serving available without a fabricated number.
+
+### Story E5.4: Add versioned dish-composition reference suggestions
+
+As a person reviewing a chosen dish,
+I want to see optional ingredients commonly associated with that dish,
+so that I can confirm a complex meal without typing every component.
+
+**Traceability:** FR-13..FR-17, FR-20..FR-21, NFR-12, NFR-15..NFR-16,
+NFR-24, AR-7, AR-19, UX-DR13..UX-DR20, UX-DR37.
+
+**Acceptance Criteria:**
+
+- **Given** a selected main dish, **when** a composition source is available,
+  **then** a versioned, licensed, country-aware, attributable source can return
+  stable dish, ingredient, and optional recipe-reference-weight IDs without
+  carrying photo data, user corrections, or nutrition authority.
+- **Then** suggestions appear only under `Also common with this dish`, show
+  source/version, and start unselected. They are removable/editable within the
+  active session and never claim to be visible in the photo.
+- **And** a recipe-reference weight is explicitly labelled, editable, and never
+  a measured mass, `DefaultProposal`, serving, or nutrition input until E5.3's
+  explicit confirmation path completes.
+- **And** no composition lookup runs after `None of these`, manual search,
+  abstention, cancellation, or a missing source. The photo-only/manual path
+  remains usable and deterministic fixtures prove provenance separation,
+  invalidation, and telemetry redaction.
 
 ## Epic E6: Journey evidence and evaluation
 

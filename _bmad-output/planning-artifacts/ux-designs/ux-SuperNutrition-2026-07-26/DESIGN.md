@@ -136,12 +136,11 @@ The visible product name is always `SuperNutrition`. The store-listing title
 the `AI nutritionist` descriptor must not replace or extend the installed app
 name, launcher label, navigation title, or in-product wordmark.
 
-**UX-A1 — Working palette assumption:** the muted natural-green accent is the
-working visual direction until the Product/Design owner validates it through
-brand review and accessibility/usability checks before the first visual UI story
-is marked ready for development. The system should remain credible if that
-accent changes; layout, typography, and semantic state must not depend on brand
-color.
+**UX-A1 — Approved palette direction:** Product approved the muted natural-green
+accent for the visual direction. The first visual UI story must still verify
+contrast, dark-theme behavior, image-scrim readability, responsive reflow, and
+accessibility/usability on real devices. Layout, typography, and semantic state
+must not depend on brand color.
 
 **Low-friction interaction:** surfaces should feel immediate and quiet. Prefer a
 visible, editable default and one clear action over a choice-first sheet or a
@@ -178,9 +177,11 @@ Use Compose Material 3 semantic roles backed by platform system fonts. Dynamic
 type and Android font scaling are requirements, not exceptions.
 
 Nutrition numbers use tabular figures where available, but remain body-scale.
-The app must not turn calories into a giant score. Food names and unresolved
-assumptions outrank nutrient values in the hierarchy. Labels use sentence case;
-all-caps and condensed labels are prohibited.
+The core UI does not show a calorie total. After confirmed food identity,
+supported nutrients, vitamins, minerals, and catalog-backed descriptive food
+properties lead the nutrition hierarchy; serving assumptions remain visibly
+available. Labels use sentence case; all-caps and condensed labels are
+prohibited. Descriptive properties never state or imply a health outcome.
 
 Text containers grow for localized copy and dynamic type. Primary actions may
 wrap to two lines and grow vertically; essential labels and nutrition values are
@@ -226,16 +227,18 @@ metaphor; no other control copies it.
 - **Camera shutter** — Large centered circular action with text alternative
   “Take meal photo.” Disabled only while capture is not ready.
 - **Primary action** — `{components.primary-action}`. One per decision surface:
-  Analyze remotely, Confirm foods and serving, or Scan again.
+  Calculate nutrients, Save and return, or Scan again.
 - **Secondary action** — `{components.secondary-action}` for Retake, Continue
-  without upload, Edit, and Cancel.
+  locally/manual, Edit, and Cancel.
 - **Candidate card** — `{components.candidate-card}`. Food name, Confidence
   wording, source route, serving assumption, alternatives, remove/edit action.
   A v2 visible component also shows its visible-region/ambiguity state and an
   editable `Estimated range` in grams or `Not enough visual evidence`; neither
   is presented as measured weight or numeric nutrition.
-- **Nutrition card** — `{components.nutrition-card}`. Confirmed food and serving
-  precede calories/macros; source/version and estimate language remain visible.
+- **Nutrition profile** — `{components.nutrition-card}`. Confirmed food and
+  serving precede supported nutrients, vitamins, minerals, and catalog-backed
+  descriptive food properties. The core UI omits calorie total; source/version
+  and estimate language remain visible, and no property becomes a health claim.
 - **State chip** — `{components.state-chip}`. Text plus optional icon for Local,
   Remote, Manual, Needs review, or Offline. Never color-only.
 - **Analyzing treatment** — Frozen photo with a low-opacity neutral scrim,
@@ -243,11 +246,12 @@ metaphor; no other control copies it.
   action, and no countdown or anxious animation. The permitted long local path
   uses `Preparing photo`, `Finding visible foods`, `Estimating portions`, and
   `Checking results`; it never simulates progress beyond completed work.
-- **Consent sheet** — Purpose, data sent, retention, provider-category wording,
-  alternatives, and two `{components.consent-action}` actions with equal size,
-  weight, keyboard/focus access, and no preselection. “Continue without upload”
-  is listed first in reading/focus order; “Send photo for remote analysis”
-  follows. Neither uses the filled primary-action treatment.
+- **Paid remote consent sheet (deferred)** — Not present in the free/default
+  MVP. A future entitled paid route must show purpose, data sent, retention,
+  provider-category wording, alternatives, and two `{components.consent-action}`
+  actions with equal size, weight, keyboard/focus access, and no preselection.
+  “Continue without upload” is first in reading/focus order; “Send photo for
+  remote analysis” follows. Neither uses the filled primary-action treatment.
 - **Country and catalog sheet** — Current catalog country, separate
   policy-resolved market jurisdiction and processing-region values, suggested
   system region, confirmed `CatalogCountry` persisted for the next attempt, and

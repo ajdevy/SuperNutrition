@@ -2,6 +2,7 @@ package com.supernutrition.android;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.RemoteException;
 import android.os.SystemClock;
 
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -25,7 +26,11 @@ public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
     private static final long SEMANTICS_TIMEOUT_MS = 15_000L;
 
     @Test
-    public void captureSurfaceExposesStableAutomationIdsAndLabels() {
+    public void captureSurfaceExposesStableAutomationIdsAndLabels() throws RemoteException {
+        UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        device.wakeUp();
+        device.waitForIdle();
+
         Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         Intent launchIntent = targetContext.getPackageManager()
                 .getLaunchIntentForPackage(targetContext.getPackageName());
@@ -33,7 +38,6 @@ public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
         launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         InstrumentationRegistry.getInstrumentation().startActivitySync(launchIntent);
 
-        UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         device.waitForIdle();
         assertSemantic(device, UiAutomationIds.INSTANCE.getPHOTO_ANALYSIS_TITLE().getValue(),
                 targetContext.getString(R.string.capture_title));

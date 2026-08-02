@@ -16,6 +16,7 @@ fi
 python3 - "${contract_roots[@]}" <<'PY'
 from hashlib import sha256
 import json
+import math
 from pathlib import Path
 import re
 import sys
@@ -89,6 +90,12 @@ def require_locale(value, label):
 def require_number_between(value, lower, upper, label, lower_inclusive=True):
     if not isinstance(value, (int, float)) or isinstance(value, bool) or not lower <= value <= upper:
         fail(f"{label} must be between {lower} and {upper}")
+    try:
+        finite_double = float(value)
+    except (OverflowError, ValueError):
+        fail(f"{label} must be representable as a finite Kotlin Double")
+    if not math.isfinite(finite_double):
+        fail(f"{label} must be representable as a finite Kotlin Double")
     if not lower_inclusive and value == lower:
         fail(f"{label} must be greater than {lower}")
 
@@ -337,6 +344,37 @@ def validate_v2(release):
         fail("inference v2 must publish ready, component, abstention, failure, and telemetry fixtures")
     schema = release["schema"]
     matrix = release["matrix"]
+    if schema != {
+        "schema": "supernutrition.inference-evidence-contract.v2",
+        "schema_version": 1,
+        "contract_id": "inference-evidence",
+        "release": "v2",
+        "language_neutral": True,
+        "executable": False,
+        "canonical_json": True,
+        "numeric_nutrition": False,
+        "canonical_fixture_kinds": ["capability", "result", "telemetry"],
+        "ports": {
+            "request": "closed-photo-ref-or-text-plus-immutable-attempt-context",
+            "capability": "typed-state-reason-user-safe-message-key-with-model-taxonomy-calibration",
+            "result": "visible-component-evidence-or-abstention-or-typed-failure",
+            "component": "localized-candidate-calibrated-confidence-visibility-ambiguity-optional-normalized-region",
+            "mass": "estimated-finite-ordered-gram-range-or-typed-not-evaluable-or-typed-abstained",
+            "provenance": "route-engine-model-taxonomy-calibration-contract",
+            "telemetry": "versioned-allowlisted-operational-buckets-without-raw-payload-or-component-values",
+        },
+        "compatibility": {
+            "unknown_fields": "ignore",
+            "missing_required_fields": "reject",
+            "incompatible_change": "new-major-release",
+        },
+        "confidence": {
+            "low_upper_exclusive": 0.5,
+            "medium_upper_exclusive": 0.8,
+            "high_lower_inclusive": 0.8,
+        },
+    }:
+        fail("inference v2 schema metadata or port declarations drifted")
     if schema.get("contract_id") != "inference-evidence" or schema.get("release") != "v2":
         fail("inference schema must identify the modality-neutral inference-evidence v2 release")
     if schema.get("language_neutral") is not True or schema.get("executable") is not False:
@@ -345,36 +383,37 @@ def validate_v2(release):
         "capability", "result", "telemetry"
     ]:
         fail("inference v2 must forbid nutrition and preserve fixture kinds")
-    if set(schema.get("ports", {})) != {
-        "request", "capability", "result", "component", "mass", "provenance", "telemetry"
-    }:
-        fail("inference v2 port inventory drifted")
-    if schema.get("compatibility", {}) != {
-        "unknown_fields": "ignore",
-        "missing_required_fields": "reject",
-        "incompatible_change": "new-major-release",
-    }:
-        fail("inference v2 compatibility policy drifted")
-    if matrix.get("contract_id") != "inference-evidence" or matrix.get("release") != "v2":
+    require_keys(matrix, {
+        "schema", "contract_id", "release", "digest", "supported_pair", "coexistence_pair"
+    }, "inference v2 compatibility matrix")
+    if matrix.get("schema") != "supernutrition.inference-evidence-compatibility-matrix.v2" or \
+            matrix.get("contract_id") != "inference-evidence" or matrix.get("release") != "v2":
         fail("inference compatibility matrix must target v2")
     required_pairs = {
         ("domain-inference-v2", consumer, "forward", "accepted")
         for consumer in ("local-android-v2", "local-ios-v2", "text-v2", "evaluation-v2")
     }
-    pairs = {
-        (item.get("producer"), item.get("consumer"), item.get("direction"), item.get("expected"))
+    for index, item in enumerate(matrix.get("supported_pair", [])):
+        require_keys(item, {"producer", "consumer", "direction", "expected"},
+                     f"inference v2 compatibility matrix.supported_pair[{index}]")
+    supported_pairs = [
+        (item["producer"], item["consumer"], item["direction"], item["expected"])
         for item in matrix.get("supported_pair", [])
-    }
-    if pairs != required_pairs:
-        fail(f"inference v2 compatibility matrix drifted: {sorted(pairs)}")
-    coexistence = {
-        (item.get("first_release"), item.get("second_release"), item.get("requirement"))
+    ]
+    if len(supported_pairs) != len(set(supported_pairs)) or set(supported_pairs) != required_pairs:
+        fail(f"inference v2 compatibility matrix drifted: {sorted(supported_pairs)}")
+    for index, item in enumerate(matrix.get("coexistence_pair", [])):
+        require_keys(item, {"first_release", "second_release", "requirement"},
+                     f"inference v2 compatibility matrix.coexistence_pair[{index}]")
+    coexistence_pairs = [
+        (item["first_release"], item["second_release"], item["requirement"])
         for item in matrix.get("coexistence_pair", [])
-    }
-    if coexistence != {
+    ]
+    expected_coexistence = {
         (V1_VERSION, V2_VERSION, "separate-ports-required"),
         (V2_VERSION, V1_VERSION, "separate-ports-required"),
-    }:
+    }
+    if len(coexistence_pairs) != len(set(coexistence_pairs)) or set(coexistence_pairs) != expected_coexistence:
         fail("inference v1/v2 coexistence matrix drifted")
 
     def validate_provenance(value, label):
@@ -414,8 +453,8 @@ def validate_v2(release):
             upper = value["range"]["upperGrams"]
             require_number_between(lower, 0, float("inf"), f"{label}.range.lowerGrams")
             require_number_between(upper, 0, float("inf"), f"{label}.range.upperGrams")
-            if lower > upper:
-                fail(f"{label}.range must be ordered")
+            if lower >= upper:
+                fail(f"{label}.range must be strictly ordered")
             assumptions = value["calibrationAssumptions"]
             if not isinstance(assumptions, list) or not assumptions or len(set(assumptions)) != len(assumptions):
                 fail(f"{label}.calibrationAssumptions must be a nonempty unique list")
@@ -493,7 +532,13 @@ def validate_v2(release):
                 fail("v2 telemetry fixture has an unknown timing or resource bucket")
             if fixture["componentCountBucket"] not in {"zero", "one", "two-to-four", "five-or-more"}:
                 fail("v2 telemetry fixture has an unknown component count bucket")
-        else:
+        elif name in {
+            "photo-component-estimated-result.json",
+            "photo-component-not-evaluable-result.json",
+            "text-component-not-evaluable-result.json",
+            "abstention-result.json",
+            "failure-result.json",
+        }:
             require_keys(fixture, {"contractVersion", "inputModality", "outcome"}, name)
             if fixture["inputModality"] not in {"photo", "text"}:
                 fail(f"{name} has an unknown input modality")
@@ -506,14 +551,31 @@ def validate_v2(release):
                     fail(f"{name} must contain at least one component")
                 ids = []
                 mass_types = []
+                has_visual_regions = []
                 for index, component in enumerate(components):
                     ids.append(component.get("componentId") if isinstance(component, dict) else None)
+                    has_visual_regions.append(isinstance(component, dict) and "region" in component)
                     mass_types.append(validate_component(component, f"{name}.components[{index}]"))
                 if len(set(ids)) != len(ids):
                     fail(f"{name} component IDs must be unique")
                 if fixture["inputModality"] == "text" and any(mass_type != "not-evaluable" for mass_type in mass_types):
                     fail(f"{name} text output must use only not-evaluable mass states")
+                if fixture["inputModality"] == "text" and any(has_visual_regions):
+                    fail(f"{name} text output must not carry visual region evidence")
+                expected_mass = {
+                    "photo-component-estimated-result.json": "estimated",
+                    "photo-component-not-evaluable-result.json": "not-evaluable",
+                    "text-component-not-evaluable-result.json": "not-evaluable",
+                }.get(name)
+                if expected_mass is not None and set(mass_types) != {expected_mass}:
+                    fail(f"{name} does not contain its required mass state")
+                if name.startswith("text-") and fixture["inputModality"] != "text":
+                    fail(f"{name} must use text input modality")
+                if name.startswith("photo-") and fixture["inputModality"] != "photo":
+                    fail(f"{name} must use photo input modality")
             elif outcome_type == "abstention":
+                if name != "abstention-result.json":
+                    fail(f"{name} has an unexpected abstention outcome")
                 require_keys(outcome, {"outcomeType", "reason", "userMessageKey", "provenance"}, f"{name}.outcome")
                 if outcome["reason"] not in {
                     "identity-ambiguous", "no-food-detected", "image-quality", "unsupported-content"
@@ -522,6 +584,8 @@ def validate_v2(release):
                 require_identifier(outcome["userMessageKey"], f"{name}.outcome.userMessageKey")
                 validate_provenance(outcome["provenance"], f"{name}.outcome.provenance")
             elif outcome_type == "failure":
+                if name != "failure-result.json":
+                    fail(f"{name} has an unexpected failure outcome")
                 require_keys(outcome, {"outcomeType", "code", "retryable", "userMessageKey", "provenance"}, f"{name}.outcome")
                 if outcome["code"] not in {
                     "invalid-input", "model-unavailable", "resource-limit", "temporary-unavailable"
@@ -531,6 +595,8 @@ def validate_v2(release):
                 validate_provenance(outcome["provenance"], f"{name}.outcome.provenance")
             else:
                 fail(f"{name} has an unknown outcome type")
+        else:
+            fail(f"inference v2 has an unknown fixture: {name}")
     verify_digest(release)
 
 
