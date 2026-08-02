@@ -37,6 +37,46 @@ band_medium_below = 0.8
 band_high_from = 0.8
 band_mismatch = "reject"
 
+# Capability is reported per modality, not per engine. An engine serving both can
+# be ready for photos and still waiting on a text model; one answer for the pair
+# would have to be the pessimistic one, hiding a working camera behind a missing
+# text model.
+#
+# The states and reasons are v1's, unchanged, because that is what "identical
+# across modalities and unchanged from v1" requires. Only the envelope is new,
+# and it is declared here for the same reason the telemetry vocabularies are:
+# v2 published `capability-ready.json` as a canonical fixture with no binding
+# able to decode it, and nothing compared the two.
+[capability]
+emitted_fields = [
+  "contractVersion",
+  "modality",
+  "state",
+  "reason",
+  "userMessageKey",
+  "engineId",
+  "modelVersion",
+]
+# modelVersion is absent unless the engine is ready, because an engine with no
+# model has no version to name. Every other field is always present.
+optional_fields = ["modelVersion"]
+unlisted_field = "reject"
+state = ["unavailable", "model-required", "downloading", "ready", "temporarily-unavailable", "unsupported"]
+reason = [
+  "none",
+  "device-unsupported",
+  "model-missing",
+  "model-downloading",
+  "resource-budget",
+  "temporary-unavailable",
+]
+# "ready" is the only state that may report reason "none", and the only one that
+# must name a model version. A ready capability with a reason, or an unavailable
+# one without, is a self-contradicting report rather than an unusual one.
+ready_requires_reason = "none"
+ready_requires_model_version = true
+unavailable_forbids_reason = "none"
+
 # Telemetry carries the route because "which engine answered" is the operational
 # question this product actually has, and `local` alone cannot answer it: an
 # on-device vision engine and an on-device text engine are different engines with
