@@ -12,6 +12,13 @@ dependencyLocking {
     // stay covered by dependency verification. Same reasoning as
     // feature/photo-analysis-ui.
     ignoredDependencies.add("org.jetbrains.skiko:skiko-awt-runtime-*")
+    // Compose Desktop publishes one runtime per host OS/architecture too, reached
+    // through the hot-reload dev source set. Locking it pins whichever host wrote
+    // the lockfile -- a macOS entry here made CI fail on Linux with "did not
+    // resolve desktop-jvm-macos-x64 which is part of the dependency lock state".
+    // Same reasoning as skiko above: versions stay pinned by the version catalog
+    // and artifacts stay covered by dependency verification.
+    ignoredDependencies.add("org.jetbrains.compose.desktop:desktop-jvm-*")
 }
 
 composeCompiler {
