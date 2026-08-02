@@ -13,6 +13,7 @@ public object SharedKitPhotoAnalysis {
     ): UIViewController = PhotoAnalysisViewController(
         session.feature,
         session.presenterCopy,
+        retainedPhoto = { session.retainedPhoto },
     ) { action -> onNativeAction(action.toSharedKitAction()) }
 }
 

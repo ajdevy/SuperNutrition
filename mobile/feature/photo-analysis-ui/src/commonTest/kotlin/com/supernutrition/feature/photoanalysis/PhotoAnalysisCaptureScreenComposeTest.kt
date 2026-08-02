@@ -1,13 +1,16 @@
 package com.supernutrition.feature.photoanalysis
 
+import androidx.compose.material3.Text
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.v2.runComposeUiTest
 import com.supernutrition.core.ui.UiAutomationId
 import com.supernutrition.core.ui.UiAutomationIds
+import com.supernutrition.core.ui.photoAnalysisVisibleComponentId
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -57,12 +60,16 @@ class PhotoAnalysisCaptureScreenComposeTest {
                         shutter = UiAutomationId("custom_shutter"),
                         import = UiAutomationId("custom_import"),
                     ),
+                    retainedPhoto = { Text("Retained photo") },
+                    photoTextContrast = PhotoAnalysisPhotoTextContrast.LIGHT_TEXT,
                 ),
             )
         }
 
         onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_TITLE.value).assertIsDisplayed()
         onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_STATUS.value).assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_RETAINED_PHOTO.value).assertIsDisplayed()
+        onNodeWithText("Retained photo").assertIsDisplayed()
         onNodeWithTag("custom_shutter").performClick()
         onNodeWithTag("custom_import").performClick()
         onNodeWithTag(UiAutomationIds.CAPTURE_OPEN_SETTINGS.value).performClick()
@@ -83,11 +90,104 @@ class PhotoAnalysisCaptureScreenComposeTest {
                     actions = emptyList(),
                 ),
                 onAction = {},
-                surface = PhotoAnalysisCaptureSurface(presenterCopy = copy),
+                surface = PhotoAnalysisCaptureSurface(
+                    presenterCopy = copy,
+                    photoTextContrast = PhotoAnalysisPhotoTextContrast.DARK_TEXT,
+                ),
             )
         }
 
         onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_TITLE.value).assertIsDisplayed()
         onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_STATUS.value).assertIsDisplayed()
+    }
+
+    @Test
+    fun `review renders separate dish text and from-photo evidence without selection controls`() = runComposeUiTest {
+        val copy = PhotoAnalysisPresenterCopyFixtures.localized()
+        val model = PhotoAnalysisPresenterModel(
+            statusLabel = copy.status.reviewCandidate,
+            state = PhotoAnalysisPresenterState.CANDIDATE_REVIEW,
+            actions = listOf(PhotoAnalysisPresenterAction.Cancel),
+            review = PhotoAnalysisReviewModel(
+                mainDishProposals = listOf(
+                    PhotoAnalysisDishProposalModel(
+                        candidateId = "dish-salmon",
+                        label = "Salmone con riso",
+                        rank = 1,
+                        confidenceLabel = copy.evidence.highConfidence,
+                        provenanceLabel = copy.evidence.localProvenance,
+                    ),
+                ),
+                visibleComponents = listOf(
+                    PhotoAnalysisVisibleComponentModel(
+                        componentId = "component-rice",
+                        label = "Riso",
+                        sourceLabel = copy.evidence.fromThisPhoto,
+                        confidenceLabel = copy.evidence.highConfidence,
+                        ambiguityLabel = copy.evidence.identityClear,
+                        visibilityLabel = copy.evidence.fullyVisible,
+                        region = PhotoAnalysisVisibleRegionModel(0.1, 0.1, 0.2, 0.2),
+                        regionLabel = copy.evidence.regionAvailable,
+                        mass = PhotoAnalysisMassModel(
+                            PhotoAnalysisMassStatus.ESTIMATED,
+                            "Estimated: 120–150 g",
+                        ),
+                        provenanceLabel = copy.evidence.localProvenance,
+                        selectionLabel = copy.evidence.notSelected,
+                    ),
+                ),
+            ),
+        )
+        setContent {
+            PhotoAnalysisCaptureScreen(
+                model = model,
+                onAction = {},
+                surface = PhotoAnalysisCaptureSurface(presenterCopy = copy),
+            )
+        }
+
+        onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_MAIN_DISH_PROPOSALS.value).assertIsDisplayed()
+        onNodeWithText("Salmone con riso").assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_COMPONENT_EVIDENCE.value).assertIsDisplayed()
+        onNodeWithTag(photoAnalysisVisibleComponentId("component-rice").value).assertIsDisplayed()
+        onNodeWithText("Riso").assertIsDisplayed()
+        onNodeWithText(copy.evidence.fromThisPhoto).assertIsDisplayed()
+        onNodeWithText("Estimated: 120–150 g").assertIsDisplayed()
+    }
+
+    @Test
+    fun `each local wait stage exposes one cancel action and no nutrition output`() = runComposeUiTest {
+        val copy = PhotoAnalysisPresenterCopyFixtures.localized()
+        val ref = com.supernutrition.domain.photoanalysis.PhotoRef.issue(
+            com.supernutrition.domain.photoanalysis.AttemptId("compose-stage-attempt"),
+            "compose-stage-photo",
+        )
+        val requestId = com.supernutrition.domain.photoanalysis.RequestId("compose-stage-request")
+
+        listOf(
+            com.supernutrition.domain.photoanalysis.LocalAnalysisStage.FINDING_VISIBLE_FOODS,
+            com.supernutrition.domain.photoanalysis.LocalAnalysisStage.ESTIMATING_PORTIONS,
+            com.supernutrition.domain.photoanalysis.LocalAnalysisStage.CHECKING_RESULTS,
+        ).forEach { stage ->
+            setContent {
+                PhotoAnalysisCaptureScreen(
+                    model = PhotoAnalysisPresenterModel.from(
+                        com.supernutrition.domain.photoanalysis.PhotoAnalysisState.Analyzing(
+                            ref,
+                            requestId,
+                            stage,
+                        ),
+                        copy,
+                    ),
+                    onAction = {},
+                    surface = PhotoAnalysisCaptureSurface(presenterCopy = copy),
+                )
+            }
+
+            onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_STAGE.value).assertIsDisplayed()
+            onNodeWithTag(UiAutomationIds.CAPTURE_CANCEL.value).assertIsDisplayed()
+            onNodeWithText("calorie", substring = true, ignoreCase = true).assertDoesNotExist()
+            onNodeWithText("nutrition", substring = true, ignoreCase = true).assertDoesNotExist()
+        }
     }
 }

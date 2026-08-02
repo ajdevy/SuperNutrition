@@ -68,6 +68,7 @@ internal object InferenceV2ContractFixtures {
                         label = "Black beans",
                         locale = "en",
                     ),
+                    region = null,
                     mass = MassEvidence.NotEvaluable(
                         reason = MassNotEvaluableReason.TEXT_HAS_NO_VISIBLE_PORTION,
                         userMessageKey = "inference.mass.text_has_no_visible_portion",

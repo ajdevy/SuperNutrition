@@ -2,9 +2,10 @@
 
 ## Verdict
 
-The two spines are suitable for architecture and story planning. Visual UI
-implementation remains gated by UX-A1 palette validation and the five
-layout-sensitive mocks named in `EXPERIENCE.md`.
+The two spines are suitable for implementation. Product owner Anastasia approved
+the unified photo-analysis and optional Serving editor mock set on 2026-08-01.
+The remaining sequencing dependency is E3.9's typed result-to-review boundary;
+the implementation must still verify the UX-A1 palette on real devices.
 
 ## Resolved Findings
 
@@ -28,9 +29,11 @@ layout-sensitive mocks named in `EXPERIENCE.md`.
 
 ## Remaining Handoffs
 
-- Create mocks for Capture, Remote consent, Candidate review, Serving
-  confirmation, and Grounded result before the first visual UI story is
-  ready-for-development.
+- The unified photo-analysis surface (Capture → retained photo → Candidate
+  review/nutrient profile) and optional Serving editor are approved. Paid Remote
+  consent remains deferred to a separately entitled release.
+- E3.9 must publish the typed result-to-review boundary before E5.1 integrates
+  the review state or begins its sequenced visual sub-slice.
 - Architecture must freeze the native camera bridge and sealed state/event/effect
   types.
 - PRD Gate G-1 replaces the provisional country/catalog cohort.

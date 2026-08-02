@@ -6,8 +6,17 @@ sealed interface PhotoAnalysisState {
     data object Capture : PhotoAnalysisState
     data class Preparing(val ref: PhotoRef) : PhotoAnalysisState
     data class Ready(val input: NormalizedPhotoInput) : PhotoAnalysisState
-    data class Analyzing(val ref: PhotoRef, val requestId: RequestId) : PhotoAnalysisState
-    data class CandidateReview(val ref: PhotoRef, val requestId: RequestId) : PhotoAnalysisState
+    data class Analyzing(
+        val ref: PhotoRef,
+        val requestId: RequestId,
+        val stage: LocalAnalysisStage = LocalAnalysisStage.FINDING_VISIBLE_FOODS,
+    ) : PhotoAnalysisState
+
+    data class CandidateReview(
+        val ref: PhotoRef,
+        val requestId: RequestId,
+        val draft: CandidateReviewDraft = CandidateReviewDraft(emptyList(), emptyList()),
+    ) : PhotoAnalysisState
     data class Recovery(val reason: RecoveryReason, val ref: PhotoRef? = null) : PhotoAnalysisState
     data class Backgrounded(val snapshot: PhotoAnalysisBackgroundSnapshot) : PhotoAnalysisState
 }
@@ -32,6 +41,13 @@ enum class RecoveryReason {
     CANCELLED,
 }
 
+/** Truthful, bounded local work stages shown while photo evidence is being prepared for review. */
+enum class LocalAnalysisStage {
+    FINDING_VISIBLE_FOODS,
+    ESTIMATING_PORTIONS,
+    CHECKING_RESULTS,
+}
+
 sealed interface PhotoAnalysisEvent {
     data class PhotoCaptured(val ref: PhotoRef) : PhotoAnalysisEvent
     data class PreparationSucceeded(val input: NormalizedPhotoInput) : PhotoAnalysisEvent
@@ -49,6 +65,14 @@ sealed interface PhotoAnalysisEvent {
     data object PermissionDenied : PhotoAnalysisEvent
     data class AnalysisStarted(val requestId: RequestId) : PhotoAnalysisEvent
     data class AnalysisSucceeded(val requestId: RequestId) : PhotoAnalysisEvent
+    data class LocalAnalysisStageChanged(val requestId: RequestId, val stage: LocalAnalysisStage) : PhotoAnalysisEvent
+
+    /** Typed, separate dish proposals and visible component evidence for the review boundary. */
+    data class ReviewEvidenceAvailable(val requestId: RequestId, val draft: CandidateReviewDraft) : PhotoAnalysisEvent
+
+    /** A factual review outcome when no editable component evidence can be offered. */
+    data class ReviewEvidenceUnavailable(val requestId: RequestId, val reason: RecoveryReason) : PhotoAnalysisEvent
+
     data class ReplacePhoto(val ref: PhotoRef) : PhotoAnalysisEvent
     data object Cancel : PhotoAnalysisEvent
     data object ScanAgain : PhotoAnalysisEvent

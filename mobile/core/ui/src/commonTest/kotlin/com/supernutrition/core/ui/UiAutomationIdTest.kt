@@ -3,6 +3,7 @@ package com.supernutrition.core.ui
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 class UiAutomationIdTest {
@@ -24,5 +25,20 @@ class UiAutomationIdTest {
         }
         assertEquals("photo_analysis_title", UiAutomationIds.PHOTO_ANALYSIS_TITLE.value)
         assertTrue(UiAutomationIds.all.contains(UiAutomationIds.CAPTURE_CANCEL))
+    }
+
+    @Test
+    fun `visible component identifiers are stable and encode opaque punctuation`() {
+        assertEquals(
+            "photo_analysis_component_l69_l6e_l67_l72_l65_l64_l69_l65_l6e_l74_x3a_l72_l69_l63_l65",
+            photoAnalysisVisibleComponentId("ingredient:rice").value,
+        )
+        assertNotEquals(
+            photoAnalysisVisibleComponentId("A"),
+            photoAnalysisVisibleComponentId("u41"),
+        )
+        assertTrue(photoAnalysisVisibleComponentId("component-rice").value.matches(UI_AUTOMATION_ID_PATTERN))
+        assertTrue(photoAnalysisVisibleComponentId("!0AZz9-").value.matches(UI_AUTOMATION_ID_PATTERN))
+        assertFailsWith<IllegalArgumentException> { photoAnalysisVisibleComponentId("") }
     }
 }

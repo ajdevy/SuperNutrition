@@ -141,3 +141,8 @@ modality_route_agreement = "reject-mismatch"
 unknown_fields = "ignore"
 missing_required_fields = "reject"
 incompatible_change = "new-major-release"
+
+[confidence]
+low_upper_exclusive = 0.5
+medium_upper_exclusive = 0.8
+high_lower_inclusive = 0.8

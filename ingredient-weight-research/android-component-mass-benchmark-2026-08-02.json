@@ -1,0 +1,110 @@
+{
+  "schema": "supernutrition.android-component-mass-benchmark.v1",
+  "date": "2026-08-02",
+  "scope": "physical Android research candidate screen; not a production component/mass G3 signature",
+  "device": {
+    "serial": "192.168.0.150:37613",
+    "physical": true,
+    "model": "DNY-NX9",
+    "os": "Android 16 / API 36",
+    "abi": "arm64-v8a"
+  },
+  "harness": {
+    "package": "com.supernutrition.g3benchmark",
+    "version_name": "g3-spike",
+    "installed_apk_sha256": "e584f14a0bc007d31893e5d22fdf65d2e5d423b1f77609e40a0e9ee609e27fc7",
+    "source_head": "d1357b4f",
+    "worktree_dirty": true,
+    "runtime": "onnxruntime-android 1.28.0 CPU",
+    "network_or_api_calls": false
+  },
+  "fixtures": {
+    "count": 5,
+    "names": [
+      "steak-side-plate.jpg",
+      "fish-side-plate.jpg",
+      "chopped-salad.jpg",
+      "buddha-bowl.jpg",
+      "salmon-grain-plate.jpg"
+    ],
+    "ground_truth": "visible manual component labels only; no calibrated/tared mass records"
+  },
+  "candidates": [
+    {
+      "candidate": "MobileSAM",
+      "artifact": {
+        "encoder": "mobile-sam-encoder.onnx",
+        "encoder_sha256": "580f5fb648ea1062c0aabc26217aed56921985f03f0cbbd852bba81d760cc749",
+        "decoder": "mobile-sam-decoder.onnx",
+        "decoder_sha256": "8976b90a87ba50a6a72217a5ff994f7d25ce16f2229fcc1ed259e1294c622ffe"
+      },
+      "run_dir": "/tmp/supernutrition-g3-android-mobilesam.pIPEo9",
+      "execution": {
+        "fixture_successes": 5,
+        "fixture_failures": 0,
+        "prompt": "one centre positive point plus one padding negative point",
+        "mask_shape_per_fixture": "[1, 4, 1024, 1024]",
+        "session_init_ms": 654,
+        "inference_p50_ms": 1799,
+        "inference_p95_ms": 2003,
+        "inference_max_ms": 2003,
+        "pss_before_kb": 28786,
+        "pss_after_kb": 733237,
+        "thermal_before": 0,
+        "thermal_after": 0
+      },
+      "ingredient_benchmark": {
+        "status": "unsupported",
+        "reason": "Prompt-conditioned class-agnostic masks do not identify ingredients."
+      },
+      "weight_benchmark": {
+        "status": "not-evaluable",
+        "reason": "No mass output and no tared scale ground truth."
+      }
+    },
+    {
+      "candidate": "YOLO-World v2",
+      "artifact": {
+        "model": "yolov8s-worldv2-coco.onnx",
+        "model_sha256": "ef272175d4db2216cde08082f1accf120bdf5ee03b5bc2ba5f51735cda1e9cbc",
+        "vocabulary": "embedded COCO-80 only; no custom ingredient prompts"
+      },
+      "run_dir": "/tmp/supernutrition-g3-android-yoloworld.cBToGy",
+      "execution": {
+        "fixture_successes": 5,
+        "fixture_failures": 0,
+        "confidence_floor": 0.1,
+        "session_init_ms": 215,
+        "inference_p50_ms": 563,
+        "inference_p95_ms": 670,
+        "inference_max_ms": 670,
+        "pss_before_kb": 27167,
+        "pss_after_kb": 244432,
+        "thermal_before": 0,
+        "thermal_after": 0,
+        "exact_visible_component_macro_f1": 0.2233,
+        "fixture_f1": [0.2222, 0.4444, 0.2, 0.0, 0.25]
+      },
+      "ingredient_benchmark": {
+        "status": "limited",
+        "scope": "exact labels in embedded COCO food subset only",
+        "macro_f1": 0.2233
+      },
+      "weight_benchmark": {
+        "status": "not-evaluable",
+        "reason": "No mass head and no tared scale ground truth."
+      }
+    }
+  ],
+  "acceptance": {
+    "component_mass_g3_status": "not-passed",
+    "component_identity_status": "not-passed",
+    "mass_status": "not-evaluable",
+    "reason": [
+      "Neither candidate is a cleared production component model.",
+      "The public five-fixture photos have no calibrated/tared mass ground truth.",
+      "Neither executed candidate provides a calibrated mass output.",
+      "No production manifest or runtime activation was changed."
+    ]
+  }
+}

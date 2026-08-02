@@ -4,7 +4,7 @@ baseline_commit: 84fc6d7e2128b01a45a9b7cec8b37755d04120e6
 
 # Story 3.4: Integrate deterministic local-first routing
 
-Status: in-progress
+Status: done
 
 ## Story
 
@@ -101,6 +101,12 @@ silently uploads a photo.
 
 Non-UI story. The route policy does not alter tap, scroll, field, choice,
 consent, default, or navigation budgets.
+
+### Scope amendment note
+
+The routing implementation closes the pre-release Epic 3 scope. Production
+component/mass activation remains fail-closed and is deferred to the approved
+post-release G3 corpus/model/device gate.
 
 ## References
 

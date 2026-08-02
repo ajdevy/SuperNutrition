@@ -4,7 +4,12 @@ baseline_commit: 84fc6d7e2128b01a45a9b7cec8b37755d04120e6
 
 # Story 3.3: Implement local iOS inference
 
-Status: in-progress
+Status: done
+
+The 2026-08-02 approved post-release scope amendment closes this story at the
+independent iOS adapter, physical host/bridge correctness, and fail-closed
+production seam. Component/mass model selection and the physical iOS G-3
+benchmark are deferred until the post-release consented corpus exists.
 
 ## Story
 
@@ -110,6 +115,13 @@ navigation behavior changes.
 - [Source: `mobile/domain/inference/src/commonMain/kotlin/com/supernutrition/domain/inference/InferenceContract.kt`]
 - [Source: `mobile/domain/photo-analysis/src/commonMain/kotlin/com/supernutrition/domain/photoanalysis/PhotoAnalysisDomain.kt`]
 - [Source: `mobile/REAL_DEVICE_TESTING.md`]
+
+### Scope amendment note
+
+The iOS adapter story is complete for the pre-release scope. The existing
+physical Xcode/arm64 evidence is host/bridge correctness only; production
+component/mass evidence remains a post-release G-3 gate and no production model
+is selected by this story.
 
 ## Dev Agent Record
 

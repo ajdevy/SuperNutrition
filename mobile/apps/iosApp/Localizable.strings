@@ -11,8 +11,30 @@
 "photo_analysis.status.preparing_photo" = "Preparing photo";
 "photo_analysis.status.photo_ready" = "Photo ready";
 "photo_analysis.status.analyzing_photo" = "Analyzing photo";
+"photo_analysis.status.finding_visible_foods" = "Finding visible foods";
+"photo_analysis.status.estimating_portions" = "Estimating portions";
+"photo_analysis.status.checking_results" = "Checking results";
 "photo_analysis.status.review_candidate" = "Review candidate";
 "photo_analysis.status.restoring_photo_analysis" = "Restoring photo analysis";
+
+"photo_analysis.evidence.from_photo" = "From this photo";
+"photo_analysis.evidence.high_confidence" = "High confidence";
+"photo_analysis.evidence.medium_confidence" = "Medium confidence";
+"photo_analysis.evidence.low_confidence" = "Low confidence";
+"photo_analysis.evidence.identity_clear" = "Identity clear";
+"photo_analysis.evidence.identity_ambiguous" = "Identity uncertain";
+"photo_analysis.evidence.mixed_content" = "Mixed content";
+"photo_analysis.evidence.fully_visible" = "Fully visible";
+"photo_analysis.evidence.partially_occluded" = "Partially occluded";
+"photo_analysis.evidence.region_available" = "Photo region available";
+"photo_analysis.evidence.region_unavailable" = "Photo region unavailable";
+"photo_analysis.evidence.estimated_mass" = "Estimated: {lower}–{upper} g";
+"photo_analysis.evidence.mass_not_evaluable" = "Mass cannot be estimated";
+"photo_analysis.evidence.mass_abstained" = "Mass unavailable";
+"photo_analysis.evidence.local_provenance" = "On-device analysis";
+"photo_analysis.evidence.remote_provenance" = "Remote analysis";
+"photo_analysis.evidence.selected" = "Selected";
+"photo_analysis.evidence.not_selected" = "Not selected";
 
 "photo_analysis.recovery.permission_required" = "Camera permission is required";
 "photo_analysis.recovery.camera_unavailable" = "Camera is unavailable";

@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import com.supernutrition.core.ui.CameraAvailability
 import com.supernutrition.core.ui.CameraPermissionState
+import com.supernutrition.domain.photoanalysis.NormalizedPhotoInput
 import com.supernutrition.domain.photoanalysis.PhotoAnalysisEvent
 import com.supernutrition.domain.photoanalysis.PhotoPreparationException
 import com.supernutrition.domain.photoanalysis.RecoveryReason
@@ -13,6 +14,7 @@ import com.supernutrition.platform.photoandroid.AndroidPhotoNormalizerPort
 import java.util.UUID
 
 /** Typed Android effect coordinator kept outside the Activity and platform bridge. */
+@Suppress("LongParameterList")
 class PhotoAnalysisAndroidHostController(
     private val feature: PhotoAnalysisFeature,
     private val photoBridge: AndroidPhotoBridgePort,
@@ -23,6 +25,9 @@ class PhotoAnalysisAndroidHostController(
     private val launchImport: () -> Unit,
     private val launchSettings: () -> Unit,
     private val captureOperation: CaptureOperationState,
+    private val onRetainedPhotoReady: (NormalizedPhotoInput) -> Unit,
+    private val onRetainedPhotoInvalidated: () -> Unit,
+    private val analysisLauncher: PhotoAnalysisAnalysisLauncher = PhotoAnalysisAnalysisLauncher.None,
 ) {
     fun initialize() {
         photoBridge.cleanupStaleCaptureFiles()
@@ -30,6 +35,10 @@ class PhotoAnalysisAndroidHostController(
 
     fun handleAction(action: PhotoAnalysisPresenterAction) {
         feature.route(action, ::handleNativeAction)
+        if (action == PhotoAnalysisPresenterAction.Cancel || action == PhotoAnalysisPresenterAction.ScanAgain) {
+            analysisLauncher.cancel()
+            onRetainedPhotoInvalidated()
+        }
     }
 
     fun onPermissionResult(granted: Boolean) {
@@ -42,65 +51,56 @@ class PhotoAnalysisAndroidHostController(
         }
     }
 
+    @Suppress("SwallowedException", "TooGenericExceptionCaught")
     fun onActivityResult(resultCode: Int, data: Intent?, isCamera: Boolean) {
         if (isCamera) {
             val expectedOperation = captureOperation.pendingOperationId
             if (expectedOperation == null) {
-                feature.dispatch(
-                    PhotoAnalysisEvent.PreparationFailed(
-                        if (resultCode == Activity.RESULT_OK) {
-                            RecoveryReason.CAPTURE_FAILED
-                        } else {
-                            RecoveryReason.CANCELLED
-                        },
-                    ),
+                failPreparation(
+                    if (resultCode == Activity.RESULT_OK) RecoveryReason.CAPTURE_FAILED else RecoveryReason.CANCELLED,
                 )
                 return
             }
             val returnedOperation = data?.getStringExtra(AndroidPhotoCaptureFiles.EXTRA_OPERATION_ID)
             captureOperation.pendingOperationId = null
             if (returnedOperation != expectedOperation) {
-                feature.dispatch(
-                    PhotoAnalysisEvent.PreparationFailed(
-                        if (resultCode ==
-                            Activity.RESULT_OK
-                        ) {
-                                RecoveryReason.CAPTURE_FAILED
-                            } else {
-                                RecoveryReason.CANCELLED
-                            },
-                    ),
+                failPreparation(
+                    if (resultCode == Activity.RESULT_OK) RecoveryReason.CAPTURE_FAILED else RecoveryReason.CANCELLED,
                 )
                 return
             }
         }
         if (resultCode != Activity.RESULT_OK) {
-            feature.dispatch(
-                PhotoAnalysisEvent.PreparationFailed(
-                    if (isCamera && photoBridge.isCaptureFailure(data)) {
-                        RecoveryReason.CAPTURE_FAILED
-                    } else {
-                        RecoveryReason.CANCELLED
-                    },
-                ),
-            )
+            val reason = if (isCamera && photoBridge.isCaptureFailure(data)) {
+                RecoveryReason.CAPTURE_FAILED
+            } else {
+                RecoveryReason.CANCELLED
+            }
+            failPreparation(reason)
             return
         }
 
+        analysisLauncher.cancel()
+        onRetainedPhotoInvalidated()
         val ref = feature.issuePhotoRef(UUID.randomUUID().toString())
         feature.dispatch(PhotoAnalysisEvent.PhotoCaptured(ref))
         val sourceBytes = photoBridge.photoBytesFromResult(data)
         if (sourceBytes == null) {
-            feature.dispatch(PhotoAnalysisEvent.PreparationFailed(RecoveryReason.CAPTURE_FAILED))
+            failPreparation(RecoveryReason.CAPTURE_FAILED)
             return
         }
 
         try {
-            feature.dispatch(PhotoAnalysisEvent.PreparationSucceeded(normalizer.normalize(ref, sourceBytes)))
-        } catch (error: PhotoPreparationException) {
-            feature.dispatch(PhotoAnalysisEvent.PreparationFailed(RecoveryReason.POOR_IMAGE))
-        } catch (error: Exception) {
-            feature.dispatch(PhotoAnalysisEvent.PreparationFailed(RecoveryReason.CAPTURE_FAILED))
+            val input = normalizer.normalize(ref, sourceBytes)
+            feature.dispatch(PhotoAnalysisEvent.PreparationSucceeded(input))
+            onRetainedPhotoReady(input)
+            analysisLauncher.start()
+        } catch (_: PhotoPreparationException) {
+            failPreparation(RecoveryReason.POOR_IMAGE)
+        } catch (_: RuntimeException) {
+            failPreparation(RecoveryReason.CAPTURE_FAILED)
+        } finally {
+            sourceBytes.fill(0)
         }
     }
 
@@ -143,6 +143,12 @@ class PhotoAnalysisAndroidHostController(
             photoBridge.markCameraPermissionRequestStarted()
             requestCameraPermission()
         }
+    }
+
+    private fun failPreparation(reason: RecoveryReason) {
+        analysisLauncher.cancel()
+        onRetainedPhotoInvalidated()
+        feature.dispatch(PhotoAnalysisEvent.PreparationFailed(reason))
     }
 }
 

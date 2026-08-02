@@ -1,0 +1,103 @@
+{
+  "schema": "supernutrition.ingredient-weight-android-candidate-evidence.v1",
+  "date": "2026-08-02",
+  "scope": "fresh research-only physical Android v2 candidate execution; not a production model selection or G-3 signature",
+  "device": {
+    "serial": "AU3N025429006787",
+    "physical": true,
+    "model": "DNY-NX9",
+    "os": "Android 16 / API 36",
+    "abi": "arm64-v8a"
+  },
+  "runtime": {
+    "name": "onnxruntime-android",
+    "version": "1.28.0",
+    "execution_provider": "CPU",
+    "network_or_api_calls": false
+  },
+  "fixtures": {
+    "count": 5,
+    "names": [
+      "steak-side-plate.jpg",
+      "fish-side-plate.jpg",
+      "chopped-salad.jpg",
+      "buddha-bowl.jpg",
+      "salmon-grain-plate.jpg"
+    ],
+    "ground_truth": "conservative visible-component labels only; public photos have no tared mass records"
+  },
+  "candidates": [
+    {
+      "candidate": "MobileSAM",
+      "status": "device-executed",
+      "artifact": {
+        "encoder": "mobile-sam-encoder.onnx",
+        "encoder_sha256": "580f5fb648ea1062c0aabc26217aed56921985f03f0cbbd852bba81d760cc749",
+        "decoder": "mobile-sam-decoder.onnx",
+        "decoder_sha256": "8976b90a87ba50a6a72217a5ff994f7d25ce16f2229fcc1ed259e1294c622ffe"
+      },
+      "execution": {
+        "prompt": "one centre positive point plus one padding negative point",
+        "output": "four class-agnostic 1024x1024 masks per fixture",
+        "fixture_successes": 5,
+        "fixture_failures": 0,
+        "session_init_ms": 676,
+        "inference_p50_ms": 1780,
+        "inference_p95_ms": 1891,
+        "inference_max_ms": 1891,
+        "pss_before_kb": 29677,
+        "pss_after_kb": 735484,
+        "thermal_before": 0,
+        "thermal_after": 0
+      },
+      "ingredient_benchmark": {
+        "status": "unsupported",
+        "reason": "Prompt-conditioned class-agnostic masks do not identify ingredients."
+      },
+      "weight_benchmark": {
+        "status": "not-evaluable",
+        "reason": "No mass output and no tared scale ground truth."
+      },
+      "decision": "Reject as an automatic ingredient or grams candidate; retain only as a research annotation aid."
+    },
+    {
+      "candidate": "YOLO-World v2",
+      "status": "device-executed-limited-vocabulary",
+      "artifact": {
+        "model": "yolov8s-worldv2-coco.onnx",
+        "model_sha256": "ef272175d4db2216cde08082f1accf120bdf5ee03b5bc2ba5f51735cda1e9cbc",
+        "vocabulary": "embedded COCO-80 only; no custom ingredient prompts"
+      },
+      "execution": {
+        "fixture_successes": 5,
+        "fixture_failures": 0,
+        "confidence_floor": 0.1,
+        "session_init_ms": 211,
+        "inference_p50_ms": 575,
+        "inference_p95_ms": 594,
+        "inference_max_ms": 594,
+        "pss_before_kb": 27876,
+        "pss_after_kb": 245274,
+        "thermal_before": 0,
+        "thermal_after": 0
+      },
+      "ingredient_benchmark": {
+        "status": "limited",
+        "scope": "exact labels in the embedded COCO food subset only",
+        "macro_f1": 0.2233,
+        "fixture_count": 5,
+        "observed_limitations": [
+          "Some carrot and broccoli detections matched visible components.",
+          "False food labels included sandwich, cake, pizza, donut, apple, banana, and orange.",
+          "The vocabulary and normalization stage are not the required ingredient contract."
+        ]
+      },
+      "weight_benchmark": {
+        "status": "not-evaluable",
+        "reason": "No mass head and no tared scale ground truth."
+      },
+      "decision": "Reject for the current ingredient UX; it proves deployment only and needs a cleared ingredient model plus a separate weighed-mass stage."
+    }
+  ],
+  "overall_decision": "Neither executed candidate proves the v2 requirement of visible ingredient evidence plus calibrated grams. The production G-3 gate remains open."
+}
