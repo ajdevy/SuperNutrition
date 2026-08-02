@@ -1,8 +1,8 @@
 package com.supernutrition.platform.photoios
 
 import com.supernutrition.core.ui.UiAutomationIds
-import com.supernutrition.platform.photoios.captureinterop.SNCreateCaptureInput
 import com.supernutrition.platform.photoios.captureinterop.SNConfigureCaptureDevice
+import com.supernutrition.platform.photoios.captureinterop.SNCreateCaptureInput
 import com.supernutrition.platform.photoios.captureinterop.SNDefaultBackCamera
 import com.supernutrition.platform.photoios.captureinterop.SNFileDataRepresentation
 import com.supernutrition.platform.photoios.captureinterop.SNSetViewAccessibilityIdentifier

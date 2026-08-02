@@ -8,7 +8,7 @@
 | Production activation | **Blocked until user acceptance/signature and remaining gaps close** |
 | Measurement harness | [`tools/g3-benchmark/README.md`](../../tools/g3-benchmark/README.md) |
 | Research record | [`docs/research/epic-3-food-recognition-preprocessing-camera.md`](../../docs/research/epic-3-food-recognition-preprocessing-camera.md) |
-| Evidence date | 2026-08-01 |
+| Evidence date | 2026-08-02 |
 
 This document records reproducible physical-device evidence. Evidence alone is
 not a signature; this revision records one scoped Engineering approval and a
@@ -69,6 +69,35 @@ vessel, weigh each visible ingredient before plating, weigh the final plate,
 record scale readings and resolution, then capture overview and oblique device
 photos. Pixels and a dish class are not a valid gram oracle.
 
+The E3.6 corpus boundary is now executable through
+[`tools/g3-benchmark/consented-weighed-corpus.schema.json`](../../tools/g3-benchmark/consented-weighed-corpus.schema.json)
+and [`tools/g3-benchmark/validate_weighed_corpus.py`](../../tools/g3-benchmark/validate_weighed_corpus.py).
+The validator enforces opaque references, scrubbed photo/mask digests, tared
+per-component readings, explicit non-evaluable states, QC, and split isolation;
+no human corpus is checked in, so this implementation does not add G-3 quality
+evidence or a runtime/model selection.
+
+The validator's explicit `--require-g3` mode now enforces the minimum 300-case
+pilot and the complete `train`, `calibration`, and `held-out` partition set.
+The repository contains no consented manifest, so this strict check remains an
+acceptance gate rather than fabricated G-3 evidence.
+
+The real-corpus scoring layer is now executable through
+[`tools/g3-benchmark/evaluate_consented_corpus.py`](../../tools/g3-benchmark/evaluate_consented_corpus.py).
+It consumes only a validated redacted corpus plus a strict model prediction
+handoff, matches visible components one-to-one by canonical label and box IoU,
+and emits ingredient F1, component/total mass error, coverage/abstention, and
+partition/device/lighting/angle slices. With no 300-case consented corpus or
+production model prediction handoff in this checkout, its production command
+must remain `not-evaluable`; no score is fabricated from the public fixtures.
+
+The shared `component-model/v1` manifest now also requires every production
+candidate to bind four additional evidence references: legal clearance, the
+consented corpus, the component/mass benchmark, and rollback verification.
+Those references are rejected on research-only and staged manifests, so a
+runtime cannot promote a candidate merely by adding Product and Engineering
+approval strings. No production candidate currently satisfies this gate.
+
 ### FPB research baseline for ingredient and weight work
 
 FPB/YOLOv12-FoodWeight was the first research baseline for the
@@ -113,6 +142,31 @@ semantic segmentation and does not yield separate repeated components or mass.
 Neither omission receives an invented device metric. Full candidate provenance,
 checksums, and fixture outputs are in
 [`ingredient-weight-research/android-candidate-device-evidence-2026-08-01.json`](../../ingredient-weight-research/android-candidate-device-evidence-2026-08-01.json).
+
+On 2026-08-02, the two Android research activities were rerun on the connected
+physical Honor DNY-NX9 (`AU3N025429006787`). MobileSAM completed `5/5`
+prompted mask runs with p95 `1,891 ms` and PSS `735,484 KB`, but remains
+`unsupported` for ingredient identity and `not-evaluable` for mass. YOLO-World
+v2 completed `5/5` runs with exact visible-component macro F1 `0.2233`, p95
+`594 ms`, and PSS `245,274 KB`; it remains limited to the embedded COCO-80
+vocabulary and has no mass head. The fresh record is
+[`ingredient-weight-research/android-candidate-device-evidence-2026-08-02.json`](../../ingredient-weight-research/android-candidate-device-evidence-2026-08-02.json).
+This is fresh deployment/candidate evidence only; it does not select a v2
+production model or close the Product/Engineering G-3 gate.
+
+The latest component-candidate rerun used the same physical device through the
+explicit ADB mDNS serial `192.168.0.150:37613` and the installed
+`com.supernutrition.g3benchmark` APK (SHA-256
+`e584f14a0bc007d31893e5d22fdf65d2e5d423b1f77609e40a0e9ee609e27fc7`).
+MobileSAM completed `5/5` prompted mask runs with p95 `2,003 ms` and PSS
+`733,237 KB`; YOLO-World v2 completed `5/5` runs with exact visible-component
+macro F1 `0.2233`, p95 `670 ms`, and PSS `244,432 KB`. Both stayed thermally
+stable at `0 -> 0`. This is now a fresh physical Android component-candidate
+screen, but it is **not** a component/mass G-3 pass: MobileSAM remains
+class-agnostic, YOLO-World is limited to COCO-80, and both mass results are
+`not-evaluable` because the fixtures have no calibrated/tared scale truth and
+neither model emits calibrated mass. The complete record is
+[`ingredient-weight-research/android-component-mass-benchmark-2026-08-02.json`](../../ingredient-weight-research/android-component-mass-benchmark-2026-08-02.json).
 
 ## Device matrix and measured evidence
 
@@ -303,6 +357,33 @@ attempt, but the successful unlocked rerun completed semantic `5/5`, init
 `560 ms`, p50/p95/max `83/85/85 ms`, resident memory
 `261,360 -> 253,008 KB`, thermal `0 -> 0`, and battery level `1 -> 1`.
 
+The 2026-08-02 current-worktree Android research rerun used the physical Honor
+DNY-NX9 through `192.168.0.150:37613` and the pinned Food-101 artifact. It
+completed semantic `5/5`, init `2,150 ms`, p50/p95/max `187/218/335 ms`, PSS
+`26,350 -> 270,889 KB`, battery current `-253 -> -1,674 µA`, and thermal
+`0 -> 0`. The result explicitly reports ingredient capability `unsupported`
+and plated weight `not-evaluable`; the full local-only bundle is
+`/tmp/supernutrition-g3-android-20260802-current`. This is a fresh
+research/device result, not component/mass G-3 evidence or production
+activation.
+
+The 2026-08-02 iOS research-runner rerun was attempted against the paired
+iPhone 14 Pro (`REDACTED_PHYSICAL_DEVICE_UDID`) with local identity
+`6U74HTSWH3`. Xcode stopped before compilation because no authenticated account
+or provisioning profile exists for that team and bundle `com.supernutrition.g3`.
+That research-only `com.supernutrition.g3` attempt produced no benchmark result
+and is not counted. The separate product physical acceptance path was then
+rerun with the configured Team `REDACTED_TEAM_ID`: Xcode UI acceptance completed
+`5/5`, and the binary-bound `iosArm64` fixture lane completed `5/5` (3
+normalization, 2 bridge) on iPhone 14 Pro / iOS 26.5.2. The emitted bundle is
+`/tmp/supernutrition-ios-evidence-20260802/bundle/`, with status
+`local-only` because this checkout is dirty; it binds the physical UDID,
+artifact/fixture/policy digests, Xcode/Gradle versions, `.xcresult`, and JUnit
+counts. The iOS simulator lane remains unexecuted because strict dependency
+verification lacks the `kotlinx-serialization-core-iosx64:1.9.0` checksum.
+These are platform correctness/evidence results only; they do not establish
+component identity, calibrated mass quality, or production G-3 approval.
+
 ## Acceptance and signature
 
 | Role | Name | Decision | Date | Signature/reference |
@@ -310,5 +391,22 @@ attempt, but the successful unlocked rerun completed semantic `5/5`, init
 | Engineering owner | AJ (`ajdevy`) | approved: scoped High local-wait budget for current dish-only v1 harness | 2026-08-01 | user-authorized in this task; PR #29 |
 | Product owner | Anastasia | approved: v2 visible-component and estimated-grams direction; v1 dish-only is not product acceptance | 2026-08-01 | user approval in this task; v2 G-3 signature remains pending evidence |
 
-Until both rows are completed, G-3 remains open and E3.2/E3.3/E3.4 remain
-implementation-ready/in-progress rather than production-complete.
+## 2026-08-02 Product/Engineering G3 decision
+
+The dated decision record is
+[`g3-signoff-decision-2026-08-02.md`](g3-signoff-decision-2026-08-02.md).
+Product and Engineering jointly record **NO-GO for production v2 activation**
+and **CONDITIONAL GO for pre-release implementation/research preparation**.
+The decision accepts the repository-owned implementation evidence but withholds
+production approval because the selected model, consented weighed corpus,
+accepted physical Android/iOS component/mass G-3 benchmark bundle, bound E3.9
+runtime evidence, and complete approval bundle are not present. The latest
+Android candidate screen is recorded separately and does not satisfy that
+bundle.
+
+Under the approved 2026-08-02 post-release scope amendment, E3.2/E3.3/E3.4
+and the rest of Epic 3 are complete for the pre-release implementation scope.
+G-3 remains open for production v2 activation: a replacement APPROVED decision
+must still reference the complete model, legal, consented-corpus, physical
+Android/iOS benchmark, staged-flow, and rollback bundle. This artifact must not
+be read as production component/mass approval.

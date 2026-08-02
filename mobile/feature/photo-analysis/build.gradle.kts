@@ -40,6 +40,7 @@ kotlin {
             implementation(project(":feature:photo-analysis-presenter"))
             implementation(project(":feature:photo-analysis-ui"))
             implementation(project(":domain:photo-analysis"))
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
         }
         commonTest.dependencies {
             implementation(kotlin("test"))

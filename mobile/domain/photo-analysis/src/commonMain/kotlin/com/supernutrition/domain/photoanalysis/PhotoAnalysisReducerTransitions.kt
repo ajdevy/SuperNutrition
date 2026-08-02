@@ -1,11 +1,13 @@
 package com.supernutrition.domain.photoanalysis
 
 internal class PhotoAnalysisReducerTransitions(private val context: PhotoAnalysisReducerContext) {
+    private val analysisTransitions = PhotoAnalysisAnalysisTransitions(context)
+
     fun reduce(current: PhotoAnalysisState, event: PhotoAnalysisEvent): PhotoAnalysisReduction = when (current) {
         PhotoAnalysisState.Capture -> reduceCapture(event)
         is PhotoAnalysisState.Preparing -> reducePreparing(current, event)
         is PhotoAnalysisState.Ready -> reduceReady(current, event)
-        is PhotoAnalysisState.Analyzing -> reduceAnalyzing(current, event)
+        is PhotoAnalysisState.Analyzing -> analysisTransitions.reduce(current, event)
         is PhotoAnalysisState.CandidateReview -> reduceCandidateReview(current, event)
         is PhotoAnalysisState.Recovery -> reduceRecovery(current, event)
         is PhotoAnalysisState.Backgrounded -> unchanged(current)
@@ -70,32 +72,6 @@ internal class PhotoAnalysisReducerTransitions(private val context: PhotoAnalysi
             else -> unchanged(current)
         }
 
-    private fun reduceAnalyzing(
-        current: PhotoAnalysisState.Analyzing,
-        event: PhotoAnalysisEvent,
-    ): PhotoAnalysisReduction = when (event) {
-        is PhotoAnalysisEvent.AnalysisSucceeded -> when {
-            event.requestId != current.requestId -> unchanged(current)
-
-            context.isLive(current.ref) -> unchanged(
-                PhotoAnalysisState.CandidateReview(current.ref, current.requestId),
-            )
-
-            else -> {
-                reduction(
-                    PhotoAnalysisState.Recovery(RecoveryReason.CAPTURE_FAILED),
-                    PhotoAnalysisEffect.RevokePhoto(current.ref),
-                )
-            }
-        }
-
-        is PhotoAnalysisEvent.ReplacePhoto -> replace(current, current.ref, event.ref)
-
-        PhotoAnalysisEvent.Cancel -> cancel(current.ref)
-
-        else -> unchanged(current)
-    }
-
     private fun reduceCandidateReview(
         current: PhotoAnalysisState.CandidateReview,
         event: PhotoAnalysisEvent,
@@ -136,7 +112,7 @@ internal class PhotoAnalysisReducerTransitions(private val context: PhotoAnalysi
         reduction(PhotoAnalysisState.Capture, PhotoAnalysisEffect.RevokePhoto(ref))
 }
 
-private fun unchanged(state: PhotoAnalysisState) = PhotoAnalysisReduction(state)
+internal fun unchanged(state: PhotoAnalysisState) = PhotoAnalysisReduction(state)
 
-private fun reduction(state: PhotoAnalysisState, effect: PhotoAnalysisEffect) =
+internal fun reduction(state: PhotoAnalysisState, effect: PhotoAnalysisEffect) =
     PhotoAnalysisReduction(state, listOf(effect))

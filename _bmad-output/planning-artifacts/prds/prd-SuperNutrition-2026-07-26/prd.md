@@ -371,8 +371,9 @@ calculation.
 
 #### FR-16: Deterministic nutrition grounding
 
-The system calculates calories and supported nutrients from the confirmed
-Nutrition Source record and Serving Assumption.
+The system calculates the supported nutrient, vitamin, and mineral profile plus
+catalog-backed descriptive food properties from the confirmed Nutrition Source
+record and Serving Assumption. The core UI omits a calorie total.
 
 **Consequences:**
 
@@ -399,14 +400,16 @@ Realizes all User Journeys.
 
 #### FR-18: Grounded result display
 
-The user can view confirmed food, Serving Assumption, calories, supported
-macronutrients, source/version, uncertainty, and Inference Route.
+The user can view confirmed food, Serving Assumption, supported nutrients,
+vitamins/minerals, catalog-backed descriptive food properties, source/version,
+uncertainty, and Inference Route on the photo-first review screen. The core UI
+does not show a calorie total.
 
 **Consequences:**
 
 - The result labels estimates and ranges in plain language.
 - The UI never presents the result as medical, allergen, or exact-measurement
-  advice.
+  advice, or as a health-effect claim.
 
 #### FR-19: Scan again
 
@@ -905,3 +908,40 @@ quality, scale-linked component and total-mass error, device/runtime/resource
 evidence, staged-and-cancellable UX evidence, and rollback. G-5 approves the
 claim wording, confidence/abstention, and quality thresholds after the corpus
 pilot; provisional targets are not public claims.
+
+## 15. Approved product-direction amendment — local default and nutrient-first result
+
+**Approved:** 2026-08-01 by Product owner Anastasia. This amendment supersedes
+earlier first-release UX assumptions about a default remote offer, a separate
+result screen, and calorie-first output. It does not permit remote transfer
+without valid consent, model-generated nutrition, medical/allergen conclusions,
+or unsupported nutrient/property claims.
+
+### Default and paid routing
+
+The free/default MVP is local/manual only. It must not show Remote consent,
+start a remote request, or present an upgrade/remote choice after local
+unavailability, abstention, or low confidence. Epic E4 remains a later
+paid-only capability: only an entitled paid user who explicitly chooses the
+remote path may reach its consent surface, after G-4 closes. The existing
+consent, region, retention, cost, cancellation, and gateway requirements remain
+mandatory for that future path.
+
+### Nutrient-first, non-medical result
+
+After explicit food identity and serving confirmation plus catalog grounding,
+the photo-first review screen presents the supported nutrient/vitamin/mineral
+profile and any catalog-backed descriptive food properties. The core UI omits a
+calorie total. Every displayed value/property retains source, version, serving,
+and estimate language. It must not state or imply a medical outcome, disease
+prevention/treatment, allergen safety, or that a food will affect a person's
+health. Missing catalog data remains absent/unknown rather than inferred.
+
+### Surface consolidation
+
+Capture, Candidate selection, and the grounded nutrient profile are sequential
+states of one photo-first screen: after shutter/import, the captured photo stays
+in place as the screen moves into review and then profile. The serving editor is
+an optional edit-and-return secondary screen; it becomes required only for an
+unresolved amount or required assumption, then returns to that same photo-first
+screen. No standalone Grounded-result destination is introduced.

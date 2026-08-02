@@ -5,7 +5,7 @@ story_key: 3-5-release-v2-visible-component-and-mass-evidence-contract
 
 # Story 3.5: Release v2 visible-component and mass-evidence contract
 
-Status: review
+Status: done
 
 ## Story
 
@@ -102,11 +102,26 @@ v2 consumers are introduced release by release.
   - [x] Record precise v2 manifest/hash/version information; do not register a
     runtime/model, public corpus, or Food-101 dish output as component evidence.
 - [x] Validate (AC: 1–7)
-  - [x] Run v1 and v2 contract positive and negative suites, the inference
-    module JVM test/Kover lane, and read-only local quality checks appropriate to
-    changed inventory/policy files.
-  - [x] Run `graphify update .`, `git diff --check`, and preserve the untracked
-    user presentation directory.
+- [x] Run v1 and v2 contract positive and negative suites, the inference
+  module JVM test/Kover lane, and read-only local quality checks appropriate to
+  changed inventory/policy files.
+- [x] Run `graphify update .`, `git diff --check`, and preserve the untracked
+  user presentation directory.
+
+### Review Findings
+
+- [x] [Review][Patch] Defensively copy v2 component and mass assumption lists so callers cannot mutate validated evidence after construction [InferenceV2Models.kt:80].
+- [x] [Review][Patch] Enforce request/result modality parity at the v2 engine boundary [InferenceV2Contract.kt:123].
+- [x] [Review][Patch] Reject degenerate gram ranges that would contradict the release's no-exact-mass guarantee [InferenceV2Models.kt:230].
+- [x] [Review][Patch] Reject duplicate supported and coexistence matrix declarations [verify-inference-contract.sh:360].
+- [x] [Review][Patch] Validate the exact v2 schema and compatibility-matrix metadata and port declarations [verify-inference-contract.sh:340].
+- [x] [Review][Patch] Validate fixture filenames against their required modality, outcome, and mass semantics [verify-inference-contract.sh:326].
+- [x] [Review][Patch] Reject JSON numbers that cannot be represented as finite Kotlin `Double` values [verify-inference-contract.sh:89].
+- [x] [Review][Patch] Publish and verify the confidence-band derivation thresholds in the language-neutral schema [InferenceV2Models.kt:142].
+- [x] [Review][Patch] Recompute negative-fixture release digests after semantic mutations so each case reaches its intended validator [inference-contract-negative-fixtures.sh:171].
+- [x] [Review][Patch] Require explicit model, taxonomy, and calibration version values for unavailable capabilities [InferenceV2Models.kt:21].
+- [x] [Review][Patch] Reject visual-region evidence on text component results and
+  update the canonical text fixture and shell verifier [InferenceV2Models.kt:64].
 
 ## Developer guardrails
 
@@ -114,7 +129,7 @@ v2 consumers are introduced release by release.
 
 - A `MassEstimate` must be a **range**, not a nullable scalar. Use SI grams as
   the canonical unit; UI localization is a later feature concern. The lower and
-  upper bounds must be finite, non-negative, and `lower <= upper`.
+  upper bounds must be finite, non-negative, and `lower < upper`.
 - `not_evaluable` is a successful honest outcome, not `0 g` and not a failure.
   Enumerate user-safe reasons such as ambiguous portion, mixed/occluded content,
   unsupported geometry, or missing calibration; no free-form diagnostic text.
@@ -221,6 +236,13 @@ GPT-5 Codex
 - This contract-only story does not claim component recognition, mass accuracy,
   device validation, Food-101 evidence, model selection, corpus readiness, or
   G-3 closure. Those remain E3.6 through E3.9.
+- Completed the scoped adversarial and edge review hardening: public v2 engine
+  calls now enforce request/result modality parity, validated list inputs are
+  snapshotted, exact-mass ranges are rejected, and schema/matrix/fixture
+  semantics are checked without weakening the v1 lane.
+- Revalidated after review fixes: positive v1/v2 contract verification, the
+  digest-refreshing negative-fixture suite, `:domain:inference:jvmTest`, and
+  inference plus photo-analysis Detekt lanes all pass.
 
 ### Debug Log References
 
@@ -253,3 +275,6 @@ GPT-5 Codex
 
 - 2026-08-01: Implemented and validated the v2 visible-component and
   mass-evidence contract; advanced the story to review.
+- 2026-08-01: Applied scoped review hardening and advanced the contract-only
+  story to done; runtime/model selection, corpus, and G-3 work remain outside
+  this story.

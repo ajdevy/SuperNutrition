@@ -8,6 +8,7 @@ import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.reinterpret
+import kotlinx.cinterop.useContents
 import kotlinx.cinterop.usePinned
 import platform.Foundation.NSData
 import platform.posix.memcpy
@@ -41,10 +42,15 @@ class IosImageNormalizerFixtureTest {
     fun `exif gps fixture normalizes to bounded metadata free pixels`() {
         val source = checkNotNull(SNMakeDataFromBase64(FIXTURE_BASE64))
         val ref = PhotoRef.issue(AttemptId("ios-fixture-attempt"), "ios-fixture-photo")
-        val normalized = IosImageNormalizer().normalize(ref, source)
+        val prepared = IosImageNormalizer().normalizeWithPreview(ref, source)
+        val normalized = prepared.input
 
         assertEquals(4, normalized.width)
         assertEquals(6, normalized.height)
+        prepared.preview.size.useContents {
+            assertEquals(4.0, width)
+            assertEquals(6.0, height)
+        }
         assertEquals(ImageOrientation.UP, normalized.orientation)
         assertEquals("sRGB", normalized.colorSpace)
         assertTrue(normalized.metadataKeys.isEmpty())

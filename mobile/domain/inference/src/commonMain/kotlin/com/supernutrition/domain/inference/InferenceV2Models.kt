@@ -4,6 +4,7 @@ package com.supernutrition.domain.inference
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlinx.serialization.json.JsonClassDiscriminator
 
 private fun isFiniteValue(value: Double): Boolean = value.isFinite()
@@ -34,12 +35,18 @@ data class InferenceV2Capability(
         requireV2Identifier(engineId, "Capability engine ID must be a bounded identifier")
         if (state == CapabilityState.READY) {
             requireV2(reason == CapabilityReason.NONE, "Ready capability must not report an unavailable reason")
-            requireNonBlankValue(modelVersion, "Ready capability must identify its model version")
-            requireNonBlankValue(taxonomyVersion, "Ready capability must identify its taxonomy version")
-            requireNonBlankValue(calibrationVersion, "Ready capability must identify its calibration version")
         } else {
             requireV2(reason != CapabilityReason.NONE, "Unavailable capability must report an unavailable reason")
         }
+        requireNonBlankValue(modelVersion, "Capability must identify its model version or explicit unavailable value")
+        requireNonBlankValue(
+            taxonomyVersion,
+            "Capability must identify its taxonomy version or explicit unavailable value",
+        )
+        requireNonBlankValue(
+            calibrationVersion,
+            "Capability must identify its calibration version or explicit unavailable value",
+        )
     }
 }
 
@@ -54,6 +61,10 @@ data class InferenceV2Result(
         if (inputModality == InferenceInputModality.TEXT) {
             if (outcome is InferenceV2Outcome.Components) {
                 outcome.components.forEach { component ->
+                    requireV2(
+                        component.region == null,
+                        "Text input must never carry visual region evidence",
+                    )
                     requireV2(
                         component.mass is MassEvidence.NotEvaluable,
                         "Text input must never carry an estimated or abstained mass state",
@@ -77,13 +88,32 @@ enum class InferenceInputModality {
 sealed interface InferenceV2Outcome {
     @Serializable
     @SerialName("components")
-    data class Components(val components: List<VisibleComponent>) : InferenceV2Outcome {
+    @Suppress("MemberNameEqualsClassName")
+    class Components private constructor(
+        @SerialName("components")
+        private val componentsInput: List<VisibleComponent>,
+    ) : InferenceV2Outcome {
+        @Transient
+        val components: List<VisibleComponent> = componentsInput.toList()
+
         init {
-            requireV2(components.isNotEmpty(), "Component outcome must not be empty")
+            requireV2(componentsInput.isNotEmpty(), "Component outcome must not be empty")
             requireV2(
-                components.map(VisibleComponent::componentId).toSet().size == components.size,
+                componentsInput.map(VisibleComponent::componentId).toSet().size == componentsInput.size,
                 "Component IDs must be unique",
             )
+        }
+
+        fun copy(components: List<VisibleComponent> = this.components): Components = Components(components)
+
+        override fun equals(other: Any?): Boolean = other is Components && components == other.components
+
+        override fun hashCode(): Int = components.hashCode()
+
+        override fun toString(): String = "Components(components=$components)"
+
+        companion object {
+            operator fun invoke(components: List<VisibleComponent>): Components = Components(components.toList())
         }
     }
 
@@ -130,11 +160,7 @@ data class VisibleComponent(
 }
 
 @Serializable
-data class LocalizedCandidateIdentity(
-    val candidateId: String,
-    val label: String,
-    val locale: String,
-) {
+data class LocalizedCandidateIdentity(val candidateId: String, val label: String, val locale: String) {
     init {
         requireV2Identifier(candidateId, "Candidate ID must be a bounded identifier")
         requireNonBlankValue(label, "Candidate label must not be blank")
@@ -174,12 +200,7 @@ enum class ComponentAmbiguity {
 
 /** Normalized region evidence only; it is neither a mask nor a file or URI reference. */
 @Serializable
-data class NormalizedVisibleRegion(
-    val left: Double,
-    val top: Double,
-    val width: Double,
-    val height: Double,
-) {
+data class NormalizedVisibleRegion(val left: Double, val top: Double, val width: Double, val height: Double) {
     init {
         requireV2(
             doubleArrayOf(left, top, width, height).all(::isFiniteValue),
@@ -205,28 +226,46 @@ data class NormalizedVisibleRegion(
 sealed interface MassEvidence {
     @Serializable
     @SerialName("estimated")
-    data class Estimated(
+    class Estimated private constructor(
         val range: GramRange,
-        val calibrationAssumptions: List<MassCalibrationAssumption>,
+        @SerialName("calibrationAssumptions")
+        private val calibrationAssumptionsInput: List<MassCalibrationAssumption>,
     ) : MassEvidence {
+        @Transient
+        val calibrationAssumptions: List<MassCalibrationAssumption> = calibrationAssumptionsInput.toList()
+
         init {
             requireV2(
-                calibrationAssumptions.isNotEmpty(),
+                calibrationAssumptionsInput.isNotEmpty(),
                 "Estimated mass must declare at least one calibration assumption",
             )
             requireV2(
-                calibrationAssumptions.toSet().size == calibrationAssumptions.size,
+                calibrationAssumptionsInput.toSet().size == calibrationAssumptionsInput.size,
                 "Estimated mass calibration assumptions must be unique",
             )
+        }
+
+        fun copy(
+            range: GramRange = this.range,
+            calibrationAssumptions: List<MassCalibrationAssumption> = this.calibrationAssumptions,
+        ): Estimated = Estimated(range, calibrationAssumptions)
+
+        override fun equals(other: Any?): Boolean = other is Estimated &&
+            range == other.range && calibrationAssumptions == other.calibrationAssumptions
+
+        override fun hashCode(): Int = 31 * range.hashCode() + calibrationAssumptions.hashCode()
+
+        override fun toString(): String = "Estimated(range=$range, calibrationAssumptions=$calibrationAssumptions)"
+
+        companion object {
+            operator fun invoke(range: GramRange, calibrationAssumptions: List<MassCalibrationAssumption>): Estimated =
+                Estimated(range, calibrationAssumptions.toList())
         }
     }
 
     @Serializable
     @SerialName("not-evaluable")
-    data class NotEvaluable(
-        val reason: MassNotEvaluableReason,
-        val userMessageKey: String,
-    ) : MassEvidence {
+    data class NotEvaluable(val reason: MassNotEvaluableReason, val userMessageKey: String) : MassEvidence {
         init {
             requireV2Identifier(userMessageKey, "Mass not-evaluable message key must be a bounded identifier")
         }
@@ -234,10 +273,7 @@ sealed interface MassEvidence {
 
     @Serializable
     @SerialName("abstained")
-    data class Abstained(
-        val reason: MassAbstentionReason,
-        val userMessageKey: String,
-    ) : MassEvidence {
+    data class Abstained(val reason: MassAbstentionReason, val userMessageKey: String) : MassEvidence {
         init {
             requireV2Identifier(userMessageKey, "Mass abstention message key must be a bounded identifier")
         }
@@ -251,7 +287,7 @@ data class GramRange(val lowerGrams: Double, val upperGrams: Double) {
             doubleArrayOf(lowerGrams, upperGrams).all(::isFiniteNonNegative),
             "Gram range bounds must be finite and non-negative",
         )
-        requireV2(lowerGrams <= upperGrams, "Gram range lower bound must not exceed upper bound")
+        requireV2(lowerGrams < upperGrams, "Gram range must have distinct lower and upper bounds")
     }
 }
 

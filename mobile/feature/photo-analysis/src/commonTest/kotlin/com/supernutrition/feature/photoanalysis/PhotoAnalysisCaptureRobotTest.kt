@@ -1,6 +1,7 @@
 package com.supernutrition.feature.photoanalysis
 
 import com.supernutrition.core.ui.UiAutomationIds
+import com.supernutrition.core.ui.photoAnalysisVisibleComponentId
 import com.supernutrition.testing.composesupport.SemanticId
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -39,7 +40,34 @@ class PhotoAnalysisCaptureRobotTest {
         )
     }
 
-    private class FakeHost(private val state: PhotoAnalysisPresenterState, private val texts: Map<String, String>) :
+    @Test
+    fun `robot covers local wait cancel and component evidence semantics`() {
+        val copy = PhotoAnalysisPresenterCopyFixtures.localized()
+        val componentId = "component-rice"
+        val host = FakeHost(
+            state = PhotoAnalysisPresenterState.ANALYZING,
+            texts = mapOf(
+                UiAutomationIds.PHOTO_ANALYSIS_STATUS.value to copy.status.estimatingPortions,
+                UiAutomationIds.CAPTURE_CANCEL.value to copy.capture.cancel,
+                photoAnalysisVisibleComponentId(componentId).value to "Riso",
+            ),
+        )
+        val robot = PhotoAnalysisCaptureRobot(host, copy)
+
+        robot.assertLocalWaitSurface(copy.status.estimatingPortions)
+        host.state = PhotoAnalysisPresenterState.CANDIDATE_REVIEW
+        robot.assertVisibleComponent(componentId, "Riso")
+
+        assertEquals(
+            listOf(
+                PhotoAnalysisCaptureRobotContract.LOCAL_WAIT_SURFACE_STEP,
+                PhotoAnalysisCaptureRobotContract.COMPONENT_EVIDENCE_STEP,
+            ),
+            robot.trace.steps().map { it.id },
+        )
+    }
+
+    private class FakeHost(var state: PhotoAnalysisPresenterState, private val texts: Map<String, String>) :
         PhotoAnalysisCaptureRobotHost {
         val clicked = mutableListOf<String>()
 

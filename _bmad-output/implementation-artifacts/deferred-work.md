@@ -1,6 +1,6 @@
 ## Deferred from: code review (2026-07-31)
 
-- Dedicated Epic 3 Android physical local-inference/network/G-3 evidence is blocked until the signed G-3 runtime/model benchmark and a clean evidence-producing scenario exist; the available 15/15 run is UI evidence only.
+- Dedicated Epic 3 Android physical local-inference adapter evidence now passes `4/4`, and the packaged UI/capture suites pass `15/15` each. Signed v2 G-3 evidence remains blocked until a selected component runtime/model, consented corpus, and clean component-quality scenario exist; the current Food-101 run is semantic dish-only research evidence.
 - Physical iOS fixture/Xcode acceptance is now verified on the paired iPhone
   using the configured local Apple development account; the remaining
   production blocker is the signed G-3 runtime/model benchmark.

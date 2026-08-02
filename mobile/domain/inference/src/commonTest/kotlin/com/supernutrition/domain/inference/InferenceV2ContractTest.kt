@@ -9,6 +9,7 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertIs
 
+@Suppress("LargeClass")
 class InferenceV2ContractTest {
     @Test
     fun `v2 engine uses an opaque attempt-bound photo input`() {
@@ -22,12 +23,12 @@ class InferenceV2ContractTest {
                 configurationDigest = "a".repeat(64),
             ),
         )
-        val engine = object : InferenceV2Engine {
+        val engine = object : InferenceV2Engine() {
             override val contractVersion: String = INFERENCE_EVIDENCE_CONTRACT_V2
 
             override suspend fun capability(): InferenceV2Capability = InferenceV2ContractFixtures.readyCapability
 
-            override suspend fun analyze(request: InferenceV2Request): InferenceV2Result =
+            override suspend fun analyzeUnvalidated(request: InferenceV2Request): InferenceV2Result =
                 InferenceV2ContractFixtures.estimatedPhotoResult
         }
 
@@ -78,6 +79,7 @@ class InferenceV2ContractTest {
 
         assertFailsWith<IllegalArgumentException> { GramRange(-1.0, 0.0) }
         assertFailsWith<IllegalArgumentException> { GramRange(2.0, 1.0) }
+        assertFailsWith<IllegalArgumentException> { GramRange(1.0, 1.0) }
         assertFailsWith<IllegalArgumentException> { GramRange(Double.NaN, 1.0) }
         assertFailsWith<IllegalArgumentException> {
             MassEvidence.Estimated(
@@ -91,13 +93,23 @@ class InferenceV2ContractTest {
         assertFailsWith<IllegalArgumentException> {
             NormalizedVisibleRegion(left = 0.9, top = 0.1, width = 0.2, height = 0.2)
         }
+
+        val callerComponents = mutableListOf(component)
+        val stableComponents = InferenceV2Outcome.Components(callerComponents)
+        callerComponents.clear()
+        assertEquals(1, stableComponents.components.size)
+        val callerAssumptions = mutableListOf(MassCalibrationAssumption.SINGLE_VIEW_APPROXIMATION)
+        val stableMass = MassEvidence.Estimated(GramRange(1.0, 2.0), callerAssumptions)
+        callerAssumptions.clear()
+        assertEquals(1, stableMass.calibrationAssumptions.size)
     }
 
     @Test
     fun `text output cannot carry an estimated mass`() {
-        val estimatedComponent = (InferenceV2ContractFixtures.estimatedPhotoResult.outcome as InferenceV2Outcome.Components)
-            .components
-            .single()
+        val estimatedComponent =
+            (InferenceV2ContractFixtures.estimatedPhotoResult.outcome as InferenceV2Outcome.Components)
+                .components
+                .single()
         assertFailsWith<IllegalArgumentException> {
             InferenceV2Result(
                 contractVersion = INFERENCE_EVIDENCE_CONTRACT_V2,
@@ -114,16 +126,17 @@ class InferenceV2ContractTest {
     @Test
     fun `v2 json is canonical ignores unknowns and rejects invalid evidence`() {
         val encoded = InferenceV2ContractJson.encode(InferenceV2ContractFixtures.estimatedPhotoResult)
-        val expected = listOf(
-            "{\"contractVersion\":\"inference-evidence/v2\",\"inputModality\":\"photo\",\"outcome\":{\"outcomeType\":\"components\",",
-            "\"components\":[{\"componentId\":\"component:salmon-1\",\"candidate\":{\"candidateId\":\"ingredient:salmon\",",
-            "\"label\":\"Salmon\",\"locale\":\"en\"},\"confidence\":{\"score\":0.91,\"band\":\"high\"},",
-            "\"visibility\":\"visible\",\"ambiguity\":\"none\",\"region\":{\"left\":0.1,\"top\":0.2,\"width\":0.3,\"height\":0.4},",
-            "\"mass\":{\"massType\":\"estimated\",\"range\":{\"lowerGrams\":120.0,\"upperGrams\":155.0},",
-            "\"calibrationAssumptions\":[\"single-view-approximation\"]},\"provenance\":{\"route\":\"local\",\"engineId\":\"fixture-component-engine\",",
-            "\"modelVersion\":\"fixture-component-model-1\",\"taxonomyVersion\":\"fixture-ingredient-taxonomy-1\",",
-            "\"calibrationVersion\":\"fixture-mass-calibration-1\",\"contractVersion\":\"inference-evidence/v2\"}}]}}",
-        ).joinToString("")
+        val expected = """
+            {"contractVersion":"inference-evidence/v2","inputModality":"photo","outcome":{"outcomeType":"components",
+            "components":[{"componentId":"component:salmon-1","candidate":{"candidateId":"ingredient:salmon",
+            "label":"Salmon","locale":"en"},"confidence":{"score":0.91,"band":"high"},
+            "visibility":"visible","ambiguity":"none","region":{"left":0.1,"top":0.2,"width":0.3,"height":0.4},
+            "mass":{"massType":"estimated","range":{"lowerGrams":120.0,"upperGrams":155.0},
+            "calibrationAssumptions":["single-view-approximation"]},"provenance":{"route":"local",
+            "engineId":"fixture-component-engine","modelVersion":"fixture-component-model-1",
+            "taxonomyVersion":"fixture-ingredient-taxonomy-1","calibrationVersion":"fixture-mass-calibration-1",
+            "contractVersion":"inference-evidence/v2"}}]}}
+        """.trimIndent().replace("\n", "")
 
         assertEquals(Json.parseToJsonElement(expected), Json.parseToJsonElement(encoded))
         assertEquals(
@@ -144,35 +157,106 @@ class InferenceV2ContractTest {
     }
 
     @Test
-    fun `v2 canonical fixtures cover every outcome capability and telemetry shape`() {
-        val expectedResults = mapOf(
-            InferenceV2ContractFixtures.notEvaluablePhotoResult to "{\"contractVersion\":\"inference-evidence/v2\",\"inputModality\":\"photo\",\"outcome\":{\"outcomeType\":\"components\",\"components\":[{\"componentId\":\"component:vegetables-1\",\"candidate\":{\"candidateId\":\"ingredient:mixed-vegetables\",\"label\":\"Mixed vegetables\",\"locale\":\"en\"},\"confidence\":{\"score\":0.91,\"band\":\"high\"},\"visibility\":\"visible\",\"ambiguity\":\"none\",\"region\":{\"left\":0.1,\"top\":0.2,\"width\":0.3,\"height\":0.4},\"mass\":{\"massType\":\"not-evaluable\",\"reason\":\"mixed-or-occluded\",\"userMessageKey\":\"inference.mass.mixed_or_occluded\"},\"provenance\":{\"route\":\"local\",\"engineId\":\"fixture-component-engine\",\"modelVersion\":\"fixture-component-model-1\",\"taxonomyVersion\":\"fixture-ingredient-taxonomy-1\",\"calibrationVersion\":\"fixture-mass-calibration-1\",\"contractVersion\":\"inference-evidence/v2\"}}]}}",
-            InferenceV2ContractFixtures.textNotEvaluableResult to "{\"contractVersion\":\"inference-evidence/v2\",\"inputModality\":\"text\",\"outcome\":{\"outcomeType\":\"components\",\"components\":[{\"componentId\":\"component:beans-1\",\"candidate\":{\"candidateId\":\"ingredient:black-beans\",\"label\":\"Black beans\",\"locale\":\"en\"},\"confidence\":{\"score\":0.91,\"band\":\"high\"},\"visibility\":\"visible\",\"ambiguity\":\"none\",\"region\":{\"left\":0.1,\"top\":0.2,\"width\":0.3,\"height\":0.4},\"mass\":{\"massType\":\"not-evaluable\",\"reason\":\"text-has-no-visible-portion\",\"userMessageKey\":\"inference.mass.text_has_no_visible_portion\"},\"provenance\":{\"route\":\"local\",\"engineId\":\"fixture-component-engine\",\"modelVersion\":\"fixture-component-model-1\",\"taxonomyVersion\":\"fixture-ingredient-taxonomy-1\",\"calibrationVersion\":\"fixture-mass-calibration-1\",\"contractVersion\":\"inference-evidence/v2\"}}]}}",
-            InferenceV2ContractFixtures.abstentionResult to "{\"contractVersion\":\"inference-evidence/v2\",\"inputModality\":\"photo\",\"outcome\":{\"outcomeType\":\"abstention\",\"reason\":\"no-food-detected\",\"userMessageKey\":\"inference.abstention.no_food_detected\",\"provenance\":{\"route\":\"local\",\"engineId\":\"fixture-component-engine\",\"modelVersion\":\"fixture-component-model-1\",\"taxonomyVersion\":\"fixture-ingredient-taxonomy-1\",\"calibrationVersion\":\"fixture-mass-calibration-1\",\"contractVersion\":\"inference-evidence/v2\"}}}",
-            InferenceV2ContractFixtures.failureResult to "{\"contractVersion\":\"inference-evidence/v2\",\"inputModality\":\"photo\",\"outcome\":{\"outcomeType\":\"failure\",\"code\":\"temporary-unavailable\",\"retryable\":true,\"userMessageKey\":\"inference.failure.temporary_unavailable\",\"provenance\":{\"route\":\"local\",\"engineId\":\"fixture-component-engine\",\"modelVersion\":\"fixture-component-model-1\",\"taxonomyVersion\":\"fixture-ingredient-taxonomy-1\",\"calibrationVersion\":\"fixture-mass-calibration-1\",\"contractVersion\":\"inference-evidence/v2\"}}}",
-        )
+    fun `text output cannot carry visual region evidence`() {
+        val component = (InferenceV2ContractFixtures.textNotEvaluableResult.outcome as InferenceV2Outcome.Components)
+            .components
+            .single()
+        assertEquals(null, component.region)
+        assertFailsWith<IllegalArgumentException> {
+            InferenceV2Result(
+                contractVersion = INFERENCE_EVIDENCE_CONTRACT_V2,
+                inputModality = InferenceInputModality.TEXT,
+                outcome = InferenceV2Outcome.Components(
+                    listOf(component.copy(region = NormalizedVisibleRegion(0.1, 0.2, 0.3, 0.4))),
+                ),
+            )
+        }
+    }
 
-        expectedResults.forEach { (result, expected) ->
-            assertEquals(Json.parseToJsonElement(expected), Json.parseToJsonElement(InferenceV2ContractJson.encode(result)))
+    @Test
+    fun `v2 canonical fixtures cover every outcome capability and telemetry shape`() {
+        assertCanonicalOutcomeFixtures()
+        assertCanonicalCapabilityFixture()
+        assertCanonicalTelemetryFixture()
+    }
+
+    private fun assertCanonicalOutcomeFixtures() {
+        canonicalOutcomeFixtures().forEach { (result, expected) ->
+            assertEquals(
+                Json.parseToJsonElement(expected),
+                Json.parseToJsonElement(InferenceV2ContractJson.encode(result)),
+            )
             assertEquals(result, InferenceV2ContractJson.decode(InferenceV2ContractJson.encode(result)))
         }
-        val expectedCapability = "{\"contractVersion\":\"inference-evidence/v2\",\"state\":\"ready\",\"reason\":\"none\",\"userMessageKey\":\"inference.capability.ready\",\"engineId\":\"fixture-component-engine\",\"modelVersion\":\"fixture-component-model-1\",\"taxonomyVersion\":\"fixture-ingredient-taxonomy-1\",\"calibrationVersion\":\"fixture-mass-calibration-1\"}"
+    }
+
+    private fun canonicalOutcomeFixtures(): Map<InferenceV2Result, String> = mapOf(
+        InferenceV2ContractFixtures.notEvaluablePhotoResult to """
+            {"contractVersion":"inference-evidence/v2","inputModality":"photo","outcome":{"outcomeType":"components",
+            "components":[{"componentId":"component:vegetables-1","candidate":{"candidateId":"ingredient:mixed-vegetables","label":"Mixed vegetables","locale":"en"},
+            "confidence":{"score":0.91,"band":"high"},"visibility":"visible","ambiguity":"none","region":{"left":0.1,"top":0.2,"width":0.3,"height":0.4},
+            "mass":{"massType":"not-evaluable","reason":"mixed-or-occluded","userMessageKey":"inference.mass.mixed_or_occluded"},
+            "provenance":{"route":"local","engineId":"fixture-component-engine","modelVersion":"fixture-component-model-1",
+            "taxonomyVersion":"fixture-ingredient-taxonomy-1","calibrationVersion":"fixture-mass-calibration-1","contractVersion":"inference-evidence/v2"}}]}}
+        """.trimIndent().replace("\n", ""),
+        InferenceV2ContractFixtures.textNotEvaluableResult to """
+            {"contractVersion":"inference-evidence/v2","inputModality":"text","outcome":{"outcomeType":"components",
+            "components":[{"componentId":"component:beans-1","candidate":{"candidateId":"ingredient:black-beans","label":"Black beans","locale":"en"},
+            "confidence":{"score":0.91,"band":"high"},"visibility":"visible","ambiguity":"none",
+            "mass":{"massType":"not-evaluable","reason":"text-has-no-visible-portion","userMessageKey":"inference.mass.text_has_no_visible_portion"},
+            "provenance":{"route":"local","engineId":"fixture-component-engine","modelVersion":"fixture-component-model-1",
+            "taxonomyVersion":"fixture-ingredient-taxonomy-1","calibrationVersion":"fixture-mass-calibration-1","contractVersion":"inference-evidence/v2"}}]}}
+        """.trimIndent().replace("\n", ""),
+        InferenceV2ContractFixtures.abstentionResult to """
+            {"contractVersion":"inference-evidence/v2","inputModality":"photo","outcome":{"outcomeType":"abstention","reason":"no-food-detected",
+            "userMessageKey":"inference.abstention.no_food_detected","provenance":{"route":"local","engineId":"fixture-component-engine",
+            "modelVersion":"fixture-component-model-1","taxonomyVersion":"fixture-ingredient-taxonomy-1",
+            "calibrationVersion":"fixture-mass-calibration-1","contractVersion":"inference-evidence/v2"}}}
+        """.trimIndent().replace("\n", ""),
+        InferenceV2ContractFixtures.failureResult to """
+            {"contractVersion":"inference-evidence/v2","inputModality":"photo","outcome":{"outcomeType":"failure","code":"temporary-unavailable","retryable":true,
+            "userMessageKey":"inference.failure.temporary_unavailable","provenance":{"route":"local","engineId":"fixture-component-engine",
+            "modelVersion":"fixture-component-model-1","taxonomyVersion":"fixture-ingredient-taxonomy-1",
+            "calibrationVersion":"fixture-mass-calibration-1","contractVersion":"inference-evidence/v2"}}}
+        """.trimIndent().replace("\n", ""),
+    )
+
+    private fun assertCanonicalCapabilityFixture() {
+        val expectedCapability = """
+            {"contractVersion":"inference-evidence/v2","state":"ready","reason":"none","userMessageKey":"inference.capability.ready",
+            "engineId":"fixture-component-engine","modelVersion":"fixture-component-model-1","taxonomyVersion":"fixture-ingredient-taxonomy-1",
+            "calibrationVersion":"fixture-mass-calibration-1"}
+        """.trimIndent().replace("\n", "")
         assertEquals(
             Json.parseToJsonElement(expectedCapability),
-            Json.parseToJsonElement(InferenceV2ContractJson.encodeCapability(InferenceV2ContractFixtures.readyCapability)),
+            Json.parseToJsonElement(
+                InferenceV2ContractJson.encodeCapability(InferenceV2ContractFixtures.readyCapability),
+            ),
         )
         assertEquals(
             InferenceV2ContractFixtures.readyCapability,
-            InferenceV2ContractJson.decodeCapability(InferenceV2ContractJson.encodeCapability(InferenceV2ContractFixtures.readyCapability)),
+            InferenceV2ContractJson.decodeCapability(
+                InferenceV2ContractJson.encodeCapability(InferenceV2ContractFixtures.readyCapability),
+            ),
         )
-        val expectedTelemetry = "{\"contractVersion\":\"inference-evidence/v2\",\"eventType\":\"attempt\",\"route\":\"local\",\"capabilityState\":\"ready\",\"outcome\":\"components\",\"durationBucket\":\"1-to-5s\",\"resourceBucket\":\"within-budget\",\"componentCountBucket\":\"one\"}"
+    }
+
+    private fun assertCanonicalTelemetryFixture() {
+        val expectedTelemetry = """
+            {"contractVersion":"inference-evidence/v2","eventType":"attempt","route":"local","capabilityState":"ready",
+            "outcome":"components","durationBucket":"1-to-5s","resourceBucket":"within-budget","componentCountBucket":"one"}
+        """.trimIndent().replace("\n", "")
         assertEquals(
             Json.parseToJsonElement(expectedTelemetry),
-            Json.parseToJsonElement(InferenceV2ContractJson.encodeTelemetry(InferenceV2ContractFixtures.telemetryEvent)),
+            Json.parseToJsonElement(
+                InferenceV2ContractJson.encodeTelemetry(InferenceV2ContractFixtures.telemetryEvent),
+            ),
         )
         assertEquals(
             InferenceV2ContractFixtures.telemetryEvent,
-            InferenceV2ContractJson.decodeTelemetry(InferenceV2ContractJson.encodeTelemetry(InferenceV2ContractFixtures.telemetryEvent)),
+            InferenceV2ContractJson.decodeTelemetry(
+                InferenceV2ContractJson.encodeTelemetry(InferenceV2ContractFixtures.telemetryEvent),
+            ),
         )
     }
 
@@ -204,11 +288,13 @@ class InferenceV2ContractTest {
         }
     }
 
+    @Suppress("LongMethod")
     @Test
     fun `v2 remaining invariants fail closed and all typed evidence states serialize`() {
-        val estimatedComponent = (InferenceV2ContractFixtures.estimatedPhotoResult.outcome as InferenceV2Outcome.Components)
-            .components
-            .single()
+        val estimatedComponent =
+            (InferenceV2ContractFixtures.estimatedPhotoResult.outcome as InferenceV2Outcome.Components)
+                .components
+                .single()
         val provenance = estimatedComponent.provenance
         val attempt = AttemptId("attempt-v2-text")
         val text = InferenceV2Input.Text("beans", "en")
@@ -242,16 +328,28 @@ class InferenceV2ContractTest {
             reason = CapabilityReason.MODEL_MISSING,
             userMessageKey = "inference.capability.model_required",
             engineId = "fixture-component-engine",
-            modelVersion = "",
-            taxonomyVersion = "",
-            calibrationVersion = "",
+            modelVersion = "unavailable",
+            taxonomyVersion = "unavailable",
+            calibrationVersion = "unavailable",
         )
         assertEquals(CapabilityState.MODEL_REQUIRED, unavailable.state)
         assertFailsWith<IllegalArgumentException> { unavailable.copy(reason = CapabilityReason.NONE) }
         assertFailsWith<IllegalArgumentException> { unavailable.copy(userMessageKey = " ") }
-        assertFailsWith<IllegalArgumentException> { InferenceV2ContractFixtures.readyCapability.copy(modelVersion = "") }
-        assertFailsWith<IllegalArgumentException> { InferenceV2ContractFixtures.readyCapability.copy(taxonomyVersion = " ") }
-        assertFailsWith<IllegalArgumentException> { InferenceV2ContractFixtures.readyCapability.copy(calibrationVersion = "") }
+        assertFailsWith<IllegalArgumentException> {
+            InferenceV2ContractFixtures.readyCapability.copy(
+                modelVersion = "",
+            )
+        }
+        assertFailsWith<IllegalArgumentException> {
+            InferenceV2ContractFixtures.readyCapability.copy(
+                taxonomyVersion = " ",
+            )
+        }
+        assertFailsWith<IllegalArgumentException> {
+            InferenceV2ContractFixtures.readyCapability.copy(
+                calibrationVersion = "",
+            )
+        }
 
         assertFailsWith<IllegalArgumentException> { InferenceV2Outcome.Components(emptyList()) }
         assertFailsWith<IllegalArgumentException> {
@@ -267,14 +365,22 @@ class InferenceV2ContractTest {
         assertFailsWith<IllegalArgumentException> { estimatedComponent.candidate.copy(label = " ") }
         assertFailsWith<IllegalArgumentException> { CalibratedConfidence(-0.1, ConfidenceBand.LOW) }
         assertFailsWith<IllegalArgumentException> { CalibratedConfidence(1.1, ConfidenceBand.HIGH) }
-        assertFailsWith<IllegalArgumentException> { CalibratedConfidence(Double.POSITIVE_INFINITY, ConfidenceBand.HIGH) }
+        assertFailsWith<IllegalArgumentException> {
+            CalibratedConfidence(
+                Double.POSITIVE_INFINITY,
+                ConfidenceBand.HIGH,
+            )
+        }
         assertFailsWith<IllegalArgumentException> { CalibratedConfidence(0.5, ConfidenceBand.LOW) }
         assertFailsWith<IllegalArgumentException> { NormalizedVisibleRegion(-0.1, 0.0, 0.1, 0.1) }
         assertFailsWith<IllegalArgumentException> { NormalizedVisibleRegion(0.0, 0.0, 0.0, 0.1) }
         assertFailsWith<IllegalArgumentException> { NormalizedVisibleRegion(0.0, 0.0, 1.1, 0.1) }
         assertFailsWith<IllegalArgumentException> { NormalizedVisibleRegion(Double.NaN, 0.0, 0.1, 0.1) }
         assertFailsWith<IllegalArgumentException> {
-            MassEvidence.Estimated(GramRange(1.0, 2.0), listOf(MassCalibrationAssumption.PARTIAL_OCCLUSION, MassCalibrationAssumption.PARTIAL_OCCLUSION))
+            MassEvidence.Estimated(
+                GramRange(1.0, 2.0),
+                listOf(MassCalibrationAssumption.PARTIAL_OCCLUSION, MassCalibrationAssumption.PARTIAL_OCCLUSION),
+            )
         }
         assertFailsWith<IllegalArgumentException> {
             MassEvidence.Abstained(MassAbstentionReason.IMAGE_QUALITY, " ")
@@ -301,7 +407,9 @@ class InferenceV2ContractTest {
         MassCalibrationAssumption.entries.forEach { assumption ->
             val result = InferenceV2ContractFixtures.estimatedPhotoResult.copy(
                 outcome = InferenceV2Outcome.Components(
-                    listOf(estimatedComponent.copy(mass = MassEvidence.Estimated(GramRange(1.0, 2.0), listOf(assumption)))),
+                    listOf(
+                        estimatedComponent.copy(mass = MassEvidence.Estimated(GramRange(1.0, 2.0), listOf(assumption))),
+                    ),
                 ),
             )
             assertEquals(result, InferenceV2ContractJson.decode(InferenceV2ContractJson.encode(result)))
@@ -309,7 +417,11 @@ class InferenceV2ContractTest {
         MassNotEvaluableReason.entries.forEach { reason ->
             val result = InferenceV2ContractFixtures.notEvaluablePhotoResult.copy(
                 outcome = InferenceV2Outcome.Components(
-                    listOf(estimatedComponent.copy(mass = MassEvidence.NotEvaluable(reason, "inference.mass.not_evaluable"))),
+                    listOf(
+                        estimatedComponent.copy(
+                            mass = MassEvidence.NotEvaluable(reason, "inference.mass.not_evaluable"),
+                        ),
+                    ),
                 ),
             )
             assertEquals(result, InferenceV2ContractJson.decode(InferenceV2ContractJson.encode(result)))
@@ -340,11 +452,15 @@ class InferenceV2ContractTest {
                     outcome = outcome,
                     componentCountBucket = count,
                 )
-                assertEquals(event, InferenceV2ContractJson.decodeTelemetry(InferenceV2ContractJson.encodeTelemetry(event)))
+                assertEquals(
+                    event,
+                    InferenceV2ContractJson.decodeTelemetry(InferenceV2ContractJson.encodeTelemetry(event)),
+                )
             }
         }
     }
 
+    @Suppress("LongMethod", "CyclomaticComplexMethod")
     @Test
     fun `v2 serializable optional and boundary variants round trip`() {
         val component = (InferenceV2ContractFixtures.estimatedPhotoResult.outcome as InferenceV2Outcome.Components)
@@ -352,14 +468,21 @@ class InferenceV2ContractTest {
             .single()
         val withoutRegion = InferenceV2ContractJson.encode(InferenceV2ContractFixtures.estimatedPhotoResult)
             .replace("\"region\":{\"left\":0.1,\"top\":0.2,\"width\":0.3,\"height\":0.4},", "")
-        assertEquals(null, (InferenceV2ContractJson.decode(withoutRegion).outcome as InferenceV2Outcome.Components)
-            .components
-            .single()
-            .region)
+        assertEquals(
+            null,
+            (InferenceV2ContractJson.decode(withoutRegion).outcome as InferenceV2Outcome.Components)
+                .components
+                .single()
+                .region,
+        )
         assertEquals(
             CapabilityState.MODEL_REQUIRED,
             InferenceV2ContractJson.decodeCapability(
-                "{\"contractVersion\":\"inference-evidence/v2\",\"state\":\"model-required\",\"reason\":\"model-missing\",\"userMessageKey\":\"inference.capability.model_required\",\"engineId\":\"fixture-component-engine\",\"modelVersion\":\"\",\"taxonomyVersion\":\"\",\"calibrationVersion\":\"\"}",
+                """
+                    {"contractVersion":"inference-evidence/v2","state":"model-required","reason":"model-missing",
+                    "userMessageKey":"inference.capability.model_required","engineId":"fixture-component-engine",
+                    "modelVersion":"unavailable","taxonomyVersion":"unavailable","calibrationVersion":"unavailable"}
+                """.trimIndent().replace("\n", ""),
             ).state,
         )
 
@@ -373,12 +496,15 @@ class InferenceV2ContractTest {
                     reason = CapabilityReason.MODEL_MISSING,
                     userMessageKey = "inference.capability.typed",
                     engineId = "fixture-component-engine",
-                    modelVersion = "",
-                    taxonomyVersion = "",
-                    calibrationVersion = "",
+                    modelVersion = "unavailable",
+                    taxonomyVersion = "unavailable",
+                    calibrationVersion = "unavailable",
                 )
             }
-            assertEquals(capability, InferenceV2ContractJson.decodeCapability(InferenceV2ContractJson.encodeCapability(capability)))
+            assertEquals(
+                capability,
+                InferenceV2ContractJson.decodeCapability(InferenceV2ContractJson.encodeCapability(capability)),
+            )
         }
         CapabilityReason.entries.filterNot { it == CapabilityReason.NONE }.forEach { reason ->
             val capability = InferenceV2Capability(
@@ -387,11 +513,14 @@ class InferenceV2ContractTest {
                 reason = reason,
                 userMessageKey = "inference.capability.reason",
                 engineId = "fixture-component-engine",
-                modelVersion = "",
-                taxonomyVersion = "",
-                calibrationVersion = "",
+                modelVersion = "unavailable",
+                taxonomyVersion = "unavailable",
+                calibrationVersion = "unavailable",
             )
-            assertEquals(capability, InferenceV2ContractJson.decodeCapability(InferenceV2ContractJson.encodeCapability(capability)))
+            assertEquals(
+                capability,
+                InferenceV2ContractJson.decodeCapability(InferenceV2ContractJson.encodeCapability(capability)),
+            )
         }
         InferenceTelemetryEventType.entries.forEach { eventType ->
             InferenceRoute.entries.forEach { route ->
@@ -401,7 +530,10 @@ class InferenceV2ContractTest {
                         route = route,
                         capabilityState = state,
                     )
-                    assertEquals(event, InferenceV2ContractJson.decodeTelemetry(InferenceV2ContractJson.encodeTelemetry(event)))
+                    assertEquals(
+                        event,
+                        InferenceV2ContractJson.decodeTelemetry(InferenceV2ContractJson.encodeTelemetry(event)),
+                    )
                 }
             }
         }
@@ -411,7 +543,10 @@ class InferenceV2ContractTest {
                     durationBucket = duration,
                     resourceBucket = resource,
                 )
-                assertEquals(event, InferenceV2ContractJson.decodeTelemetry(InferenceV2ContractJson.encodeTelemetry(event)))
+                assertEquals(
+                    event,
+                    InferenceV2ContractJson.decodeTelemetry(InferenceV2ContractJson.encodeTelemetry(event)),
+                )
             }
         }
         ComponentVisibility.entries.forEach { visibility ->
@@ -443,13 +578,16 @@ class InferenceV2ContractTest {
             NormalizedVisibleRegion(0.0, 0.9, 0.1, 0.1),
             NormalizedVisibleRegion(0.9, 0.0, 0.1, 0.1),
         ).forEach { region ->
-            assertEquals(region, InferenceV2ContractJson.decode(
-                InferenceV2ContractJson.encode(
-                    InferenceV2ContractFixtures.estimatedPhotoResult.copy(
-                        outcome = InferenceV2Outcome.Components(listOf(component.copy(region = region))),
+            val decodedRegion = (
+                InferenceV2ContractJson.decode(
+                    InferenceV2ContractJson.encode(
+                        InferenceV2ContractFixtures.estimatedPhotoResult.copy(
+                            outcome = InferenceV2Outcome.Components(listOf(component.copy(region = region))),
+                        ),
                     ),
-                ),
-            ).let { (it.outcome as InferenceV2Outcome.Components).components.single().region })
+                ).outcome as InferenceV2Outcome.Components
+                ).components.single().region
+            assertEquals(region, decodedRegion)
         }
         assertFailsWith<IllegalArgumentException> { NormalizedVisibleRegion(0.0, -0.1, 0.1, 0.1) }
         assertFailsWith<IllegalArgumentException> { NormalizedVisibleRegion(0.0, 0.0, 0.1, 0.0) }
@@ -463,6 +601,7 @@ class InferenceV2ContractTest {
         assertFailsWith<IllegalArgumentException> { CalibratedConfidence(0.8, ConfidenceBand.MEDIUM) }
     }
 
+    @Suppress("LongMethod")
     @Test
     fun `v2 every validation predicate has an independently invalid example`() {
         val attempt = AttemptId("attempt-v2-equality")
@@ -606,7 +745,14 @@ class InferenceV2ContractTest {
                 contractVersion = INFERENCE_EVIDENCE_CONTRACT_V2,
                 inputModality = InferenceInputModality.TEXT,
                 outcome = InferenceV2Outcome.Components(
-                    listOf(component.copy(mass = MassEvidence.Abstained(MassAbstentionReason.IMAGE_QUALITY, "inference.mass.abstained"))),
+                    listOf(
+                        component.copy(
+                            mass = MassEvidence.Abstained(
+                                MassAbstentionReason.IMAGE_QUALITY,
+                                "inference.mass.abstained",
+                            ),
+                        ),
+                    ),
                 ),
             )
         }
@@ -616,6 +762,7 @@ class InferenceV2ContractTest {
         )
     }
 
+    @Suppress("LongMethod")
     @Test
     fun `v2 evidence equality distinguishes every allowed field`() {
         val component = (InferenceV2ContractFixtures.estimatedPhotoResult.outcome as InferenceV2Outcome.Components)
@@ -647,9 +794,9 @@ class InferenceV2ContractTest {
             reason = CapabilityReason.MODEL_MISSING,
             userMessageKey = "inference.capability.unavailable",
             engineId = "fixture-component-engine",
-            modelVersion = "",
-            taxonomyVersion = "",
-            calibrationVersion = "",
+            modelVersion = "unavailable",
+            taxonomyVersion = "unavailable",
+            calibrationVersion = "unavailable",
         )
         assertEquals(
             unavailableCapability,
@@ -773,6 +920,7 @@ class InferenceV2ContractTest {
         assertFalse(telemetry.equals("telemetry"))
     }
 
+    @Suppress("LongMethod")
     @Test
     fun `v2 decoders reject every required released evidence field`() {
         val estimated = InferenceV2ContractJson.encode(InferenceV2ContractFixtures.estimatedPhotoResult)
@@ -862,6 +1010,7 @@ class InferenceV2ContractTest {
         }
     }
 
+    @Suppress("LongMethod")
     @Test
     fun `v2 alternate decoder masks and union paths remain fail closed`() {
         val component = (InferenceV2ContractFixtures.estimatedPhotoResult.outcome as InferenceV2Outcome.Components)
@@ -894,6 +1043,7 @@ class InferenceV2ContractTest {
             listOf(
                 component.copy(
                     componentId = "component:text-1",
+                    region = null,
                     mass = MassEvidence.NotEvaluable(
                         MassNotEvaluableReason.TEXT_HAS_NO_VISIBLE_PORTION,
                         "inference.mass.text_has_no_visible_portion",
@@ -901,6 +1051,7 @@ class InferenceV2ContractTest {
                 ),
                 component.copy(
                     componentId = "component:text-2",
+                    region = null,
                     mass = MassEvidence.NotEvaluable(
                         MassNotEvaluableReason.TEXT_HAS_NO_VISIBLE_PORTION,
                         "inference.mass.text_has_no_visible_portion",
@@ -910,7 +1061,11 @@ class InferenceV2ContractTest {
         )
         assertEquals(
             InferenceInputModality.TEXT,
-            InferenceV2Result(INFERENCE_EVIDENCE_CONTRACT_V2, InferenceInputModality.TEXT, textComponents).inputModality,
+            InferenceV2Result(
+                INFERENCE_EVIDENCE_CONTRACT_V2,
+                InferenceInputModality.TEXT,
+                textComponents,
+            ).inputModality,
         )
         assertEquals(
             InferenceInputModality.TEXT,
@@ -985,8 +1140,16 @@ class InferenceV2ContractTest {
             InferenceV2ContractFixtures.failureResult,
         ).forEach { result ->
             val payload = InferenceV2ContractJson.encode(result).lowercase()
-            listOf("calorie", "macro", "micronutrient", "nutrition", "raw", "photoPath", "userText").forEach {
-                forbidden -> assertFalse(payload.contains(forbidden.lowercase()))
+            listOf(
+                "calorie",
+                "macro",
+                "micronutrient",
+                "nutrition",
+                "raw",
+                "photoPath",
+                "userText",
+            ).forEach { forbidden ->
+                assertFalse(payload.contains(forbidden.lowercase()))
             }
         }
         val telemetry = InferenceV2ContractJson.encodeTelemetry(InferenceV2ContractFixtures.telemetryEvent)
