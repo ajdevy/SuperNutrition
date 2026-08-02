@@ -1,7 +1,7 @@
 schema = "supernutrition.inference-evidence-compatibility-matrix.v2"
 contract_id = "inference-evidence"
 release = "v2"
-digest = "e84995d1198597b83d1550b9e641b58b09448ed8b6a571bebbc91b8b6fa1aed5"
+digest = "e2d3ec9fdad8d8e292fdb413647509e6ba813809f02ef31d11ea0c3f583e4c59"
 
 [[supported_pair]]
 producer = "domain-inference-v2"

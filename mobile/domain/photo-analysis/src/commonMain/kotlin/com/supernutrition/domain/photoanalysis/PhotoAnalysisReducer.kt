@@ -13,6 +13,7 @@ class PhotoAnalysisReducer(leases: PhotoLeaseStorePort, sessions: PhotoSessionSt
     private val transitions = PhotoAnalysisReducerTransitions(context)
     private val lifecycle = PhotoAnalysisReducerLifecycle(context)
     private val routeCoordinator = RouteAttemptCoordinator(attemptId)
+    private var inMemoryBackgroundState: PhotoAnalysisState? = null
 
     var state: PhotoAnalysisState = PhotoAnalysisState.Capture
         private set
@@ -22,8 +23,28 @@ class PhotoAnalysisReducer(leases: PhotoLeaseStorePort, sessions: PhotoSessionSt
 
     fun dispatch(event: PhotoAnalysisEvent) {
         val previous = state
-        val reduction = reduce(state, event)
+        val retainedState = if (previous is PhotoAnalysisState.Backgrounded && event is PhotoAnalysisEvent.Restored) {
+            inMemoryBackgroundState
+        } else {
+            null
+        }
+        val reduction = retainedState?.let { PhotoAnalysisReduction(lifecycle.restoreInMemory(it)) }
+            ?: reduce(state, event)
         state = reduction.state
+        when (event) {
+            PhotoAnalysisEvent.Backgrounded -> if (previous !is PhotoAnalysisState.Backgrounded) {
+                inMemoryBackgroundState = previous
+            }
+
+            PhotoAnalysisEvent.Restored,
+            is PhotoAnalysisEvent.RestoreFromSnapshot,
+            is PhotoAnalysisEvent.ReplacePhoto,
+            PhotoAnalysisEvent.Cancel,
+            PhotoAnalysisEvent.ScanAgain,
+            -> inMemoryBackgroundState = null
+
+            else -> Unit
+        }
         if (state != previous && event.invalidatesRoute()) {
             routeCoordinator.cancel()
         }

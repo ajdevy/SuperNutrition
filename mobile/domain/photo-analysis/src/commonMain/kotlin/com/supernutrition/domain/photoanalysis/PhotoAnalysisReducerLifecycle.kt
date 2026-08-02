@@ -15,11 +15,35 @@ internal class PhotoAnalysisReducerLifecycle(private val context: PhotoAnalysisR
             PhotoAnalysisState.Analyzing(snapshot.ref, snapshot.requestId)
         }
 
-        is PhotoAnalysisBackgroundSnapshot.CandidateReview -> restoreInput(snapshot.ref) {
-            PhotoAnalysisState.CandidateReview(snapshot.ref, snapshot.requestId)
-        }
+        is PhotoAnalysisBackgroundSnapshot.CandidateReview -> failedRestore(snapshot.ref)
 
         is PhotoAnalysisBackgroundSnapshot.Recovery -> restoreRecovery(snapshot)
+    }
+
+    /**
+     * The in-memory activity path may retain typed review evidence. Process snapshots never do,
+     * so their candidate-review path above fails closed instead of recreating an untyped review.
+     */
+    fun restoreInMemory(state: PhotoAnalysisState): PhotoAnalysisState = when (state) {
+        PhotoAnalysisState.Capture -> PhotoAnalysisState.Capture
+
+        is PhotoAnalysisState.Preparing -> restorePreparing(state.ref)
+
+        is PhotoAnalysisState.Ready -> restoreInput(state.input.ref, PhotoAnalysisState::Ready)
+
+        is PhotoAnalysisState.Analyzing -> restoreInput(state.ref) {
+            PhotoAnalysisState.Analyzing(state.ref, state.requestId, state.stage)
+        }
+
+        is PhotoAnalysisState.CandidateReview -> restoreInput(state.ref) {
+            PhotoAnalysisState.CandidateReview(state.ref, state.requestId, state.draft)
+        }
+
+        is PhotoAnalysisState.Recovery -> restoreRecovery(
+            PhotoAnalysisBackgroundSnapshot.Recovery(state.reason, state.ref),
+        )
+
+        is PhotoAnalysisState.Backgrounded -> restore(state.snapshot)
     }
 
     private fun restorePreparing(ref: PhotoRef): PhotoAnalysisState =

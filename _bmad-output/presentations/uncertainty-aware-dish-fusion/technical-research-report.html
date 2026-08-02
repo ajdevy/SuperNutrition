@@ -1,0 +1,644 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Визуальный отчёт по ресерчу uncertainty-aware fusion для определения блюд и ингредиентов в SuperNutrition.">
+  <title>Когда блюдо знает больше, чем фотография</title>
+  <link rel="icon" href="data:,">
+  <style>
+    :root {
+      --ink: #17212b;
+      --muted: #62717a;
+      --paper: #f5f2eb;
+      --paper-strong: #fffdfa;
+      --navy: #132b3a;
+      --navy-2: #1e4150;
+      --teal: #4aa89c;
+      --teal-soft: #dcefeb;
+      --orange: #e9764d;
+      --orange-soft: #ffe3d4;
+      --yellow: #f2ca67;
+      --blue-soft: #dbe9f4;
+      --line: #d9dfdc;
+      --shadow: 0 18px 60px rgba(19, 43, 58, .13);
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+    a { color: inherit; }
+    a:focus-visible, button:focus-visible, summary:focus-visible {
+      outline: 3px solid var(--orange);
+      outline-offset: 4px;
+    }
+    button { font: inherit; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      min-height: 58px;
+      padding: 12px clamp(18px, 4vw, 64px);
+      color: var(--paper-strong);
+      background: rgba(19, 43, 58, .96);
+      backdrop-filter: blur(12px);
+    }
+    .brand {
+      font-size: .83rem;
+      font-weight: 850;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .toc {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px 18px;
+      font-size: .84rem;
+    }
+    .toc a { color: rgba(255, 253, 250, .74); text-decoration: none; }
+    .toc a:hover, .toc a[aria-current="true"] { color: var(--yellow); }
+    .progress {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      height: 3px;
+      background: rgba(255,255,255,.12);
+    }
+    .progress span {
+      display: block;
+      width: 0;
+      height: 100%;
+      background: var(--yellow);
+      transition: width .25s ease;
+    }
+
+    main { overflow: hidden; }
+    section { scroll-margin-top: 82px; }
+    .section {
+      width: min(1160px, calc(100% - 36px));
+      margin: 0 auto;
+      padding: clamp(64px, 9vw, 120px) 0;
+    }
+    .hero {
+      color: var(--paper-strong);
+      background:
+        radial-gradient(circle at 86% 16%, rgba(242, 202, 103, .28), transparent 22rem),
+        radial-gradient(circle at 12% 92%, rgba(74, 168, 156, .25), transparent 24rem),
+        var(--navy);
+    }
+    .hero-inner {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(290px, .92fr);
+      align-items: center;
+      gap: clamp(38px, 7vw, 100px);
+      min-height: 76vh;
+    }
+    .eyebrow, .kicker {
+      margin: 0 0 14px;
+      color: var(--orange);
+      font-size: .76rem;
+      font-weight: 850;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    .hero .eyebrow { color: var(--yellow); }
+    h1, h2, h3 { margin: 0; line-height: 1.08; letter-spacing: -.035em; }
+    h1 { max-width: 760px; font-size: clamp(3.1rem, 7.4vw, 7rem); font-weight: 880; }
+    h2 { font-size: clamp(2.1rem, 4.6vw, 4.45rem); }
+    h3 { font-size: clamp(1.2rem, 2vw, 1.55rem); }
+    .lead { max-width: 680px; margin: 26px 0 0; font-size: clamp(1.1rem, 2vw, 1.35rem); }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 12px 18px;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .button.primary { color: var(--navy); background: var(--yellow); }
+    .button.secondary { color: var(--paper-strong); border-color: rgba(255,255,255,.46); }
+    .hero-card {
+      position: relative;
+      padding: clamp(24px, 4vw, 42px);
+      color: var(--ink);
+      background: var(--paper-strong);
+      border: 10px solid rgba(255,255,255,.13);
+      border-radius: 34px 34px 18px 18px;
+      box-shadow: var(--shadow);
+      transform: rotate(2deg);
+    }
+    .hero-card::before {
+      content: "observed on device";
+      position: absolute;
+      top: -19px;
+      right: 24px;
+      padding: 7px 11px;
+      color: var(--navy);
+      background: var(--yellow);
+      border-radius: 9px;
+      font-size: .73rem;
+      font-weight: 850;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      transform: rotate(-4deg);
+    }
+    .hero-card h3 { margin-bottom: 22px; }
+    .trace-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 18px;
+      padding: 15px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .trace-row:last-child { border-bottom: 0; }
+    .trace-label { color: var(--muted); font-size: .82rem; }
+    .trace-value { margin-top: 3px; font-size: 1.1rem; font-weight: 850; }
+    .confidence { color: var(--orange); font-size: 1.3rem; font-weight: 880; }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: .78rem;
+      font-weight: 800;
+    }
+    .tag::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+    .tag.teal { color: #207c70; background: var(--teal-soft); }
+    .tag.orange { color: #a54627; background: var(--orange-soft); }
+    .tag.blue { color: #2c648b; background: var(--blue-soft); }
+    .section-head { max-width: 780px; margin-bottom: 40px; }
+    .section-head p { max-width: 720px; margin: 20px 0 0; color: var(--muted); font-size: 1.12rem; }
+    .dark { color: var(--paper-strong); background: var(--navy); }
+    .dark .kicker { color: var(--yellow); }
+    .dark .section-head p { color: rgba(255, 253, 250, .72); }
+
+    .quote {
+      margin: 0;
+      padding: 22px 24px;
+      border-left: 5px solid var(--orange);
+      color: var(--navy);
+      background: var(--orange-soft);
+      border-radius: 0 18px 18px 0;
+      font-size: clamp(1.2rem, 2.2vw, 1.65rem);
+      font-weight: 780;
+      line-height: 1.25;
+    }
+    .dark .quote { color: var(--navy); }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+    .panel {
+      padding: clamp(22px, 3vw, 32px);
+      background: var(--paper-strong);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 35px rgba(19, 43, 58, .06);
+    }
+    .dark .panel { color: var(--ink); }
+    .panel p { color: var(--muted); }
+    .panel p:last-child { margin-bottom: 0; }
+    .number {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      margin-bottom: 20px;
+      color: var(--paper-strong);
+      background: var(--navy);
+      border-radius: 13px;
+      font-weight: 880;
+    }
+    .dark .number { color: var(--navy); background: var(--yellow); }
+    .mini-list { margin: 18px 0 0; padding: 0; list-style: none; }
+    .mini-list li { position: relative; margin: 11px 0 0; padding-left: 21px; color: var(--muted); }
+    .mini-list li::before { content: ""; position: absolute; top: .65em; left: 0; width: 8px; height: 8px; background: var(--teal); border-radius: 50%; }
+    .mini-list strong { color: var(--ink); }
+    .dark .mini-list strong { color: var(--ink); }
+
+    .failure-map {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr);
+      gap: 22px;
+      align-items: stretch;
+      margin-top: 30px;
+    }
+    .funnel {
+      display: grid;
+      gap: 12px;
+      align-content: center;
+      padding: 26px;
+      background: #f8fbfa;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+    .funnel-step {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 14px;
+      padding: 15px 17px;
+      background: var(--paper-strong);
+      border: 1px solid var(--line);
+      border-radius: 15px;
+    }
+    .funnel-step .mark { color: var(--orange); font-size: 1.2rem; font-weight: 900; }
+    .funnel-step small { color: var(--muted); }
+    .arrow { color: var(--muted); text-align: center; font-size: 1.5rem; line-height: 1; }
+    .three-failures { display: grid; gap: 13px; }
+    .failure {
+      padding: 18px;
+      border-radius: 18px;
+      border: 1px solid transparent;
+    }
+    .failure h3 { margin-bottom: 6px; font-size: 1.1rem; }
+    .failure p { margin: 0; color: var(--muted); font-size: .94rem; }
+    .failure.miss { background: var(--blue-soft); border-color: #bfd8e8; }
+    .failure.false { background: var(--orange-soft); border-color: #f5c8b5; }
+    .failure.prior { background: var(--teal-soft); border-color: #bfdfd8; }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      align-items: center;
+      gap: 10px;
+      margin-top: 36px;
+    }
+    .pipeline-node {
+      min-height: 142px;
+      padding: 18px 14px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 18px;
+    }
+    .pipeline-node strong { display: block; margin-bottom: 9px; font-size: 1rem; }
+    .pipeline-node span { display: block; color: rgba(255,255,255,.68); font-size: .88rem; }
+    .pipeline-node.fusion { color: var(--navy); background: var(--yellow); border-color: var(--yellow); }
+    .pipeline-node.fusion span { color: rgba(19,43,58,.76); }
+    .pipeline-arrow { color: var(--yellow); font-size: 1.6rem; text-align: center; }
+    .subline { margin: 20px 0 0; color: var(--muted); font-size: .94rem; }
+    .dark .subline { color: rgba(255,255,255,.66); }
+
+    .state-table { width: 100%; border-collapse: collapse; margin-top: 28px; font-size: .96rem; }
+    .state-table caption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    .state-table th, .state-table td { padding: 17px 15px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+    .state-table th { color: var(--muted); font-size: .76rem; letter-spacing: .08em; text-transform: uppercase; }
+    .state-table td:first-child { width: 31%; font-weight: 850; }
+    .state-table tr:last-child td { border-bottom: 0; }
+    .state-table .show { color: #22796d; }
+    .state-table .hide { color: #a54627; }
+    .state-table .review { color: #2c648b; }
+    .example-strip { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 30px; }
+    .example {
+      padding: 20px;
+      border-radius: 18px;
+      background: #f8fbfa;
+      border: 1px solid var(--line);
+    }
+    .example small { display: block; margin-bottom: 8px; color: var(--muted); }
+    .example strong { display: block; font-size: 1.16rem; }
+    .example p { margin: 8px 0 0; color: var(--muted); font-size: .92rem; }
+
+    .ablation { display: grid; gap: 10px; margin-top: 32px; }
+    .ablation-row { display: grid; grid-template-columns: minmax(150px, .8fr) 1.7fr auto; align-items: center; gap: 18px; padding: 14px 17px; background: var(--paper-strong); border: 1px solid var(--line); border-radius: 15px; }
+    .ablation-row strong { font-size: .96rem; }
+    .ablation-row span { color: var(--muted); font-size: .9rem; }
+    .ablation-row .result { color: var(--orange); font-size: .8rem; font-weight: 850; letter-spacing: .06em; text-transform: uppercase; }
+    .ablation-row.recommended { background: var(--teal-soft); border-color: #aad5cd; }
+    .ablation-row.recommended .result { color: #207c70; }
+    .metric-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 28px; }
+    .metric { padding: 20px; background: var(--navy); border-radius: 18px; }
+    .metric strong { display: block; color: var(--yellow); font-size: 1.6rem; }
+    .metric span { display: block; margin-top: 7px; color: rgba(255,255,255,.74); font-size: .88rem; }
+    .note { margin-top: 22px; color: var(--muted); font-size: .93rem; }
+
+    .roadmap { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin-top: 32px; }
+    .roadmap-step { position: relative; min-height: 205px; padding: 20px 17px; background: var(--paper-strong); border: 1px solid var(--line); border-radius: 20px; }
+    .roadmap-step:not(:last-child)::after { content: "→"; position: absolute; z-index: 2; top: 48%; right: -15px; color: var(--orange); font-size: 1.5rem; font-weight: 900; }
+    .roadmap-step b { display: block; margin-bottom: 10px; color: var(--orange); font-size: .76rem; letter-spacing: .12em; text-transform: uppercase; }
+    .roadmap-step h3 { font-size: 1.12rem; }
+    .roadmap-step p { margin: 12px 0 0; color: var(--muted); font-size: .9rem; }
+    .definition { margin-top: 28px; padding: 25px 28px; background: var(--teal-soft); border: 1px solid #b8ddd6; border-radius: var(--radius); }
+    .definition h3 { color: #155f56; }
+    .definition p { margin-bottom: 0; color: #315e59; }
+    .definition code, .inline-code { padding: 2px 6px; color: var(--navy); background: rgba(255,255,255,.68); border-radius: 6px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .88em; }
+
+    .sources { background: #ece9e0; }
+    .source-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 30px; margin: 26px 0 0; padding: 0; list-style: none; }
+    .source-list li { padding: 10px 0; border-bottom: 1px solid var(--line); }
+    .source-list a { color: var(--navy-2); font-weight: 750; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+    details { margin-top: 26px; padding: 18px 20px; background: rgba(255,255,255,.56); border: 1px solid var(--line); border-radius: 16px; }
+    summary { cursor: pointer; font-weight: 850; }
+    details p { max-width: 820px; color: var(--muted); }
+    footer { padding: 28px 18px 44px; color: rgba(255,255,255,.68); background: var(--navy); text-align: center; font-size: .86rem; }
+
+    @media (max-width: 900px) {
+      .hero-inner, .failure-map { grid-template-columns: 1fr; }
+      .hero-card { max-width: 620px; transform: none; }
+      .pipeline { grid-template-columns: 1fr; }
+      .pipeline-arrow { transform: rotate(90deg); }
+      .roadmap { grid-template-columns: 1fr; }
+      .roadmap-step { min-height: 0; }
+      .roadmap-step:not(:last-child)::after { top: auto; right: auto; bottom: -17px; left: 50%; transform: rotate(90deg); }
+      .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 680px) {
+      .topbar { align-items: flex-start; flex-direction: column; gap: 7px; }
+      .toc { justify-content: flex-start; gap: 5px 14px; }
+      .section { width: min(100% - 28px, 1160px); padding: 60px 0; }
+      .hero-inner { min-height: auto; padding-top: 38px; padding-bottom: 64px; }
+      .grid-2, .grid-3, .example-strip, .source-list { grid-template-columns: 1fr; }
+      .state-table { display: block; overflow-x: auto; white-space: normal; }
+      .state-table th, .state-table td { min-width: 170px; }
+      .ablation-row { grid-template-columns: 1fr; gap: 6px; }
+      .ablation-row .result { justify-self: start; }
+      .metric-grid { grid-template-columns: 1fr 1fr; }
+      h1 { font-size: clamp(3rem, 16vw, 5.2rem); }
+    }
+    @media print {
+      .topbar { position: static; color: var(--ink); background: transparent; border-bottom: 1px solid var(--line); }
+      .toc, .progress, .hero-actions { display: none; }
+      .hero, .dark, footer { color: var(--ink); background: var(--paper-strong); }
+      .dark .section-head p, .dark .subline { color: var(--muted); }
+      .dark .panel, .metric, .pipeline-node { color: var(--ink); background: var(--paper-strong); border: 1px solid var(--line); }
+      .pipeline-node span, .metric span { color: var(--muted); }
+      section { break-inside: avoid; }
+      a { text-decoration: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">SuperNutrition · Research report</div>
+    <nav class="toc" aria-label="Разделы отчёта">
+      <a href="#case">Кейс</a>
+      <a href="#decision">Решение</a>
+      <a href="#semantics">Семантика</a>
+      <a href="#evidence">Доказательства</a>
+      <a href="#next">Следующий шаг</a>
+    </nav>
+    <div class="progress" aria-hidden="true"><span></span></div>
+  </header>
+
+  <main>
+    <section class="hero" id="top">
+      <div class="section hero-inner">
+        <div>
+          <p class="eyebrow">Technical research · 02.08.2026</p>
+          <h1>Фотография должна отличать «вижу» от «ожидаю».</h1>
+          <p class="lead">Как SuperNutrition может объединять определение блюда и ингредиентов, не превращая догадку по рецепту в ложное визуальное утверждение.</p>
+          <div class="hero-actions">
+            <a class="button primary" href="#decision">Ключевой вывод</a>
+            <a class="button secondary" href="../../planning-artifacts/research/technical-uncertainty-aware-dish-ingredient-fusion-research-2026-08-02.md">Открыть исходный ресерч</a>
+          </div>
+        </div>
+        <aside class="hero-card" aria-label="Наблюдаемый пример с устройства">
+          <h3>Наблюдаемый конфликт</h3>
+          <div class="trace-row">
+            <div><div class="trace-label">Dish candidate</div><div class="trace-value">pork_chop</div></div>
+            <div class="confidence">dish</div>
+          </div>
+          <div class="trace-row">
+            <div><div class="trace-label">Detector proposal</div><div class="trace-value">orange</div></div>
+            <span class="tag orange">проверить</span>
+          </div>
+          <div class="trace-row">
+            <div><div class="trace-label">Plausible, but missed</div><div class="trace-value">broccoli</div></div>
+            <span class="tag blue">не видно</span>
+          </div>
+          <p class="subline">Главная проблема: один список смешивает разные типы доказательств.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="case">
+      <div class="section-head">
+        <p class="kicker">01 · Situation</p>
+        <h2>Пользователь хочет понять состав блюда, а получает смесь сигналов.</h2>
+        <p>В текущем PoC dish classifier, detector и recipe knowledge оказываются в одном пользовательском результате. Поэтому «pork chop» может соседствовать с «orange», а отсутствие «broccoli» выглядит как доказательство отсутствия.</p>
+      </div>
+      <div class="grid-3">
+        <article class="panel">
+          <div class="number">1</div>
+          <h3>Блюдо — это гипотеза</h3>
+          <p><span class="inline-code">pork_chop</span> говорит, какое блюдо больше всего похоже на фотографию. Это не маска и не список реально видимых продуктов.</p>
+        </article>
+        <article class="panel">
+          <div class="number">2</div>
+          <h3>Детектор — это отдельный сигнал</h3>
+          <p><span class="inline-code">orange</span> — предложение визуального детектора. Оно требует локализации и калиброванного порога перед тем, как попасть в основной overlay.</p>
+        </article>
+        <article class="panel">
+          <div class="number">3</div>
+          <h3>Рецепт — это контекст</h3>
+          <p><span class="inline-code">broccoli</span> может быть составно правдоподобен, но не локализован. Контекст должен поддержать review, а не выдать визуальный факт.</p>
+        </article>
+      </div>
+      <blockquote class="quote" style="margin-top: 28px;">Один confidence не может честно описать одновременно «модель видит объект» и «этот объект типичен для блюда».</blockquote>
+    </section>
+
+    <section class="dark" id="friction">
+      <div class="section">
+        <div class="section-head">
+          <p class="kicker">02 · Friction</p>
+          <h2>Hard-prior фильтр делает ошибку тихой и необратимой.</h2>
+          <p>Он кажется простым: взять dish top‑1, оставить только ожидаемые ингредиенты и убрать остальное. Но один и тот же результат может означать три разные вещи — и для каждой нужен свой UX и свой quality gate.</p>
+        </div>
+        <div class="failure-map">
+          <div class="funnel" aria-label="Путь hard-prior фильтра">
+            <div class="funnel-step"><span class="mark">01</span><strong>Dish top‑1</strong><small>pork_chop</small></div>
+            <div class="arrow" aria-hidden="true">↓</div>
+            <div class="funnel-step"><span class="mark">02</span><strong>Hard whitelist</strong><small>ожидаемый состав</small></div>
+            <div class="arrow" aria-hidden="true">↓</div>
+            <div class="funnel-step"><span class="mark">03</span><strong>Один список для UI</strong><small>видно / не видно смешаны</small></div>
+          </div>
+          <div class="three-failures">
+            <article class="failure miss"><h3>Detector miss</h3><p>Ингредиент есть, но маленький, закрыт, смешан или модель его не локализовала.</p></article>
+            <article class="failure false"><h3>False proposal</h3><p>Детектор предложил orange, но визуального подтверждения недостаточно.</p></article>
+            <article class="failure prior"><h3>Prior-only knowledge</h3><p>Брокколи типична для состава, но рецепт сам по себе не доказывает её наличие на фото.</p></article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="dark" id="decision" style="background: #1e4150;">
+      <div class="section">
+        <div class="section-head">
+          <p class="kicker">03 · Change</p>
+          <h2>Решение: calibrated top‑k late fusion.</h2>
+          <p>Сохраняем независимые каналы, калибруем их отдельно и только потом объединяем в детерминированном fusion layer. Dish prior может ранжировать и поддерживать, но не может «нарисовать» регион на фото.</p>
+        </div>
+        <div class="pipeline" aria-label="Рекомендуемая архитектура объединения сигналов">
+          <div class="pipeline-node"><strong>Фото</strong><span>image + grid prompt</span></div>
+          <div class="pipeline-arrow" aria-hidden="true">→</div>
+          <div class="pipeline-node"><strong>2 канала</strong><span>dish distribution<br>visual proposals</span></div>
+          <div class="pipeline-arrow" aria-hidden="true">→</div>
+          <div class="pipeline-node fusion"><strong>Late fusion</strong><span>top‑k prior + calibration + quality gates</span></div>
+        </div>
+        <div class="pipeline" style="margin-top: 12px; grid-template-columns: 1fr auto 1fr; max-width: 690px;">
+          <div class="pipeline-node"><strong>Evidence contract</strong><span>state, provenance, reason</span></div>
+          <div class="pipeline-arrow" aria-hidden="true">→</div>
+          <div class="pipeline-node"><strong>UI / review</strong><span>show, separate, or abstain</span></div>
+        </div>
+        <p class="subline">Top‑k нужен, чтобы низкая уверенность в dish top‑1 или смешанное блюдо не создавало confirmation bias.</p>
+      </div>
+    </section>
+
+    <section class="section" id="semantics">
+      <div class="section-head">
+        <p class="kicker">04 · Claim semantics</p>
+        <h2>Каждому типу доказательства — свой статус.</h2>
+        <p>Это не просто переименование. Разные статусы позволяют UI, nutrition binding и debug-режиму принимать разные решения, не теряя исходные model outputs.</p>
+      </div>
+      <div class="panel" style="padding: 12px 18px; overflow-x: auto;">
+        <table class="state-table">
+          <caption>Evidence states и правила их показа в UI</caption>
+          <thead><tr><th>Evidence state</th><th>Что означает</th><th>Основной overlay</th><th>Review / debug</th></tr></thead>
+          <tbody>
+            <tr><td><span class="tag teal">VISUAL_DETECTED</span></td><td>Локализованное визуальное доказательство прошло precision gate.</td><td class="show">Показывать</td><td>Detected candidate</td></tr>
+            <tr><td><span class="tag blue">COMPOSITION_PLAUSIBLE</span></td><td>Поддержка со стороны блюда/онтологии есть, но достаточной локализации нет.</td><td class="hide">Не показывать box</td><td class="review">«Вероятно по составу, не подтверждено визуально»</td></tr>
+            <tr><td><span class="tag orange">VISUAL_PROPOSAL_LOW_CONFIDENCE</span></td><td>Детектор выдал слабое предложение.</td><td class="hide">Скрыть</td><td class="review">Сохранить для debug</td></tr>
+            <tr><td><span class="tag orange">REJECTED_ARTIFACT</span></td><td>Предложение конфликтует с визуальной/онтологической политикой.</td><td class="hide">Скрыть</td><td class="review">Хранить причину отказа</td></tr>
+            <tr><td><span class="tag blue">UNKNOWN_OR_ABSTAINED</span></td><td>Недостаточно данных, high disagreement, poor image или неизвестное блюдо.</td><td class="hide">Не делать forced claim</td><td class="review">Попросить review / новый input</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="example-strip" aria-label="Как будет интерпретирован текущий кейс">
+        <article class="example"><small>Dish hypothesis</small><strong>pork_chop</strong><p>Гипотеза блюда с calibrated dish confidence.</p></article>
+        <article class="example"><small>Composition candidate</small><strong>broccoli</strong><p>Правдоподобен по составу, но не заявляется как видимый.</p></article>
+        <article class="example"><small>Raw proposal</small><strong>orange</strong><p>Останется в debug, пока не пройдёт visual gate.</p></article>
+      </div>
+    </section>
+
+    <section class="section" id="evidence">
+      <div class="section-head">
+        <p class="kicker">05 · Proof</p>
+        <h2>Решение принимаем по измеряемому риску, а не по более длинному списку.</h2>
+        <p>Исследование предлагает сравнить политики на фиксированных публичных данных и conflict slices. Пороговые значения нельзя честно придумать заранее — их нужно получить из baseline run и product risk tolerance.</p>
+      </div>
+      <div class="ablation" aria-label="Лестница сравнительного benchmark">
+        <div class="ablation-row"><strong>No prior</strong><span>Только визуальный detector</span><span class="result">baseline</span></div>
+        <div class="ablation-row"><strong>Hard prior</strong><span>Top‑1 whitelist удаляет несоответствия</span><span class="result">reject</span></div>
+        <div class="ablation-row"><strong>Top‑1 soft prior</strong><span>Prior влияет на rank, но всё ещё зависит от top‑1</span><span class="result">transitional</span></div>
+        <div class="ablation-row"><strong>Top‑k soft prior</strong><span>Composition support как смесь нескольких dish hypotheses</span><span class="result">compare</span></div>
+        <div class="ablation-row recommended"><strong>Top‑k calibrated fusion</strong><span>Visual evidence + composition support + quality/open-set gates</span><span class="result">recommended</span></div>
+      </div>
+      <div class="metric-grid" aria-label="Группы метрик качества">
+        <div class="metric"><strong>Precision</strong><span>visible-claim precision при полезном coverage</span></div>
+        <div class="metric"><strong>Recall</strong><span>ingredient multilabel recall и dish top‑k</span></div>
+        <div class="metric"><strong>Calibration</strong><span>ECE, Brier, NLL и risk–coverage</span></div>
+        <div class="metric"><strong>Runtime</strong><span>p50/p95 latency, memory, size, thermal</span></div>
+      </div>
+      <p class="note"><strong>Обязательные slices:</strong> mixed/overlap, dish-prior conflict, top‑1/top‑2 disagreement, unknown/non-food/poor quality, device/lighting, raw/cooked и cuisine variation.</p>
+    </section>
+
+    <section class="section dark" id="next">
+      <div class="section-head">
+        <p class="kicker">06 · Action</p>
+        <h2>Следующий implementation slice — зафиксировать смысл до настройки весов.</h2>
+        <p>Полный joint model — долгий future track. Ближайший безопасный выигрыш даёт контракт, replay fixtures, calibration и shadow mode поверх уже существующих model adapters.</p>
+      </div>
+      <div class="roadmap">
+        <article class="roadmap-step"><b>R1</b><h3>Evidence contract</h3><p>Статусы, provenance, model/ontology/calibration versions и decision reason.</p></article>
+        <article class="roadmap-step"><b>R2</b><h3>Ablation harness</h3><p>Пять политик на fixed public-data и curated conflict slices.</p></article>
+        <article class="roadmap-step"><b>R3</b><h3>Separate calibration</h3><p>Dish и detector калибруются независимо; raw scores не складываются.</p></article>
+        <article class="roadmap-step"><b>R4</b><h3>Top‑k fusion</h3><p>Small deterministic baseline или meta-model с отдельными claim gates.</p></article>
+        <article class="roadmap-step"><b>R5</b><h3>Review-safe UI</h3><p>Overlay только для VISUAL_DETECTED; остальное — отдельные статусы.</p></article>
+      </div>
+      <div class="definition">
+        <h3>Definition of Done для research flag</h3>
+        <p>Host benchmark + Android device evidence + iOS evidence when available + contract/UI tests; complete provenance; zero stale-result regressions; rollback к старой policy остаётся возможным.</p>
+      </div>
+    </section>
+
+    <section class="section sources" id="sources">
+      <div class="section-head">
+        <p class="kicker">Appendix</p>
+        <h2>Что подтверждено и где остаётся неопределённость.</h2>
+        <p>Архитектурный вывод имеет высокую техническую уверенность. Конкретные weights и thresholds требуют project-specific calibration set и ещё не являются production evidence.</p>
+      </div>
+      <div class="grid-2">
+        <div class="panel">
+          <h3>Ключевые источники</h3>
+          <ul class="source-list">
+            <li><a href="https://openaccess.thecvf.com/content/CVPR2021/papers/Wu_A_Large-Scale_Benchmark_for_Food_Image_Segmentation_CVPR_2021_paper.pdf" target="_blank" rel="noreferrer">FoodSeg103 benchmark</a></li>
+            <li><a href="https://github.com/google-research-datasets/Nutrition5k" target="_blank" rel="noreferrer">Nutrition5k official repository</a></li>
+            <li><a href="https://mm.cs.uec.ac.jp/uecfoodpix/" target="_blank" rel="noreferrer">UECFoodPix official dataset</a></li>
+            <li><a href="https://proceedings.mlr.press/v70/guo17a.html" target="_blank" rel="noreferrer">Modern neural network calibration</a></li>
+            <li><a href="https://proceedings.mlr.press/v97/geifman19a.html" target="_blank" rel="noreferrer">Selective prediction / reject option</a></li>
+            <li><a href="https://onnxruntime.ai/docs/tutorials/mobile/" target="_blank" rel="noreferrer">ONNX Runtime Mobile</a></li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Ограничения ресерча</h3>
+          <ul class="mini-list">
+            <li><strong>Новый 300-meal weighed corpus не собирался.</strong> Для этого отчёта использованы публичные источники и curated conflict cases.</li>
+            <li><strong>Публичные датасеты не равны user meals.</strong> Есть ограничения по cuisine, domain shift и визуальной наблюдаемости скрытых компонентов.</li>
+            <li><strong>Thresholds ещё не production-ready.</strong> Они должны появиться после baseline, calibration и slice report.</li>
+            <li><strong>Доказательство не должно быть одной цифрой.</strong> Нужны claim-specific states, provenance и возможность abstain.</li>
+          </ul>
+        </div>
+      </div>
+      <details>
+        <summary>Полный список источников и технических рекомендаций</summary>
+        <p>Подробный BMAD technical research с архитектурой, integration patterns, data contract, roadmap, рисками и source verification находится в <a href="../../planning-artifacts/research/technical-uncertainty-aware-dish-ingredient-fusion-research-2026-08-02.md">исходном документе</a>.</p>
+        <p>В нём также зафиксированы рекомендации по JSON fixtures, versioned manifests, model digests, Android/iOS parity, ONNX Runtime Mobile и отдельному consented post-release correction loop.</p>
+      </details>
+    </section>
+  </main>
+
+  <footer>
+    SuperNutrition · Uncertainty-aware dish and ingredient fusion · Research complete · 02.08.2026
+  </footer>
+
+  <script>
+    (() => {
+      const sections = [...document.querySelectorAll('main > section[id]')];
+      const links = [...document.querySelectorAll('.toc a')];
+      const progress = document.querySelector('.progress span');
+
+      const setActive = (id) => {
+        links.forEach((link) => link.setAttribute('aria-current', link.hash === '#' + id ? 'true' : 'false'));
+        const index = Math.max(0, sections.findIndex((section) => section.id === id));
+        progress.style.width = `${((index + 1) / sections.length) * 100}%`;
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (visible) setActive(visible.target.id);
+      }, { rootMargin: '-20% 0px -65% 0px', threshold: [0, .2, .5, 1] });
+      sections.forEach((section) => observer.observe(section));
+      setActive('top');
+
+      document.addEventListener('keydown', (event) => {
+        if (event.target.closest('input, textarea, select, button, a, summary')) return;
+        if (!['ArrowDown', 'ArrowRight', 'ArrowUp', 'ArrowLeft'].includes(event.key)) return;
+        const current = sections.findIndex((section) => section.getBoundingClientRect().top >= -120 && section.getBoundingClientRect().top < window.innerHeight * .55);
+        const direction = event.key === 'ArrowDown' || event.key === 'ArrowRight' ? 1 : -1;
+        const next = sections[Math.min(sections.length - 1, Math.max(0, current + direction))];
+        if (next) { event.preventDefault(); next.scrollIntoView({ behavior: 'smooth' }); }
+      });
+    })();
+  </script>
+</body>
+</html>

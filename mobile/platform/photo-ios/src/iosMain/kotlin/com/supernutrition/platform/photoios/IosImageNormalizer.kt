@@ -38,7 +38,10 @@ class IosImageNormalizer(
     private val common = PhotoInputNormalizer(maxDimension = maxDimension, digest = digest)
 
     @Suppress("ThrowsCount")
-    fun normalize(ref: PhotoRef, sourceData: NSData): NormalizedPhotoInput {
+    fun normalize(ref: PhotoRef, sourceData: NSData): NormalizedPhotoInput = normalizeWithPreview(ref, sourceData).input
+
+    @Suppress("ThrowsCount")
+    fun normalizeWithPreview(ref: PhotoRef, sourceData: NSData): IosNormalizedPhoto {
         if (sourceData.length == 0uL) {
             throw PhotoPreparationException("Photo bytes must not be empty")
         }
@@ -68,7 +71,7 @@ class IosImageNormalizer(
         ) ?: throw PhotoPreparationException("iOS could not encode the normalized JPEG")
         val rawBytes = normalizedData.toByteArray()
 
-        return common.normalize(
+        val normalized = common.normalize(
             RawPhoto(
                 ref = ref,
                 bytes = rawBytes.withoutJpegApplicationMetadata(),
@@ -79,6 +82,7 @@ class IosImageNormalizer(
                 metadataKeys = PhotoNormalizationDefaults.METADATA_KEYS,
             ),
         )
+        return IosNormalizedPhoto(input = normalized, preview = normalizedImage)
     }
 
     private fun drawOnMainThread(image: UIImage, width: Double, height: Double, scale: Double): UIImage? {
@@ -102,6 +106,9 @@ class IosImageNormalizer(
         return rendered
     }
 }
+
+/** Normalized domain input plus a display-only native image copy. */
+class IosNormalizedPhoto(val input: NormalizedPhotoInput, val preview: UIImage)
 
 /** Uses the platform crypto implementation instead of maintaining SHA-256 here. */
 @OptIn(ExperimentalForeignApi::class)

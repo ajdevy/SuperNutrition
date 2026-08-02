@@ -10,11 +10,17 @@ import platform.UIKit.UIViewController
 fun PhotoAnalysisViewController(
     feature: PhotoAnalysisFeature,
     copy: PhotoAnalysisPresenterCopy,
+    retainedPhoto: () -> IosRetainedPhotoPreview?,
     onNativeAction: (PhotoAnalysisNativeAction) -> Unit,
 ): UIViewController = ComposeUIViewController {
+    val preview = retainedPhoto()
     PhotoAnalysisCaptureContent(
         stateFlow = feature.stateFlow,
         onAction = { action -> feature.route(action, onNativeAction) },
-        surface = PhotoAnalysisCaptureSurface(presenterCopy = copy),
+        surface = PhotoAnalysisCaptureSurface(
+            presenterCopy = copy,
+            retainedPhoto = preview?.let { current -> { IosRetainedPhotoBackdrop(current) } },
+            photoTextContrast = preview?.let { PhotoAnalysisPhotoTextContrast.LIGHT_TEXT },
+        ),
     )
 }

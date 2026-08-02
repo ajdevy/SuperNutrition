@@ -5,17 +5,21 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.supernutrition.domain.photoanalysis.AttemptId
 import com.supernutrition.domain.photoanalysis.PhotoLeaseStore
 import com.supernutrition.domain.photoanalysis.PhotoSessionStore
 import com.supernutrition.platform.photoandroid.AndroidImageNormalizer
 import com.supernutrition.platform.photoandroid.AndroidPhotoAttemptIds
 import com.supernutrition.platform.photoandroid.AndroidPhotoBridge
+import kotlinx.coroutines.launch
 
 /** Android composition root: lifecycle, result launchers, and feature wiring only. */
 class PhotoAnalysisComposeActivity : ComponentActivity() {
@@ -25,6 +29,7 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
     }
     private val feature: PhotoAnalysisFeature get() = retainedState.feature
     private lateinit var host: PhotoAnalysisAndroidHostController
+    private var analysisLauncher: PhotoAnalysisAnalysisLauncher = PhotoAnalysisAnalysisLauncher.None
     private var permissionRationale: android.app.AlertDialog? = null
     private var wasBackgrounded = false
 
@@ -42,8 +47,31 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
                 preparingPhoto = getString(R.string.capture_status_preparing),
                 photoReady = getString(R.string.capture_status_ready_photo),
                 analyzingPhoto = getString(R.string.capture_status_analyzing),
+                findingVisibleFoods = getString(R.string.capture_status_finding_visible_foods),
+                estimatingPortions = getString(R.string.capture_status_estimating_portions),
+                checkingResults = getString(R.string.capture_status_checking_results),
                 reviewCandidate = getString(R.string.capture_status_review),
                 restoringPhotoAnalysis = getString(R.string.capture_status_restoring),
+            ),
+            evidence = EvidenceCopy(
+                fromThisPhoto = getString(R.string.capture_evidence_from_photo),
+                highConfidence = getString(R.string.capture_evidence_high_confidence),
+                mediumConfidence = getString(R.string.capture_evidence_medium_confidence),
+                lowConfidence = getString(R.string.capture_evidence_low_confidence),
+                identityClear = getString(R.string.capture_evidence_identity_clear),
+                identityAmbiguous = getString(R.string.capture_evidence_identity_ambiguous),
+                mixedContent = getString(R.string.capture_evidence_mixed_content),
+                fullyVisible = getString(R.string.capture_evidence_fully_visible),
+                partiallyOccluded = getString(R.string.capture_evidence_partially_occluded),
+                regionAvailable = getString(R.string.capture_evidence_region_available),
+                regionUnavailable = getString(R.string.capture_evidence_region_unavailable),
+                estimatedMass = getString(R.string.capture_evidence_estimated_mass),
+                massNotEvaluable = getString(R.string.capture_evidence_mass_not_evaluable),
+                massAbstained = getString(R.string.capture_evidence_mass_abstained),
+                localProvenance = getString(R.string.capture_evidence_local_provenance),
+                remoteProvenance = getString(R.string.capture_evidence_remote_provenance),
+                selected = getString(R.string.capture_evidence_selected),
+                notSelected = getString(R.string.capture_evidence_not_selected),
             ),
             recovery = RecoveryCopy(
                 scanAgain = getString(R.string.capture_scan_again),
@@ -87,6 +115,7 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
             context = this,
             permissionRequestInFlight = retainedState.captureOperation.permissionRequestInFlight,
         )
+        analysisLauncher = PhotoAnalysisAnalysisLauncher.None
         host = PhotoAnalysisAndroidHostController(
             feature = feature,
             photoBridge = photoBridge,
@@ -107,17 +136,32 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
             launchImport = { importLauncher.launch(photoBridge.photoPickerIntent()) },
             launchSettings = { startActivity(photoBridge.settingsIntent()) },
             captureOperation = retainedState.captureOperation,
+            onRetainedPhotoReady = retainedState.previewStore::show,
+            onRetainedPhotoInvalidated = retainedState.previewStore::clear,
+            analysisLauncher = analysisLauncher,
         ).also { it.initialize() }
 
         PhotoAnalysisSnapshotBundleCodec.decode(savedInstanceState, attemptId)?.let { snapshot ->
             feature.dispatch(com.supernutrition.domain.photoanalysis.PhotoAnalysisEvent.RestoreFromSnapshot(snapshot))
         }
+        observeRetainedPhotoLifecycle()
         setContent {
+            val preview by retainedState.previewStore.preview.collectAsState()
             PhotoAnalysisCaptureContent(
                 stateFlow = feature.stateFlow,
                 onAction = host::handleAction,
                 modifier = Modifier.semantics { testTagsAsResourceId = true },
-                surface = PhotoAnalysisCaptureSurface(presenterCopy = presentationCopy),
+                surface = PhotoAnalysisCaptureSurface(
+                    presenterCopy = presentationCopy,
+                    retainedPhoto = preview?.let { current -> { AndroidRetainedPhotoBackdrop(current) } },
+                    photoTextContrast = preview?.let { current ->
+                        if (current.hasLightBackdrop) {
+                            PhotoAnalysisPhotoTextContrast.DARK_TEXT
+                        } else {
+                            PhotoAnalysisPhotoTextContrast.LIGHT_TEXT
+                        }
+                    },
+                ),
             )
         }
     }
@@ -146,20 +190,37 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
     override fun onStop() {
         permissionRationale?.dismiss()
         permissionRationale = null
+        if (feature.state is com.supernutrition.domain.photoanalysis.PhotoAnalysisState.Analyzing) {
+            analysisLauncher.cancel()
+        }
         feature.dispatch(com.supernutrition.domain.photoanalysis.PhotoAnalysisEvent.Backgrounded)
         wasBackgrounded = true
         retainedState.wasBackgrounded = true
         super.onStop()
     }
 
+    private fun observeRetainedPhotoLifecycle() {
+        lifecycleScope.launch {
+            feature.stateFlow.collect(retainedState.previewStore::retainFor)
+        }
+    }
+
     class RetainedState : ViewModel() {
+        internal val leases = PhotoLeaseStore()
+        internal val sessions = PhotoSessionStore()
+        internal val previewStore = AndroidRetainedPhotoPreviewStore()
         val feature = PhotoAnalysisFeature(
             attemptId = AttemptId(AndroidPhotoAttemptIds.CAPTURE),
-            leases = PhotoLeaseStore(),
-            sessions = PhotoSessionStore(),
+            leases = leases,
+            sessions = sessions,
         )
         val captureOperation = CaptureOperationState()
         var wasBackgrounded: Boolean = false
+
+        override fun onCleared() {
+            previewStore.clear()
+            super.onCleared()
+        }
     }
 
     private companion object {

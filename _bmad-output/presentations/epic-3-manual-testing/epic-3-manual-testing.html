@@ -1,0 +1,859 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Manual-only Epic 3 photo-analysis testing walkthrough for Android and iOS.">
+  <title>Epic 3 · Manual photo-analysis testing</title>
+  <link rel="icon" href="data:,">
+  <style>
+    :root {
+      --ink: #17231f;
+      --muted: #5d6c65;
+      --paper: #f7f3e9;
+      --paper-strong: #fffdf8;
+      --forest: #173d35;
+      --forest-soft: #dcebe2;
+      --coral: #ef755e;
+      --coral-soft: #ffe2d9;
+      --yellow: #f3c861;
+      --line: #d9dfd8;
+      --shadow: 0 18px 50px rgba(23, 61, 53, .12);
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+
+    a { color: inherit; }
+
+    a:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    summary:focus-visible {
+      outline: 3px solid var(--coral);
+      outline-offset: 4px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 14px clamp(18px, 4vw, 64px);
+      color: var(--paper-strong);
+      background: rgba(23, 61, 53, .95);
+      backdrop-filter: blur(12px);
+    }
+
+    .brand {
+      font-weight: 800;
+      letter-spacing: .04em;
+      white-space: nowrap;
+    }
+
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px 18px;
+      font-size: .86rem;
+    }
+
+    .nav a {
+      text-decoration: none;
+      opacity: .84;
+    }
+
+    .nav a:hover { opacity: 1; text-decoration: underline; text-underline-offset: 4px; }
+
+    main { overflow: hidden; }
+
+    .section {
+      width: min(1180px, calc(100% - 36px));
+      margin: 0 auto;
+      padding: clamp(64px, 9vw, 120px) 0;
+    }
+
+    .hero {
+      color: var(--paper-strong);
+      background:
+        radial-gradient(circle at 85% 18%, rgba(243, 200, 97, .34), transparent 22rem),
+        radial-gradient(circle at 15% 92%, rgba(239, 117, 94, .28), transparent 24rem),
+        var(--forest);
+    }
+
+    .hero-inner {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(280px, .95fr);
+      align-items: center;
+      gap: clamp(36px, 7vw, 100px);
+      min-height: 78vh;
+    }
+
+    .eyebrow,
+    .kicker {
+      margin: 0 0 14px;
+      color: var(--coral);
+      font-size: .78rem;
+      font-weight: 850;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .hero .eyebrow { color: var(--yellow); }
+
+    h1, h2, h3 { margin: 0; line-height: 1.08; letter-spacing: -.035em; }
+
+    h1 {
+      max-width: 720px;
+      font-size: clamp(3rem, 7vw, 6.8rem);
+      font-weight: 850;
+    }
+
+    h2 { font-size: clamp(2rem, 4vw, 4rem); }
+    h3 { font-size: clamp(1.2rem, 2vw, 1.55rem); }
+
+    .lead {
+      max-width: 650px;
+      margin: 24px 0 0;
+      color: inherit;
+      font-size: clamp(1.1rem, 2vw, 1.35rem);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 34px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 12px 18px;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .button.primary { color: var(--forest); background: var(--yellow); }
+    .button.secondary { color: var(--paper-strong); border-color: rgba(255,255,255,.45); }
+
+    .hero-photo {
+      position: relative;
+      min-height: 480px;
+      overflow: hidden;
+      border: 12px solid rgba(255,255,255,.14);
+      border-radius: 48% 48% 24px 24px;
+      box-shadow: var(--shadow);
+      transform: rotate(2deg);
+    }
+
+    .hero-photo img { width: 100%; height: 100%; min-height: 480px; object-fit: cover; display: block; }
+
+    .photo-tag {
+      position: absolute;
+      right: 18px;
+      bottom: 18px;
+      padding: 9px 12px;
+      color: var(--forest);
+      background: var(--yellow);
+      border-radius: 12px;
+      font-size: .82rem;
+      font-weight: 850;
+      transform: rotate(-3deg);
+    }
+
+    .scope-grid,
+    .platform-grid,
+    .finish-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+      margin-top: 38px;
+    }
+
+    .scope-card,
+    .platform-card,
+    .finish-card,
+    .fixture-card,
+    .log-card,
+    .callout,
+    details {
+      background: var(--paper-strong);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .scope-card,
+    .platform-card,
+    .finish-card,
+    .log-card,
+    .callout { padding: 26px; }
+
+    .section-intro {
+      display: grid;
+      grid-template-columns: minmax(0, .86fr) minmax(0, 1.14fr);
+      gap: 40px;
+      align-items: end;
+    }
+
+    .section-intro p { margin: 0; color: var(--muted); font-size: 1.08rem; }
+
+    .scope-card strong,
+    .platform-card strong,
+    .finish-card strong { display: block; margin-bottom: 8px; font-size: 1.1rem; }
+
+    .scope-card p,
+    .platform-card p,
+    .finish-card p { margin: 0; color: var(--muted); }
+
+    .scope-card.allowed { border-top: 6px solid #6fac80; }
+    .scope-card.forbidden { border-top: 6px solid var(--coral); }
+    .scope-card.status { border-top: 6px solid var(--yellow); }
+    .scope-card.evidence { border-top: 6px solid #7f9bd4; }
+
+    .state-rail {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 38px;
+    }
+
+    .state {
+      position: relative;
+      min-height: 126px;
+      padding: 16px;
+      color: var(--forest);
+      background: var(--forest-soft);
+      border-radius: 18px;
+    }
+
+    .state:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      top: 44px;
+      right: -17px;
+      z-index: 1;
+      color: var(--coral);
+      font-size: 1.5rem;
+      font-weight: 900;
+    }
+
+    .state .number {
+      display: block;
+      margin-bottom: 16px;
+      color: var(--coral);
+      font-size: .75rem;
+      font-weight: 900;
+      letter-spacing: .12em;
+    }
+
+    .state strong { display: block; font-size: 1.02rem; }
+    .state small { display: block; margin-top: 4px; color: var(--muted); }
+
+    .fixtures {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 38px;
+    }
+
+    .fixture-card { overflow: hidden; }
+    .fixture-card img { display: block; width: 100%; aspect-ratio: 1 / 1; object-fit: cover; }
+    .fixture-body { padding: 16px; }
+    .fixture-body h3 { font-size: 1.05rem; }
+    .fixture-body p { margin: 8px 0 0; color: var(--muted); font-size: .9rem; }
+    .source { margin: 12px 0 0; color: var(--muted); font-size: .74rem; line-height: 1.4; }
+    .source a { color: var(--forest); font-weight: 750; text-underline-offset: 3px; }
+
+    .platform-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .platform-card::before {
+      content: "ANDROID";
+      position: absolute;
+      top: 18px;
+      right: -42px;
+      padding: 5px 48px;
+      color: var(--paper-strong);
+      background: var(--forest);
+      font-size: .67rem;
+      font-weight: 900;
+      letter-spacing: .16em;
+      transform: rotate(35deg);
+    }
+
+    .platform-card.ios::before { content: "IOS"; background: var(--coral); }
+
+    .step-list {
+      display: grid;
+      gap: 14px;
+      margin: 24px 0 0;
+      padding: 0;
+      list-style: none;
+      counter-reset: manual-step;
+    }
+
+    .step-list li {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr);
+      gap: 12px;
+      align-items: start;
+      counter-increment: manual-step;
+    }
+
+    .step-list li::before {
+      content: counter(manual-step);
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      color: var(--paper-strong);
+      background: var(--forest);
+      border-radius: 50%;
+      font-size: .85rem;
+      font-weight: 900;
+    }
+
+    .ios .step-list li::before { background: var(--coral); }
+    .step-list strong { display: block; }
+    .step-list span { color: var(--muted); }
+
+    .observe {
+      margin-top: 22px;
+      padding: 16px 18px;
+      border-left: 4px solid var(--yellow);
+      background: #fff7dc;
+      border-radius: 0 16px 16px 0;
+    }
+
+    .observe strong { display: block; margin-bottom: 4px; }
+    .observe p { margin: 0; color: var(--muted); font-size: .92rem; }
+
+    .manual-run {
+      margin-top: 38px;
+      padding: 28px;
+      color: var(--paper-strong);
+      background: var(--forest);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .manual-run h3 { color: var(--yellow); }
+    .manual-run p { margin: 8px 0 0; color: rgba(255,255,255,.8); }
+
+    .checklist {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px 22px;
+      margin-top: 18px;
+    }
+
+    .checklist label { display: flex; gap: 10px; align-items: flex-start; color: rgba(255,255,255,.94); }
+    .checklist input { width: 19px; height: 19px; margin: 3px 0 0; accent-color: var(--yellow); }
+
+    .route {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 38px;
+    }
+
+    .route-step {
+      min-height: 180px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: var(--paper-strong);
+    }
+
+    .route-step .route-mark {
+      display: inline-grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      margin-bottom: 24px;
+      color: var(--forest);
+      background: var(--yellow);
+      border-radius: 10px;
+      font-weight: 900;
+    }
+
+    .route-step p { margin: 10px 0 0; color: var(--muted); }
+
+    .callout {
+      margin-top: 24px;
+      border-left: 6px solid var(--coral);
+    }
+
+    .callout p { margin: 0; color: var(--muted); }
+
+    details { margin-top: 18px; box-shadow: none; }
+    summary { cursor: pointer; padding: 18px 20px; font-weight: 800; }
+    details > div { padding: 0 20px 20px; color: var(--muted); }
+    details p { margin: 0 0 10px; }
+    details p:last-child { margin-bottom: 0; }
+
+    .log-grid {
+      display: grid;
+      grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr);
+      gap: 22px;
+      margin-top: 38px;
+    }
+
+    .log-card h3 { margin-bottom: 16px; }
+
+    .field { display: grid; gap: 6px; margin-top: 14px; }
+    .field:first-of-type { margin-top: 0; }
+    .field label { color: var(--muted); font-size: .84rem; font-weight: 750; }
+    .field input,
+    .field textarea {
+      width: 100%;
+      padding: 11px 12px;
+      color: var(--ink);
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      font: inherit;
+    }
+    .field textarea { min-height: 110px; resize: vertical; }
+
+    .result-row {
+      display: grid;
+      grid-template-columns: minmax(110px, .7fr) repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: .9rem;
+    }
+
+    .result-row:first-of-type { color: var(--muted); font-size: .76rem; font-weight: 850; text-transform: uppercase; letter-spacing: .07em; }
+    .result-row label { display: flex; gap: 6px; align-items: center; color: var(--muted); }
+    .result-row input { accent-color: var(--forest); }
+
+    .finish-card { min-height: 210px; }
+    .finish-card.pass { border-top: 6px solid #6fac80; }
+    .finish-card.blocked { border-top: 6px solid var(--yellow); }
+    .finish-card.stop { border-top: 6px solid var(--coral); }
+
+    footer {
+      padding: 34px 18px 54px;
+      color: rgba(255,255,255,.82);
+      background: var(--forest);
+      font-size: .86rem;
+    }
+    footer .footer-inner { width: min(1180px, 100%); margin: 0 auto; }
+    footer strong { color: var(--yellow); }
+    footer p { max-width: 900px; margin: 8px 0 0; }
+
+    @media (max-width: 900px) {
+      .hero-inner,
+      .section-intro,
+      .log-grid { grid-template-columns: 1fr; }
+      .hero-photo { min-height: 360px; max-width: 620px; }
+      .hero-photo img { min-height: 360px; }
+      .fixtures { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .state-rail { grid-template-columns: repeat(5, minmax(130px, 1fr)); overflow-x: auto; padding-bottom: 8px; }
+      .route { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 680px) {
+      .topbar { align-items: flex-start; flex-direction: column; gap: 8px; }
+      .nav { justify-content: flex-start; }
+      .section { width: min(100% - 28px, 1180px); padding: 64px 0; }
+      .scope-grid,
+      .platform-grid,
+      .finish-grid,
+      .checklist { grid-template-columns: 1fr; }
+      .fixtures { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .hero-photo { min-height: 280px; border-width: 8px; }
+      .hero-photo img { min-height: 280px; }
+      .result-row { grid-template-columns: minmax(86px, .7fr) repeat(3, minmax(58px, 1fr)); font-size: .78rem; }
+      .result-row:first-of-type { font-size: .64rem; }
+      .manual-run, .scope-card, .platform-card, .finish-card, .log-card, .callout { padding: 20px; }
+    }
+
+    @media print {
+      :root { --paper: #fff; --paper-strong: #fff; --shadow: none; }
+      .topbar { position: static; color: #000; background: #fff; border-bottom: 1px solid #bbb; }
+      .nav, .hero-actions { display: none; }
+      .hero { color: #000; background: #fff; }
+      .hero-inner { min-height: auto; }
+      .hero-photo { max-width: 360px; min-height: 260px; }
+      .hero-photo img { min-height: 260px; }
+      .section { width: 100%; padding: 36px 0; break-inside: avoid; }
+      .section-intro, .scope-grid, .platform-grid, .log-grid, .finish-grid { break-inside: avoid; }
+      .state-rail, .fixtures { break-inside: avoid; }
+      a { text-decoration: underline; }
+      footer { color: #000; background: #fff; border-top: 1px solid #bbb; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">SUPERNUTRITION / E3</div>
+    <nav class="nav" aria-label="Presentation sections">
+      <a href="#scope">Scope</a>
+      <a href="#fixtures">Fixtures</a>
+      <a href="#complex-dishes">Complex dishes</a>
+      <a href="#android">Android</a>
+      <a href="#ios">iOS</a>
+      <a href="#log">Log</a>
+      <a href="#done">Done</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="section hero-inner">
+        <div>
+          <p class="eyebrow">Manual test walkthrough · Epic 3</p>
+          <h1>Prove the photo path by hand.</h1>
+          <p class="lead">A focused Android + iOS guide for exercising the photo-analysis surface with ten real food pictures, including five multi-component dishes, observing local-first states, and recording recovery without automation or API calls.</p>
+          <div class="hero-actions">
+            <a class="button primary" href="#scope">Start the walkthrough</a>
+            <a class="button secondary" href="#fixtures">Open the test kit</a>
+          </div>
+        </div>
+        <figure class="hero-photo">
+          <img src="assets/apple.jpg" alt="A single red apple on a light background, used as the first manual test fixture">
+          <figcaption class="photo-tag">Fixture 06 · composite meal</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="scope">
+      <div class="section-intro">
+        <div>
+          <p class="kicker">01 · Orient</p>
+          <h2>One promise for the tester.</h2>
+        </div>
+        <p>Follow the visible product path with your fingers. Record exactly what the device shows. Keep product behavior, evidence gaps, and future gates separate.</p>
+      </div>
+
+      <div class="scope-grid">
+        <article class="scope-card allowed">
+          <strong>In scope</strong>
+          <p>Opening the app, tapping the visible capture/import controls, selecting one local photo, handling OS permission prompts, turning airplane mode on or off manually, backgrounding and restoring the app, cancelling, retrying, and writing down the observed state.</p>
+        </article>
+        <article class="scope-card forbidden">
+          <strong>Not in this guide</strong>
+          <p>No test runner, scripted gesture, shell command, network/API request, instrumentation step, mock server, automated assertion, or inferred “pass” based only on a build or a unit test.</p>
+        </article>
+        <article class="scope-card status">
+          <strong>Current Epic 3 status</strong>
+          <p>The shared contract, Android/iOS adapter seams, and local-first routing logic exist. Concrete production runtime/model activation and signed G-3 benchmark evidence are still open. This deck never claims those gates are closed.</p>
+        </article>
+        <article class="scope-card evidence">
+          <strong>Evidence rule</strong>
+          <p>Use <b>Pass</b> only when the physical device visibly completes the intended manual behavior. Use <b>Blocked</b> when the app/build/runtime/device prerequisite is missing. Use <b>Fail</b> when the observed behavior contradicts the expected path.</p>
+        </article>
+      </div>
+
+      <div class="state-rail" aria-label="Expected visible photo-analysis states">
+        <div class="state"><span class="number">01</span><strong>Ready to capture</strong><small>Start here.</small></div>
+        <div class="state"><span class="number">02</span><strong>Preparing photo</strong><small>Photo is being normalized.</small></div>
+        <div class="state"><span class="number">03</span><strong>Photo ready</strong><small>Prepared input is visible.</small></div>
+        <div class="state"><span class="number">04</span><strong>Analyzing photo</strong><small>Keep the attempt in view.</small></div>
+        <div class="state"><span class="number">05</span><strong>Review candidate</strong><small>Record what appears.</small></div>
+      </div>
+    </section>
+
+    <section class="section" id="fixtures">
+      <div class="section-intro">
+        <div>
+          <p class="kicker">02 · Test kit</p>
+          <h2>Ten pictures. Five controls plus five composite meals.</h2>
+        </div>
+        <p>Copy these downloaded files to each device’s photo library using your normal manual transfer method. Test one picture per attempt; do not assume that visual similarity means an inference result is correct. The first five are simple controls; the second five are intentionally crowded dishes.</p>
+      </div>
+
+      <div class="fixtures">
+        <article class="fixture-card">
+          <img src="assets/apple.jpg" alt="Red apple fixture">
+          <div class="fixture-body"><h3>01 · Apple</h3><p>Single isolated object. A clean control for capture, preparation, and one-item review.</p><p class="source">Photo: Renee Comet / National Cancer Institute · public domain · <a href="https://commons.wikimedia.org/wiki/File:Apple_(1).jpg">source page</a></p></div>
+        </article>
+        <article class="fixture-card">
+          <img src="assets/banana.jpg" alt="Yellow banana fixture">
+          <div class="fixture-body"><h3>02 · Banana</h3><p>Single object with a different shape and orientation. Watch for the same state path.</p><p class="source">Photo: ZooFari · public domain · <a href="https://commons.wikimedia.org/wiki/File:Banana_Fruit.JPG">source page</a></p></div>
+        </article>
+        <article class="fixture-card">
+          <img src="assets/pizza.jpg" alt="Pizza fixture with visible toppings">
+          <div class="fixture-body"><h3>03 · Pizza</h3><p>Composite dish. Useful for candidate review and recording uncertainty without guessing.</p><p class="source">Photo: MuthuLakshmi Vijaya · CC0 · <a href="https://commons.wikimedia.org/wiki/File:Pizza_image.jpg">source page</a></p></div>
+        </article>
+        <article class="fixture-card">
+          <img src="assets/salad.jpg" alt="Mixed salad fixture">
+          <div class="fixture-body"><h3>04 · Salad</h3><p>Many small components. Check whether the UI stays legible and whether recovery stays explicit.</p><p class="source">Photo: Sarang · public domain · <a href="https://commons.wikimedia.org/wiki/File:Salad_full.jpg">source page</a></p></div>
+        </article>
+        <article class="fixture-card">
+          <img src="assets/penne-pasta.jpg" alt="Penne pasta fixture with garnish">
+          <div class="fixture-body"><h3>05 · Penne pasta</h3><p>Dense texture and garnish. Use it to exercise a busy photo while keeping notes factual.</p><p class="source">Photo: Daniel Sone / National Cancer Institute · public domain · <a href="https://commons.wikimedia.org/wiki/File:Penne_pasta.jpg">source page</a></p></div>
+        </article>
+      </div>
+
+      <div class="callout"><p><strong>Fixture discipline:</strong> The ten images are food-photo inputs, not expected-result oracles. Record the exact candidate, abstention, typed recovery, or block that the current build exposes. Do not write calories, macros, allergens, or confidence values unless the product visibly provides a reviewed, non-medical value.</p></div>
+    </section>
+
+    <section class="section" id="complex-dishes">
+      <div class="section-intro">
+        <div>
+          <p class="kicker">03 · Composite meals</p>
+          <h2>Test what happens when the plate is already busy.</h2>
+        </div>
+        <p>These five additions put several visible objects in one frame. The goal is not to decide whether the model is nutritionally right; it is to see whether the product stays legible, honest, and recoverable when components overlap or are already chopped.</p>
+      </div>
+
+      <div class="fixtures complex-fixtures">
+        <article class="fixture-card">
+          <img src="assets/steak-side-plate.jpg" alt="Sliced steak with green beans, quinoa vegetables, and a creamy side on one plate">
+          <div class="fixture-body"><h3>06 · Steak + sides</h3><p>Sliced steak sits over a grain-and-vegetable base with green beans and a creamy side. Watch whether separate plate regions remain understandable when the protein overlaps the base.</p><p class="source">Photo: Ɱ · CC BY-SA 4.0 · <a href="https://commons.wikimedia.org/wiki/File:Steak_dinner_with_vegetables.jpg">source page</a></p></div>
+        </article>
+        <article class="fixture-card">
+          <img src="assets/fish-side-plate.jpg" alt="Fish fillets with broccoli, carrots, and onion on a white plate">
+          <div class="fixture-body"><h3>07 · Fish + vegetables</h3><p>Fish fillets share the frame with broccoli, carrot, and onion. Check for small side pieces near the plate edge and for readable recovery when the background is bright.</p><p class="source">Photo: Tiia Monto · CC BY-SA 4.0 · <a href="https://commons.wikimedia.org/wiki/File:Pike_and_vegetables.jpg">source page</a></p></div>
+        </article>
+        <article class="fixture-card">
+          <img src="assets/chopped-salad.jpg" alt="Finely chopped cucumber, tomato, onion, and carrot salad with herbs">
+          <div class="fixture-body"><h3>08 · Chopped salad</h3><p>Many diced vegetables, grated carrot, herbs, and dressing create a dense texture. Record whether the UI abstains, groups the dish, or shows a candidate without inventing item-level detail.</p><p class="source">Photo: Talupu · CC BY-SA 4.0 · <a href="https://commons.wikimedia.org/wiki/File:Mixed_salad_(Kosambri_or_Kachumber).jpg">source page</a></p></div>
+        </article>
+        <article class="fixture-card">
+          <img src="assets/buddha-bowl.jpg" alt="Buddha bowl with rice, grains, avocado, greens, edamame, radish, and tempeh">
+          <div class="fixture-body"><h3>09 · Buddha bowl</h3><p>Several ingredients are separated into visible sections inside one bowl. Check crop behavior, component boundaries, and whether a busy composition keeps the action and terminal state clear.</p><p class="source">Photo: PizzaMan · CC BY-SA 4.0 · <a href="https://commons.wikimedia.org/wiki/File:BuddhaBowlLot.jpg">source page</a></p></div>
+        </article>
+        <article class="fixture-card">
+          <img src="assets/salmon-grain-plate.jpg" alt="Whole fish over rice and beans with greens and tomato sauce on a plate">
+          <div class="fixture-body"><h3>10 · Fish, rice + beans</h3><p>A whole fish overlaps rice, beans, greens, and sauce. Use it to observe occlusion and mixed textures; do not infer bones, portions, or nutrition from the image.</p><p class="source">Photo: BlessNathan · CC BY-SA 4.0 · <a href="https://commons.wikimedia.org/wiki/File:Rice,_beans_and_Salmon_Fish.jpg">source page</a></p></div>
+        </article>
+      </div>
+
+      <div class="platform-grid">
+        <article class="platform-card">
+          <h3>Manual loop · every composite meal</h3>
+          <ol class="step-list">
+            <li><div><strong>Choose one composite fixture.</strong><span>Start from “Ready to capture” and select only that local image. Do not combine photos or crop during the attempt.</span></div></li>
+            <li><div><strong>Let the whole photo remain visible.</strong><span>Watch whether preparation preserves all visible components and whether a busy frame causes a clear typed recovery.</span></div></li>
+            <li><div><strong>Describe what is actually shown.</strong><span>Record candidate text, abstention, unavailable copy, or block exactly as displayed. Note whether the result is dish-level, component-level, or silent.</span></div></li>
+            <li><div><strong>Repeat after “Scan again”.</strong><span>Return to capture before selecting the next composite meal. Keep each row tied to one image and one attempt.</span></div></li>
+          </ol>
+          <div class="observe"><strong>Observe</strong><p>Look for legibility, visible component handling, crop/rotation surprises, and explicit uncertainty. A plausible label is still only an observation; it is not an expected result.</p></div>
+        </article>
+
+        <article class="platform-card ios">
+          <h3>Complex-dish notes to capture</h3>
+          <ol class="step-list">
+            <li><div><strong>Component count, not correctness.</strong><span>Write a short visual note such as “fish + greens + rice visible”; do not turn that note into a nutrition claim.</span></div></li>
+            <li><div><strong>Overlap and occlusion.</strong><span>Record if one object covers another, if sauce merges boundaries, or if the app explicitly asks for a clearer image.</span></div></li>
+            <li><div><strong>Small/chopped objects.</strong><span>Record whether the result groups them, names them, abstains, or displays a recovery branch. Do not count pieces manually as a pass condition.</span></div></li>
+            <li><div><strong>Cross-platform comparison.</strong><span>Run the same five composite images on Android and iOS, then compare state vocabulary and recovery—not picker pixels or model certainty.</span></div></li>
+          </ol>
+          <div class="observe"><strong>Observe</strong><p>Keep platform-specific permission and picker behavior separate from the shared photo-analysis outcome. If a composite fixture is blocked by a missing gate, record the gate name.</p></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="android">
+      <div class="section-intro">
+        <div>
+          <p class="kicker">04 · Perform on Android</p>
+          <h2>Keep the whole attempt in one pair of hands.</h2>
+        </div>
+        <p>Use a physical Android device for device-level claims. A simulator or a missing local runtime can still support a UI walkthrough, but the result must be marked as limited or blocked rather than upgraded to inference evidence.</p>
+      </div>
+
+      <div class="platform-grid">
+        <article class="platform-card">
+          <h3>Happy path · one fixture at a time</h3>
+          <ol class="step-list">
+            <li><div><strong>Start at “Ready to capture”.</strong><span>Launch SuperNutrition and confirm the capture screen is visible.</span></div></li>
+            <li><div><strong>Tap “Choose photo”.</strong><span>Use the Android photo picker and select exactly one fixture from the test kit.</span></div></li>
+            <li><div><strong>Watch the labels.</strong><span>Record whether the screen moves through “Preparing photo”, “Photo ready”, and “Analyzing photo”.</span></div></li>
+            <li><div><strong>Read the terminal state.</strong><span>If “Review candidate” appears, copy the visible candidate into the log. If a typed recovery appears, copy that exact text instead.</span></div></li>
+            <li><div><strong>Tap “Scan again”.</strong><span>Confirm a new attempt returns to the capture surface before moving to the next fixture, including the five composite meals.</span></div></li>
+          </ol>
+          <div class="observe"><strong>Observe</strong><p>One photo should own one visible attempt. A replacement or late result must not reopen an old attempt. This is a manual observation, not an automated assertion.</p></div>
+        </article>
+
+        <article class="platform-card">
+          <h3>Permission, cancel, restore</h3>
+          <ol class="step-list">
+            <li><div><strong>Test camera permission.</strong><span>Tap “Take meal photo”, deny the camera prompt, and record “Camera permission is required”.</span></div></li>
+            <li><div><strong>Recover in Settings.</strong><span>Tap “Open settings”, manually enable camera permission, return to the app, and try “Take meal photo” again.</span></div></li>
+            <li><div><strong>Cancel the picker.</strong><span>Tap “Choose photo”, close the picker without selecting anything, and record the recovery copy shown by the build.</span></div></li>
+            <li><div><strong>Background an active attempt.</strong><span>While “Preparing photo” or “Analyzing photo” is visible, go to the home screen, wait briefly, and reopen SuperNutrition.</span></div></li>
+            <li><div><strong>Verify restoration.</strong><span>Record whether “Restoring photo analysis” appears and whether the same attempt resumes safely without a duplicate terminal result.</span></div></li>
+          </ol>
+          <div class="observe"><strong>Observe</strong><p>Permission, cancellation, and lifecycle recovery should remain explicit. If the build does not expose the path, mark it Blocked and name the missing prerequisite.</p></div>
+        </article>
+      </div>
+
+      <div class="manual-run">
+        <h3>Android offline check · manual only</h3>
+        <p>Use the device’s Quick Settings to turn Airplane mode on. Relaunch or reset the visible capture flow, select one fixture, and record the exact result. Turn Airplane mode off only after the observation is written down.</p>
+        <div class="checklist">
+          <label><input type="checkbox"> I wrote the device model and Android version.</label>
+          <label><input type="checkbox"> I recorded the selected fixture name.</label>
+          <label><input type="checkbox"> I recorded the visible terminal state or recovery copy.</label>
+          <label><input type="checkbox"> I did not grant a remote upload/consent path during this Epic 3 check.</label>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="ios">
+      <div class="section-intro">
+        <div>
+          <p class="kicker">05 · Perform on iOS</p>
+          <h2>Repeat the same evidence vocabulary.</h2>
+        </div>
+        <p>The iOS host keeps camera and photo-picker ownership native while the shared surface exposes the same capture states. Test on a physical iPhone for physical-device claims; simulator observations are UI-only.</p>
+      </div>
+
+      <div class="platform-grid">
+        <article class="platform-card ios">
+          <h3>Happy path · one fixture</h3>
+          <ol class="step-list">
+            <li><div><strong>Start at “Ready to capture”.</strong><span>Open SuperNutrition and confirm the shared capture surface is ready.</span></div></li>
+            <li><div><strong>Tap “Choose photo”.</strong><span>Use the iOS photo picker and select one downloaded fixture.</span></div></li>
+            <li><div><strong>Watch the state copy.</strong><span>Record “Preparing photo”, “Photo ready”, and “Analyzing photo” if they appear.</span></div></li>
+            <li><div><strong>Record the terminal outcome.</strong><span>Copy the visible candidate or typed recovery message. Do not add a nutrition interpretation that is not shown.</span></div></li>
+            <li><div><strong>Tap “Scan again”.</strong><span>Return to capture and repeat the same manual path for all ten fixtures, including the five composite meals.</span></div></li>
+          </ol>
+          <div class="observe"><strong>Observe</strong><p>The cross-platform contract is about evidence vocabulary and ownership, not identical pixels. Record platform-specific picker/permission UI separately from the shared photo-analysis state.</p></div>
+        </article>
+
+        <article class="platform-card ios">
+          <h3>Permission, cancel, restore</h3>
+          <ol class="step-list">
+            <li><div><strong>Test camera permission.</strong><span>Tap “Take meal photo”, deny the iOS camera prompt, and record “Camera permission is required”.</span></div></li>
+            <li><div><strong>Recover in Settings.</strong><span>Tap “Open settings”, manually enable Camera, return to SuperNutrition, and retry.</span></div></li>
+            <li><div><strong>Cancel the picker.</strong><span>Open “Choose photo” and dismiss the picker without selecting. Record the exact recovery copy shown.</span></div></li>
+            <li><div><strong>Background an active attempt.</strong><span>Swipe up to leave the app while the photo is preparing or analyzing, then return to it from the app switcher.</span></div></li>
+            <li><div><strong>Verify restoration.</strong><span>Record whether “Restoring photo analysis” appears and whether stale/duplicate results are avoided.</span></div></li>
+          </ol>
+          <div class="observe"><strong>Observe</strong><p>If a required Apple signing, host, or runtime prerequisite is absent, stop at that boundary and mark the row Blocked. Do not relabel simulator or compile evidence as physical iOS inference evidence.</p></div>
+        </article>
+      </div>
+
+      <div class="manual-run">
+        <h3>iOS offline check · manual only</h3>
+        <p>Open Control Center, turn Airplane mode on, return to SuperNutrition, and run one fixture through the visible path. Record whether the build exposes local/unavailable/offline evidence. This guide does not authorize remote consent.</p>
+        <div class="checklist">
+          <label><input type="checkbox"> I wrote the iPhone model and iOS version.</label>
+          <label><input type="checkbox"> I selected one fixture from the ten-photo kit.</label>
+          <label><input type="checkbox"> I recorded the visible state sequence and terminal copy.</label>
+          <label><input type="checkbox"> I kept simulator-only observations separate from device evidence.</label>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-intro">
+        <div>
+          <p class="kicker">06 · Recover</p>
+          <h2>When the path bends, keep the result honest.</h2>
+        </div>
+        <p>Epic 3 is fail-closed around local capability, attempt ownership, cancellation, and explicit remote escalation. The tester’s job is to capture the branch that actually appears.</p>
+      </div>
+
+      <div class="route" aria-label="Manual recovery decision path">
+        <article class="route-step"><span class="route-mark">A</span><h3>Visible local result</h3><p>Record the local route/provenance if the product exposes it. A candidate is not permission to invent numeric nutrition or medical conclusions.</p></article>
+        <article class="route-step"><span class="route-mark">B</span><h3>Typed local recovery</h3><p>Record offline, unavailable, abstention, poor image, no-food, cancelled, or permission copy exactly as shown. Mark the manual row Pass only when the recovery is usable.</p></article>
+        <article class="route-step"><span class="route-mark">C</span><h3>Missing gate</h3><p>If the current build has no runnable local runtime/model, no approved device evidence, or no physical iOS signing, mark Blocked with the gate name. Do not treat that as a product failure.</p></article>
+      </div>
+
+      <details>
+        <summary>Recovery cases to run once per platform</summary>
+        <div>
+          <p><strong>Permission denied:</strong> deny camera access, follow “Open settings”, return, and retry.</p>
+          <p><strong>Picker cancelled:</strong> open the native picker, dismiss it, and record whether the app remains at capture or shows typed cancellation.</p>
+          <p><strong>Backgrounded:</strong> leave during preparation or analysis, return, and check for “Restoring photo analysis” without duplicate completion.</p>
+          <p><strong>Airplane mode:</strong> turn it on manually before selecting a fixture. Record local evidence or a typed offline/unavailable branch; do not infer network isolation from the absence of a visible error.</p>
+          <p><strong>No-food branch:</strong> the ten downloaded fixtures are all food photos. Use a separate non-food image only if that branch is explicitly required, and label it as a different fixture.</p>
+        </div>
+      </details>
+    </section>
+
+    <section class="section" id="log">
+      <div class="section-intro">
+        <div>
+          <p class="kicker">07 · Record</p>
+          <h2>Leave a trace another tester can read.</h2>
+        </div>
+        <p>This small sheet is intentionally manual. Fill it while the device is in front of you; one row means one photo on one platform.</p>
+      </div>
+
+      <div class="log-grid">
+        <article class="log-card">
+          <h3>Session header</h3>
+          <div class="field"><label for="tester">Tester</label><input id="tester" type="text" autocomplete="off"></div>
+          <div class="field"><label for="device">Device + OS</label><input id="device" type="text" autocomplete="off"></div>
+          <div class="field"><label for="build">App build / commit label</label><input id="build" type="text" autocomplete="off"></div>
+          <div class="field"><label for="notes">Manual notes</label><textarea id="notes" placeholder="Permission path, visible state sequence, recovery copy, and anything that blocked the run."></textarea></div>
+        </article>
+
+        <article class="log-card">
+          <h3>Ten-photo result grid</h3>
+          <div class="result-row"><span>Fixture</span><span>Pass</span><span>Fail</span><span>Blocked</span></div>
+          <div class="result-row"><strong>Apple</strong><label><input type="radio" name="apple-result"> yes</label><label><input type="radio" name="apple-result"> yes</label><label><input type="radio" name="apple-result"> yes</label></div>
+          <div class="result-row"><strong>Banana</strong><label><input type="radio" name="banana-result"> yes</label><label><input type="radio" name="banana-result"> yes</label><label><input type="radio" name="banana-result"> yes</label></div>
+          <div class="result-row"><strong>Pizza</strong><label><input type="radio" name="pizza-result"> yes</label><label><input type="radio" name="pizza-result"> yes</label><label><input type="radio" name="pizza-result"> yes</label></div>
+          <div class="result-row"><strong>Salad</strong><label><input type="radio" name="salad-result"> yes</label><label><input type="radio" name="salad-result"> yes</label><label><input type="radio" name="salad-result"> yes</label></div>
+          <div class="result-row"><strong>Penne</strong><label><input type="radio" name="penne-result"> yes</label><label><input type="radio" name="penne-result"> yes</label><label><input type="radio" name="penne-result"> yes</label></div>
+          <div class="result-row"><strong>Steak + sides</strong><label><input type="radio" name="steak-result"> yes</label><label><input type="radio" name="steak-result"> yes</label><label><input type="radio" name="steak-result"> yes</label></div>
+          <div class="result-row"><strong>Fish + vegetables</strong><label><input type="radio" name="fish-result"> yes</label><label><input type="radio" name="fish-result"> yes</label><label><input type="radio" name="fish-result"> yes</label></div>
+          <div class="result-row"><strong>Chopped salad</strong><label><input type="radio" name="chopped-salad-result"> yes</label><label><input type="radio" name="chopped-salad-result"> yes</label><label><input type="radio" name="chopped-salad-result"> yes</label></div>
+          <div class="result-row"><strong>Buddha bowl</strong><label><input type="radio" name="buddha-result"> yes</label><label><input type="radio" name="buddha-result"> yes</label><label><input type="radio" name="buddha-result"> yes</label></div>
+          <div class="result-row"><strong>Fish, rice + beans</strong><label><input type="radio" name="salmon-grain-result"> yes</label><label><input type="radio" name="salmon-grain-result"> yes</label><label><input type="radio" name="salmon-grain-result"> yes</label></div>
+          <div class="field"><label for="terminal">Observed terminal / recovery copy</label><textarea id="terminal" placeholder="Copy the exact visible text. Avoid paraphrasing a blocked state as a pass."></textarea></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="done">
+      <div class="section-intro">
+        <div>
+          <p class="kicker">08 · Accept</p>
+          <h2>Definition of done for this hand test.</h2>
+        </div>
+        <p>Close the session with a bounded statement. The outcome is useful when it says what was observed, on which device, with which fixture, and which Epic 3 gate remains open.</p>
+      </div>
+
+      <div class="finish-grid">
+        <article class="finish-card pass"><strong>Pass the manual scenario when…</strong><p>All ten fixtures have a recorded outcome on the target platform, including the five composite meals, the visible path is understandable, permission/cancel/background recovery is explicit, and no photo is silently routed to a remote path.</p></article>
+        <article class="finish-card blocked"><strong>Mark Blocked when…</strong><p>The physical device, signed host, approved runtime/model, or G-3 evidence needed for the specific claim is unavailable. Include the missing prerequisite and keep UI-only evidence separate.</p></article>
+        <article class="finish-card stop"><strong>Mark Fail when…</strong><p>The app contradicts its own visible contract: a denied permission cannot recover, a stale attempt publishes after replacement, a cancelled run completes unexpectedly, or a remote path is silently entered.</p></article>
+        <article class="finish-card"><strong>Hand off the record with…</strong><p>Platform, device/OS, app build label, fixture name, exact visible status/recovery copy, Pass/Fail/Blocked, and a short note about the next action. Never attach raw personal photos or secrets.</p></article>
+      </div>
+
+      <div class="callout"><p><strong>Next action:</strong> run the walkthrough on the first available physical Android and iPhone devices, then attach only the manual observation sheet to the Epic 3 review. Keep the G-3 runtime/model decision and production inference evidence as a separate gate.</p></div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <strong>SuperNutrition · Epic 3 manual testing</strong>
+      <p>Self-contained artifact: images are local under <code>assets/</code>; the source links beside each fixture are attribution links only. This presentation contains no automation, API calls, scripted test steps, or required network connection.</p>
+    </div>
+  </footer>
+</body>
+</html>

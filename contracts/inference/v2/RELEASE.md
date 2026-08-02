@@ -2,9 +2,9 @@
 
 Immutable, language-neutral, data-only contract release for visible food
 component evidence and honest mass states. A component identifies only what is
-visible; its mass is either an estimated finite gram range with stated
-calibration assumptions, typed `not-evaluable`, or typed `abstained`. It never
-means a measured or exact mass.
+visible; its mass is either an estimated finite, strictly ordered gram range
+with stated calibration assumptions, typed `not-evaluable`, or typed
+`abstained`. It never means a measured or exact mass.
 
 Inputs are a closed photo-or-text discriminator. Photo input reuses the opaque,
 attempt-bound `PhotoRef`; text is future-safe input only. Results and telemetry

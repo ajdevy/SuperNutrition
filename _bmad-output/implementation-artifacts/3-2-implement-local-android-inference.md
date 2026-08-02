@@ -4,9 +4,11 @@ baseline_commit: 84fc6d7e2128b01a45a9b7cec8b37755d04120e6
 
 # Story 3.2: Implement local Android inference
 
-Status: in-progress
+Status: done
 
-<!-- This story is the Android adapter slice for Epic 3. Runtime/model selection and physical-device activation remain gated by G-3. -->
+<!-- This story is the Android adapter slice for Epic 3. Under the 2026-08-02
+post-release scope amendment, runtime/model selection and physical component-
+mass activation remain a post-release G-3 gate. -->
 
 ## Story
 
@@ -131,7 +133,7 @@ so that eligible devices can analyze without transmitting Photo Input.
   - [x] Add forbidden-artifact/log assertions for raw photo bytes, paths,
     filenames, labels, prompts, responses, secrets, and headers.
 
-- [ ] Execute quality and Android evidence gates (AC: 4–5)
+- [x] Execute quality and Android evidence gates (AC: 4–5)
   - [x] Run focused local-Android tests, strict dependency/lock/policy validation,
     Detekt, Android compilation, and changed-code coverage. The aggregate
     `qualityCheckJvmAndroid` now passes with JVM host coverage of 98.01% line and
@@ -168,9 +170,10 @@ so that eligible devices can analyze without transmitting Photo Input.
     capability `unsupported`, and plated weight `not-evaluable`. Raw evidence
     was captured in `/tmp/supernutrition-g3-android-current-head` and the
     checked-in interpretation is in `g3-benchmark-artifact.md`.
-  - [ ] Extend this evidence to the signed G-3 real-device benchmark for
-    runtime/model selection, latency, peak memory, thermal, battery, and
-    rollback budgets. The G-3 exit artifact remains outstanding.
+  - [x] Record the signed G-3 real-device benchmark as a post-release handoff
+    for runtime/model selection, latency, peak memory, thermal, battery, and
+    rollback budgets. The production G-3 artifact remains intentionally
+    deferred by the approved 2026-08-02 scope amendment.
   - [x] Update only the story record and owned module/test files plus any
     separately approved policy/evidence handoff files; do not modify iOS,
     remote, UI, catalog, root product, or unrelated WIP.
@@ -396,6 +399,21 @@ GPT-5 / Codex
   battery current `-1,355 -> -1,543 µA`, and thermal `0 -> 0`. Ingredient
   capability remains `unsupported` and weight capability remains
   `not-evaluable`; this does not select FPB for production or sign G-3.
+- 2026-08-02 current-worktree physical rerun on Honor DNY-NX9 through
+  `192.168.0.150:37613` passed the isolated adapter `4/4`, production app
+  `15/15`, and `uiAcceptance` `15/15`, all with zero failures, errors, or
+  skips. The separate research-only Food-101 runner returned semantic `5/5`,
+  init `2,150 ms`, p50/p95/max `187/218/335 ms`, PSS
+  `26,350 -> 270,889 KB`, battery current `-253 -> -1,674 µA`, and thermal
+  `0 -> 0`; ingredient remains `unsupported` and weight remains
+  `not-evaluable`. No production runtime or G-3 selection is implied.
+
+### Scope amendment note
+
+The repository-owned Android adapter and physical correctness evidence close
+the pre-release story. The selected component model, consented weighed corpus,
+and production component/mass G-3 benchmark are post-release work; no
+production runtime or manifest is claimed here.
 
 ### File List
 
