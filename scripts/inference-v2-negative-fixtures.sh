@@ -249,4 +249,62 @@ mutate_telemetry telemetry_vocabulary "durationBucket=over-30s"
 repin telemetry_vocabulary
 expect_rejected_because "a bucket value outside its declared vocabulary" telemetry_vocabulary "outside its declared vocabulary"
 
+# --- capability envelope --------------------------------------------------
+# The fixture that was checked only for its filename, so it could have declared
+# any shape at all while a binding was written from it.
+
+mutate_capability() {
+    local name="$1"
+    python3 - "$work/$name/fixtures/capability-ready.json" "${@:2}" <<'CAP'
+import json, sys
+from pathlib import Path
+path = Path(sys.argv[1])
+data = json.loads(path.read_text())
+for assignment in sys.argv[2:]:
+    key, _, value = assignment.partition("=")
+    if value == "":
+        data.pop(key, None)
+    else:
+        data[key] = value
+path.write_text(json.dumps(data, separators=(",", ":")) + "\n")
+CAP
+}
+
+seed capability_extra
+mutate_capability capability_extra "deviceSerial=HT7A1B002345"
+repin capability_extra
+expect_rejected_because "capability carrying a field outside the allowlist" capability_extra "unlisted fields"
+
+seed capability_missing
+mutate_capability capability_missing "engineId="
+repin capability_missing
+expect_rejected_because "capability omitting a required field" capability_missing "omits required fields"
+
+seed capability_state
+mutate_capability capability_state "state=warming-up"
+repin capability_state
+expect_rejected_because "a capability state outside its vocabulary" capability_state "outside its declared vocabulary"
+
+seed capability_modality
+mutate_capability capability_modality "modality=voice"
+repin capability_modality
+expect_rejected_because "a capability for an undeclared modality" capability_modality "not a declared modality"
+
+# The self-contradicting reports. Both directions, because each is a different
+# way for one capability to say two things at once.
+seed capability_ready_with_reason
+mutate_capability capability_ready_with_reason "reason=model-missing"
+repin capability_ready_with_reason
+expect_rejected_because "ready and still reporting a reason" capability_ready_with_reason "still reports an unavailable reason"
+
+seed capability_ready_without_model
+mutate_capability capability_ready_without_model "modelVersion="
+repin capability_ready_without_model
+expect_rejected_because "ready and naming no model" capability_ready_without_model "names no model version"
+
+seed capability_silent_failure
+mutate_capability capability_silent_failure "state=unsupported" "modelVersion="
+repin capability_silent_failure
+expect_rejected_because "unavailable and reporting no reason" capability_silent_failure "reports no reason"
+
 echo "inference v2 negative fixtures: OK"

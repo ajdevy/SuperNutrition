@@ -52,13 +52,13 @@ class InferenceTelemetryV2Test {
 
     @Test
     fun `the canonical fixture round-trips byte for byte`() {
-        val event = InferenceContractJson.decodeTelemetryV2(canonical)
+        val event = InferenceContractV2Json.decodeTelemetry(canonical)
 
         assertEquals(InferenceRouteV2.LOCAL_TEXT, event.route)
         assertEquals(InferenceModality.TEXT, event.modality)
         assertEquals(TelemetryEventNameV2.ATTEMPT_COMPLETED, event.eventName)
         assertEquals(TelemetryItemGroupCountBucket.TWO_TO_THREE, event.itemGroupCountBucket)
-        assertEquals(canonical, InferenceContractJson.encodeTelemetryV2(event))
+        assertEquals(canonical, InferenceContractV2Json.encodeTelemetry(event))
     }
 
     @Test
@@ -75,7 +75,7 @@ class InferenceTelemetryV2Test {
 
         assertEquals(InferenceRouteV2.LOCAL_TEXT, event.route)
         assertTrue(event.route != InferenceRouteV2.LOCAL && event.route != InferenceRouteV2.REMOTE)
-        assertEquals(canonical, InferenceContractJson.encodeTelemetryV2(event))
+        assertEquals(canonical, InferenceContractV2Json.encodeTelemetry(event))
     }
 
     @Test
@@ -95,7 +95,7 @@ class InferenceTelemetryV2Test {
             resourceBucket = TelemetryResourceBucketV2.LOW,
         )
 
-        val encoded = InferenceContractJson.encodeTelemetryV2(event)
+        val encoded = InferenceContractV2Json.encodeTelemetry(event)
         assertTrue("sourceSpan" !in encoded, "spans index the user's own words and must not be logged")
         assertTrue("description" !in encoded, "the description is not telemetry eligible")
         assertTrue("food:egg-boiled" !in encoded, "what a person ate is not an operational measurement")
@@ -201,7 +201,7 @@ class InferenceTelemetryV2Test {
     @Test
     fun `a v1 contract version is rejected rather than silently accepted`() {
         assertFailsWith<IllegalArgumentException> {
-            InferenceContractJson.decodeTelemetryV2(
+            InferenceContractV2Json.decodeTelemetry(
                 canonical.replace(INFERENCE_CONTRACT_V2, "photo-inference-engine/v1"),
             )
         }

@@ -108,8 +108,20 @@ sealed interface InferenceRequestV2 {
  * a first-class outcome, provenance on every result — is modality-independent.
  */
 interface InferenceEngineV2 {
+    /** Every implementation must explicitly bind itself to the frozen contract release. */
+    val contractVersion: String
+
     /** Which modalities this engine can serve. An engine may support only one. */
     val supportedModalities: Set<InferenceModality>
+
+    /**
+     * What this engine can do for one modality right now.
+     *
+     * Per modality because an engine serving both can be ready for photos and
+     * still waiting on a text model. v1's `PhotoInferenceEngine.capability()`
+     * needs no argument because it has one modality to report on; this one does.
+     */
+    suspend fun capability(modality: InferenceModality): EngineCapabilityV2
 
     /**
      * Returns [InferenceResultV2] rather than v1's `PhotoInferenceResult`.

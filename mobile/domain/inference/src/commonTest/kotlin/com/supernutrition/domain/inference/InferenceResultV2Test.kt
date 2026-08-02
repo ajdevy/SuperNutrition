@@ -53,7 +53,7 @@ class InferenceResultV2Test {
 
     @Test
     fun `a text result decodes with one group per item, each carrying its span`() {
-        val result = InferenceContractJson.decodeV2(textCandidates)
+        val result = InferenceContractV2Json.decode(textCandidates)
 
         assertEquals(INFERENCE_CONTRACT_V2, result.contractVersion)
         assertEquals(InferenceModality.TEXT, result.modality)
@@ -66,7 +66,7 @@ class InferenceResultV2Test {
 
     @Test
     fun `a photo result decodes with groups and no spans`() {
-        val result = InferenceContractJson.decodeV2(photoCandidates)
+        val result = InferenceContractV2Json.decode(photoCandidates)
 
         assertEquals(InferenceModality.PHOTO, result.modality)
         val groups = assertIs<InferenceOutcomeV2.Candidates>(result.outcome).itemGroups
@@ -77,11 +77,11 @@ class InferenceResultV2Test {
     @Test
     fun `abstention and failure decode with their v2 reasons`() {
         val abstained = assertIs<InferenceOutcomeV2.Abstention>(
-            InferenceContractJson.decodeV2(abstention).outcome,
+            InferenceContractV2Json.decode(abstention).outcome,
         )
         assertEquals(AbstentionReasonV2.DESCRIPTION_UNSEGMENTABLE, abstained.reason)
 
-        val failed = assertIs<InferenceOutcomeV2.Failure>(InferenceContractJson.decodeV2(failure).outcome)
+        val failed = assertIs<InferenceOutcomeV2.Failure>(InferenceContractV2Json.decode(failure).outcome)
         assertEquals(InferenceFailureCode.TEMPORARY_UNAVAILABLE, failed.code)
         assertEquals(true, failed.retryable)
     }
@@ -89,7 +89,7 @@ class InferenceResultV2Test {
     @Test
     fun `every canonical fixture round-trips byte-identically`() {
         for (fixture in listOf(textCandidates, photoCandidates, abstention, failure)) {
-            assertEquals(fixture, InferenceContractJson.encodeV2(InferenceContractJson.decodeV2(fixture)))
+            assertEquals(fixture, InferenceContractV2Json.encode(InferenceContractV2Json.decode(fixture)))
         }
     }
 
@@ -97,7 +97,7 @@ class InferenceResultV2Test {
     fun `a partly anchored text result is rejected rather than surfaced`() {
         // partial_segmentation = "reject". Some items traceable to the user's
         // words and some not is the FM-6 failure wearing provenance.
-        val anchored = InferenceContractJson.decodeV2(textCandidates)
+        val anchored = InferenceContractV2Json.decode(textCandidates)
         val groups = assertIs<InferenceOutcomeV2.Candidates>(anchored.outcome).itemGroups
 
         assertFailsWith<IllegalArgumentException> {
@@ -113,7 +113,7 @@ class InferenceResultV2Test {
 
     @Test
     fun `a photo result carrying a text span is rejected`() {
-        val photo = InferenceContractJson.decodeV2(photoCandidates)
+        val photo = InferenceContractV2Json.decode(photoCandidates)
         val group = assertIs<InferenceOutcomeV2.Candidates>(photo.outcome).itemGroups.single()
 
         assertFailsWith<IllegalArgumentException> {
@@ -128,7 +128,7 @@ class InferenceResultV2Test {
     @Test
     fun `a v1 contract version is refused everywhere v2 is required`() {
         assertFailsWith<IllegalArgumentException> {
-            InferenceContractJson.decodeV2(textCandidates.replace(INFERENCE_CONTRACT_V2, PHOTO_INFERENCE_CONTRACT_V1))
+            InferenceContractV2Json.decode(textCandidates.replace(INFERENCE_CONTRACT_V2, PHOTO_INFERENCE_CONTRACT_V1))
         }
     }
 }
