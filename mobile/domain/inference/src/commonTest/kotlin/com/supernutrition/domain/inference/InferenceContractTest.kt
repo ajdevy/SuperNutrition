@@ -1,6 +1,8 @@
 package com.supernutrition.domain.inference
 
 import kotlinx.serialization.SerializationException
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlin.test.Test
@@ -84,6 +86,13 @@ class InferenceContractTest {
                 configurationDigest = "A".repeat(64),
             )
         }
+        assertFailsWith<IllegalArgumentException> {
+            requireSha256Digest("a".repeat(63), "test")
+        }
+        assertFailsWith<IllegalArgumentException> {
+            requireSha256Digest("g".repeat(64), "test")
+        }
+        assertEquals("0".repeat(64), requireSha256Digest("0".repeat(64), "test"))
     }
 
     @Test
@@ -351,10 +360,16 @@ class InferenceContractTest {
             )
         }
         assertFailsWith<IllegalArgumentException> { candidate.copy(rank = 0) }
+        assertFailsWith<IllegalArgumentException> { candidate.copy(rank = -1) }
         assertFailsWith<IllegalArgumentException> { InferenceOutcome.Candidates(emptyList()) }
         assertFailsWith<IllegalArgumentException> {
             InferenceOutcome.Candidates(
                 listOf(candidate, candidate.copy(candidateId = "food:apple", rank = 1)),
+            )
+        }
+        assertFailsWith<IllegalArgumentException> {
+            InferenceOutcome.Candidates(
+                listOf(candidate, candidate.copy(candidateId = candidate.candidateId, rank = 2)),
             )
         }
         assertFailsWith<IllegalArgumentException> {
@@ -510,6 +525,8 @@ class InferenceContractTest {
         assertEquals(ConfidenceBand.MEDIUM, ConfidenceBand.fromScore(0.799999))
         assertEquals(ConfidenceBand.HIGH, ConfidenceBand.fromScore(0.8))
         assertEquals(ConfidenceBand.HIGH, ConfidenceBand.fromScore(1.0))
+        assertEquals(ConfidenceBand.MEDIUM, Confidence(0.5, ConfidenceBand.MEDIUM).band)
+        assertEquals(ConfidenceBand.MEDIUM, Confidence(0.799999, ConfidenceBand.MEDIUM).band)
 
         assertFailsWith<IllegalArgumentException> { Confidence(0.49, ConfidenceBand.HIGH) }
         assertFailsWith<IllegalArgumentException> { Confidence(0.5, ConfidenceBand.LOW) }
@@ -533,6 +550,58 @@ class InferenceContractTest {
                     "{\"contractVersion\"",
                     "{\"futureCapabilityField\":true,\"contractVersion\"",
                 ),
+            ),
+        )
+    }
+
+    @Test
+    fun `legacy generated serializers round trip branch boundary values`() {
+        val json = Json { encodeDefaults = true }
+        val jsonWithoutDefaults = Json { encodeDefaults = false }
+        val candidate = candidateFixture()
+        val candidates = InferenceOutcome.Candidates(listOf(candidate))
+        val capability = InferenceContractFixtures.readyCapability
+        val unavailable = EngineCapability(
+            contractVersion = PHOTO_INFERENCE_CONTRACT_V1,
+            state = CapabilityState.MODEL_REQUIRED,
+            reason = CapabilityReason.MODEL_MISSING,
+            userMessageKey = "inference.capability.model_required",
+            engineId = "fixture-engine",
+        )
+
+        assertEquals(
+            Confidence(0.5, ConfidenceBand.MEDIUM),
+            json.decodeFromString(
+                Confidence.serializer(),
+                json.encodeToString(Confidence.serializer(), Confidence(0.5, ConfidenceBand.MEDIUM)),
+            ),
+        )
+        assertEquals(
+            capability,
+            json.decodeFromString(
+                EngineCapability.serializer(),
+                json.encodeToString(EngineCapability.serializer(), capability),
+            ),
+        )
+        assertEquals(
+            unavailable,
+            jsonWithoutDefaults.decodeFromString(
+                EngineCapability.serializer(),
+                jsonWithoutDefaults.encodeToString(EngineCapability.serializer(), unavailable),
+            ),
+        )
+        assertEquals(
+            candidate,
+            json.decodeFromString(
+                InferenceCandidate.serializer(),
+                json.encodeToString(InferenceCandidate.serializer(), candidate),
+            ),
+        )
+        assertEquals(
+            candidates,
+            json.decodeFromString(
+                InferenceOutcome.Candidates.serializer(),
+                json.encodeToString(InferenceOutcome.Candidates.serializer(), candidates),
             ),
         )
     }
