@@ -3,7 +3,12 @@
 **Review type:** BMAD adversarial review (`bmad-review-adversarial-general`)
 **Review date:** 2026-08-02
 **Reviewer:** Claude Code (read-only pass; no artifact was modified)
-**Status:** findings open, none applied
+**Status:** B1 and B2 addressed in the research package; B3, B4, M1–M13, and H1–H11 remain open unless noted below.
+
+**Follow-up note (2026-08-02):** The research and presentation now reference the
+existing `inference-evidence/v2` contract and the measured G-3 baseline. The
+review-time provenance below remains historical; re-read current files before
+acting on any remaining finding.
 
 This file is a self-contained handoff. Another agent should be able to act on it
 without the originating conversation. Every claim below is marked as either
