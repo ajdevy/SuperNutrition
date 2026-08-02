@@ -316,49 +316,40 @@ class InferenceContractTest {
     @Test
     fun `candidate invariants reject malformed values`() {
         val candidate = candidateFixture()
-        val provenance = candidate.provenance
+        assertRejectsMalformedCandidateIdentity(candidate)
+        assertRejectsMalformedCandidateRankAndOutcome(candidate)
+    }
 
-        assertFailsWith<IllegalArgumentException> {
-            InferenceCandidate(
-                candidateId = "",
-                label = candidate.label,
-                rank = candidate.rank,
-                confidence = candidate.confidence,
-                unresolvedAssumptions = emptyList(),
-                provenance = provenance,
-            )
-        }
-        assertFailsWith<IllegalArgumentException> {
-            InferenceCandidate(
-                candidateId = " ",
-                label = candidate.label,
-                rank = candidate.rank,
-                confidence = candidate.confidence,
-                unresolvedAssumptions = emptyList(),
-                provenance = provenance,
-            )
+    private fun assertRejectsMalformedCandidateIdentity(candidate: InferenceCandidate) {
+        val provenance = candidate.provenance
+        listOf("", " ").forEach { candidateId ->
+            assertFailsWith<IllegalArgumentException> {
+                InferenceCandidate(
+                    candidateId = candidateId,
+                    label = candidate.label,
+                    rank = candidate.rank,
+                    confidence = candidate.confidence,
+                    unresolvedAssumptions = emptyList(),
+                    provenance = provenance,
+                )
+            }
         }
         assertEquals(" x", candidate.copy(candidateId = " x").candidateId)
-        assertFailsWith<IllegalArgumentException> {
-            InferenceCandidate(
-                candidateId = candidate.candidateId,
-                label = "",
-                rank = candidate.rank,
-                confidence = candidate.confidence,
-                unresolvedAssumptions = emptyList(),
-                provenance = provenance,
-            )
+        listOf("", " ").forEach { label ->
+            assertFailsWith<IllegalArgumentException> {
+                InferenceCandidate(
+                    candidateId = candidate.candidateId,
+                    label = label,
+                    rank = candidate.rank,
+                    confidence = candidate.confidence,
+                    unresolvedAssumptions = emptyList(),
+                    provenance = provenance,
+                )
+            }
         }
-        assertFailsWith<IllegalArgumentException> {
-            InferenceCandidate(
-                candidateId = candidate.candidateId,
-                label = " ",
-                rank = candidate.rank,
-                confidence = candidate.confidence,
-                unresolvedAssumptions = emptyList(),
-                provenance = provenance,
-            )
-        }
+    }
+
+    private fun assertRejectsMalformedCandidateRankAndOutcome(candidate: InferenceCandidate) {
         assertFailsWith<IllegalArgumentException> { candidate.copy(rank = 0) }
         assertFailsWith<IllegalArgumentException> { candidate.copy(rank = -1) }
         assertFailsWith<IllegalArgumentException> { InferenceOutcome.Candidates(emptyList()) }
