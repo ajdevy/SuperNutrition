@@ -68,6 +68,12 @@ internal data class JvmCoverageSummary(
     val moduleCount: Int,
 )
 
+internal data class JvmCoverageTarget(
+    val projectPath: String,
+    val lineMinimumPercent: Int,
+    val branchMinimumPercent: Int,
+)
+
 internal object JvmCoverageVerifier {
     fun reportPaths(reportRoot: Path, projectPath: String): List<Path> {
         val projectRoot = reportRoot.resolve(projectPath.removePrefix(":").replace(':', '/'))
@@ -79,8 +85,17 @@ internal object JvmCoverageVerifier {
 
     fun reportPath(reportRoot: Path, projectPath: String): Path = reportPaths(reportRoot, projectPath).first()
 
-    fun verify(reportRoot: Path, productionProjects: List<String>): JvmCoverageSummary {
+    fun verify(
+        reportRoot: Path,
+        productionProjects: List<String>,
+        targets: Map<String, JvmCoverageTarget> = productionProjects.associateWith {
+            JvmCoverageTarget(it, lineMinimumPercent = 85, branchMinimumPercent = 85)
+        },
+    ): JvmCoverageSummary {
         require(productionProjects.isNotEmpty()) { "JVM host coverage has no production modules" }
+        require(targets.keys == productionProjects.toSet()) {
+            "JVM coverage targets must match the production modules exactly"
+        }
         var lineMissed = 0L
         var lineCovered = 0L
         var branchMissed = 0L
@@ -102,9 +117,20 @@ internal object JvmCoverageVerifier {
             // empty-branch failure; other modules still contribute the
             // aggregate branch denominator.
             val branch = counter(text, "BRANCH", path, allowEmpty = true)
+            val target = targets.getValue(path)
+            val moduleLinePercent = percentage(line.second, line.first, "line")
+            require(moduleLinePercent >= target.lineMinimumPercent) {
+                "JVM module $path line coverage is ${formatCoverage(moduleLinePercent)}%; " +
+                    "minimum is ${target.lineMinimumPercent}%"
+            }
             lineMissed += line.first
             lineCovered += line.second
             if (branch.first + branch.second > 0) {
+                val moduleBranchPercent = percentage(branch.second, branch.first, "branch")
+                require(moduleBranchPercent >= target.branchMinimumPercent) {
+                    "JVM module $path branch coverage is ${formatCoverage(moduleBranchPercent)}%; " +
+                        "minimum is ${target.branchMinimumPercent}%"
+                }
                 branchMissed += branch.first
                 branchCovered += branch.second
             }

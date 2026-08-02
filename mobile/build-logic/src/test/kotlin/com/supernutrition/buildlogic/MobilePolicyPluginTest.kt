@@ -25,6 +25,8 @@ class MobilePolicyPluginTest {
                 [[denominator]]
                 source_path = "mobile/core/config"
                 coverage_kind = "jvm"
+                line_minimum_percent = 85
+                branch_minimum_percent = 85
             """.trimIndent(),
         )
         val project = ProjectBuilder.builder()
