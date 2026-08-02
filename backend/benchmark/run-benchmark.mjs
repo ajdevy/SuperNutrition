@@ -2,7 +2,11 @@
 import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync } from 'fs';
 import { resolve, join } from 'path';
 
-const API_KEY = process.env.API_KEY;
+const API_KEY = process.env.OPENROUTER_API_KEY;
+if (!API_KEY) {
+  console.error('OPENROUTER_API_KEY not set; export it from backend/mobile-api/.env before running');
+  process.exit(1);
+}
 const BASE = 'https://openrouter.ai/api/v1';
 const IMG_DIR = resolve(join(import.meta.dirname, 'images'));
 const OUT_DIR = resolve(join(import.meta.dirname, 'results'));
