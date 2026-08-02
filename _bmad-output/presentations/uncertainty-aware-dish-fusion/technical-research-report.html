@@ -534,7 +534,29 @@
       <div class="section-head">
         <p class="kicker">05 · Proof</p>
         <h2>Решение принимаем по измеряемому риску, а не по более длинному списку.</h2>
-        <p>Исследование предлагает сравнить политики на фиксированных публичных данных и conflict slices. Пороговые значения нельзя честно придумать заранее — их нужно получить из baseline run и product risk tolerance.</p>
+        <p>Мы начинаем не с нуля: v2 contract и G-3 baseline уже задают production boundary, runtime budgets и честное ограничение текущих моделей. Fusion thresholds всё ещё нужно получить из отдельного slice report.</p>
+      </div>
+      <div class="grid-2" style="margin: 30px 0;">
+        <article class="panel">
+          <h3>Production boundary уже есть</h3>
+          <ul class="mini-list">
+            <li><strong>v2 result:</strong> components, abstention или typed failure.</li>
+            <li><strong>Visual claim:</strong> `VisibleComponent.confidence` + `ComponentVisibility`.</li>
+            <li><strong>Composition-only:</strong> отдельный review/debug envelope, не overlay.</li>
+            <li><strong>Compatibility:</strong> additive optional extension only; required-field changes need a new major.</li>
+          </ul>
+          <p><a href="../../../contracts/inference/v2/schema.toml">Открыть v2 schema</a> · <a href="../../../mobile/domain/inference/src/commonMain/kotlin/com/supernutrition/domain/inference/InferenceV2Models.kt">Открыть v2 models</a></p>
+        </article>
+        <article class="panel">
+          <h3>G-3 baseline уже измерен</h3>
+          <ul class="mini-list">
+            <li><strong>Food-101:</strong> semantic 5/5; ingredients unsupported; mass not-evaluable.</li>
+            <li><strong>Android:</strong> p95 279 ms, max 334 ms, PSS 273,547 KB.</li>
+            <li><strong>iOS:</strong> p95 85 ms, max 85 ms, resident 253,008 KB.</li>
+            <li><strong>Component candidates:</strong> YOLO-World F1 0.2233; MobileSAM p95 2,003 ms.</li>
+          </ul>
+          <p><a href="../../implementation-artifacts/g3-benchmark-artifact.md">Открыть G-3 artifact</a></p>
+        </article>
       </div>
       <div class="ablation" aria-label="Лестница сравнительного benchmark">
         <div class="ablation-row"><strong>No prior</strong><span>Только визуальный detector</span><span class="result">baseline</span></div>
@@ -559,8 +581,8 @@
         <p>Полный joint model — долгий future track. Ближайший безопасный выигрыш даёт контракт, replay fixtures, calibration и shadow mode поверх уже существующих model adapters.</p>
       </div>
       <div class="roadmap">
-        <article class="roadmap-step"><b>R1</b><h3>Evidence contract</h3><p>Статусы, provenance, model/ontology/calibration versions и decision reason.</p></article>
-        <article class="roadmap-step"><b>R2</b><h3>Ablation harness</h3><p>Пять политик на fixed public-data и curated conflict slices.</p></article>
+        <article class="roadmap-step"><b>R1</b><h3>Delta к v2 contract</h3><p>Reuse existing confidence, visibility и provenance; composition-only states держать отдельно до additive extension.</p></article>
+        <article class="roadmap-step"><b>R2</b><h3>G-3 baseline + ablation</h3><p>Пять политик поверх существующих device/model measurements и fixed conflict slices.</p></article>
         <article class="roadmap-step"><b>R3</b><h3>Separate calibration</h3><p>Dish и detector калибруются независимо; raw scores не складываются.</p></article>
         <article class="roadmap-step"><b>R4</b><h3>Top‑k fusion</h3><p>Small deterministic baseline или meta-model с отдельными claim gates.</p></article>
         <article class="roadmap-step"><b>R5</b><h3>Review-safe UI</h3><p>Overlay только для VISUAL_DETECTED; остальное — отдельные статусы.</p></article>
@@ -587,6 +609,8 @@
             <li><a href="https://proceedings.mlr.press/v70/guo17a.html" target="_blank" rel="noreferrer">Modern neural network calibration</a></li>
             <li><a href="https://proceedings.mlr.press/v97/geifman19a.html" target="_blank" rel="noreferrer">Selective prediction / reject option</a></li>
             <li><a href="https://onnxruntime.ai/docs/tutorials/mobile/" target="_blank" rel="noreferrer">ONNX Runtime Mobile</a></li>
+            <li><a href="../../../contracts/inference/v2/schema.toml">Existing inference-evidence/v2 schema</a></li>
+            <li><a href="../../implementation-artifacts/g3-benchmark-artifact.md">Existing G-3 device baseline</a></li>
           </ul>
         </div>
         <div class="panel">
