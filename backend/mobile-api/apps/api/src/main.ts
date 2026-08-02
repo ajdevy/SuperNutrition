@@ -103,7 +103,7 @@ export const buildApplication = async (
     ? [
         new OpenRouterInferenceProvider(
           openRouterKey,
-          { baseUrl: config.inference.openRouterBaseUrl, timeoutMs: 15_000 },
+          { baseUrl: config.inference.openRouterBaseUrl, timeoutMs: 30_000 },
           payloads,
         ),
       ]
