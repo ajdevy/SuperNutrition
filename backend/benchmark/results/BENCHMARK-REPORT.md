@@ -236,17 +236,18 @@ Treat the rankings here as directional.
 
 ## 🔴 Security finding — unrelated to model selection, needs action
 
-**`backend/benchmark/run-benchmark.mjs` line 5 contains a live OpenRouter API key hardcoded in
-plaintext, and the file is tracked in git.**
+**`backend/benchmark/run-benchmark.mjs` line 5 contained a live OpenRouter API key hardcoded in
+plaintext, and the file was tracked in git. Fixed 2026-08-02: the key is now loaded from
+`OPENROUTER_API_KEY` (env).**
 
 ```js
-const API_KEY = 'sk-or-v1-ad7bc28420...';
+const API_KEY = process.env.OPENROUTER_API_KEY;
 ```
 
-`backend/mobile-api/.env` is correctly gitignored, but this key is in the repository history and is
-the same key the benchmark uses. **Rotate the key and load it from `.env`** as the free-roster script
-does. Note that `USDA_API_KEY` and the RS256 private key in `.env` are protected by gitignore only —
-worth confirming they were never committed earlier in history.
+`backend/mobile-api/.env` is correctly gitignored, but the key was in the repository history and is
+the same key the benchmark uses. **Rotate the key** (it is compromised in git history) — the env
+var keeps working with the new value. Note that `USDA_API_KEY` and the RS256 private key in `.env`
+are protected by gitignore only — worth confirming they were never committed earlier in history.
 
 ---
 
