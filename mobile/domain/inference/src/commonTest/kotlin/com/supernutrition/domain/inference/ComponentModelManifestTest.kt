@@ -1,5 +1,8 @@
 package com.supernutrition.domain.inference
 
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -22,6 +25,45 @@ class ComponentModelManifestTest {
             ),
             manifest.toProvenance("local-component-test"),
         )
+    }
+
+    @Test
+    fun `manifest defaults optional rollback and approval references to absent`() {
+        val manifest = ComponentModelManifest(
+            manifestVersion = COMPONENT_MODEL_MANIFEST_V1,
+            modelVersion = "component-model-defaults",
+            artifactDigest = "a".repeat(64),
+            taxonomyVersion = "ingredient-taxonomy-1",
+            taxonomyDigest = "b".repeat(64),
+            preprocessingVersion = "preprocess-1",
+            postprocessingVersion = "postprocess-1",
+            maskContractVersion = "mask-region-v1",
+            calibrationVersion = "mass-calibration-1",
+            runtime = "onnx-runtime",
+            executionProvider = "cpu",
+            compatibilityTier = "research-tier",
+            ownership = ComponentModelOwnership.APP_MANAGED,
+            activation = ComponentModelActivation.RESEARCH_ONLY,
+            legalApprovalRef = null,
+            corpusRef = null,
+            benchmarkEvidenceRef = null,
+            rollbackEvidenceRef = null,
+        )
+
+        assertEquals(null, manifest.rollbackTargetVersion)
+        assertEquals(null, manifest.productApprovalRef)
+        assertEquals(null, manifest.engineeringApprovalRef)
+    }
+
+    @Test
+    fun `manifest serialization round trips both research defaults and production evidence`() {
+        val json = Json { encodeDefaults = true }
+        listOf(validManifest(), validProductionManifest()).forEach { manifest ->
+            val encoded = json.encodeToString(ComponentModelManifest.serializer(), manifest)
+            val decoded = json.decodeFromString(ComponentModelManifest.serializer(), encoded)
+
+            assertEquals(manifest, decoded)
+        }
     }
 
     @Test

@@ -1,8 +1,13 @@
 package com.supernutrition.domain.inference
 
 import kotlinx.serialization.SerializationException
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.EmptyCoroutineContext
+import kotlin.coroutines.startCoroutine
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -34,12 +39,45 @@ class InferenceV2ContractTest {
 
         assertEquals(attempt, (request.input as InferenceV2Input.Photo).photoRef.attemptId)
         assertEquals(INFERENCE_EVIDENCE_CONTRACT_V2, engine.contractVersion)
+        assertEquals(InferenceV2ContractFixtures.estimatedPhotoResult, runSuspend { engine.analyze(request) })
         assertFailsWith<IllegalArgumentException> {
             InferenceV2Request(
                 input = request.input,
                 attemptContext = request.attemptContext.copy(attemptId = AttemptId("other-v2-attempt")),
             )
         }
+    }
+
+    @Test
+    fun `v2 engine rejects a result whose modality differs from the request`() {
+        val attempt = AttemptId("attempt-v2-modality")
+        val request = InferenceV2Request(
+            input = InferenceV2Input.Photo(PhotoRef.issue(attempt, "leased-v2-modality")),
+            attemptContext = InferenceAttemptContext(
+                attemptId = attempt,
+                requestId = "request-v2-modality",
+                configurationVersion = "config-v2-modality",
+                configurationDigest = "a".repeat(64),
+            ),
+        )
+        val engine = object : InferenceV2Engine() {
+            override val contractVersion: String = INFERENCE_EVIDENCE_CONTRACT_V2
+
+            override suspend fun capability(): InferenceV2Capability = InferenceV2ContractFixtures.readyCapability
+
+            override suspend fun analyzeUnvalidated(request: InferenceV2Request): InferenceV2Result =
+                InferenceV2ContractFixtures.textNotEvaluableResult
+        }
+
+        assertFailsWith<IllegalArgumentException> { runSuspend { engine.analyze(request) } }
+    }
+
+    private fun <T> runSuspend(block: suspend () -> T): T {
+        var result: Result<T>? = null
+        block.startCoroutine(
+            Continuation(EmptyCoroutineContext) { completed -> result = completed },
+        )
+        return checkNotNull(result).getOrThrow()
     }
 
     @Test
@@ -98,10 +136,25 @@ class InferenceV2ContractTest {
         val stableComponents = InferenceV2Outcome.Components(callerComponents)
         callerComponents.clear()
         assertEquals(1, stableComponents.components.size)
+        assertFalse(
+            stableComponents == InferenceV2Outcome.Components(
+                listOf(component.copy(componentId = "component:other")),
+            ),
+        )
+        assertFalse(stableComponents.equals("components"))
+        assertEquals(stableComponents, stableComponents.copy(listOf(component)))
         val callerAssumptions = mutableListOf(MassCalibrationAssumption.SINGLE_VIEW_APPROXIMATION)
         val stableMass = MassEvidence.Estimated(GramRange(1.0, 2.0), callerAssumptions)
         callerAssumptions.clear()
         assertEquals(1, stableMass.calibrationAssumptions.size)
+        assertFalse(
+            stableMass == MassEvidence.Estimated(
+                GramRange(1.0, 3.0),
+                listOf(MassCalibrationAssumption.SINGLE_VIEW_APPROXIMATION),
+            ),
+        )
+        assertEquals(stableMass, stableMass.copy())
+        assertFalse(stableMass.equals("mass"))
     }
 
     @Test
@@ -154,6 +207,65 @@ class InferenceV2ContractTest {
         assertFailsWith<IllegalArgumentException> {
             InferenceV2ContractJson.decode(encoded.replace("\"upperGrams\":155.0", "\"upperGrams\":-1.0"))
         }
+    }
+
+    @Test
+    fun `v2 generated serializers round trip component and capability boundaries`() {
+        val json = Json { encodeDefaults = true }
+        val jsonWithoutDefaults = Json { encodeDefaults = false }
+        val component = (InferenceV2ContractFixtures.estimatedPhotoResult.outcome as InferenceV2Outcome.Components)
+            .components
+            .single()
+        val componentWithoutRegion = component.copy(region = null)
+        val capability = InferenceV2ContractFixtures.readyCapability
+
+        assertEquals(
+            component,
+            json.decodeFromString(
+                VisibleComponent.serializer(),
+                json.encodeToString(VisibleComponent.serializer(), component),
+            ),
+        )
+        assertEquals(
+            componentWithoutRegion,
+            jsonWithoutDefaults.decodeFromString(
+                VisibleComponent.serializer(),
+                jsonWithoutDefaults.encodeToString(VisibleComponent.serializer(), componentWithoutRegion),
+            ),
+        )
+        assertEquals(
+            capability,
+            json.decodeFromString(
+                InferenceV2Capability.serializer(),
+                json.encodeToString(InferenceV2Capability.serializer(), capability),
+            ),
+        )
+        assertEquals(
+            InferenceV2ContractFixtures.estimatedPhotoResult,
+            json.decodeFromString(
+                InferenceV2Result.serializer(),
+                json.encodeToString(InferenceV2Result.serializer(), InferenceV2ContractFixtures.estimatedPhotoResult),
+            ),
+        )
+        val components = InferenceV2Outcome.Components(listOf(component))
+        assertEquals(
+            components,
+            json.decodeFromString(
+                InferenceV2Outcome.Components.serializer(),
+                json.encodeToString(InferenceV2Outcome.Components.serializer(), components),
+            ),
+        )
+        val mass = MassEvidence.Estimated(
+            GramRange(1.0, 2.0),
+            listOf(MassCalibrationAssumption.REFERENCE_GEOMETRY_AVAILABLE),
+        )
+        assertEquals(
+            mass,
+            json.decodeFromString(
+                MassEvidence.Estimated.serializer(),
+                json.encodeToString(MassEvidence.Estimated.serializer(), mass),
+            ),
+        )
     }
 
     @Test

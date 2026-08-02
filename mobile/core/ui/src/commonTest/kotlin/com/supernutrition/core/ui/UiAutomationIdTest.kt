@@ -8,6 +8,25 @@ import kotlin.test.assertTrue
 
 class UiAutomationIdTest {
     @Test
+    fun `camera capture contract exposes every permission and availability state`() {
+        assertEquals(
+            listOf(
+                CameraPermissionState.NOT_DETERMINED,
+                CameraPermissionState.GRANTED,
+                CameraPermissionState.DENIED,
+                CameraPermissionState.RATIONALE,
+                CameraPermissionState.PERMANENTLY_DENIED,
+                CameraPermissionState.RESTRICTED,
+            ),
+            CameraPermissionState.values().toList(),
+        )
+        assertEquals(
+            listOf(CameraAvailability.AVAILABLE, CameraAvailability.UNAVAILABLE),
+            CameraAvailability.values().toList(),
+        )
+    }
+
+    @Test
     fun `registry is unique and locale neutral`() {
         val values = UiAutomationIds.all.map { it.value }
 

@@ -3,10 +3,21 @@ package com.supernutrition.domain.inference
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertFailsWith
 import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
 class ComponentModelActivationTest {
+    @Test
+    fun `active model state rejects a non-production manifest`() {
+        assertFailsWith<IllegalArgumentException> {
+            ComponentModelActivationController(
+                RecordingOperations(),
+                initialActive = manifest("research-model", null, ComponentModelActivation.RESEARCH_ONLY),
+            )
+        }
+    }
+
     @Test
     fun `staging and activation require a verified production manifest`() {
         val operations = RecordingOperations()
