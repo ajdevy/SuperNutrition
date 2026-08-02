@@ -267,7 +267,7 @@ internal fun stripQuantityWords(query: String): String {
  * word behind it survived too.
  */
 private fun isQuantityToken(token: String): Boolean {
-    if (token in QUANTITY_WORDS) return true
+    if (quantifies(token)) return true
     if (token.isNotEmpty() && token.all(Char::isDigit)) return true
     // "200g", "2tbsp": a number glued to its unit is still one quantity. It
     // consults QUANTITY_WORDS rather than a units list of its own — the two
@@ -276,8 +276,30 @@ private fun isQuantityToken(token: String): Boolean {
     // resolved while "2tbsp rice" did not. Whether a space was typed is not a
     // distinction the catalog should notice.
     val digits = token.takeWhile(Char::isDigit)
-    return digits.isNotEmpty() && token.drop(digits.length) in QUANTITY_WORDS
+    return digits.isNotEmpty() && quantifies(token.drop(digits.length))
 }
+
+/**
+ * Whether a word counts or measures, in whatever case it was written in.
+ *
+ * Russian declines its numerals too, and the vocabulary holds only the
+ * dictionary forms. `двух морских окуней` and `200 граммов свинины` are how the
+ * language actually writes an amount, and both stalled here: `двух` is not
+ * `два`, so the counting word survived stripping as a token no record could
+ * satisfy, and the food behind it never resolved.
+ *
+ * The same generated table the matcher folds through, rather than a second list
+ * of oblique numerals kept in step with the first. Two vocabularies for one idea
+ * have already drifted twice in this file — units from quantity words, and a
+ * segmentation copy from its original — and both were fixed by deleting the
+ * duplicate rather than synchronising it.
+ *
+ * Additive on purpose. A word already in [QUANTITY_WORDS] stays a quantity word
+ * whatever its lemma is: `столовая` is one half of `столовая ложка` and folds to
+ * `столовый`, which is not a measure and would have quietly stopped being one.
+ */
+private fun quantifies(word: String): Boolean =
+    word in QUANTITY_WORDS || russianFormToLemma[word].let { it != null && it in QUANTITY_WORDS }
 
 private fun skipSeparatorsForward(description: String, from: Int, limit: Int): Int {
     var at = from
