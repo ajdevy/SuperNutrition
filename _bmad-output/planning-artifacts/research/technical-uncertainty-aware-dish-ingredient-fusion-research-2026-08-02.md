@@ -241,7 +241,10 @@ The safe adoption pattern is therefore:
 - calibrate dish and component scores separately;
 - use dish–ingredient relations as a soft ranking feature;
 - preserve raw detector outputs for audit/debug;
-- emit `detected`, `dish_expected`, `not_localized`, `rejected_artifact`, or `unknown` rather than collapsing all states to “ingredient”; and
+- reference the canonical evidence-state table above for product semantics: use
+  the existing v2 visual contract for production claims, and keep
+  composition-only, low-confidence, rejected, and abstained proposals in the
+  versioned fusion/review envelope rather than a parallel production enum; and
 - measure risk–coverage before enabling automatic nutrition binding.
 
 _Confidence:_ high for the separation of visual evidence and priors; medium for the exact fusion weights because they require a project-specific calibration set.
@@ -354,7 +357,10 @@ Review events should be explicit (`AcceptCandidate`, `RejectCandidate`, `AddMiss
 
 Model manifests, label maps, calibration files, and ontology files should be integrity-checked by digest and tied to a release/version. User photo data should remain local by default; if future upload/consent is added, the evidence record must identify consent state and destination separately from model output.
 
-No external integration should be allowed to replace `visualDetected` with a dish-prior assertion. API authentication, TLS, and key management matter only once remote services are introduced; the immediate integrity control is deterministic versioning and provenance.
+No external integration should be allowed to replace an existing v2 visual
+claim with a dish-prior assertion. API authentication, TLS, and key management
+matter only once remote services are introduced; the immediate integrity
+control is deterministic versioning and provenance.
 
 _Source:_ [W3C PROV-DM](https://www.w3.org/TR/prov-dm/), [ONNX Runtime mobile deployment](https://onnxruntime.ai/docs/tutorials/mobile/).
 
@@ -484,7 +490,10 @@ These are complementary evidence layers, not interchangeable quality claims.
 Adopt the new fusion behavior in stages. Do not replace the current hard prior in one release:
 
 1. **Shadow mode:** run hard-prior and candidate soft-fusion decisions in parallel; show the current UI but log the proposed evidence states in consented benchmark artifacts.
-2. **Evidence-contract release:** add separate `visualDetected`, `compositionPlausible`, `notLocalized`, and `unknown` states while keeping the current ranking behavior behind a flag.
+2. **Evidence-contract release:** expose the existing v2 visual result and
+   provenance, then add only additive optional composition/review fields after
+   fixture validation while keeping the current ranking behavior behind a flag.
+   Do not introduce a parallel production evidence-state enum.
 3. **Calibration release:** fit dish and detector calibration on a held-out, deployment-like set; record calibration version and risk-coverage curves.
 4. **Soft-fusion release:** enable top-k dish mixture and learned/simple late fusion for a controlled cohort or research flag.
 5. **Retirement:** remove hard filtering only after the soft-fusion benchmark improves visible-claim precision and does not regress review burden on required slices.
