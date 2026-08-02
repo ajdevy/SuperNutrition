@@ -1,0 +1,172 @@
+{
+  "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+  "modelVersion": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+  "provider": "Nvidia",
+  "duration": 576.0267310000054,
+  "durationSec": "0.58",
+  "promptTokens": 525,
+  "completionTokens": 2141,
+  "totalTokens": 2666,
+  "cost": 0,
+  "raw": "{\n  \"foods\": [\n    {\n      \"label\": \"avocado\",\n      \"rank\": 1,\n      \"confidence\": 1.0,\n      \"assumptions\": [\"sliced\"]\n    },\n    {\n      \"label\": \"radish\",\n      \"rank\": 1,\n      \"confidence\": 1.0,",
+  "rawFull": "{\n  \"foods\": [\n    {\n      \"label\": \"avocado\",\n      \"rank\": 1,\n      \"confidence\": 1.0,\n      \"assumptions\": [\"sliced\"]\n    },\n    {\n      \"label\": \"radish\",\n      \"rank\": 1,\n      \"confidence\": 1.0,\n      \"assumptions\": [\"sliced\"]\n    },\n    {\n      \"label\": \"cherry tomato\",\n      \"rank\": 1,\n      \"confidence\": 1.0,\n      \"assumptions\": [\"on vine\"]\n    },\n    {\n      \"label\": \"yellow bell pepper\",\n      \"rank\": 1,\n      \"confidence\": 1.0,\n      \"assumptions\": [\"sliced\"]\n    },\n    {\n      \"label\": \"lettuce\",\n      \"rank\": 1,\n      \"confidence\": 1.0,\n      \"assumptions\": [\"leafy\"]\n    },\n    {\n      \"label\": \"red cabbage\",\n      \"rank\": 1,\n      \"confidence\": 1.0,\n      \"assumptions\": [\"shredded\"]\n    },\n    {\n      \"label\": \"chickpeas\",\n      \"rank\": 1,\n      \"confidence\": 1.0,\n      \"assumptions\": [\"cooked\"]\n    },\n    {\n      \"label\": \"sweet potato\",\n      \"rank\": 1,\n      \"confidence\": 1.0,\n      \"assumptions\": [\"diced\"]\n    },\n    {\n      \"label\": \"microgreens\",\n      \"rank\": 1,\n      \"confidence\": 1.0,\n      \"assumptions\": [\"sprouted\"]\n    }\n  ]\n}",
+  "reasoningPresent": true,
+  "finishReason": "stop",
+  "maxTokens": 2048,
+  "parsed": {
+    "foods": [
+      {
+        "label": "avocado",
+        "rank": 1,
+        "confidence": 1,
+        "assumptions": [
+          "sliced"
+        ]
+      },
+      {
+        "label": "radish",
+        "rank": 1,
+        "confidence": 1,
+        "assumptions": [
+          "sliced"
+        ]
+      },
+      {
+        "label": "cherry tomato",
+        "rank": 1,
+        "confidence": 1,
+        "assumptions": [
+          "on vine"
+        ]
+      },
+      {
+        "label": "yellow bell pepper",
+        "rank": 1,
+        "confidence": 1,
+        "assumptions": [
+          "sliced"
+        ]
+      },
+      {
+        "label": "lettuce",
+        "rank": 1,
+        "confidence": 1,
+        "assumptions": [
+          "leafy"
+        ]
+      },
+      {
+        "label": "red cabbage",
+        "rank": 1,
+        "confidence": 1,
+        "assumptions": [
+          "shredded"
+        ]
+      },
+      {
+        "label": "chickpeas",
+        "rank": 1,
+        "confidence": 1,
+        "assumptions": [
+          "cooked"
+        ]
+      },
+      {
+        "label": "sweet potato",
+        "rank": 1,
+        "confidence": 1,
+        "assumptions": [
+          "diced"
+        ]
+      },
+      {
+        "label": "microgreens",
+        "rank": 1,
+        "confidence": 1,
+        "assumptions": [
+          "sprouted"
+        ]
+      }
+    ]
+  },
+  "foods": [
+    {
+      "label": "avocado",
+      "rank": 1,
+      "confidence": 1,
+      "assumptions": [
+        "sliced"
+      ]
+    },
+    {
+      "label": "radish",
+      "rank": 1,
+      "confidence": 1,
+      "assumptions": [
+        "sliced"
+      ]
+    },
+    {
+      "label": "cherry tomato",
+      "rank": 1,
+      "confidence": 1,
+      "assumptions": [
+        "on vine"
+      ]
+    },
+    {
+      "label": "yellow bell pepper",
+      "rank": 1,
+      "confidence": 1,
+      "assumptions": [
+        "sliced"
+      ]
+    },
+    {
+      "label": "lettuce",
+      "rank": 1,
+      "confidence": 1,
+      "assumptions": [
+        "leafy"
+      ]
+    },
+    {
+      "label": "red cabbage",
+      "rank": 1,
+      "confidence": 1,
+      "assumptions": [
+        "shredded"
+      ]
+    },
+    {
+      "label": "chickpeas",
+      "rank": 1,
+      "confidence": 1,
+      "assumptions": [
+        "cooked"
+      ]
+    },
+    {
+      "label": "sweet potato",
+      "rank": 1,
+      "confidence": 1,
+      "assumptions": [
+        "diced"
+      ]
+    },
+    {
+      "label": "microgreens",
+      "rank": 1,
+      "confidence": 1,
+      "assumptions": [
+        "sprouted"
+      ]
+    }
+  ],
+  "attempts": [],
+  "image": "01-salad-bowl.jpg",
+  "modelLabel": "Nemotron 3 Nano Omni 30B (free, prod fallback/deep)",
+  "pass": 2,
+  "key": "nvidia_nemotron-3-nano-omni-30b-a3b-reasoning:free__01-salad-bowl_jpg",
+  "session": "free-roster"
+}

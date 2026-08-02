@@ -1,0 +1,94 @@
+{
+  "model": "google/gemma-4-26b-a4b-it:free",
+  "modelVersion": "google/gemma-4-26b-a4b-it:free",
+  "provider": "Darkbloom",
+  "duration": 2364.044146,
+  "durationSec": "2.36",
+  "promptTokens": 382,
+  "completionTokens": 263,
+  "totalTokens": 645,
+  "cost": 0,
+  "raw": "{\n  \"foods\": [\n    {\n      \"label\": \"paella\",\n      \"rank\": 1,\n      \"confidence\": 0.95,\n      \"assumptions\": [\n        \"The dish contains rice, shrimp, and vegetables typical of paella.\",\n        \"Th",
+  "rawFull": "{\n  \"foods\": [\n    {\n      \"label\": \"paella\",\n      \"rank\": 1,\n      \"confidence\": 0.95,\n      \"assumptions\": [\n        \"The dish contains rice, shrimp, and vegetables typical of paella.\",\n        \"The presentation in a shallow pan is characteristic of paella.\"\n      ]\n    },\n    {\n      \"label\": \"shrimp\",\n      \"rank\": 2,\n      \"confidence\": 0.9,\n      \"assumptions\": [\n        \"Pink, curved shapes in the rice are identifiable as cooked shrimp.\"\n      ]\n    },\n    {\n      \"label\": \"lemon\",\n      \"rank\": 3,\n      \"confidence\": 0.98,\n      \"assumptions\": [\n        \"Yellow wedges are clearly lemon slices used for garnish.\"\n      ]\n    },\n    {\n      \"label\": \"cilantro\",\n      \"rank\": 4,\n      \"confidence\": 0.85,\n      \"assumptions\": [\n        \"Green leafy herbs used as garnish are likely cilantro or parsley.\"\n      ]\n    }\n  ]\n}",
+  "reasoningPresent": false,
+  "finishReason": "stop",
+  "maxTokens": 2048,
+  "parsed": {
+    "foods": [
+      {
+        "label": "paella",
+        "rank": 1,
+        "confidence": 0.95,
+        "assumptions": [
+          "The dish contains rice, shrimp, and vegetables typical of paella.",
+          "The presentation in a shallow pan is characteristic of paella."
+        ]
+      },
+      {
+        "label": "shrimp",
+        "rank": 2,
+        "confidence": 0.9,
+        "assumptions": [
+          "Pink, curved shapes in the rice are identifiable as cooked shrimp."
+        ]
+      },
+      {
+        "label": "lemon",
+        "rank": 3,
+        "confidence": 0.98,
+        "assumptions": [
+          "Yellow wedges are clearly lemon slices used for garnish."
+        ]
+      },
+      {
+        "label": "cilantro",
+        "rank": 4,
+        "confidence": 0.85,
+        "assumptions": [
+          "Green leafy herbs used as garnish are likely cilantro or parsley."
+        ]
+      }
+    ]
+  },
+  "foods": [
+    {
+      "label": "paella",
+      "rank": 1,
+      "confidence": 0.95,
+      "assumptions": [
+        "The dish contains rice, shrimp, and vegetables typical of paella.",
+        "The presentation in a shallow pan is characteristic of paella."
+      ]
+    },
+    {
+      "label": "shrimp",
+      "rank": 2,
+      "confidence": 0.9,
+      "assumptions": [
+        "Pink, curved shapes in the rice are identifiable as cooked shrimp."
+      ]
+    },
+    {
+      "label": "lemon",
+      "rank": 3,
+      "confidence": 0.98,
+      "assumptions": [
+        "Yellow wedges are clearly lemon slices used for garnish."
+      ]
+    },
+    {
+      "label": "cilantro",
+      "rank": 4,
+      "confidence": 0.85,
+      "assumptions": [
+        "Green leafy herbs used as garnish are likely cilantro or parsley."
+      ]
+    }
+  ],
+  "attempts": [],
+  "image": "02-burger-fries.jpg",
+  "modelLabel": "Gemma 4 26B (free, prod fast-identify)",
+  "pass": 1,
+  "key": "google_gemma-4-26b-a4b-it:free__02-burger-fries_jpg",
+  "session": "free-roster"
+}
