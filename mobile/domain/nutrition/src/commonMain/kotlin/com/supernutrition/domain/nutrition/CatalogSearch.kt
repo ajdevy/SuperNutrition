@@ -131,27 +131,68 @@ class CatalogSearch(records: List<CatalogRecord>) {
 
         for (tier in MatchTier.entries) {
             val hits = indexed.filter { tier.matches(normalizedQuery, queryTokens, it) }
-            if (hits.isNotEmpty()) {
-                // Order from the data, never from catalog construction order:
-                // two packages built from the same records in a different
-                // sequence must answer the same query identically. Coverage
-                // carries the meaning; canonical id only breaks remaining ties.
-                return hits
-                    .sortedWith(
-                        compareByDescending<IndexedRecord> { it.coverageOf(tier, normalizedQuery, queryTokens) }
-                            .thenBy { it.canonicalItemId },
-                    )
-                    .map {
-                        CatalogSearchResult(
-                            canonicalItemId = it.canonicalItemId,
-                            displayName = it.displayName,
-                            strength = MatchStrength(tier, it.coverageOf(tier, normalizedQuery, queryTokens)),
-                        )
-                    }
+            if (hits.isEmpty()) continue
+            // Order from the data, never from catalog construction order: two
+            // packages built from the same records in a different sequence must
+            // answer the same query identically.
+            if (tier != MatchTier.TOKEN_SUBSET) return rank(tier, normalizedQuery, queryTokens, hits)
+
+            // Coverage still decides first, so this can only reorder records
+            // that ALREADY TIED — it replaces canonical id, which is arbitrary,
+            // with literal evidence, which is not. `свиней` is that tie: Lard
+            // and all twenty pork cuts cover `свинья` completely, and only pork
+            // carries the typed word itself, in `мясо свиней`. It cannot
+            // disturb `курицы`, where chicken and egg are both literal and
+            // coverage already separates them 1000 to 500.
+            val literal = hits.filter { it.matchesWithoutFolding(queryTokens) }
+                .mapTo(mutableSetOf()) { it.canonicalItemId }
+            val ranked = hits
+                .sortedWith(
+                    compareByDescending<IndexedRecord> { it.coverageOf(tier, normalizedQuery, queryTokens) }
+                        .thenBy { if (it.canonicalItemId in literal) 0 else 1 }
+                        .thenBy { it.canonicalItemId },
+                )
+                .map { result(tier, normalizedQuery, queryTokens, it) }
+            if (literal.isNotEmpty()) return ranked
+
+            // Nothing here was reached literally, so this tier exists only
+            // because the fold walked to it — and first-tier-wins then deletes
+            // the prefix reading of the same keystrokes. `паст` is four
+            // characters into `пастернак` and simultaneously the genitive
+            // plural of `паста`, so parsnip was not demoted, it was absent.
+            // Appended and never merged: a PREFIX record must not outrank a
+            // TOKEN_SUBSET one, and appending cannot move a hit already here.
+            val matched = hits.mapTo(mutableSetOf()) { it.canonicalItemId }
+            val prefixOnly = indexed.filter {
+                it.canonicalItemId !in matched && MatchTier.PREFIX.matches(normalizedQuery, queryTokens, it)
             }
+            return ranked + rank(MatchTier.PREFIX, normalizedQuery, queryTokens, prefixOnly)
         }
         return emptyList()
     }
+
+    private fun rank(
+        tier: MatchTier,
+        query: String,
+        tokens: List<String>,
+        hits: List<IndexedRecord>,
+    ): List<CatalogSearchResult> = hits
+        .sortedWith(
+            compareByDescending<IndexedRecord> { it.coverageOf(tier, query, tokens) }
+                .thenBy { it.canonicalItemId },
+        )
+        .map { result(tier, query, tokens, it) }
+
+    private fun result(
+        tier: MatchTier,
+        query: String,
+        tokens: List<String>,
+        record: IndexedRecord,
+    ): CatalogSearchResult = CatalogSearchResult(
+        canonicalItemId = record.canonicalItemId,
+        displayName = record.displayName,
+        strength = MatchStrength(tier, record.coverageOf(tier, query, tokens)),
+    )
 }
 
 /**
@@ -168,10 +209,17 @@ class CatalogSearch(records: List<CatalogRecord>) {
  * *wrong* record. [sharesLemma] therefore lives inside token comparison, where
  * it can correct a ranking rather than only add a late fallback.
  *
- * PREFIX stays raw for the same measurement read the other way. A half-typed
- * word is a prefix of a stored surface form and not of its lemma — `брюссельска`
- * prefixes `брюссельская` and parts ways with `брюссельский` at the eleventh
- * character — so someone mid-word would lose a hit that works today.
+ * PREFIX stays raw: a half-typed word is a prefix of a stored surface form and
+ * not of its lemma — `брюссельска` prefixes `брюссельская` and parts ways with
+ * `брюссельский` at the eleventh character — so a folded index would take a
+ * hit away mid-keystroke. That argument covers prefixes which are not
+ * themselves word forms, and NOT the ones which are: `паст` is four characters
+ * into `пастернак` and also the genitive plural of `паста`, so the fold
+ * promotes it into TOKEN_SUBSET and first-tier-wins then removes every parsnip
+ * record from the result set entirely — not demoted, absent. [CatalogSearch]'s
+ * `searchExact` therefore evaluates PREFIX as well whenever nothing in
+ * TOKEN_SUBSET was reached literally, and appends what it finds rather than
+ * merging it, so a PREFIX record can never outrank one already here.
  */
 internal enum class MatchTier { EXACT, TOKEN_SUBSET, PREFIX, FUZZY }
 
@@ -197,6 +245,17 @@ internal class IndexedRecord(record: CatalogRecord) {
 
     /** Whether any searchable form of this record uses [token]. */
     fun mentions(token: String): Boolean = formTokens.any { form -> form.any { it == token } }
+
+    /**
+     * Whether the query lands here without the lemma table's help: every typed
+     * token is literally a token of one stored form. This is the pre-fold
+     * TOKEN_SUBSET predicate, kept as a named question rather than deleted,
+     * because ranking has to tell evidence from inference. A record whose
+     * stored name carries the typed word is evidence; one the fold walked to
+     * is a guess, and a guess may order evidence but must not outrank it.
+     */
+    fun matchesWithoutFolding(queryTokens: List<String>): Boolean =
+        anyForm { _, formTokens -> queryTokens.all { it in formTokens } }
 
     val normalizedName: String get() = searchableForms.first()
     val tokens: List<String> get() = formTokens.first()
