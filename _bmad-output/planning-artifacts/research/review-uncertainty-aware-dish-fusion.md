@@ -3,12 +3,15 @@
 **Review type:** BMAD adversarial review (`bmad-review-adversarial-general`)
 **Review date:** 2026-08-02
 **Reviewer:** Claude Code (read-only pass; no artifact was modified)
-**Status:** B1 and B2 addressed in the research package; B3, B4, M1–M13, and H1–H11 remain open unless noted below.
+**Status:** B1, B2, and B4 addressed in the research package; B3, M1–M13, and H1–H11 remain open unless noted below.
 
 **Follow-up note (2026-08-02):** The research and presentation now reference the
-existing `inference-evidence/v2` contract and the measured G-3 baseline. The
-review-time provenance below remains historical; re-read current files before
-acting on any remaining finding.
+existing `inference-evidence/v2` contract and the measured G-3 baseline. B4 was
+reclassified from an inconsistency to a direct contradiction after B1: the
+legacy state lists in the adoption sections have now been replaced with the v2
+visual contract plus the separate fusion/review envelope. The review-time
+provenance below remains historical; re-read current files before acting on any
+remaining finding.
 
 This file is a self-contained handoff. Another agent should be able to act on it
 without the originating conversation. Every claim below is marked as either
@@ -243,6 +246,12 @@ of a frozen contract.
 
 **Fix:** one table, one casing, one set; every other mention becomes a reference
 to it. Reconcile against B1 before choosing names.
+
+**Resolution (follow-up):** The legacy lower-snake and camelCase state lists in
+the Technology Adoption Trends and Evidence-contract release sections were
+removed. Those sections now reference the canonical evidence-state table, the
+existing v2 visual result/provenance, and additive optional composition/review
+fields only; no parallel production enum is instructed.
 
 ---
 
