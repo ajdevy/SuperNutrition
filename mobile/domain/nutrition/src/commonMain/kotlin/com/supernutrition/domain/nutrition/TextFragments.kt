@@ -108,6 +108,56 @@ object TextFragments {
     }
 
     /**
+     * Splits a fragment on the weak separators, for a caller that has already
+     * failed to resolve it whole. Returns the fragment unchanged when it holds
+     * none, so a caller can treat "no split available" and "split changed
+     * nothing" identically.
+     *
+     * Spans stay absolute so each part still indexes the original description —
+     * a part whose span pointed into the fragment would show the user
+     * provenance from the wrong offset.
+     */
+    internal fun splitOnWeakSeparators(fragment: TextFragment): List<TextFragment> {
+        val text = fragment.text
+        val base = fragment.span.start
+        val parts = mutableListOf<TextFragment>()
+        var start = 0
+        var index = 0
+
+        fun emit(endExclusive: Int) {
+            val trimmed = trimSeparators(text, start, endExclusive) ?: return
+            parts += TextFragment(
+                text = text.substring(trimmed.start, trimmed.end),
+                span = TextSpan(base + trimmed.start, base + trimmed.end),
+            )
+        }
+
+        while (index < text.length) {
+            val width = weakSeparatorAt(text, index)
+            if (width > 0) {
+                emit(index)
+                index += width
+                start = index
+            } else {
+                index++
+            }
+        }
+        emit(text.length)
+        return if (parts.isEmpty()) listOf(fragment) else parts
+    }
+
+    private fun weakSeparatorAt(text: String, index: Int): Int {
+        if (!text[index].isWhitespace()) return 0
+        val wordStart = skipWhitespace(text, index)
+        var wordEnd = wordStart
+        while (wordEnd < text.length && !text[wordEnd].isWhitespace()) wordEnd++
+        if (text.substring(wordStart, wordEnd).lowercase() in WEAK_SEPARATORS) {
+            return skipWhitespace(text, wordEnd) - index
+        }
+        return 0
+    }
+
+    /**
      * Whether this position separates two foods rather than sitting inside one.
      *
      * The rule a surface must respect when it offers a split: a cut through the
@@ -116,41 +166,6 @@ object TextFragments {
     internal fun separatesWords(description: String, at: Int): Boolean =
         (at > 0 && isSeparatorCharacter(description[at - 1])) ||
             (at < description.length && isSeparatorCharacter(description[at]))
-
-    private fun skipSeparatorsForward(description: String, from: Int, limit: Int): Int {
-        var at = from
-        while (at < limit && isSeparatorCharacter(description[at])) at++
-        return at
-    }
-
-    private fun skipSeparatorsBackward(description: String, floor: Int, from: Int): Int {
-        var at = from
-        while (at > floor && isSeparatorCharacter(description[at - 1])) at--
-        return at
-    }
-
-    private fun skipLeadingConjunction(description: String, from: Int, limit: Int): Int {
-        var wordEnd = from
-        while (wordEnd < limit && !isSeparatorCharacter(description[wordEnd])) wordEnd++
-        return if (wordEnd > from && isConjunction(description.substring(from, wordEnd))) wordEnd else from
-    }
-
-    private fun skipTrailingConjunction(description: String, floor: Int, to: Int): Int {
-        var wordStart = to
-        while (wordStart > floor && !isSeparatorCharacter(description[wordStart - 1])) wordStart--
-        return if (wordStart < to && isConjunction(description.substring(wordStart, to))) wordStart else to
-    }
-
-    /** Whitespace and the comma [separatorAt] already treats as a separator on its own. */
-    private fun isSeparatorCharacter(character: Char): Boolean = character.isWhitespace() || character == ','
-
-    private fun isConjunction(word: String): Boolean = word.lowercase() in CONJUNCTIONS
-
-    /**
-     * Deliberately small and English-only. A separator list is language-specific
-     * data and belongs with the per-market language matrix rather than here.
-     */
-    private val CONJUNCTIONS = setOf("and", "with", "plus", "&")
 }
 
 /**
@@ -223,3 +238,52 @@ private fun isQuantityToken(token: String): Boolean {
     val digits = token.takeWhile(Char::isDigit)
     return digits.isNotEmpty() && token.drop(digits.length) in QUANTITY_WORDS
 }
+
+private fun skipSeparatorsForward(description: String, from: Int, limit: Int): Int {
+    var at = from
+    while (at < limit && isSeparatorCharacter(description[at])) at++
+    return at
+}
+
+private fun skipSeparatorsBackward(description: String, floor: Int, from: Int): Int {
+    var at = from
+    while (at > floor && isSeparatorCharacter(description[at - 1])) at--
+    return at
+}
+
+private fun skipLeadingConjunction(description: String, from: Int, limit: Int): Int {
+    var wordEnd = from
+    while (wordEnd < limit && !isSeparatorCharacter(description[wordEnd])) wordEnd++
+    return if (wordEnd > from && isConjunction(description.substring(from, wordEnd))) wordEnd else from
+}
+
+private fun skipTrailingConjunction(description: String, floor: Int, to: Int): Int {
+    var wordStart = to
+    while (wordStart > floor && !isSeparatorCharacter(description[wordStart - 1])) wordStart--
+    return if (wordStart < to && isConjunction(description.substring(wordStart, to))) wordStart else to
+}
+
+/** Whitespace and the comma [TextFragments] already treats as a separator on its own. */
+private fun isSeparatorCharacter(character: Char): Boolean = character.isWhitespace() || character == ','
+
+private fun isConjunction(word: String): Boolean = word.lowercase() in CONJUNCTIONS
+
+/**
+ * Deliberately small and English-only. A separator list is language-specific
+ * data and belongs with the per-market language matrix rather than here.
+ */
+private val CONJUNCTIONS = setOf("and", "plus", "&")
+
+/**
+ * Words that join two foods AND appear inside compound food names.
+ *
+ * `with` sits here rather than with the strong conjunctions because
+ * "macaroni with cheese" is one food and "eggs with toast" is two, and
+ * nothing in the text distinguishes them — only the catalog does. Spanish
+ * `con` and Russian `с`/`со` are the same word doing the same double duty,
+ * and they are listed now so the three languages behave alike instead of
+ * English being split and the others escaping by omission.
+ *
+ * A fragment is only split on these after failing to resolve whole.
+ */
+private val WEAK_SEPARATORS = setOf("with", "con", "с", "со")
