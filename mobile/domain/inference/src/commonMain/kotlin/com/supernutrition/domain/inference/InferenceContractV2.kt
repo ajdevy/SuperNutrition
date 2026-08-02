@@ -39,12 +39,31 @@ sealed interface InferenceRequestV2 {
     val modality: InferenceModality
     val attemptContext: InferenceAttemptContext
 
-    /** Photo identification. Bytes stay behind the lease and content ports. */
+    /**
+     * Photo identification. Bytes stay behind the lease and content ports.
+     *
+     * `@ConsistentCopyVisibility` makes the generated `copy()` internal to match
+     * the constructor. Without it `copy()` is public, which exposes a non-public
+     * constructor — a warning today and a compile error in language version 2.5 —
+     * and, more immediately, offered a way around the invariant below: a public
+     * `copy(photoRef = other)` produced a request whose photo and attempt context
+     * belonged to different attempts, which the factory exists to forbid.
+     */
+    @ConsistentCopyVisibility
     data class Photo internal constructor(
         val photoRef: PhotoRef,
         override val attemptContext: InferenceAttemptContext,
     ) : InferenceRequestV2 {
         override val modality: InferenceModality get() = InferenceModality.PHOTO
+
+        init {
+            // Held by the type rather than by one construction path. The check
+            // lived only in `photo()`, so `copy()` and any in-module direct
+            // construction skipped it.
+            require(photoRef.attemptId == attemptContext.attemptId) {
+                "PhotoRef and inference context must belong to the same attempt"
+            }
+        }
     }
 
     /**
@@ -60,6 +79,13 @@ sealed interface InferenceRequestV2 {
         override val attemptContext: InferenceAttemptContext,
     ) : InferenceRequestV2 {
         override val modality: InferenceModality get() = InferenceModality.TEXT
+
+        init {
+            // Same reasoning as Photo: the invariant belongs to the type, not to
+            // the factory that happens to be the public way in.
+            require(description.isNotBlank()) { "Inference description must not be blank" }
+            require(inputLocale.isNotBlank()) { "Inference input locale must not be blank" }
+        }
 
         /**
          * Deliberately omits the description. Free text can carry more
@@ -83,22 +109,14 @@ sealed interface InferenceRequestV2 {
     }
 
     companion object {
-        fun photo(photoRef: PhotoRef, attemptContext: InferenceAttemptContext): InferenceRequestV2 {
-            require(photoRef.attemptId == attemptContext.attemptId) {
-                "PhotoRef and inference context must belong to the same attempt"
-            }
-            return Photo(photoRef, attemptContext)
-        }
+        fun photo(photoRef: PhotoRef, attemptContext: InferenceAttemptContext): InferenceRequestV2 =
+            Photo(photoRef, attemptContext)
 
         fun text(
             description: String,
             inputLocale: String,
             attemptContext: InferenceAttemptContext,
-        ): InferenceRequestV2 {
-            require(description.isNotBlank()) { "Inference description must not be blank" }
-            require(inputLocale.isNotBlank()) { "Inference input locale must not be blank" }
-            return Text(description.trim(), inputLocale, attemptContext)
-        }
+        ): InferenceRequestV2 = Text(description.trim(), inputLocale, attemptContext)
     }
 }
 
