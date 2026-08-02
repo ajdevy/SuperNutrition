@@ -20,7 +20,7 @@ class InteractionDefaultsTest {
 
     @Test
     fun `snapshot resolves context without letting locale choose region`() {
-        val context = MarketPolicyResolver().resolve(snapshot)
+        val context = PolicyContextResolver().resolve(snapshot)
 
         assertEquals("US", context.catalogCountry)
         assertEquals("US", context.marketJurisdiction)
