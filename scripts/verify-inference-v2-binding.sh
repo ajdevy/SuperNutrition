@@ -112,6 +112,53 @@ if declared_modalities != emitted_modalities:
         f"binding {sorted(emitted_modalities)}"
     )
 
+# The capability envelope has the same failure mode the telemetry event had: a
+# canonical fixture and a binding that could drift from it silently.
+capability_schema = schema.get("capability", {})
+for key, enum_name in (("state", "CapabilityState"), ("reason", "CapabilityReason")):
+    declared = set(capability_schema.get(key, []))
+    if not declared:
+        raise SystemExit(f"v2 schema declares no capability {key} vocabulary")
+    emitted = serial_names(enum_name)
+    if declared != emitted:
+        raise SystemExit(
+            f"capability {key} disagrees: schema {sorted(declared)}, binding {sorted(emitted)}"
+        )
+
+
+def constructor_parameters(type_name):
+    match = re.search(rf"\bdata class {re.escape(type_name)}\s*\(", text)
+    if not match:
+        raise SystemExit(f"binding declares no {type_name}")
+    depth = 0
+    for index in range(match.end() - 1, len(text)):
+        if text[index] == "(":
+            depth += 1
+        elif text[index] == ")":
+            depth -= 1
+            if depth == 0:
+                return text[match.end():index]
+    raise SystemExit(f"{type_name}'s parameter list is not closed")
+
+
+capability_parameters = constructor_parameters("EngineCapabilityV2")
+capability_emitted = re.findall(r"\bval\s+([A-Za-z][A-Za-z0-9]*)\s*:", capability_parameters)
+capability_declared = capability_schema.get("emitted_fields", [])
+if capability_emitted != capability_declared:
+    raise SystemExit(
+        "capability field list disagrees between schema and binding:\n"
+        f"  schema:  {capability_declared}\n"
+        f"  binding: {capability_emitted}"
+    )
+# The optional field must be the nullable one, or "always present" and "may be
+# absent" are decided in two places that can disagree.
+declared_optional = set(capability_schema.get("optional_fields", []))
+binding_optional = set(re.findall(r"\bval\s+([A-Za-z][A-Za-z0-9]*)\s*:\s*[A-Za-z<>, ]+\?", capability_parameters))
+if declared_optional != binding_optional:
+    raise SystemExit(
+        f"capability optional fields disagree: schema {sorted(declared_optional)}, binding {sorted(binding_optional)}"
+    )
+
 # The field list, not only the values. An allowlist is only as closed as the
 # type that produces it, and a property added to the event would otherwise be
 # emitted without appearing in emitted_fields.

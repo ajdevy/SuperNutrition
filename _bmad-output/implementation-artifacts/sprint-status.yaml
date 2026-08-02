@@ -94,7 +94,12 @@ development_status:
   # defects, including two independent reasons the SPEC success signal fails
   # end to end. Marking this done was premature.
   epic-7: in-progress
-  7-1-release-inference-contract-v2-with-identification-modality: in-progress
+  # All implementable criteria met and verified on feat/e7-meal-search-ui. v1's
+  # digest still prints the literal named in the story; v2 gained the capability
+  # envelope it published a fixture for and could not decode; and
+  # verify-inference-contract.sh now verifies both releases. Retiring v1 is
+  # explicitly a separate change and is not blocked by anything here.
+  7-1-release-inference-contract-v2-with-identification-modality: review
   # Work complete and verified on PR #25; awaiting human review, not self-declared done.
   7-2-deliver-the-deterministic-catalog-search-floor: review
   7-3-add-the-per-market-language-matrix: review
@@ -105,6 +110,12 @@ development_status:
   # _bmad-output/specs/spec-gate-readiness/G-3-device-matrix.md says what the
   # benchmark must supply. Not done: gate-blocked is not the same as complete.
   7-4-add-on-device-typed-identification: review
-  7-5-add-segmentation-review-and-correction: in-progress
+  # All four criteria met on feat/e7-meal-search-ui (69d41156). split was the
+  # missing operation; the review now also holds the description, which is what
+  # "each item shows the words it came from" needs. The allowlist criterion is
+  # satisfied by contracts/interaction-policy/v1, which already declares
+  # preparation, recipe and food identity never-defaultable; this change adds
+  # nothing to that allowlist.
+  7-5-add-segmentation-review-and-correction: review
   7-6-add-remote-typed-identification: in-progress
   epic-7-retrospective: optional

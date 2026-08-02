@@ -127,6 +127,47 @@ def scan(node, origin):
 for name, payload in fixtures.items():
     scan(payload, name)
 
+# The capability fixture was checked only for its filename, so it could declare
+# any shape at all. It is a canonical fixture: a binding is written from it.
+capability_schema = schema.get("capability", {})
+capability = fixtures["capability-ready.json"]
+capability_fields = capability_schema.get("emitted_fields", [])
+if not capability_fields:
+    raise SystemExit("v2 must declare the fields a capability report carries")
+if capability_schema.get("unlisted_field") != "reject":
+    raise SystemExit("an allowlist that admits unlisted fields is not an allowlist")
+optional_capability_fields = set(capability_schema.get("optional_fields", []))
+if set(capability) - set(capability_fields):
+    raise SystemExit(f"capability fixture carries unlisted fields: {sorted(set(capability) - set(capability_fields))}")
+missing = set(capability_fields) - set(capability) - optional_capability_fields
+if missing:
+    raise SystemExit(f"capability fixture omits required fields: {sorted(missing)}")
+if capability["modality"] not in modality.get("values", []):
+    raise SystemExit(f"capability fixture modality={capability['modality']!r} is not a declared modality")
+for field in ("state", "reason"):
+    values = capability_schema.get(field, [])
+    if not values:
+        raise SystemExit(f"v2 must declare the capability {field} vocabulary")
+    if capability[field] not in values:
+        raise SystemExit(f"capability fixture {field}={capability[field]!r} is outside its declared vocabulary")
+
+# The self-contradicting reports, checked structurally rather than trusted to the
+# binding. A ready capability with an unavailable reason, or an unavailable one
+# claiming none, says two things at once and a surface has to pick.
+if capability_schema.get("ready_requires_reason") != "none":
+    raise SystemExit("a ready capability must not report an unavailable reason")
+if capability_schema.get("unavailable_forbids_reason") != "none":
+    raise SystemExit("an unavailable capability must report why")
+if capability_schema.get("ready_requires_model_version") is not True:
+    raise SystemExit("a ready capability must name the model it is ready with")
+if capability["state"] == "ready":
+    if capability["reason"] != "none":
+        raise SystemExit("capability fixture is ready and still reports an unavailable reason")
+    if not capability.get("modelVersion"):
+        raise SystemExit("capability fixture is ready and names no model version")
+elif capability["reason"] == "none":
+    raise SystemExit("capability fixture is unavailable and reports no reason")
+
 # Telemetry must not carry the description or any free text.
 telemetry = fixtures["telemetry-event.json"]
 if "description" in json.dumps(telemetry):

@@ -552,3 +552,18 @@ for root_argument in sys.argv[1:]:
     else:
         fail(f"unsupported inference contract release: {contract_id}/{version}")
 PY
+
+# Both published releases, from one entrypoint. E7.1 requires this script to
+# verify both: two releases coexist during the migration, and a checker that
+# covers only the older one would let the newer drift unnoticed while still
+# reporting success.
+#
+# The v2 checks live in their own script rather than being inlined, because the
+# two releases have genuinely different rules — v1 has no modality, no spans and
+# no capability envelope to check — and one script branching on release would be
+# harder to read than two that each verify one thing.
+#
+# Deliberately not passed the SUPERNUTRITION_INFERENCE_CONTRACT override: that
+# variable names a v1 tree, and the negative-fixture harness points it at mutated
+# copies. v2 is verified where it actually lives.
+"${repo_root}/scripts/verify-inference-v2-contract.sh"
