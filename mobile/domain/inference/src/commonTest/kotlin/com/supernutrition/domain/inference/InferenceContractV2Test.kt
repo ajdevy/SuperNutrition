@@ -77,4 +77,32 @@ class InferenceContractV2Test {
     fun `the contract version names the modality-neutral v2 release`() {
         assertEquals("inference-engine/v2", INFERENCE_CONTRACT_V2)
     }
+
+    @Test
+    fun `copy cannot route a photo to an attempt it does not belong to`() {
+        // The invariant lived only in the factory, so the generated copy() went
+        // around it: a request whose PhotoRef and attempt context named
+        // different attempts was constructible from any caller. Moving the check
+        // into the type closes that whichever way the instance is made.
+        val request = InferenceRequestV2.photo(PhotoRef.issue(attemptId, "photo-ref-1"), context)
+        val foreign = PhotoRef.issue(AttemptId("attempt-2"), "photo-ref-2")
+
+        val failure = assertFailsWith<IllegalArgumentException> {
+            (request as InferenceRequestV2.Photo).copy(photoRef = foreign)
+        }
+
+        assertTrue("same attempt" in failure.message.orEmpty())
+    }
+
+    @Test
+    fun `a text request enforces its own invariants, not only the factory's`() {
+        // Same reasoning from the other side: constructing directly must not be
+        // a way to obtain a request the factory would have refused.
+        assertFailsWith<IllegalArgumentException> {
+            InferenceRequestV2.Text(description = "", inputLocale = "en-US", attemptContext = context)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            InferenceRequestV2.Text(description = "rye toast", inputLocale = " ", attemptContext = context)
+        }
+    }
 }
