@@ -129,6 +129,18 @@ mutates_repository = false
 test_entrypoint = "scripts/inference-v2-binding-negative-fixtures.sh"
 
 [[executable]]
+path = "scripts/verify-market-policy-contract.sh"
+purpose = "read-only market-policy v1 validation: required fields, unresolved-is-default, per-modality consent, and no inferred posture"
+mutates_repository = false
+test_entrypoint = "scripts/market-policy-negative-fixtures.sh"
+
+[[executable]]
+path = "scripts/market-policy-negative-fixtures.sh"
+purpose = "negative fixtures for omission-as-permission, lapsed approval, inherited posture, borrowed consent copy, and instance drift"
+mutates_repository = false
+test_entrypoint = "scripts/market-policy-negative-fixtures.sh"
+
+[[executable]]
 path = "scripts/verify-release-immutability.sh"
 purpose = "cross-revision gate proving no published contract release or catalog entry changed since the base revision"
 mutates_repository = false
