@@ -196,7 +196,47 @@ internal val QUANTITY_WORDS: Set<String> = setOf(
     "cup", "cups", "bowl", "bowls", "plate", "plates", "glass", "glasses",
     "gram", "grams", "g", "mg", "kg", "ml", "l", "oz", "lb",
     "tbsp", "tsp", "tablespoon", "tablespoons", "teaspoon", "teaspoons",
+    // Russian. Numerals appear in several cases because a query is not a
+    // sentence and the user types whichever form they were thinking in.
+    "один", "одна", "два", "две", "три", "четыре", "пять", "шесть", "семь",
+    "восемь", "девять", "десять", "пол", "половина", "пара",
+    "грамм", "грамма", "граммов", "г", "мг", "кг", "мл", "л",
+    "штука", "штуки", "шт", "ломтик", "ломтика", "ломтики",
+    "кусок", "куска", "куски", "порция", "порции", "стакан", "стакана",
+    "ложка", "ложки", "ст", "ч",
+    // Spanish.
+    "un", "una", "unos", "unas", "dos", "tres", "cuatro", "cinco", "seis",
+    "siete", "ocho", "nueve", "diez", "medio", "media", "mitad",
+    "gramo", "gramos", "kilo", "kilos", "litro", "litros", "mililitro", "mililitros",
+    "rebanada", "rebanadas", "rodaja", "rodajas", "trozo", "trozos",
+    "porcion", "porciones", "taza", "tazas", "plato", "platos", "vaso", "vasos",
+    "cucharada", "cucharadas", "cucharadita", "cucharaditas",
+    "de", "del",
 )
+
+/**
+ * Whether a query says nothing about food.
+ *
+ * A string made only of separators and counting words names no food, and the
+ * catalog must not answer it. Measured before this existed: `and` reached one
+ * record, `с` another, `y` another, and `200 gramos` another — the PREFIX tier
+ * lets a one-character token claim any record whose own token starts with it,
+ * and no length bound applied there the way one already applies to fuzzy
+ * matching.
+ *
+ * A bare conjunction resolving to a food is the FM-1 shape exactly: confident,
+ * plausible and wrong. It matters more than an ordinary miss because the caller
+ * cannot tell it apart from a real answer — segmentation leaves such tokens
+ * behind routinely, so the wrong food would arrive attached to a real meal.
+ *
+ * Checked semantically rather than by a minimum length, because the problem is
+ * not that these strings are short. "и" and "with" differ in length by three
+ * characters and fail for the same reason.
+ */
+internal fun namesNoFood(query: String): Boolean {
+    val tokens = tokenizeNormalized(normalizeForSearch(query))
+    return tokens.isEmpty() || tokens.all { isQuantityToken(it) || isSeparatorWord(it) }
+}
 
 /**
  * Drops leading and trailing quantity words, keeping the food name between them.
@@ -269,6 +309,14 @@ private fun isSeparatorCharacter(character: Char): Boolean = character.isWhitesp
 private fun isConjunction(word: String): Boolean = word.lowercase() in CONJUNCTIONS
 
 /**
+ * Any word this file treats as joining two foods, strong or weak. Kept as one
+ * predicate so a word added to either set is automatically a word the catalog
+ * refuses to answer on its own.
+ */
+private fun isSeparatorWord(word: String): Boolean =
+    word.lowercase().let { it in CONJUNCTIONS || it in WEAK_SEPARATORS }
+
+/**
  * Deliberately small and English-only. A separator list is language-specific
  * data and belongs with the per-market language matrix rather than here.
  */
@@ -286,4 +334,19 @@ private val CONJUNCTIONS = setOf("and", "plus", "&")
  *
  * A fragment is only split on these after failing to resolve whole.
  */
-private val WEAK_SEPARATORS = setOf("with", "con", "с", "со")
+private val WEAK_SEPARATORS = setOf(
+    "with",
+    "con",
+    "с",
+    "со",
+    // `и` and `y` were briefly strong, on the reasoning that a true coordinator
+    // cannot appear inside a food name the way `con` does. The corpus falsified
+    // that against real AGROVOC records: `ягоды лесные и садовые` and `свежие
+    // фрукты и ягоды` are single records whose names contain `и`, and promoting
+    // it split both. The claim had been marked as recalled rather than sourced,
+    // and it was wrong — which is the argument for resolving whole first and
+    // splitting only on failure, rather than for a better list.
+    "и",
+    "y",
+    "e",
+)
