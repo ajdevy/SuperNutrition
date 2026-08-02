@@ -67,6 +67,54 @@ export const EFFECT_TTL_SECONDS = 86_400;
 
 const ATTEMPT_PATTERN = /^att_[A-Za-z0-9]{16,64}$/;
 const EFFECT_PATTERN = /^eff_[A-Za-z0-9]{16,64}$/;
+const REQUEST_ID_PATTERN = /^req_[A-Za-z0-9]{16,64}$/;
+
+/** How long a spent X-Request-Id stays unusable. Matches the effect window. */
+export const REQUEST_ID_TTL_SECONDS = 86_400;
+
+/**
+ * Header gates, in the order `gateway-request.toml [validation_order]` sets:
+ * contract-version, then authentication, then request-id-replay. Both headers
+ * are `optional = false` in the release, so an absent one is as much a
+ * rejection as a wrong one — a caller that omits the version is not asserting
+ * compatibility with anything, and accepting it would silently bind them to
+ * whatever the server happens to speak today.
+ *
+ * The replay CLAIM is not made here: it must happen after authentication, and
+ * spending a one-time identifier on a request that is about to fail auth would
+ * make a legitimate retry impossible.
+ */
+export const validateGatewayHeaders = (headers: {
+  contractVersion: string | undefined;
+  requestId: string | undefined;
+}): { requestId: string } => {
+  if (
+    headers.contractVersion === undefined ||
+    !SUPPORTED_CONTRACT_VERSIONS.includes(headers.contractVersion as 'mobile-api/v1')
+  ) {
+    throw new GatewayError(GATEWAY_CODES.UNSUPPORTED_VERSION, {
+      details: [
+        {
+          field: 'X-Contract-Version',
+          issue: headers.contractVersion === undefined ? 'missing' : 'unsupported',
+        },
+      ],
+    });
+  }
+
+  if (headers.requestId === undefined || !REQUEST_ID_PATTERN.test(headers.requestId)) {
+    throw new GatewayError(GATEWAY_CODES.VALIDATION_ERROR, {
+      details: [
+        {
+          field: 'X-Request-Id',
+          issue: headers.requestId === undefined ? 'missing' : 'malformed',
+        },
+      ],
+    });
+  }
+
+  return { requestId: headers.requestId };
+};
 
 /** Magic bytes, so a declared content type that lies is rejected. */
 const MAGIC: Readonly<Record<string, readonly number[][]>> = {

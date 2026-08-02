@@ -31,7 +31,7 @@ not a running service.
 1. **Consent receipt schema** — the fields in §5.3, as part of the contract
    release so both sides bind the same shape.
 2. **Digest verification** — SHA-256 of the received payload must equal the
-   receipt's `payloadDigest`; mismatch is `403 CONSENT_REQUIRED`. Server-side
+   receipt's `digest`; mismatch is `400 MALFORMED_CONSENT`. Server-side
    verification is what makes AD-8's binding real rather than a client promise.
 3. **Market policy endpoint** — `GET /gw/v1/policy/market` returns resolved
    jurisdiction, processing region, posture, and per-modality permission with

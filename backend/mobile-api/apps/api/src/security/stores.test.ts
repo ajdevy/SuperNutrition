@@ -196,6 +196,53 @@ describe('idempotency', () => {
     expect(await store.claim('k', 'digest-1')).toEqual({ state: 'conflict' });
   });
 
+  it('allows a retry after a failed attempt released its claim', async () => {
+    const store = new InMemoryIdempotencyStore();
+    await store.claim('k', 'digest-1');
+    await store.fail('k');
+    expect(await store.claim('k', 'digest-1')).toEqual({ state: 'fresh' });
+  });
+
+  it('replays a completed response for the same digest', async () => {
+    const store = new InMemoryIdempotencyStore();
+    await store.claim('k', 'digest-1');
+    await store.complete('k', { status: 201, body: { id: 'meal-1' } });
+    expect(await store.claim('k', 'digest-1')).toEqual({
+      state: 'replay',
+      response: { status: 201, body: { id: 'meal-1' } },
+    });
+  });
+
+  it('conflicts when the same key carries a different request', async () => {
+    const store = new InMemoryIdempotencyStore();
+    await store.claim('k', 'digest-1');
+    await store.complete('k', { status: 201, body: { id: 'meal-1' } });
+    expect(await store.claim('k', 'digest-2')).toEqual({ state: 'conflict' });
+  });
+
+  // A response body that happens to look like an internal marker must still
+  // round-trip: "failed" is a separate call, never a shape sniffed out of a
+  // stored value.
+  it('stores a response whose body contains a failed key', async () => {
+    const store = new InMemoryIdempotencyStore();
+    await store.claim('k', 'digest-1');
+    await store.complete('k', { status: 201, body: { failed: true } });
+    expect(await store.claim('k', 'digest-1')).toEqual({
+      state: 'replay',
+      response: { status: 201, body: { failed: true } },
+    });
+  });
+
+  it('treats an expired record as absent, so a replay is not honoured forever', async () => {
+    let clock = 1_000;
+    const store = new InMemoryIdempotencyStore(() => clock);
+    await store.claim('k', 'digest-1', 60);
+    await store.complete('k', { status: 201, body: { id: 'meal-1' } });
+
+    clock += 61_000;
+    expect(await store.claim('k', 'digest-1', 60)).toEqual({ state: 'fresh' });
+  });
+
   it('ignores completion for an unknown key', async () => {
     const store = new InMemoryIdempotencyStore();
     await expect(store.complete('missing', {})).resolves.toBeUndefined();

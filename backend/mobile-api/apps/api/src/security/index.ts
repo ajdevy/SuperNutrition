@@ -34,6 +34,13 @@ export interface RateLimiter {
 export interface IdempotencyStore {
   claim(key: string, requestDigest: string, ttlSeconds: number): Promise<IdempotencyClaim>;
   complete(key: string, response: unknown): Promise<void>;
+  /**
+   * Releases a claim whose request failed, so a retry with the same key may run
+   * again. Distinct from `complete` because "failed" and "returned this
+   * response" are different outcomes: sniffing a sentinel out of the response
+   * value would make any body containing that shape unstorable.
+   */
+  fail(key: string): Promise<void>;
 }
 
 export type IdempotencyClaim =
@@ -162,6 +169,7 @@ export {
 export {
   JwtTokenIssuer,
   TestModeAuthenticator,
+  MIN_TEST_TOKEN_LENGTH,
   hashRefreshToken,
   generateRefreshToken,
   generateOpaqueId,

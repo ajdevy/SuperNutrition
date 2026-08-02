@@ -13,7 +13,11 @@ import {
 import { mapError, resolveCorrelationId } from '../../middleware/index.js';
 import { runInferencePipeline, type PipelineDeps } from './pipeline.js';
 import { cancellationStatus } from './transfer-state.js';
-import { MAX_PAYLOAD_BYTES, type InferenceRequestInput } from './inference.handler.js';
+import {
+  MAX_PAYLOAD_BYTES,
+  validateGatewayHeaders,
+  type InferenceRequestInput,
+} from './inference.handler.js';
 
 /**
  * Fastify wiring for `/gw/v1`.
@@ -104,17 +108,26 @@ export const registerGatewayRoutes = async (
       }
       attemptId = typeof context?.attemptId === 'string' ? context.attemptId : null;
 
+      // Contract-version and request-id shape are checked before the caller is
+      // authenticated, in the order the release's validation_order sets.
+      const { requestId } = validateGatewayHeaders({
+        contractVersion: request.headers['x-contract-version'] as string | undefined,
+        requestId: request.headers['x-request-id'] as string | undefined,
+      });
+
       const auth = await deps.authenticate(request);
       const result = await runInferencePipeline(deps, {
         context,
         payload: { bytes, contentType },
         auth,
         clientIp: request.ip,
+        requestId,
       });
 
       return reply
         .status(result.status)
         .header('X-Correlation-Id', correlationId)
+        .headers(result.headers ?? {})
         .send(result.body);
     } catch (error) {
       // Disposal is unconditional. The pipeline disposes in its own `finally`,
@@ -144,6 +157,23 @@ export const registerGatewayRoutes = async (
     },
   );
 
+  /**
+   * Declared by the release and by docs/06 §6.5, but `text` is a RESERVED
+   * modality in v1 (schema.toml `[modality] supported = ["photo"]`). It answers
+   * `invalid-modality` — "not supported by this release" — rather than 404,
+   * which would say the path does not exist and send a client hunting for a
+   * typo instead of falling back to manual entry.
+   */
+  app.post('/gw/v1/inference/text', async (request, reply) =>
+    fail(
+      reply,
+      new GatewayError(GATEWAY_CODES.INVALID_MODALITY, {
+        details: [{ field: 'modality', issue: 'reserved_in_this_release' }],
+      }),
+      correlationOf(request),
+    ),
+  );
+
   app.post('/gw/v1/session', async (request, reply) => {
     const correlationId = correlationOf(request);
     try {
@@ -159,7 +189,15 @@ export const registerGatewayRoutes = async (
     async (request, reply) => {
       const correlationId = correlationOf(request);
       try {
-        const modality = request.query.modality ?? 'photo';
+        // `modality` is non-optional in market-policy.toml. Defaulting it would
+        // answer the photo posture to a client that asked about nothing —
+        // exactly the cross-modality inference MP-4 forbids.
+        const modality = request.query.modality;
+        if (modality === undefined || modality === '') {
+          throw new GatewayError(GATEWAY_CODES.VALIDATION_ERROR, {
+            details: [{ field: 'modality', issue: 'required' }],
+          });
+        }
         if (modality !== 'photo' && modality !== 'text') {
           throw new GatewayError(GATEWAY_CODES.INVALID_MODALITY, {
             details: [{ field: 'modality', issue: 'unsupported' }],

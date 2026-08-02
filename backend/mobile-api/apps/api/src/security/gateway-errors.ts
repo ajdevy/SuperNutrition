@@ -197,6 +197,14 @@ export class GatewayError extends Error {
   readonly recoverable: boolean;
   readonly retryAfter: number;
   readonly details: readonly GatewayErrorDetail[];
+  /**
+   * Response headers this failure must carry. A 429 is required by
+   * `rate-limit.toml` to advertise the limit, the remaining budget, and the
+   * window reset — none of which the taxonomy entry knows, because they belong
+   * to the layer that rejected. Carrying them on the error is what lets the
+   * throwing site supply them without the error mapper knowing about limiters.
+   */
+  readonly headers: Readonly<Record<string, string>>;
   override readonly cause?: unknown;
 
   constructor(
@@ -205,6 +213,7 @@ export class GatewayError extends Error {
       details?: readonly GatewayErrorDetail[];
       cause?: unknown;
       retryAfterOverride?: number;
+      headers?: Readonly<Record<string, string>>;
     } = {},
   ) {
     const spec = GATEWAY_ERRORS[gatewayCode];
@@ -216,6 +225,7 @@ export class GatewayError extends Error {
     this.recoverable = spec.recoverable;
     this.retryAfter = options.retryAfterOverride ?? spec.retryAfter;
     this.details = options.details ?? [];
+    this.headers = options.headers ?? {};
     if (options.cause !== undefined) this.cause = options.cause;
   }
 

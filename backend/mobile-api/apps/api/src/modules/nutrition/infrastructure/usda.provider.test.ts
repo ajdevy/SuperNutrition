@@ -59,7 +59,7 @@ const transport = (...replies: ReadonlyArray<() => Response>) => {
 const build = (fetchImpl: FetchLike, over: Partial<UsdaConfig> = {}) =>
   new USDAProvider(KEY, config(over), DATASET, fetchImpl);
 
-const nutrient = (id: number, amount: number) => ({ nutrient: { id }, amount });
+const nutrient = (id: number, amount: number) => ({ nutrientId: id, value: amount });
 
 const BANANA = {
   fdcId: 171705,
@@ -229,7 +229,7 @@ describe('nutrient parsing', () => {
   });
 
   it('treats a nutrient entry without an amount as absent', async () => {
-    const facts = await factsOf([nutrient(1008, 89), { nutrient: { id: 1003 } }]);
+    const facts = await factsOf([nutrient(1008, 89), { nutrientId: 1003 }]);
 
     expect(facts?.proteinG).toBeNull();
   });

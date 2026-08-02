@@ -17,14 +17,82 @@ This project is worked on by Claude Code as an **uninterrupted continuation of t
 7. **Git discipline:** work on the current branch (`feat/e43-gateway-impl` for E4.3 stack) or a new branch per stage; commit per coherent unit with `feat(backend): ...` style; DO NOT commit the dirty benchmark files or unrelated docs; push rarely and deliberately (paid GitHub Actions quota — see AGENTS.md).
 8. **Deep context:** full old session transcripts are at `~/.claude/projects/-Users-jj-Work-SuperNutrition/` (imported from the local machine). If this digest lacks a detail, search those transcripts for how the local agent decided it.
 
-## Next step (current objective) — NOT Stage 7
+## Next step (current objective) — Stage 7
 
-- Stages 1–6 are done (architecture, skeleton, contracts, E4.3 gateway, meals product API, USDA catalog).
-- **NEXT: the photo-flow curl test — end to end, by hand, against the running API:** photo → inference → candidate confirm → USDA facts → meal save → history. This is the next task, decided 2026-08-01.
-- **Do NOT start Stage 7** (`backend/07-goals-progress.md`) until the photo-flow curl test is done. Stage 8 (`backend/08-achievements-coach-journey.md`) comes after Stage 7.
-- The curl run is also where open decision 5 gets settled: it is the first traffic against the live USDA API, so it is the moment to check whether `/foods/search` actually parses (see "Stage 6 risks" below).
+- Stages 1–6 are done, and the **full contract audit of Surfaces A and B is done (2026-08-02)** — see "Current focus" below.
+- The photo-flow end-to-end run is done and green (`backend/mobile-api/scripts/photo-flow.sh`).
+- **NEXT: Stage 7** (`backend/07-goals-progress.md`), then Stage 8 (`backend/08-achievements-coach-journey.md`).
+- **BLOCKER for live inference:** the OpenRouter account is out of credit (`total_credits: 0`, `total_usage: 0.198` as of 2026-08-02). Every `/gw/v1/inference/photo` call now returns a 200 envelope with `outcome.failureCode = "budget-exceeded"` — correct fail-closed behaviour, not a bug. Top up the account before any further live inference testing. Everything not needing a provider call (all gates, catalog, meals) still works.
 
-## Current focus: Stage 6 USDA catalog — DONE (2026-08-01)
+## Current focus: full API contract audit — DONE (2026-08-02)
+
+Audited every Surface A and B route against `contracts/mobile-api/v1/` (canonical),
+ARCHITECTURE-SPINE AD-5/6/7/8/13/18/40, and docs 06/09/10/12. Verified by unit tests,
+a live scenario probe (60+ scenarios against the running server), and `photo-flow.sh`.
+**All uncommitted — nothing has been committed or pushed.**
+
+### Contract violations found and fixed
+
+1. **CRITICAL — the gateway served anonymous callers.** `TestModeAuthenticator` accepted a
+   missing/empty `Authorization` and fabricated `installationId = 'test-installation'`, so an
+   anonymous request reached a paid OpenRouter call and every anonymous caller shared one
+   rate-limit bucket. Test mode skips *attestation*, not *authentication*. Now `401
+   authentication-failed` (`security/auth.ts`, `MIN_TEST_TOKEN_LENGTH`). Same class of bug as
+   the catalog-search fix in `fd3a191`, but on the surface that spends money.
+2. **`X-Contract-Version` was never validated** (contract: `optional = false`). Now
+   `400 unsupported-version` when absent or outside the matrix.
+3. **`X-Request-Id` was never validated and replay detection did not exist**, though
+   `validation_order` lists `request-id-replay` and `GATEWAY_PIPELINE` declares
+   `authenticate-and-replay-check`. `token-replayed` was dead code. Now enforced via a
+   dedicated `requestIds` store, claimed after auth and before the rate limiter.
+4. **429 omitted `X-RateLimit-Limit/Remaining/Reset`** — all three non-optional in
+   `rate-limit.toml` and asserted by the released fixture. `GatewayError` now carries headers
+   the throwing site attaches; `mapError` merges them.
+5. **`outcome.failureCode` emitted non-contract values** (`timeout`, `content-rejected`,
+   `malformed-response`, `cancelled`). The contract requires one gatewayCode from the taxonomy.
+   Now mapped, with `userMessageKey`/`recoverable` read from `GATEWAY_ERRORS` instead of a
+   second hand-written copy. `content-rejected` became an **abstention**
+   (`content-rejected-by-provider`) — the attempt succeeded, the provider declined.
+6. **`GET /gw/v1/policy/market` defaulted a missing `modality` to `photo`** (contract:
+   `optional = false`) — the cross-modality inference MP-4 forbids. Now `400 validation-error`.
+7. **`POST /gw/v1/inference/text` 404'd** despite being declared in `GATEWAY_ROUTES` and docs/06.
+   Now registered, answering `400 invalid-modality` (text is *reserved* in v1).
+8. **Surface B leaked the gateway taxonomy**: 501 stubs and unknown `/api/v1` paths returned
+   `{error:{gatewayCode…}}`, contradicting the product error handler in the same file. Added
+   `NOT_IMPLEMENTED` (501) to `ERROR_CODES`; both now answer in the product taxonomy.
+9. **The product rate-limit layer did not exist.** docs/09 §9.3 defines per-user 120/min
+   fail-open and the rule was already declared in `main.ts`, but no route used it. Now wired,
+   with `X-RateLimit-*` on successful responses too.
+10. **Idempotency store cleanup**: `claim()` ignored its TTL (a replay was honoured forever),
+    and "failed" was sniffed out of the response object's shape. Now TTL-expiring with an
+    explicit `fail(key)`; a replay reproduces the stored **status and body**, not a hardcoded 201.
+
+### Docs corrected
+
+- `docs/06` §6.2 — a previous agent had rewritten the **product** taxonomy table using
+  **gateway** code names (`MALFORMED_CONSENT`, `CONTENT_TOO_LARGE`, `UNSUPPORTED_VERSION`,
+  `KILL_SWITCH`) that do not exist in `ERROR_CODES`. The table matched neither surface. Now
+  mirrors `ERROR_CODES`/`ERROR_STATUS` exactly and states which surface it governs.
+- `docs/06` §6.5/§6.7/§6.8 — header enforcement, replay, text endpoint, `modality` required,
+  idempotency semantics, `X-RateLimit-*` on success.
+- `docs/09` §9.2 — states that test mode skips attestation, not authentication.
+- `docs/12` — the inference helper script was missing all three required headers and would now
+  fail; corrected and **re-run verbatim from the doc** to confirm it works.
+
+### Verified working end to end
+
+`scripts/photo-flow.sh`: session → policy → inference → catalog search (live USDA) → meal save →
+history. Open decision 5 is **settled**: the live `/foods/search` flat shape (`nutrientId`/`value`)
+parses, covered by `usda.contract.test.ts` against captured live-API snapshots in `__fixtures__/`.
+
+### Gates (2026-08-02)
+
+`./quality-check` passes: typecheck, lint, format, **874 tests / 50 files**, coverage
+95.84% lines / 93.83% branches (threshold 85%), contract consumption, lock integrity.
+`verify-mobile-api-contract`, `verify-inference-contract`, `verify-interaction-policy-contract`,
+`verify-root-boundaries`, `verify-product-identity` all pass.
+
+## Previous focus: Stage 6 USDA catalog — DONE (2026-08-01)
 
 Implementation landed in `09d2d05`, the test surface in `ec48c3d`, and the catalog-auth fix in the commit this digest ships with. All committed, **not pushed**.
 
@@ -67,11 +135,21 @@ Implementation landed in `09d2d05`, the test surface in `ec48c3d`, and the catal
 1. **OPEN — `search` may parse nothing from the real FDC API.** `extractNutrients` reads `foodNutrients[].nutrient.id` / `.amount`, which is the `/food/{fdcId}` detail shape. The public `/foods/search` response uses the abridged shape (`nutrientId` / `value`), so against the live API every candidate could be skipped as malformed and search would always return an empty list. **Decision 2026-08-01: do NOT change the code now.** Validate it against the live USDA API during the photo-flow curl test; only then decide whether `extractNutrients` should accept both shapes. Tracked as open decision 5.
 2. **CLOSED — `GET /api/v1/catalog/search` now authenticates.** It was the one Surface B route that did not call `deps.authenticate`, so anonymous callers could spend the USDA quota. Fixed 2026-08-01: the route authenticates first, before the query is parsed, so an anonymous caller gets 401 rather than a validation error that would tell them which parameters were wrong. Covered by three tests in `product-routes.test.ts` (anonymous search refused with no upstream call; anonymous + invalid answers 401 not 400; the route joined the shared "refuses without a credential" table).
 
-## Working tree state (verified 2026-08-01 after the Stage 6 test commit)
+## Working tree state (verified 2026-08-02 after the contract audit)
 
-- Only two dirty paths, both pre-existing and NOT ours: modified `.claude/settings.json` and untracked `.claude/hooks/gate.log`. Do not sweep them into a backend commit.
+- **The whole audit is uncommitted.** 29 modified files (+1118/-162) plus untracked
+  `backend/mobile-api/scripts/photo-flow.sh`, `apps/api/src/modules/nutrition/infrastructure/usda.contract.test.ts`,
+  and `apps/api/src/modules/nutrition/infrastructure/__fixtures__/`. All gates green. Nothing pushed.
+- **`.claude/settings.json` is dirty and is NOT ours** (pre-existing, carried since 2026-08-01).
+  Worth a look before committing anything: it *removes* the `PreToolUse` secret-scan hook and the
+  `Stop` test-gate hook, and changes `Write(.env*)`/`Write(**/.env*)` deny rules to `Edit(...)` —
+  which leaves `Write` to a `.env` file permitted. Either restore it or accept it deliberately;
+  do not sweep it into a backend commit.
+- `.claude/hooks/gate.log` untracked — also pre-existing, not ours.
 - Earlier entries here are now stale and resolved: the 16 modified `backend/benchmark/results/**` files are no longer dirty, and `backend/AGENTS.md`, `backend/docs/`, and the Stage 5–8 spec files are committed (`bc87798`).
 - DeepSeek benchmark files were REMOVED from the worktree (10 untracked files, not recoverable via git — intentional, on request).
+- A `tsx watch apps/api/src/main.ts` dev server may still be running on :3000 from these sessions
+  (`/tmp/api.log`). It hot-reloads on source change; kill it before starting another.
 
 ## Other in-flight work from older sessions (not finished)
 
@@ -97,8 +175,11 @@ Implementation landed in `09d2d05`, the test surface in `ec48c3d`, and the catal
 2. Whether to merge PR #27 (or the whole stack) — or keep the gateway contract-only until G-1/G-4 posture reviews.
 3. Fix the PHPicker images-only filter bug in IosPhotoBridge.kt (offered, not done).
 4. Re-run the `food-weight-api-research/` deep research (folder lost) if the Passio/LogMeal/CalorieMama/LLM-API comparison is still needed — food-photo-recognition-research is intact as a base.
-5. **OPEN:** confirm the `/foods/search` nutrient shape against the live FDC API **during the photo-flow curl test**, then decide whether `extractNutrients` should accept both shapes. Deliberately not fixed in advance (see "Stage 6 risks" above).
+5. ~~Confirm the `/foods/search` nutrient shape against the live FDC API~~ — **settled 2026-08-02.** The live search endpoint is flat (`nutrientId`/`value`), the detail endpoint nested (`nutrient.id`/`amount`). `extractNutrients` now accepts both, covered by `usda.contract.test.ts` against captured live snapshots.
 6. ~~Whether `GET /api/v1/catalog/search` must authenticate~~ — **decided and done 2026-08-01:** it must, and it now does.
+7. **OPEN:** top up the OpenRouter account. Credits hit zero on 2026-08-02 during audit testing; live inference returns `budget-exceeded` until then.
+8. **OPEN:** decide what to do about the unowned `.claude/settings.json` change that dropped the secret-scan and test-gate hooks (see "Working tree state").
+9. **OPEN:** whether to commit the audit as one commit or split it (gateway auth/headers, outcome normalization, product surface, docs). Nothing is committed yet — the user asked to be consulted before committing.
 
 ## Token economy (set 2026-08-01, shared quota across bot + CLI + code-server)
 

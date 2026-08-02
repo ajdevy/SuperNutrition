@@ -25,8 +25,13 @@ export interface UsdaConfig {
 
 // ── USDA FoodData Central response shapes (internal) ───────────────────────
 
+// The foods/search endpoint is flat (nutrientId/value); the food/{id}
+// endpoint nests ({ nutrient: { id }, amount }). Snapshot of the live API:
+// __fixtures__/usda-search.apple.json and __fixtures__/usda-food-174988.json.
 interface UsdaNutrient {
-  readonly nutrient: { readonly id: number };
+  readonly nutrientId?: number;
+  readonly value?: number;
+  readonly nutrient?: { readonly id: number };
   readonly amount?: number;
 }
 
@@ -93,10 +98,13 @@ const extractNutrients = (
 ): Pick<NutritionFact, NutrientField> | null => {
   const found: Partial<Record<NutrientField, string>> = {};
   for (const n of raw) {
-    const field = NUTRIENT_MAP.get(n.nutrient.id);
+    const id = n.nutrientId ?? n.nutrient?.id;
+    if (id === undefined) continue;
+    const amount = n.value ?? n.amount;
+    const field = NUTRIENT_MAP.get(id);
     // A nutrient USDA lists without an amount is absent, not zero (§8.7).
-    if (field === undefined || n.amount === undefined || n.amount === null) continue;
-    found[field] = toDecimal(n.amount);
+    if (field === undefined || amount === undefined || amount === null) continue;
+    found[field] = toDecimal(amount);
   }
 
   if (found.calories === undefined) return null; // calories required

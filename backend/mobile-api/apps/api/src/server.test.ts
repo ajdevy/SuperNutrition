@@ -73,7 +73,18 @@ const context = () => ({
   },
 });
 
-const multipartBody = (ctx: unknown, bytes: Buffer) => {
+/** A credential long enough to be accepted; test mode skips attestation only. */
+const TOKEN = 'Bearer test.installation-0001';
+
+/** X-Request-Id is one-time, so every request needs its own. */
+let requestSeq = 0;
+const nextRequestId = () => `req_0000000000000000${(requestSeq += 1).toString().padStart(4, '0')}`;
+
+const multipartBody = (
+  ctx: unknown,
+  bytes: Buffer,
+  headerOverrides: Record<string, string | undefined> = {},
+) => {
   const boundary = '----test-boundary';
   const head = Buffer.from(
     `--${boundary}\r\nContent-Disposition: form-data; name="context"\r\n\r\n${JSON.stringify(ctx)}\r\n` +
@@ -81,10 +92,17 @@ const multipartBody = (ctx: unknown, bytes: Buffer) => {
       `Content-Type: image/jpeg\r\n\r\n`,
   );
   const tail = Buffer.from(`\r\n--${boundary}--\r\n`);
-  return {
-    payload: Buffer.concat([head, bytes, tail]),
-    headers: { 'content-type': `multipart/form-data; boundary=${boundary}` },
+  const headers: Record<string, string> = {
+    'content-type': `multipart/form-data; boundary=${boundary}`,
+    authorization: TOKEN,
+    'x-contract-version': 'mobile-api/v1',
+    'x-request-id': nextRequestId(),
   };
+  for (const [name, value] of Object.entries(headerOverrides)) {
+    if (value === undefined) delete headers[name];
+    else headers[name] = value;
+  }
+  return { payload: Buffer.concat([head, bytes, tail]), headers };
 };
 
 let server: ServerHandle;
@@ -137,6 +155,7 @@ beforeEach(async () => {
         { layer: 'ip', limit: 300, windowSeconds: 60 },
       ]),
       effects: new InMemoryEffectStore(),
+      requestIds: new InMemoryEffectStore(),
       payloads: { put: () => {}, dispose: () => {} },
       transfers: new TransferStateTracker(() => NOW),
       resolveMarket: (id, modality, now) => resolver.resolve(id, modality, now),
@@ -161,6 +180,12 @@ beforeEach(async () => {
       meals: {
         listMeals: async () => ({ data: [], page: { nextCursor: null, hasMore: false } }),
       } as never,
+      idempotency: {
+        claim: async () => ({ state: 'fresh' }),
+        complete: async () => {},
+        fail: async () => {},
+      } as never,
+      limiter: new InMemoryRateLimiter([{ layer: 'user', limit: 120, windowSeconds: 60 }]),
       authenticate: async () => ({ userId: 'user-1' }),
     },
   });
@@ -309,11 +334,92 @@ describe('POST /gw/v1/inference/photo', () => {
   });
 });
 
+/**
+ * Header gates from `gateway-request.toml`. Every one of these is
+ * `optional = false` in the release, and every one of them used to be accepted:
+ * an anonymous, versionless, replayable request reached a paid provider.
+ */
+describe('gateway request headers (contract gateway-request.toml)', () => {
+  const post = (overrides: Record<string, string | undefined>) =>
+    server.app.inject({
+      method: 'POST',
+      url: '/gw/v1/inference/photo',
+      ...multipartBody(context(), JPEG, overrides),
+    });
+
+  it.each([
+    ['absent', undefined],
+    ['empty', ''],
+    ['not a bearer credential', 'Bearer '],
+  ])('refuses a request whose Authorization is %s', async (_label, authorization) => {
+    const response = await post({ authorization });
+    expect(response.statusCode).toBe(401);
+    expect(response.json().error.gatewayCode).toBe('authentication-failed');
+  });
+
+  it.each([
+    ['absent', undefined],
+    ['outside the supported matrix', 'mobile-api/v99'],
+  ])('refuses a request whose X-Contract-Version is %s', async (_label, version) => {
+    const response = await post({ 'x-contract-version': version });
+    expect(response.statusCode).toBe(400);
+    expect(response.json().error.gatewayCode).toBe('unsupported-version');
+  });
+
+  it.each([
+    ['absent', undefined],
+    ['malformed', 'not-a-request-id'],
+  ])('refuses a request whose X-Request-Id is %s', async (_label, requestId) => {
+    const response = await post({ 'x-request-id': requestId });
+    expect(response.statusCode).toBe(400);
+    expect(response.json().error).toMatchObject({
+      gatewayCode: 'validation-error',
+      details: [{ field: 'X-Request-Id' }],
+    });
+  });
+
+  // A retry must carry a fresh identifier, which is why the taxonomy marks
+  // token-replayed unrecoverable: retrying THIS one can never succeed (AD-21).
+  it('rejects a replayed X-Request-Id as token-replayed', async () => {
+    const requestId = nextRequestId();
+
+    const first = await post({ 'x-request-id': requestId });
+    expect(first.statusCode).toBe(200);
+
+    const replay = await post({ 'x-request-id': requestId });
+    expect(replay.statusCode).toBe(401);
+    expect(replay.json().error).toMatchObject({
+      gatewayCode: 'token-replayed',
+      recoverable: false,
+    });
+  });
+});
+
+describe('POST /gw/v1/inference/text', () => {
+  // Declared by the release and by docs/06, but `text` is reserved in v1. A 404
+  // would say the path does not exist and send a client hunting for a typo.
+  it('answers invalid-modality rather than 404, because text is reserved', async () => {
+    const response = await server.app.inject({ method: 'POST', url: '/gw/v1/inference/text' });
+    expect(response.statusCode).toBe(400);
+    expect(response.json().error.gatewayCode).toBe('invalid-modality');
+  });
+});
+
 describe('DELETE /gw/v1/inference/:attemptId', () => {
+  it('refuses an anonymous cancellation', async () => {
+    const response = await server.app.inject({
+      method: 'DELETE',
+      url: '/gw/v1/inference/att_0000000000000000',
+    });
+    expect(response.statusCode).toBe(401);
+    expect(response.json().error.gatewayCode).toBe('authentication-failed');
+  });
+
   it('returns 204 and no body for an attempt that sent nothing', async () => {
     const response = await server.app.inject({
       method: 'DELETE',
       url: '/gw/v1/inference/att_0000000000000000',
+      headers: { authorization: TOKEN },
     });
     expect(response.statusCode).toBe(204);
     expect(response.body).toBe('');
@@ -323,6 +429,7 @@ describe('DELETE /gw/v1/inference/:attemptId', () => {
     const response = await server.app.inject({
       method: 'DELETE',
       url: '/gw/v1/inference/att_1111111111111111',
+      headers: { authorization: TOKEN },
     });
     expect([202, 204]).toContain(response.statusCode);
     if (response.statusCode === 202) {
@@ -365,6 +472,21 @@ describe('GET /gw/v1/policy/market', () => {
     });
   });
 
+  // `modality` is non-optional in market-policy.toml. Defaulting it would
+  // answer the photo posture to a client that asked about nothing, which is
+  // exactly the cross-modality inference MP-4 forbids.
+  it('requires a modality rather than defaulting to photo', async () => {
+    const response = await server.app.inject({
+      method: 'GET',
+      url: '/gw/v1/policy/market?jurisdiction=ZZ',
+    });
+    expect(response.statusCode).toBe(400);
+    expect(response.json().error).toMatchObject({
+      gatewayCode: 'validation-error',
+      details: [{ field: 'modality', issue: 'required' }],
+    });
+  });
+
   it('rejects an unsupported modality', async () => {
     const response = await server.app.inject({
       method: 'GET',
@@ -389,7 +511,10 @@ describe('product surface', () => {
   it('returns 501 rather than 404 for a route no stage has implemented', async () => {
     const response = await server.app.inject({ method: 'GET', url: '/api/v1/goals' });
     expect(response.statusCode).toBe(501);
-    expect(response.json().error.userMessageKey).toBe('error.not_implemented');
+    // Answers in the PRODUCT taxonomy: a gatewayCode here would be a code the
+    // product client has never heard of (docs/06 §6.2).
+    expect(response.json().error.code).toBe('NOT_IMPLEMENTED');
+    expect(response.json().error.gatewayCode).toBeUndefined();
   });
 
   it('serves the meals routes instead of stubbing them', async () => {

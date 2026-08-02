@@ -1,14 +1,15 @@
 import { AppError, type AuthMode } from '@supernutrition/shared';
-import type { TestModeAuthenticator } from './auth.js';
+import { MIN_TEST_TOKEN_LENGTH, type TestModeAuthenticator } from './auth.js';
 
 /**
  * Product API identity (docs/09 §9.2).
  *
- * The gateway's test-mode authenticator hands out a context for any request,
- * including one with no credential at all — correct there, because the gateway
- * is fenced by market policy and its own test-mode refusal. The Product API
- * owns durable user data, so an anonymous request is refused here rather than
- * silently resolving to somebody's account.
+ * Both surfaces require a credential; test mode skips attestation, not
+ * authentication. The check is repeated here rather than delegated so that a
+ * malformed credential leaves this method as an `AppError` — the Product API
+ * taxonomy a client can branch on — instead of a `GatewayError` that would fall
+ * through the product error mapper as an unrecognised throwable and surface as
+ * a 500 (docs/06 §6.2).
  */
 export interface ProductPrincipal {
   readonly userId: string;
@@ -39,7 +40,9 @@ export class TestModeProductAuthenticator {
   }
 
   async authenticate(authorizationHeader: string | undefined): Promise<ProductPrincipal> {
-    if (bearer(authorizationHeader).length === 0) throw AppError.unauthenticated();
+    if (bearer(authorizationHeader).length < MIN_TEST_TOKEN_LENGTH) {
+      throw AppError.unauthenticated();
+    }
 
     const context = this.#tokens.authenticate(authorizationHeader);
     const userId = await this.#users.resolve(context.installationId);

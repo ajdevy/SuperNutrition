@@ -1,5 +1,6 @@
 import Fastify, { type FastifyBaseLogger, type FastifyInstance } from 'fastify';
 import multipart from '@fastify/multipart';
+import { AppError, ERROR_CODES } from '@supernutrition/shared';
 import type { AppConfig } from './config/index.js';
 import type { AppLogger } from './logging/index.js';
 import { MIDDLEWARE_ORDER, mapError, resolveCorrelationId } from './middleware/index.js';
@@ -73,7 +74,18 @@ export const buildServer = async (deps: ServerDeps): Promise<ServerHandle> => {
     return reply.status(mapped.status).headers(mapped.headers).send(mapped.body);
   });
 
+  // An unknown path answers in the taxonomy of the surface it was aimed at. A
+  // product client branches on `code`, has never heard of `gatewayCode`, and
+  // would read a gateway envelope as an unparseable response rather than a 404
+  // (docs/06 §6.2).
   app.setNotFoundHandler((request, reply) => {
+    if (request.url.startsWith('/api/')) {
+      const error = new AppError(ERROR_CODES.VALIDATION_FAILED, 'No such endpoint.', {
+        details: [{ field: 'path', issue: 'not_found' }],
+      });
+      return reply.status(404).send(error.toResponse(String(request.id)));
+    }
+
     const mapped = mapError(
       new GatewayError(GATEWAY_CODES.VALIDATION_ERROR, {
         details: [{ field: 'path', issue: 'not_found' }],
