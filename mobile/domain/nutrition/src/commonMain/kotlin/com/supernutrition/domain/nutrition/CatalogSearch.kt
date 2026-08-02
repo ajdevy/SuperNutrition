@@ -160,6 +160,18 @@ class CatalogSearch(records: List<CatalogRecord>) {
  *
  * Ordering matters: a complete token is also a prefix of itself, so
  * TOKEN_SUBSET must precede PREFIX or it can never match anything of its own.
+ *
+ * There is deliberately no separate tier for Russian case folding. Adding one
+ * was the obvious shape and it was measured to be useless: a tier below
+ * TOKEN_SUBSET never runs when TOKEN_SUBSET has already matched something, and
+ * the case that most needed folding was one where TOKEN_SUBSET matched the
+ * *wrong* record. [sharesLemma] therefore lives inside token comparison, where
+ * it can correct a ranking rather than only add a late fallback.
+ *
+ * PREFIX stays raw for the same measurement read the other way. A half-typed
+ * word is a prefix of a stored surface form and not of its lemma — `брюссельска`
+ * prefixes `брюссельская` and parts ways with `брюссельский` at the eleventh
+ * character — so someone mid-word would lose a hit that works today.
  */
 internal enum class MatchTier { EXACT, TOKEN_SUBSET, PREFIX, FUZZY }
 
@@ -205,8 +217,24 @@ internal class IndexedRecord(record: CatalogRecord) {
         var best = 0
         forEachForm { formName, formTokens ->
             if (formTokens.isNotEmpty() && tier.matchesForm(query, queryTokens, formName, formTokens)) {
+                // Coverage counts the same way the tier matched, or it scores a
+                // record on evidence that tier never used. TOKEN_SUBSET now
+                // compares through the lemma table, and an inflected query
+                // accounts for nothing under `startsWith` — `курицы` does not
+                // begin `курица` — so without the clause here the record whose
+                // whole name the query names would tie with one that merely
+                // mentions it, and the tie would fall to canonical id. That tie
+                // is the defect this fixes, so leaving coverage behind would
+                // have fixed nothing.
+                //
+                // Gated rather than always consulted, so PREFIX and FUZZY rank
+                // exactly as they did before.
                 val accounted = formTokens.count { recordToken ->
-                    queryTokens.any { recordToken.startsWith(it) || isNearMatch(it, recordToken) }
+                    queryTokens.any { queryToken ->
+                        recordToken.startsWith(queryToken) ||
+                            isNearMatch(queryToken, recordToken) ||
+                            (tier == MatchTier.TOKEN_SUBSET && sharesLemma(queryToken, recordToken))
+                    }
                 }
                 val coverage = accounted * COVERAGE_SCALE / formTokens.size
                 if (coverage > best) best = coverage
@@ -237,10 +265,48 @@ internal fun MatchTier.matchesForm(
     formTokens: List<String>,
 ): Boolean = when (this) {
     MatchTier.EXACT -> formName == query
-    MatchTier.TOKEN_SUBSET -> tokens.all { it in formTokens }
+    MatchTier.TOKEN_SUBSET -> tokens.all { token -> formTokens.any { sharesLemma(token, it) } }
     MatchTier.PREFIX -> tokens.all { token -> formTokens.any { it.startsWith(token) } }
     MatchTier.FUZZY -> tokens.all { token -> formTokens.any { isNearMatch(token, it) } }
 }
+
+/**
+ * Whether two tokens are one Russian word written in two different cases.
+ *
+ * Russian nouns decline through six cases, so a catalog holding nominative
+ * display names answers `курица` and not `курицу` — and `курицу` is what a
+ * person types. The endings are not suffix arithmetic, which is why this is a
+ * generated table rather than a rule: it is built once from OpenCorpora at build
+ * time, because there is no pure-KMP morphology stack to run on a phone.
+ *
+ * Applied to both sides, which is the whole of why it sits in TOKEN_SUBSET
+ * rather than in a tier of its own. `курицы` — the genitive, and the form in
+ * every phrase like "200 граммов курицы" — is a literal token of the stored
+ * synonym `яйцо курицы`, so it matched at TOKEN_SUBSET and answered a request
+ * for chicken with **eggs**: two records covered one word of two, and the tie
+ * fell to whichever canonical id sorted first. A tier below TOKEN_SUBSET could
+ * never have corrected that, because TOKEN_SUBSET had already matched. Folding
+ * inside the comparison brings the record actually named `курица` into the same
+ * tier, where covering the whole name outranks covering half of a longer one.
+ *
+ * A token the table does not know keeps its own spelling, so this is plain
+ * equality for every other language and costs them one hash probe. That
+ * fallback is not a convenience: a lemma is never a key of its own table — an
+ * entry mapping a word to itself was deliberately left out — so the nominative
+ * sitting in the catalog resolves through this branch and no other.
+ *
+ * It also settles `ё` without a second mechanism. [normalizeForSearch] folds
+ * Latin diacritics and leaves Cyrillic alone, so `свекла` and `свёкла` are two
+ * strings to the matcher and one word to everyone else; both spellings are keys
+ * here and both reach the same lemma.
+ *
+ * 175 genuinely ambiguous forms are absent rather than guessed, so they fall
+ * through unchanged. `гранаты` is pomegranates or garnets depending on the
+ * paradigm, and picking one would not degrade a search — it would answer a
+ * Russian word with the wrong food, confidently. Absence is the correct answer.
+ */
+internal fun sharesLemma(left: String, right: String): Boolean =
+    left == right || (russianFormToLemma[left] ?: left) == (russianFormToLemma[right] ?: right)
 
 /**
  * Bounded near-match. The allowance scales with token length because a fixed
