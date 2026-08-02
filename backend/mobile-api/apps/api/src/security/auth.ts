@@ -156,9 +156,17 @@ export class JwtTokenIssuer {
 /**
  * Test-mode authenticator.
  *
- * Hands out a context without verifying anything, which is exactly what the
- * client with no auth integration needs. The resulting context is labelled
- * `test-mode`, and that label is what stops it reaching a real market.
+ * Skips ATTESTATION, which is exactly what a client with no auth integration
+ * needs, but still requires a credential. Those are different things, and
+ * conflating them is what let an anonymous caller reach the provider: the
+ * contract marks `Authorization` non-optional (gateway-request.toml), the
+ * taxonomy's `authentication-failed` covers a MISSING token as much as an
+ * untrusted one, and the rate limiter keys on `installationId` — so a request
+ * with no credential would both spend money and share one throttling bucket
+ * with every other anonymous caller.
+ *
+ * The resulting context is labelled `test-mode`, and that label is what stops
+ * it reaching a real market.
  */
 export class TestModeAuthenticator {
   readonly #environment: string;
@@ -168,18 +176,28 @@ export class TestModeAuthenticator {
   }
 
   authenticate(authorizationHeader: string | undefined): AuthContext {
-    const presented = authorizationHeader?.replace(/^Bearer\s+/i, '').trim();
-    const installationId =
-      presented && presented.length >= 8 ? presented.slice(0, 32) : 'test-installation';
+    const presented = authorizationHeader?.replace(/^Bearer\s+/i, '').trim() ?? '';
+    // A short token is refused rather than folded into a shared fallback
+    // principal: a caller who can pick the principal can pick whose rate-limit
+    // budget to spend.
+    if (presented.length < MIN_TEST_TOKEN_LENGTH) {
+      throw new GatewayError(GATEWAY_CODES.AUTHENTICATION_FAILED, {
+        details: [{ field: 'authorization', issue: 'missing_or_malformed_bearer_token' }],
+      });
+    }
+
     return {
       userId: 'test-user',
-      installationId,
+      installationId: presented.slice(0, 32),
       scope: 'both',
       authMode: 'test-mode',
       environment: this.#environment,
     };
   }
 }
+
+/** Shortest credential accepted in test mode; sessions issue far longer ones. */
+export const MIN_TEST_TOKEN_LENGTH = 8;
 
 /** Compares a presented refresh token against a stored hash in constant time. */
 export const refreshTokenMatches = (presented: string, storedHash: string): boolean => {

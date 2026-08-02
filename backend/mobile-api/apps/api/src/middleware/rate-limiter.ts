@@ -14,11 +14,16 @@ export interface RateLimitCheckInput {
   readonly keys: readonly RateLimitKey[];
 }
 
-export interface RateLimitHeaders {
+/**
+ * The three headers `rate-limit.toml` marks non-optional. Intersected with a
+ * string record so the value stays assignable wherever a plain header bag is
+ * expected, without losing the named keys.
+ */
+export type RateLimitHeaders = Readonly<Record<string, string>> & {
   readonly 'X-RateLimit-Limit': string;
   readonly 'X-RateLimit-Remaining': string;
   readonly 'X-RateLimit-Reset': string;
-}
+};
 
 export const rateLimitHeaders = (decision: RateLimitDecision): RateLimitHeaders => ({
   'X-RateLimit-Limit': String(decision.limit),
@@ -41,6 +46,10 @@ export const enforceRateLimits = async (input: RateLimitCheckInput): Promise<Rat
         ...(decision.retryAfterSeconds !== null
           ? { retryAfterOverride: decision.retryAfterSeconds }
           : {}),
+        // The rejecting layer's own numbers, so a client can back off
+        // accurately. Which layer rejected is still not disclosed: the code is
+        // always `rate-limited` and the headers name no layer.
+        headers: rateLimitHeaders(decision),
         details: [{ field: 'rateLimit', issue: 'exceeded' }],
       });
     }

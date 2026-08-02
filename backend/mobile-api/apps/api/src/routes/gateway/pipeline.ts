@@ -1,13 +1,15 @@
 import type { Modality } from '@supernutrition/shared';
 import {
   GATEWAY_CODES,
+  GATEWAY_ERRORS,
   GatewayError,
   type AuthContext,
   type EffectStore,
+  type GatewayCode,
   type MarketResolution,
   type RateLimiter,
 } from '../../security/index.js';
-import { enforceRateLimits } from '../../middleware/index.js';
+import { enforceRateLimits, rateLimitHeaders } from '../../middleware/index.js';
 import type { InferenceOrchestrator } from '../../modules/inference/index.js';
 import {
   assertRemoteEnabled,
@@ -15,6 +17,7 @@ import {
   validateRequest,
   verifyConsentAndMarket,
   EFFECT_TTL_SECONDS,
+  REQUEST_ID_TTL_SECONDS,
   type GatewayResponseBody,
   type InferenceRequestInput,
   type OutcomeOut,
@@ -40,6 +43,13 @@ export interface PipelineDeps {
   readonly orchestrator: InferenceOrchestrator;
   readonly limiter: RateLimiter;
   readonly effects: EffectStore;
+  /**
+   * One-time claim per `X-Request-Id`. Separate from `effects` so a replayed
+   * request ID and a duplicated transfer effect cannot collide in one keyspace:
+   * they are different identifiers with different lifetimes and different
+   * answers (`token-replayed` vs `validation-error`).
+   */
+  readonly requestIds: EffectStore;
   readonly payloads: PayloadSink;
   readonly transfers: TransferStateTracker;
   readonly resolveMarket: (marketId: string, modality: Modality, now: Date) => MarketResolution;
@@ -54,12 +64,14 @@ export interface PipelineInput {
   readonly payload: { bytes: Uint8Array; contentType: string };
   readonly auth: AuthContext;
   readonly clientIp: string;
+  /** Validated `X-Request-Id`. One-time: a replay is rejected, never served. */
+  readonly requestId: string;
 }
 
 export const runInferencePipeline = async (
   deps: PipelineDeps,
   input: PipelineInput,
-): Promise<{ status: number; body: GatewayResponseBody }> => {
+): Promise<{ status: number; body: GatewayResponseBody; headers?: Record<string, string> }> => {
   const now = deps.now();
   const { context, payload, auth } = input;
 
@@ -75,8 +87,24 @@ export const runInferencePipeline = async (
     throw new GatewayError(GATEWAY_CODES.INSUFFICIENT_SCOPE);
   }
 
+  // 2b — replay detection (AD-21). Claimed AFTER authentication so a rejected
+  // caller cannot burn a legitimate client's request ID, and BEFORE the rate
+  // limiter so a replay costs nothing from the caller's budget. Retrying this
+  // request can never succeed, which is why the taxonomy marks
+  // `token-replayed` unrecoverable: a retry must carry a fresh identifier.
+  const freshRequestId = await deps.requestIds.claimOnce(
+    'request-id',
+    input.requestId,
+    REQUEST_ID_TTL_SECONDS,
+  );
+  if (!freshRequestId) {
+    throw new GatewayError(GATEWAY_CODES.TOKEN_REPLAYED, {
+      details: [{ field: 'X-Request-Id', issue: 'already_used' }],
+    });
+  }
+
   // 3 — rate limits, per installation and per IP.
-  await enforceRateLimits({
+  const rateDecision = await enforceRateLimits({
     limiter: deps.limiter,
     keys: [
       { layer: 'installation', principal: auth.installationId },
@@ -186,16 +214,12 @@ export const runInferencePipeline = async (
             })),
             requiresConfirmation: result.value.requiresConfirmation,
           }
-        : {
-            outcomeType: 'abstention',
-            reasonCode: 'no-food-detected',
-            userMessageKey: 'inference.abstention.no_food_detected',
-            manualAlternativeAvailable: true,
-          }
-      : failureOutcome(result.error);
+        : abstentionOutcome('no-food-detected')
+      : outcomeForFailure(result.error);
 
     return {
       status: 200,
+      headers: { ...rateLimitHeaders(rateDecision) },
       body: {
         contractVersion: 'mobile-api/v1',
         requestId: deps.requestIdFactory(),
@@ -213,35 +237,73 @@ export const runInferencePipeline = async (
   }
 };
 
-const FAILURE_MESSAGE_KEYS: Readonly<
-  Record<string, { key: string; recoverable: boolean; retry: number | null }>
-> = {
-  timeout: { key: 'error.provider_timeout', recoverable: true, retry: 15 },
-  'rate-limited': { key: 'error.rate_limited', recoverable: true, retry: 30 },
-  'provider-unavailable': { key: 'error.provider_unavailable', recoverable: true, retry: 60 },
-  'content-rejected': { key: 'error.invalid_modality', recoverable: false, retry: null },
-  'malformed-response': { key: 'error.internal', recoverable: false, retry: null },
-  cancelled: { key: 'error.cancelled', recoverable: false, retry: null },
-  'budget-exceeded': { key: 'error.budget_exceeded', recoverable: false, retry: null },
-  'kill-switch': { key: 'error.remote_disabled', recoverable: true, retry: 300 },
+/** Closed set of abstention reasons (gateway-response.toml). */
+type AbstentionReason =
+  | 'no-food-detected'
+  | 'image-unusable'
+  | 'ambiguous-scene'
+  | 'below-confidence-floor'
+  | 'content-rejected-by-provider';
+
+const ABSTENTION_MESSAGE_KEYS: Readonly<Record<AbstentionReason, string>> = {
+  'no-food-detected': 'inference.abstention.no_food_detected',
+  'image-unusable': 'inference.abstention.image_unusable',
+  'ambiguous-scene': 'inference.abstention.ambiguous_scene',
+  'below-confidence-floor': 'inference.abstention.below_confidence_floor',
+  'content-rejected-by-provider': 'inference.abstention.content_rejected_by_provider',
+};
+
+const abstentionOutcome = (reasonCode: AbstentionReason): OutcomeOut => ({
+  outcomeType: 'abstention',
+  reasonCode,
+  userMessageKey: ABSTENTION_MESSAGE_KEYS[reasonCode],
+  // Always true in v1: manual entry and catalog search work without this
+  // service, which is what makes a fail-closed remote path a degraded
+  // experience rather than an outage.
+  manualAlternativeAvailable: true,
+});
+
+/**
+ * Internal failure kinds mapped onto released gateway codes.
+ *
+ * `outcome.failureCode` is contractually "one gatewayCode from
+ * error-taxonomy.toml", so the orchestrator's own vocabulary (`timeout`,
+ * `cancelled`, `malformed-response`) may not appear on the wire: a client
+ * branching on the taxonomy would meet a discriminant it has never heard of.
+ */
+const FAILURE_CODES: Readonly<Record<string, GatewayCode>> = {
+  timeout: GATEWAY_CODES.PROVIDER_TIMEOUT,
+  'rate-limited': GATEWAY_CODES.RATE_LIMITED,
+  'provider-unavailable': GATEWAY_CODES.PROVIDER_UNAVAILABLE,
+  'malformed-response': GATEWAY_CODES.INTERNAL_ERROR,
+  cancelled: GATEWAY_CODES.CLIENT_CANCELLED,
+  'budget-exceeded': GATEWAY_CODES.BUDGET_EXCEEDED,
+  'kill-switch': GATEWAY_CODES.KILL_SWITCH,
 };
 
 /**
  * A provider failure is returned INSIDE a 200 envelope as a failure outcome,
  * not as an HTTP error: the request itself was valid and fully processed, and
  * the client needs the resolved market values that a bare error body omits.
+ *
+ * A provider refusing the content is the one case that is NOT a failure. The
+ * attempt succeeded and the answer is "I will not identify this", which the
+ * release models as an abstention with `content-rejected-by-provider` — so the
+ * client offers manual entry rather than a retry that cannot help.
  */
-const failureOutcome = (failure: string): OutcomeOut => {
-  const spec = FAILURE_MESSAGE_KEYS[failure] ?? {
-    key: 'error.internal',
-    recoverable: false,
-    retry: null,
-  };
+const outcomeForFailure = (failure: string): OutcomeOut => {
+  if (failure === 'content-rejected') return abstentionOutcome('content-rejected-by-provider');
+
+  const code = FAILURE_CODES[failure] ?? GATEWAY_CODES.INTERNAL_ERROR;
+  // userMessageKey and recoverable MIRROR the taxonomy entry rather than being
+  // restated here; a second copy is a second thing to drift.
+  const spec = GATEWAY_ERRORS[code];
   return {
     outcomeType: 'failure',
-    failureCode: failure,
-    userMessageKey: spec.key,
+    failureCode: code,
+    userMessageKey: spec.userMessageKey,
     recoverable: spec.recoverable,
-    retryAfterSeconds: spec.retry,
+    // "Present only when recoverable and a wait is required."
+    retryAfterSeconds: spec.recoverable && spec.retryAfter > 0 ? spec.retryAfter : null,
   };
 };

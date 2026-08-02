@@ -8,7 +8,7 @@ import {
   generateOpaqueId,
   refreshTokenMatches,
 } from './auth.js';
-import { GatewayError } from './gateway-errors.js';
+import { GatewayError, GATEWAY_CODES } from './gateway-errors.js';
 
 let privateKey: string;
 let publicKey: string;
@@ -151,8 +151,7 @@ describe('opaque identifiers', () => {
 describe('test-mode authenticator', () => {
   const authenticator = new TestModeAuthenticator('development');
 
-  it('labels every context as test-mode', () => {
-    expect(authenticator.authenticate(undefined).authMode).toBe('test-mode');
+  it('labels a credentialed context as test-mode', () => {
     expect(authenticator.authenticate('Bearer abcdefghijkl').authMode).toBe('test-mode');
   });
 
@@ -162,8 +161,17 @@ describe('test-mode authenticator', () => {
     );
   });
 
-  it('falls back to a fixed installation when no token is presented', () => {
-    expect(authenticator.authenticate(undefined).installationId).toBe('test-installation');
-    expect(authenticator.authenticate('Bearer tiny').installationId).toBe('test-installation');
+  // Test mode skips attestation, not authentication. An anonymous caller here
+  // would reach a paid provider and would share one rate-limit principal with
+  // every other anonymous caller.
+  it.each([
+    ['absent', undefined],
+    ['empty', ''],
+    ['bearer with nothing after it', 'Bearer '],
+    ['too short to be a credential', 'Bearer tiny'],
+  ])('refuses a request whose credential is %s', (_label, header) => {
+    expect(() => authenticator.authenticate(header)).toThrowError(
+      expect.objectContaining({ gatewayCode: GATEWAY_CODES.AUTHENTICATION_FAILED }),
+    );
   });
 });

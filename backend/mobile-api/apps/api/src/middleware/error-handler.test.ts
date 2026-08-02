@@ -68,6 +68,34 @@ describe('response shaping', () => {
     ).toBeUndefined();
   });
 
+  // rate-limit.toml: "Retry-After ... Authoritative; equals the body
+  // retryAfter." A client that backs off on the header and a server that meant
+  // the body would disagree about when a retry is allowed.
+  it('keeps the Retry-After header and the body retryAfter in agreement', () => {
+    const mapped = mapError(
+      new GatewayError(GATEWAY_CODES.RATE_LIMITED, { retryAfterOverride: 3600 }),
+      'c',
+    );
+    expect(mapped.headers['Retry-After']).toBe('3600');
+    expect(mapped.body.error.retryAfter).toBe(3600);
+  });
+
+  // The X-RateLimit-* trio belongs to the layer that rejected, which the
+  // taxonomy entry cannot know — so the throwing site attaches it.
+  it('emits headers the throwing site attached', () => {
+    const mapped = mapError(
+      new GatewayError(GATEWAY_CODES.RATE_LIMITED, {
+        headers: { 'X-RateLimit-Limit': '20', 'X-RateLimit-Remaining': '0' },
+      }),
+      'c',
+    );
+    expect(mapped.headers).toMatchObject({
+      'X-RateLimit-Limit': '20',
+      'X-RateLimit-Remaining': '0',
+      'X-Correlation-Id': 'c',
+    });
+  });
+
   it('never serializes the cause', () => {
     const mapped = mapError(
       new GatewayError(GATEWAY_CODES.INTERNAL_ERROR, { cause: { secret: 'do-not-leak' } }),

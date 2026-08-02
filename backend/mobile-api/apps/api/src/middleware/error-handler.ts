@@ -91,7 +91,12 @@ export const toProductError = (error: unknown): AppError => {
 
 export const mapError = (error: unknown, correlationId: string): MappedErrorResponse => {
   const gatewayError = toGatewayError(error);
-  const headers: Record<string, string> = { 'X-Correlation-Id': correlationId };
+  const headers: Record<string, string> = {
+    'X-Correlation-Id': correlationId,
+    // Headers the throwing site attached — the X-RateLimit-* trio a 429 must
+    // carry (rate-limit.toml marks all three non-optional).
+    ...gatewayError.headers,
+  };
 
   // Retry-After is advertised only where the taxonomy says the client may
   // retry. Advertising it on a terminal failure invites a pointless retry.

@@ -17,6 +17,7 @@ import { buildServer, type ServerHandle } from './server.js';
 import {
   FIXTURE_MARKET_POLICY,
   InMemoryEffectStore,
+  InMemoryIdempotencyStore,
   InMemoryRateLimiter,
   PRODUCTION_MARKET_POLICY,
   StaticMarketPolicyResolver,
@@ -87,6 +88,9 @@ export const buildApplication = async (
   const transfers = new TransferStateTracker();
   const limiter = new InMemoryRateLimiter(RATE_LIMIT_RULES);
   const effects = new InMemoryEffectStore();
+  // Separate keyspace from `effects`: a spent request ID and a spent transfer
+  // effect are different identifiers with different answers (AD-21 vs AD-18).
+  const requestIds = new InMemoryEffectStore();
 
   const profiles = TomlModelProfileSource.fromFile(
     resolve(process.cwd(), config.inference.modelProfilesPath),
@@ -99,7 +103,7 @@ export const buildApplication = async (
     ? [
         new OpenRouterInferenceProvider(
           openRouterKey,
-          { baseUrl: config.inference.openRouterBaseUrl, timeoutMs: 8000 },
+          { baseUrl: config.inference.openRouterBaseUrl, timeoutMs: 15_000 },
           payloads,
         ),
       ]
@@ -173,6 +177,7 @@ export const buildApplication = async (
       orchestrator,
       limiter,
       effects,
+      requestIds,
       payloads,
       transfers,
       resolveMarket: (marketId, modality, now) => marketResolver.resolve(marketId, modality, now),
@@ -210,6 +215,8 @@ export const buildApplication = async (
     product: {
       meals: mealController,
       searchFood,
+      idempotency: new InMemoryIdempotencyStore(),
+      limiter,
       authenticate: async (request) => {
         if (config.auth.testMode) {
           return productAuthenticator.authenticate(request.headers.authorization);

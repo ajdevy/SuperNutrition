@@ -213,13 +213,29 @@ export class RedisEffectStore implements EffectStore {
   }
 }
 
+/**
+ * Idempotency records, expiring on the TTL the caller claims with.
+ *
+ * A claim with no response recorded is treated as IN FLIGHT and conflicts: two
+ * concurrent retries of the same key must not both create. A failed request
+ * releases its claim explicitly, so only a genuine in-flight duplicate is
+ * refused (docs/06 §6.7).
+ */
 export class InMemoryIdempotencyStore implements IdempotencyStore {
-  readonly #entries = new Map<string, { digest: string; response?: unknown }>();
+  readonly #entries = new Map<string, { digest: string; expiresAt: number; response?: unknown }>();
+  readonly #now: () => number;
 
-  async claim(key: string, requestDigest: string): Promise<IdempotencyClaim> {
+  constructor(now: () => number = Date.now) {
+    this.#now = now;
+  }
+
+  async claim(key: string, requestDigest: string, ttlSeconds = 86_400): Promise<IdempotencyClaim> {
+    const now = this.#now();
     const existing = this.#entries.get(key);
-    if (!existing) {
-      this.#entries.set(key, { digest: requestDigest });
+    // An expired record is indistinguishable from an absent one: the 24h
+    // window is what bounds how long a replay is honoured.
+    if (!existing || existing.expiresAt <= now) {
+      this.#entries.set(key, { digest: requestDigest, expiresAt: now + ttlSeconds * 1000 });
       return { state: 'fresh' };
     }
     if (existing.digest !== requestDigest) return { state: 'conflict' };
@@ -230,5 +246,9 @@ export class InMemoryIdempotencyStore implements IdempotencyStore {
   async complete(key: string, response: unknown): Promise<void> {
     const existing = this.#entries.get(key);
     if (existing) this.#entries.set(key, { ...existing, response });
+  }
+
+  async fail(key: string): Promise<void> {
+    this.#entries.delete(key);
   }
 }

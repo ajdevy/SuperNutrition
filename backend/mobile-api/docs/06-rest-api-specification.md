@@ -40,7 +40,14 @@ human-readable, English, for developers — it is **not** user-facing copy, beca
 user-facing copy is localized on the client. `correlationId` appears in logs and
 in every error, so a user report is traceable without asking for a screenshot.
 
-**Error codes**
+**Error codes (Surface B only)**
+
+This table is the Product API taxonomy, and it mirrors `ERROR_CODES` /
+`ERROR_STATUS` in `packages/shared`. Surface A does **not** use it: the gateway
+has its own envelope (`error.gatewayCode`) and its own released catalog in
+`contracts/mobile-api/v1/error-taxonomy.toml`. The two are separate on purpose —
+a product client branches on `code` and has never heard of a `gatewayCode` — so
+a code from one surface must never appear on the other.
 
 | HTTP | Code | Meaning |
 | --- | --- | --- |
@@ -49,19 +56,25 @@ in every error, so a user report is traceable without asking for a screenshot.
 | 401 | `TOKEN_REPLAYED` | Nonce or request ID already used |
 | 403 | `FORBIDDEN` | Authenticated but not permitted |
 | 403 | `MARKET_NOT_PERMITTED` | Posture absent, `unresolved`, expired, or `prohibited` |
-| 403 | `CONSENT_REQUIRED` | No valid receipt bound to this payload digest |
+| 403 | `CONSENT_REQUIRED` | Receipt valid but consent policy not met (modality, region, purpose, decision) |
 | 403 | `TEST_MODE_FORBIDDEN` | Test-mode token attempted a real remote transfer |
-| 404 | `*_NOT_FOUND` | Resource absent or not owned by caller |
+| 404 | `*_NOT_FOUND` | `MEAL_NOT_FOUND`, `USER_NOT_FOUND`, `GOAL_NOT_FOUND`, `CATALOG_ITEM_NOT_FOUND` |
 | 409 | `CONFLICT` | Idempotency or state conflict |
 | 413 | `PAYLOAD_TOO_LARGE` | Upload exceeds the configured limit |
 | 415 | `UNSUPPORTED_MEDIA_TYPE` | Content type not allowlisted |
 | 422 | `CONTRACT_VERSION_UNSUPPORTED` | Contract version not in the supported matrix |
-| 429 | `RATE_LIMITED` | Throttled; `Retry-After` set |
+| 429 | `RATE_LIMITED` | Throttled; `Retry-After` and `X-RateLimit-*` set |
 | 499 | `CLIENT_CANCELLED` | Client aborted; recorded for transfer-state semantics |
 | 500 | `INTERNAL_ERROR` | Unexpected; no internal detail leaked |
+| 501 | `NOT_IMPLEMENTED` | Route is declared by this spec but its stage has not shipped |
 | 502 | `PROVIDER_UNAVAILABLE` | Upstream provider failed after retries |
 | 503 | `PROVIDER_KILL_SWITCH` | Provider disabled by operator |
 | 504 | `PROVIDER_TIMEOUT` | Upstream deadline exceeded |
+
+Where the same condition exists on both surfaces the statuses may differ, and
+the difference is the surface's own: the gateway answers `provider-unavailable`
+with 503 because the release fixes it there, while Surface B answers 502. Only
+Surface A is contract-frozen.
 
 A 404 is returned for resources that exist but belong to another user. A 403
 would confirm the resource exists.
@@ -105,8 +118,18 @@ Contract-bound. Persists nothing about the payload.
 
 ### `POST /gw/v1/inference/photo`
 
-Headers: `Authorization: Bearer`, `X-Request-Id` (one-time), `X-Attempt-Id`,
-`X-Effect-Id`, `X-Contract-Version`, `Idempotency-Key`.
+Headers: `Authorization: Bearer`, `X-Request-Id` (one-time), `X-Contract-Version`,
+`Idempotency-Key` (optional). `attemptId` and `effectId` travel inside the
+`context` part, never as headers (contracts/mobile-api/v1/gateway-request.toml).
+
+All three non-optional headers are enforced, in the release's
+`validation_order`: contract version, then authentication, then request-id
+replay. An absent header is as much a rejection as a wrong one — a caller who
+omits `X-Contract-Version` is not asserting compatibility with anything.
+`X-Request-Id` must match `^req_[A-Za-z0-9]{16,64}$` and is spent on first use;
+a repeat is `401 TOKEN_REPLAYED` and is **not** recoverable, because a retry has
+to carry a fresh identifier. The claim is made after authentication, so a
+rejected caller cannot burn a legitimate client's request ID.
 
 Body: `multipart/form-data` — `payload` (scrubbed normalized bytes) plus
 `context` (JSON).
@@ -118,17 +141,23 @@ Body: `multipart/form-data` — `payload` (scrubbed normalized bytes) plus
   "attemptId": "att_01J8X4Q2K7R9M3P5T6V8W0Y2A1",
   "effectId": "eff_01J8X4Q2K7R9M3P5T6V8W0Y2A2",
   "consentReceipt": {
-    "payloadDigest": "sha256:9f2b…",
+    "version": "1",
+    "attemptId": "att_01J8X4Q2K7R9M3P5T6V8W0Y2A1",
+    "digest": "sha256:9f2b…",
     "modality": "photo",
-    "consentCopyVersion": "photo-consent/3",
-    "marketJurisdiction": "DE",
-    "processingRegion": "eu-central",
+    "purpose": "food-identification",
+    "decision": "granted",
+    "marketJurisdiction": "ZZ",
+    "processingRegion": "fixture-region",
+    "consentCopyVersion": "photo-consent/fixture-1",
     "retentionVersion": "retention/2",
+    "retentionDays": 0,
     "configurationVersion": "cfg/2026-07-26.4",
-    "decidedAt": "2026-07-29T10:14:02Z"
+    "recordedAt": "2026-07-29T10:14:02Z",
+    "expiresAt": "2026-07-29T10:29:02Z"
   },
   "inferenceContext": {
-    "catalogCountry": "DE",
+    "catalogCountry": "ZZ",
     "mealType": "lunch",
     "locale": "de-DE",
     "measurementSystem": "metric"
@@ -143,6 +172,8 @@ Response `200`:
   "contractVersion": "mobile-api/v1",
   "requestId": "req_01J8X4…",
   "attemptId": "att_01J8X4…",
+  "resolvedMarketJurisdiction": "ZZ",
+  "resolvedProcessingRegion": "fixture-region",
   "outcome": {
     "outcomeType": "candidates",
     "candidates": [{
@@ -156,7 +187,7 @@ Response `200`:
       "provenance": {
         "route": "remote",
         "engineId": "gateway-openrouter",
-        "modelVersion": "google/gemini-2.5-flash",
+        "modelVersion": "openai/gpt-4o-mini",
         "calibrationVersion": "cal-2026-07",
         "contractVersion": "photo-inference-engine/v1"
       }
@@ -169,16 +200,24 @@ Response `200`:
 endpoint carries calories, macros, or micronutrients** — asserted by a schema
 test, mirroring `contracts/inference/v1`.
 
-Errors: 403 `CONSENT_REQUIRED` when the receipt digest does not match the
-computed digest of the received payload; 403 `MARKET_NOT_PERMITTED` when the
-resolved posture forbids this modality; 413 above the limit; 422 on unsupported
-contract version.
+Errors: 400 `MALFORMED_CONSENT` when the receipt digest does not match the
+computed digest of the received payload, or the receipt is structurally invalid;
+403 `CONSENT_REQUIRED` when the receipt is valid but consent policy is not met;
+403 `MARKET_NOT_PERMITTED` when the resolved posture forbids this modality;
+400 `UNSUPPORTED_VERSION` on a contract version outside the supported matrix;
+413 `CONTENT_TOO_LARGE` above the limit (taxonomy: contracts/mobile-api/v1/error-taxonomy.toml).
 
 ### `POST /gw/v1/inference/text`
 
 Same envelope, `modality: "text"`, body is a bounded description string. Photo
 and text permissions are resolved independently and a receipt carrying the wrong
 modality's consent copy fails closed (MP-4).
+
+**Not active in v1.** `schema.toml` lists `text` as a *reserved* modality, so the
+route answers `400 invalid-modality` — "not supported by this release". It is
+registered rather than absent deliberately: a 404 would say the path does not
+exist and send a client hunting for a typo instead of falling back to manual
+entry.
 
 ### `DELETE /gw/v1/inference/{attemptId}`
 
@@ -206,6 +245,13 @@ Returns the resolved `marketJurisdiction`, `processingRegion`, posture, and
 per-modality permission with its consent copy version. Clients call this
 **before** presenting a consent sheet, because MP-7 requires the resolved values
 to be displayed before either choice.
+
+`modality` is **required** (`photo` or `text`); `jurisdiction` is an optional
+advisory hint. A missing modality is `400 VALIDATION_FAILED` rather than a
+default: answering the photo posture to a client that asked about nothing is
+exactly the cross-modality inference MP-4 forbids. Responses are `no-store` —
+a posture expires at resolution time, so a cached permissive answer would
+outlive the permission it reports.
 
 ## 6.6 Surface B — Product `/api/v1`
 
@@ -255,8 +301,8 @@ genuinely differ; nothing downstream branches on which was used.
 rejected with `VALIDATION_FAILED` — an ungrounded number must not enter the
 database, and the boundary is the last place to stop it.
 
-`POST /api/v1/meals/photo` additionally carries `attemptId` and the
-`inferenceEvidence` array so provenance is preserved. It does **not** carry image
+`POST /api/v1/meals/photo` additionally carries `attemptId`, `configurationVersion`,
+and the `evidence` array so provenance is preserved. It does **not** carry image
 bytes; those went to the gateway and no longer exist.
 
 `POST /api/v1/meals/voice` carries the transcript and, where the client
@@ -361,9 +407,19 @@ default under AD-40.
 ## 6.7 Idempotency
 
 All POSTs that create or spend accept `Idempotency-Key`. The key, request digest,
-and response are cached in Redis for 24 hours. A repeat with the same key and
-same digest replays the stored response; a repeat with the same key and a
-different digest is `409 CONFLICT`.
+and response are cached for 24 hours. A repeat with the same key and same digest
+replays the stored status and body; a repeat with the same key and a different
+digest is `409 CONFLICT`.
+
+The digest is computed over the body with object keys canonically ordered, so
+two serializations of the same request are the same request. A claim that has
+neither completed nor failed is treated as **in flight** and also conflicts —
+that is what stops two concurrent retries from both creating. A request that
+fails releases its claim, so a retry may run.
+
+The header is what a client uses to promise "this is the same request". Without
+one the POST is a plain create: inventing a digest-based key for callers who did
+not ask would silently collapse two genuinely separate identical meals into one.
 
 This matters most on `POST /meals/*`: a retry over a flaky mobile connection
 must not create two lunches, two XP grants, and a phantom streak day.
@@ -372,11 +428,20 @@ must not create two lunches, two XP grants, and a phantom streak day.
 
 **Request:** `Authorization`, `Content-Type`, `X-Request-Id`, `X-Correlation-Id`,
 `Idempotency-Key`, `Accept-Language`, `X-Client-Version`, and on the gateway
-`X-Attempt-Id`, `X-Effect-Id`, `X-Contract-Version`.
+`X-Contract-Version`. `attemptId`/`effectId` are body fields of the gateway
+`context`, never headers (contracts/mobile-api/v1).
 
 **Response:** `X-Correlation-Id` (always), `X-RateLimit-Limit`,
 `X-RateLimit-Remaining`, `X-RateLimit-Reset`, `Retry-After` on 429/503,
 `Deprecation` and `Sunset` on deprecated versions.
+
+The `X-RateLimit-*` trio is present on successful responses too, not only on a
+429, so a client can back off *before* it is rejected rather than only learning
+the limit by hitting it. On a 429 all four are required
+(`contracts/mobile-api/v1/rate-limit.toml`). They report the numbers of the
+layer that would reject, and never name the layer: one code (`rate-limited`)
+regardless of which limiter fired, so a caller probing for headroom learns
+nothing about the topology.
 
 ## 6.9 OpenAPI
 

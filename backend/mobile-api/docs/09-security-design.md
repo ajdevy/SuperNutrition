@@ -52,6 +52,15 @@ The stage brief requires sessions handed out without verification because the
 client has no auth integration yet. That is a legitimate development need and a
 production catastrophe, so the fence is structural:
 
+Test mode skips **attestation**, not **authentication**. Both surfaces still
+require a bearer credential: the contract marks `Authorization` non-optional,
+`authentication-failed` covers a missing token as much as an untrusted one, and
+the rate limiter keys on `installationId` — so an uncredentialed request would
+both spend money at a provider and share one throttling bucket with every other
+anonymous caller. A credential too short to be one is refused rather than folded
+into a shared fallback principal, because a caller who can pick the principal
+can pick whose budget to spend.
+
 1. **Boot assertion.** With `TEST_MODE=true` and `NODE_ENV=production`, or a
    resolved gateway environment of `production`, the process **exits non-zero at
    startup**. It does not warn and continue. A warning in a log is a control
@@ -126,8 +135,8 @@ binding and would mean the bytes analysed are not the bytes consented to.
 
 A remote transfer requires **all** of the following. Any one absent fails closed:
 
-1. A consent receipt whose `payloadDigest` matches the SHA-256 of the received
-   payload. Mismatch → `403 CONSENT_REQUIRED`. This is the AD-8 binding, and
+1. A consent receipt whose `digest` matches the SHA-256 of the received
+   payload. Mismatch → `400 MALFORMED_CONSENT`. This is the AD-8 binding, and
    checking it server-side is what makes it more than a client-side promise.
 2. `modality` matching the endpoint, with the reviewed consent copy version for
    *that* modality. Photo and text are decided independently; presenting one

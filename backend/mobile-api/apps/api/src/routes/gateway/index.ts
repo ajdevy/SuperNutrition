@@ -37,6 +37,7 @@ export type GatewayPipelineStep = (typeof GATEWAY_PIPELINE)[number];
 
 export {
   validateRequest,
+  validateGatewayHeaders,
   assertRemoteEnabled,
   assertTransferAuthorized,
   verifyConsentAndMarket,
@@ -45,6 +46,7 @@ export {
   ALLOWED_CONTENT_TYPES,
   MAX_PAYLOAD_BYTES,
   EFFECT_TTL_SECONDS,
+  REQUEST_ID_TTL_SECONDS,
 } from './inference.handler.js';
 export type {
   GatewayResponseBody,

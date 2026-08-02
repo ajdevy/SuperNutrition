@@ -14,7 +14,13 @@ import {
 import { buildServer, type ServerHandle } from '../../server.js';
 import { createLogger } from '../../logging/index.js';
 import type { AppConfig } from '../../config/index.js';
-import { TestModeAuthenticator, TestModeProductAuthenticator } from '../../security/index.js';
+import {
+  InMemoryIdempotencyStore,
+  InMemoryRateLimiter,
+  TestModeAuthenticator,
+  TestModeProductAuthenticator,
+  type RateLimiter,
+} from '../../security/index.js';
 import {
   CreateMealEventHandler,
   CorrectMealEventHandler,
@@ -185,8 +191,8 @@ const usdaFood = (fdcId: number, description: string) => ({
   fdcId,
   description,
   foodNutrients: [
-    { nutrient: { id: 1008 }, amount: 89 },
-    { nutrient: { id: 1003 }, amount: 1.09 },
+    { nutrientId: 1008, value: 89 },
+    { nutrientId: 1003, value: 1.09 },
   ],
   foodPortions: [{ amount: 1, gramWeight: 118, measureUnit: { name: 'medium' } }],
 });
@@ -226,12 +232,17 @@ const meal = (over: Record<string, unknown> = {}) => ({
 
 let server: ServerHandle;
 let repository: InMemoryMealRepository;
+let idempotencyStore: InMemoryIdempotencyStore;
+/** Swappable per test, so throttling can be provoked without rebuilding. */
+let productLimiter: RateLimiter;
 
 beforeEach(async () => {
   repository = new InMemoryMealRepository();
   usdaCalls = [];
   usdaReply = () => usdaJson({ foods: [usdaFood(171705, 'Bananas, raw')] });
 
+  idempotencyStore = new InMemoryIdempotencyStore();
+  productLimiter = new InMemoryRateLimiter([{ layer: 'user', limit: 120, windowSeconds: 60 }]);
   const commandDeps = { repository, now: () => new Date('2026-07-29T12:30:04Z'), uuid: randomUUID };
   const controller = new MealControllerImpl({
     createMeal: new CreateMealEventHandler(commandDeps),
@@ -261,6 +272,11 @@ beforeEach(async () => {
     } as never,
     product: {
       meals: controller,
+      idempotency: idempotencyStore,
+      limiter: {
+        check: (key) => productLimiter.check(key),
+        failureMode: (layer) => productLimiter.failureMode(layer),
+      },
       // The real provider and use case, with only the transport doubled: the
       // catalog contract a client sees includes the provenance the provider
       // stamps on every fact.
@@ -356,6 +372,65 @@ describe('creating meals', () => {
     expect(response.statusCode).toBe(500);
     expect(response.json().error.code).toBe('INTERNAL_ERROR');
     expect(response.body).not.toMatch(/at\s+\w+\s+\(/);
+  });
+});
+
+describe('idempotency (docs/06 §6.7)', () => {
+  const key = 'idem-test-1';
+
+  const postWithKey = (url: string, payload: unknown, idemKey: string, authorization = TOKEN) =>
+    server.app.inject({
+      method: 'POST',
+      url,
+      payload,
+      headers: { authorization, 'idempotency-key': idemKey },
+    });
+
+  it('replays the stored response for the same key and same body', async () => {
+    const first = await postWithKey('/api/v1/meals/manual', meal(), key);
+    const second = await postWithKey('/api/v1/meals/manual', meal(), key);
+
+    expect(first.statusCode).toBe(201);
+    expect(second.statusCode).toBe(201);
+    // Exactly one meal exists: the replay did not create a duplicate.
+    expect(repository.events.size).toBe(1);
+    expect(second.body).toBe(first.body);
+  });
+
+  it('returns 409 CONFLICT for the same key and a different body', async () => {
+    await postWithKey('/api/v1/meals/manual', meal(), key);
+    const conflicting = await postWithKey(
+      '/api/v1/meals/manual',
+      meal({ mealType: 'breakfast' }),
+      key,
+    );
+
+    expect(conflicting.statusCode).toBe(409);
+    expect(conflicting.json().error.code).toBe('CONFLICT');
+    expect(repository.events.size).toBe(1);
+  });
+
+  it('ignores key ordering in the body when deciding the digest', async () => {
+    const bodyA = meal();
+    const bodyB = JSON.parse(JSON.stringify(bodyA));
+    const shuffled: Record<string, unknown> = {};
+    for (const k of Object.keys(bodyB).reverse()) shuffled[k] = bodyB[k];
+
+    const first = await postWithKey('/api/v1/meals/manual', bodyA, key);
+    const replay = await postWithKey('/api/v1/meals/manual', shuffled, key);
+
+    expect(first.statusCode).toBe(201);
+    expect(replay.statusCode).toBe(201);
+    expect(repository.events.size).toBe(1);
+  });
+
+  it('treats a missing key as a plain non-idempotent create', async () => {
+    const first = await post('/api/v1/meals/manual', meal());
+    const second = await post('/api/v1/meals/manual', meal());
+
+    expect(first.statusCode).toBe(201);
+    expect(second.statusCode).toBe(201);
+    expect(repository.events.size).toBe(2);
   });
 });
 
@@ -800,12 +875,74 @@ describe('the rest of Surface B', () => {
     const response = await server.app.inject({ method: method as 'GET', url });
 
     expect(response.statusCode).toBe(501);
-    expect(response.json().error.userMessageKey).toBe('error.not_implemented');
+    // Product taxonomy, not the gateway's: a client branching on `code` would
+    // read a gatewayCode envelope as an unparseable response (docs/06 §6.2).
+    expect(response.json().error.code).toBe('NOT_IMPLEMENTED');
+    expect(response.json().error).not.toHaveProperty('gatewayCode');
   });
 
   it('carries a correlation id on a product response', async () => {
     const response = await get('/api/v1/meals');
     expect(response.headers['x-correlation-id']).toBeDefined();
+  });
+
+  // An unknown path answers in the taxonomy of the surface it was aimed at. A
+  // product client branches on `code` and has never heard of `gatewayCode`.
+  it('answers an unknown product path in the product taxonomy', async () => {
+    const response = await get('/api/v1/there-is-no-such-thing');
+
+    expect(response.statusCode).toBe(404);
+    expect(response.json().error.code).toBe('VALIDATION_FAILED');
+    expect(response.json().error).not.toHaveProperty('gatewayCode');
+  });
+});
+
+/**
+ * The product layer throttles per user and fails OPEN — this surface is unpaid,
+ * and a limiter outage should not stop a user seeing yesterday's lunch. The
+ * gateway fails closed. One global policy gets one of the two wrong
+ * (docs/09 §9.3).
+ */
+describe('rate limiting (docs/09 §9.3)', () => {
+  it('advertises the remaining budget on an allowed request', async () => {
+    const response = await get('/api/v1/meals');
+
+    expect(response.statusCode).toBe(200);
+    expect(response.headers['x-ratelimit-limit']).toBe('120');
+    expect(response.headers['x-ratelimit-remaining']).toBeDefined();
+    expect(response.headers['x-ratelimit-reset']).toBeDefined();
+  });
+
+  it('answers 429 with Retry-After once the per-user budget is spent', async () => {
+    productLimiter = new InMemoryRateLimiter([{ layer: 'user', limit: 1, windowSeconds: 60 }]);
+
+    expect((await get('/api/v1/meals')).statusCode).toBe(200);
+    const throttled = await get('/api/v1/meals');
+
+    expect(throttled.statusCode).toBe(429);
+    expect(throttled.json().error.code).toBe('RATE_LIMITED');
+    expect(throttled.headers['retry-after']).toBe('60');
+    expect(throttled.headers['x-ratelimit-remaining']).toBe('0');
+  });
+
+  it('serves the request when the limiter itself is unavailable', async () => {
+    productLimiter = {
+      check: async () => {
+        throw new Error('redis is down');
+      },
+      failureMode: () => 'fail-open',
+    };
+
+    expect((await get('/api/v1/meals')).statusCode).toBe(200);
+  });
+
+  it('throttles the caller, not the endpoint: an anonymous request never reaches it', async () => {
+    productLimiter = new InMemoryRateLimiter([{ layer: 'user', limit: 1, windowSeconds: 60 }]);
+    const anonymous = await server.app.inject({ method: 'GET', url: '/api/v1/meals' });
+
+    expect(anonymous.statusCode).toBe(401);
+    // The budget is untouched, so a real caller still gets their full quota.
+    expect((await get('/api/v1/meals')).statusCode).toBe(200);
   });
 
   it('never sets a permissive CORS header (docs/09 §9.9)', async () => {

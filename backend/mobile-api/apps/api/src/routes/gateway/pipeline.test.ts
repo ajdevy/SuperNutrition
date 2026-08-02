@@ -4,6 +4,8 @@ import { ok, type Result } from '@supernutrition/shared';
 import { runInferencePipeline, type PipelineDeps } from './pipeline.js';
 import { TransferStateTracker } from './transfer-state.js';
 import {
+  GATEWAY_CODES,
+  GATEWAY_ERRORS,
   GatewayError,
   InMemoryEffectStore,
   InMemoryRateLimiter,
@@ -126,6 +128,7 @@ beforeEach(() => {
       { layer: 'ip', limit: 300, windowSeconds: 60 },
     ]),
     effects: new InMemoryEffectStore(),
+    requestIds: new InMemoryEffectStore(),
     payloads: {
       put: () => {},
       dispose: (attemptId) => disposed.push(attemptId),
@@ -139,12 +142,16 @@ beforeEach(() => {
   };
 });
 
-const run = (context: unknown, bytes: Uint8Array = JPEG) =>
+// A fresh request ID per call by default: X-Request-Id is one-time, so a
+// shared constant would make the second call in any test a replay.
+let requestSeq = 0;
+const run = (context: unknown, bytes: Uint8Array = JPEG, requestId?: string) =>
   runInferencePipeline(deps, {
     context: context as never,
     payload: { bytes, contentType: 'image/jpeg' },
     auth: AUTH,
     clientIp: '203.0.113.5',
+    requestId: requestId ?? `req_00000000000000${(requestSeq += 1).toString().padStart(2, '0')}`,
   });
 
 describe('happy path', () => {
@@ -360,5 +367,144 @@ describe('provider failure is an outcome, not an HTTP error', () => {
       recoverable: true,
     });
     expect(response.body.resolvedProcessingRegion).toBe('fixture-region');
+  });
+
+  /**
+   * `outcome.failureCode` is contractually "one gatewayCode from
+   * error-taxonomy.toml". The orchestrator's own vocabulary — `timeout`,
+   * `cancelled`, `malformed-response` — may not reach the wire: a client
+   * branching on the taxonomy would meet a discriminant it has never heard of.
+   */
+  it.each([
+    ['timeout', 'provider-timeout', true, 15],
+    ['cancelled', 'client-cancelled', false, null],
+    ['malformed-response', 'internal-error', false, null],
+    ['rate-limited', 'rate-limited', true, 30],
+    ['budget-exceeded', 'budget-exceeded', false, null],
+    ['kill-switch', 'kill-switch', true, 300],
+  ] as const)(
+    'maps the internal failure %s onto the released code %s',
+    async (failure, code, recoverable, retryAfterSeconds) => {
+      orchestrator.result = { ok: false, error: failure };
+      const response = await run(contextFor(JPEG));
+
+      expect(response.body.outcome).toMatchObject({
+        outcomeType: 'failure',
+        failureCode: code,
+        userMessageKey: GATEWAY_ERRORS[code].userMessageKey,
+        recoverable,
+        retryAfterSeconds,
+      });
+    },
+  );
+
+  it('emits only codes the released taxonomy declares', async () => {
+    const released = new Set(Object.values(GATEWAY_CODES));
+    const failures = [
+      'timeout',
+      'cancelled',
+      'malformed-response',
+      'rate-limited',
+      'provider-unavailable',
+      'budget-exceeded',
+      'kill-switch',
+      // An unmapped failure must still land on a released code rather than
+      // leaking whatever string the orchestrator invented.
+      'something-nobody-mapped',
+    ] as const;
+
+    for (const [index, failure] of failures.entries()) {
+      orchestrator.result = { ok: false, error: failure as never };
+      // A fresh effect id per iteration: a repeated one is a duplicate transfer
+      // start and would be refused before the orchestrator is reached.
+      const effectId = `eff_00000000000000${index.toString().padStart(2, '0')}`;
+      const outcome = (await run(contextFor(JPEG, { effectId }))).body.outcome;
+
+      if (outcome.outcomeType !== 'failure') throw new Error(`expected a failure for ${failure}`);
+      expect(released.has(outcome.failureCode as never), outcome.failureCode).toBe(true);
+    }
+  });
+
+  /**
+   * A provider refusing the content is the one case that is NOT a failure. The
+   * attempt succeeded and the answer is "I will not identify this", which the
+   * release models as an abstention — so the client offers manual entry rather
+   * than a retry that cannot help.
+   */
+  it('reports a provider content rejection as an abstention, not a failure', async () => {
+    orchestrator.result = { ok: false, error: 'content-rejected' };
+    const response = await run(contextFor(JPEG));
+
+    expect(response.body.outcome).toEqual({
+      outcomeType: 'abstention',
+      reasonCode: 'content-rejected-by-provider',
+      userMessageKey: 'inference.abstention.content_rejected_by_provider',
+      manualAlternativeAvailable: true,
+    });
+  });
+
+  it('reports an empty identification as a no-food abstention', async () => {
+    orchestrator.result = ok({
+      ...(orchestrator.result as { value: InferenceResult }).value,
+      outcome: 'abstention',
+      candidates: [],
+    });
+    const response = await run(contextFor(JPEG));
+
+    expect(response.body.outcome).toEqual({
+      outcomeType: 'abstention',
+      reasonCode: 'no-food-detected',
+      userMessageKey: 'inference.abstention.no_food_detected',
+      manualAlternativeAvailable: true,
+    });
+  });
+});
+
+describe('replay detection (AD-21)', () => {
+  it('rejects a reused request id as token-replayed, before the rate limiter', async () => {
+    const requestId = 'req_1111111111111111';
+    await run(contextFor(JPEG), JPEG, requestId);
+
+    await expect(
+      run(contextFor(JPEG, { effectId: 'eff_9999999999999999' }), JPEG, requestId),
+    ).rejects.toMatchObject({ gatewayCode: 'token-replayed', recoverable: false });
+    expect(orchestrator.calls, 'a replay reached a provider').toBe(1);
+  });
+});
+
+describe('rate limiting (contract rate-limit.toml)', () => {
+  it('advertises the remaining budget on a successful response', async () => {
+    const response = await run(contextFor(JPEG));
+    expect(response.headers).toMatchObject({
+      'X-RateLimit-Limit': expect.any(String),
+      'X-RateLimit-Remaining': expect.any(String),
+      'X-RateLimit-Reset': expect.any(String),
+    });
+  });
+
+  // rate-limit.toml marks all four non-optional on a 429, and the released
+  // fixture asserts them. Only Retry-After used to be sent.
+  it('carries the limit, remaining, and reset on a rejection', async () => {
+    deps = {
+      ...deps,
+      limiter: new InMemoryRateLimiter([{ layer: 'installation', limit: 1, windowSeconds: 3600 }]),
+    };
+    await run(contextFor(JPEG));
+
+    const rejected = await run(contextFor(JPEG, { effectId: 'eff_8888888888888888' })).catch(
+      (error: GatewayError) => error,
+    );
+    expect(rejected).toBeInstanceOf(GatewayError);
+    const error = rejected as GatewayError;
+    expect(error.gatewayCode).toBe('rate-limited');
+    expect(error.headers).toMatchObject({
+      'X-RateLimit-Limit': '1',
+      'X-RateLimit-Remaining': '0',
+      'X-RateLimit-Reset': expect.any(String),
+    });
+
+    // The code never says WHICH layer rejected, so a caller cannot probe the
+    // limiter topology for headroom.
+    expect(JSON.stringify(error.toBody('c'))).not.toContain('installation');
   });
 });
