@@ -383,6 +383,91 @@ MANUAL_TERMS: Tuple[Tuple[str, str, str, str], ...] = (
         "yogurt` record instead of any real yogurt. Verified 2026-08-03 against "
         "GeneratedCatalog.kt: fan-out 0, no record carried the American spelling.",
     ),
+    # The five entries below are the reviewed slice of a curated slang batch
+    # (shroom/taters/nanner/cheez/chkn) identified by a 20-round, 875-scenario
+    # multilingual slang sweep. Each was independently re-measured against the
+    # real, current GeneratedCatalog.kt before being added -- not carried over
+    # from the sweep's own estimate -- including the FUZZY-tier edit-distance
+    # check the established entries above use, since a short slang word is
+    # exactly the shape that can already land on an unrelated record by
+    # coincidence (as cafe/sammon originally did). Two other candidates from
+    # the same batch, `PB` (peanut butter) and `za` (pizza), are NOT here:
+    # both were found to have no correct target this mechanism can reach --
+    # peanut butter's USDA head carries no AGROVOC-sourced terms at all, and
+    # the generator's SUBHEAD_OVERRIDES can only carve into an existing
+    # populated group, never originate one; pizza's only real-food USDA
+    # records are dropped by the generator's own segment/token caps before
+    # either curated-term mechanism runs. A third, `avo` (avocado), needed no
+    # entry: "avo" already resolves correctly today via the PREFIX tier
+    # against "avocado"/"avocados", the record's own display tokens.
+    (
+        "c_2487", "en", "shroom",
+        "English slang for mushroom; c_2487's (edible fungi) only en match "
+        "term is the plain plural `mushrooms`, and `shroom` is not a case, "
+        "plural, or lemma variant of it that CatalogSearch.kt's "
+        "isPluralPair/sharesLemma fold together, so a query for it fails "
+        "EXACT, TOKEN_SUBSET, PREFIX and FUZZY alike rather than landing on "
+        "some other food. Verified 2026-08-03 against GeneratedCatalog.kt: "
+        "fan-out 0 -- every case-insensitive hit for the substring `shroom` is "
+        "inside `mushroom`/`mushrooms`, none is the standalone token. Also "
+        "checked the FUZZY tier directly: a 6-character query only ever gets "
+        "allowance 1, and no catalog token of length 5-7 is within edit "
+        "distance 1 of `shroom`, so the word is not already reachable by "
+        "accident either.",
+    ),
+    (
+        "c_13551", "en", "taters",
+        "common English slang for potatoes (as in 'tater tots'); AGROVOC's "
+        "entire en entry for this concept is the qualified matches `fresh "
+        "potatoes`/`Irish potatoes`, so the informal word is not anywhere in "
+        "the source data and a user typing it gets no match at any tier. Not "
+        "a restated-head case (the head is `potatoes`, not `taters`) and not "
+        "reachable via FUZZY either: `taters` (6 chars, allowance 1 under "
+        "FUZZY_LONG_TOKEN_LENGTH) needs an unrelated record or synonym token "
+        "within edit distance 1 to land by coincidence -- checked `waters`, "
+        "`haters`, `caters`, `eaters`, `batters`, `taster(s)`, `tatters` and "
+        "others against the catalog, none exist as a token. Verified "
+        "2026-08-03 against GeneratedCatalog.kt and food-synonyms.json: "
+        "fan-out 0, no record, concept, or head named `tater`/`taters`.",
+    ),
+    (
+        "c_806", "en", "nanner",
+        "informal/childish American English spelling of banana; AGROVOC's en "
+        "entry for this concept carries only `banana` and `banana fruit`, so "
+        "`nanner` is not anywhere in the source data. Verified 2026-08-03 "
+        "against GeneratedCatalog.kt: fan-out 0, no record carries it as a "
+        "searchable form, and it is not reachable via the FUZZY tier either -- "
+        "no existing token in the catalog is within edit distance 1 of "
+        "`nanner` at this length (bare `banana` itself is distance 4 away), so "
+        "a missing entry leaves the query unresolved rather than merely slow "
+        "to reach the right food.",
+    ),
+    (
+        "c_1507", "en", "cheez",
+        "the informal/slang spelling of cheese, as typed describing a meal; "
+        "AGROVOC's en entry for this concept has only the single match "
+        "`cheeses`, with no colloquial spelling anywhere in the source data. "
+        "Verified 2026-08-03 against GeneratedCatalog.kt: fan-out 0 by literal "
+        "grep, and 0 under the FUZZY tier too -- no length-4-to-6 catalog "
+        "token anywhere in the file is within edit distance 1, and `cheese` "
+        "itself sits at edit distance 2, one past FUZZY's allowance of 1 for "
+        "a 5-character token -- so the addition cannot redirect any existing "
+        "query.",
+    ),
+    (
+        "c_1540", "en", "chkn",
+        "common texting/slang abbreviation for chicken; c_1540 (chickens) and "
+        "c_24000 (chicken meat) both already carry literal `chicken` in their "
+        "en match list (see RESTATES_HEAD_EXCEPTIONS in "
+        "generate-catalog-kotlin.py), so `chkn` is added beside its sibling "
+        "on c_1540, the concept the plain word itself already lives on. "
+        "Verified 2026-08-03 against GeneratedCatalog.kt: fan-out 0, no "
+        "record or concept carries `chkn` in any form, and the FUZZY tier "
+        "cannot already reach it either -- at 4 characters it clears "
+        "FUZZY_MIN_TOKEN_LENGTH, but the length-difference bound (allowance "
+        "1) rules out every real-catalog token 3 or fewer characters longer "
+        "or shorter, including `chicken` itself (length 7, difference 3).",
+    ),
 )
 
 
