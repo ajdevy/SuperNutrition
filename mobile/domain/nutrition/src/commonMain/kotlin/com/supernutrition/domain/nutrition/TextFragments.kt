@@ -243,12 +243,58 @@ internal val QUANTITY_WORDS: Set<String> = setOf(
  * carries evidence for every one of its words, is what stops that: a query
  * built only from words this file already knows are not food can never reach
  * a tier at all, stripped or not.
+ *
+ * [NEGATION_WORDS] is checked separately, and cannot be folded into the
+ * all-tokens rule above, because a negation query is not made of junk tokens
+ * — "no nuts" pairs a marker word with a genuine food word, and it is the
+ * PAIRING that must refuse, not either word alone. Measured: `no`, `not` and
+ * `without` each combined with ten common foods — nuts, eggs, milk, rice,
+ * cheese, butter, onions, sugar, sauce, bread — and every single combination
+ * matched a real record, most of them the excluded food itself: "no nuts"
+ * reached a nuts record, "no cheese" reached a cheese record, "no sauce"
+ * reached a sauce record. Every USDA name qualified with "not sweetened",
+ * "no salt added" or "without added sugar" is a coincidental PREFIX or
+ * TOKEN_SUBSET hit waiting to happen, because PREFIX carries no minimum token
+ * length the way FUZZY does, and "no" is a two-character prefix of "not". A
+ * user writing "no nuts, allergic" is stating a medical exclusion, and
+ * logging the allergen is the one answer worse than logging nothing — the
+ * product-wide rule against silently defaulting an uncertain medical or
+ * allergen conclusion applies directly here.
  */
 internal fun namesNoFood(query: String): Boolean {
     val tokens = tokenizeNormalized(normalizeForSearch(query))
-    return tokens.isEmpty() ||
-        tokens.all { isQuantityToken(it) || isSeparatorWord(it) || it in russianScaffoldingForms }
+    if (tokens.isEmpty() || tokens.any { it in NEGATION_WORDS }) return true
+    return tokens.all { isQuantityToken(it) || isSeparatorWord(it) || it in russianScaffoldingForms }
 }
+
+/**
+ * Words that mark what follows as excluded rather than eaten.
+ *
+ * Deliberately narrow and English-only for now: measured to actually cause a
+ * wrong-food leak (`no`, `not`, `without`, `hold`, `skip`), or an
+ * unambiguous synonym of one already measured (`minus`, `sans`,
+ * `excluding`). `free` is excluded on purpose despite also appearing next to
+ * negated words in USDA names — unlike these, it is not itself a marker of
+ * exclusion; "sugar-free syrup" and "gluten-free bread" are real qualified
+ * products a person legitimately searches for, and refusing them would cost
+ * a correct answer to prevent a leak that word does not cause on its own.
+ *
+ * Spanish `sin`/`menos` were measured against the same ten foods and neither
+ * produced a single leak in this catalog, so they are not added here — a
+ * word earns a place in this set by causing a measured failure, the same
+ * standard [WEAK_SEPARATORS] and [QUANTITY_WORDS] are held to, not by being a
+ * plausible negation word in the abstract.
+ */
+internal val NEGATION_WORDS: Set<String> = setOf(
+    "no",
+    "not",
+    "without",
+    "hold",
+    "skip",
+    "minus",
+    "sans",
+    "excluding",
+)
 
 /**
  * Drops leading and trailing words that are not the food's name, keeping
