@@ -33,8 +33,8 @@ package com.supernutrition.domain.nutrition
  * source's own, ascending NDB number, so widening either bound yields a
  * strict superset.
  *
- * 1964 of these records carry alternate names: 1305 terms across
- * 222 shared lists, joined to 208 AGROVOC concepts on an exact
+ * 1964 of these records carry alternate names: 1322 terms across
+ * 224 shared lists, joined to 208 AGROVOC concepts on an exact
  * fold of the name's head segment -- the text before the first comma.
  * The alternates are the English, Spanish and Russian words people
  * actually type; the display name stays USDA's own, because that is the
@@ -47,7 +47,7 @@ package com.supernutrition.domain.nutrition
  * reach is exactly the wrong-food failure the join exists to avoid.
  *
  * The join is exact-key only. It rejects two classes of term:
- * 273 that only restate the head segment the display name already
+ * 272 that only restate the head segment the display name already
  * carries, and 12 that are some other record's head segment -- AGROVOC
  * files beet leaves under beetroot, and `beet greens` belongs to the
  * record of that name, not to beet roots. It also refuses whole heads
@@ -124,7 +124,7 @@ internal object GeneratedNames0 {
     )
 
     /** yogurt -- agrovoc:c_15463 */
-    val yogurt: List<String> = listOf("yoghurt", "yogur", "йогурт")
+    val yogurt: List<String> = listOf("yoghurt", "yogurt", "yogur", "йогурт")
 
     /** egg -- agrovoc:c_2502 */
     val egg: List<String> = listOf(
@@ -232,6 +232,7 @@ internal object GeneratedNames0 {
 
     /** chicken -- agrovoc:c_1540, agrovoc:c_24000 */
     val chicken: List<String> = listOf(
+        "chicken",
         "domestic fowl",
         "Gallus gallus domesticus",
         "pollo",
@@ -1766,6 +1767,23 @@ internal object GeneratedNames3 {
 
     /** frog legs -- agrovoc:c_24560 */
     val frogLegs: List<String> = listOf("anca de rana", "лягушачьи окорочка")
+
+    /** fish (real-salmon-fish) -- agrovoc:c_15903 */
+    val realSalmonFish: List<String> = listOf(
+        "fish meat",
+        "fresh fish",
+        "wet fish",
+        "pescado",
+        "Pescado fresco",
+        "рыба",
+        "мясо рыбы",
+        "свежая рыба",
+        "сырая рыба",
+        "salmon",
+    )
+
+    /** beverages (real-coffee) -- agrovoc:c_896 */
+    val realCoffee: List<String> = listOf("drinks", "bebida", "напитки", "cafe", "café")
 }
 
 // Records, part 0 of 15.
@@ -4831,7 +4849,7 @@ internal object GeneratedCatalogPart7 {
             "Beverages, chocolate-flavor beverage mix, powder, prepared with whole milk",
             GeneratedNames2.beverages,
         ),
-        CatalogRecord("food:usda-srl-14180", "Beverages, coffee, brewed, breakfast blend", GeneratedNames2.beverages),
+        CatalogRecord("food:usda-srl-14180", "Beverages, coffee, brewed, breakfast blend", GeneratedNames3.realCoffee),
         CatalogRecord("food:usda-srl-14181", "Beverages, chocolate syrup", GeneratedNames2.beverages),
         CatalogRecord(
             "food:usda-srl-14182",
@@ -4850,14 +4868,14 @@ internal object GeneratedCatalogPart7 {
         CatalogRecord(
             "food:usda-srl-14209",
             "Beverages, coffee, brewed, prepared with tap water",
-            GeneratedNames2.beverages,
+            GeneratedNames3.realCoffee,
         ),
         CatalogRecord(
             "food:usda-srl-14210",
             "Beverages, coffee, brewed, espresso, restaurant-prepared",
-            GeneratedNames2.beverages,
+            GeneratedNames3.realCoffee,
         ),
-        CatalogRecord("food:usda-srl-14214", "Beverages, coffee, instant, regular, powder", GeneratedNames2.beverages),
+        CatalogRecord("food:usda-srl-14214", "Beverages, coffee, instant, regular, powder", GeneratedNames3.realCoffee),
         CatalogRecord(
             "food:usda-srl-14216",
             "Beverages, aloe vera juice drink, fortified with Vitamin C",
@@ -4875,11 +4893,15 @@ internal object GeneratedCatalogPart8 {
         CatalogRecord(
             "food:usda-srl-14218",
             "Beverages, coffee, instant, decaffeinated, powder",
-            GeneratedNames2.beverages,
+            GeneratedNames3.realCoffee,
         ),
-        CatalogRecord("food:usda-srl-14222", "Beverages, coffee, instant, with chicory", GeneratedNames2.beverages),
-        CatalogRecord("food:usda-srl-14223", "Beverages, coffee, instant, chicory", GeneratedNames2.beverages),
-        CatalogRecord("food:usda-srl-14224", "Beverages, coffee, instant, mocha, sweetened", GeneratedNames2.beverages),
+        CatalogRecord("food:usda-srl-14222", "Beverages, coffee, instant, with chicory", GeneratedNames3.realCoffee),
+        CatalogRecord("food:usda-srl-14223", "Beverages, coffee, instant, chicory", GeneratedNames3.realCoffee),
+        CatalogRecord(
+            "food:usda-srl-14224",
+            "Beverages, coffee, instant, mocha, sweetened",
+            GeneratedNames3.realCoffee,
+        ),
         CatalogRecord(
             "food:usda-srl-14236",
             "Beverages, coffee substitute, cereal grain beverage, powder",
@@ -5226,15 +5248,19 @@ internal object GeneratedCatalogPart8 {
         CatalogRecord("food:usda-srl-15073", "Fish, roughy, orange, raw", GeneratedNames2.fish),
         CatalogRecord("food:usda-srl-15074", "Fish, sablefish, raw", GeneratedNames2.fish),
         CatalogRecord("food:usda-srl-15075", "Fish, sablefish, smoked", GeneratedNames2.fish),
-        CatalogRecord("food:usda-srl-15076", "Fish, salmon, Atlantic, wild, raw", GeneratedNames2.fish),
-        CatalogRecord("food:usda-srl-15077", "Fish, salmon, chinook, smoked", GeneratedNames2.fish),
-        CatalogRecord("food:usda-srl-15078", "Fish, salmon, chinook, raw", GeneratedNames2.fish),
-        CatalogRecord("food:usda-srl-15079", "Fish, salmon, chum, raw", GeneratedNames2.fish),
-        CatalogRecord("food:usda-srl-15081", "Fish, salmon, coho, wild, raw", GeneratedNames2.fish),
-        CatalogRecord("food:usda-srl-15083", "Fish, salmon, pink, raw", GeneratedNames2.fish),
-        CatalogRecord("food:usda-srl-15085", "Fish, salmon, sockeye, raw", GeneratedNames2.fish),
-        CatalogRecord("food:usda-srl-15086", "Fish, salmon, sockeye, cooked, dry heat", GeneratedNames2.fish),
-        CatalogRecord("food:usda-srl-15087", "Fish, salmon, sockeye, canned, drained solids", GeneratedNames2.fish),
+        CatalogRecord("food:usda-srl-15076", "Fish, salmon, Atlantic, wild, raw", GeneratedNames3.realSalmonFish),
+        CatalogRecord("food:usda-srl-15077", "Fish, salmon, chinook, smoked", GeneratedNames3.realSalmonFish),
+        CatalogRecord("food:usda-srl-15078", "Fish, salmon, chinook, raw", GeneratedNames3.realSalmonFish),
+        CatalogRecord("food:usda-srl-15079", "Fish, salmon, chum, raw", GeneratedNames3.realSalmonFish),
+        CatalogRecord("food:usda-srl-15081", "Fish, salmon, coho, wild, raw", GeneratedNames3.realSalmonFish),
+        CatalogRecord("food:usda-srl-15083", "Fish, salmon, pink, raw", GeneratedNames3.realSalmonFish),
+        CatalogRecord("food:usda-srl-15085", "Fish, salmon, sockeye, raw", GeneratedNames3.realSalmonFish),
+        CatalogRecord("food:usda-srl-15086", "Fish, salmon, sockeye, cooked, dry heat", GeneratedNames3.realSalmonFish),
+        CatalogRecord(
+            "food:usda-srl-15087",
+            "Fish, salmon, sockeye, canned, drained solids",
+            GeneratedNames3.realSalmonFish,
+        ),
         CatalogRecord("food:usda-srl-15090", "Fish, scup, raw", GeneratedNames2.fish),
         CatalogRecord("food:usda-srl-15091", "Fish, sea bass, mixed species, raw", GeneratedNames2.fish),
         CatalogRecord("food:usda-srl-15093", "Fish, seatrout, mixed species, raw", GeneratedNames2.fish),
@@ -5244,14 +5270,6 @@ internal object GeneratedCatalogPart8 {
         CatalogRecord("food:usda-srl-15098", "Fish, sheepshead, cooked, dry heat", GeneratedNames2.fish),
         CatalogRecord("food:usda-srl-15099", "Fish, smelt, rainbow, raw", GeneratedNames2.fish),
         CatalogRecord("food:usda-srl-15100", "Fish, smelt, rainbow, cooked, dry heat", GeneratedNames2.fish),
-        CatalogRecord("food:usda-srl-15101", "Fish, snapper, mixed species, raw", GeneratedNames2.fish),
-        CatalogRecord("food:usda-srl-15103", "Fish, spot, raw", GeneratedNames2.fish),
-        CatalogRecord("food:usda-srl-15104", "Fish, sturgeon, mixed species, raw", GeneratedNames2.fish),
-        CatalogRecord("food:usda-srl-15106", "Fish, sturgeon, mixed species, smoked", GeneratedNames2.fish),
-        CatalogRecord("food:usda-srl-15107", "Fish, sucker, white, raw", GeneratedNames2.fish),
-        CatalogRecord("food:usda-srl-15108", "Fish, sunfish, pumpkin seed, raw", GeneratedNames2.fish),
-        CatalogRecord("food:usda-srl-15109", "Fish, surimi", GeneratedNames2.fish),
-        CatalogRecord("food:usda-srl-15110", "Fish, swordfish, raw", GeneratedNames2.fish),
     )
 }
 
@@ -5261,6 +5279,14 @@ internal object GeneratedCatalogPart8 {
 // threshold at once.
 internal object GeneratedCatalogPart9 {
     val records: List<CatalogRecord> = listOf(
+        CatalogRecord("food:usda-srl-15101", "Fish, snapper, mixed species, raw", GeneratedNames2.fish),
+        CatalogRecord("food:usda-srl-15103", "Fish, spot, raw", GeneratedNames2.fish),
+        CatalogRecord("food:usda-srl-15104", "Fish, sturgeon, mixed species, raw", GeneratedNames2.fish),
+        CatalogRecord("food:usda-srl-15106", "Fish, sturgeon, mixed species, smoked", GeneratedNames2.fish),
+        CatalogRecord("food:usda-srl-15107", "Fish, sucker, white, raw", GeneratedNames2.fish),
+        CatalogRecord("food:usda-srl-15108", "Fish, sunfish, pumpkin seed, raw", GeneratedNames2.fish),
+        CatalogRecord("food:usda-srl-15109", "Fish, surimi", GeneratedNames2.fish),
+        CatalogRecord("food:usda-srl-15110", "Fish, swordfish, raw", GeneratedNames2.fish),
         CatalogRecord("food:usda-srl-15111", "Fish, swordfish, cooked, dry heat", GeneratedNames2.fish),
         CatalogRecord("food:usda-srl-15112", "Fish, tilefish, raw", GeneratedNames2.fish),
         CatalogRecord("food:usda-srl-15113", "Fish, tilefish, cooked, dry heat", GeneratedNames2.fish),
@@ -5307,7 +5333,11 @@ internal object GeneratedCatalogPart9 {
         CatalogRecord("food:usda-srl-15176", "Mollusks, squid, mixed species, cooked, fried"),
         CatalogRecord("food:usda-srl-15177", "Mollusks, whelk, unspecified, raw"),
         CatalogRecord("food:usda-srl-15178", "Mollusks, whelk, unspecified, cooked, moist heat"),
-        CatalogRecord("food:usda-srl-15179", "Fish, salmon, chinook, smoked, (lox), regular", GeneratedNames2.fish),
+        CatalogRecord(
+            "food:usda-srl-15179",
+            "Fish, salmon, chinook, smoked, (lox), regular",
+            GeneratedNames3.realSalmonFish,
+        ),
         CatalogRecord("food:usda-srl-15188", "Fish, bass, striped, cooked, dry heat", GeneratedNames2.fish),
         CatalogRecord("food:usda-srl-15189", "Fish, bluefish, cooked, dry heat", GeneratedNames2.fish),
         CatalogRecord("food:usda-srl-15190", "Fish, burbot, cooked, dry heat", GeneratedNames2.fish),
@@ -5326,9 +5356,9 @@ internal object GeneratedCatalogPart9 {
         CatalogRecord("food:usda-srl-15205", "Fish, pollock, Atlantic, cooked, dry heat", GeneratedNames2.fish),
         CatalogRecord("food:usda-srl-15206", "Fish, pout, ocean, cooked, dry heat", GeneratedNames2.fish),
         CatalogRecord("food:usda-srl-15208", "Fish, sablefish, cooked, dry heat", GeneratedNames2.fish),
-        CatalogRecord("food:usda-srl-15210", "Fish, salmon, chinook, cooked, dry heat", GeneratedNames2.fish),
-        CatalogRecord("food:usda-srl-15211", "Fish, salmon, chum, cooked, dry heat", GeneratedNames2.fish),
-        CatalogRecord("food:usda-srl-15212", "Fish, salmon, pink, cooked, dry heat", GeneratedNames2.fish),
+        CatalogRecord("food:usda-srl-15210", "Fish, salmon, chinook, cooked, dry heat", GeneratedNames3.realSalmonFish),
+        CatalogRecord("food:usda-srl-15211", "Fish, salmon, chum, cooked, dry heat", GeneratedNames3.realSalmonFish),
+        CatalogRecord("food:usda-srl-15212", "Fish, salmon, pink, cooked, dry heat", GeneratedNames3.realSalmonFish),
         CatalogRecord("food:usda-srl-15213", "Fish, scup, cooked, dry heat", GeneratedNames2.fish),
         CatalogRecord("food:usda-srl-15215", "Fish, shad, american, cooked, dry heat", GeneratedNames2.fish),
         CatalogRecord("food:usda-srl-15216", "Fish, spot, cooked, dry heat", GeneratedNames2.fish),
@@ -5341,8 +5371,8 @@ internal object GeneratedCatalogPart9 {
         CatalogRecord("food:usda-srl-15231", "Mollusks, oyster, Pacific, cooked, moist heat"),
         CatalogRecord("food:usda-srl-15232", "Fish, roughy, orange, cooked, dry heat", GeneratedNames2.fish),
         CatalogRecord("food:usda-srl-15234", "Fish, catfish, channel, farmed, raw", GeneratedNames2.fish),
-        CatalogRecord("food:usda-srl-15236", "Fish, salmon, Atlantic, farmed, raw", GeneratedNames2.fish),
-        CatalogRecord("food:usda-srl-15238", "Fish, salmon, coho, farmed, raw", GeneratedNames2.fish),
+        CatalogRecord("food:usda-srl-15236", "Fish, salmon, Atlantic, farmed, raw", GeneratedNames3.realSalmonFish),
+        CatalogRecord("food:usda-srl-15238", "Fish, salmon, coho, farmed, raw", GeneratedNames3.realSalmonFish),
         CatalogRecord("food:usda-srl-15240", "Fish, trout, rainbow, farmed, raw", GeneratedNames2.fish),
         CatalogRecord("food:usda-srl-15242", "Crustaceans, crayfish, mixed species, farmed, raw"),
         CatalogRecord("food:usda-srl-15245", "Mollusks, oyster, eastern, farmed, raw"),
@@ -5350,7 +5380,11 @@ internal object GeneratedCatalogPart9 {
         CatalogRecord("food:usda-srl-15251", "Salmon nuggets, breaded, frozen, heated"),
         CatalogRecord("food:usda-srl-15252", "Salmon nuggets, cooked as purchased, unheated"),
         CatalogRecord("food:usda-srl-15253", "Salmon, sockeye, canned, total can contents", GeneratedNames2.salmon),
-        CatalogRecord("food:usda-srl-15260", "Fish, salmon, pink, canned, drained solids", GeneratedNames2.fish),
+        CatalogRecord(
+            "food:usda-srl-15260",
+            "Fish, salmon, pink, canned, drained solids",
+            GeneratedNames3.realSalmonFish,
+        ),
         CatalogRecord("food:usda-srl-15261", "Fish, tilapia, raw", GeneratedNames2.fish),
         CatalogRecord("food:usda-srl-15262", "Fish, tilapia, cooked, dry heat", GeneratedNames2.fish),
         CatalogRecord("food:usda-srl-15266", "Fish, pollock, Alaska, raw", GeneratedNames2.fish),
@@ -5621,6 +5655,15 @@ internal object GeneratedCatalogPart9 {
             "Lamb, variety meats and by-products, pancreas, raw",
             GeneratedNames3.lamb,
         ),
+    )
+}
+
+// Records, part 10 of 15.
+// The split is a size limit, not a grouping: one initializer holding every
+// entry would approach the 64 KB JVM method limit and Detekt's LargeClass
+// threshold at once.
+internal object GeneratedCatalogPart10 {
+    val records: List<CatalogRecord> = listOf(
         CatalogRecord(
             "food:usda-srl-17212",
             "Veal, variety meats and by-products, pancreas, raw",
@@ -5639,15 +5682,6 @@ internal object GeneratedCatalogPart9 {
             "Veal, shank (fore and hind), separable lean and fat, raw",
             GeneratedNames3.veal,
         ),
-    )
-}
-
-// Records, part 10 of 15.
-// The split is a size limit, not a grouping: one initializer holding every
-// entry would approach the 64 KB JVM method limit and Detekt's LargeClass
-// threshold at once.
-internal object GeneratedCatalogPart10 {
-    val records: List<CatalogRecord> = listOf(
         CatalogRecord(
             "food:usda-srl-17278",
             "Veal, shank (fore and hind), separable lean only, raw",
@@ -6007,6 +6041,15 @@ internal object GeneratedCatalogPart10 {
         CatalogRecord("food:usda-srl-18434", "Crackers, cheese, low sodium"),
         CatalogRecord("food:usda-srl-18435", "Danish pastry, raspberry, unenriched"),
         CatalogRecord("food:usda-srl-18436", "Doughnuts, yeast-leavened, glazed, unenriched (includes honey buns)"),
+    )
+}
+
+// Records, part 11 of 15.
+// The split is a size limit, not a grouping: one initializer holding every
+// entry would approach the 64 KB JVM method limit and Detekt's LargeClass
+// threshold at once.
+internal object GeneratedCatalogPart11 {
+    val records: List<CatalogRecord> = listOf(
         CatalogRecord(
             "food:usda-srl-18437",
             "English muffins, plain, enriched, without calcium propionate(includes sourdough)",
@@ -6028,15 +6071,6 @@ internal object GeneratedCatalogPart10 {
         CatalogRecord("food:usda-srl-18450", "Tortillas, ready-to-bake or -fry, flour, without added calcium"),
         CatalogRecord("food:usda-srl-18451", "Cake, pound, commercially prepared, fat-free"),
         CatalogRecord("food:usda-srl-18453", "Cake, yellow, light, dry mix"),
-    )
-}
-
-// Records, part 11 of 15.
-// The split is a size limit, not a grouping: one initializer holding every
-// entry would approach the 64 KB JVM method limit and Detekt's LargeClass
-// threshold at once.
-internal object GeneratedCatalogPart11 {
-    val records: List<CatalogRecord> = listOf(
         CatalogRecord("food:usda-srl-18457", "Crackers, saltines, fat-free, low-sodium"),
         CatalogRecord("food:usda-srl-18459", "Tart, breakfast, low fat"),
         CatalogRecord("food:usda-srl-18513", "Archway Home Style Cookies, Sugar Free Oatmeal"),
@@ -6396,6 +6430,15 @@ internal object GeneratedCatalogPart11 {
             GeneratedNames3.snacks,
         ),
         CatalogRecord("food:usda-srl-19858", "Candies, sugar-coated almonds"),
+    )
+}
+
+// Records, part 12 of 15.
+// The split is a size limit, not a grouping: one initializer holding every
+// entry would approach the 64 KB JVM method limit and Detekt's LargeClass
+// threshold at once.
+internal object GeneratedCatalogPart12 {
+    val records: List<CatalogRecord> = listOf(
         CatalogRecord("food:usda-srl-19860", "Cocoa, dry powder, hi-fat or breakfast, processed with alkali"),
         CatalogRecord("food:usda-srl-19866", "Candies, soft fruit and nut squares"),
         CatalogRecord("food:usda-srl-19867", "Ice creams, vanilla, fat free"),
@@ -6417,15 +6460,6 @@ internal object GeneratedCatalogPart11 {
         CatalogRecord("food:usda-srl-19921", "Candies, Tamarind"),
         CatalogRecord("food:usda-srl-19922", "Candies, coconut bar, not chocolate covered"),
         CatalogRecord("food:usda-srl-20001", "Amaranth grain, uncooked"),
-    )
-}
-
-// Records, part 12 of 15.
-// The split is a size limit, not a grouping: one initializer holding every
-// entry would approach the 64 KB JVM method limit and Detekt's LargeClass
-// threshold at once.
-internal object GeneratedCatalogPart12 {
-    val records: List<CatalogRecord> = listOf(
         CatalogRecord("food:usda-srl-20002", "Amaranth grain, cooked"),
         CatalogRecord("food:usda-srl-20003", "Arrowroot flour"),
         CatalogRecord("food:usda-srl-20004", "Barley, hulled", GeneratedNames3.barley),
@@ -6785,6 +6819,15 @@ internal object GeneratedCatalogPart12 {
             "food:usda-srl-28376",
             "Van's, The Perfect 10, Crispy Six Whole Grain + Four Seed Baked Crackers, Gluten Free",
         ),
+    )
+}
+
+// Records, part 13 of 15.
+// The split is a size limit, not a grouping: one initializer holding every
+// entry would approach the 64 KB JVM method limit and Detekt's LargeClass
+// threshold at once.
+internal object GeneratedCatalogPart13 {
+    val records: List<CatalogRecord> = listOf(
         CatalogRecord("food:usda-srl-28397", "Bread, multi-grain (includes whole-grain)", GeneratedNames3.bread),
         CatalogRecord("food:usda-srl-28399", "Cookies, animal crackers (includes arrowroot, tea biscuits)"),
         CatalogRecord(
@@ -6806,15 +6849,6 @@ internal object GeneratedCatalogPart12 {
         CatalogRecord("food:usda-srl-32002", "Rice and vermicelli mix, rice pilaf flavor, unprepared"),
         CatalogRecord("food:usda-srl-32003", "Rice and vermicelli mix, rice pilaf flavor, prepared with 80% margarine"),
         CatalogRecord("food:usda-srl-32004", "Macaroni and cheese, box mix with cheese sauce, unprepared"),
-    )
-}
-
-// Records, part 13 of 15.
-// The split is a size limit, not a grouping: one initializer holding every
-// entry would approach the 64 KB JVM method limit and Detekt's LargeClass
-// threshold at once.
-internal object GeneratedCatalogPart13 {
-    val records: List<CatalogRecord> = listOf(
         CatalogRecord("food:usda-srl-32005", "Macaroni and cheese, box mix with cheese sauce, prepared"),
         CatalogRecord("food:usda-srl-32006", "Taquitos, frozen, chicken and cheese, oven-heated"),
         CatalogRecord("food:usda-srl-32007", "Taquitos, frozen, beef and cheese, oven-heated"),
@@ -6901,7 +6935,11 @@ internal object GeneratedCatalogPart13 {
         CatalogRecord("food:usda-srl-35059", "Owl, horned, flesh, raw (Alaska Native)"),
         CatalogRecord("food:usda-srl-35060", "Fish, pike, northern, liver (Alaska Native)", GeneratedNames2.fish),
         CatalogRecord("food:usda-srl-35063", "Rhubarb, wild, leaves (Alaska Native)", GeneratedNames1.rhubarb),
-        CatalogRecord("food:usda-srl-35064", "Fish, salmon, tipnuk, fermented (Alaska Native)", GeneratedNames2.fish),
+        CatalogRecord(
+            "food:usda-srl-35064",
+            "Fish, salmon, tipnuk, fermented (Alaska Native)",
+            GeneratedNames3.realSalmonFish,
+        ),
         CatalogRecord("food:usda-srl-35069", "Duck, scoter, white-winged, meat (Alaska Native)", GeneratedNames0.duck),
         CatalogRecord("food:usda-srl-35070", "Sea cucumber, yane (Alaska Native)"),
         CatalogRecord("food:usda-srl-35071", "Seal, ringed, meat (Alaska Native)"),
@@ -6951,10 +6989,22 @@ internal object GeneratedCatalogPart13 {
         CatalogRecord("food:usda-srl-35147", "Tamales (Navajo)"),
         CatalogRecord("food:usda-srl-35148", "Stew, steamed corn (Navajo)"),
         CatalogRecord("food:usda-srl-35149", "Fish, halibut, raw, with skin (Alaska Native)", GeneratedNames2.fish),
-        CatalogRecord("food:usda-srl-35150", "Fish, salmon, coho (silver), raw (Alaska Native)", GeneratedNames2.fish),
-        CatalogRecord("food:usda-srl-35151", "Fish, salmon, sockeye (red), raw (Alaska Native)", GeneratedNames2.fish),
-        CatalogRecord("food:usda-srl-35152", "Fish, Salmon, Chum, raw (Alaska Native)", GeneratedNames2.fish),
-        CatalogRecord("food:usda-srl-35153", "Fish, salmon, king (chinook), raw (Alaska Native)", GeneratedNames2.fish),
+        CatalogRecord(
+            "food:usda-srl-35150",
+            "Fish, salmon, coho (silver), raw (Alaska Native)",
+            GeneratedNames3.realSalmonFish,
+        ),
+        CatalogRecord(
+            "food:usda-srl-35151",
+            "Fish, salmon, sockeye (red), raw (Alaska Native)",
+            GeneratedNames3.realSalmonFish,
+        ),
+        CatalogRecord("food:usda-srl-35152", "Fish, Salmon, Chum, raw (Alaska Native)", GeneratedNames3.realSalmonFish),
+        CatalogRecord(
+            "food:usda-srl-35153",
+            "Fish, salmon, king (chinook), raw (Alaska Native)",
+            GeneratedNames3.realSalmonFish,
+        ),
         CatalogRecord("food:usda-srl-35154", "Salmonberries, raw (Alaska Native)"),
         CatalogRecord("food:usda-srl-35155", "Blueberries, wild, raw (Alaska Native)", GeneratedNames0.blueberries),
         CatalogRecord("food:usda-srl-35156", "Oil, spotted seal (Alaska Native)", GeneratedNames0.oil),
@@ -6964,7 +7014,11 @@ internal object GeneratedCatalogPart13 {
         CatalogRecord("food:usda-srl-35162", "Caribou, hind quarter meat, raw (Alaska Native)"),
         CatalogRecord("food:usda-srl-35165", "Fish, whitefish, dried (Alaska Native)", GeneratedNames2.fish),
         CatalogRecord("food:usda-srl-35169", "Fish, sheefish, raw (Alaska Native)", GeneratedNames2.fish),
-        CatalogRecord("food:usda-srl-35171", "Fish, salmon, chum, dried (Alaska Native)", GeneratedNames2.fish),
+        CatalogRecord(
+            "food:usda-srl-35171",
+            "Fish, salmon, chum, dried (Alaska Native)",
+            GeneratedNames3.realSalmonFish,
+        ),
         CatalogRecord("food:usda-srl-35172", "Elk, free range, ground, cooked patties (Shoshone Bannock)"),
         CatalogRecord("food:usda-srl-35173", "Elk, free range, ground, raw (Shoshone Bannock)"),
         CatalogRecord("food:usda-srl-35174", "Buffalo, free range, top round steak, raw (Shoshone Bannock)"),
@@ -7154,6 +7208,15 @@ internal object GeneratedCatalogPart13 {
         CatalogRecord("food:usda-srl-43329", "Salad dressing, mayonnaise and mayonnaise-type, low calorie"),
         CatalogRecord("food:usda-srl-43331", "Salad dressing, bacon and tomato"),
         CatalogRecord("food:usda-srl-43340", "Cheese, parmesan, low sodium", GeneratedNames0.cheese),
+    )
+}
+
+// Records, part 14 of 15.
+// The split is a size limit, not a grouping: one initializer holding every
+// entry would approach the 64 KB JVM method limit and Detekt's LargeClass
+// threshold at once.
+internal object GeneratedCatalogPart14 {
+    val records: List<CatalogRecord> = listOf(
         CatalogRecord("food:usda-srl-43344", "Jams, preserves, marmalade, reduced sugar"),
         CatalogRecord("food:usda-srl-43346", "Frozen novelties, juice type, orange"),
         CatalogRecord("food:usda-srl-43355", "Mayonnaise, low sodium, low calorie or diet"),
@@ -7195,15 +7258,6 @@ internal object GeneratedCatalogPart13 {
         ),
         CatalogRecord("food:usda-srl-43507", "Frankfurter, low sodium"),
         CatalogRecord("food:usda-srl-43514", "Frozen novelties, ice type, pop, with low calorie sweetener"),
-    )
-}
-
-// Records, part 14 of 15.
-// The split is a size limit, not a grouping: one initializer holding every
-// entry would approach the 64 KB JVM method limit and Detekt's LargeClass
-// threshold at once.
-internal object GeneratedCatalogPart14 {
-    val records: List<CatalogRecord> = listOf(
         CatalogRecord("food:usda-srl-43541", "Ice creams, chocolate, rich"),
         CatalogRecord("food:usda-srl-43543", "Milk, imitation, non-soy", GeneratedNames0.milk),
         CatalogRecord(

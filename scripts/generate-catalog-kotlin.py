@@ -322,6 +322,76 @@ REJECTED_HEADS = {
     "pepper": "the one record under this head is a banana pepper, not the spice",
 }
 
+# Records whose head is shared with unrelated foods, so no head- or
+# concept-level mechanism above (MANUAL_HEAD_CONCEPTS, MANUAL_TERMS,
+# MANUAL_WIKIDATA_LINKS -- all scoped to a whole head or concept) can add a
+# term to only these records without also joining it to every other record
+# under the same head. "Fish" is 164 records across every species this
+# catalog carries; "Beverages" spans every drink. Each entry below carves its
+# matching records into their own alternate-name group, keeping the terms
+# their shared head-group already gave them plus the new word.
+#
+# Reviewed and dated the same way MANUAL_TERMS is: fan-out checked against
+# GeneratedCatalog.kt before being added, never a way to bulk-restore terms
+# a filter dropped for a real reason.
+SUBHEAD_OVERRIDES = (
+    (
+        "real-salmon-fish",
+        lambda r: canonical_head(r["display"]) == "fish" and r["display"].split(",")[1].strip().lower() == "salmon",
+        ("salmon",),
+        # 2026-08-03: 22 records ("Fish, salmon, ..."). Excludes "Fish oil,
+        # salmon" (head "fish oil", a byproduct, not a food someone eats
+        # plain) and "Salmon nuggets, ..."/"Salmonberries, ..." (head
+        # "salmon nuggets"/"salmonberries", already a different head
+        # entirely). Fan-out of bare "salmon" before this entry: 0 -- no
+        # record carried it, and "sammon" (a realistic typo) resolved to
+        # the "Fish oil, salmon" byproduct instead of any fish.
+    ),
+    (
+        "real-coffee",
+        lambda r: (
+            canonical_head(r["display"]) == "beverages"
+            and "coffee" in r["display"].lower()
+            and "substitute" not in r["display"].lower()
+        ),
+        ("cafe", "café"),
+        # 2026-08-03: 8 records ("Beverages, coffee, ..."), excluding the 2
+        # "coffee substitute" records. cafe/café were unreachable at any tier
+        # before this entry -- "cafe" (4 characters) and "coffee" (6) fail
+        # the FUZZY tier's length-difference bound before an edit distance is
+        # even computed -- and the query landed by coincidence on the
+        # unrelated "Syrup, Cane" instead (edit distance 1 from "cafe").
+    ),
+)
+
+
+def apply_subhead_overrides(records, groups, used_identifiers):
+    """Splits each override's matching records into their own alternate-name
+    group, carrying the shared head-group's own terms plus the new word(s).
+
+    A new group object per override, not a mutation of the shared one: every
+    OTHER record under "Fish" or "Beverages" must keep exactly the terms it
+    had, and giving the matched records their own group is what makes that
+    true by construction rather than by a second filtering pass.
+    """
+    for name, predicate, new_terms in SUBHEAD_OVERRIDES:
+        matching = [record for record in records if record["group"] is not None and predicate(record)]
+        if not matching:
+            continue
+        base_group = matching[0]["group"]
+        base_terms = base_group["terms"]
+        combined_terms = base_terms + [term for term in new_terms if term not in base_terms]
+        sub_group = {
+            "head": f"{base_group['head']} ({name})",
+            "concepts": base_group["concepts"],
+            "terms": combined_terms,
+            "identifier": identifier_for(name, used_identifiers),
+            "records": len(matching),
+        }
+        for record in matching:
+            record["group"] = sub_group
+        groups[f"__subhead__{name}"] = sub_group
+
 # ---------------------------------------------------------------------------
 # String helpers mirroring CatalogSearch.kt character for character. They decide
 # which records join; they never compute a nutrition value or a search result.
@@ -550,6 +620,37 @@ def concepts_for_head(head_keys, display_index, manual_index):
     return ordered
 
 
+# The restates-head filter below is correct in general: a term identical to
+# the display name's own head is usually redundant, since every record under
+# that head already carries the head word in its own display name. It is
+# operationally WRONG for a head whose records have no OTHER short form,
+# because CatalogSearch.kt's coverageOf scores a coverage FRACTION per
+# searchable form: a twelve-token qualified USDA name ("Chicken, broilers or
+# fryers, meat and skin and giblets and neck, raw") scores a low fraction even
+# on its own perfectly-spelled head word, while an unrelated record's two-token
+# alternate name ("chicken egg", "tofu yogurt") scores a high one and wins the
+# tier outright. Measured on the shipped catalog: bare "chicken" and "yogurt"
+# resolved to Egg and Tofu yogurt respectively, not to any chicken or yogurt
+# record, with no typo involved at all.
+#
+# Reviewed and dated per head, the same bar MANUAL_TERMS is held to -- this is
+# not a way to bulk-restore every dropped term, it is a named exception for a
+# head measured to need one.
+RESTATES_HEAD_EXCEPTIONS = {
+    # 2026-08-03: fan-out 0 in GeneratedCatalog.kt before this entry -- no
+    # record carried the bare word. "chicken" already exists in AGROVOC source
+    # (concepts c_1540 and c_24000 both list it as a match term) and only
+    # needs this carve-out, no food-synonyms.json change.
+    "chicken": {"chicken"},
+    # 2026-08-03: fan-out 0. "yogurt" does not exist in AGROVOC source at all
+    # (c_15463's entire en entry was the British spelling with no match list)
+    # and was added as a MANUAL_TERMS entry in generate-food-synonyms.py
+    # first; this carve-out is what keeps the generator from then dropping it
+    # again as restating its own head.
+    "yogurt": {"yogurt"},
+}
+
+
 def terms_for_head(head, concept_ids, concepts_by_id, other_head_keys, stats):
     """The alternate names a head segment contributes, in a stable order.
 
@@ -557,6 +658,7 @@ def terms_for_head(head, concept_ids, concepts_by_id, other_head_keys, stats):
     head share one emitted list rather than carrying its own copy.
     """
     head_keys = fold_keys(head)
+    exceptions = RESTATES_HEAD_EXCEPTIONS.get(head, frozenset())
     seen = set()
     terms = []
     for concept_id in concept_ids:
@@ -566,7 +668,7 @@ def terms_for_head(head, concept_ids, concepts_by_id, other_head_keys, stats):
                 continue
             seen.add(normalized)
             term_keys = fold_keys(term)
-            if term_keys & head_keys:
+            if term_keys & head_keys and normalized not in exceptions:
                 stats["dropped_restates_head"] += 1
                 continue
             if term_keys & other_head_keys:
@@ -655,6 +757,8 @@ def build_records(foods, concepts, stats):
         group["records"] += 1
         joined_concepts.update(group["concepts"])
         stats["joined_records"] += 1
+
+    apply_subhead_overrides(records, groups, used_identifiers)
 
     emitted = [group for group in groups.values() if group["terms"] and group["records"]]
     stats["joined_concepts"] = len(joined_concepts)
