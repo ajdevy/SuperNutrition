@@ -17,11 +17,11 @@ HTTP client anywhere in `mobile/`, and neither `AndroidManifest.xml` declares th
 
 | Input | Why the code needs it | State today |
 | --- | --- | --- |
-| **Provider and runtime** | Nothing names one; `engineId` and `modelVersion` are free strings on every result and telemetry event | Not selected |
+| **Provider and runtime** | Nothing names one; `engineId` and `modelVersion` are free strings on every result and telemetry event | **Decided 2026-08-03:** OpenRouter, reconciled from `origin/feat/e43-gateway-impl` — not yet reconciled/merged |
 | **API shape for text** | `contracts/mobile-api/v1` describes a photo envelope only — no endpoints, no message schema, no auth, no error taxonomy, and nothing for a typed description | Released, but binds no code |
-| **Processing regions** | `RemoteTextDecision.Offer` cannot be constructed without a non-null region, so an offer that cannot name where it processes is unrepresentable | Every market unresolved; see G-1 and E1.6 |
-| **Cost and abuse position** | No rate limit, quota, or abuse control exists in any form | Absent |
-| **DPA, retention, training terms** | Whether a description may be retained or trained on is a contract term, not a code setting | Absent; `retention` appears in no source file |
+| **Processing regions** | `RemoteTextDecision.Offer` cannot be constructed without a non-null region, so an offer that cannot name where it processes is unrepresentable | **Decided 2026-08-03:** no privileged first region — enabled per market as G-1 resolves each one; every market still unresolved today, see G-1 and E1.6 |
+| **Cost and abuse position** | No rate limit, quota, or abuse control exists in any form | Absent on the mobile/product-policy side; the unmerged gateway branch reportedly has a Redis rate limiter, unverified/unreconciled |
+| **DPA, retention, training terms** | Whether a description may be retained or trained on is a contract term, not a code setting | **Decided 2026-08-03:** not retained/trained on by default, opt-in per description if the user allows it — DPA language and technical per-request feasibility both still absent; see the draft-proposals doc §2 |
 | **Staging threat model** | The free-text path is the sensitive one — see the E1.6 posture proposal on Article 9 | Not written |
 | **Operations plan** | Who is paged when the gateway fails, and what the app does meanwhile | Not written |
 
@@ -79,16 +79,13 @@ corrected 2026-08-03:
 
 ## How we will know the gate is satisfied
 
-1. A named provider, runtime and region set, with the mobile-api contract
-   extended to describe a text request — a new release, since v1 describes a
-   photo envelope and `incompatible_change = "new-major-release"`. Note as of
-   2026-08-03: `origin/feat/e43-gateway-impl` (unmerged) already implements a
-   working gateway with a real OpenRouter provider adapter, but its own
-   `contracts/mobile-api/v1` release explicitly ships `supported = ["photo"]`,
-   `reserved = ["text"]` with `frozen_after_first_consumer = true` — so
-   reconciling with that branch, not choosing a second provider from scratch,
-   is the live decision here, and enabling text still needs the described new
-   major release regardless of which branch that work lands from.
+1. **Decided 2026-08-03, not yet executed.** Provider is OpenRouter,
+   reconciled from `origin/feat/e43-gateway-impl` rather than chosen fresh;
+   region rollout is per-market as G-1 resolves each one, with no privileged
+   first market. What remains: actually reconciling/merging that branch, and
+   shipping the mobile-api contract release enabling `text` — currently
+   `reserved`, not `supported`, and frozen after its first consumer, so this
+   is a new major release regardless of which branch the work lands from.
 2. **Satisfied 2026-08-03.** The consent-copy mismatch check exists
    (`MarketPolicyRegistry.mayTransfer`) and has a negative fixture
    (`MarketPolicyTest`'s mismatch test, passing).
@@ -103,10 +100,16 @@ corrected 2026-08-03:
    design, not merely by accident, so a market change between offer and
    transfer is a refusal rather than a race).
 4. DPA terms are recorded where a reader can find them, including whether
-   descriptions may be retained or used for training. "Not retained" is a term to
-   obtain, not an assumption to make. **Not satisfied.** A draft proposal exists
-   at `_bmad-output/implementation-artifacts/g4-remote-gateway-draft-proposals.md`
-   for whoever owns this to react to — it is explicitly not the real terms.
+   descriptions may be retained or used for training. "Not retained" is a term
+   to obtain, not an assumption to make. **Decided 2026-08-03, not yet
+   obtained.** Position: not retained/trained on by default, opt-in per
+   description if the user allows it. What remains: confirming the chosen
+   provider/model can technically honor a per-request opt-in (a materially
+   more specific ask than a blanket retention clause), designing the consent
+   toggle itself, and writing the DPA language to match — see
+   `_bmad-output/implementation-artifacts/g4-remote-gateway-draft-proposals.md`
+   §2. The decision is real; the contract and the code that would enforce it
+   are not.
 
 ## The dependency worth naming
 
