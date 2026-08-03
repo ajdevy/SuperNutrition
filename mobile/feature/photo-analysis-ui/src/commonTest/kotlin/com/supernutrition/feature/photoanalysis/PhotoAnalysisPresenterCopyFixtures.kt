@@ -16,6 +16,7 @@ object PhotoAnalysisPresenterCopyFixtures {
             photoReady = "Foto pronta",
             analyzingPhoto = "Analisi foto",
             findingVisibleFoods = "Ricerca cibi visibili",
+            identifyingDish = "Identificazione piatto",
             estimatingPortions = "Stima porzioni",
             checkingResults = "Verifica risultati",
             reviewCandidate = "Rivedi candidato",

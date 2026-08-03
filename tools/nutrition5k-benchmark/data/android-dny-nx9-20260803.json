@@ -1,0 +1,82 @@
+{
+  "schema": "supernutrition.fusion.android-device-evidence.v1",
+  "date": "2026-08-03",
+  "device": {
+    "serial": "192.168.0.150:43381",
+    "model": "DNY-NX9",
+    "transport": "physical Android device"
+  },
+  "app": {
+    "package": "com.supernutrition.g3benchmark",
+    "activity": "com.supernutrition.g3benchmark/.PocActivity",
+    "policy": "bounded_late_fusion",
+    "calibration_status": "not_calibrated_research_poc"
+  },
+  "verification": {
+    "unit_tests": {
+      "status": "passed",
+      "command": "./mobile/gradlew -p tools/g3-benchmark/android-runner test --no-configuration-cache --console=plain",
+      "gradle_tasks": 22
+    },
+    "apk_assemble": {
+      "status": "passed",
+      "command": "./mobile/gradlew -p tools/g3-benchmark/android-runner :app:assembleDebug --no-configuration-cache --console=plain"
+    },
+    "install": {
+      "status": "passed",
+      "method": "adb push followed by device-local pm install -r",
+      "last_update_time": "2026-08-03 10:54:42"
+    }
+  },
+  "user_sample_runs": [
+    {
+      "filename": "2026-08-02_22-30-34-breakfast-bacon-eggs-fruit.jpg",
+      "status": "success",
+      "top3_dishes": ["french_toast 39.7%", "pancakes 25.4%", "omelette 18.2%"],
+      "regions": 3,
+      "region_labels": ["carrot", "carrot", "carrot"]
+    },
+    {
+      "filename": "2026-08-02_22-30-42-chicken-salad-vegetables.jpg",
+      "status": "success",
+      "top3_dishes": ["pork_chop 50.1%", "grilled_salmon 41.2%", "caesar_salad 2.1%"],
+      "regions": 9,
+      "region_labels": ["carrot", "broccoli", "orange"]
+    },
+    {
+      "filename": "2026-08-02_22-30-47-fruit-cottage-cheese-roasted-vegetables.jpg",
+      "status": "success",
+      "top3_dishes": ["beet_salad 20.1%", "cheese_plate 19.9%", "gnocchi 19.1%"],
+      "regions": 1,
+      "region_labels": ["carrot"]
+    },
+    {
+      "filename": "2026-08-02_22-30-52-green-salad-protein.jpg",
+      "status": "success",
+      "top3_dishes": ["greek_salad 92.5%", "beet_salad 5.4%", "caesar_salad 0.8%"],
+      "regions": 3,
+      "region_labels": ["broccoli", "broccoli", "broccoli"]
+    },
+    {
+      "filename": "2026-08-02_22-30-57-mixed-meal-beef-rice-salad-vegetables.jpg",
+      "status": "success",
+      "top3_dishes": ["greek_salad 96.5%", "caesar_salad 1.1%", "bibimbap 1.0%"],
+      "regions": 5,
+      "region_labels": ["broccoli", "broccoli", "carrot"]
+    }
+  ],
+  "grid_smoke": {
+    "status": "passed",
+    "input_filename": "2026-08-02_22-30-57-mixed-meal-beef-rice-salad-vegetables.jpg",
+    "selected_cell": 5,
+    "status_after_analysis": "success",
+    "regions_after_analysis": 6,
+    "warning_verified": "grid prompt is class-agnostic; its mask does not identify an ingredient"
+  },
+  "limitations": [
+    "The PoC is research-only and is not production mobile evidence.",
+    "Dish percentages are model scores, not calibrated probabilities.",
+    "Region labels are limited YOLO-World vocabulary proposals, not full ingredient truth.",
+    "The five user photos have no human per-region ground truth in this run."
+  ]
+}

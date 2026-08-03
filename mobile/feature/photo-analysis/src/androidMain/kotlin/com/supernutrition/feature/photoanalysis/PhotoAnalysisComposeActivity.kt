@@ -48,6 +48,7 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
                 photoReady = getString(R.string.capture_status_ready_photo),
                 analyzingPhoto = getString(R.string.capture_status_analyzing),
                 findingVisibleFoods = getString(R.string.capture_status_finding_visible_foods),
+                identifyingDish = getString(R.string.capture_status_identifying_dish),
                 estimatingPortions = getString(R.string.capture_status_estimating_portions),
                 checkingResults = getString(R.string.capture_status_checking_results),
                 reviewCandidate = getString(R.string.capture_status_review),
@@ -72,6 +73,10 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
                 remoteProvenance = getString(R.string.capture_evidence_remote_provenance),
                 selected = getString(R.string.capture_evidence_selected),
                 notSelected = getString(R.string.capture_evidence_not_selected),
+                dishCandidatesTitle = getString(R.string.capture_evidence_dish_candidates),
+                visibleComponentsTitle = getString(R.string.capture_evidence_visible_components),
+                compositionHintsTitle = getString(R.string.capture_evidence_composition_hints),
+                compositionHintSource = getString(R.string.capture_evidence_composition_hint_source),
             ),
             recovery = RecoveryCopy(
                 scanAgain = getString(R.string.capture_scan_again),

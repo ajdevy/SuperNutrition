@@ -1,0 +1,2161 @@
+{
+  "cases": [
+    {
+      "case_id": "nutrition5k-017-dish_1558641320",
+      "crop_file": "dish_crops/dish_1558641320.jpg",
+      "dish_id": "dish_1558641320",
+      "dish_prior": [
+        "dough",
+        "tomato_sauce",
+        "mozzarella",
+        "cheese",
+        "pepperoni",
+        "mushroom",
+        "onion"
+      ],
+      "dish_top3": [
+        {
+          "confidence": 0.21010234951972961,
+          "label": "pizza"
+        },
+        {
+          "confidence": 0.07977300137281418,
+          "label": "bruschetta"
+        },
+        {
+          "confidence": 0.07364880293607712,
+          "label": "caprese_salad"
+        }
+      ],
+      "hard_visual_labels": [],
+      "raw_visual_labels": [
+        "apple",
+        "carrot",
+        "orange"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 0,
+      "selection_reason": "hard_gate_conflict",
+      "weak_detector_targets": [
+        "apple",
+        "carrot"
+      ]
+    },
+    {
+      "case_id": "nutrition5k-026-dish_1560367980",
+      "crop_file": "dish_crops/dish_1560367980.jpg",
+      "dish_id": "dish_1560367980",
+      "dish_prior": [
+        "dough",
+        "tomato_sauce",
+        "mozzarella",
+        "cheese",
+        "pepperoni",
+        "mushroom",
+        "onion"
+      ],
+      "dish_top3": [
+        {
+          "confidence": 0.8620498776435852,
+          "label": "pizza"
+        },
+        {
+          "confidence": 0.05620458349585533,
+          "label": "lasagna"
+        },
+        {
+          "confidence": 0.021580088883638382,
+          "label": "bruschetta"
+        }
+      ],
+      "hard_visual_labels": [],
+      "raw_visual_labels": [
+        "broccoli"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 0,
+      "selection_reason": "hard_gate_conflict",
+      "weak_detector_targets": []
+    },
+    {
+      "case_id": "nutrition5k-029-dish_1560801859",
+      "crop_file": "dish_crops/dish_1560801859.jpg",
+      "dish_id": "dish_1560801859",
+      "dish_prior": [
+        "dough",
+        "tomato_sauce",
+        "mozzarella",
+        "cheese",
+        "pepperoni",
+        "mushroom",
+        "onion"
+      ],
+      "dish_top3": [
+        {
+          "confidence": 0.9084254503250122,
+          "label": "pizza"
+        },
+        {
+          "confidence": 0.02129003405570984,
+          "label": "beef_carpaccio"
+        },
+        {
+          "confidence": 0.02122972533106804,
+          "label": "steak"
+        }
+      ],
+      "hard_visual_labels": [],
+      "raw_visual_labels": [
+        "broccoli"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 0,
+      "selection_reason": "hard_gate_conflict",
+      "weak_detector_targets": []
+    },
+    {
+      "case_id": "nutrition5k-031-dish_1561147967",
+      "crop_file": "dish_crops/dish_1561147967.jpg",
+      "dish_id": "dish_1561147967",
+      "dish_prior": [
+        "pasta",
+        "tomato_sauce",
+        "beef",
+        "cheese",
+        "ricotta"
+      ],
+      "dish_top3": [
+        {
+          "confidence": 0.47304680943489075,
+          "label": "lasagna"
+        },
+        {
+          "confidence": 0.10571642965078354,
+          "label": "pizza"
+        },
+        {
+          "confidence": 0.0661095455288887,
+          "label": "gnocchi"
+        }
+      ],
+      "hard_visual_labels": [],
+      "raw_visual_labels": [
+        "broccoli"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 0,
+      "selection_reason": "hard_gate_conflict",
+      "weak_detector_targets": [
+        "carrot"
+      ]
+    },
+    {
+      "case_id": "nutrition5k-035-dish_1561578800",
+      "crop_file": "dish_crops/dish_1561578800.jpg",
+      "dish_id": "dish_1561578800",
+      "dish_prior": [
+        "dough",
+        "tomato_sauce",
+        "mozzarella",
+        "cheese",
+        "pepperoni",
+        "mushroom",
+        "onion"
+      ],
+      "dish_top3": [
+        {
+          "confidence": 0.9024931788444519,
+          "label": "pizza"
+        },
+        {
+          "confidence": 0.048327963799238205,
+          "label": "lasagna"
+        },
+        {
+          "confidence": 0.027665039524435997,
+          "label": "chicken_quesadilla"
+        }
+      ],
+      "hard_visual_labels": [],
+      "raw_visual_labels": [
+        "broccoli"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 0,
+      "selection_reason": "hard_gate_conflict",
+      "weak_detector_targets": []
+    },
+    {
+      "case_id": "nutrition5k-038-dish_1561661347",
+      "crop_file": "dish_crops/dish_1561661347.jpg",
+      "dish_id": "dish_1561661347",
+      "dish_prior": [
+        "romaine_lettuce",
+        "chicken",
+        "parmesan",
+        "croutons",
+        "caesar_dressing"
+      ],
+      "dish_top3": [
+        {
+          "confidence": 0.7944217920303345,
+          "label": "caesar_salad"
+        },
+        {
+          "confidence": 0.06929922848939896,
+          "label": "omelette"
+        },
+        {
+          "confidence": 0.021636592224240303,
+          "label": "filet_mignon"
+        }
+      ],
+      "hard_visual_labels": [],
+      "raw_visual_labels": [
+        "broccoli"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 0,
+      "selection_reason": "hard_gate_conflict",
+      "weak_detector_targets": []
+    },
+    {
+      "case_id": "nutrition5k-049-dish_1562703345",
+      "crop_file": "dish_crops/dish_1562703345.jpg",
+      "dish_id": "dish_1562703345",
+      "dish_prior": [
+        "dough",
+        "tomato_sauce",
+        "mozzarella",
+        "cheese",
+        "pepperoni",
+        "mushroom",
+        "onion"
+      ],
+      "dish_top3": [
+        {
+          "confidence": 0.684384822845459,
+          "label": "pizza"
+        },
+        {
+          "confidence": 0.07959368079900742,
+          "label": "lasagna"
+        },
+        {
+          "confidence": 0.04840419441461563,
+          "label": "carrot_cake"
+        }
+      ],
+      "hard_visual_labels": [],
+      "raw_visual_labels": [
+        "banana",
+        "broccoli"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 0,
+      "selection_reason": "hard_gate_conflict",
+      "weak_detector_targets": []
+    },
+    {
+      "case_id": "nutrition5k-050-dish_1562703447",
+      "crop_file": "dish_crops/dish_1562703447.jpg",
+      "dish_id": "dish_1562703447",
+      "dish_prior": [
+        "dough",
+        "tomato_sauce",
+        "mozzarella",
+        "cheese",
+        "pepperoni",
+        "mushroom",
+        "onion"
+      ],
+      "dish_top3": [
+        {
+          "confidence": 0.6248713731765747,
+          "label": "pizza"
+        },
+        {
+          "confidence": 0.12175016105175018,
+          "label": "chicken_quesadilla"
+        },
+        {
+          "confidence": 0.06177539378404617,
+          "label": "lasagna"
+        }
+      ],
+      "hard_visual_labels": [],
+      "raw_visual_labels": [
+        "broccoli"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 0,
+      "selection_reason": "hard_gate_conflict",
+      "weak_detector_targets": [
+        "apple"
+      ]
+    },
+    {
+      "case_id": "nutrition5k-052-dish_1562788568",
+      "crop_file": "dish_crops/dish_1562788568.jpg",
+      "dish_id": "dish_1562788568",
+      "dish_prior": [
+        "rice",
+        "egg",
+        "peas",
+        "carrot",
+        "green_onion"
+      ],
+      "dish_top3": [
+        {
+          "confidence": 0.5430048108100891,
+          "label": "fried_rice"
+        },
+        {
+          "confidence": 0.12414826452732086,
+          "label": "carrot_cake"
+        },
+        {
+          "confidence": 0.09212832897901535,
+          "label": "pad_thai"
+        }
+      ],
+      "hard_visual_labels": [
+        "carrot"
+      ],
+      "raw_visual_labels": [
+        "broccoli",
+        "carrot"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 0,
+      "selection_reason": "hard_gate_conflict",
+      "weak_detector_targets": []
+    },
+    {
+      "case_id": "nutrition5k-053-dish_1562876531",
+      "crop_file": "dish_crops/dish_1562876531.jpg",
+      "dish_id": "dish_1562876531",
+      "dish_prior": [
+        "romaine_lettuce",
+        "chicken",
+        "parmesan",
+        "croutons",
+        "caesar_dressing"
+      ],
+      "dish_top3": [
+        {
+          "confidence": 0.9881551265716553,
+          "label": "caesar_salad"
+        },
+        {
+          "confidence": 0.004459876101464033,
+          "label": "beet_salad"
+        },
+        {
+          "confidence": 0.0028660332318395376,
+          "label": "greek_salad"
+        }
+      ],
+      "hard_visual_labels": [],
+      "raw_visual_labels": [
+        "broccoli"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 0,
+      "selection_reason": "hard_gate_conflict",
+      "weak_detector_targets": []
+    },
+    {
+      "case_id": "nutrition5k-055-dish_1563220987",
+      "crop_file": "dish_crops/dish_1563220987.jpg",
+      "dish_id": "dish_1563220987",
+      "dish_prior": [
+        "pork_chop",
+        "pork",
+        "carrot",
+        "potato",
+        "green_beans",
+        "apple_sauce"
+      ],
+      "dish_top3": [
+        {
+          "confidence": 0.5337300300598145,
+          "label": "pork_chop"
+        },
+        {
+          "confidence": 0.13965769112110138,
+          "label": "foie_gras"
+        },
+        {
+          "confidence": 0.09341779351234436,
+          "label": "fried_calamari"
+        }
+      ],
+      "hard_visual_labels": [],
+      "raw_visual_labels": [
+        "broccoli"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 0,
+      "selection_reason": "hard_gate_conflict",
+      "weak_detector_targets": []
+    },
+    {
+      "case_id": "nutrition5k-056-dish_1563221025",
+      "crop_file": "dish_crops/dish_1563221025.jpg",
+      "dish_id": "dish_1563221025",
+      "dish_prior": [
+        "pork_chop",
+        "pork",
+        "carrot",
+        "potato",
+        "green_beans",
+        "apple_sauce"
+      ],
+      "dish_top3": [
+        {
+          "confidence": 0.6342273950576782,
+          "label": "pork_chop"
+        },
+        {
+          "confidence": 0.11848582327365875,
+          "label": "fried_calamari"
+        },
+        {
+          "confidence": 0.06561124324798584,
+          "label": "foie_gras"
+        }
+      ],
+      "hard_visual_labels": [],
+      "raw_visual_labels": [
+        "broccoli"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 0,
+      "selection_reason": "hard_gate_conflict",
+      "weak_detector_targets": []
+    },
+    {
+      "case_id": "nutrition5k-060-dish_1563565354",
+      "crop_file": "dish_crops/dish_1563565354.jpg",
+      "dish_id": "dish_1563565354",
+      "dish_prior": [
+        "pork_chop",
+        "pork",
+        "carrot",
+        "potato",
+        "green_beans",
+        "apple_sauce"
+      ],
+      "dish_top3": [
+        {
+          "confidence": 0.2407481074333191,
+          "label": "pork_chop"
+        },
+        {
+          "confidence": 0.18687234818935394,
+          "label": "caesar_salad"
+        },
+        {
+          "confidence": 0.11094280332326889,
+          "label": "ceviche"
+        }
+      ],
+      "hard_visual_labels": [],
+      "raw_visual_labels": [
+        "broccoli"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 0,
+      "selection_reason": "hard_gate_conflict",
+      "weak_detector_targets": [
+        "carrot"
+      ]
+    },
+    {
+      "case_id": "nutrition5k-078-dish_1565035830",
+      "crop_file": "dish_crops/dish_1565035830.jpg",
+      "dish_id": "dish_1565035830",
+      "dish_prior": [
+        "cucumber",
+        "tomato",
+        "red_onion",
+        "bell_pepper",
+        "feta_cheese",
+        "olives",
+        "olive_oil"
+      ],
+      "dish_top3": [
+        {
+          "confidence": 0.18631504476070404,
+          "label": "greek_salad"
+        },
+        {
+          "confidence": 0.12125056982040405,
+          "label": "filet_mignon"
+        },
+        {
+          "confidence": 0.09509603679180145,
+          "label": "cheese_plate"
+        }
+      ],
+      "hard_visual_labels": [],
+      "raw_visual_labels": [
+        "carrot"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 0,
+      "selection_reason": "hard_gate_conflict",
+      "weak_detector_targets": []
+    },
+    {
+      "case_id": "nutrition5k-084-dish_1565811025",
+      "crop_file": "dish_crops/dish_1565811025.jpg",
+      "dish_id": "dish_1565811025",
+      "dish_prior": [
+        "romaine_lettuce",
+        "chicken",
+        "parmesan",
+        "croutons",
+        "caesar_dressing"
+      ],
+      "dish_top3": [
+        {
+          "confidence": 0.9618772268295288,
+          "label": "caesar_salad"
+        },
+        {
+          "confidence": 0.009873561561107635,
+          "label": "beet_salad"
+        },
+        {
+          "confidence": 0.007250810042023659,
+          "label": "gnocchi"
+        }
+      ],
+      "hard_visual_labels": [],
+      "raw_visual_labels": [
+        "broccoli"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 0,
+      "selection_reason": "hard_gate_conflict",
+      "weak_detector_targets": [
+        "broccoli"
+      ]
+    },
+    {
+      "case_id": "nutrition5k-097-dish_1566851616",
+      "crop_file": "dish_crops/dish_1566851616.jpg",
+      "dish_id": "dish_1566851616",
+      "dish_prior": [
+        "pasta",
+        "tomato_sauce",
+        "beef",
+        "cheese",
+        "ricotta"
+      ],
+      "dish_top3": [
+        {
+          "confidence": 0.2778337597846985,
+          "label": "lasagna"
+        },
+        {
+          "confidence": 0.2689874470233917,
+          "label": "omelette"
+        },
+        {
+          "confidence": 0.22156839072704315,
+          "label": "pizza"
+        }
+      ],
+      "hard_visual_labels": [],
+      "raw_visual_labels": [
+        "broccoli"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 0,
+      "selection_reason": "hard_gate_conflict",
+      "weak_detector_targets": [
+        "broccoli"
+      ]
+    },
+    {
+      "case_id": "nutrition5k-001-dish_1557862783",
+      "crop_file": "dish_crops/dish_1557862783.jpg",
+      "dish_id": "dish_1557862783",
+      "dish_prior": [
+        "beef",
+        "potato",
+        "green_beans",
+        "salad",
+        "sauce"
+      ],
+      "dish_top3": [
+        {
+          "confidence": 0.41028136014938354,
+          "label": "steak"
+        },
+        {
+          "confidence": 0.19376936554908752,
+          "label": "filet_mignon"
+        },
+        {
+          "confidence": 0.12143930047750473,
+          "label": "prime_rib"
+        }
+      ],
+      "hard_visual_labels": [],
+      "raw_visual_labels": [],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 1,
+      "selection_reason": "empty_raw_visual_output",
+      "weak_detector_targets": []
+    },
+    {
+      "case_id": "nutrition5k-003-dish_1558030383",
+      "crop_file": "dish_crops/dish_1558030383.jpg",
+      "dish_id": "dish_1558030383",
+      "dish_prior": [],
+      "dish_top3": [
+        {
+          "confidence": 0.24822688102722168,
+          "label": "peking_duck"
+        },
+        {
+          "confidence": 0.19959233701229095,
+          "label": "tuna_tartare"
+        },
+        {
+          "confidence": 0.0693969801068306,
+          "label": "pizza"
+        }
+      ],
+      "hard_visual_labels": [],
+      "raw_visual_labels": [],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 1,
+      "selection_reason": "empty_raw_visual_output",
+      "weak_detector_targets": []
+    },
+    {
+      "case_id": "nutrition5k-015-dish_1558630207",
+      "crop_file": "dish_crops/dish_1558630207.jpg",
+      "dish_id": "dish_1558630207",
+      "dish_prior": [],
+      "dish_top3": [
+        {
+          "confidence": 0.6682907342910767,
+          "label": "donuts"
+        },
+        {
+          "confidence": 0.11428604274988174,
+          "label": "gnocchi"
+        },
+        {
+          "confidence": 0.06261931359767914,
+          "label": "churros"
+        }
+      ],
+      "hard_visual_labels": [],
+      "raw_visual_labels": [],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 1,
+      "selection_reason": "empty_raw_visual_output",
+      "weak_detector_targets": []
+    },
+    {
+      "case_id": "nutrition5k-020-dish_1558720133",
+      "crop_file": "dish_crops/dish_1558720133.jpg",
+      "dish_id": "dish_1558720133",
+      "dish_prior": [],
+      "dish_top3": [
+        {
+          "confidence": 0.26413118839263916,
+          "label": "ice_cream"
+        },
+        {
+          "confidence": 0.13833987712860107,
+          "label": "dumplings"
+        },
+        {
+          "confidence": 0.08951546251773834,
+          "label": "gnocchi"
+        }
+      ],
+      "hard_visual_labels": [],
+      "raw_visual_labels": [],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 1,
+      "selection_reason": "empty_raw_visual_output",
+      "weak_detector_targets": []
+    },
+    {
+      "case_id": "nutrition5k-033-dish_1561574368",
+      "crop_file": "dish_crops/dish_1561574368.jpg",
+      "dish_id": "dish_1561574368",
+      "dish_prior": [
+        "romaine_lettuce",
+        "chicken",
+        "parmesan",
+        "croutons",
+        "caesar_dressing"
+      ],
+      "dish_top3": [
+        {
+          "confidence": 0.9982736110687256,
+          "label": "caesar_salad"
+        },
+        {
+          "confidence": 0.0005543275037780404,
+          "label": "beet_salad"
+        },
+        {
+          "confidence": 0.0003422184381633997,
+          "label": "ravioli"
+        }
+      ],
+      "hard_visual_labels": [],
+      "raw_visual_labels": [],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 1,
+      "selection_reason": "empty_raw_visual_output",
+      "weak_detector_targets": []
+    },
+    {
+      "case_id": "nutrition5k-040-dish_1562009006",
+      "crop_file": "dish_crops/dish_1562009006.jpg",
+      "dish_id": "dish_1562009006",
+      "dish_prior": [
+        "romaine_lettuce",
+        "chicken",
+        "parmesan",
+        "croutons",
+        "caesar_dressing"
+      ],
+      "dish_top3": [
+        {
+          "confidence": 0.3277062475681305,
+          "label": "caesar_salad"
+        },
+        {
+          "confidence": 0.23283681273460388,
+          "label": "crab_cakes"
+        },
+        {
+          "confidence": 0.11650081723928452,
+          "label": "fried_calamari"
+        }
+      ],
+      "hard_visual_labels": [],
+      "raw_visual_labels": [],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 1,
+      "selection_reason": "empty_raw_visual_output",
+      "weak_detector_targets": [
+        "carrot"
+      ]
+    },
+    {
+      "case_id": "nutrition5k-041-dish_1562009810",
+      "crop_file": "dish_crops/dish_1562009810.jpg",
+      "dish_id": "dish_1562009810",
+      "dish_prior": [
+        "rice",
+        "egg",
+        "peas",
+        "carrot",
+        "green_onion"
+      ],
+      "dish_top3": [
+        {
+          "confidence": 0.8715335726737976,
+          "label": "fried_rice"
+        },
+        {
+          "confidence": 0.11776793003082275,
+          "label": "risotto"
+        },
+        {
+          "confidence": 0.0035428665578365326,
+          "label": "paella"
+        }
+      ],
+      "hard_visual_labels": [],
+      "raw_visual_labels": [],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 1,
+      "selection_reason": "empty_raw_visual_output",
+      "weak_detector_targets": []
+    },
+    {
+      "case_id": "nutrition5k-048-dish_1562700593",
+      "crop_file": "dish_crops/dish_1562700593.jpg",
+      "dish_id": "dish_1562700593",
+      "dish_prior": [],
+      "dish_top3": [
+        {
+          "confidence": 0.7517909407615662,
+          "label": "omelette"
+        },
+        {
+          "confidence": 0.07328571379184723,
+          "label": "filet_mignon"
+        },
+        {
+          "confidence": 0.06043389067053795,
+          "label": "prime_rib"
+        }
+      ],
+      "hard_visual_labels": [],
+      "raw_visual_labels": [],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 1,
+      "selection_reason": "empty_raw_visual_output",
+      "weak_detector_targets": [
+        "apple"
+      ]
+    },
+    {
+      "case_id": "nutrition5k-002-dish_1557937037",
+      "crop_file": "dish_crops/dish_1557937037.jpg",
+      "dish_id": "dish_1557937037",
+      "dish_prior": [],
+      "dish_top3": [
+        {
+          "confidence": 0.2406412661075592,
+          "label": "beignets"
+        },
+        {
+          "confidence": 0.14109396934509277,
+          "label": "strawberry_shortcake"
+        },
+        {
+          "confidence": 0.12679815292358398,
+          "label": "donuts"
+        }
+      ],
+      "hard_visual_labels": [
+        "carrot"
+      ],
+      "raw_visual_labels": [
+        "carrot"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 2,
+      "selection_reason": "empty_top1_prior_control",
+      "weak_detector_targets": []
+    },
+    {
+      "case_id": "nutrition5k-004-dish_1558110436",
+      "crop_file": "dish_crops/dish_1558110436.jpg",
+      "dish_id": "dish_1558110436",
+      "dish_prior": [],
+      "dish_top3": [
+        {
+          "confidence": 0.8934507369995117,
+          "label": "beet_salad"
+        },
+        {
+          "confidence": 0.03067104145884514,
+          "label": "gnocchi"
+        },
+        {
+          "confidence": 0.018251944333314896,
+          "label": "foie_gras"
+        }
+      ],
+      "hard_visual_labels": [
+        "carrot"
+      ],
+      "raw_visual_labels": [
+        "carrot"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 2,
+      "selection_reason": "empty_top1_prior_control",
+      "weak_detector_targets": []
+    },
+    {
+      "case_id": "nutrition5k-005-dish_1558110478",
+      "crop_file": "dish_crops/dish_1558110478.jpg",
+      "dish_id": "dish_1558110478",
+      "dish_prior": [],
+      "dish_top3": [
+        {
+          "confidence": 0.9037010073661804,
+          "label": "cheese_plate"
+        },
+        {
+          "confidence": 0.05514496564865112,
+          "label": "beet_salad"
+        },
+        {
+          "confidence": 0.01190084870904684,
+          "label": "omelette"
+        }
+      ],
+      "hard_visual_labels": [
+        "broccoli",
+        "carrot"
+      ],
+      "raw_visual_labels": [
+        "broccoli",
+        "carrot"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 3,
+      "selection_reason": "empty_top1_prior_control",
+      "weak_detector_targets": []
+    },
+    {
+      "case_id": "nutrition5k-006-dish_1558113430",
+      "crop_file": "dish_crops/dish_1558113430.jpg",
+      "dish_id": "dish_1558113430",
+      "dish_prior": [],
+      "dish_top3": [
+        {
+          "confidence": 0.9479781985282898,
+          "label": "seaweed_salad"
+        },
+        {
+          "confidence": 0.01059566531330347,
+          "label": "spring_rolls"
+        },
+        {
+          "confidence": 0.008171454071998596,
+          "label": "beet_salad"
+        }
+      ],
+      "hard_visual_labels": [
+        "broccoli"
+      ],
+      "raw_visual_labels": [
+        "broccoli"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 2,
+      "selection_reason": "empty_top1_prior_control",
+      "weak_detector_targets": []
+    },
+    {
+      "case_id": "nutrition5k-007-dish_1558114145",
+      "crop_file": "dish_crops/dish_1558114145.jpg",
+      "dish_id": "dish_1558114145",
+      "dish_prior": [],
+      "dish_top3": [
+        {
+          "confidence": 0.8281446099281311,
+          "label": "panna_cotta"
+        },
+        {
+          "confidence": 0.04696306213736534,
+          "label": "greek_salad"
+        },
+        {
+          "confidence": 0.024288557469844818,
+          "label": "frozen_yogurt"
+        }
+      ],
+      "hard_visual_labels": [
+        "apple",
+        "carrot"
+      ],
+      "raw_visual_labels": [
+        "apple",
+        "carrot"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 3,
+      "selection_reason": "empty_top1_prior_control",
+      "weak_detector_targets": []
+    },
+    {
+      "case_id": "nutrition5k-008-dish_1558114209",
+      "crop_file": "dish_crops/dish_1558114209.jpg",
+      "dish_id": "dish_1558114209",
+      "dish_prior": [],
+      "dish_top3": [
+        {
+          "confidence": 0.865611732006073,
+          "label": "panna_cotta"
+        },
+        {
+          "confidence": 0.04258216172456741,
+          "label": "beet_salad"
+        },
+        {
+          "confidence": 0.020965132862329483,
+          "label": "cheesecake"
+        }
+      ],
+      "hard_visual_labels": [
+        "carrot"
+      ],
+      "raw_visual_labels": [
+        "carrot"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 2,
+      "selection_reason": "empty_top1_prior_control",
+      "weak_detector_targets": []
+    },
+    {
+      "case_id": "nutrition5k-009-dish_1558372948",
+      "crop_file": "dish_crops/dish_1558372948.jpg",
+      "dish_id": "dish_1558372948",
+      "dish_prior": [],
+      "dish_top3": [
+        {
+          "confidence": 0.6484257578849792,
+          "label": "donuts"
+        },
+        {
+          "confidence": 0.20330260694026947,
+          "label": "poutine"
+        },
+        {
+          "confidence": 0.03036360815167427,
+          "label": "churros"
+        }
+      ],
+      "hard_visual_labels": [
+        "carrot"
+      ],
+      "raw_visual_labels": [
+        "carrot"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 2,
+      "selection_reason": "empty_top1_prior_control",
+      "weak_detector_targets": []
+    },
+    {
+      "case_id": "nutrition5k-010-dish_1558373008",
+      "crop_file": "dish_crops/dish_1558373008.jpg",
+      "dish_id": "dish_1558373008",
+      "dish_prior": [],
+      "dish_top3": [
+        {
+          "confidence": 0.2678218483924866,
+          "label": "samosa"
+        },
+        {
+          "confidence": 0.22091996669769287,
+          "label": "dumplings"
+        },
+        {
+          "confidence": 0.17457441985607147,
+          "label": "beignets"
+        }
+      ],
+      "hard_visual_labels": [
+        "carrot"
+      ],
+      "raw_visual_labels": [
+        "carrot"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 2,
+      "selection_reason": "empty_top1_prior_control",
+      "weak_detector_targets": []
+    },
+    {
+      "case_id": "nutrition5k-012-dish_1558461792",
+      "crop_file": "dish_crops/dish_1558461792.jpg",
+      "dish_id": "dish_1558461792",
+      "dish_prior": [],
+      "dish_top3": [
+        {
+          "confidence": 0.48103976249694824,
+          "label": "caprese_salad"
+        },
+        {
+          "confidence": 0.1607934981584549,
+          "label": "greek_salad"
+        },
+        {
+          "confidence": 0.046872831881046295,
+          "label": "edamame"
+        }
+      ],
+      "hard_visual_labels": [
+        "apple",
+        "broccoli",
+        "carrot",
+        "orange"
+      ],
+      "raw_visual_labels": [
+        "apple",
+        "broccoli",
+        "carrot",
+        "orange"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 3,
+      "selection_reason": "multi_component_control",
+      "weak_detector_targets": []
+    },
+    {
+      "case_id": "nutrition5k-018-dish_1558719570",
+      "crop_file": "dish_crops/dish_1558719570.jpg",
+      "dish_id": "dish_1558719570",
+      "dish_prior": [],
+      "dish_top3": [
+        {
+          "confidence": 0.23846308887004852,
+          "label": "clam_chowder"
+        },
+        {
+          "confidence": 0.11044114083051682,
+          "label": "beignets"
+        },
+        {
+          "confidence": 0.055731844156980515,
+          "label": "risotto"
+        }
+      ],
+      "hard_visual_labels": [
+        "apple",
+        "banana"
+      ],
+      "raw_visual_labels": [
+        "apple",
+        "banana"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 3,
+      "selection_reason": "multi_component_control",
+      "weak_detector_targets": [
+        "apple"
+      ]
+    },
+    {
+      "case_id": "nutrition5k-019-dish_1558720097",
+      "crop_file": "dish_crops/dish_1558720097.jpg",
+      "dish_id": "dish_1558720097",
+      "dish_prior": [],
+      "dish_top3": [
+        {
+          "confidence": 0.5225030183792114,
+          "label": "gnocchi"
+        },
+        {
+          "confidence": 0.061777133494615555,
+          "label": "chicken_wings"
+        },
+        {
+          "confidence": 0.05469628795981407,
+          "label": "chicken_curry"
+        }
+      ],
+      "hard_visual_labels": [
+        "carrot",
+        "orange"
+      ],
+      "raw_visual_labels": [
+        "carrot",
+        "orange"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 3,
+      "selection_reason": "multi_component_control",
+      "weak_detector_targets": [
+        "carrot"
+      ]
+    },
+    {
+      "case_id": "nutrition5k-022-dish_1559239369",
+      "crop_file": "dish_crops/dish_1559239369.jpg",
+      "dish_id": "dish_1559239369",
+      "dish_prior": [],
+      "dish_top3": [
+        {
+          "confidence": 0.5542805790901184,
+          "label": "beet_salad"
+        },
+        {
+          "confidence": 0.08445702493190765,
+          "label": "caprese_salad"
+        },
+        {
+          "confidence": 0.046227406710386276,
+          "label": "grilled_salmon"
+        }
+      ],
+      "hard_visual_labels": [
+        "apple",
+        "broccoli",
+        "carrot",
+        "orange"
+      ],
+      "raw_visual_labels": [
+        "apple",
+        "broccoli",
+        "carrot",
+        "orange"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 3,
+      "selection_reason": "multi_component_control",
+      "weak_detector_targets": [
+        "orange"
+      ]
+    },
+    {
+      "case_id": "nutrition5k-023-dish_1559578579",
+      "crop_file": "dish_crops/dish_1559578579.jpg",
+      "dish_id": "dish_1559578579",
+      "dish_prior": [],
+      "dish_top3": [
+        {
+          "confidence": 0.8702009320259094,
+          "label": "baby_back_ribs"
+        },
+        {
+          "confidence": 0.03421918675303459,
+          "label": "chicken_wings"
+        },
+        {
+          "confidence": 0.022739602252840996,
+          "label": "churros"
+        }
+      ],
+      "hard_visual_labels": [
+        "apple",
+        "carrot"
+      ],
+      "raw_visual_labels": [
+        "apple",
+        "carrot"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 3,
+      "selection_reason": "multi_component_control",
+      "weak_detector_targets": []
+    },
+    {
+      "case_id": "nutrition5k-025-dish_1559850314",
+      "crop_file": "dish_crops/dish_1559850314.jpg",
+      "dish_id": "dish_1559850314",
+      "dish_prior": [],
+      "dish_top3": [
+        {
+          "confidence": 0.2572155296802521,
+          "label": "edamame"
+        },
+        {
+          "confidence": 0.16101288795471191,
+          "label": "donuts"
+        },
+        {
+          "confidence": 0.09991595149040222,
+          "label": "gnocchi"
+        }
+      ],
+      "hard_visual_labels": [
+        "carrot",
+        "orange"
+      ],
+      "raw_visual_labels": [
+        "carrot",
+        "orange"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 3,
+      "selection_reason": "multi_component_control",
+      "weak_detector_targets": [
+        "orange"
+      ]
+    },
+    {
+      "case_id": "nutrition5k-039-dish_1561739265",
+      "crop_file": "dish_crops/dish_1561739265.jpg",
+      "dish_id": "dish_1561739265",
+      "dish_prior": [],
+      "dish_top3": [
+        {
+          "confidence": 0.9614729285240173,
+          "label": "cheese_plate"
+        },
+        {
+          "confidence": 0.014294835738837719,
+          "label": "grilled_salmon"
+        },
+        {
+          "confidence": 0.004961856175214052,
+          "label": "greek_salad"
+        }
+      ],
+      "hard_visual_labels": [
+        "broccoli",
+        "carrot"
+      ],
+      "raw_visual_labels": [
+        "broccoli",
+        "carrot"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 3,
+      "selection_reason": "multi_component_control",
+      "weak_detector_targets": [
+        "broccoli"
+      ]
+    },
+    {
+      "case_id": "nutrition5k-045-dish_1562690950",
+      "crop_file": "dish_crops/dish_1562690950.jpg",
+      "dish_id": "dish_1562690950",
+      "dish_prior": [],
+      "dish_top3": [
+        {
+          "confidence": 0.9602628946304321,
+          "label": "cheese_plate"
+        },
+        {
+          "confidence": 0.008865189738571644,
+          "label": "cheesecake"
+        },
+        {
+          "confidence": 0.00848402176052332,
+          "label": "omelette"
+        }
+      ],
+      "hard_visual_labels": [
+        "apple",
+        "broccoli",
+        "carrot"
+      ],
+      "raw_visual_labels": [
+        "apple",
+        "broccoli",
+        "carrot"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 3,
+      "selection_reason": "multi_component_control",
+      "weak_detector_targets": [
+        "apple",
+        "broccoli"
+      ]
+    },
+    {
+      "case_id": "nutrition5k-011-dish_1558376874",
+      "crop_file": "dish_crops/dish_1558376874.jpg",
+      "dish_id": "dish_1558376874",
+      "dish_prior": [],
+      "dish_top3": [
+        {
+          "confidence": 0.21270623803138733,
+          "label": "donuts"
+        },
+        {
+          "confidence": 0.16098907589912415,
+          "label": "churros"
+        },
+        {
+          "confidence": 0.14107300341129303,
+          "label": "gnocchi"
+        }
+      ],
+      "hard_visual_labels": [
+        "carrot"
+      ],
+      "raw_visual_labels": [
+        "carrot"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 2,
+      "selection_reason": "unchanged_single_component_control",
+      "weak_detector_targets": []
+    },
+    {
+      "case_id": "nutrition5k-013-dish_1558549773",
+      "crop_file": "dish_crops/dish_1558549773.jpg",
+      "dish_id": "dish_1558549773",
+      "dish_prior": [],
+      "dish_top3": [
+        {
+          "confidence": 0.7722465991973877,
+          "label": "edamame"
+        },
+        {
+          "confidence": 0.19002608954906464,
+          "label": "seaweed_salad"
+        },
+        {
+          "confidence": 0.008319730870425701,
+          "label": "guacamole"
+        }
+      ],
+      "hard_visual_labels": [
+        "broccoli"
+      ],
+      "raw_visual_labels": [
+        "broccoli"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 2,
+      "selection_reason": "unchanged_single_component_control",
+      "weak_detector_targets": []
+    },
+    {
+      "case_id": "nutrition5k-014-dish_1558630176",
+      "crop_file": "dish_crops/dish_1558630176.jpg",
+      "dish_id": "dish_1558630176",
+      "dish_prior": [],
+      "dish_top3": [
+        {
+          "confidence": 0.16579608619213104,
+          "label": "clam_chowder"
+        },
+        {
+          "confidence": 0.09723039716482162,
+          "label": "donuts"
+        },
+        {
+          "confidence": 0.046512022614479065,
+          "label": "risotto"
+        }
+      ],
+      "hard_visual_labels": [
+        "apple"
+      ],
+      "raw_visual_labels": [
+        "apple"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 2,
+      "selection_reason": "unchanged_single_component_control",
+      "weak_detector_targets": [
+        "apple"
+      ]
+    },
+    {
+      "case_id": "nutrition5k-016-dish_1558639482",
+      "crop_file": "dish_crops/dish_1558639482.jpg",
+      "dish_id": "dish_1558639482",
+      "dish_prior": [],
+      "dish_top3": [
+        {
+          "confidence": 0.2930920124053955,
+          "label": "dumplings"
+        },
+        {
+          "confidence": 0.0757603645324707,
+          "label": "sushi"
+        },
+        {
+          "confidence": 0.061789512634277344,
+          "label": "creme_brulee"
+        }
+      ],
+      "hard_visual_labels": [
+        "banana"
+      ],
+      "raw_visual_labels": [
+        "banana"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 2,
+      "selection_reason": "unchanged_single_component_control",
+      "weak_detector_targets": []
+    },
+    {
+      "case_id": "nutrition5k-021-dish_1559238993",
+      "crop_file": "dish_crops/dish_1559238993.jpg",
+      "dish_id": "dish_1559238993",
+      "dish_prior": [],
+      "dish_top3": [
+        {
+          "confidence": 0.831588089466095,
+          "label": "strawberry_shortcake"
+        },
+        {
+          "confidence": 0.07740917801856995,
+          "label": "panna_cotta"
+        },
+        {
+          "confidence": 0.05654814466834068,
+          "label": "cheesecake"
+        }
+      ],
+      "hard_visual_labels": [
+        "carrot"
+      ],
+      "raw_visual_labels": [
+        "carrot"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 2,
+      "selection_reason": "unchanged_single_component_control",
+      "weak_detector_targets": []
+    },
+    {
+      "case_id": "nutrition5k-024-dish_1559844272",
+      "crop_file": "dish_crops/dish_1559844272.jpg",
+      "dish_id": "dish_1559844272",
+      "dish_prior": [],
+      "dish_top3": [
+        {
+          "confidence": 0.3634607791900635,
+          "label": "donuts"
+        },
+        {
+          "confidence": 0.12803927063941956,
+          "label": "gnocchi"
+        },
+        {
+          "confidence": 0.12563146650791168,
+          "label": "edamame"
+        }
+      ],
+      "hard_visual_labels": [
+        "carrot"
+      ],
+      "raw_visual_labels": [
+        "carrot"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 2,
+      "selection_reason": "unchanged_single_component_control",
+      "weak_detector_targets": []
+    },
+    {
+      "case_id": "nutrition5k-027-dish_1560368506",
+      "crop_file": "dish_crops/dish_1560368506.jpg",
+      "dish_id": "dish_1560368506",
+      "dish_prior": [],
+      "dish_top3": [
+        {
+          "confidence": 0.5139561891555786,
+          "label": "cheese_plate"
+        },
+        {
+          "confidence": 0.18953436613082886,
+          "label": "pork_chop"
+        },
+        {
+          "confidence": 0.1373191922903061,
+          "label": "foie_gras"
+        }
+      ],
+      "hard_visual_labels": [
+        "broccoli"
+      ],
+      "raw_visual_labels": [
+        "broccoli"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 2,
+      "selection_reason": "unchanged_single_component_control",
+      "weak_detector_targets": [
+        "broccoli"
+      ]
+    },
+    {
+      "case_id": "nutrition5k-028-dish_1560526447",
+      "crop_file": "dish_crops/dish_1560526447.jpg",
+      "dish_id": "dish_1560526447",
+      "dish_prior": [],
+      "dish_top3": [
+        {
+          "confidence": 0.9522205591201782,
+          "label": "beet_salad"
+        },
+        {
+          "confidence": 0.041990507394075394,
+          "label": "seaweed_salad"
+        },
+        {
+          "confidence": 0.002577971899881959,
+          "label": "greek_salad"
+        }
+      ],
+      "hard_visual_labels": [
+        "broccoli"
+      ],
+      "raw_visual_labels": [
+        "broccoli"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 2,
+      "selection_reason": "unchanged_single_component_control",
+      "weak_detector_targets": [
+        "carrot"
+      ]
+    },
+    {
+      "case_id": "nutrition5k-030-dish_1561147944",
+      "crop_file": "dish_crops/dish_1561147944.jpg",
+      "dish_id": "dish_1561147944",
+      "dish_prior": [],
+      "dish_top3": [
+        {
+          "confidence": 0.7857605814933777,
+          "label": "beet_salad"
+        },
+        {
+          "confidence": 0.08299705386161804,
+          "label": "seaweed_salad"
+        },
+        {
+          "confidence": 0.08296721428632736,
+          "label": "greek_salad"
+        }
+      ],
+      "hard_visual_labels": [
+        "broccoli"
+      ],
+      "raw_visual_labels": [
+        "broccoli"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 2,
+      "selection_reason": "unchanged_single_component_control",
+      "weak_detector_targets": [
+        "carrot"
+      ]
+    },
+    {
+      "case_id": "nutrition5k-032-dish_1561393764",
+      "crop_file": "dish_crops/dish_1561393764.jpg",
+      "dish_id": "dish_1561393764",
+      "dish_prior": [],
+      "dish_top3": [
+        {
+          "confidence": 0.2777165472507477,
+          "label": "omelette"
+        },
+        {
+          "confidence": 0.22816599905490875,
+          "label": "chicken_wings"
+        },
+        {
+          "confidence": 0.08982043713331223,
+          "label": "baby_back_ribs"
+        }
+      ],
+      "hard_visual_labels": [
+        "broccoli"
+      ],
+      "raw_visual_labels": [
+        "broccoli"
+      ],
+      "review": {
+        "abstention_needed": null,
+        "ambiguous_components": [],
+        "composition_only_hypotheses": [],
+        "misleading_suggestions": [],
+        "review_status": "pending",
+        "reviewer": null,
+        "useful_suggestions": [],
+        "visible_components": [],
+        "visible_regions": []
+      },
+      "selection_priority": 2,
+      "selection_reason": "unchanged_single_component_control",
+      "weak_detector_targets": [
+        "broccoli"
+      ]
+    }
+  ],
+  "sample_count": 50,
+  "schema": "supernutrition.nutrition5k-visible-audit.v1",
+  "selection": {
+    "all_hard_gate_conflicts": true,
+    "control_policy": "deterministic_priority_slice_from_existing_100",
+    "ground_truth_boundary": "model-assisted audit is not human ground truth"
+  },
+  "status": "pending_annotation"
+}

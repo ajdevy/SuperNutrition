@@ -39,6 +39,7 @@ public final class PocActivity extends Activity {
     private static final int REQUEST_GALLERY = 4103;
     private static final String RESEARCH_WARNING =
             "Research PoC / ingredient labels limited to model vocabulary / grams unavailable";
+    private static final String EXTRA_RESEARCH_IMAGE_PATH = "research_image_path";
 
     private final ExecutorService analysisExecutor = Executors.newSingleThreadExecutor();
     private PocOverlayView overlayView;
@@ -55,6 +56,10 @@ public final class PocActivity extends Activity {
         super.onCreate(savedInstanceState);
         setTitle("SuperNutrition G-3 Research PoC");
         setContentView(createContentView());
+        String researchImagePath = getIntent().getStringExtra(EXTRA_RESEARCH_IMAGE_PATH);
+        if (researchImagePath != null && !researchImagePath.isBlank()) {
+            loadResearchImage(researchImagePath);
+        }
     }
 
     @Override
@@ -223,6 +228,15 @@ public final class PocActivity extends Activity {
         }
     }
 
+    private void loadResearchImage(String path) {
+        Bitmap bitmap = BitmapFactory.decodeFile(path);
+        if (bitmap == null) {
+            statusView.setText("Research image недоступно: " + path);
+            return;
+        }
+        setSelectedBitmap(bitmap);
+    }
+
     private void setSelectedBitmap(Bitmap bitmap) {
         analysisRequestId++;
         if (selectedBitmap != null && selectedBitmap != bitmap && !selectedBitmap.isRecycled()) {
@@ -360,6 +374,7 @@ public final class PocActivity extends Activity {
                 summary.append("\n• ").append(suggestion.label);
                 if (suggestion.fromDishPrior) {
                     summary.append(" — dish prior");
+                    summary.append(", composition support ").append(percent(suggestion.compositionSupport));
                     if (suggestion.detectorConfidence >= 0.0f) {
                         summary.append(", detected ").append(percent(suggestion.detectorConfidence));
                     } else {
@@ -367,9 +382,7 @@ public final class PocActivity extends Activity {
                     }
                 } else {
                     summary.append(" — detector ").append(percent(suggestion.detectorConfidence));
-                    if (!suggestion.acceptedForRegions) {
-                        summary.append(", rejected by dish prior");
-                    }
+                    summary.append(", retained for visual review");
                 }
             }
         }
