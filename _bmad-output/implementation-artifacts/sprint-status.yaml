@@ -57,14 +57,24 @@ development_status:
   epic-3-retrospective: optional
 
   # Discovered 2026-08-03 while scoping E7.6: origin/feat/e43-gateway-impl
-  # (unmerged, commit 24d51378) already implements a working first-party
-  # gateway for 4.3 -- Fastify server, auth, consent verification, a real
-  # OpenRouter provider adapter, rate limiting, telemetry -- 537 tests,
-  # 94.1%/90.2% coverage. Not an ancestor of main or this branch. Left as
-  # backlog below because this file has not been reconciled with that branch;
-  # do not treat 4-3 as clean unstarted work without checking it first. Its
-  # own contracts/mobile-api/v1 release ships text as reserved, not supported,
-  # and is frozen after first consumer -- see G-4's draft-proposals note.
+  # (unmerged, commit 24d51378) implements a first-party gateway for 4.3 --
+  # Fastify server, auth, consent verification, an OpenRouter provider
+  # adapter, rate limiting, telemetry -- 537 tests, 94.1%/90.2% coverage. Not
+  # an ancestor of main or this branch. Left as backlog below because this
+  # file has not been reconciled with that branch; do not treat 4-3 as clean
+  # unstarted work without checking it first.
+  #
+  # Adversarially re-verified 2026-08-03 against the actual composition root,
+  # not the commit message: photo-only (the text route is documented and
+  # schema'd but never registered); the composition root wires in-memory
+  # rate-limit/dedup stores instead of the tested Redis-backed ones it also
+  # contains (rate limits and at-most-once dedup are per-process, don't
+  # survive a restart or hold across replicas); and there is currently no
+  # working non-test-mode authentication path at all -- production auth
+  # unconditionally throws. Tests passing on that branch is not evidence its
+  # production wiring is safe. Its own contracts/mobile-api/v1 release ships
+  # text as reserved, not supported, and is frozen after first consumer.
+  # Full findings: G-4's draft-proposals doc, sections 1, 3, and 4.
   epic-4: backlog
   4-1-implement-remote-consent-and-transfer-states: backlog
   4-2-implement-the-remote-mobile-adapter: backlog
