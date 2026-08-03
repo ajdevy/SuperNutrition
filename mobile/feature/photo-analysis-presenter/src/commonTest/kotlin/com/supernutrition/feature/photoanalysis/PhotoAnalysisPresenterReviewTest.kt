@@ -20,6 +20,7 @@ import com.supernutrition.domain.inference.PHOTO_INFERENCE_CONTRACT_V1
 import com.supernutrition.domain.inference.VisibleComponent
 import com.supernutrition.domain.photoanalysis.AttemptId
 import com.supernutrition.domain.photoanalysis.CandidateReviewDraft
+import com.supernutrition.domain.photoanalysis.DishIngredientHint
 import com.supernutrition.domain.photoanalysis.LocalAnalysisStage
 import com.supernutrition.domain.photoanalysis.PhotoAnalysisState
 import com.supernutrition.domain.photoanalysis.PhotoRef
@@ -39,6 +40,7 @@ class PhotoAnalysisPresenterReviewTest {
     fun `presenter maps every factual local stage without a time estimate`() {
         val expectedLabels = mapOf(
             LocalAnalysisStage.FINDING_VISIBLE_FOODS to copy.status.findingVisibleFoods,
+            LocalAnalysisStage.IDENTIFYING_DISH to copy.status.identifyingDish,
             LocalAnalysisStage.ESTIMATING_PORTIONS to copy.status.estimatingPortions,
             LocalAnalysisStage.CHECKING_RESULTS to copy.status.checkingResults,
         )
@@ -64,6 +66,14 @@ class PhotoAnalysisPresenterReviewTest {
                 draft = CandidateReviewDraft(
                     mainDishProposals = listOf(dish("dish-salmon", "Salmon with rice", 1)),
                     photoEvidence = listOf(component("component-rice", "ingredient:rice", "Rice")),
+                    compositionHints = listOf(
+                        DishIngredientHint(
+                            ingredientId = "ingredient:tomato",
+                            label = "Tomato",
+                            support = 1.0,
+                            sourceDishCandidateIds = listOf("dish-salmon"),
+                        ),
+                    ),
                 ),
             ),
             copy,
@@ -77,6 +87,8 @@ class PhotoAnalysisPresenterReviewTest {
         assertEquals(copy.evidence.localProvenance, review.visibleComponents.single().provenanceLabel)
         assertFalse(review.visibleComponents.single().isSelected)
         assertEquals(copy.evidence.notSelected, review.visibleComponents.single().selectionLabel)
+        assertEquals(listOf("Tomato"), review.compositionHints.map { it.label })
+        assertEquals(copy.evidence.compositionHintSource, review.compositionHints.single().sourceLabel)
     }
 
     @Test

@@ -13,6 +13,7 @@ import com.supernutrition.domain.inference.PhotoRef
 import com.supernutrition.domain.inference.V2AbstentionReason
 import com.supernutrition.domain.inference.V2InferenceFailureCode
 import com.supernutrition.domain.inference.VisibleComponent
+import com.supernutrition.domain.photoanalysis.BoundedDishIngredientFusion
 import com.supernutrition.domain.photoanalysis.CandidateReviewDraft
 import com.supernutrition.domain.photoanalysis.LocalAnalysisStage
 import com.supernutrition.domain.photoanalysis.PhotoAnalysisEvent
@@ -66,13 +67,13 @@ class PhotoAnalysisAnalysisCoordinator(
                 ref,
                 componentResult.recoveryReason(),
             )
-            dispatchStage(requestId, LocalAnalysisStage.ESTIMATING_PORTIONS)
+            dispatchStage(requestId, LocalAnalysisStage.IDENTIFYING_DISH)
             val dishResult = dishEngine.analyze(PhotoInferenceRequest(ref, attemptContext))
             if (!isActive(requestId, ref)) return PhotoAnalysisAnalysisResult.Ignored
 
             dispatchStage(requestId, LocalAnalysisStage.CHECKING_RESULTS)
-            val draft = CandidateReviewDraft(
-                mainDishProposals = dishResult.outcome.dishCandidates(),
+            val draft = BoundedDishIngredientFusion.merge(
+                dishes = dishResult.outcome.dishCandidates(),
                 photoEvidence = components,
             )
             feature.dispatch(PhotoAnalysisEvent.ReviewEvidenceAvailable(requestId, draft))

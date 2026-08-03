@@ -10,8 +10,9 @@
 "photo_analysis.status.ready_to_capture" = "Ready to capture";
 "photo_analysis.status.preparing_photo" = "Preparing photo";
 "photo_analysis.status.photo_ready" = "Photo ready";
-"photo_analysis.status.analyzing_photo" = "Analyzing photo";
-"photo_analysis.status.finding_visible_foods" = "Finding visible foods";
+"photo_analysis.status.analyzing_photo" = "Detecting ingredients";
+"photo_analysis.status.finding_visible_foods" = "Detecting ingredients";
+"photo_analysis.status.identifying_dish" = "Identifying the dish";
 "photo_analysis.status.estimating_portions" = "Estimating portions";
 "photo_analysis.status.checking_results" = "Checking results";
 "photo_analysis.status.review_candidate" = "Review candidate";
@@ -35,6 +36,10 @@
 "photo_analysis.evidence.remote_provenance" = "Remote analysis";
 "photo_analysis.evidence.selected" = "Selected";
 "photo_analysis.evidence.not_selected" = "Not selected";
+"photo_analysis.evidence.dish_candidates" = "Dish candidates";
+"photo_analysis.evidence.visible_components" = "Detected in photo";
+"photo_analysis.evidence.composition_hints" = "Possible ingredients from dish";
+"photo_analysis.evidence.composition_hint_source" = "Dish hint, not visual evidence";
 
 "photo_analysis.recovery.permission_required" = "Camera permission is required";
 "photo_analysis.recovery.camera_unavailable" = "Camera is unavailable";

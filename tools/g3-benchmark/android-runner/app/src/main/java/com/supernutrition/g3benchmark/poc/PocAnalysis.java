@@ -92,17 +92,20 @@ public final class PocAnalysis implements AutoCloseable {
         public final float detectorConfidence;
         public final boolean fromDishPrior;
         public final boolean acceptedForRegions;
+        public final float compositionSupport;
 
         IngredientSuggestion(
                 String label,
                 float detectorConfidence,
                 boolean fromDishPrior,
-                boolean acceptedForRegions
+                boolean acceptedForRegions,
+                float compositionSupport
         ) {
             this.label = label;
             this.detectorConfidence = detectorConfidence;
             this.fromDishPrior = fromDishPrior;
             this.acceptedForRegions = acceptedForRegions;
+            this.compositionSupport = compositionSupport;
         }
 
         public String getLabel() {
@@ -119,6 +122,10 @@ public final class PocAnalysis implements AutoCloseable {
 
         public boolean isAcceptedForRegions() {
             return acceptedForRegions;
+        }
+
+        public float getCompositionSupport() {
+            return compositionSupport;
         }
     }
 
