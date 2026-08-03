@@ -7,6 +7,8 @@ import com.supernutrition.domain.inference.VisibleComponent
 data class CandidateReviewDraft(
     val mainDishProposals: List<InferenceCandidate>,
     val photoEvidence: List<VisibleComponent>,
+    /** Dish-prior hypotheses; these are never visual evidence. */
+    val compositionHints: List<DishIngredientHint> = emptyList(),
 ) {
     init {
         require(mainDishProposals.size <= MAX_MAIN_DISH_PROPOSALS) {
@@ -24,10 +26,24 @@ data class CandidateReviewDraft(
         require(photoEvidence.map(VisibleComponent::componentId).distinct().size == photoEvidence.size) {
             "Candidate review photo-evidence component IDs must be unique"
         }
+        require(compositionHints.size <= MAX_COMPOSITION_HINTS) {
+            "Candidate review must contain at most $MAX_COMPOSITION_HINTS composition hints"
+        }
+        require(compositionHints.map(DishIngredientHint::ingredientId).distinct().size == compositionHints.size) {
+            "Candidate review composition hint IDs must be unique"
+        }
+        require(
+            compositionHints.zipWithNext().all { (previous, next) ->
+                previous.support >= next.support
+            },
+        ) {
+            "Candidate review composition hints must be ordered by support"
+        }
     }
 
     private companion object {
         const val MAX_MAIN_DISH_PROPOSALS = 3
+        const val MAX_COMPOSITION_HINTS = 24
     }
 }
 

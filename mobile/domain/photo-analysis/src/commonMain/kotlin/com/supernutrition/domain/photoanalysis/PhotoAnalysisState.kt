@@ -44,6 +44,7 @@ enum class RecoveryReason {
 /** Truthful, bounded local work stages shown while photo evidence is being prepared for review. */
 enum class LocalAnalysisStage {
     FINDING_VISIBLE_FOODS,
+    IDENTIFYING_DISH,
     ESTIMATING_PORTIONS,
     CHECKING_RESULTS,
 }

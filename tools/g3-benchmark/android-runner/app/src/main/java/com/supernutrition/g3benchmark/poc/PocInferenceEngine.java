@@ -132,11 +132,8 @@ public final class PocInferenceEngine implements AutoCloseable {
             warnings.add("COCO region proposal pipeline unavailable: " + reason(error));
         }
 
-        List<String> dishPrior = dishes.isEmpty()
-                ? Collections.<String>emptyList()
-                : PocDishIngredientPriors.forDish(dishes.get(0).label);
-        ingredientSuggestions.addAll(buildIngredientSuggestions(dishPrior, detectorProposals));
-        List<RawRegion> proposals = applyDishPrior(dishPrior, detectorProposals, warnings);
+        ingredientSuggestions.addAll(buildIngredientSuggestions(dishes, detectorProposals));
+        List<RawRegion> proposals = applySuggestionFirstFusion(dishes, detectorProposals, warnings);
 
         if (gridCellIndex >= 0) {
             float[] bounds = PocInferenceMath.gridCellBounds(gridCellIndex);
@@ -423,40 +420,43 @@ public final class PocInferenceEngine implements AutoCloseable {
         return kept;
     }
 
-    private static List<RawRegion> applyDishPrior(
-            List<String> dishPrior,
+    private static List<RawRegion> applySuggestionFirstFusion(
+            List<PocAnalysis.DishCandidate> dishes,
             List<RawRegion> detectorProposals,
             List<String> warnings
     ) {
-        if (dishPrior.isEmpty()) {
-            if (!detectorProposals.isEmpty()) {
-                warnings.add("no dish-specific ingredient prior; raw detector hints retained for debug");
-            }
-            return new ArrayList<>(detectorProposals);
+        Map<String, Float> support = PocFusionPolicy.compositionSupport(dishes);
+        List<RawRegion> ranked = new ArrayList<>(detectorProposals);
+        Collections.sort(ranked, (left, right) -> Float.compare(
+                PocFusionPolicy.rankScore(
+                        right.confidence,
+                        PocFusionPolicy.normalizedSupport(support, right.label)),
+                PocFusionPolicy.rankScore(
+                        left.confidence,
+                        PocFusionPolicy.normalizedSupport(support, left.label))
+        ));
+        if (!ranked.isEmpty()) {
+            warnings.add("bounded late fusion applied; raw visual proposals retained and reranked");
         }
-        List<RawRegion> accepted = new ArrayList<>();
-        for (RawRegion proposal : detectorProposals) {
-            if (dishPrior.contains(proposal.label)) {
-                accepted.add(proposal);
-            }
-        }
-        warnings.add("dish-conditioned ingredient prior applied; detector labels outside the prior are debug-only");
-        return accepted;
+        warnings.add("dish-prior-only suggestions are composition hints; they never create visual overlays");
+        return ranked;
     }
 
     private static List<PocAnalysis.IngredientSuggestion> buildIngredientSuggestions(
-            List<String> dishPrior,
+            List<PocAnalysis.DishCandidate> dishes,
             List<RawRegion> detectorProposals
     ) {
+        Map<String, Float> compositionSupport = PocFusionPolicy.compositionSupport(dishes);
         List<PocAnalysis.IngredientSuggestion> suggestions = new ArrayList<>();
         Set<String> seen = new HashSet<>();
-        for (String label : dishPrior) {
+        for (String label : PocFusionPolicy.compositionLabels(dishes)) {
             float detectorConfidence = maxDetectorConfidence(detectorProposals, label);
             suggestions.add(new PocAnalysis.IngredientSuggestion(
                     label,
                     detectorConfidence,
                     true,
-                    detectorConfidence >= 0.0f
+                    detectorConfidence >= 0.0f,
+                    PocFusionPolicy.normalizedSupport(compositionSupport, label)
             ));
             seen.add(label);
         }
@@ -466,7 +466,8 @@ public final class PocInferenceEngine implements AutoCloseable {
                         proposal.label,
                         proposal.confidence,
                         false,
-                        dishPrior.isEmpty()
+                        true,
+                        PocFusionPolicy.normalizedSupport(compositionSupport, proposal.label)
                 ));
             }
         }

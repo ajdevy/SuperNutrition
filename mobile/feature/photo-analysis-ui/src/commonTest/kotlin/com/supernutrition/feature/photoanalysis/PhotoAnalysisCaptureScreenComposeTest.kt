@@ -104,7 +104,30 @@ class PhotoAnalysisCaptureScreenComposeTest {
     @Test
     fun `review renders separate dish text and from-photo evidence without selection controls`() = runComposeUiTest {
         val copy = PhotoAnalysisPresenterCopyFixtures.localized()
-        val model = PhotoAnalysisPresenterModel(
+        val model = reviewModel(copy)
+        setContent {
+            PhotoAnalysisCaptureScreen(
+                model = model,
+                onAction = {},
+                surface = PhotoAnalysisCaptureSurface(presenterCopy = copy),
+            )
+        }
+
+        onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_MAIN_DISH_PROPOSALS.value).assertIsDisplayed()
+        onNodeWithText("Salmone con riso").assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_COMPONENT_EVIDENCE.value).assertIsDisplayed()
+        onNodeWithTag(photoAnalysisVisibleComponentId("component-rice").value).assertIsDisplayed()
+        onNodeWithText("Riso").assertIsDisplayed()
+        onNodeWithText(copy.evidence.fromThisPhoto).assertIsDisplayed()
+        onNodeWithText("Estimated: 120–150 g").assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_COMPOSITION_HINTS.value).assertIsDisplayed()
+        onNodeWithText("Pomodoro").assertIsDisplayed()
+        onNodeWithText(copy.evidence.compositionHintSource).assertIsDisplayed()
+        onNodeWithText(copy.evidence.fromThisPhoto).assertExists()
+    }
+
+    private fun reviewModel(copy: PhotoAnalysisPresenterCopy): PhotoAnalysisPresenterModel =
+        PhotoAnalysisPresenterModel(
             statusLabel = copy.status.reviewCandidate,
             state = PhotoAnalysisPresenterState.CANDIDATE_REVIEW,
             actions = listOf(PhotoAnalysisPresenterAction.Cancel),
@@ -136,24 +159,16 @@ class PhotoAnalysisCaptureScreenComposeTest {
                         selectionLabel = copy.evidence.notSelected,
                     ),
                 ),
+                compositionHints = listOf(
+                    PhotoAnalysisDishIngredientHintModel(
+                        ingredientId = "ingredient:tomato",
+                        label = "Pomodoro",
+                        sourceLabel = copy.evidence.compositionHintSource,
+                        sourceDishCandidateIds = listOf("dish-salmon"),
+                    ),
+                ),
             ),
         )
-        setContent {
-            PhotoAnalysisCaptureScreen(
-                model = model,
-                onAction = {},
-                surface = PhotoAnalysisCaptureSurface(presenterCopy = copy),
-            )
-        }
-
-        onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_MAIN_DISH_PROPOSALS.value).assertIsDisplayed()
-        onNodeWithText("Salmone con riso").assertIsDisplayed()
-        onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_COMPONENT_EVIDENCE.value).assertIsDisplayed()
-        onNodeWithTag(photoAnalysisVisibleComponentId("component-rice").value).assertIsDisplayed()
-        onNodeWithText("Riso").assertIsDisplayed()
-        onNodeWithText(copy.evidence.fromThisPhoto).assertIsDisplayed()
-        onNodeWithText("Estimated: 120–150 g").assertIsDisplayed()
-    }
 
     @Test
     fun `each local wait stage exposes one cancel action and no nutrition output`() = runComposeUiTest {
@@ -166,6 +181,7 @@ class PhotoAnalysisCaptureScreenComposeTest {
 
         listOf(
             com.supernutrition.domain.photoanalysis.LocalAnalysisStage.FINDING_VISIBLE_FOODS,
+            com.supernutrition.domain.photoanalysis.LocalAnalysisStage.IDENTIFYING_DISH,
             com.supernutrition.domain.photoanalysis.LocalAnalysisStage.ESTIMATING_PORTIONS,
             com.supernutrition.domain.photoanalysis.LocalAnalysisStage.CHECKING_RESULTS,
         ).forEach { stage ->
