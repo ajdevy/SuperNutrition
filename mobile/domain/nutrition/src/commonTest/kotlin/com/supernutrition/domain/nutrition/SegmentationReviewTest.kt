@@ -341,4 +341,95 @@ class SegmentationReviewTest {
         assertEquals(listOf("food:eggs-fried-in-olive-oil"), merged.items.map { it.canonicalItemId })
         assertEquals(TextSpan(0, 55), merged.items.single().sourceSpan)
     }
+
+    @Test
+    fun `merging leaves a third item alone when it ends before the merged hull begins`() {
+        // egg (0,15) ends well before the bread+oil hull (20,55) starts, so it
+        // is a real remaining item that must survive the merge untouched --
+        // distinct from the straddling case, where the remaining item's words
+        // fall inside the hull.
+        val oil = DetectedItem("food:olive-oil", TextSpan(46, 55))
+        val review = SegmentationReview.of(description, proposed).add(oil)
+
+        val merged = review.merge(bread, oil, "food:rye-toast-with-olive-oil")
+
+        assertEquals(
+            listOf("food:egg-boiled", "food:rye-toast-with-olive-oil"),
+            merged.items.map { it.canonicalItemId },
+        )
+    }
+
+    @Test
+    fun `merging leaves a third item alone when it starts after the merged hull ends`() {
+        // oil (46,55) starts after the egg+bread hull (0,40) ends -- the
+        // mirror of the case above, so the straddle check's first comparison
+        // is exercised on its own false branch too.
+        val oil = DetectedItem("food:olive-oil", TextSpan(46, 55))
+        val review = SegmentationReview.of(description, proposed).add(oil)
+
+        val merged = review.merge(egg, bread, "food:eggs-on-toast")
+
+        assertEquals(
+            listOf("food:olive-oil", "food:eggs-on-toast"),
+            merged.items.map { it.canonicalItemId },
+        )
+    }
+
+    @Test
+    fun `merging an item not in the split changes nothing`() {
+        // The interface can emit a stale merge request for an item the user
+        // just removed, same as confirm and split already tolerate.
+        val review = SegmentationReview.of(description, proposed).remove(bread)
+
+        val unchanged = review.merge(egg, bread, "food:eggs-on-toast")
+
+        assertEquals(listOf("food:egg-boiled"), unchanged.items.map { it.canonicalItemId })
+    }
+
+    @Test
+    fun `merging when only the second item is stale also changes nothing`() {
+        // Forces the second membership check on its own, rather than always
+        // short-circuiting on the first.
+        val review = SegmentationReview.of(description, proposed).remove(egg)
+
+        val unchanged = review.merge(egg, bread, "food:eggs-on-toast")
+
+        assertEquals(listOf("food:bread-rye"), unchanged.items.map { it.canonicalItemId })
+    }
+
+    @Test
+    fun `wordsFor refuses an item that is not in this split`() {
+        // Asking for a foreign item's words would return a substring of a
+        // description that item never came from.
+        val review = SegmentationReview.of(description, proposed).remove(bread)
+
+        assertFailsWith<IllegalArgumentException> { review.wordsFor(bread) }
+    }
+
+    @Test
+    fun `a split that would leave only a conjunction on the first half is refused`() {
+        // Pathological on its own, but the guard exists for exactly this
+        // shape: trimming leaves nothing on one side, and a stale-reference
+        // no-op would look identical to a split that worked.
+        val collapsed = "and rice"
+        val one = DetectedItem("food:mystery", TextSpan(0, 8))
+        val review = SegmentationReview.of(collapsed, listOf(one))
+
+        val failure = assertFailsWith<IllegalArgumentException> {
+            review.split(one, at = 4, "food:a", "food:b")
+        }
+        assertTrue("leaves one side blank" in failure.message.orEmpty())
+    }
+
+    @Test
+    fun `a split that would leave only a conjunction on the second half is refused`() {
+        val collapsed = "rice and"
+        val one = DetectedItem("food:mystery", TextSpan(0, 8))
+        val review = SegmentationReview.of(collapsed, listOf(one))
+
+        val failure = assertFailsWith<IllegalArgumentException> {
+            review.split(one, at = 4, "food:a", "food:b")
+        }
+        assertTrue("leaves one side blank" in failure.message.orEmpty())
+    }
 }

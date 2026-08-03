@@ -204,6 +204,6 @@ line_minimum_percent = 85
 branch_minimum_percent = 85
 changed_line_minimum_percent = 100
 changed_branch_minimum_percent = 100
-observed_line_percent = "90.91"
+observed_line_percent = "99.99"
 observed_branch_percent = "100.00"
 status = "local-verified"
