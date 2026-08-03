@@ -5,8 +5,13 @@ const val PHOTO_INFERENCE_CONTRACT_V1 = "photo-inference-engine/v1"
 /** Shared domain validation for immutable, language-neutral contract values. */
 const val SHA256_DIGEST_LENGTH = 64
 
-fun isSha256Digest(value: String): Boolean =
-    value.length == SHA256_DIGEST_LENGTH && value.all { it in '0'..'9' || it in 'a'..'f' }
+fun isSha256Digest(value: String): Boolean {
+    if (value.length != SHA256_DIGEST_LENGTH) return false
+    for (character in value) {
+        if (character !in '0'..'9' && character !in 'a'..'f') return false
+    }
+    return true
+}
 
 fun requireSha256Digest(value: String, message: String): String = value.also {
     require(isSha256Digest(it)) { message }

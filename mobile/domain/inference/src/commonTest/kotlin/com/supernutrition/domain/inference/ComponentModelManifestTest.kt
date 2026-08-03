@@ -6,6 +6,8 @@ import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class ComponentModelManifestTest {
     @Test
@@ -116,7 +118,19 @@ class ComponentModelManifestTest {
 
     @Test
     fun `manifest rejects digest and rollback drift`() {
+        assertTrue(isSha256Digest("0".repeat(64)))
+        assertFalse(isSha256Digest("a".repeat(63) + ":"))
+        assertFalse(isSha256Digest("a".repeat(63) + "G"))
         assertFailsWith<IllegalArgumentException> { validManifest().copy(artifactDigest = "not-a-digest") }
+        assertEquals(
+            "0".repeat(64),
+            validManifest().copy(artifactDigest = "0".repeat(64)).artifactDigest,
+        )
+        listOf('G', ':', 'g').forEach { invalidHexCharacter ->
+            assertFailsWith<IllegalArgumentException> {
+                validManifest().copy(artifactDigest = "a".repeat(63) + invalidHexCharacter)
+            }
+        }
         assertFailsWith<IllegalArgumentException> {
             validManifest(rollbackTargetVersion = "component-model-research-1")
         }
