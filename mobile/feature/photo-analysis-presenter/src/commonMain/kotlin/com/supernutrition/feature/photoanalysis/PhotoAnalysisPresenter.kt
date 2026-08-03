@@ -6,6 +6,7 @@ import com.supernutrition.domain.inference.ConfidenceBand
 import com.supernutrition.domain.inference.InferenceRoute
 import com.supernutrition.domain.inference.MassEvidence
 import com.supernutrition.domain.photoanalysis.CandidateReviewDraft
+import com.supernutrition.domain.photoanalysis.DishIngredientHint
 import com.supernutrition.domain.photoanalysis.LocalAnalysisStage
 import com.supernutrition.domain.photoanalysis.PhotoAnalysisState
 import com.supernutrition.domain.photoanalysis.RecoveryReason
@@ -59,6 +60,7 @@ data class StatusCopy(
     val photoReady: String,
     val analyzingPhoto: String,
     val findingVisibleFoods: String,
+    val identifyingDish: String,
     val estimatingPortions: String,
     val checkingResults: String,
     val reviewCandidate: String,
@@ -71,6 +73,7 @@ data class StatusCopy(
             photoReady,
             analyzingPhoto,
             findingVisibleFoods,
+            identifyingDish,
             estimatingPortions,
             checkingResults,
             reviewCandidate,
@@ -98,6 +101,10 @@ data class EvidenceCopy(
     val remoteProvenance: String,
     val selected: String,
     val notSelected: String,
+    val dishCandidatesTitle: String = "Dish candidates",
+    val visibleComponentsTitle: String = "Detected in photo",
+    val compositionHintsTitle: String = "Possible ingredients from dish",
+    val compositionHintSource: String = "Dish hint, not visual evidence",
 ) {
     init {
         require(estimatedMass.contains("{lower}") && estimatedMass.contains("{upper}")) {
@@ -125,6 +132,10 @@ data class EvidenceCopy(
             remoteProvenance,
             selected,
             notSelected,
+            dishCandidatesTitle,
+            visibleComponentsTitle,
+            compositionHintsTitle,
+            compositionHintSource,
         )
 }
 
@@ -188,6 +199,7 @@ data class PhotoAnalysisPresenterModel(
 
         private fun stageLabel(stage: LocalAnalysisStage, copy: PhotoAnalysisPresenterCopy): String = when (stage) {
             LocalAnalysisStage.FINDING_VISIBLE_FOODS -> copy.status.findingVisibleFoods
+            LocalAnalysisStage.IDENTIFYING_DISH -> copy.status.identifyingDish
             LocalAnalysisStage.ESTIMATING_PORTIONS -> copy.status.estimatingPortions
             LocalAnalysisStage.CHECKING_RESULTS -> copy.status.checkingResults
         }
@@ -232,6 +244,7 @@ data class PhotoAnalysisPresenterModel(
 data class PhotoAnalysisReviewModel(
     val mainDishProposals: List<PhotoAnalysisDishProposalModel>,
     val visibleComponents: List<PhotoAnalysisVisibleComponentModel>,
+    val compositionHints: List<PhotoAnalysisDishIngredientHintModel> = emptyList(),
 )
 
 data class PhotoAnalysisDishProposalModel(
@@ -256,6 +269,13 @@ data class PhotoAnalysisVisibleComponentModel(
     /** E3.9 renders only immutable evidence; E5.1 owns a user-controlled selection. */
     val isSelected: Boolean = false,
     val selectionLabel: String,
+)
+
+data class PhotoAnalysisDishIngredientHintModel(
+    val ingredientId: String,
+    val label: String,
+    val sourceLabel: String,
+    val sourceDishCandidateIds: List<String>,
 )
 
 data class PhotoAnalysisVisibleRegionModel(val left: Double, val top: Double, val width: Double, val height: Double)
@@ -300,6 +320,15 @@ private fun CandidateReviewDraft.toPresentation(copy: PhotoAnalysisPresenterCopy
                 selectionLabel = copy.evidence.notSelected,
             )
         },
+        compositionHints = compositionHints.map { hint -> hint.toPresentation(copy.evidence) },
+    )
+
+private fun DishIngredientHint.toPresentation(copy: EvidenceCopy): PhotoAnalysisDishIngredientHintModel =
+    PhotoAnalysisDishIngredientHintModel(
+        ingredientId = ingredientId,
+        label = label,
+        sourceLabel = copy.compositionHintSource,
+        sourceDishCandidateIds = sourceDishCandidateIds,
     )
 
 private fun confidenceLabel(band: ConfidenceBand, copy: EvidenceCopy): String = when (band) {

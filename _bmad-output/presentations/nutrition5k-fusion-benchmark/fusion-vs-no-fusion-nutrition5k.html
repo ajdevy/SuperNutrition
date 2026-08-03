@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Visual report comparing SuperNutrition's raw ingredient proposals with its hard dish-prior fusion on 100 Nutrition5k food images.">
+  <title>Fusion vs no fusion | SuperNutrition</title>
+  <style>
+    :root {
+      --ink: #17211b;
+      --muted: #607066;
+      --paper: #f7f7f2;
+      --card: #fff;
+      --line: #dfe6df;
+      --green: #176b4a;
+      --green-soft: #dcefe4;
+      --orange: #c56a2e;
+      --orange-soft: #f8e5d5;
+      --slate: #59646c;
+      --shadow: 0 18px 50px rgba(30, 46, 37, .09);
+      --radius: 24px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: radial-gradient(circle at 80% 0%, rgba(215, 237, 221, .72), transparent 32rem), var(--paper);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+    a { color: var(--green); }
+    a:focus-visible, summary:focus-visible { outline: 3px solid #8bc6a4; outline-offset: 4px; }
+    .shell { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+    .topbar {
+      position: sticky; top: 0; z-index: 5;
+      background: rgba(247, 247, 242, .9); backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(223, 230, 223, .92);
+    }
+    .topbar-inner { min-height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+    .brand { font-weight: 850; letter-spacing: -.035em; }
+    .brand span { color: var(--green); }
+    nav { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+    nav a { text-decoration: none; color: var(--muted); font-size: 13px; font-weight: 750; padding: 8px 10px; border-radius: 999px; }
+    nav a:hover, nav a:focus-visible { color: var(--green); background: var(--green-soft); outline: none; }
+    main { overflow: hidden; }
+    section { padding: 92px 0; border-bottom: 1px solid var(--line); }
+    .hero { min-height: 84vh; display: grid; align-items: center; }
+    .hero-grid { display: grid; grid-template-columns: 1fr .9fr; gap: 54px; align-items: end; }
+    .eyebrow { text-transform: uppercase; letter-spacing: .14em; color: var(--green); font-size: 12px; font-weight: 850; margin-bottom: 16px; }
+    h1, h2, h3 { line-height: 1.04; letter-spacing: -.05em; margin: 0 0 18px; }
+    h1 { font-size: clamp(48px, 8vw, 92px); max-width: 820px; }
+    h2 { font-size: clamp(36px, 5.5vw, 62px); max-width: 860px; }
+    h3 { font-size: 24px; }
+    p { max-width: 760px; }
+    .lede { max-width: 780px; font-size: clamp(20px, 2.3vw, 28px); color: var(--muted); }
+    .small { font-size: 14px; color: var(--muted); }
+    .hero-visual { transform: rotate(1deg); }
+    .hero-visual img { width: 100%; display: block; border-radius: 28px; box-shadow: var(--shadow); }
+    figcaption { color: var(--muted); font-size: 13px; margin-top: 10px; }
+    .takeaway { border-left: 5px solid var(--orange); padding: 14px 0 14px 20px; max-width: 790px; font-size: 19px; margin-top: 28px; }
+    .metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 32px 0; }
+    .metric { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 20px; box-shadow: 0 8px 22px rgba(30, 46, 37, .05); }
+    .metric .value { font-size: 43px; font-weight: 900; line-height: 1; letter-spacing: -.07em; margin-bottom: 10px; }
+    .metric .label { color: var(--muted); font-size: 13px; }
+    .metric.green .value { color: var(--green); }
+    .metric.orange .value { color: var(--orange); }
+    .metric.slate .value { color: var(--slate); }
+    .section-head { display: flex; justify-content: space-between; align-items: end; gap: 28px; margin-bottom: 34px; }
+    .section-head p { margin: 0; color: var(--muted); }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 26px; box-shadow: var(--shadow); }
+    .card h3 { margin-bottom: 10px; }
+    .card p:last-child { margin-bottom: 0; }
+    .tag { display: inline-flex; align-items: center; border-radius: 999px; padding: 6px 10px; font-size: 12px; font-weight: 850; margin-bottom: 16px; }
+    .tag.orange { color: #8e461c; background: var(--orange-soft); }
+    .tag.green { color: var(--green); background: var(--green-soft); }
+    .tag.slate { color: #46535e; background: #e8edf0; }
+    .flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 14px; align-items: center; margin: 30px 0; }
+    .flow-step { min-height: 140px; background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 20px; }
+    .flow-step strong { display: block; margin-bottom: 8px; }
+    .flow-step span { color: var(--muted); font-size: 14px; }
+    .arrow { color: var(--orange); font-size: 28px; font-weight: 900; }
+    .callout { padding: 20px 22px; border-radius: 18px; background: var(--orange-soft); color: #6f3c1c; margin-top: 24px; }
+    .chart-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .chart { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 22px; }
+    .chart h3 { font-size: 19px; margin-bottom: 20px; }
+    .bar-row { display: grid; grid-template-columns: 104px 1fr 58px; gap: 10px; align-items: center; margin: 13px 0; font-size: 13px; }
+    .bar-row strong { text-align: right; font-size: 13px; }
+    .track { height: 14px; border-radius: 99px; background: #edf0eb; overflow: hidden; }
+    .bar { height: 100%; border-radius: inherit; }
+    .bar.raw { background: var(--orange); }
+    .bar.fusion { background: var(--green); }
+    .legend { display: flex; gap: 18px; flex-wrap: wrap; color: var(--muted); font-size: 13px; margin-top: 20px; }
+    .legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; margin-right: 6px; }
+    .legend .raw i { background: var(--orange); }
+    .legend .fusion i { background: var(--green); }
+    .evidence-card { overflow: hidden; padding: 0; }
+    .evidence-card img { display: block; width: 100%; height: auto; background: #eef0ec; }
+    .evidence-copy { padding: 20px 22px 22px; }
+    .evidence-copy h3 { font-size: 21px; margin-bottom: 8px; }
+    .evidence-copy p { margin: 0; font-size: 14px; color: var(--muted); }
+    .evidence-copy strong { color: var(--ink); }
+    .gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 24px; }
+    .gallery figure { margin: 0; }
+    .gallery img { width: 100%; aspect-ratio: 1.2; object-fit: cover; border-radius: 16px; display: block; }
+    .gallery figcaption { padding: 8px 2px 0; }
+    table { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; font-size: 14px; }
+    th, td { padding: 15px 16px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; background: #fbfcf9; }
+    tr:last-child td { border-bottom: 0; }
+    .positive { color: var(--green); font-weight: 800; }
+    .negative { color: var(--orange); font-weight: 800; }
+    details { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; margin-top: 18px; }
+    summary { cursor: pointer; font-weight: 800; }
+    details p, details ul { color: var(--muted); font-size: 14px; }
+    .source-line { font-size: 13px; color: var(--muted); margin-top: 26px; }
+    footer { padding: 48px 0 76px; color: var(--muted); font-size: 13px; }
+    @media (max-width: 840px) {
+      .hero-grid, .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .metric-grid { grid-template-columns: repeat(2, 1fr); }
+      .chart-grid, .gallery { grid-template-columns: repeat(2, 1fr); }
+      .flow { grid-template-columns: 1fr; }
+      .arrow { transform: rotate(90deg); justify-self: center; }
+      section { padding: 66px 0; }
+    }
+    @media (max-width: 560px) {
+      .shell { padding: 0 18px; }
+      .topbar-inner { align-items: flex-start; padding: 12px 0; flex-direction: column; }
+      nav { justify-content: flex-start; }
+      .metric-grid, .chart-grid, .gallery { grid-template-columns: 1fr; }
+      table { display: block; overflow-x: auto; white-space: nowrap; }
+      .hero { min-height: auto; padding-top: 58px; }
+    }
+    @media print {
+      .topbar { position: static; }
+      nav { display: none; }
+      section { padding: 42px 0; break-inside: avoid; }
+      .hero { min-height: auto; }
+      .card, .metric, .chart, .evidence-card { box-shadow: none; }
+      a { color: inherit; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <div class="brand">Super<span>Nutrition</span> · fusion evidence</div>
+      <nav aria-label="Report sections">
+        <a href="#decision">Decision</a>
+        <a href="#method">Method</a>
+        <a href="#evidence">Pictures</a>
+        <a href="#next">Next</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="decision">
+      <div class="shell hero-grid">
+        <div>
+          <div class="eyebrow">100 Nutrition5k plate images · host benchmark</div>
+          <h1>Fusion filtered the noise — and some useful evidence too.</h1>
+          <p class="lede">The current hard dish-prior gate made the output smaller, but this controlled comparison did not show a detection improvement over the raw visual proposals.</p>
+          <div class="takeaway"><strong>Decision:</strong> keep raw visual evidence auditable; do not treat hard top-1 fusion as an unconditional quality upgrade.</div>
+        </div>
+        <figure class="hero-visual">
+          <img src="assets/case-01-chicken-broccoli-salad-comparison.jpg" alt="Chicken and broccoli salad with 13 orange raw proposals on the left and no accepted regions after hard fusion on the right">
+          <figcaption>One real example: 13 raw proposals become 0 accepted regions when the dish prior does not contain the proposed label.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <div class="shell">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">The result in four numbers</div>
+            <h2>Less output is not the same as better output.</h2>
+          </div>
+          <p>Same 100 images, same ONNX assets, same thresholds.</p>
+        </div>
+        <div class="metric-grid">
+          <div class="metric slate"><div class="value">100</div><div class="label">Nutrition5k images evaluated</div></div>
+          <div class="metric orange"><div class="value">200 → 153</div><div class="label">regions after the hard gate</div></div>
+          <div class="metric orange"><div class="value">25.00 → 22.02%</div><div class="label">weak micro F1, no fusion → fusion</div></div>
+          <div class="metric orange"><div class="value">−12.12 pp</div><div class="label">weak recall delta</div></div>
+        </div>
+        <p class="small">Metrics use recipe-level ingredient metadata as a weak proxy and score only the five labels supported by this PoC: apple, banana, broccoli, carrot, and orange.</p>
+      </div>
+    </section>
+
+    <section id="method">
+      <div class="shell">
+        <div class="eyebrow">What changed</div>
+        <h2>The prior became a whitelist.</h2>
+        <p class="lede">The two arms differ in one policy decision: whether the dish classifier is allowed to remove a detector proposal from the accepted result.</p>
+        <div class="flow" aria-label="Comparison flow">
+          <div class="flow-step"><strong>1 · Photo crop</strong><span>Official Nutrition5k overhead frame, trimmed to the plate interior.</span></div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="flow-step"><strong>2 · Visual proposals</strong><span>YOLO-World v2 proposes component labels and boxes.</span></div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="flow-step"><strong>3 · Two outcomes</strong><span>Raw proposals stay visible; hard fusion keeps only labels in the top-1 dish prior.</span></div>
+        </div>
+        <div class="grid-2">
+          <article class="card"><span class="tag orange">Before · no fusion</span><h3>Keep the visual channel intact.</h3><p>Every filtered proposal remains available for review after confidence filtering, per-label NMS, and the 16-region cap.</p></article>
+          <article class="card"><span class="tag green">After · hard top-1 prior</span><h3>Let the dish prior veto.</h3><p>If the top-1 dish prior does not contain the proposal label, the region is removed from the accepted result. Rejected proposals remain only in debug output.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="shell">
+        <div class="section-head">
+          <div><div class="eyebrow">The measured trade-off</div><h2>Every headline quality metric moved down.</h2></div>
+          <p>Weak proxy; directional evidence, not production truth.</p>
+        </div>
+        <div class="chart-grid">
+          <div class="chart"><h3>Micro precision</h3><div class="bar-row"><span>No fusion</span><div class="track"><div class="bar raw" style="width:16.84%"></div></div><strong>16.84%</strong></div><div class="bar-row"><span>Hard prior</span><div class="track"><div class="bar fusion" style="width:15.79%"></div></div><strong>15.79%</strong></div></div>
+          <div class="chart"><h3>Micro recall</h3><div class="bar-row"><span>No fusion</span><div class="track"><div class="bar raw" style="width:48.48%"></div></div><strong>48.48%</strong></div><div class="bar-row"><span>Hard prior</span><div class="track"><div class="bar fusion" style="width:36.36%"></div></div><strong>36.36%</strong></div></div>
+          <div class="chart"><h3>Micro F1</h3><div class="bar-row"><span>No fusion</span><div class="track"><div class="bar raw" style="width:25%"></div></div><strong>25.00%</strong></div><div class="bar-row"><span>Hard prior</span><div class="track"><div class="bar fusion" style="width:22.02%"></div></div><strong>22.02%</strong></div></div>
+        </div>
+        <div class="legend"><span class="raw"><i></i>No fusion</span><span class="fusion"><i></i>Hard top-1 dish prior</span></div>
+        <div class="callout"><strong>Read this carefully:</strong> the benchmark does not prove that every raw proposal is correct. It shows that the current gate deletes candidate evidence faster than it improves the weak recipe-level match.</div>
+      </div>
+    </section>
+
+    <section id="evidence">
+      <div class="shell">
+        <div class="section-head">
+          <div><div class="eyebrow">Pictures from the benchmark</div><h2>What the policy does to real plates.</h2></div>
+          <p>Orange = raw proposal · green = accepted after fusion.</p>
+        </div>
+        <div class="grid-2">
+          <article class="card evidence-card">
+            <img src="assets/case-01-chicken-broccoli-salad-comparison.jpg" alt="Comparison of 13 raw broccoli proposals versus zero accepted regions for a Caesar salad image">
+            <div class="evidence-copy"><h3>Caesar salad: 13 → 0</h3><p><strong>Dish prior:</strong> romaine, chicken, parmesan, croutons, dressing. The visual detector proposes broccoli; the hard gate deletes every region.</p></div>
+          </article>
+          <article class="card evidence-card">
+            <img src="assets/case-02-fried-rice-comparison.jpg" alt="Comparison of two raw proposals, broccoli and carrot, versus one accepted carrot proposal for fried rice">
+            <div class="evidence-copy"><h3>Fried rice: 2 → 1</h3><p><strong>Dish prior:</strong> rice, egg, peas, carrot, green onion. The prior keeps carrot and removes broccoli. This is the intended filtering behavior, but it is not enough to improve the aggregate score.</p></div>
+          </article>
+          <article class="card evidence-card">
+            <img src="assets/case-03-grilled-salmon-comparison.jpg" alt="Comparison where the same broccoli proposal remains accepted before and after fusion for a grilled salmon image">
+            <div class="evidence-copy"><h3>Grilled salmon: 1 → 1</h3><p><strong>Dish prior:</strong> salmon, lemon, rice, broccoli, asparagus. Because broccoli is listed, fusion leaves the proposal unchanged.</p></div>
+          </article>
+          <article class="card evidence-card">
+            <img src="assets/case-04-greek-salad-comparison.jpg" alt="Comparison of two raw carrot proposals versus zero accepted regions for a Greek salad image">
+            <div class="evidence-copy"><h3>Greek salad: 2 → 0</h3><p><strong>Dish prior:</strong> cucumber, tomato, onion, pepper, feta, olives. Carrot is not in the prior, so both raw proposals disappear from the accepted result.</p></div>
+          </article>
+        </div>
+        <h3 style="margin-top: 54px">Dish-only crops, without detector overlays</h3>
+        <div class="gallery">
+          <figure><img src="assets/case-01-chicken-broccoli-salad.jpg" alt="Dish-only crop showing chicken and broccoli salad"><figcaption>Chicken and broccoli salad</figcaption></figure>
+          <figure><img src="assets/case-02-fried-rice.jpg" alt="Dish-only crop showing fried rice, carrot, corn, and chicken"><figcaption>Fried rice plate</figcaption></figure>
+          <figure><img src="assets/case-03-grilled-salmon.jpg" alt="Dish-only crop showing a grilled protein, greens, and beans"><figcaption>Grilled protein plate</figcaption></figure>
+          <figure><img src="assets/case-04-greek-salad.jpg" alt="Dish-only crop showing chicken, cauliflower, peppers, tomatoes, and red onion"><figcaption>Composite salad plate</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="shell">
+        <div class="eyebrow">Full comparison</div>
+        <h2>Same models. One policy switch.</h2>
+        <table>
+          <thead><tr><th>Strategy</th><th>Regions</th><th>Images with regions</th><th>Weak precision</th><th>Weak recall</th><th>Weak F1</th></tr></thead>
+          <tbody>
+            <tr><td><strong>No fusion</strong></td><td>200</td><td>69 / 100</td><td>16.84%</td><td>48.48%</td><td>25.00%</td></tr>
+            <tr><td><strong>Hard top-1 prior</strong></td><td>153</td><td>54 / 100</td><td>15.79%</td><td>36.36%</td><td>22.02%</td></tr>
+            <tr><td><strong>Delta</strong></td><td class="negative">−47</td><td class="negative">−15</td><td class="negative">−1.05 pp</td><td class="negative">−12.12 pp</td><td class="negative">−2.98 pp</td></tr>
+          </tbody>
+        </table>
+        <details>
+          <summary>Benchmark boundary and reproducibility</summary>
+          <ul>
+            <li>100 official Nutrition5k `rgb_test` overhead RGB frames, cropped to a canonical plate interior with an elliptical mask.</li>
+            <li>Dish model: Food-101 Swin ONNX. Region model: YOLO-World v2 COCO ONNX. Runtime: ONNX Runtime CPU on host.</li>
+            <li>Only five PoC component labels are scored. Nutrition5k ingredient metadata is recipe-level, not visible-component or pixel-level ground truth.</li>
+            <li>This is host evidence for the PoC, not a 100-image physical Android run and not a G-3 signoff.</li>
+          </ul>
+        </details>
+        <p class="source-line">Dataset provenance: <a href="https://github.com/google-research-datasets/Nutrition5k">official Nutrition5k repository</a>. Full machine-readable output: <a href="../../../tools/nutrition5k-benchmark/data/nutrition5k-100/comparison.json">comparison.json</a>.</p>
+      </div>
+    </section>
+
+    <section id="next">
+      <div class="shell grid-2">
+        <div>
+          <div class="eyebrow">Next move</div>
+          <h2>Make fusion supportive, not destructive.</h2>
+          <p class="lede">The next experiment should preserve visual evidence and test whether a soft or top-k prior can improve ranking without turning dish expectation into ingredient proof.</p>
+        </div>
+        <div class="card">
+          <span class="tag green">Definition of done</span>
+          <h3>Fusion earns its place when it wins on labeled evidence.</h3>
+          <ul>
+            <li>Keep raw proposals visible and mark prior-inconsistent items.</li>
+            <li>Compare raw, hard top-1, and soft/top-k on the same annotated images.</li>
+            <li>Score semantic precision/recall separately from box or mask quality.</li>
+            <li>Only then decide whether fusion belongs in the user-facing path.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell">SuperNutrition · Nutrition5k fusion benchmark · 2026-08-03 · Prepared from the reproducible project artifacts.</div>
+  </footer>
+</body>
+</html>

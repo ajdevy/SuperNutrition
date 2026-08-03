@@ -72,13 +72,14 @@ class PhotoAnalysisAnalysisCoordinatorTest {
         assertEquals(
             listOf(
                 LocalAnalysisStage.FINDING_VISIBLE_FOODS,
-                LocalAnalysisStage.ESTIMATING_PORTIONS,
+                LocalAnalysisStage.IDENTIFYING_DISH,
                 LocalAnalysisStage.CHECKING_RESULTS,
             ),
             stages,
         )
         assertEquals(listOf("dish-1"), result.draft.mainDishProposals.map(InferenceCandidate::candidateId))
         assertEquals(listOf("component-1"), result.draft.photoEvidence.map(VisibleComponent::componentId))
+        assertEquals("ingredient:cucumber", result.draft.compositionHints.first().ingredientId)
     }
 
     @Test
@@ -253,7 +254,7 @@ class PhotoAnalysisAnalysisCoordinatorTest {
 
     private fun dish() = InferenceCandidate(
         candidateId = "dish-1",
-        label = "Rice bowl",
+        label = "Greek salad",
         rank = 1,
         confidence = Confidence(0.9, ConfidenceBand.HIGH),
         unresolvedAssumptions = emptyList(),

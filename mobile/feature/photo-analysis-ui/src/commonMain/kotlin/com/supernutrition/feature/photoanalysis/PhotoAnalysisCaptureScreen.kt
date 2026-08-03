@@ -49,6 +49,7 @@ data class PhotoAnalysisCaptureAutomationIds(
     val retainedPhoto: UiAutomationId = UiAutomationIds.PHOTO_ANALYSIS_RETAINED_PHOTO,
     val mainDishProposals: UiAutomationId = UiAutomationIds.PHOTO_ANALYSIS_MAIN_DISH_PROPOSALS,
     val componentEvidence: UiAutomationId = UiAutomationIds.PHOTO_ANALYSIS_COMPONENT_EVIDENCE,
+    val compositionHints: UiAutomationId = UiAutomationIds.PHOTO_ANALYSIS_COMPOSITION_HINTS,
     val shutter: UiAutomationId = UiAutomationIds.CAPTURE_SHUTTER,
     val import: UiAutomationId = UiAutomationIds.CAPTURE_IMPORT,
     val openSettings: UiAutomationId = UiAutomationIds.CAPTURE_OPEN_SETTINGS,
@@ -181,60 +182,105 @@ private fun PhotoAnalysisActions(
 
 @Composable
 private fun PhotoAnalysisReviewContent(review: PhotoAnalysisReviewModel, surface: PhotoAnalysisCaptureSurface) {
-    if (review.mainDishProposals.isNotEmpty()) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .automationId(surface.automationIds.mainDishProposals),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            review.mainDishProposals.forEach { dish ->
-                Text(
-                    text = dish.label,
-                    style = surface.overlayTextStyle(),
-                    modifier = Modifier.semantics {
+    PhotoAnalysisDishCandidates(review, surface)
+    PhotoAnalysisVisibleComponents(review, surface)
+    PhotoAnalysisCompositionHints(review, surface)
+}
+
+@Composable
+private fun PhotoAnalysisDishCandidates(review: PhotoAnalysisReviewModel, surface: PhotoAnalysisCaptureSurface) {
+    if (review.mainDishProposals.isEmpty()) return
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .automationId(surface.automationIds.mainDishProposals),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Text(
+            text = surface.presenterCopy.evidence.dishCandidatesTitle,
+            style = surface.overlayTextStyle(),
+        )
+        review.mainDishProposals.forEach { dish ->
+            Text(
+                text = dish.label,
+                style = surface.overlayTextStyle(),
+                modifier = Modifier.semantics {
+                    contentDescription = listOf(
+                        dish.label,
+                        dish.confidenceLabel,
+                        dish.provenanceLabel,
+                    ).joinToString()
+                    stateDescription = surface.presenterCopy.evidence.notSelected
+                },
+            )
+        }
+    }
+}
+
+@Composable
+private fun PhotoAnalysisVisibleComponents(review: PhotoAnalysisReviewModel, surface: PhotoAnalysisCaptureSurface) {
+    if (review.visibleComponents.isEmpty()) return
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .automationId(surface.automationIds.componentEvidence),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Text(
+            text = surface.presenterCopy.evidence.visibleComponentsTitle,
+            style = surface.overlayTextStyle(),
+        )
+        review.visibleComponents.forEach { component ->
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .automationId(photoAnalysisVisibleComponentId(component.componentId))
+                    .semantics {
                         contentDescription = listOf(
-                            dish.label,
-                            dish.confidenceLabel,
-                            dish.provenanceLabel,
+                            component.label,
+                            component.sourceLabel,
+                            component.confidenceLabel,
+                            component.ambiguityLabel,
+                            component.visibilityLabel,
+                            component.regionLabel,
+                            component.mass.label,
+                            component.provenanceLabel,
                         ).joinToString()
-                        stateDescription = surface.presenterCopy.evidence.notSelected
+                        stateDescription = component.selectionLabel
                     },
-                )
+            ) {
+                Text(component.label, style = surface.overlayTextStyle())
+                Text(component.sourceLabel, style = surface.overlayTextStyle())
+                Text(component.mass.label, style = surface.overlayTextStyle())
             }
         }
     }
+}
 
-    if (review.visibleComponents.isNotEmpty()) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .automationId(surface.automationIds.componentEvidence),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            review.visibleComponents.forEach { component ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .automationId(photoAnalysisVisibleComponentId(component.componentId))
-                        .semantics {
-                            contentDescription = listOf(
-                                component.label,
-                                component.sourceLabel,
-                                component.confidenceLabel,
-                                component.ambiguityLabel,
-                                component.visibilityLabel,
-                                component.regionLabel,
-                                component.mass.label,
-                                component.provenanceLabel,
-                            ).joinToString()
-                            stateDescription = component.selectionLabel
-                        },
-                ) {
-                    Text(component.label, style = surface.overlayTextStyle())
-                    Text(component.sourceLabel, style = surface.overlayTextStyle())
-                    Text(component.mass.label, style = surface.overlayTextStyle())
-                }
+@Composable
+private fun PhotoAnalysisCompositionHints(review: PhotoAnalysisReviewModel, surface: PhotoAnalysisCaptureSurface) {
+    if (review.compositionHints.isEmpty()) return
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .automationId(surface.automationIds.compositionHints),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Text(
+            text = surface.presenterCopy.evidence.compositionHintsTitle,
+            style = surface.overlayTextStyle(),
+        )
+        review.compositionHints.forEach { hint ->
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .semantics {
+                        contentDescription = listOf(hint.label, hint.sourceLabel).joinToString()
+                        stateDescription = hint.sourceLabel
+                    },
+            ) {
+                Text(hint.label, style = surface.overlayTextStyle())
+                Text(hint.sourceLabel, style = surface.overlayTextStyle())
             }
         }
     }
