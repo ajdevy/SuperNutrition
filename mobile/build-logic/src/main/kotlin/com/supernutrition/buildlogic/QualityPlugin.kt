@@ -11,6 +11,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.VersionCatalogsExtension
+import org.gradle.api.logging.Logger
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.withType
 import org.gradle.api.tasks.testing.Test
@@ -308,6 +309,7 @@ class QualityPlugin : Plugin<Project> {
                         "branch=${formatCoverage(result.branchPercent)}% across " +
                         "${result.moduleCount} production modules.",
                 )
+                verifyStrictCoverageModules(reportRoot, inventoryProjects, logger)
             }
         }
 
@@ -327,6 +329,7 @@ class QualityPlugin : Plugin<Project> {
                         "branch=${formatCoverage(result.branchPercent)}% across " +
                         "${result.moduleCount} production modules; no active quality claim emitted.",
                 )
+                verifyStrictCoverageModules(reportRoot, inventoryProjects, logger)
             }
         }
 
@@ -346,6 +349,53 @@ class QualityPlugin : Plugin<Project> {
      * own executable gates and never enters this denominator.
      */
     private fun formatCoverage(value: Double): String = String.format(Locale.ROOT, "%.2f", value)
+
+    /**
+     * Modules held to a stricter bar than the project-wide 85% floor in
+     * `coverage.toml`, with the reason each one earns it. `coverage.toml`'s
+     * own `line_minimum_percent`/`branch_minimum_percent` fields cannot carry
+     * this: [MobilePolicyValidator] requires every denominator to declare the
+     * uniform 85, so a per-module floor stricter than that lives here
+     * instead, enforced in addition to the aggregate check rather than in
+     * place of it.
+     *
+     * `:domain:nutrition` (typed-text meal search/matching) is the catalog
+     * matcher, segmentation, and ranking logic the E7.2 review's slang and
+     * edge-case sweep repeatedly found silent wrong-food defects in — an
+     * uncovered branch here is a plausible wrong answer waiting to be found.
+     * Branch is a genuine 100%. Line stops at 99.99, not 100, because of one
+     * confirmed exception: `CatalogServingDefaultSource.standardServingIfBoundToSnapshot`
+     * (a `fun interface` default method) never receives Kover line
+     * attribution regardless of what calls it — verified by mutation testing
+     * both of its logical branches (`CatalogServingDefaultSourceTest`
+     * exercises the digest match and the digest mismatch, and forcing each
+     * branch's condition to a constant makes the existing test fail) — so
+     * 99.99 is the tightest bound this one confirmed tooling gap allows
+     * without drifting into padding for a real regression: any single newly
+     * uncovered line in this module drops the measured percentage by more
+     * than this remaining margin.
+     */
+    private val strictCoverageModules: Map<String, Pair<Double, Double>> = mapOf(
+        ":domain:nutrition" to (99.99 to 100.0),
+    )
+
+    private fun verifyStrictCoverageModules(
+        reportRoot: Path,
+        inventoryProjects: List<String>,
+        logger: Logger,
+    ) {
+        strictCoverageModules.forEach { (path, thresholds) ->
+            if (path !in inventoryProjects) return@forEach
+            val (minLinePercent, minBranchPercent) = thresholds
+            val result = JvmCoverageVerifier.verifyModule(reportRoot, path, minLinePercent, minBranchPercent)
+            logger.lifecycle(
+                "$path coverage: line=${formatCoverage(result.linePercent)}%, " +
+                    "branch=${formatCoverage(result.branchPercent)}% " +
+                    "(module floor: line>=${formatCoverage(minLinePercent)}%, " +
+                    "branch>=${formatCoverage(minBranchPercent)}%).",
+            )
+        }
+    }
 
     private fun coverageClaimAllowed(mobileRoot: Path, explicitJvmCoverage: Boolean = false): Boolean {
         if (explicitJvmCoverage) return true

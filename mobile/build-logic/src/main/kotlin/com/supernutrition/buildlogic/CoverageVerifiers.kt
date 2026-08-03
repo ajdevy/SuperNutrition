@@ -86,17 +86,7 @@ internal object JvmCoverageVerifier {
         var branchMissed = 0L
         var branchCovered = 0L
         productionProjects.forEach { path ->
-            val report = reportPaths(reportRoot, path).firstOrNull(Files::isRegularFile)
-            require(report != null) {
-                "Missing JVM/Android Kover report for $path: ${reportPaths(reportRoot, path).joinToString()}"
-            }
-            val text = try {
-                Files.readString(report)
-            } catch (error: Exception) {
-                throw IllegalArgumentException("Unable to read JVM Kover report for $path: $report", error)
-            }
-            val line = counter(text, "LINE", path)
-            val branch = counter(text, "BRANCH", path)
+            val (line, branch) = moduleCounters(reportRoot, path)
             lineMissed += line.first
             lineCovered += line.second
             branchMissed += branch.first
@@ -111,6 +101,43 @@ internal object JvmCoverageVerifier {
             "JVM host branch coverage is ${formatCoverage(branchPercent)}%; minimum is 85%"
         }
         return JvmCoverageSummary(linePercent, branchPercent, productionProjects.size)
+    }
+
+    /**
+     * Enforces a threshold stricter than the project floor on one module,
+     * reusing the same report-reading path [verify] does so the two can never
+     * read a module's coverage two different ways.
+     */
+    fun verifyModule(
+        reportRoot: Path,
+        projectPath: String,
+        minLinePercent: Double,
+        minBranchPercent: Double,
+    ): JvmCoverageSummary {
+        val (line, branch) = moduleCounters(reportRoot, projectPath)
+        val linePercent = percentage(line.second, line.first, "line")
+        val branchPercent = percentage(branch.second, branch.first, "branch")
+        require(linePercent >= minLinePercent) {
+            "$projectPath line coverage is ${formatCoverage(linePercent)}%; minimum is ${formatCoverage(minLinePercent)}%"
+        }
+        require(branchPercent >= minBranchPercent) {
+            "$projectPath branch coverage is ${formatCoverage(branchPercent)}%; " +
+                "minimum is ${formatCoverage(minBranchPercent)}%"
+        }
+        return JvmCoverageSummary(linePercent, branchPercent, 1)
+    }
+
+    private fun moduleCounters(reportRoot: Path, path: String): Pair<Pair<Long, Long>, Pair<Long, Long>> {
+        val report = reportPaths(reportRoot, path).firstOrNull(Files::isRegularFile)
+        require(report != null) {
+            "Missing JVM/Android Kover report for $path: ${reportPaths(reportRoot, path).joinToString()}"
+        }
+        val text = try {
+            Files.readString(report)
+        } catch (error: Exception) {
+            throw IllegalArgumentException("Unable to read JVM Kover report for $path: $report", error)
+        }
+        return counter(text, "LINE", path) to counter(text, "BRANCH", path)
     }
 
     fun counter(text: String, type: String, projectPath: String): Pair<Long, Long> {

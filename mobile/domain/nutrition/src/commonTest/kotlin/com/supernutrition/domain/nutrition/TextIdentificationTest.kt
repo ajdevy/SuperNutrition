@@ -90,6 +90,25 @@ class TextIdentificationTest {
     }
 
     @Test
+    fun `a segmented outcome with no items at all falls back to the floor`() {
+        // Distinct from the out-of-range-span case above: here the engine
+        // itself proposed zero items, which the all() over an empty list
+        // would otherwise treat as vacuously "every span indexes" and accept
+        // as a valid, empty split.
+        val identification = TextIdentification(
+            floor = floor,
+            engine = { TextEngineOutcome.Segmented(emptyList()) },
+        )
+
+        val outcome = identification.identify("rye bread")
+
+        assertEquals(
+            TextIdentificationOutcome.Floor(listOf(DetectedItem("food:bread-rye", TextSpan(0, 9)))),
+            outcome,
+        )
+    }
+
+    @Test
     fun `an empty description never reaches the engine`() {
         var engineCalled = false
         val identification = TextIdentification(
@@ -104,5 +123,16 @@ class TextIdentificationTest {
 
         assertEquals(TextIdentificationOutcome.Empty, outcome)
         assertTrue(!engineCalled, "an empty description is not worth a model invocation")
+    }
+
+    @Test
+    fun `a span cannot index a description starting before its own text`() {
+        assertTrue(!TextSpan(-1, 3).indexes("boiled egg"))
+    }
+
+    @Test
+    fun `a span cannot index a description whose end does not come after its start`() {
+        assertTrue(!TextSpan(3, 3).indexes("boiled egg"))
+        assertTrue(!TextSpan(5, 3).indexes("boiled egg"))
     }
 }

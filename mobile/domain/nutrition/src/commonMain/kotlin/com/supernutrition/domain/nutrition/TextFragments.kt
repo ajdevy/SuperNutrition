@@ -345,8 +345,10 @@ internal fun stripNonFoodEdgeWords(query: String): String {
  * word behind it survived too.
  */
 private fun isQuantityToken(token: String): Boolean {
+    // Both callers feed this exclusively from tokenizeNormalized, which never
+    // emits an empty token, so `token` is never blank here.
     if (quantifies(token)) return true
-    if (token.isNotEmpty() && token.all(Char::isDigit)) return true
+    if (token.all(Char::isDigit)) return true
     // "200g", "2tbsp": a number glued to its unit is still one quantity. It
     // consults QUANTITY_WORDS rather than a units list of its own — the two
     // vocabularies drifted apart immediately when they were separate, so
