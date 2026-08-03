@@ -77,17 +77,39 @@ is correct, and several are asserted as such in `GeneratedCatalogTest`.
   a dedicated measurement panel (wf_089c9da3-f3c); ships separately once the
   candidate is verified on the real engine.
 
-## What was deliberately NOT attempted: a curated slang-synonym batch
+## The curated slang-synonym batch: worked through one at a time (2026-08-03)
 
 `shroom`->mushroom, `taters`->potato, `nanner`->banana, `PB`->peanut butter,
-`avo`->avocado, `za`->pizza, `cheez`->cheese, `chkn`->chicken are common,
-unambiguous, and would each be a well-scoped MANUAL_TERMS addition on the
-масло precedent (scripts/generate-food-synonyms.py, reviewed and dated).
-Not added in this pass: deciding which slang terms are established enough
-to earn a permanent catalog entry is a curation judgment call the codebase
-already treats as requiring individual review (JUNK_ALIASES' own header:
-"found during review... NOT a clean bill of health"), and batching eight-plus
-unreviewed entries in one pass is the scope creep AGENTS.md's suppression
-guidance warns against, applied to data instead of code. A future pass
-should add these one at a time, each with its own fan-out check and dated
-justification, the way масло was added.
+`avo`->avocado, `za`->pizza, `cheez`->cheese, `chkn`->chicken were originally
+recorded here as "each a well-scoped MANUAL_TERMS addition on the масло
+precedent, not attempted in this pass." Worked through individually, per
+term, with an independent fan-out and FUZZY-tier safety check against the
+real GeneratedCatalog.kt before each one landed -- some of the eight turned
+out not to fit that description at all:
+
+- **Added as MANUAL_TERMS** (scripts/generate-food-synonyms.py, dated
+  2026-08-03 entries, applied via `--apply-curated-terms-offline` and
+  verified with `SlangSynonymTest.kt`): `shroom` (c_2487), `taters`
+  (c_13551), `nanner` (c_806), `cheez` (c_1507), `chkn` (c_1540).
+- **Needed no addition**: `avo` already reaches the avocado record via the
+  PREFIX tier today. Verifying this surfaced a real, separate defect,
+  though -- it was landing on "Oil, avocado" instead, the identical
+  short-form-beats-long-form shape as chicken/yogurt/salmon/cafe. Fixed as a
+  `RESTATES_HEAD_EXCEPTIONS` carve-out in generate-catalog-kotlin.py (same
+  mechanism as the chicken fix: the word already existed in AGROVOC source
+  and only needed to stop being dropped as restating its own head), not as
+  a MANUAL_TERMS entry.
+- **Genuinely not fixable by either established mechanism**: `PB` and `za`.
+  `PB` (peanut butter): no AGROVOC concept names peanut butter at all, so
+  MANUAL_TERMS has nothing to attach to; SUBHEAD_OVERRIDES cannot originate
+  a new alternate-name group for this head either, because
+  `apply_subhead_overrides()` only ever splits an ALREADY-populated group
+  (its own `record["group"] is not None` guard), and peanut butter's head
+  has no AGROVOC join to populate one. `za` (pizza): no AGROVOC concept for
+  pizza either, and the only genuinely plain-pizza USDA source records
+  (`food:usda-srl-21224`/`21225`/`21226`/... "Pizza, cheese topping, ...")
+  are dropped by the generator's own segment/token selection caps
+  (`DEFAULT_MAX_SEGMENTS`/`DEFAULT_MAX_NAME_TOKENS`) before either curated-
+  term mechanism ever runs -- recovering them is a whole-catalog cap
+  tradeoff, not a scoped slang fix. Both remain genuine catalog gaps,
+  correctly returning nothing today, same as `cheerios`/`big mac` above.
