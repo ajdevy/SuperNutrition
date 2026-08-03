@@ -372,6 +372,17 @@ MANUAL_TERMS: Tuple[Tuple[str, str, str, str], ...] = (
         "concept c_5334 instead. Verified 2026-08-02 against GeneratedCatalog.kt: "
         "fan-out 0, no record carried it.",
     ),
+    (
+        "c_15463", "en", "yogurt",
+        "the American spelling; AGROVOC's entire en entry for this concept is "
+        "the British spelling `yoghurt` as a bare display with no match list, so "
+        "`yogurt` is not anywhere in the source data. Without it, and paired with "
+        "generate-catalog-kotlin.py's RESTATES_HEAD_EXCEPTIONS carve-out (the "
+        "term would otherwise be dropped as restating its own head `Yogurt`), "
+        "the coverage formula sent `yogert`/`yogurt` to the unrelated `Tofu "
+        "yogurt` record instead of any real yogurt. Verified 2026-08-03 against "
+        "GeneratedCatalog.kt: fan-out 0, no record carried the American spelling.",
+    ),
 )
 
 
