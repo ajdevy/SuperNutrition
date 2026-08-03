@@ -138,6 +138,41 @@
     "term": "yogurt",
     "reason": "the American spelling; AGROVOC's entire en entry for this concept is the British spelling `yoghurt` as a bare display with no match list, so `yogurt` is not anywhere in the source data. Without it, and paired with generate-catalog-kotlin.py's RESTATES_HEAD_EXCEPTIONS carve-out (the term would otherwise be dropped as restating its own head `Yogurt`), the coverage formula sent `yogert`/`yogurt` to the unrelated `Tofu yogurt` record instead of any real yogurt. Verified 2026-08-03 against GeneratedCatalog.kt: fan-out 0, no record carried the American spelling.",
     "applied_utc": "2026-08-03T05:42:07Z"
+   },
+   {
+    "concept": "agrovoc:c_2487",
+    "lang": "en",
+    "term": "shroom",
+    "reason": "English slang for mushroom; c_2487's (edible fungi) only en match term is the plain plural `mushrooms`, and `shroom` is not a case, plural, or lemma variant of it that CatalogSearch.kt's isPluralPair/sharesLemma fold together, so a query for it fails EXACT, TOKEN_SUBSET, PREFIX and FUZZY alike rather than landing on some other food. Verified 2026-08-03 against GeneratedCatalog.kt: fan-out 0 -- every case-insensitive hit for the substring `shroom` is inside `mushroom`/`mushrooms`, none is the standalone token. Also checked the FUZZY tier directly: a 6-character query only ever gets allowance 1, and no catalog token of length 5-7 is within edit distance 1 of `shroom`, so the word is not already reachable by accident either.",
+    "applied_utc": "2026-08-03T09:20:29Z"
+   },
+   {
+    "concept": "agrovoc:c_13551",
+    "lang": "en",
+    "term": "taters",
+    "reason": "common English slang for potatoes (as in 'tater tots'); AGROVOC's entire en entry for this concept is the qualified matches `fresh potatoes`/`Irish potatoes`, so the informal word is not anywhere in the source data and a user typing it gets no match at any tier. Not a restated-head case (the head is `potatoes`, not `taters`) and not reachable via FUZZY either: `taters` (6 chars, allowance 1 under FUZZY_LONG_TOKEN_LENGTH) needs an unrelated record or synonym token within edit distance 1 to land by coincidence -- checked `waters`, `haters`, `caters`, `eaters`, `batters`, `taster(s)`, `tatters` and others against the catalog, none exist as a token. Verified 2026-08-03 against GeneratedCatalog.kt and food-synonyms.json: fan-out 0, no record, concept, or head named `tater`/`taters`.",
+    "applied_utc": "2026-08-03T09:20:29Z"
+   },
+   {
+    "concept": "agrovoc:c_806",
+    "lang": "en",
+    "term": "nanner",
+    "reason": "informal/childish American English spelling of banana; AGROVOC's en entry for this concept carries only `banana` and `banana fruit`, so `nanner` is not anywhere in the source data. Verified 2026-08-03 against GeneratedCatalog.kt: fan-out 0, no record carries it as a searchable form, and it is not reachable via the FUZZY tier either -- no existing token in the catalog is within edit distance 1 of `nanner` at this length (bare `banana` itself is distance 4 away), so a missing entry leaves the query unresolved rather than merely slow to reach the right food.",
+    "applied_utc": "2026-08-03T09:20:29Z"
+   },
+   {
+    "concept": "agrovoc:c_1507",
+    "lang": "en",
+    "term": "cheez",
+    "reason": "the informal/slang spelling of cheese, as typed describing a meal; AGROVOC's en entry for this concept has only the single match `cheeses`, with no colloquial spelling anywhere in the source data. Verified 2026-08-03 against GeneratedCatalog.kt: fan-out 0 by literal grep, and 0 under the FUZZY tier too -- no length-4-to-6 catalog token anywhere in the file is within edit distance 1, and `cheese` itself sits at edit distance 2, one past FUZZY's allowance of 1 for a 5-character token -- so the addition cannot redirect any existing query.",
+    "applied_utc": "2026-08-03T09:20:29Z"
+   },
+   {
+    "concept": "agrovoc:c_1540",
+    "lang": "en",
+    "term": "chkn",
+    "reason": "common texting/slang abbreviation for chicken; c_1540 (chickens) and c_24000 (chicken meat) both already carry literal `chicken` in their en match list (see RESTATES_HEAD_EXCEPTIONS in generate-catalog-kotlin.py), so `chkn` is added beside its sibling on c_1540, the concept the plain word itself already lives on. Verified 2026-08-03 against GeneratedCatalog.kt: fan-out 0, no record or concept carries `chkn` in any form, and the FUZZY tier cannot already reach it either -- at 4 characters it clears FUZZY_MIN_TOKEN_LENGTH, but the length-difference bound (allowance 1) rules out every real-catalog token 3 or fewer characters longer or shorter, including `chicken` itself (length 7, difference 3).",
+    "applied_utc": "2026-08-03T09:20:29Z"
    }
   ]
  },
@@ -434,7 +469,8 @@
     "display": "bananas",
     "match": [
      "banana",
-     "banana fruit"
+     "banana fruit",
+     "nanner"
     ]
    },
    "es": {
@@ -1450,7 +1486,8 @@
    "en": {
     "display": "cheese",
     "match": [
-     "cheeses"
+     "cheeses",
+     "cheez"
     ]
    },
    "es": {
@@ -1517,6 +1554,7 @@
     "display": "chickens",
     "match": [
      "chicken",
+     "chkn",
      "domestic fowl",
      "Gallus gallus domesticus"
     ]
@@ -2500,7 +2538,8 @@
    "en": {
     "display": "edible fungi",
     "match": [
-     "mushrooms"
+     "mushrooms",
+     "shroom"
     ]
    },
    "es": {
@@ -11521,7 +11560,8 @@
     "display": "potatoes",
     "match": [
      "fresh potatoes",
-     "Irish potatoes"
+     "Irish potatoes",
+     "taters"
     ]
    },
    "es": {

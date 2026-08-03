@@ -648,6 +648,18 @@ RESTATES_HEAD_EXCEPTIONS = {
     # first; this carve-out is what keeps the generator from then dropping it
     # again as restating its own head.
     "yogurt": {"yogurt"},
+    # 2026-08-03: found while adding "avo" as a slang synonym in the same
+    # curated batch as chkn/shroom/taters/nanner/cheez -- "avo" itself needed
+    # no addition (it already reaches this record via PREFIX), but that PREFIX
+    # match was measured to be the wrong record: "Oil, avocado" (own display
+    # tokens "oil","avocado", coverage 500 for a 2-token form) outranked
+    # "Avocados, raw, all commercial varieties" (own display coverage 200 for
+    # a 5-token form) -- the identical short-form-beats-long-form shape as
+    # chicken/yogurt/salmon/cafe. "avocado" already exists in AGROVOC source
+    # (c_9022's own en match list) and only needs this carve-out, no
+    # food-synonyms.json change: it was being dropped as restating this
+    # concept's own head "avocados".
+    "avocados": {"avocado"},
 }
 
 
