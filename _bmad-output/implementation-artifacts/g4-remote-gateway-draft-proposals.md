@@ -37,18 +37,25 @@ first. This matches how `MarketPolicy` is already modeled — one independent
 decision per `marketId` — so it needs no new mechanism, just markets actually
 being resolved.
 
-**What is still NOT done, despite the decision being made:**
+**What is still NOT done, deliberately deferred 2026-08-03 (product owner's
+choice, not an oversight):**
 - Reconciling/merging `feat/e43-gateway-impl` as the real Epic 4.3
-  implementation (`sprint-status.yaml` still shows `epic-4: backlog` and
-  doesn't mention this branch — a real coordination gap this document flags
-  but cannot itself close).
+  implementation. Explicitly not attempted this pass — decided to skip for
+  now rather than merge a ~6,100-line branch across the backend product root.
+  `sprint-status.yaml` still flags that it exists and isn't reflected there.
 - Shipping the new major `contracts/mobile-api` release that actually
   describes a text request — `text` is currently `reserved`, not `supported`,
-  and that contract is frozen after its first consumer.
+  and that contract is frozen after its first consumer. Explicitly not
+  attempted this pass — decided to draft the shape only if/when picked back
+  up, not run the real AD-36 release process (coexistence window,
+  server-before-client activation, rollback plan) unprompted.
 - Confirming OpenRouter (as an aggregator routing to underlying models) is
   acceptable from a procurement standpoint given the retention position in
   section 2 below — the provider choice and the retention choice both have to
   hold together, not just each in isolation.
+
+Both deferred items are real, scoped work for whenever platform picks this
+back up — not blocked on anything technical, just not done in this pass.
 
 **Owner of what's left:** platform (branch reconciliation, contract release).
 
@@ -62,15 +69,32 @@ defaulted). Someone who never opts in gets the strict position section 1's
 predecessor draft proposed (not retained, not trained on); someone who opts in
 allows retention/training under whatever terms the provider agreement records.
 
-**What is still NOT done, despite the decision being made:**
-- **Technical feasibility is unconfirmed.** This requires the chosen provider
-  (OpenRouter, and whichever underlying model it routes a given request to)
-  to actually support a per-request retention flag — "sometimes retained,
-  sometimes not, decided per request by an end-user's own toggle." That is a
-  materially more specific technical requirement than a blanket "provider
-  supports zero data retention" clause, and has not been verified against
-  OpenRouter's actual API or the specific models `config/model-profiles.toml`
-  would name.
+**Technical feasibility — confirmed 2026-08-03 against OpenRouter's public
+docs (openrouter.ai/docs/guides/features/zdr, openrouter.ai/docs/guides/privacy/provider-logging,
+verified 2026-06-29 per OpenRouter's own page):**
+- OpenRouter supports **per-request** Zero Data Retention via a `zdr` boolean
+  in `provider` request preferences (`"provider": {"zdr": true}`), restricting
+  that specific request to endpoints with a zero-retention policy. This is
+  additive only — the per-request flag can force ZDR *on* for one request, but
+  cannot force it *off* below an account-wide or guardrail policy.
+- Training is a separate control from retention (some providers retain but
+  don't train, or vice versa): OpenRouter's `data_collection: deny` setting
+  blocks routing to providers that store or train on data at all.
+- **Important limitation to carry into the DPA:** OpenRouter enforces this by
+  *routing* — refusing to send the request to a non-compliant endpoint — not
+  by remotely deleting data after the fact. Once a request is sent to a
+  provider whose policy permits training, OpenRouter has no further control
+  over that provider's own retention/training behavior. The guarantee is
+  "we will only route your strict request to compliant endpoints," not "we
+  can revoke a downstream provider's copy."
+- **This maps directly onto the decided opt-in design:** default (user has
+  not opted in) sets `zdr: true` and `data_collection: deny` on that request;
+  opt-in (user allows it) omits those restrictions for that one request,
+  letting it route more broadly. No blanket account setting needed — the
+  per-request parameter is the exact mechanism this decision requires.
+
+**What is still NOT done, despite the decision being made and now confirmed
+technically feasible:**
 - **No code models this yet.** `MarketPolicy` tracks per-modality transfer
   permission and consent-copy version, but nothing today represents a
   separate, user-controlled "may this specific description be retained/
