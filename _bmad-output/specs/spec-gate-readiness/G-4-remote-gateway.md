@@ -121,9 +121,13 @@ and should be sequenced together, with E1.6's contract as the shared vocabulary.
 ## Draft proposals, not decisions
 
 `_bmad-output/implementation-artifacts/g4-remote-gateway-draft-proposals.md`
-(2026-08-03) sketches a starting point for criterion 1's provider
-reconciliation, criterion 4's DPA/retention position, a staging threat model,
-and an operations plan — each explicitly marked as a draft for the real owner
-(platform / privacy / legal / security) to accept, amend, or reject. It also
-flags that `origin/feat/e43-gateway-impl` (unmerged) already implements a
-working first-party gateway that `sprint-status.yaml` does not yet reflect.
+(2026-08-03, adversarially reviewed the same day) records the provider/region/
+retention decisions, a staging threat model, and an operations plan — each
+explicitly marked as a draft for the real owner (platform / privacy / legal /
+security) to accept, amend, or reject, not as sign-off. It also corrects an
+earlier, too-favorable read of `origin/feat/e43-gateway-impl` (unmerged): that
+branch ships a **photo-only** gateway (the text route is documented and
+schema'd but never registered), wires **in-memory** rate-limiting and dedup
+stores at its actual composition root instead of the tested Redis-backed ones
+it also contains, and has **no working production authentication path** at
+all today. `sprint-status.yaml`'s epic-4 note carries the same correction.
