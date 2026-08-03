@@ -33,7 +33,7 @@ package com.supernutrition.domain.nutrition
  * source's own, ascending NDB number, so widening either bound yields a
  * strict superset.
  *
- * 1964 of these records carry alternate names: 1322 terms across
+ * 1964 of these records carry alternate names: 1329 terms across
  * 224 shared lists, joined to 208 AGROVOC concepts on an exact
  * fold of the name's head segment -- the text before the first comma.
  * The alternates are the English, Spanish and Russian words people
@@ -47,7 +47,7 @@ package com.supernutrition.domain.nutrition
  * reach is exactly the wrong-food failure the join exists to avoid.
  *
  * The join is exact-key only. It rejects two classes of term:
- * 272 that only restate the head segment the display name already
+ * 271 that only restate the head segment the display name already
  * carries, and 12 that are some other record's head segment -- AGROVOC
  * files beet leaves under beetroot, and `beet greens` belongs to the
  * record of that name, not to beet roots. It also refuses whole heads
@@ -92,7 +92,7 @@ internal object GeneratedNames0 {
     val butterOil: List<String> = listOf("butteroil", "grasa oleosa de mantequilla", "топленое масло")
 
     /** cheese -- agrovoc:c_1507 */
-    val cheese: List<String> = listOf("queso", "сыры", "сыр")
+    val cheese: List<String> = listOf("cheez", "queso", "сыры", "сыр")
 
     /** cream -- agrovoc:c_1951 */
     val cream: List<String> = listOf("crema", "Nata", "сливки")
@@ -233,6 +233,7 @@ internal object GeneratedNames0 {
     /** chicken -- agrovoc:c_1540, agrovoc:c_24000 */
     val chicken: List<String> = listOf(
         "chicken",
+        "chkn",
         "domestic fowl",
         "Gallus gallus domesticus",
         "pollo",
@@ -360,6 +361,7 @@ internal object GeneratedNames0 {
     /** avocados -- agrovoc:c_9022 */
     val avocados: List<String> = listOf(
         "alligator pear",
+        "avocado",
         "avocado pear",
         "aguacate",
         "Ahuacate",
@@ -373,6 +375,7 @@ internal object GeneratedNames0 {
     /** bananas -- agrovoc:c_806 */
     val bananas: List<String> = listOf(
         "banana fruit",
+        "nanner",
         "banano",
         "Banano asiático",
         "Banano de canarias",
@@ -1106,6 +1109,7 @@ internal object GeneratedNames2 {
     /** mushrooms -- agrovoc:c_2487 */
     val mushrooms: List<String> = listOf(
         "edible fungi",
+        "shroom",
         "seta comestible",
         "Hongo comestible",
         "съедобные грибы",
@@ -1164,6 +1168,7 @@ internal object GeneratedNames2 {
     val potatoes: List<String> = listOf(
         "fresh potatoes",
         "Irish potatoes",
+        "taters",
         "papa",
         "Patata",
         "картофель",
@@ -1318,6 +1323,7 @@ internal object GeneratedNames2 {
     /** mushroom -- agrovoc:c_2487 */
     val mushroom: List<String> = listOf(
         "edible fungi",
+        "shroom",
         "seta comestible",
         "Hongo comestible",
         "съедобные грибы",
@@ -1387,9 +1393,6 @@ internal object GeneratedNames2 {
         "свежая рыба",
         "сырая рыба",
     )
-
-    /** salmon -- agrovoc:c_6756 */
-    val salmon: List<String> = listOf("grilse", "лососи", "лосось после нереста")
 }
 
 // Alternate names, part 3 of 4. Each list is shared by every record
@@ -1398,6 +1401,9 @@ internal object GeneratedNames2 {
 // entry would approach the 64 KB JVM method limit and Detekt's LargeClass
 // threshold at once.
 internal object GeneratedNames3 {
+    /** salmon -- agrovoc:c_6756 */
+    val salmon: List<String> = listOf("grilse", "лососи", "лосось после нереста")
+
     /** lupins -- agrovoc:c_7ae064ee */
     val lupins: List<String> = listOf(
         "lupin beans",
@@ -5379,7 +5385,7 @@ internal object GeneratedCatalogPart9 {
         CatalogRecord("food:usda-srl-15250", "Mollusks, conch, baked or broiled"),
         CatalogRecord("food:usda-srl-15251", "Salmon nuggets, breaded, frozen, heated"),
         CatalogRecord("food:usda-srl-15252", "Salmon nuggets, cooked as purchased, unheated"),
-        CatalogRecord("food:usda-srl-15253", "Salmon, sockeye, canned, total can contents", GeneratedNames2.salmon),
+        CatalogRecord("food:usda-srl-15253", "Salmon, sockeye, canned, total can contents", GeneratedNames3.salmon),
         CatalogRecord(
             "food:usda-srl-15260",
             "Fish, salmon, pink, canned, drained solids",
@@ -7037,7 +7043,7 @@ internal object GeneratedCatalogPart13 {
         CatalogRecord(
             "food:usda-srl-35190",
             "Salmon, red (sockeye), filets with skin, smoked (Alaska Native)",
-            GeneratedNames2.salmon,
+            GeneratedNames3.salmon,
         ),
         CatalogRecord("food:usda-srl-35192", "Agave, raw (Southwest)"),
         CatalogRecord("food:usda-srl-35193", "Agave, cooked (Southwest)"),
