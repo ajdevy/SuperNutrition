@@ -131,6 +131,13 @@
     "term": "масло",
     "reason": "the ordinary Russian word for butter; AGROVOC has only the qualified `сливочное масло`, and the lemma fold sent the bare word to the oils concept c_5334 instead. Verified 2026-08-02 against GeneratedCatalog.kt: fan-out 0, no record carried it.",
     "applied_utc": "2026-08-02T19:37:36Z"
+   },
+   {
+    "concept": "agrovoc:c_15463",
+    "lang": "en",
+    "term": "yogurt",
+    "reason": "the American spelling; AGROVOC's entire en entry for this concept is the British spelling `yoghurt` as a bare display with no match list, so `yogurt` is not anywhere in the source data. Without it, and paired with generate-catalog-kotlin.py's RESTATES_HEAD_EXCEPTIONS carve-out (the term would otherwise be dropped as restating its own head `Yogurt`), the coverage formula sent `yogert`/`yogurt` to the unrelated `Tofu yogurt` record instead of any real yogurt. Verified 2026-08-03 against GeneratedCatalog.kt: fan-out 0, no record carried the American spelling.",
+    "applied_utc": "2026-08-03T05:42:07Z"
    }
   ]
  },
@@ -12211,7 +12218,10 @@
   {
    "id": "agrovoc:c_15463",
    "en": {
-    "display": "yoghurt"
+    "display": "yoghurt",
+    "match": [
+     "yogurt"
+    ]
    },
    "es": {
     "display": "yogur"
