@@ -39,3 +39,38 @@ Next step: gather more instances (the concurrent 20-lens scenario sweep) into
 a real battery, then run a judge-panel workflow the same way ranking-fix-round2
 did -- multiple independent candidates, each swept against the full catalog,
 adversarially cross-checked, before anything ships.
+
+---
+
+## Correction: this is not FUZZY-only, and not typo-only
+
+Found while triaging the 875-scenario slang sweep: bare, correctly-spelled
+"chicken" and "milk" -- the two most ordinary English protein/dairy words --
+resolve wrong on the real engine, with no typo involved at all.
+
+```
+chicken -> TOKEN_SUBSET, Egg, whole, raw, fresh (500)   -- not Chicken
+milk    -> TOKEN_SUBSET, Whey, acid, fluid (500)         -- not Milk
+творог  -> TOKEN_SUBSET, Tofu, firm... (333)             -- not cottage cheese
+```
+
+This is the SAME coverage-tie mechanism as масло/свиней (fixed in 17413c34),
+but the 17413c34 fix does not reach it: that fix only breaks a tie between a
+LITERAL match and a LEMMA-FOLDED match. Here, BOTH sides are literal --
+"chicken" is a genuine token of Chicken's own alternate names ("chicken
+meat", "cooked chicken") AND of Egg's alternate name ("chicken egg") with no
+folding involved on either side. The tie survives 17413c34 untouched and
+falls to canonical id, which happens to favor Egg (usda-srl-01123 sorts
+before usda-srl-05011).
+
+This widens the scope of what the coverage-fix panel (wf_089c9da3-f3c) needs
+to solve. The panel's brief scoped one candidate ("fuzzy-specific-guard")
+around the assumption that all four original instances (chiken/yogert/
+sammon/cafe) reach the wrong record via FUZZY specifically -- true for those
+four, but chicken/milk/творог prove the SAME failure shape also reaches
+through TOKEN_SUBSET on tokens the query typed *exactly right*. A fix scoped
+to FUZZY alone would leave this open. The panel's own broad sweep
+(instructed to sample the catalog's own vocabulary) should have surfaced
+this independently; verify explicitly that whichever candidate ships also
+resolves plain "chicken" and "milk" correctly before treating the panel's
+recommendation as complete.

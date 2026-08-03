@@ -204,6 +204,15 @@ internal val QUANTITY_WORDS: Set<String> = setOf(
     "штука", "штуки", "шт", "ломтик", "ломтика", "ломтики",
     "кусок", "куска", "куски", "порция", "порции", "стакан", "стакана",
     "ложка", "ложки", "ст", "ч",
+    // Measured missing from a slang/edge-case sweep: none of these fold to an
+    // existing entry through the lemma table, because that table is scoped to
+    // catalog words and these are not catalog words -- unlike "двух" -> "два"
+    // earlier in this file, there is no shortcut, and each case form used in
+    // practice is listed explicitly, matching the style already used above.
+    // Verified against the shipped catalog before being added: zero of these
+    // twelve forms collide with any record's own name.
+    "горсть", "горсти", "кусочек", "кусочка", "кусочку", "кусочком",
+    "долька", "дольки", "дольку", "половинка", "половинки", "половинку",
     // Spanish.
     "un", "una", "unos", "unas", "dos", "tres", "cuatro", "cinco", "seis",
     "siete", "ocho", "nueve", "diez", "medio", "media", "mitad",
