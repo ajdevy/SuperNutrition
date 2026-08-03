@@ -1,5 +1,10 @@
 package com.supernutrition.domain.nutrition
 
+import com.supernutrition.core.config.MarketId
+import com.supernutrition.core.config.MarketPolicyRegistry
+import com.supernutrition.core.config.MarketResolution
+import com.supernutrition.core.config.RemotePermission
+
 /**
  * The closed set of reasons remote analysis may be offered, from AD-6.
  *
@@ -50,16 +55,7 @@ sealed interface RemoteTextDecision {
  */
 object RemoteTextEligibility {
     fun decide(localOutcome: TextEngineOutcome, market: MarketTextPolicy): RemoteTextDecision {
-        val reason = when (localOutcome) {
-            is TextEngineOutcome.Unavailable -> RemoteEligibilityReason.LOCAL_UNAVAILABLE
-
-            is TextEngineOutcome.Abstained -> RemoteEligibilityReason.LOCAL_ABSTENTION
-
-            // A local result that succeeded is a terminal answer. Escalating it
-            // would widen AD-6's closed trigger set and turn every meal into an
-            // upload prompt.
-            is TextEngineOutcome.Segmented -> return RemoteTextDecision.NotOffered
-        }
+        val reason = localOutcome.escalationReason() ?: return RemoteTextDecision.NotOffered
 
         if (!market.remoteTextPermitted) return RemoteTextDecision.NotPermitted
 
@@ -74,4 +70,63 @@ object RemoteTextEligibility {
 
         return RemoteTextDecision.Offer(reason, consentCopyVersion, processingRegion)
     }
+
+    /**
+     * G-4's third satisfaction criterion: a real, non-test caller of [decide],
+     * resolving the market straight from [MarketPolicyRegistry] instead of
+     * requiring the caller to hand-build a [MarketTextPolicy].
+     *
+     * Delegates to the pure [decide] overload above rather than duplicating its
+     * branching, so the two can never drift about what a local outcome or a
+     * missing field means.
+     *
+     * [MarketPolicyRegistry.mayTransfer] is the transfer-time re-check this
+     * offer must still pass before anything actually moves, called separately
+     * (and again, deliberately) at the moment of transfer against the copy
+     * version the user was actually shown -- not folded into this function,
+     * because re-deriving the market's position from the registry at that
+     * later moment, rather than trusting what this offer already decided, is
+     * what makes a market that changed between offer and transfer a refusal
+     * instead of a race.
+     */
+    fun decide(
+        localOutcome: TextEngineOutcome,
+        marketId: MarketId,
+        registry: MarketPolicyRegistry,
+        todayEpochDay: Long,
+    ): RemoteTextDecision {
+        val policy = when (val resolution = registry.resolve(marketId, todayEpochDay)) {
+            is MarketResolution.Unresolved -> null
+            is MarketResolution.Resolved -> resolution.policy
+        }
+        val market = MarketTextPolicy(
+            remoteTextPermitted = policy?.textRemotePermission == RemotePermission.PERMITTED,
+            textConsentCopyVersion = policy?.textConsentCopyVersion,
+            // More than one permitted region is treated the same as none for
+            // this decision: an offer must show the one region a transfer will
+            // actually use, and market policy today only declares which
+            // regions are allowed, not which one a given attempt resolves to
+            // (that resolution has no design yet -- see G-4). Picking one
+            // ourselves would be exactly the silent default AGENTS.md forbids
+            // for provider routing, applied to region routing instead.
+            processingRegion = policy?.let { it.permittedProcessingRegions.singleOrNull() },
+        )
+        return decide(localOutcome, market)
+    }
+}
+
+/**
+ * AD-6's closed trigger set, as a function of the local outcome alone. Shared
+ * by both [RemoteTextEligibility.decide] overloads so the market-registry
+ * caller and the hand-built-policy caller can never disagree about what a
+ * local outcome means -- only about how a market is looked up.
+ */
+private fun TextEngineOutcome.escalationReason(): RemoteEligibilityReason? = when (this) {
+    is TextEngineOutcome.Unavailable -> RemoteEligibilityReason.LOCAL_UNAVAILABLE
+
+    is TextEngineOutcome.Abstained -> RemoteEligibilityReason.LOCAL_ABSTENTION
+
+    // A local result that succeeded is a terminal answer. Escalating it would
+    // widen AD-6's closed trigger set and turn every meal into an upload prompt.
+    is TextEngineOutcome.Segmented -> null
 }

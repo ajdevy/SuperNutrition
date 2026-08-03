@@ -62,6 +62,15 @@ development_status:
   3-10-integrate-bounded-dish-ingredient-hints: in-progress
   epic-3-retrospective: optional
 
+  # Discovered 2026-08-03 while scoping E7.6: origin/feat/e43-gateway-impl
+  # (unmerged, commit 24d51378) already implements a working first-party
+  # gateway for 4.3 -- Fastify server, auth, consent verification, a real
+  # OpenRouter provider adapter, rate limiting, telemetry -- 537 tests,
+  # 94.1%/90.2% coverage. Not an ancestor of main or this branch. Left as
+  # backlog below because this file has not been reconciled with that branch;
+  # do not treat 4-3 as clean unstarted work without checking it first. Its
+  # own contracts/mobile-api/v1 release ships text as reserved, not supported,
+  # and is frozen after first consumer -- see G-4's draft-proposals note.
   epic-4: backlog
   4-1-implement-remote-consent-and-transfer-states: backlog
   4-2-implement-the-remote-mobile-adapter: backlog
@@ -119,5 +128,14 @@ development_status:
   # preparation, recipe and food identity never-defaultable; this change adds
   # nothing to that allowlist.
   7-5-add-segmentation-review-and-correction: review
+  # 2026-08-03: AC-1 (offer eligibility) and AC-4 (unresolved market disables
+  # remote) were already implemented via RemoteTextEligibility.kt. This pass
+  # added the AC-2 mismatch check's missing production path (a registry-based
+  # decide() overload, plus MarketPolicyRegistry.mayTransfer wired in end to
+  # end) and fixed a mislabeled test that wasn't covering what it claimed.
+  # AC-3 (the consent receipt) and the remainder of AC-2 (reviewed copy text)
+  # are gated on G-4's external inputs, not implementable here -- see G-4's
+  # updated satisfaction criteria and its draft-proposals doc. No presenter or
+  # screen exists yet; scope for this pass was deliberately domain-layer only.
   7-6-add-remote-typed-identification: in-progress
   epic-7-retrospective: optional
