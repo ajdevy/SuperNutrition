@@ -1,78 +1,96 @@
-# G-4 draft proposals — provider, DPA/retention, threat model, ops plan
+# G-4: provider/region/retention decisions, plus draft threat model and ops plan
 
-**Status: DRAFT. None of this has been reviewed or approved by platform,
-privacy, or legal. Nothing here satisfies G-4's external-input requirements —
-it exists so a real reviewer has a concrete starting point instead of a blank
-page. Do not cite this document as evidence G-4 is closed.**
+**Status: mixed.** Sections 1 and 2 (provider/region, retention position) are
+now real product decisions, made 2026-08-03 by the person with authority to
+make them, in conversation — not fabricated by an agent. They are not,
+however, the *legally and technically executed* versions of those decisions:
+the branch still needs reconciling, the contract release still needs
+shipping, the DPA still needs writing, and per-request opt-in retention still
+needs a technical feasibility check against the actual provider API. Sections
+3 and 4 (threat model, ops plan) remain drafts nobody has reviewed — treat
+those two as a starting point for security/platform, not as sign-off.
 
-Written 2026-08-03 while scoping Story E7.6. The code-level pieces of G-4
+Written 2026-08-03 while scoping Story E7.6, updated the same day once the
+provider/retention/region decisions were made. The code-level pieces of G-4
 (consent-copy mismatch check, a production caller for
 `RemoteTextEligibility.decide`) were implemented and verified the normal way
 this session — see the commit history and `G-4-remote-gateway.md`'s updated
-"how we will know the gate is satisfied" section. The four items below are
-different in kind: they are business, legal, and security decisions, and an
-agent proposing them does not make them real. Each section says plainly what
-would make it real.
+"how we will know the gate is satisfied" section.
 
-## 1. Provider and runtime — reconciliation, not a new choice
+## 1. Provider, runtime, and region — DECIDED 2026-08-03 (product owner, in chat)
 
-**Do not pick a provider from scratch.** `origin/feat/e43-gateway-impl`
+**Provider: `OpenRouterInferenceProvider`, reconciled from
+`origin/feat/e43-gateway-impl` rather than built fresh.** That branch
 (unmerged, commit `24d51378`, Jul 30 2026) already implements a working
-first-party gateway against a real provider: `OpenRouterInferenceProvider`
+first-party gateway against it
 (`backend/mobile-api/apps/api/src/modules/inference/infrastructure/openrouter/`),
-537 tests, 94.1%/90.2% coverage. It is architected as a swappable adapter
-behind a domain-level `InferenceProvider` port — model IDs live only in
-`config/model-profiles.toml`, never in business logic (AD-9) — and its
+537 tests, 94.1%/90.2% coverage, architected as a swappable adapter behind a
+domain-level `InferenceProvider` port — model IDs live only in
+`config/model-profiles.toml`, never in business logic (AD-9). Its
 `ProviderRequest.modality` type already includes `'text'` alongside `'photo'`
 at the port level, even though the shipped `contracts/mobile-api/v1` release
 on that branch only marks `photo` as `supported` (`text` is `reserved`).
 
-**What this means for G-4:** the "named provider and runtime" decision may
-already have effectively been made by whoever built that branch. The live
-decision is not "which provider" but:
-- Whether to reconcile/merge `feat/e43-gateway-impl` as the real Epic 4.3
-  implementation (sprint-status.yaml still shows `epic-4: backlog` and does
-  not mention this branch at all — that's a real coordination gap, not
-  something this document can resolve).
-- Whether OpenRouter itself (as an aggregator routing to underlying models)
-  is an acceptable vendor from a procurement/DPA standpoint — that's exactly
-  section 2 below, and is unaffected by whether the code is good.
+**Region: no single privileged first market.** Remote text is enabled per
+market as gate G-1 resolves each one, not sequenced behind one region going
+first. This matches how `MarketPolicy` is already modeled — one independent
+decision per `marketId` — so it needs no new mechanism, just markets actually
+being resolved.
 
-**Owner:** platform (branch reconciliation), procurement/legal (vendor
-approval). **This document proposes nothing new here** — it reports what
-already exists so nobody builds a second gateway or re-derives a provider
-choice the codebase already made.
+**What is still NOT done, despite the decision being made:**
+- Reconciling/merging `feat/e43-gateway-impl` as the real Epic 4.3
+  implementation (`sprint-status.yaml` still shows `epic-4: backlog` and
+  doesn't mention this branch — a real coordination gap this document flags
+  but cannot itself close).
+- Shipping the new major `contracts/mobile-api` release that actually
+  describes a text request — `text` is currently `reserved`, not `supported`,
+  and that contract is frozen after its first consumer.
+- Confirming OpenRouter (as an aggregator routing to underlying models) is
+  acceptable from a procurement standpoint given the retention position in
+  section 2 below — the provider choice and the retention choice both have to
+  hold together, not just each in isolation.
 
-## 2. DPA, retention, and training terms — PROPOSED, not obtained
+**Owner of what's left:** platform (branch reconciliation, contract release).
 
-G-4's own text: *"'Not retained' is a term to obtain, not an assumption to
-make."* Nothing below is that term. This is a proposed position for legal to
-either adopt, amend, or reject.
+## 2. Retention and training terms — DECIDED 2026-08-03 (product owner, in chat)
 
-**Proposed position** (mirrors the stance the codebase already takes on-device
-— `contracts/inference/v2` marks free text `loggable = false`,
-`telemetry_eligible = false` — extended to the vendor relationship):
+**Position: default not retained / not trained on, per description, unless the
+user explicitly allows it.** Not a blanket policy either way — an opt-in the
+user controls per the product's own stated principle (defaults are visible,
+sourced, editable, reversible, session-scoped; consent is never silently
+defaulted). Someone who never opts in gets the strict position section 1's
+predecessor draft proposed (not retained, not trained on); someone who opts in
+allows retention/training under whatever terms the provider agreement records.
 
-- Descriptions transferred to the remote provider should not be retained by
-  the provider beyond the request/response cycle needed to serve it.
-- Descriptions should not be used to train or fine-tune the provider's models,
-  including via default opt-in retention policies some providers apply unless
-  a request explicitly opts out.
-- If the chosen provider (OpenRouter or whichever underlying model it routes
-  to) cannot contractually guarantee both of the above, that is a fact for
-  legal/privacy to weigh against the product decision to offer remote text at
-  all — not a fact this document can substitute a workaround for.
-- A DPA (or equivalent contractual instrument) recording whichever position is
-  actually adopted should live somewhere a reader can find it — the gate spec
-  suggests `contracts/` or a dedicated `docs/legal/` location; this repo does
-  not yet have a convention for that, which is itself worth deciding.
+**What is still NOT done, despite the decision being made:**
+- **Technical feasibility is unconfirmed.** This requires the chosen provider
+  (OpenRouter, and whichever underlying model it routes a given request to)
+  to actually support a per-request retention flag — "sometimes retained,
+  sometimes not, decided per request by an end-user's own toggle." That is a
+  materially more specific technical requirement than a blanket "provider
+  supports zero data retention" clause, and has not been verified against
+  OpenRouter's actual API or the specific models `config/model-profiles.toml`
+  would name.
+- **No code models this yet.** `MarketPolicy` tracks per-modality transfer
+  permission and consent-copy version, but nothing today represents a
+  separate, user-controlled "may this specific description be retained/
+  trained on" toggle. That's new scope for whoever builds the consent
+  presenter (section 3 of the G-4 spec's satisfaction list), not something
+  `RemoteTextEligibility`/`MarketPolicyRegistry` already carry.
+- **The DPA itself is still unwritten.** G-4's own text: *"'Not retained' is a
+  term to obtain, not an assumption to make."* The position above is the
+  product's ask; a named person with the authority to approve a DPA still has
+  to obtain contract language from the provider that actually supports an
+  opt-in retention model, not just accept boilerplate terms. A DPA (or
+  equivalent) recording the finalized terms should live somewhere a reader can
+  find it — this repo has no existing convention for that location yet.
 
-**What would make this real:** a named person with the authority to approve a
-DPA reviews it, an actual agreement (or explicit written acceptance of the
-provider's standard terms) exists, and its retention/training position is
-recorded in a form the codebase can point to — ideally as a checked-in fact
-(a policy version, a boolean, a date) the same way `MarketPolicy` already
-requires a `legalReviewApprover` and an expiry for market-level decisions.
+**What would make this real:** confirm the provider/model combination can
+technically honor a per-request opt-in, design the toggle the consent screen
+will show (a decision for whoever builds that presenter), and get the DPA
+language to match — then record the finalized position as a checked-in fact
+the same way `MarketPolicy` already requires a `legalReviewApprover` and an
+expiry for market-level decisions.
 
 ## 3. Staging threat model — DRAFT, for security review
 
@@ -130,8 +148,10 @@ the intended one (or corrects it).
 
 Two of G-4's four satisfaction criteria are done for real (items 2 and 3 in
 `G-4-remote-gateway.md`'s "how we will know the gate is satisfied" list,
-verified in code and tests this session). The other two — a named
-provider/region/contract release, and DPA/retention terms — are not
-implementable by engineering alone, and this document is explicitly not a
-substitute for the real sign-off both require. Its only job is to leave the
-next reviewer something concrete to react to instead of nothing.
+verified in code and tests this session). The other two now have a real
+product decision behind them (sections 1 and 2 above), but neither is
+*executed* yet: the provider/contract work still needs engineering, and the
+retention position still needs a DPA and a technical feasibility check before
+it's true rather than intended. Sections 3 and 4 remain unreviewed drafts.
+Nothing in this document is a substitute for that remaining work — it exists
+so the next person has decisions and a starting point instead of a blank page.
