@@ -2,6 +2,7 @@ package com.supernutrition.domain.nutrition
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class CatalogSearchTest {
     @Test
@@ -138,5 +139,54 @@ class CatalogSearchTest {
         )
 
         assertEquals(emptyList(), search.search("motorcycle").map { it.canonicalItemId })
+    }
+
+    @Test
+    fun `MatchStrength equality compares tier and coverage, not identity`() {
+        assertEquals(MatchStrength(MatchTier.EXACT, 500), MatchStrength(MatchTier.EXACT, 500))
+        assertTrue(MatchStrength(MatchTier.EXACT, 500) != MatchStrength(MatchTier.TOKEN_SUBSET, 500))
+        assertTrue(MatchStrength(MatchTier.EXACT, 500) != MatchStrength(MatchTier.EXACT, 400))
+        assertTrue(!MatchStrength(MatchTier.EXACT, 500).equals("not a MatchStrength"))
+    }
+
+    @Test
+    fun `sameTier compares tier alone, ignoring coverage`() {
+        assertTrue(MatchStrength(MatchTier.EXACT, 100).sameTier(MatchStrength(MatchTier.EXACT, 900)))
+        assertTrue(!MatchStrength(MatchTier.EXACT, 100).sameTier(MatchStrength(MatchTier.PREFIX, 100)))
+    }
+
+    @Test
+    fun `an alternate name that tokenizes to nothing contributes no coverage but does not crash`() {
+        // A stray alternate name with no letters or digits at all -- a data
+        // mistake more than a real synonym -- must not blow up ranking. It
+        // simply never satisfies any tier and is skipped when scoring.
+        val search = CatalogSearch(
+            listOf(
+                CatalogRecord(
+                    canonicalItemId = "food:rye-bread",
+                    displayName = "Bread, rye",
+                    alternateNames = listOf(","),
+                ),
+            ),
+        )
+
+        val results = search.search("rye bread")
+
+        assertEquals(listOf("food:rye-bread"), results.map { it.canonicalItemId })
+    }
+
+    @Test
+    fun `editDistance handles an empty string on either side`() {
+        assertEquals(3, editDistance("", "abc"))
+        assertEquals(3, editDistance("abc", ""))
+        assertEquals(0, editDistance("", ""))
+    }
+
+    @Test
+    fun `isPluralPair is false when the singular side is empty`() {
+        // Not a real word pair -- guards a division-of-labour boundary rather
+        // than a case a real query reaches -- but the function is general
+        // enough to be asked, and must not throw or misreport on it.
+        assertTrue(!isPluralPair("s", ""))
     }
 }

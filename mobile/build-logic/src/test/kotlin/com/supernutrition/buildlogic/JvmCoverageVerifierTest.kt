@@ -109,6 +109,71 @@ class JvmCoverageVerifierTest {
         }
     }
 
+    @Test
+    fun `verifyModule enforces its own threshold, independent of the 85 percent floor`() {
+        val root = Files.createTempDirectory("jvm-coverage-module")
+        try {
+            writeReport(root, ":domain:nutrition", lineMissed = 1, lineCovered = 999, branchMissed = 0, branchCovered = 10)
+
+            val result = JvmCoverageVerifier.verifyModule(
+                root,
+                ":domain:nutrition",
+                minLinePercent = 99.0,
+                minBranchPercent = 100.0,
+            )
+
+            assertEquals(1, result.moduleCount)
+            assertEquals(100.0, result.branchPercent)
+        } finally {
+            root.toFile().deleteRecursively()
+        }
+    }
+
+    @Test
+    fun `verifyModule fails closed when a module falls below its stricter threshold`() {
+        val root = Files.createTempDirectory("jvm-coverage-module-fail")
+        try {
+            writeReport(root, ":domain:nutrition", lineMissed = 2, lineCovered = 998, branchMissed = 0, branchCovered = 10)
+
+            val failure = assertFailsWith<IllegalArgumentException> {
+                JvmCoverageVerifier.verifyModule(
+                    root,
+                    ":domain:nutrition",
+                    minLinePercent = 99.99,
+                    minBranchPercent = 100.0,
+                )
+            }
+
+            assertTrue(failure.message.orEmpty().contains(":domain:nutrition"))
+            assertTrue(failure.message.orEmpty().contains("line"))
+        } finally {
+            root.toFile().deleteRecursively()
+        }
+    }
+
+    @Test
+    fun `verifyModule reads only the given project's report, ignoring others in the same root`() {
+        // A sibling module with poor coverage sitting in the same report root
+        // must not pull this module's own, independently-scored result down.
+        val root = Files.createTempDirectory("jvm-coverage-module-scoped")
+        try {
+            writeReport(root, ":domain:nutrition", lineMissed = 0, lineCovered = 100, branchMissed = 0, branchCovered = 100)
+            writeReport(root, ":other", lineMissed = 50, lineCovered = 50, branchMissed = 50, branchCovered = 50)
+
+            val result = JvmCoverageVerifier.verifyModule(
+                root,
+                ":domain:nutrition",
+                minLinePercent = 100.0,
+                minBranchPercent = 100.0,
+            )
+
+            assertEquals(100.0, result.linePercent)
+            assertEquals(100.0, result.branchPercent)
+        } finally {
+            root.toFile().deleteRecursively()
+        }
+    }
+
     private fun writeReport(
         root: Path,
         projectPath: String,

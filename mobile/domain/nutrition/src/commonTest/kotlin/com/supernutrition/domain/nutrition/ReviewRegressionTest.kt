@@ -188,6 +188,15 @@ class ReviewRegressionTest {
     }
 
     @Test
+    fun `a query made only of preparation words names no food to relax onto`() {
+        // The last-resort relaxation still needs a food to match the
+        // preparation against. "grilled raw" strips no quantity word (neither
+        // is one), so it reaches the relaxation with every token claimed by
+        // PREPARATION_WORDS and nothing left to search for.
+        assertEquals(emptyList(), floor.search("grilled raw"))
+    }
+
+    @Test
     fun `the floor carries unmatched preparation to the item the user reviews`() {
         val identification = TextIdentification(
             floor = floor,

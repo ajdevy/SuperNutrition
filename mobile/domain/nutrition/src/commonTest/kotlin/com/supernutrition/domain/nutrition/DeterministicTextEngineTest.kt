@@ -78,6 +78,18 @@ class DeterministicTextEngineTest {
     }
 
     @Test
+    fun `abstains on a description that segments to no fragments at all`() {
+        // A bare comma is non-blank, so nothing upstream filters it out before
+        // it reaches the engine, but TextFragments.of splits on the comma and
+        // trims away the empty pieces on either side, leaving no fragment at
+        // all -- a different path to Abstained than "every fragment failed to
+        // resolve", and one none of the other tests here reach.
+        val outcome = engine.identify(",")
+
+        assertEquals(TextEngineOutcome.Abstained("no-recognizable-fragment"), outcome)
+    }
+
+    @Test
     fun `works through the identification port with no model present`() {
         // The whole point: Noah, offline, low-end device, no model, still
         // reaches a segmented meal.

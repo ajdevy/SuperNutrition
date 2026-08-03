@@ -131,9 +131,15 @@ class CatalogSearch(records: List<CatalogRecord>) {
     }
 
     private fun searchExact(query: String): List<CatalogSearchResult> {
+        // Every caller guarantees a non-empty token list before reaching here:
+        // `search` only calls this after `namesNoFood` has ruled out an empty
+        // query, the retry only calls this when `stripNonFoodEdgeWords`
+        // actually removed something (which never empties the token list --
+        // it returns the query untouched rather than stripping it to
+        // nothing), and `searchRelaxingPreparation` only calls this once its
+        // own `food.isEmpty()` guard has passed.
         val normalizedQuery = normalizeForSearch(query)
         val queryTokens = tokenizeNormalized(normalizedQuery)
-        if (queryTokens.isEmpty()) return emptyList()
 
         for (tier in MatchTier.entries) {
             val hits = indexed.filter { tier.matches(normalizedQuery, queryTokens, it) }
@@ -262,9 +268,6 @@ internal class IndexedRecord(record: CatalogRecord) {
      */
     fun matchesWithoutFolding(queryTokens: List<String>): Boolean =
         anyForm { _, formTokens -> queryTokens.all { it in formTokens } }
-
-    val normalizedName: String get() = searchableForms.first()
-    val tokens: List<String> get() = formTokens.first()
 
     /**
      * How much of this record the query accounted for, as a permille integer so
