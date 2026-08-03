@@ -105,8 +105,8 @@ class ComponentModelActivationController(
     /** Restores the active manifest's declared production rollback target. */
     fun rollback(): ComponentModelActivationResult {
         val current = active ?: return rejected(ComponentModelActivationFailure.ROLLBACK_TARGET_UNAVAILABLE)
-        // Active manifests are production-only, and production manifests require this target.
-        val targetVersion = current.rollbackTargetVersion as String
+        val targetVersion = current.rollbackTargetVersion
+            ?: return rejected(ComponentModelActivationFailure.ROLLBACK_TARGET_UNAVAILABLE)
         val target = registered[targetVersion]
             ?: return rejected(ComponentModelActivationFailure.MODEL_NOT_REGISTERED)
         if (target.activation != ComponentModelActivation.PRODUCTION) {
