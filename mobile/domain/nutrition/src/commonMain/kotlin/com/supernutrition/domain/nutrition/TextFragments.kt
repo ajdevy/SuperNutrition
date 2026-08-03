@@ -232,25 +232,48 @@ internal val QUANTITY_WORDS: Set<String> = setOf(
  * Checked semantically rather than by a minimum length, because the problem is
  * not that these strings are short. "и" and "with" differ in length by three
  * characters and fail for the same reason.
+ *
+ * [russianScaffoldingForms] belongs in this check for a reason specific to
+ * stripping it: this function runs once, on the query as typed, before
+ * anything is stripped. `stripNonFoodEdgeWords` removes scaffolding from both
+ * edges, and "приготовил и съел" — scaffolding, weak separator, scaffolding —
+ * would strip to the bare word "и", a token several real record names carry
+ * interior to themselves (`фрукты и ягоды`). Handed to a tier directly, that
+ * token would match one of them. Rejecting the query up front, while it still
+ * carries evidence for every one of its words, is what stops that: a query
+ * built only from words this file already knows are not food can never reach
+ * a tier at all, stripped or not.
  */
 internal fun namesNoFood(query: String): Boolean {
     val tokens = tokenizeNormalized(normalizeForSearch(query))
-    return tokens.isEmpty() || tokens.all { isQuantityToken(it) || isSeparatorWord(it) }
+    return tokens.isEmpty() ||
+        tokens.all { isQuantityToken(it) || isSeparatorWord(it) || it in russianScaffoldingForms }
 }
 
 /**
- * Drops leading and trailing quantity words, keeping the food name between them.
+ * Drops leading and trailing words that are not the food's name, keeping
+ * whatever sits between them.
  *
- * Only the edges are trimmed. A quantity word in the middle of a name is part of
- * that name — "half and half" is a food, not half of a food — and removing
+ * Quantities and Russian scaffolding verbs are stripped together in one pass
+ * rather than as two attempts in sequence: "съел два яйца" carries a
+ * scaffolding word ahead of a quantity word, and a pass that only recognises
+ * one vocabulary stops at the first token the other owns, stripping neither.
+ * A single predicate over both is what lets them compose regardless of order.
+ *
+ * Only the edges are trimmed. A stripped word in the middle of a name is part
+ * of that name — "half and half" is a food, not half of a food — and removing
  * interior words would corrupt records rather than clean queries.
  */
-internal fun stripQuantityWords(query: String): String {
+internal fun stripNonFoodEdgeWords(query: String): String {
+    // Local rather than a top-level function: it has exactly one caller, and
+    // this file is already at detekt's per-file function ceiling.
+    fun isStrippable(token: String) = isQuantityToken(token) || token in russianScaffoldingForms
+
     val tokens = tokenizeNormalized(normalizeForSearch(query))
     var from = 0
     var to = tokens.size
-    while (from < to && isQuantityToken(tokens[from])) from++
-    while (to > from && isQuantityToken(tokens[to - 1])) to--
+    while (from < to && isStrippable(tokens[from])) from++
+    while (to > from && isStrippable(tokens[to - 1])) to--
     if (from == 0 && to == tokens.size) return query
     if (from >= to) return query
     return tokens.subList(from, to).joinToString(" ")

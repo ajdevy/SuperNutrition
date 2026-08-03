@@ -82,25 +82,31 @@ class CatalogSearch(records: List<CatalogRecord>) {
     /**
      * Three attempts, weakest last, so a stronger reading always wins outright.
      *
-     * Note the difference between the two relaxations. Quantity words are
-     * *removed*: "two" tells the catalog nothing and the amount is asked for
-     * again at serving confirmation. Preparation words are *kept and reported*:
-     * "grilled" is part of what the food is, so dropping it silently would be a
-     * wrong answer rather than a cleaned query.
+     * Note the difference between the two relaxations. Quantity words and
+     * Russian scaffolding verbs are *removed*: "two" and "съел" tell the
+     * catalog nothing about which food was meant, and an amount is asked for
+     * again at serving confirmation. Preparation words are *kept and
+     * reported*: "grilled" is part of what the food is, so dropping it
+     * silently would be a wrong answer rather than a cleaned query.
      */
     fun search(query: String): List<CatalogSearchResult> {
-        // Before any tier: a query of only separators and counting words names
-        // no food, and every tier below would happily find one for it.
+        // Before any tier: a query built only from separators, counting
+        // words and Russian scaffolding verbs names no food, and every tier
+        // below would happily find one for it — including, once the edges
+        // below are stripped, a word this same guard would have refused on
+        // its own.
         if (namesNoFood(query)) return emptyList()
 
         val direct = searchExact(query)
         if (direct.isNotEmpty()) return direct
 
-        // People type "two boiled eggs", not "egg, boiled". Every tier requires
-        // all query tokens to be satisfied by one record, so a single counting
-        // word makes the fragment unresolvable. Retry without them, second so
-        // that a food whose real name contains such a word still wins outright.
-        val stripped = stripQuantityWords(query)
+        // People type "two boiled eggs", not "egg, boiled" — and "съел два
+        // варёных яйца", not "яйцо, варёное". Every tier requires all query
+        // tokens to be satisfied by one record, so a single counting word or
+        // scaffolding verb makes the fragment unresolvable. Retry without
+        // them, second so that a food whose real name contains such a word
+        // still wins outright.
+        val stripped = stripNonFoodEdgeWords(query)
         val withoutQuantity = if (stripped == query) emptyList() else searchExact(stripped)
         if (withoutQuantity.isNotEmpty()) return withoutQuantity
 
