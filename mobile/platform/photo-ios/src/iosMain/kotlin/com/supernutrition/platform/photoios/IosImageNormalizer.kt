@@ -4,6 +4,7 @@ import com.supernutrition.core.config.PhotoNormalizationDefaults
 import com.supernutrition.core.config.withoutJpegApplicationMetadata
 import com.supernutrition.domain.photoanalysis.ImageOrientation
 import com.supernutrition.domain.photoanalysis.NormalizedPhotoInput
+import com.supernutrition.domain.photoanalysis.PhotoFormat
 import com.supernutrition.domain.photoanalysis.PhotoInputNormalizer
 import com.supernutrition.domain.photoanalysis.PhotoPreparationException
 import com.supernutrition.domain.photoanalysis.PhotoRef
@@ -77,9 +78,11 @@ class IosImageNormalizer(
                 bytes = rawBytes.withoutJpegApplicationMetadata(),
                 width = outputWidth,
                 height = outputHeight,
-                orientation = ImageOrientation.UP,
-                colorSpace = PhotoNormalizationDefaults.COLOR_SPACE,
-                metadataKeys = PhotoNormalizationDefaults.METADATA_KEYS,
+                format = PhotoFormat(
+                    ImageOrientation.UP,
+                    PhotoNormalizationDefaults.COLOR_SPACE,
+                    PhotoNormalizationDefaults.METADATA_KEYS,
+                ),
             ),
         )
         return IosNormalizedPhoto(input = normalized, preview = normalizedImage)
