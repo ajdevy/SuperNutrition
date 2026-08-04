@@ -15,6 +15,7 @@ import com.supernutrition.domain.inference.PhotoInferenceRequest
 import com.supernutrition.domain.inference.PhotoRef
 import com.supernutrition.domain.photoanalysis.ImageOrientation
 import com.supernutrition.domain.photoanalysis.NormalizedPhotoInput
+import com.supernutrition.domain.photoanalysis.PhotoFormat
 import com.supernutrition.domain.photoanalysis.PhotoLeaseStorePort
 import com.supernutrition.domain.photoanalysis.PhotoSessionStorePort
 import kotlinx.coroutines.CancellationException
