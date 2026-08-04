@@ -83,6 +83,7 @@ export { EnvSchema, assertTestModeFence, testModeBanner };
 export type { Env, Environment };
 export {
   TestModeFenceError,
+  assertStubFence,
   isFixtureMarket,
   mayAuthorizeRemoteTransfer,
   FIXTURE_MARKET_IDS,
