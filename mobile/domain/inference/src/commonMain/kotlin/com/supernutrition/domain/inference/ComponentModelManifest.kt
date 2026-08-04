@@ -32,7 +32,7 @@ enum class ComponentModelActivation {
  * Immutable evidence required before a component/mass model can be selected.
  * This is metadata only: model bytes and runtime objects remain adapter-owned.
  */
-@Serializable
+@Serializable(with = ComponentModelManifestSerializer::class)
 data class ComponentModelManifest(
     val manifestVersion: String,
     val modelVersion: String,

@@ -20,7 +20,7 @@ import kotlinx.serialization.Serializable
  * The states and reasons themselves are v1's, unchanged, because E7.1 requires
  * exactly that. Only the envelope is new.
  */
-@Serializable
+@Serializable(with = EngineCapabilityV2Serializer::class)
 data class EngineCapabilityV2(
     val contractVersion: String,
     val modality: InferenceModality,
