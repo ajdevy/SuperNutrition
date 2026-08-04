@@ -120,19 +120,7 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
             context = this,
             permissionRequestInFlight = retainedState.captureOperation.permissionRequestInFlight,
         )
-        // Test-mode only; outside it this returns None and nothing below changes.
-        analysisLauncher = PhotoAnalysisEngineWiring.testModeLauncher(
-            context = this,
-            feature = feature,
-            sessions = retainedState.sessions,
-            leases = retainedState.leases,
-            scope = lifecycleScope,
-            configuration = PhotoAnalysisAnalysisConfiguration(
-                requestPrefix = "android-capture",
-                configurationVersion = "cfg/1",
-                configurationDigest = "b".repeat(64),
-            ),
-        )
+        analysisLauncher = buildAnalysisLauncher()
         host = PhotoAnalysisAndroidHostController(
             feature = feature,
             photoBridge = photoBridge,
@@ -164,25 +152,7 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
             feature.dispatch(com.supernutrition.domain.photoanalysis.PhotoAnalysisEvent.RestoreFromSnapshot(snapshot))
         }
         observeRetainedPhotoLifecycle()
-        setContent {
-            val preview by retainedState.previewStore.preview.collectAsState()
-            PhotoAnalysisCaptureContent(
-                stateFlow = feature.stateFlow,
-                onAction = host::handleAction,
-                modifier = Modifier.semantics { testTagsAsResourceId = true },
-                surface = PhotoAnalysisCaptureSurface(
-                    presenterCopy = presentationCopy,
-                    retainedPhoto = preview?.let { current -> { AndroidRetainedPhotoBackdrop(current) } },
-                    photoTextContrast = preview?.let { current ->
-                        if (current.hasLightBackdrop) {
-                            PhotoAnalysisPhotoTextContrast.DARK_TEXT
-                        } else {
-                            PhotoAnalysisPhotoTextContrast.LIGHT_TEXT
-                        }
-                    },
-                ),
-            )
-        }
+        setContent { CaptureContent() }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -217,6 +187,41 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         retainedState.wasBackgrounded = true
         super.onStop()
     }
+
+    /** Test-mode only; outside it this yields None and the host is unchanged. */
+
+    @androidx.compose.runtime.Composable
+    private fun CaptureContent() {
+        val preview by retainedState.previewStore.preview.collectAsState()
+        PhotoAnalysisCaptureContent(
+            stateFlow = feature.stateFlow,
+            onAction = host::handleAction,
+            modifier = Modifier.semantics { testTagsAsResourceId = true },
+            surface = PhotoAnalysisCaptureSurface(
+                presenterCopy = presentationCopy,
+                retainedPhoto = preview?.let { current -> { AndroidRetainedPhotoBackdrop(current) } },
+                photoTextContrast = preview?.let { current ->
+                    if (current.hasLightBackdrop) {
+                        PhotoAnalysisPhotoTextContrast.DARK_TEXT
+                    } else {
+                        PhotoAnalysisPhotoTextContrast.LIGHT_TEXT
+                    }
+                },
+            ),
+        )
+    }
+
+    private fun buildAnalysisLauncher(): PhotoAnalysisAnalysisLauncher = PhotoAnalysisEngineWiring.testModeLauncher(
+        context = this,
+        feature = feature,
+        sessions = retainedState.sessions,
+        scope = lifecycleScope,
+        configuration = PhotoAnalysisAnalysisConfiguration(
+            requestPrefix = "android-capture",
+            configurationVersion = "cfg/1",
+            configurationDigest = "b".repeat(64),
+        ),
+    )
 
     private fun observeRetainedPhotoLifecycle() {
         lifecycleScope.launch {

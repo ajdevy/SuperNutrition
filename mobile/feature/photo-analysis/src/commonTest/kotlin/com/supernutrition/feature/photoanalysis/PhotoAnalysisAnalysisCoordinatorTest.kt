@@ -35,6 +35,7 @@ import com.supernutrition.domain.photoanalysis.LocalAnalysisStage
 import com.supernutrition.domain.photoanalysis.NormalizedPhotoInput
 import com.supernutrition.domain.photoanalysis.PhotoAnalysisEvent
 import com.supernutrition.domain.photoanalysis.PhotoAnalysisState
+import com.supernutrition.domain.photoanalysis.PhotoFormat
 import com.supernutrition.domain.photoanalysis.PhotoLeaseStore
 import com.supernutrition.domain.photoanalysis.PhotoSessionStore
 import com.supernutrition.domain.photoanalysis.RecoveryReason

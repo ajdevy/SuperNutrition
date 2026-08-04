@@ -6,6 +6,10 @@ import android.content.pm.PackageManager
 import com.supernutrition.domain.inference.CalibratedConfidence
 import com.supernutrition.domain.inference.CapabilityReason
 import com.supernutrition.domain.inference.CapabilityState
+import com.supernutrition.domain.inference.ComponentAmbiguity
+import com.supernutrition.domain.inference.ComponentVisibility
+import com.supernutrition.domain.inference.ConfidenceBand
+import com.supernutrition.domain.inference.GramRange
 import com.supernutrition.domain.inference.INFERENCE_EVIDENCE_CONTRACT_V2
 import com.supernutrition.domain.inference.InferenceRoute
 import com.supernutrition.domain.inference.InferenceV2Capability
@@ -14,27 +18,22 @@ import com.supernutrition.domain.inference.InferenceV2Outcome
 import com.supernutrition.domain.inference.InferenceV2Provenance
 import com.supernutrition.domain.inference.InferenceV2Request
 import com.supernutrition.domain.inference.InferenceV2Result
-import com.supernutrition.domain.inference.VisibleComponent
-import com.supernutrition.domain.inference.ComponentAmbiguity
-import com.supernutrition.domain.inference.ComponentVisibility
-import com.supernutrition.domain.inference.ConfidenceBand
-import com.supernutrition.domain.inference.GramRange
 import com.supernutrition.domain.inference.LocalizedCandidateIdentity
 import com.supernutrition.domain.inference.MassCalibrationAssumption
 import com.supernutrition.domain.inference.MassEvidence
 import com.supernutrition.domain.inference.NormalizedVisibleRegion
+import com.supernutrition.domain.inference.VisibleComponent
 import com.supernutrition.domain.photoanalysis.NormalizedPhotoInput
 import com.supernutrition.domain.photoanalysis.PhotoAnalysisState
-import com.supernutrition.domain.photoanalysis.PhotoLeaseStorePort
 import com.supernutrition.domain.photoanalysis.PhotoSessionStorePort
 import com.supernutrition.inference.remote.GatewayEnvironment
 import com.supernutrition.inference.remote.HttpGatewayTransport
 import com.supernutrition.inference.remote.RemoteConsentDecision
 import com.supernutrition.inference.remote.RemoteInferenceEngine
+import kotlinx.coroutines.CoroutineScope
 import java.security.MessageDigest
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import kotlinx.coroutines.CoroutineScope
 
 /**
  * Binds the analysis engines for the Android host.
@@ -75,8 +74,7 @@ internal object PhotoAnalysisEngineWiring {
         return debuggable && metadata(context).getBoolean(TEST_MODE_KEY, false)
     }
 
-    fun baseUrl(context: Context): String =
-        metadata(context).getString(BASE_URL_KEY) ?: EMULATOR_HOST_GATEWAY
+    fun baseUrl(context: Context): String = metadata(context).getString(BASE_URL_KEY) ?: EMULATOR_HOST_GATEWAY
 
     private fun metadata(context: Context) = runCatching {
         context.packageManager
@@ -88,12 +86,10 @@ internal object PhotoAnalysisEngineWiring {
      * Returns a launcher bound to both engines, or [PhotoAnalysisAnalysisLauncher.None]
      * outside test mode. The caller does not decide the fence.
      */
-    @Suppress("LongParameterList")
     fun testModeLauncher(
         context: Context,
         feature: PhotoAnalysisFeature,
         sessions: PhotoSessionStorePort,
-        leases: PhotoLeaseStorePort,
         scope: CoroutineScope,
         configuration: PhotoAnalysisAnalysisConfiguration,
     ): PhotoAnalysisAnalysisLauncher {
@@ -117,7 +113,7 @@ internal object PhotoAnalysisEngineWiring {
                 // recomputes is bound to them rather than to a second read.
                 photoBytes = { currentInput()?.bytes },
                 digest = ::sha256,
-                consent = { testModeConsent(configuration.configurationVersion) },
+                consent = { testModeConsent() },
                 idFactory = ::opaqueToken,
             ),
             componentEngine = FixtureComponentEngine,
@@ -142,7 +138,7 @@ internal object PhotoAnalysisEngineWiring {
      * the user was never asked for. It names the fixture market so that even if
      * the fence were bypassed the gateway's own market policy rejects it.
      */
-    private fun testModeConsent(configurationVersion: String): RemoteConsentDecision {
+    private fun testModeConsent(): RemoteConsentDecision {
         val now = Instant.now().truncatedTo(ChronoUnit.SECONDS)
         return RemoteConsentDecision(
             granted = true,
@@ -224,12 +220,11 @@ private object FixtureComponentEngine : InferenceV2Engine() {
         calibrationVersion = CALIBRATION_VERSION,
     )
 
-    override suspend fun analyzeUnvalidated(request: InferenceV2Request): InferenceV2Result =
-        InferenceV2Result(
-            contractVersion = INFERENCE_EVIDENCE_CONTRACT_V2,
-            inputModality = request.input.modality,
-            outcome = InferenceV2Outcome.Components(listOf(COMPONENT)),
-        )
+    override suspend fun analyzeUnvalidated(request: InferenceV2Request): InferenceV2Result = InferenceV2Result(
+        contractVersion = INFERENCE_EVIDENCE_CONTRACT_V2,
+        inputModality = request.input.modality,
+        outcome = InferenceV2Outcome.Components(listOf(COMPONENT)),
+    )
 
     private val PROVENANCE = InferenceV2Provenance(
         route = InferenceRoute.LOCAL,
