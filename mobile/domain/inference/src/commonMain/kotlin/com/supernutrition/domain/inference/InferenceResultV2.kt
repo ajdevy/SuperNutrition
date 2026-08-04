@@ -121,7 +121,7 @@ data class InferenceSourceSpan(val start: Int, val end: Int) {
  * candidates per meal (FR-13), and text returns one group per detected item so
  * a multi-item description cannot silently collapse to one (FM-6).
  */
-@Serializable
+@Serializable(with = InferenceItemGroupSerializer::class)
 data class InferenceItemGroup(
     val groupId: String,
     val sourceSpan: InferenceSourceSpan? = null,
