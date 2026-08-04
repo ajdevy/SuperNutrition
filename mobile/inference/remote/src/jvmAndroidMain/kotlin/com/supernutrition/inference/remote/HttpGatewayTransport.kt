@@ -3,6 +3,9 @@ package com.supernutrition.inference.remote
 import java.io.DataOutputStream
 import java.net.HttpURLConnection
 import java.net.URL
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /**
  * The only HTTP-aware type in the client.
@@ -23,9 +26,21 @@ class HttpGatewayTransport(
     private val baseUrl: String,
     private val connectTimeoutMs: Int = 10_000,
     private val readTimeoutMs: Int = 30_000,
+    /**
+     * Blocking I/O is confined here rather than left to the caller. The host
+     * launches analysis on the Android main dispatcher, and `HttpURLConnection`
+     * blocks, so without this every device call dies with
+     * NetworkOnMainThreadException — which the engine then reports as an
+     * ordinary transport fault, hiding the real cause. A suspend function that
+     * blocks owns its dispatcher.
+     */
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : GatewayTransport {
 
-    override suspend fun postInferencePhoto(call: GatewayCall): GatewayHttpResponse {
+    override suspend fun postInferencePhoto(call: GatewayCall): GatewayHttpResponse =
+        withContext(ioDispatcher) { post(call) }
+
+    private fun post(call: GatewayCall): GatewayHttpResponse {
         val boundary = "----SuperNutrition${System.nanoTime()}"
         val connection = (URL("$baseUrl/gw/v1/inference/photo").openConnection() as HttpURLConnection).apply {
             requestMethod = "POST"

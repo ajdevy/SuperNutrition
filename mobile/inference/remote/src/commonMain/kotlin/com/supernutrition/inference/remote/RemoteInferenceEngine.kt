@@ -80,11 +80,12 @@ class RemoteInferenceEngine(
     )
 
     override suspend fun analyze(request: PhotoInferenceRequest): PhotoInferenceResult {
-        val attemptId = request.attemptContext.attemptId.value
-        val bytes = photoBytes.read(attemptId)
+        val domainAttemptId = request.attemptContext.attemptId.value
+        val attemptId = contractAttemptId(domainAttemptId)
+        val bytes = photoBytes.read(domainAttemptId)
             ?: return failure(InferenceFailureCode.INVALID_INPUT, false, "inference.failure.payload_missing")
 
-        val decision = consent(attemptId)
+        val decision = consent(domainAttemptId)
         // A declined or unbound decision must not reach the network at all.
         if (!decision.granted) {
             return failure(InferenceFailureCode.INVALID_INPUT, false, "inference.failure.consent_required")
@@ -140,6 +141,26 @@ class RemoteInferenceEngine(
 
         return if (response.status == 200) mapSuccess(response.body) else mapError(response.body)
     }
+
+    /**
+     * Maps a domain attempt id onto the contract's opaque form.
+     *
+     * The mobile domain lets an attempt id be any non-blank string — the Android
+     * host uses "android-photo-attempt" — while the gateway requires
+     * `^att_[A-Za-z0-9]{16,64}$` and rejects anything else with
+     * `validation-error`. Passing the domain value through therefore fails every
+     * real request, which is what it did on the first device run.
+     *
+     * The mapping is a digest rather than a random id because this value is the
+     * gateway's per-attempt anchor: the same attempt has to produce the same id
+     * on a retry, and the raw domain value must not travel.
+     */
+    private fun contractAttemptId(raw: String): String =
+        if (ATTEMPT_PATTERN.matches(raw)) {
+            raw
+        } else {
+            "att_" + digest(raw.encodeToByteArray()).substringAfter("sha256:").take(32)
+        }
 
     private fun mapSuccess(body: String): PhotoInferenceResult {
         val wire = runCatching { JSON.decodeFromString(GatewayResponseWire.serializer(), body) }
@@ -223,6 +244,8 @@ class RemoteInferenceEngine(
     internal companion object {
         const val ENGINE_ID: String = "gateway-remote"
         const val CONTRACT_V1: String = "photo-inference-engine/v1"
+
+        val ATTEMPT_PATTERN: Regex = Regex("^att_[A-Za-z0-9]{16,64}$")
 
         val JSON: Json = Json {
             ignoreUnknownKeys = true
