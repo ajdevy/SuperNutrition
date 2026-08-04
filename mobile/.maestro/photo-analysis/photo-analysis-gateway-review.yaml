@@ -1,0 +1,32 @@
+appId: ${APP_ID}
+---
+# photo -> analysis -> result, against the first-party gateway.
+#
+# Requires the test-mode build (debug source set) and a gateway reachable at the
+# configured base URL; outside test mode the host binds no engine and the flow
+# stops at "photo ready" by design. A minimal review assertion on purpose: the
+# full UJ-catalog coverage of the review states is a separate slice.
+- runScript:
+    file: ./photo-analysis-locators.js
+- launchApp:
+    clearState: true
+- assertVisible:
+    id: ${output.photo_analysis_title}
+- assertVisible:
+    id: ${output.capture_import}
+
+# Import rather than capture: the emulator camera cannot be driven headlessly,
+# and the analysis path under test is identical for both sources.
+- tapOn:
+    id: ${output.capture_import}
+- tapOn:
+    text: "meal.jpg"
+
+# The gateway's dish candidates and the local component evidence must both
+# reach the review, because the review is a fusion of the two.
+- assertVisible:
+    text: "Review candidate"
+- assertVisible:
+    text: "Dish candidates"
+- assertVisible:
+    text: "Detected in photo"
