@@ -1,0 +1,4 @@
+{"level":30,"time":1785863926523,"environment":"development","authMode":"test-mode","reqId":"fa748216701d176678a0b5e3faebc660","req":{"method":"POST","route":"/gw/v1/inference/photo","requestId":"fa748216701d176678a0b5e3faebc660"},"msg":"incoming request"}
+{"level":30,"time":1785863926566,"environment":"development","authMode":"test-mode","reqId":"fa748216701d176678a0b5e3faebc660","res":{"statusCode":400},"responseTime":41.62021399999503,"msg":"request completed"}
+{"level":30,"time":1785864097902,"environment":"development","authMode":"test-mode","reqId":"9d54c12646020b256b95537bbd897a07","req":{"method":"POST","route":"/gw/v1/inference/photo","requestId":"9d54c12646020b256b95537bbd897a07"},"msg":"incoming request"}
+{"level":30,"time":1785864097913,"environment":"development","authMode":"test-mode","reqId":"9d54c12646020b256b95537bbd897a07","res":{"statusCode":200},"responseTime":11.65799400000833,"msg":"request completed"}
