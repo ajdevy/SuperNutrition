@@ -129,7 +129,7 @@ class PhotoAnalysisAndroidHostController(
             CameraPermissionState.DENIED,
             -> requestPermission()
 
-            CameraPermissionState.RATIONALE -> showCameraPermissionRationale(::requestPermission)
+            CameraPermissionState.RATIONALE -> callbacks.showCameraPermissionRationale(::requestPermission)
 
             CameraPermissionState.PERMANENTLY_DENIED,
             CameraPermissionState.RESTRICTED,
@@ -141,7 +141,7 @@ class PhotoAnalysisAndroidHostController(
         if (!captureOperation.permissionRequestInFlight) {
             captureOperation.permissionRequestInFlight = true
             photoBridge.markCameraPermissionRequestStarted()
-            requestCameraPermission()
+            callbacks.requestCameraPermission()
         }
     }
 

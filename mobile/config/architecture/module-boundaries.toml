@@ -127,8 +127,13 @@ to = "domain|testing|platform"
 scope = "test-only"
 
 [[allowed_edge]]
+# `inference` is here because the feature host is the Android/Apple composition
+# root: it already binds the platform adapters, and the analysis engines are
+# adapters of the same kind. The seam it fills —
+# CoordinatedPhotoAnalysisAnalysisLauncher — is declared in this module, so
+# without this edge no host can bind an engine at all.
 from = "feature-host"
-to = "feature-presenter|feature-ui|platform|domain|core"
+to = "feature-presenter|feature-ui|platform|inference|domain|core"
 scope = "production"
 
 [[allowed_edge]]
