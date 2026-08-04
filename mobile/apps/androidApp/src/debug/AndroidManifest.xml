@@ -1,0 +1,11 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <application
+        android:networkSecurityConfig="@xml/network_security_config"
+        tools:replace="android:networkSecurityConfig">
+        <!-- Arms the test-mode analysis path. Debug source set only, so a
+             release build has no metadata and the fence stays closed. -->
+        <meta-data android:name="com.supernutrition.testMode" android:value="true" />
+        <meta-data android:name="com.supernutrition.gatewayBaseUrl" android:value="http://10.0.2.2:3000" />
+    </application>
+</manifest>
