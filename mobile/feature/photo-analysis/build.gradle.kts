@@ -73,6 +73,7 @@ kotlin {
             implementation(compose.material3)
             implementation(compose.ui)
             implementation(project(":platform:photo-android"))
+            implementation(project(":inference:remote"))
         }
     }
 }
