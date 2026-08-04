@@ -1,5 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.CAMERA" />
+    <!-- Required for the first-party gateway. Without it the app cannot open a
+         socket at all and every analysis fails as a transport fault. -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:name=".BootstrapApplication"
         android:label="@string/app_name"
