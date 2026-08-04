@@ -1,0 +1,6 @@
+device: emulator-5554 (Pixel_9_Pro, API 37)
+gateway: http://10.0.2.2:3000  (backend bound 0.0.0.0, TEST_MODE=true STUB_INFERENCE=true)
+flow: launch -> Choose photo -> meal.jpg -> analysis -> Review candidate
+gateway response: HTTP 200
+rendered dish candidates (from backend): Mixed salad bowl, Garden salad
+rendered local component evidence: Leafy greens, Estimated 100-140 g
