@@ -37,6 +37,6 @@ ios_architecture_exception = "docs/decisions/2026-07-27-intel-ios-x64-acceptance
 robot_owner = "mobile/feature/photo-analysis"
 robot_ids = ["photo-analysis-capture-recovery"]
 maestro_owner = "mobile/.maestro/photo-analysis"
-maestro_flow_ids = ["photo-analysis-capture-recovery"]
+maestro_flow_ids = ["photo-analysis-capture-recovery", "photo-analysis-gateway-review"]
 platforms = ["android", "ios"]
 claims = ["capture-surface", "photo-lease", "recovery-state-machine"]

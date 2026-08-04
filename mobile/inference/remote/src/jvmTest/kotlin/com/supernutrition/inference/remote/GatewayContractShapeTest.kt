@@ -75,11 +75,7 @@ private fun shapeRequest() = PhotoInferenceRequest(
     ),
 )
 
-private fun shapeEngineFor(
-    attempt: String,
-    transport: GatewayTransport,
-    idFactory: () -> String,
-) = shapeEngine(transport, idFactory)
+private fun shapeEngineFor(transport: GatewayTransport, idFactory: () -> String) = shapeEngine(transport, idFactory)
 
 private fun rawRequest(attempt: String) = PhotoInferenceRequest(
     photoRef = PhotoRef.issue(AttemptId(attempt), "photo0000000001"),
@@ -116,7 +112,7 @@ class GatewayContractShapeTest {
         // The Android host's attempt id is "android-photo-attempt", which the
         // gateway rejects outright. Sending it raw failed every real request.
         val transport = CapturingTransport()
-        val engine = shapeEngineFor("android-photo-attempt", transport) { "0000000000000001" }
+        val engine = shapeEngineFor(transport) { "0000000000000001" }
 
         engine.analyze(rawRequest("android-photo-attempt"))
 
@@ -132,9 +128,9 @@ class GatewayContractShapeTest {
     fun theMappedAttemptIdIsStableAcrossRetries() = runBlocking {
         val first = CapturingTransport()
         val second = CapturingTransport()
-        shapeEngineFor("android-photo-attempt", first) { "0000000000000001" }
+        shapeEngineFor(first) { "0000000000000001" }
             .analyze(rawRequest("android-photo-attempt"))
-        shapeEngineFor("android-photo-attempt", second) { "0000000000000002" }
+        shapeEngineFor(second) { "0000000000000002" }
             .analyze(rawRequest("android-photo-attempt"))
 
         assertEquals(

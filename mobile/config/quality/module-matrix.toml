@@ -5,8 +5,8 @@ lifecycle = "active"
 inventory_state = "local-verified"
 source_digest = "local-only"
 quality_claim = true
-production_source_count = 12
-coverage_denominator_count = 12
+production_source_count = 15
+coverage_denominator_count = 15
 undeclared_executable_policy = "fail"
 
 # Active local inventory: every production source has an explicit quality
@@ -66,6 +66,30 @@ path = "mobile/domain/photo-analysis"
 kind = "production-kmp"
 production = true
 quality_task = "domain:photo-analysis:jvmTest"
+status = "local-verified"
+
+[[unit]]
+id = "inference-remote"
+path = "mobile/inference/remote"
+kind = "production-adapter"
+production = true
+quality_task = "inference:remote:jvmTest"
+status = "local-verified"
+
+[[unit]]
+id = "inference-local-android"
+path = "mobile/inference/local-android"
+kind = "production-adapter"
+production = true
+quality_task = "inference:local-android:jvmTest"
+status = "local-verified"
+
+[[unit]]
+id = "inference-local-ios"
+path = "mobile/inference/local-ios"
+kind = "production-adapter"
+production = true
+quality_task = "inference:local-ios:jvmTest"
 status = "local-verified"
 
 [[unit]]

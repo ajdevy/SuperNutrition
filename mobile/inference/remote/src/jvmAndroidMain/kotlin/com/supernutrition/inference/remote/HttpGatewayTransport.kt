@@ -1,11 +1,11 @@
 package com.supernutrition.inference.remote
 
-import java.io.DataOutputStream
-import java.net.HttpURLConnection
-import java.net.URL
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.DataOutputStream
+import java.net.HttpURLConnection
+import java.net.URL
 
 /**
  * The only HTTP-aware type in the client.

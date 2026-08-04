@@ -17,6 +17,7 @@ import com.supernutrition.domain.inference.PhotoInferenceEngine
 import com.supernutrition.domain.inference.PhotoInferenceRequest
 import com.supernutrition.domain.inference.PhotoInferenceResult
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
 
 /** Supplies the scrubbed, normalized bytes for an attempt's PhotoRef. */
 fun interface PhotoBytesSource {
@@ -119,13 +120,14 @@ class RemoteInferenceEngine(
                 locale = environment.locale,
                 measurementSystem = environment.measurementSystem,
                 configurationVersion = environment.configurationVersion,
+                priorMealSummary = null,
             ),
         )
 
         val response = try {
             transport.postInferencePhoto(
                 GatewayCall(
-                    contextJson = JSON.encodeToString(GatewayRequestWire.serializer(), envelope),
+                    contextJson = GatewayCodec.encodeRequest(envelope).toString(),
                     payload = bytes,
                     contentType = "image/jpeg",
                     requestId = "req_${idFactory()}",
@@ -155,15 +157,14 @@ class RemoteInferenceEngine(
      * gateway's per-attempt anchor: the same attempt has to produce the same id
      * on a retry, and the raw domain value must not travel.
      */
-    private fun contractAttemptId(raw: String): String =
-        if (ATTEMPT_PATTERN.matches(raw)) {
-            raw
-        } else {
-            "att_" + digest(raw.encodeToByteArray()).substringAfter("sha256:").take(32)
-        }
+    private fun contractAttemptId(raw: String): String = if (ATTEMPT_PATTERN.matches(raw)) {
+        raw
+    } else {
+        "att_" + digest(raw.encodeToByteArray()).substringAfter("sha256:").take(32)
+    }
 
     private fun mapSuccess(body: String): PhotoInferenceResult {
-        val wire = runCatching { JSON.decodeFromString(GatewayResponseWire.serializer(), body) }
+        val wire = runCatching { GatewayCodec.decodeResponse(JSON.parseToJsonElement(body).jsonObject) }
             .getOrNull()
             ?: return failure(InferenceFailureCode.TEMPORARY_UNAVAILABLE, true, "inference.failure.malformed")
 
@@ -194,7 +195,7 @@ class RemoteInferenceEngine(
     }
 
     private fun mapError(body: String): PhotoInferenceResult {
-        val wire = runCatching { JSON.decodeFromString(GatewayErrorBodyWire.serializer(), body) }
+        val wire = runCatching { GatewayCodec.decodeErrorBody(JSON.parseToJsonElement(body).jsonObject) }
             .getOrNull()?.error
             ?: return failure(InferenceFailureCode.TEMPORARY_UNAVAILABLE, true, "inference.failure.unknown")
         return failure(gatewayCodeToFailure(wire.gatewayCode), wire.recoverable, wire.userMessageKey)
