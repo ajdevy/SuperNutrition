@@ -92,10 +92,18 @@ xcrun xctrace list devices
 
 The iOS device framework is built with the `iosArm64` target, then the Xcode
 acceptance scheme is invoked with `-destination 'id=<UDID>'`. Signing/team
-settings are local machine inputs and must not be committed. The checked-in
+selection is configured in the Xcode project for the local Apple account
+`ancientslaviccalendar@gmail.com` (Team `Arturs Jaskevics`, Team ID
+`Z4JKB6L22Z`). Signing certificates, private keys, and generated provisioning
+profiles remain local machine inputs and must not be committed. The checked-in
 Intel fallback is an executable x64 simulator compatibility lane for shared
 presenter/reducer and bridge acceptance; it is never substituted for iPhone
 camera, lifecycle, or hardware evidence.
+
+Run `pod install` in `mobile/apps/iosApp` before using the workspace. Its
+post-install settings keep static CocoaPods libraries unsigned; the application
+and test runner are signed by Xcode. A physical-device launch also requires the
+iPhone to be paired, in Developer Mode, and unlocked.
 
 Run both the binary-bound Kotlin fixture and the physical `iosArm64` Xcode
 acceptance suite before emitting the native-evidence bundle. The emitter
@@ -103,24 +111,21 @@ requires the fixture XML as well as the physical xcresult, so a UI-only run
 cannot accidentally close the normalization gap:
 
 ```bash
-APPLE_TEAM_ID="<local-team-id>" \
-IOS_CODE_SIGN_IDENTITY="Apple Development: <name> (<certificate-id>)" \
-IOS_UDID="<physical-iphone-udid>" \
+export APPLE_TEAM_ID="${APPLE_TEAM_ID:-Z4JKB6L22Z}"
+export IOS_CODE_SIGN_IDENTITY="Apple Development: <name> (<certificate-id>)"
+export IOS_UDID="<physical-iphone-udid>"
 xcodebuild test -quiet \
-  -project mobile/apps/iosApp/SuperNutritionUIAcceptance.xcodeproj \
+  -workspace mobile/apps/iosApp/SuperNutritionUIAcceptance.xcworkspace \
   -scheme SuperNutritionUIAcceptance \
-  -destination "id=<physical-iphone-udid>" \
+  -destination "id=$IOS_UDID" \
   -derivedDataPath mobile/apps/iosApp/build/DerivedData \
   SHARED_KIT_FRAMEWORK_DIR="$PWD/mobile/apps/sharedKit/build/bin/iosArm64/debugFramework" \
-  DEVELOPMENT_TEAM="<local-team-id>" \
+  DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
   CODE_SIGN_STYLE=Automatic \
   CODE_SIGN_IDENTITY="Apple Development" \
   -allowProvisioningUpdates -allowProvisioningDeviceRegistration
 
-APPLE_TEAM_ID="<local-team-id>" \
-IOS_CODE_SIGN_IDENTITY="Apple Development: <name> (<certificate-id>)" \
-IOS_UDID="<physical-iphone-udid>" \
-  scripts/run-physical-ios-fixtures.sh
+scripts/run-physical-ios-fixtures.sh
 ```
 
 Then emit the native-evidence bundle with the real iPhone UDID:

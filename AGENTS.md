@@ -39,6 +39,24 @@ This file is the canonical agent guide. `CLAUDE.md` imports it; keep agent-speci
 - Disconnect duplicate ADB endpoints before evidence runs. With multiple devices, pass `-Pandroid.testInstrumentationRunnerArguments.deviceSerial=<serial>` and use strict dependency verification when the evidence command requires it. Confirm both `productionDebug` and `uiAcceptanceDebug` ran. Verify the XML reports under `mobile/apps/androidApp/build/outputs/androidTest-results/connected/` show exact `tests`, `failures`, `errors`, and `skipped` counts.
 - Treat ABI/API, lifecycle reflection, permission, camera, UI semantics, and accessibility failures as product failures to fix—not as device noise. When Compose sets `testTagsAsResourceId`, UI Automator must query resource IDs (`By.res`), not descriptions (`By.desc`).
 
+## Apple/iOS device evidence
+
+- The configured Xcode Apple Account is `ancientslaviccalendar@gmail.com`,
+  exposing the `Arturs Jaskevics` team with Team ID `Z4JKB6L22Z`. The
+  `DEVELOPMENT_TEAM` setting is checked into the iOS project for the production,
+  acceptance-host, and acceptance-test configurations.
+- Certificates, private keys, and generated provisioning profiles are local
+  machine inputs and must never be committed. Run `pod install` in
+  `mobile/apps/iosApp` and use
+  `SuperNutritionUIAcceptance.xcworkspace`; the Podfile keeps static CocoaPods
+  libraries unsigned while Xcode signs the app/test products.
+- Physical iOS evidence requires a paired iPhone in Developer Mode, listed by
+  `xcrun devicectl list devices`, and unlocked before install or launch. A
+  locked-device launch failure is an execution prerequisite failure, not a
+  product-test result. Follow `mobile/apps/iosApp/README.md` and
+  `mobile/REAL_DEVICE_TESTING.md` for the exact arm64 build, acceptance, and
+  fixture commands.
+
 ## Policy, CI, and merge evidence
 
 - Parse structured TOML/manifests with the typed parser; keep cached documents immutable, reject duplicate declarations and empty inventories, and fail closed. Do not reintroduce regex parsing or string round-tripping for policy decisions.
