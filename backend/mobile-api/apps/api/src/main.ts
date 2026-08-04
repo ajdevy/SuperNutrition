@@ -9,6 +9,7 @@ import {
   loadConfig,
   testModeBanner,
   TestModeFenceError,
+  assertStubFence,
   ConfigError,
   type AppConfig,
 } from './config/index.js';
@@ -27,6 +28,7 @@ import {
   generateRefreshToken,
   type RateLimitRule,
 } from './security/index.js';
+import { StubInferenceProvider } from './modules/inference/infrastructure/stub/stub.provider.js';
 import {
   InMemoryPayloadSource,
   OpenRouterInferenceProvider,
@@ -99,15 +101,33 @@ export const buildApplication = async (
   // Provider credentials are read once, here, and handed to the adapter. They
   // never touch the config object other modules hold (docs/09 §9.8).
   const openRouterKey = process.env['OPENROUTER_API_KEY'] ?? '';
-  const providers = openRouterKey
-    ? [
-        new OpenRouterInferenceProvider(
-          openRouterKey,
-          { baseUrl: config.inference.openRouterBaseUrl, timeoutMs: 30_000 },
-          payloads,
-        ),
-      ]
-    : [];
+
+  // STUB_INFERENCE exists so the client<->gateway path is exercisable without a
+  // provider key. It is fenced to TEST_MODE: with attestation on, a stub can
+  // never answer a real caller. Every other gate on the request stays real.
+  const stubAllowed = assertStubFence(
+    process.env['STUB_INFERENCE'] === 'true',
+    config.auth.testMode,
+  );
+
+  const providers = stubAllowed
+    ? [new StubInferenceProvider()]
+    : openRouterKey
+      ? [
+          new OpenRouterInferenceProvider(
+            openRouterKey,
+            { baseUrl: config.inference.openRouterBaseUrl, timeoutMs: 30_000 },
+            payloads,
+          ),
+        ]
+      : [];
+
+  if (stubAllowed) {
+    logger.warn(
+      { telemetry: { environment: config.env, authMode: 'test-mode' } },
+      'STUB inference provider active: candidates are fixtures, not model output',
+    );
+  }
 
   if (providers.length === 0) {
     logger.warn(

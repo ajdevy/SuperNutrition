@@ -68,6 +68,30 @@ export const mayAuthorizeRemoteTransfer = (
   marketId: string,
 ): boolean => (authMode === 'attested' ? true : isFixtureMarket(marketId));
 
+/**
+ * The stub-provider fence.
+ *
+ * `STUB_INFERENCE` makes the gateway answer with fixture candidates so the
+ * client transport can be exercised without a provider key. That is a inference
+ * surface that returns food identifications nobody's model produced, so it is
+ * bound to TEST_MODE by the same boot assertion as the rest of the fence: with
+ * attestation on, a stub can never answer a real caller.
+ *
+ * Lives here rather than in `main.ts` because `main.ts` is excluded from the
+ * coverage denominator, and an untested security fence is not a fence.
+ */
+export const assertStubFence = (stubRequested: boolean, testMode: boolean): boolean => {
+  if (!stubRequested) return false;
+
+  if (!testMode) {
+    throw new TestModeFenceError(
+      'STUB_INFERENCE requires TEST_MODE. Refusing to start with a stub inference provider.',
+    );
+  }
+
+  return true;
+};
+
 /** Startup banner. Deliberately loud and persistent. */
 export const testModeBanner = (env: FenceInput): string | null =>
   env.TEST_MODE
