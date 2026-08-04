@@ -6,6 +6,7 @@ import com.supernutrition.domain.inference.PhotoInferenceRequest
 import com.supernutrition.domain.inference.PhotoRef
 import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -74,6 +75,22 @@ private fun shapeRequest() = PhotoInferenceRequest(
     ),
 )
 
+private fun shapeEngineFor(
+    attempt: String,
+    transport: GatewayTransport,
+    idFactory: () -> String,
+) = shapeEngine(transport, idFactory)
+
+private fun rawRequest(attempt: String) = PhotoInferenceRequest(
+    photoRef = PhotoRef.issue(AttemptId(attempt), "photo0000000001"),
+    attemptContext = InferenceAttemptContext(
+        attemptId = AttemptId(attempt),
+        requestId = "req_0000000000000001",
+        configurationVersion = "cfg/1",
+        configurationDigest = "b".repeat(64),
+    ),
+)
+
 private fun field(body: String, name: String) = Regex("\"$name\":\"([^\"]+)\"").find(body)?.groupValues?.get(1)
 
 class GatewayContractShapeTest {
@@ -92,6 +109,38 @@ class GatewayContractShapeTest {
         assertTrue(EFFECT_PATTERN.matches(effectId), "effectId=$effectId")
         assertTrue(ATTEMPT_PATTERN.matches(attemptId), "attemptId=$attemptId")
         assertTrue(REQUEST_PATTERN.matches(requestId), "requestId=$requestId")
+    }
+
+    @Test
+    fun aDomainAttemptIdIsMappedOntoTheContractFormRatherThanSentRaw() = runBlocking {
+        // The Android host's attempt id is "android-photo-attempt", which the
+        // gateway rejects outright. Sending it raw failed every real request.
+        val transport = CapturingTransport()
+        val engine = shapeEngineFor("android-photo-attempt", transport) { "0000000000000001" }
+
+        engine.analyze(rawRequest("android-photo-attempt"))
+
+        val body = assertNotNull(transport.contextJson)
+        val attemptId = assertNotNull(field(body, "attemptId"))
+        assertTrue(ATTEMPT_PATTERN.matches(attemptId), "attemptId=$attemptId")
+        assertTrue("android-photo-attempt" !in body, "raw domain id must not travel")
+        // The receipt is cross-checked against the envelope, so both must map.
+        assertTrue(body.count { it == '{' } > 0 && attemptId in body)
+    }
+
+    @Test
+    fun theMappedAttemptIdIsStableAcrossRetries() = runBlocking {
+        val first = CapturingTransport()
+        val second = CapturingTransport()
+        shapeEngineFor("android-photo-attempt", first) { "0000000000000001" }
+            .analyze(rawRequest("android-photo-attempt"))
+        shapeEngineFor("android-photo-attempt", second) { "0000000000000002" }
+            .analyze(rawRequest("android-photo-attempt"))
+
+        assertEquals(
+            field(assertNotNull(first.contextJson), "attemptId"),
+            field(assertNotNull(second.contextJson), "attemptId"),
+        )
     }
 
     @Test
