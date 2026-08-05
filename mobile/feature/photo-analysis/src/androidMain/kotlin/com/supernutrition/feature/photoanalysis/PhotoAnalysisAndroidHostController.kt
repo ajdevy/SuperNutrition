@@ -138,7 +138,11 @@ class PhotoAnalysisAndroidHostController(
             feature.dispatch(PhotoAnalysisEvent.PreparationSucceeded(input))
             captureOperation.consecutivePreparationFailures = 0
             onRetainedPhotoReady(input)
-            analysisLauncher.start()
+            // Preparation no longer starts the analysis. A prepared photo stops
+            // at Ready so the consent surface can be shown and answered; the
+            // granted decision is what starts the launcher. Auto-starting here
+            // would transfer before the user was asked, which is the whole thing
+            // the consent surface exists to prevent (AD-40).
         } catch (error: PhotoPreparationException) {
             reportFailure(RecoveryReason.POOR_IMAGE, error.message)
         } catch (error: Throwable) {

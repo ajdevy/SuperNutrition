@@ -3,7 +3,11 @@ package com.supernutrition.feature.photoanalysis
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import com.supernutrition.core.config.MarketId
+import com.supernutrition.core.config.MarketPolicy
 import com.supernutrition.core.config.MarketPolicyRegistry
+import com.supernutrition.core.config.RemotePermission
+import com.supernutrition.core.config.ResidencyPosture
 import com.supernutrition.domain.inference.CalibratedConfidence
 import com.supernutrition.domain.inference.CapabilityReason
 import com.supernutrition.domain.inference.CapabilityState
@@ -226,13 +230,49 @@ internal object PhotoAnalysisConsentWiring {
     private const val CONSENT_TTL_MINUTES = 10L
 
     /**
-     * The disclosure this build can render, matching
-     * `contracts/market-policy/v1/fixtures/permitted-market.toml`. Passed to the
-     * registry rather than read from it: the rule is that what the user saw
-     * matches what the market authorises, and reading it from the policy would
-     * compare the answer with itself.
+     * The disclosure this build can render.
+     *
+     * These are the gateway's own TEST_MODE fixture values
+     * (`apps/api/src/security/market-policy.resolver.ts` FIXTURE_MARKET_POLICY),
+     * NOT the ones in `contracts/market-policy/v1/fixtures/permitted-market.toml`,
+     * which say `photo-transfer-copy-v1` / `fixture-region-1`. The two fixtures
+     * disagree; the gateway fail-closes on
+     * `consent-copy-version-known-for-modality` and
+     * `processing-region-in-permitted-list`, so a client presenting the contract's
+     * values is rejected by the running server. Matching the server is what makes
+     * an end-to-end run possible; reconciling the two fixtures is a
+     * contract-owner call recorded in the Slice C report.
      */
-    private const val PRESENTED_CONSENT_COPY_VERSION = "photo-transfer-copy-v1"
+    private const val PRESENTED_CONSENT_COPY_VERSION = "photo-consent/fixture-1"
+    private const val FIXTURE_PROCESSING_REGION = "fixture-region"
+
+    /**
+     * The market this test build knows about.
+     *
+     * `MarketPolicyRegistry.unresolved` is empty and stays empty — declaring a
+     * market is a legal decision, not a code change. This registry exists only
+     * behind the same TEST_MODE fence as the rest of the wiring, so a release
+     * build still resolves nothing and still offers no transfer.
+     */
+    private val testMarketRegistry = MarketPolicyRegistry(
+        listOf(
+            MarketPolicy(
+                marketId = MarketId(FIXTURE_MARKET),
+                jurisdiction = "fixture-jurisdiction",
+                residencyPosture = ResidencyPosture.PERMITTED_WITH_REGION,
+                permittedProcessingRegions = listOf(FIXTURE_PROCESSING_REGION),
+                photoRemotePermission = RemotePermission.PERMITTED,
+                textRemotePermission = RemotePermission.FORBIDDEN,
+                photoConsentCopyVersion = PRESENTED_CONSENT_COPY_VERSION,
+                textConsentCopyVersion = null,
+                acceptedInputLanguages = listOf("en", "ru"),
+                legalReviewApprover = "fixture-approver",
+                // Far enough out that the fixture does not expire mid-test; the
+                // expiry path itself is covered by RemoteTransferConsentTest.
+                legalReviewExpiresOnEpochDay = 30_000,
+            ),
+        ),
+    )
 
     /**
      * Builds the receipt for a decision the user just made, bound to the bytes
@@ -264,9 +304,9 @@ internal object PhotoAnalysisConsentWiring {
         )
     }
 
-    /** The gate for this build, from the shipped registry. */
+    /** The gate for this build. Test-fenced by its only caller. */
     fun gate(configurationVersion: String, todayEpochDay: Long): RemoteTransferGate =
-        RemoteTransferConsentPolicy(MarketPolicyRegistry.unresolved, RETENTION_VERSION).gate(
+        RemoteTransferConsentPolicy(testMarketRegistry, RETENTION_VERSION).gate(
             marketId = FIXTURE_MARKET,
             presentedConsentCopyVersion = PRESENTED_CONSENT_COPY_VERSION,
             context = RemoteTransferContext(configurationVersion, "en-GB", "metric"),
