@@ -1,0 +1,47 @@
+appId: ${APP_ID}
+---
+# UJ-2 — the remote-transfer decision.
+#
+# Fingerprinted for Maestro 2.7.0 (.maestro/maestro-cli-2.7.0.sha256). NOT
+# EXECUTED: the Maestro CLI is not installed on this host, so this flow is
+# written and reviewed but carries no run evidence yet.
+#
+# The screen sets testTagsAsResourceId, so every id below is a resource id.
+- runScript:
+    file: ./photo-analysis-locators.js
+- launchApp:
+    clearState: true
+- assertVisible:
+    id: ${output.photo_analysis_title}
+
+- tapOn:
+    id: ${output.capture_import}
+- tapOn:
+    text: "meal.jpg"
+
+# The surface must be reachable, and the two facts the contract requires to be
+# visible must be on screen BEFORE either answer is asserted.
+- assertVisible:
+    id: ${output.consent_surface}
+- assertVisible:
+    id: ${output.consent_market}
+- assertVisible:
+    id: ${output.consent_processing_region}
+- assertVisible:
+    id: ${output.consent_retention}
+- assertVisible:
+    id: ${output.consent_copy_version}
+
+# Both answers present, neither pre-selected. Maestro cannot assert "unselected"
+# directly; the forbidden-default property is covered by
+# RemoteTransferConsentScreenComposeTest, and this asserts both are offered.
+- assertVisible:
+    id: ${output.consent_grant}
+- assertVisible:
+    id: ${output.consent_decline}
+
+# Declining must leave the photo on the device: no review, no analysis.
+- tapOn:
+    id: ${output.consent_decline}
+- assertNotVisible:
+    id: ${output.photo_analysis_main_dish_proposals}

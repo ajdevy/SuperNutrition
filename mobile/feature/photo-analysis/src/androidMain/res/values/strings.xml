@@ -46,4 +46,17 @@
     <string name="capture_recovery_cancelled">Analysis cancelled</string>
     <string name="capture_permission_rationale">Camera access is needed to take a meal photo.</string>
     <string name="capture_permission_continue">Continue</string>
+    <string name="consent_prompt">Send this photo for analysis?</string>
+    <string name="consent_grant">Send photo</string>
+    <string name="consent_decline">Keep on device</string>
+    <string name="consent_market_label">Market</string>
+    <string name="consent_region_label">Processed in</string>
+    <string name="consent_retention_label">Kept by provider</string>
+    <string name="consent_retention_none">Not kept</string>
+    <string name="consent_copy_label">Disclosure</string>
+    <string name="consent_locale_label">Language and units</string>
+    <string name="consent_unavailable_market">Remote analysis is not available in your market yet. Your photo stays on this device.</string>
+    <string name="consent_unavailable_modality">Photo analysis cannot leave the device in your market.</string>
+    <string name="consent_unavailable_region">No approved processing region is available.</string>
+    <string name="consent_unavailable_copy">This build cannot show the approved disclosure.</string>
 </resources>
