@@ -4,7 +4,7 @@ product = "mobile"
 lifecycle = "active"
 profile = "photo-analysis"
 source_digest = "local-only"
-journey_count = 1
+journey_count = 3
 catalog_state = "transitioned-photo-analysis"
 
 # The photo-analysis transition must map each positive scenario exactly once
@@ -33,6 +33,84 @@ accessibility_contract_ids = ["photo.android.accessibility", "photo.ios.accessib
 locale_ids = ["en-US"]
 proposal_ids = ["proposal-capture-default-locale"]
 decision_ids = ["decision-capture-default-locale"]
+default_provenance = "bundled-safe-default"
+override_path = "inline-edit"
+undo_path = "session-undo"
+resolved_value_digest = "pending"
+forbidden_default_tests = [
+  "remote-consent",
+  "uncertain-food-identity",
+  "preparation",
+  "oil",
+  "sauce",
+  "recipe",
+  "provider-routing",
+  "medical-conclusion",
+  "allergen-conclusion",
+]
+
+[[journey]]
+id = "photo-analysis-remote-consent"
+scenario_id = "photo-analysis-remote-consent"
+maestro_flow_id = "photo-analysis-remote-consent"
+android_task = "connectedUiAcceptanceDebugAndroidTest"
+ios_task = "xcodebuild-test-iosX64"
+fixture_id = "photo-fixture-neutral"
+oracle_ids = ["no-remote-transfer-without-granted-decision", "consent-attempt-scoped"]
+terminal_state_id = "explicit-remote-decision-recorded"
+tap_budget = 1
+scroll_budget = 0
+field_budget = 0
+choice_budget = 1
+auxiliary_text_entry_chars_budget = 0
+auxiliary_choice_surface_budget = 1
+auxiliary_back_budget = 1
+auxiliary_undo_budget = 0
+auxiliary_cancel_budget = 1
+auxiliary_permission_prompt_budget = 0
+accessibility_contract_ids = ["photo.android.accessibility", "photo.ios.accessibility"]
+locale_ids = ["en-US"]
+proposal_ids = ["proposal-remote-transfer-disclosure"]
+decision_ids = ["decision-remote-transfer-consent"]
+default_provenance = "bundled-safe-default"
+override_path = "explicit-choice-only"
+undo_path = "scan-again"
+resolved_value_digest = "pending"
+forbidden_default_tests = [
+  "remote-consent",
+  "uncertain-food-identity",
+  "preparation",
+  "oil",
+  "sauce",
+  "recipe",
+  "provider-routing",
+  "medical-conclusion",
+  "allergen-conclusion",
+]
+
+[[journey]]
+id = "photo-analysis-candidate-review"
+scenario_id = "photo-analysis-candidate-review"
+maestro_flow_id = "photo-analysis-gateway-review"
+android_task = "connectedUiAcceptanceDebugAndroidTest"
+ios_task = "xcodebuild-test-iosX64"
+fixture_id = "photo-fixture-neutral"
+oracle_ids = ["review-corrections-session-scoped", "no-nutrition-from-engine"]
+terminal_state_id = "reviewed-candidate-or-scan-again"
+tap_budget = 1
+scroll_budget = 1
+field_budget = 0
+choice_budget = 1
+auxiliary_text_entry_chars_budget = 0
+auxiliary_choice_surface_budget = 1
+auxiliary_back_budget = 1
+auxiliary_undo_budget = 1
+auxiliary_cancel_budget = 1
+auxiliary_permission_prompt_budget = 0
+accessibility_contract_ids = ["photo.android.accessibility", "photo.ios.accessibility"]
+locale_ids = ["en-US"]
+proposal_ids = ["proposal-review-candidate-selection"]
+decision_ids = ["decision-review-candidate-selection"]
 default_provenance = "bundled-safe-default"
 override_path = "inline-edit"
 undo_path = "session-undo"

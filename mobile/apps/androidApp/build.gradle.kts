@@ -47,4 +47,7 @@ dependencies {
     androidTestImplementation(project(":domain:photo-analysis"))
     androidTestImplementation(project(":platform:photo-android"))
     androidTestImplementation(project(":testing:scaffold-probe"))
+    // The consent path asserts EXIF/GPS are absent from the scrubbed bytes the
+    // receipt digest covers, so the test source set needs to read EXIF itself.
+    androidTestImplementation(libs.androidx.exifinterface)
 }

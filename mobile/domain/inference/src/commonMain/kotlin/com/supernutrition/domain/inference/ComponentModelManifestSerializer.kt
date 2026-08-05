@@ -31,6 +31,8 @@ import kotlinx.serialization.encoding.encodeStructure
 internal object ComponentModelManifestSerializer : KSerializer<ComponentModelManifest> {
 
     private const val FIELD_COUNT = 21
+    private const val OWNERSHIP_INDEX = 12
+    private const val ACTIVATION_INDEX = 13
 
     override val descriptor: SerialDescriptor =
         buildClassSerialDescriptor("com.supernutrition.domain.inference.ComponentModelManifest") {
@@ -83,30 +85,55 @@ internal object ComponentModelManifestSerializer : KSerializer<ComponentModelMan
         }
     }
 
-    @Suppress("CyclomaticComplexMethod")
     override fun deserialize(decoder: Decoder): ComponentModelManifest = decoder.decodeStructure(descriptor) {
+        val fields = ManifestFields()
+        while (true) {
+            val index = decodeElementIndex(descriptor)
+            if (index == CompositeDecoder.DECODE_DONE) break
+            readElement(index, fields)
+        }
+        fields.toManifest()
+    }
+
+    /**
+     * One element, by index.
+     *
+     * Split out of [deserialize] rather than suppressed: the loop and the
+     * per-element dispatch are two decisions, and reading them together is what
+     * made the method complex. Nothing here is a contract constraint, so there is
+     * no reason the rule could not simply be obeyed.
+     */
+    private fun CompositeDecoder.readElement(index: Int, fields: ManifestFields) {
+        when (index) {
+            OWNERSHIP_INDEX ->
+                fields.ownership = decodeSerializableElement(
+                    descriptor,
+                    OWNERSHIP_INDEX,
+                    ComponentModelOwnership.serializer(),
+                )
+
+            ACTIVATION_INDEX ->
+                fields.activation = decodeSerializableElement(
+                    descriptor,
+                    ACTIVATION_INDEX,
+                    ComponentModelActivation.serializer(),
+                )
+
+            in 0 until OWNERSHIP_INDEX -> fields.strings[index] = decodeStringElement(descriptor, index)
+
+            in (ACTIVATION_INDEX + 1) until FIELD_COUNT ->
+                fields.strings[index] = decodeNullableSerializableElement(descriptor, index, String.serializer())
+
+            else -> error("Unexpected component manifest element index $index")
+        }
+    }
+
+    private class ManifestFields {
         val strings = arrayOfNulls<String>(FIELD_COUNT)
         var ownership: ComponentModelOwnership? = null
         var activation: ComponentModelActivation? = null
 
-        while (true) {
-            when (val index = decodeElementIndex(descriptor)) {
-                CompositeDecoder.DECODE_DONE -> break
-
-                12 -> ownership = decodeSerializableElement(descriptor, 12, ComponentModelOwnership.serializer())
-
-                13 -> activation = decodeSerializableElement(descriptor, 13, ComponentModelActivation.serializer())
-
-                in 0..11 -> strings[index] = decodeStringElement(descriptor, index)
-
-                in 14..20 ->
-                    strings[index] = decodeNullableSerializableElement(descriptor, index, String.serializer())
-
-                else -> error("Unexpected component manifest element index $index")
-            }
-        }
-
-        ComponentModelManifest(
+        fun toManifest() = ComponentModelManifest(
             manifestVersion = required(strings, 0),
             modelVersion = required(strings, 1),
             artifactDigest = required(strings, 2),
@@ -130,9 +157,8 @@ internal object ComponentModelManifestSerializer : KSerializer<ComponentModelMan
             rollbackEvidenceRef = strings[20],
         )
     }
-
-    /** Reject-missing-required, stated once instead of per field. */
-    private fun required(values: Array<String?>, index: Int): String = requireNotNull(values[index]) {
-        "Component manifest is missing ${descriptor.getElementName(index)}"
-    }
 }
+
+/** Reject-missing-required, stated once instead of per field. */
+private fun required(values: Array<String?>, index: Int): String =
+    requireNotNull(values[index]) { "Component manifest is missing element $index" }

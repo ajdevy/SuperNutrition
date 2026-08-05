@@ -50,6 +50,15 @@ object UiAutomationIds {
     val CAPTURE_CANCEL = UiAutomationId("capture_cancel")
     val CAPTURE_OPEN_SETTINGS = UiAutomationId("capture_open_settings")
     val CAPTURE_NATIVE = UiAutomationId("capture_native")
+    val CONSENT_SURFACE = UiAutomationId("consent_surface")
+    val CONSENT_MARKET = UiAutomationId("consent_market")
+    val CONSENT_PROCESSING_REGION = UiAutomationId("consent_processing_region")
+    val CONSENT_RETENTION = UiAutomationId("consent_retention")
+    val CONSENT_COPY_VERSION = UiAutomationId("consent_copy_version")
+    val CONSENT_LOCALE = UiAutomationId("consent_locale")
+    val CONSENT_GRANT = UiAutomationId("consent_grant")
+    val CONSENT_DECLINE = UiAutomationId("consent_decline")
+    val CONSENT_UNAVAILABLE = UiAutomationId("consent_unavailable")
     val MEAL_SEARCH_QUERY = UiAutomationId("meal_search_query")
     val MEAL_SEARCH_RESULTS = UiAutomationId("meal_search_results")
     val MEAL_SEARCH_NO_RESULTS = UiAutomationId("meal_search_no_results")
@@ -81,6 +90,15 @@ object UiAutomationIds {
         PHOTO_ANALYSIS_MAIN_DISH_PROPOSALS,
         PHOTO_ANALYSIS_COMPONENT_EVIDENCE,
         PHOTO_ANALYSIS_COMPOSITION_HINTS,
+        CONSENT_SURFACE,
+        CONSENT_MARKET,
+        CONSENT_PROCESSING_REGION,
+        CONSENT_RETENTION,
+        CONSENT_COPY_VERSION,
+        CONSENT_LOCALE,
+        CONSENT_GRANT,
+        CONSENT_DECLINE,
+        CONSENT_UNAVAILABLE,
         CAPTURE_SHUTTER,
         CAPTURE_IMPORT,
         CAPTURE_SCAN_AGAIN,

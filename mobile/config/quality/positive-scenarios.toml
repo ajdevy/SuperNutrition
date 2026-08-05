@@ -4,7 +4,7 @@ product = "mobile"
 lifecycle = "active"
 profile = "photo-analysis"
 source_digest = "local-only"
-scenario_count = 1
+scenario_count = 3
 catalog_state = "transitioned-photo-analysis"
 
 [[scenario]]
@@ -31,6 +31,103 @@ accessibility_contract_ids = ["photo.android.accessibility", "photo.ios.accessib
 locale_ids = ["en-US"]
 proposal_ids = ["proposal-capture-default-locale"]
 decision_ids = ["decision-capture-default-locale"]
+default_provenance = "bundled-safe-default"
+override_path = "inline-edit"
+undo_path = "session-undo"
+resolved_value_digest = "pending"
+forbidden_default_tests = [
+  "remote-consent",
+  "uncertain-food-identity",
+  "preparation",
+  "oil",
+  "sauce",
+  "recipe",
+  "provider-routing",
+  "medical-conclusion",
+  "allergen-conclusion",
+]
+
+# UJ-2. The decision itself, in all three market states the shipped registry can
+# be in. `tap_budget = 1` is the whole point: one press decides, and there is no
+# preceding selection tap because neither answer is pre-selected.
+[[scenario]]
+id = "photo-analysis-remote-consent"
+journey = "UJ-2"
+requirements = ["FR-1", "FR-5", "FR-19"]
+fixture_id = "photo-fixture-neutral"
+actions = ["open-capture", "capture-or-import", "read-disclosure", "decide-remote-transfer"]
+assertions = [
+  "market-and-region-shown-before-decision",
+  "no-preselected-answer",
+  "declined-receipt-recorded",
+  "granted-receipt-bound-to-scrubbed-digest",
+  "unresolved-market-states-reason",
+]
+oracle_ids = ["no-remote-transfer-without-granted-decision", "consent-attempt-scoped"]
+native_gap_ids = ["photo-android-camera-picker", "photo-ios-camera-picker"]
+terminal_outcome = "explicit-remote-decision-recorded"
+tap_budget = 1
+scroll_budget = 0
+field_budget = 0
+choice_budget = 1
+auxiliary_text_entry_chars_budget = 0
+auxiliary_choice_surface_budget = 1
+auxiliary_back_budget = 1
+auxiliary_undo_budget = 0
+auxiliary_cancel_budget = 1
+auxiliary_permission_prompt_budget = 0
+accessibility_contract_ids = ["photo.android.accessibility", "photo.ios.accessibility"]
+locale_ids = ["en-US"]
+proposal_ids = ["proposal-remote-transfer-disclosure"]
+decision_ids = ["decision-remote-transfer-consent"]
+default_provenance = "bundled-safe-default"
+override_path = "explicit-choice-only"
+undo_path = "scan-again"
+resolved_value_digest = "pending"
+forbidden_default_tests = [
+  "remote-consent",
+  "uncertain-food-identity",
+  "preparation",
+  "oil",
+  "sauce",
+  "recipe",
+  "provider-routing",
+  "medical-conclusion",
+  "allergen-conclusion",
+]
+
+# UJ-3. What the user sees after a granted transfer: provenance on every claim,
+# corrections that live for the session and no longer.
+[[scenario]]
+id = "photo-analysis-candidate-review"
+journey = "UJ-3"
+requirements = ["FR-6", "FR-7", "FR-19"]
+fixture_id = "photo-fixture-neutral"
+actions = ["open-capture", "capture-or-import", "decide-remote-transfer", "review-candidates"]
+assertions = [
+  "dish-candidates-carry-provenance",
+  "visible-components-carry-provenance",
+  "composition-hints-labelled-not-visual-evidence",
+  "selection-reversible-within-session",
+  "no-medical-or-allergen-conclusion",
+]
+oracle_ids = ["review-corrections-session-scoped", "no-nutrition-from-engine"]
+native_gap_ids = ["photo-android-camera-picker", "photo-ios-camera-picker"]
+terminal_outcome = "reviewed-candidate-or-scan-again"
+tap_budget = 1
+scroll_budget = 1
+field_budget = 0
+choice_budget = 1
+auxiliary_text_entry_chars_budget = 0
+auxiliary_choice_surface_budget = 1
+auxiliary_back_budget = 1
+auxiliary_undo_budget = 1
+auxiliary_cancel_budget = 1
+auxiliary_permission_prompt_budget = 0
+accessibility_contract_ids = ["photo.android.accessibility", "photo.ios.accessibility"]
+locale_ids = ["en-US"]
+proposal_ids = ["proposal-review-candidate-selection"]
+decision_ids = ["decision-review-candidate-selection"]
 default_provenance = "bundled-safe-default"
 override_path = "inline-edit"
 undo_path = "session-undo"

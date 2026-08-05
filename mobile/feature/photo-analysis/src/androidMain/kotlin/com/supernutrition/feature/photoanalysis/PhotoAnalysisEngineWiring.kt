@@ -3,6 +3,7 @@ package com.supernutrition.feature.photoanalysis
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import com.supernutrition.core.config.MarketPolicyRegistry
 import com.supernutrition.domain.inference.CalibratedConfidence
 import com.supernutrition.domain.inference.CapabilityReason
 import com.supernutrition.domain.inference.CapabilityState
@@ -23,9 +24,16 @@ import com.supernutrition.domain.inference.MassCalibrationAssumption
 import com.supernutrition.domain.inference.MassEvidence
 import com.supernutrition.domain.inference.NormalizedVisibleRegion
 import com.supernutrition.domain.inference.VisibleComponent
+import com.supernutrition.domain.photoanalysis.AttemptScopedConsentStore
 import com.supernutrition.domain.photoanalysis.NormalizedPhotoInput
 import com.supernutrition.domain.photoanalysis.PhotoAnalysisState
 import com.supernutrition.domain.photoanalysis.PhotoSessionStorePort
+import com.supernutrition.domain.photoanalysis.RemoteTransferConsentPolicy
+import com.supernutrition.domain.photoanalysis.RemoteTransferContext
+import com.supernutrition.domain.photoanalysis.RemoteTransferDisclosure
+import com.supernutrition.domain.photoanalysis.RemoteTransferGate
+import com.supernutrition.domain.photoanalysis.TransferConsentDecision
+import com.supernutrition.domain.photoanalysis.TransferConsentReceipt
 import com.supernutrition.inference.remote.GatewayEnvironment
 import com.supernutrition.inference.remote.HttpGatewayTransport
 import com.supernutrition.inference.remote.RemoteConsentDecision
@@ -67,7 +75,6 @@ internal object PhotoAnalysisEngineWiring {
     const val EMULATOR_HOST_GATEWAY: String = "http://10.0.2.2:3000"
 
     private const val FIXTURE_MARKET = "ZZ"
-    private const val CONSENT_TTL_MINUTES = 10L
 
     fun isTestMode(context: Context): Boolean {
         val debuggable = (context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0
@@ -86,10 +93,12 @@ internal object PhotoAnalysisEngineWiring {
      * Returns a launcher bound to both engines, or [PhotoAnalysisAnalysisLauncher.None]
      * outside test mode. The caller does not decide the fence.
      */
+    @Suppress("LongParameterList")
     fun testModeLauncher(
         context: Context,
         feature: PhotoAnalysisFeature,
         sessions: PhotoSessionStorePort,
+        consentStore: AttemptScopedConsentStore,
         scope: CoroutineScope,
         configuration: PhotoAnalysisAnalysisConfiguration,
     ): PhotoAnalysisAnalysisLauncher {
@@ -112,8 +121,8 @@ internal object PhotoAnalysisEngineWiring {
                 // The bytes actually transferred, so the digest the gateway
                 // recomputes is bound to them rather than to a second read.
                 photoBytes = { currentInput()?.bytes },
-                digest = ::sha256,
-                consent = { testModeConsent() },
+                digest = ::sha256Digest,
+                consent = { attemptId -> recordedConsent(consentStore, attemptId, currentInput()) },
                 idFactory = ::opaqueToken,
             ),
             componentEngine = FixtureComponentEngine,
@@ -132,24 +141,46 @@ internal object PhotoAnalysisEngineWiring {
     }
 
     /**
-     * A synthesised, always-granted decision for the fixture market only.
+     * The decision the user actually made, or a refusal.
      *
-     * This is the piece that must never escape test mode: it asserts a consent
-     * the user was never asked for. It names the fixture market so that even if
-     * the fence were bypassed the gateway's own market policy rejects it.
+     * Slice A synthesised a granted receipt here. Nothing synthesises one now:
+     * the store is empty until [RemoteTransferConsentScreen] reports a press, and
+     * an empty store yields `granted = false`, which [RemoteInferenceEngine]
+     * turns into a typed failure without opening a socket.
+     *
+     * The lookup is keyed by attempt AND by the digest of the bytes about to be
+     * sent, so a decision cannot survive the payload changing under it — the
+     * binding `contracts/mobile-api/v1/consent-receipt.toml` requires
+     * (`digest_covers = "scrubbed-normalized-payload-bytes"`).
      */
-    private fun testModeConsent(): RemoteConsentDecision {
-        val now = Instant.now().truncatedTo(ChronoUnit.SECONDS)
+    private fun recordedConsent(
+        store: AttemptScopedConsentStore,
+        attemptId: String,
+        input: NormalizedPhotoInput?,
+    ): RemoteConsentDecision {
+        val receipt = input?.let { store.receiptFor(attemptId, sha256Digest(it.bytes)) }
+            ?: return refused()
         return RemoteConsentDecision(
-            granted = true,
-            consentCopyVersion = "photo-consent/fixture-1",
-            processingRegion = "fixture-region",
-            marketJurisdiction = FIXTURE_MARKET,
-            retentionVersion = "retention/2",
-            recordedAt = iso(now),
-            expiresAt = iso(now.plus(CONSENT_TTL_MINUTES, ChronoUnit.MINUTES)),
-        ).also { require(it.marketJurisdiction == FIXTURE_MARKET) { "test-mode consent is fixture-market only" } }
+            granted = receipt.decision == TransferConsentDecision.GRANTED,
+            consentCopyVersion = receipt.consentCopyVersion,
+            processingRegion = receipt.processingRegion,
+            marketJurisdiction = receipt.marketJurisdiction,
+            retentionVersion = receipt.retentionVersion,
+            recordedAt = receipt.recordedAt,
+            expiresAt = receipt.expiresAt,
+        )
     }
+
+    /** No receipt is a refusal, never an absence the caller might read past. */
+    private fun refused() = RemoteConsentDecision(
+        granted = false,
+        consentCopyVersion = null,
+        processingRegion = null,
+        marketJurisdiction = FIXTURE_MARKET,
+        retentionVersion = "retention/2",
+        recordedAt = iso(Instant.now().truncatedTo(ChronoUnit.SECONDS)),
+        expiresAt = iso(Instant.now().truncatedTo(ChronoUnit.SECONDS)),
+    )
 
     private fun iso(instant: Instant) = instant.toString().replace(".000Z", "Z")
 
@@ -160,7 +191,7 @@ internal object PhotoAnalysisEngineWiring {
      * must be byte-identical to the gateway's, and format() renders digits per
      * the default locale.
      */
-    private fun sha256(bytes: ByteArray): String = buildString {
+    fun sha256Digest(bytes: ByteArray): String = buildString {
         append("sha256:")
         for (byte in MessageDigest.getInstance("SHA-256").digest(bytes)) {
             val value = byte.toInt() and 0xFF
@@ -180,6 +211,71 @@ internal object PhotoAnalysisEngineWiring {
             }
         }
     }
+}
+
+/**
+ * The consent half of the wiring: the gate this build can offer, and the receipt
+ * a decision produces. Separate from [PhotoAnalysisEngineWiring] because they are
+ * a coherent group with their own reason to change — the market policy — and
+ * because keeping them there pushed that object past the function limit.
+ */
+internal object PhotoAnalysisConsentWiring {
+
+    private const val FIXTURE_MARKET = "ZZ"
+    private const val RETENTION_VERSION = "retention/2"
+    private const val CONSENT_TTL_MINUTES = 10L
+
+    /**
+     * The disclosure this build can render, matching
+     * `contracts/market-policy/v1/fixtures/permitted-market.toml`. Passed to the
+     * registry rather than read from it: the rule is that what the user saw
+     * matches what the market authorises, and reading it from the policy would
+     * compare the answer with itself.
+     */
+    private const val PRESENTED_CONSENT_COPY_VERSION = "photo-transfer-copy-v1"
+
+    /**
+     * Builds the receipt for a decision the user just made, bound to the bytes
+     * that will actually be sent.
+     */
+    fun receiptFor(
+        decision: TransferConsentDecision,
+        input: NormalizedPhotoInput,
+        disclosure: RemoteTransferDisclosure?,
+    ): TransferConsentReceipt {
+        val now = Instant.now().truncatedTo(ChronoUnit.SECONDS)
+        return TransferConsentReceipt(
+            version = TransferConsentReceipt.RECEIPT_VERSION,
+            // The contract shape, derived from the bytes so it is stable for this
+            // attempt without leaking the host's own attempt id.
+            attemptId = "att_" + sha256(input.bytes).removePrefix("sha256:").take(32),
+            digest = sha256(input.bytes),
+            modality = TransferConsentReceipt.PHOTO_MODALITY,
+            purpose = TransferConsentReceipt.FOOD_IDENTIFICATION,
+            decision = decision,
+            marketJurisdiction = disclosure?.marketJurisdiction ?: FIXTURE_MARKET,
+            processingRegion = disclosure?.processingRegion,
+            consentCopyVersion = disclosure?.consentCopyVersion,
+            retentionVersion = disclosure?.retentionVersion ?: RETENTION_VERSION,
+            retentionDays = 0,
+            configurationVersion = disclosure?.configurationVersion ?: "cfg/1",
+            recordedAt = iso(now),
+            expiresAt = iso(now.plus(CONSENT_TTL_MINUTES, ChronoUnit.MINUTES)),
+        )
+    }
+
+    /** The gate for this build, from the shipped registry. */
+    fun gate(configurationVersion: String, todayEpochDay: Long): RemoteTransferGate =
+        RemoteTransferConsentPolicy(MarketPolicyRegistry.unresolved, RETENTION_VERSION).gate(
+            marketId = FIXTURE_MARKET,
+            presentedConsentCopyVersion = PRESENTED_CONSENT_COPY_VERSION,
+            context = RemoteTransferContext(configurationVersion, "en-GB", "metric"),
+            todayEpochDay = todayEpochDay,
+        )
+
+    private fun iso(instant: Instant) = instant.toString().replace(".000Z", "Z")
+
+    private fun sha256(bytes: ByteArray) = PhotoAnalysisEngineWiring.sha256Digest(bytes)
 }
 
 /**

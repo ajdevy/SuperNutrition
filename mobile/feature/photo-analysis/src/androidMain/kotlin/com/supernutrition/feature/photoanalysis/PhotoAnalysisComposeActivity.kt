@@ -14,8 +14,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.supernutrition.domain.photoanalysis.AttemptId
+import com.supernutrition.domain.photoanalysis.AttemptScopedConsentStore
+import com.supernutrition.domain.photoanalysis.PhotoAnalysisState
 import com.supernutrition.domain.photoanalysis.PhotoLeaseStore
 import com.supernutrition.domain.photoanalysis.PhotoSessionStore
+import com.supernutrition.domain.photoanalysis.RemoteTransferGate
+import com.supernutrition.domain.photoanalysis.TransferConsentDecision
 import com.supernutrition.platform.photoandroid.AndroidImageNormalizer
 import com.supernutrition.platform.photoandroid.AndroidPhotoAttemptIds
 import com.supernutrition.platform.photoandroid.AndroidPhotoBridge
@@ -188,33 +192,82 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         super.onStop()
     }
 
-    /** Test-mode only; outside it this yields None and the host is unchanged. */
+    /**
+     * The consent surface, shown between capture and remote analysis.
+     *
+     * It appears only while a photo is Ready and only in test mode, because
+     * outside test mode no engine is bound and there is no transfer to consent
+     * to. Pressing either answer records a receipt — a decline is recorded too —
+     * and only a grant starts the analysis. Nothing here decides on the user's
+     * behalf: no press, no receipt, and the engine reads an empty store as a
+     * refusal.
+     */
+    @androidx.compose.runtime.Composable
+    private fun ConsentGate(state: PhotoAnalysisState) {
+        val ready = state as? PhotoAnalysisState.Ready ?: return
+        if (!PhotoAnalysisEngineWiring.isTestMode(this)) return
+        if (retainedState.consentStore.decidedFor(attemptId.value)) return
+
+        val gate = PhotoAnalysisConsentWiring.gate(
+            configurationVersion = "cfg/1",
+            todayEpochDay = System.currentTimeMillis() / MILLIS_PER_DAY,
+        )
+        RemoteTransferConsentScreen(
+            state = RemoteTransferConsentModel.from(gate, consentCopy),
+            onDecision = { decision ->
+                val stored = retainedState.sessions.read(ready.input.ref) ?: return@RemoteTransferConsentScreen
+                retainedState.consentStore.record(
+                    attemptKey = attemptId.value,
+                    receipt = PhotoAnalysisConsentWiring.receiptFor(
+                        decision = decision,
+                        input = stored,
+                        disclosure = (gate as? RemoteTransferGate.Askable)?.disclosure,
+                    ),
+                )
+                if (decision == TransferConsentDecision.GRANTED) analysisLauncher.start()
+            },
+        )
+    }
 
     @androidx.compose.runtime.Composable
     private fun CaptureContent() {
         val preview by retainedState.previewStore.preview.collectAsState()
-        PhotoAnalysisCaptureContent(
-            stateFlow = feature.stateFlow,
-            onAction = host::handleAction,
+        val state by feature.stateFlow.collectAsState()
+        // One semantics tree, not two. `testTagsAsResourceId` maps tags to
+        // Android resource ids for the subtree it is set on, so two sibling
+        // roots each declaring it left the capture surface's ids unreachable to
+        // UI Automator — which the connected suite caught.
+        //
+        // The consent surface sits above the capture content and only while a
+        // photo is Ready, so a decision is asked between capture and analysis
+        // rather than before there is anything to consent to.
+        androidx.compose.foundation.layout.Column(
             modifier = Modifier.semantics { testTagsAsResourceId = true },
-            surface = PhotoAnalysisCaptureSurface(
-                presenterCopy = presentationCopy,
-                retainedPhoto = preview?.let { current -> { AndroidRetainedPhotoBackdrop(current) } },
-                photoTextContrast = preview?.let { current ->
-                    if (current.hasLightBackdrop) {
-                        PhotoAnalysisPhotoTextContrast.DARK_TEXT
-                    } else {
-                        PhotoAnalysisPhotoTextContrast.LIGHT_TEXT
-                    }
-                },
-            ),
-        )
+        ) {
+            ConsentGate(state)
+            PhotoAnalysisCaptureContent(
+                stateFlow = feature.stateFlow,
+                onAction = host::handleAction,
+                surface = PhotoAnalysisCaptureSurface(
+                    presenterCopy = presentationCopy,
+                    retainedPhoto = preview?.let { current -> { AndroidRetainedPhotoBackdrop(current) } },
+                    photoTextContrast = preview?.let { current ->
+                        if (current.hasLightBackdrop) {
+                            PhotoAnalysisPhotoTextContrast.DARK_TEXT
+                        } else {
+                            PhotoAnalysisPhotoTextContrast.LIGHT_TEXT
+                        }
+                    },
+                ),
+            )
+        }
     }
 
     private fun buildAnalysisLauncher(): PhotoAnalysisAnalysisLauncher = PhotoAnalysisEngineWiring.testModeLauncher(
         context = this,
         feature = feature,
         sessions = retainedState.sessions,
+        consentStore = retainedState.consentStore,
         scope = lifecycleScope,
         configuration = PhotoAnalysisAnalysisConfiguration(
             requestPrefix = "android-capture",
@@ -236,6 +289,7 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         internal val leases = PhotoLeaseStore()
         internal val sessions = PhotoSessionStore()
         internal val previewStore = AndroidRetainedPhotoPreviewStore()
+        internal val consentStore = AttemptScopedConsentStore()
         val feature = PhotoAnalysisFeature(
             attemptId = AttemptId(AndroidPhotoAttemptIds.CAPTURE),
             leases = leases,
@@ -250,7 +304,26 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         }
     }
 
+    private val consentCopy: ConsentCopy by lazy {
+        ConsentCopy(
+            prompt = getString(R.string.consent_prompt),
+            grant = getString(R.string.consent_grant),
+            decline = getString(R.string.consent_decline),
+            marketLabel = getString(R.string.consent_market_label),
+            processingRegionLabel = getString(R.string.consent_region_label),
+            retentionLabel = getString(R.string.consent_retention_label),
+            retentionNone = getString(R.string.consent_retention_none),
+            copyVersionLabel = getString(R.string.consent_copy_label),
+            localeLabel = getString(R.string.consent_locale_label),
+            unavailableMarketUnresolved = getString(R.string.consent_unavailable_market),
+            unavailableModalityForbidden = getString(R.string.consent_unavailable_modality),
+            unavailableNoRegion = getString(R.string.consent_unavailable_region),
+            unavailableCopyMismatch = getString(R.string.consent_unavailable_copy),
+        )
+    }
+
     private companion object {
+        const val MILLIS_PER_DAY = 86_400_000L
         const val PENDING_OPERATION_ID_KEY = "photo_analysis.pending_operation_id"
         const val PERMISSION_REQUEST_IN_FLIGHT_KEY = "photo_analysis.permission_request_in_flight"
     }
