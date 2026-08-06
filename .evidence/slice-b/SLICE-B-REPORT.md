@@ -121,8 +121,10 @@ Evidence: `e2e-review.png`, `e2e-review-hierarchy.xml` in this directory.
   24 hints and then sorted them; it now sorts before taking. My earlier commit said the hints shown
   "were an arbitrary subset", which **overstated it**: the path is not reachable today. `hintsFor`
   bounds contributors to `dishes.take(3)`, and the widest union across any three dishes in the prior
-  table is **20** distinct ingredients — measured, not assumed (best case `greek_salad + ramen + pizza`;
-  a probe passing six dishes produced 20 hints). `take(MAX_HINTS)` therefore never truncates, so the
+  table is **20** distinct ingredients — measured, not assumed. Checked exhaustively over all
+  C(19,3) = 969 combinations of the 19-dish table (max 7 ingredients per dish); the widest is
+  `greek_salad + pizza + pork_chop` = 20, and a probe passing six dishes returned 20 hints at runtime.
+  `MAX_HINTS` is 24, so `take(MAX_HINTS)` never truncates and the
   old and new orderings produce identical output through `merge()`. The change is correct and
   defensive rather than a fix for observable behaviour.
   **A failing-first regression test for the ">24 hints" case is therefore impossible** without editing
