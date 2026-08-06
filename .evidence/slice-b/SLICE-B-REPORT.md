@@ -105,17 +105,36 @@ Evidence: `e2e-review.png`, `e2e-review-hierarchy.xml` in this directory.
 
 ---
 
+## Carried items closed after the fix
+
+- **The connected suite is green for the first time: 21/21 on BOTH flavours, 0 failures.**
+  `captureSurfaceExposesStableAutomationIdsAndLabels` failed because the capture screen applied no
+  window insets, so its first element — the title — drew under the status bar. An occluded node is
+  dropped from the accessibility tree, so `photo_analysis_title` was invisible to UI Automator and to a
+  screen reader alike, while `photo_analysis_status` just below it was fine. Proven with a temporary
+  instrumentation probe that listed every node UiAutomator could see: 14 nodes, title absent, the other
+  four ids present. The probe was removed.
+  The inset is applied in the **Android host**, not the shared screen: `safeDrawingPadding()` in
+  commonMain resolved to the skiko variant and crashed on launch with
+  `NoClassDefFoundError: WindowInsetsPadding_skikoKt`. That attempt was reverted.
+- **Hint ordering.** `BoundedDishIngredientFusion.hintsFor` took 24 hints and then sorted them, so once
+  more than 24 accumulated the ones shown were an arbitrary subset rather than the best-supported. Now
+  sorted before taking. Invisible before, because the draft's descending-order rule still held over
+  whatever survived.
+
+## Second real-model E2E (regression check)
+
+A different photo through the same flow: gateway 200, review rendered
+`shrimp pasta · prawn pasta · cherry tomatoes` fused with the local component evidence.
+
 ## What remains
 
 - **`graphify update .` not run** — there is no `graphify-out/graph.json` in this worktree and no
   `graphify` on PATH, so there is nothing to update here.
-- **The pre-existing connected-suite failure is untouched.**
-  `PhotoAnalysisComposeSemanticsInstrumentationTest.captureSurfaceExposesStableAutomationIdsAndLabels`
-  still fails (`missing Compose semantic id: photo_analysis_title`). Proven pre-existing in the last
-  slice by disabling the consent gate and observing an identical failure; the app itself exposes the id
-  correctly on device. Out of scope here.
-- **Latent, not fixed (out of scope):** `BoundedDishIngredientFusion.hintsFor` calls `.take(MAX_HINTS)`
-  *before* `sortedByDescending(support)`, so it keeps an arbitrary 24 hints and then sorts them rather
-  than keeping the 24 best-supported. The draft's ordering rule still holds, so nothing fails today,
-  but the hints shown may not be the strongest ones. Worth its own fix.
-- The v2 component slot is still the honestly-labelled fixture; the swap point is unchanged.
+- **No physical device.** Camera and native-gap evidence still require one; the emulator is not that.
+- **Maestro flows remain written but not executed** — the CLI is not installed on this host.
+- **Consent is still reachable only in test mode**, and the v2 component slot is still the
+  honestly-labelled fixture. Both unfence together with the engines, in their own story.
+- **Contract-owner / iOS-owner items unchanged:** `verify-release-immutability` on
+  `contracts/mobile-api/v1`; the two market-policy fixtures that disagree on consent copy version and
+  processing region; the dropped iOS `TrackedPhotoPickerViewController`.
