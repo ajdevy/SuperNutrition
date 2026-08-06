@@ -41,7 +41,14 @@ data class CandidateReviewDraft(
         }
     }
 
-    private companion object {
+    companion object {
+        /**
+         * Public because [BoundedDishIngredientFusion] must bound to exactly this
+         * number. Duplicating it let the two drift: the fusion passed an engine's
+         * full candidate list straight through, which threw here for any engine
+         * returning more than three. A shared constant is the fix; keeping two in
+         * step is not.
+         */
         const val MAX_MAIN_DISH_PROPOSALS = 3
         const val MAX_COMPOSITION_HINTS = 24
     }

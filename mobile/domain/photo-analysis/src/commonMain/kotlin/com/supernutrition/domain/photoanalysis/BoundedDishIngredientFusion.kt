@@ -39,9 +39,23 @@ object BoundedDishIngredientFusion {
 
     private const val MAX_HINTS = 24
 
+    /**
+     * [dishes] arrives unbounded from the engine — the gateway prompt permits up
+     * to five candidates — while [CandidateReviewDraft] admits at most
+     * [CandidateReviewDraft.MAX_MAIN_DISH_PROPOSALS]. Bounding is this type's
+     * whole job and it was not doing it: the list went through untouched and the
+     * draft threw for any engine returning more than three, which the two-result
+     * stub never did and the real model does on most photos.
+     *
+     * Sorted by rank before taking, so the top proposals are kept and the draft's
+     * strictly-increasing-rank rule holds by construction rather than by trusting
+     * the engine to have ordered them.
+     */
     fun merge(dishes: List<InferenceCandidate>, photoEvidence: List<VisibleComponent>): CandidateReviewDraft =
         CandidateReviewDraft(
-            mainDishProposals = dishes,
+            mainDishProposals = dishes
+                .sortedBy(InferenceCandidate::rank)
+                .take(CandidateReviewDraft.MAX_MAIN_DISH_PROPOSALS),
             photoEvidence = photoEvidence,
             compositionHints = hintsFor(dishes),
         )

@@ -1,175 +1,121 @@
-# Slice B — real consent before any remote transfer
+# Slice B defect — "Photo capture failed" after a successful gateway 200
 
-Worktree `/Users/jj/Work/SuperNutrition-integration`, branch `integration-test`, base `d33888f`.
-Primary checkout `/Users/jj/Work/SuperNutrition` (`feat/e43-gateway-impl` @ `5a4781a`) untouched and clean.
-No push, no PR, no remote refs created. Host: Intel `x86_64`, macOS. Device: `Pixel_9_Pro` AVD (API 17 build tag), emulator only.
+Worktree `/Users/jj/Work/SuperNutrition-integration`, branch `integration-test`, base `78c918e`.
+Primary checkout untouched. No push, no PR. Device: `Pixel_9_Pro` AVD. Backend: `TEST_MODE=true`,
+**no** `STUB_INFERENCE`, real `OPENROUTER_API_KEY` from `.env`.
 
----
-
-## What
-
-**The synthesised consent is gone.** Slice A's `testModeConsent()` asserted a granted receipt the user
-was never asked for. Nothing synthesises one now: the store is empty until a person presses a button,
-and an empty store yields `granted = false`, which `RemoteInferenceEngine` turns into a typed failure
-without opening a socket.
-
-### 3.1 Consent (highest priority) — done
-
-| Layer | File | What it holds |
-|---|---|---|
-| domain | `domain/photo-analysis/…/RemoteTransferConsent.kt` | `TransferConsentReceipt` (all 14 contract fields + patterns), `RemoteTransferDisclosure`, `RemoteTransferConsentPolicy`, `AttemptScopedConsentStore` |
-| presenter | `feature/photo-analysis-presenter/…/RemoteTransferConsentPresenter.kt` | `RemoteTransferConsentState`, `ConsentCopy`, disclosure rows |
-| UI | `feature/photo-analysis-ui/…/RemoteTransferConsentScreen.kt` | the surface, both answers neutral |
-| host | `feature/photo-analysis/androidMain/…/PhotoAnalysisConsentWiring.kt` (in `PhotoAnalysisEngineWiring.kt`) + Activity `ConsentGate` | gate, receipt, store binding |
-
-- **Explicit, no default, no pre-selection.** `RemoteTransferConsentState.Askable` has no `selected`
-  field at all — a model that cannot express a pre-selection cannot drift into one. Both answers are
-  `OutlinedButton`s; neither is filled, because emphasis *is* a pre-selection.
-- **Declined is recorded.** A declined receipt is constructible with neither region nor copy version;
-  a **granted** one with either missing fails construction.
-- **Market and region shown before the decision**, first in row order, from
-  `MarketPolicyRegistry.mayTransfer(...)` with the presented copy version passed in (not read back).
-- **Digest binding** over the scrubbed normalized bytes (`digest_covers`), part of the store *lookup*
-  rather than a check a caller can forget.
-- **Three market states all handled**: `MarketPolicyRegistry.unresolved` is empty, so this build shows
-  “Remote analysis is not available in your market yet. Your photo stays on this device.” and offers
-  **no** answer. Granted-but-refused and granted-and-permitted are covered by tests against a fixture
-  registry.
-- **Interaction budget** recorded in `positive-scenarios.toml` / `journeys.toml` (UJ-2): `tap_budget = 1`,
-  `choice_budget = 1`, proposal/decision ids, `override_path = "explicit-choice-only"`,
-  `undo_path = "scan-again"`, and the complete forbidden-default inventory including `remote-consent`.
-  The forbidden-default test is `RemoteTransferConsentScreenComposeTest.'rendering the surface decides
-  nothing until someone presses'`.
-
-### 3.3 / 3.4 / 3.6 — done
-
-- `positive-scenarios.toml` 1 → **3** scenarios (UJ-1 capture-recovery, UJ-2 remote-consent, UJ-3
-  candidate-review); `journeys.toml` 1 → **3**; `ui-evidence-profile.toml` robot_ids, maestro_flow_ids
-  and claims extended; `monotonic = true` / `downgrade_allowed = false` untouched; evidence-binding
-  manifest digest recomputed (`7a77e89…`).
-- `.maestro/photo-analysis/photo-analysis-remote-consent.yaml` written, plus consent locators. Uses
-  resource ids throughout (`testTagsAsResourceId` is set).
-- **Carried item — the bare `@Suppress("CyclomaticComplexMethod")` is removed**, not justified. Obeying
-  the rule broke no contract, so per AGENTS.md the real fix applied: `deserialize` now delegates
-  per-element dispatch to `readElement` + a `ManifestFields` holder.
+**The end-to-end flow now completes.** Capture → consent → grant → gateway HTTP 200 → review renders.
 
 ---
 
-## How verified
+## Root cause
 
-All counts read from XML, never from BUILD SUCCESSFUL.
+`BoundedDishIngredientFusion.merge` did not bound. It passed the engine's candidate list straight into
+`CandidateReviewDraft`, whose initializer admits at most `MAX_MAIN_DISH_PROPOSALS = 3`:
 
-**`qualityCheckJvmAndroid --continue` → BUILD SUCCESSFUL.**
-`JVM host coverage: line=99.63%, branch=90.57% across 11 production modules.`
-`:domain:nutrition coverage: line=99.99%, branch=100.00%` (strict floor untouched).
+```kotlin
+fun merge(dishes: List<InferenceCandidate>, photoEvidence: List<VisibleComponent>) =
+    CandidateReviewDraft(mainDishProposals = dishes, …)   // unbounded
+```
 
-**`qualityCheckApple --continue` → BUILD SUCCESSFUL** (`uname -m` = `x86_64`; this is lint over
-`iosMain`, not execution).
+The backend stub returned **2** candidates, so Slice A never crossed the limit. The real model returns
+up to **5** — the gateway prompt permits it — and the first real photo produced **4**. The draft threw
+`IllegalArgumentException`, which `PhotoAnalysisAnalysisCoordinator`'s `catch (_: Exception)` converted
+into `recover(…, RecoveryReason.CAPTURE_FAILED)`.
 
-**`jvmTest --rerun-tasks` → 711 tests, 0 failures** (was 683; +28).
+**The earlier "lost `Analyzing` state" hypothesis was wrong**, and the code disproves it: `recover()`
+only dispatches when `isActive(requestId, ref)` holds, otherwise it returns `Ignored` silently. So the
+visible "Photo capture failed" is itself proof that the state *was* still `Analyzing` and that a
+non-cancellation exception was thrown. Two of the three CAPTURE_FAILED dispatch sites
+(`PhotoAnalysisAndroidHostController:87` and `:152`) are pre-analysis capture paths and cannot fire
+after a 200, leaving coordinator `catch` as the only candidate — which the device then confirmed.
 
-| module | tests | module | tests |
-|---|---:|---|---:|
-| domain/nutrition | 244 | inference/remote | 46 |
-| domain/inference | 155 | core/config | 32 |
-| **domain/photo-analysis** | **118** | inference/local-android | 26 |
-| **feature/photo-analysis-presenter** | **13** | inference/local-ios | 22 |
-| feature/meal-search-ui | 12 | feature/photo-analysis | 11 |
-| **feature/photo-analysis-ui** | **9** | testing/compose-support | 5 |
-| core/ui | 4 | apps/sharedKit | 3 |
-| platform/photo-ios | 2 | testing/scaffold-probe | 2 |
+### Device evidence for the cause
 
-`:domain:photo-analysis` branch coverage **84.68% → 87.26%** after covering the rejection paths my new
-code added (it dipped below the floor first; that was fixed by tests, not by a floor change).
+Temporary probe in the coordinator's catch, real model, real photo:
 
-**Connected instrumentation**, `:apps:androidApp:connectedAndroidTest` on `Pixel_9_Pro(AVD)`, from
-`build/outputs/androidTest-results/connected/`:
+```
+SNPROBE-COORD IllegalArgumentException: Candidate review must contain at most 3 main-dish proposals
+```
 
-| flavor | tests | failures | errors | skipped |
-|---|---:|---:|---:|---:|
-| productionDebug | 21 | 1 | 0 | 0 |
-| uiAcceptanceDebug | 21 | 1 | 0 | 0 |
+The probe was removed before committing (`grep -c SNPROBE` → 0).
 
-Both flavors ran (the second needed its own invocation — the aggregate task fails fast). 21 is up from
-7: my 6 consent tests plus the existing suite. The single failure is analysed under **Open**.
+---
 
-**Contract validators** — all exit 0: `verify-inference-contract`, `verify-inference-v2-contract`,
-`verify-inference-v2-binding`, `verify-mobile-api-contract`, `verify-product-identity`,
-`verify-root-boundaries`. `git diff --check` clean.
+## Fix
 
-**Tests watched failing first** (AGENTS.md §38), by mutating production code and confirming the
-*named* test failed:
+Two files, both in `domain/photo-analysis`:
 
-| mutation | test that failed |
+1. `CandidateReviewDraft.MAX_MAIN_DISH_PROPOSALS` is no longer `private`. The fusion must bound to
+   exactly this number; duplicating it is what let the two drift. Per AGENTS.md, when two paths must
+   agree they share the implementation rather than being kept in step.
+2. `BoundedDishIngredientFusion.merge` bounds:
+
+```kotlin
+mainDishProposals = dishes
+    .sortedBy(InferenceCandidate::rank)
+    .take(CandidateReviewDraft.MAX_MAIN_DISH_PROPOSALS),
+```
+
+Sorted before taking, so the *best-ranked* proposals survive and the draft's
+strictly-increasing-rank rule holds by construction instead of by trusting the engine's ordering.
+
+Nothing else changed. Consent, market policy, the backend chain and contracts are untouched.
+
+---
+
+## Verification
+
+**Regression test watched failing first.** With the fix reverted and everything else identical, all
+three tests in `BoundedDishIngredientFusionBoundTest` failed with the exact device exception:
+
+```
+theBestRankedProposalsAreTheOnesKept          -> IllegalArgumentException: Candidate review must contain at most 3 main-dish prop…
+mergeBoundsAnyEngineResultToWhatTheReviewAdmits -> IllegalArgumentException: …
+aFourCandidateResultMergesRatherThanThrowing  -> IllegalArgumentException: …
+```
+
+The tests run to the contract ceiling (1..5 candidates), not just the observed 4 — a fix that handled
+only "four" would miss five.
+
+**On-device E2E with the real model.** Gateway request count 2 → 3, last `"statusCode":200`, review
+rendered:
+
+```
+Review candidate
+Dish candidates:  paella · shrimp · lemon      ← real model, top 3 by rank
+Detected in photo: Leafy greens, Estimated: 100–140 g   ← fixture component engine
+```
+
+Evidence: `e2e-review.png`, `e2e-review-hierarchy.xml` in this directory.
+
+**Gates** (counts from XML, not BUILD SUCCESSFUL):
+
+| | |
 |---|---|
-| drop `&& it.digest == digest` from the store lookup | `aDecisionAuthorisesOnlyTheAttemptAndBytesItWasMadeFor` |
-| `if (decision == GRANTED)` → `if (false)` in the receipt | `aGrantedReceiptMustRecordWhatTheUserWasShown` |
+| `qualityCheckJvmAndroid --continue` | **BUILD SUCCESSFUL** |
+| JVM host aggregate | line 99.63%, branch 90.57% across 11 modules |
+| `:domain:nutrition` | line 99.99%, branch 100.00% (strict floor, untouched) |
+| `:domain:inference` | branch 88.02%, line 99.58% |
+| `:domain:photo-analysis` | branch 87.26%, line 98.20% |
+| `jvmTest` | **714 / 714**, 0 failures (was 711; +3) |
 
-Both mutations were reverted and the module re-run green (14/14, then 118 module-wide).
-
-Two defects were caught by tests during the work, not by inspection: the disclosure rows were tagged
-without `mergeDescendants`, so the automation node exposed no text to a test, UI Automator or a screen
-reader; and the consent surface first rendered as a second root with its own
-`testTagsAsResourceId`, which is now one tree.
-
----
-
-## Architecture decision — the v2 component slot stays a fixture
-
-`FixtureComponentEngine` remains, declared as `fixture-component-engine`. It is **not**
-`LocalAndroidComponentInferenceEngine`, because that engine's `enforceProductionActivation()` correctly
-refuses any manifest whose activation is not `PRODUCTION`, and satisfying it would mean stamping a
-fixture with product, engineering, legal, corpus, benchmark and rollback approval refs it does not
-have. Forging those to make a demo run would disarm the control that matters.
-
-**Swap point.** The real v2 component slot becomes available when the client supplies a real model
-artifact: model binary + taxonomy, a weighed corpus reference, benchmark evidence, and a mass
-calibration — together with product/engineering/legal approval refs and a rollback target. At that
-point `FixtureComponentEngine` is replaced by `LocalAndroidComponentInferenceEngine` with a
-`PRODUCTION` manifest, and `enforceProductionActivation()` starts passing on its own terms. Nothing in
-this slice needs to change for that swap. `enforceProductionActivation()` was not touched.
-
-## Handoffs
-
-- **Market declaration (client + legal).** `MarketPolicyRegistry.unresolved` is empty, so this build
-  can offer no remote transfer to anyone. A real market needs `market_id`, jurisdiction, residency
-  posture, permitted processing regions, per-modality permission, per-modality consent copy version, a
-  **named** `legal_review_approver` and an expiry date. No real jurisdiction was invented here; the
-  fictional `ZZ` fixture is the only declared market and it exists in `contracts/market-policy/v1/fixtures`.
-- **Consent copy (legal + content).** `photo-transfer-copy-v1` is a version string, not reviewed text.
-  The surface shows the version; the disclosure wording itself needs review before any real market.
+`git diff --check` clean. No floor lowered, no exclusion, baseline or suppression;
+`coverage.toml` and `evidence-bindings.toml` untouched.
 
 ---
 
-## Open / deviations
+## What remains
 
-- **One connected test fails, and it is pre-existing.**
-  `PhotoAnalysisComposeSemanticsInstrumentationTest.captureSurfaceExposesStableAutomationIdsAndLabels`
-  fails with `missing Compose semantic id: photo_analysis_title`. I proved it is not mine: with my
-  `ConsentGate(state)` call commented out and everything else unchanged, the test fails **identically**.
-  Direct device evidence contradicts the test, not the app — launching the activity explicitly and
-  dumping the hierarchy shows `resource-id="photo_analysis_title"` with `text="Capture"` present. The
-  test launches via `getLaunchIntentForPackage`, and during the run `monkey -c LAUNCHER` reports
-  “No activities found to run”, so the failure is in how the suite launches the app, not in the
-  surface. Slice A never ran the connected suite (it launched the app by explicit component), which is
-  why this surfaced now. **Not fixed in this slice** — it is outside the consent scope and deserves its
-  own diagnosis.
-- **Maestro flows are written but NOT executed.** The CLI is not installed on this host. The consent
-  flow is fingerprinted for 2.7.0 per `.maestro/maestro-cli-2.7.0.sha256` but carries no run evidence.
-- **No physical device.** Camera and native-gap evidence require one; none is attached. Not faked.
-- **3.2 review states — assessed, not extended.** `PhotoAnalysisReviewContent` already renders dish
-  candidates, visible components with provenance, and composition hints labelled "Dish hint, not visual
-  evidence"; Slice A proved this end-to-end on the emulator. I added the UJ-3 scenario and journey so
-  the catalog covers it, but wrote **no new review presenter/UI code** — I found no unreachable review
-  state to justify it. If you expected new review surface work here, this is the gap.
-- **`verify-release-immutability` not re-run.** It reports `contracts/mobile-api/v1` modified since
-  `c091a43`; pre-existing, not from Slice A or B, and a contract-owner call. That release was not touched.
-- **iOS `TrackedPhotoPickerViewController`** remains dropped from the #29 merge with no equivalent. It
-  cannot be compiled or run on this Intel host; iOS-owner call, not hand-spliced. No `iosMain` file was
-  changed in this slice, so no `compileKotlinIosArm64` run was required.
-- **`graphify update .` not run.** There is no `graphify-out/graph.json` in this worktree and no
+- **`graphify update .` not run** — there is no `graphify-out/graph.json` in this worktree and no
   `graphify` on PATH, so there is nothing to update here.
-- **Consent is currently reachable only in test mode.** `ConsentGate` returns early unless
-  `PhotoAnalysisEngineWiring.isTestMode(...)`, because outside test mode no engine is bound and there is
-  no transfer to consent to. The consent machinery itself is production code with no fence; only its
-  entry point is gated, and it will need unfencing in the same story that unfences the engines.
+- **The pre-existing connected-suite failure is untouched.**
+  `PhotoAnalysisComposeSemanticsInstrumentationTest.captureSurfaceExposesStableAutomationIdsAndLabels`
+  still fails (`missing Compose semantic id: photo_analysis_title`). Proven pre-existing in the last
+  slice by disabling the consent gate and observing an identical failure; the app itself exposes the id
+  correctly on device. Out of scope here.
+- **Latent, not fixed (out of scope):** `BoundedDishIngredientFusion.hintsFor` calls `.take(MAX_HINTS)`
+  *before* `sortedByDescending(support)`, so it keeps an arbitrary 24 hints and then sorts them rather
+  than keeping the 24 best-supported. The draft's ordering rule still holds, so nothing fails today,
+  but the hints shown may not be the strongest ones. Worth its own fix.
+- The v2 component slot is still the honestly-labelled fixture; the swap point is unchanged.
