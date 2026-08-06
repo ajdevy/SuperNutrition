@@ -73,8 +73,12 @@ object BoundedDishIngredientFusion {
         val maximum = accumulated.values.maxOfOrNull(MutableHint::support) ?: return emptyList()
         return accumulated.values
             .asSequence()
-            .take(MAX_HINTS)
+            // Sorted before taking. Taking first kept an arbitrary 24 and then
+            // ordered those, so the hints shown were not the best-supported ones
+            // whenever more than 24 accumulated — invisible, because the draft's
+            // descending-order rule still held over whatever survived.
             .sortedByDescending(MutableHint::support)
+            .take(MAX_HINTS)
             .map { hint ->
                 DishIngredientHint(
                     ingredientId = hint.ingredientId,

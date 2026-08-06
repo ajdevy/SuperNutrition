@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -241,8 +242,15 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         // The consent surface sits above the capture content and only while a
         // photo is Ready, so a decision is asked between capture and analysis
         // rather than before there is anything to consent to.
+        // systemBarsPadding here rather than in the shared screen: the shared
+        // module resolves the inset API to its skiko variant, which is absent on
+        // Android and crashes at composition. Without it the first element draws
+        // under the status bar, and an occluded node is dropped from the
+        // accessibility tree — invisible to UI Automator and to a screen reader.
         androidx.compose.foundation.layout.Column(
-            modifier = Modifier.semantics { testTagsAsResourceId = true },
+            modifier = Modifier
+                .systemBarsPadding()
+                .semantics { testTagsAsResourceId = true },
         ) {
             ConsentGate(state)
             PhotoAnalysisCaptureContent(
