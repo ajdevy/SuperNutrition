@@ -117,10 +117,32 @@ Evidence: `e2e-review.png`, `e2e-review-hierarchy.xml` in this directory.
   The inset is applied in the **Android host**, not the shared screen: `safeDrawingPadding()` in
   commonMain resolved to the skiko variant and crashed on launch with
   `NoClassDefFoundError: WindowInsetsPadding_skikoKt`. That attempt was reverted.
-- **Hint ordering.** `BoundedDishIngredientFusion.hintsFor` took 24 hints and then sorted them, so once
-  more than 24 accumulated the ones shown were an arbitrary subset rather than the best-supported. Now
-  sorted before taking. Invisible before, because the draft's descending-order rule still held over
-  whatever survived.
+- **Hint ordering — with a correction to what I claimed.** `BoundedDishIngredientFusion.hintsFor` took
+  24 hints and then sorted them; it now sorts before taking. My earlier commit said the hints shown
+  "were an arbitrary subset", which **overstated it**: the path is not reachable today. `hintsFor`
+  bounds contributors to `dishes.take(3)`, and the widest union across any three dishes in the prior
+  table is **20** distinct ingredients — measured, not assumed (best case `greek_salad + ramen + pizza`;
+  a probe passing six dishes produced 20 hints). `take(MAX_HINTS)` therefore never truncates, so the
+  old and new orderings produce identical output through `merge()`. The change is correct and
+  defensive rather than a fix for observable behaviour.
+  **A failing-first regression test for the ">24 hints" case is therefore impossible** without editing
+  production code (raising the three-dish bound or growing the table), which is out of scope. What was
+  added instead pins the guarantees that *are* reachable and that truncation would depend on — see
+  below.
+
+## Hint tests added
+
+Three tests in `BoundedDishIngredientFusionBoundTest`, each mutation-checked:
+
+| guarantee | mutation that must break it | caught |
+|---|---|---|
+| only the top three dishes contribute | `dishes.take(3)` → `take(6)` | yes |
+| hints descend by support, strongest normalises to 1.0 | `sortedByDescending` → `sortedBy` | yes |
+| the hint list never exceeds its ceiling, ids unique | (invariant; not reachable today) | n/a |
+
+The first assertion was vacuous in its first draft — it named ingredients the prior table does not
+hold, so it passed under the mutation. The mutation run caught that, and it now asserts against the
+five ingredients carried **only** by the fourth dish.
 
 ## Second real-model E2E (regression check)
 
@@ -129,8 +151,13 @@ A different photo through the same flow: gateway 200, review rendered
 
 ## What remains
 
-- **`graphify update .` not run** — there is no `graphify-out/graph.json` in this worktree and no
-  `graphify` on PATH, so there is nothing to update here.
+- **`graphify update .` still not run — the setup genuinely fails, it was not skipped.**
+  `./scripts/setup-agent-tools.sh` exits **1** with:
+  `uv is required. Install it from https://docs.astral.sh/uv/ and rerun this script.`
+  Node 24.16.0 and Python 3.14.6 are present; `uv` is not installed on this host. Installing a
+  system-wide developer tool is a machine change outside this task, and the script itself directs a
+  human to do it. After `uv` is installed, `./scripts/setup-agent-tools.sh && graphify update .` closes
+  this. `graphify` is not on PATH and `graphify-out/graph.json` does not exist in this worktree.
 - **No physical device.** Camera and native-gap evidence still require one; the emulator is not that.
 - **Maestro flows remain written but not executed** — the CLI is not installed on this host.
 - **Consent is still reachable only in test mode**, and the v2 component slot is still the
