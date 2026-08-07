@@ -153,13 +153,12 @@ A different photo through the same flow: gateway 200, review rendered
 
 ## What remains
 
-- **`graphify update .` still not run — the setup genuinely fails, it was not skipped.**
-  `./scripts/setup-agent-tools.sh` exits **1** with:
-  `uv is required. Install it from https://docs.astral.sh/uv/ and rerun this script.`
-  Node 24.16.0 and Python 3.14.6 are present; `uv` is not installed on this host. Installing a
-  system-wide developer tool is a machine change outside this task, and the script itself directs a
-  human to do it. After `uv` is installed, `./scripts/setup-agent-tools.sh && graphify update .` closes
-  this. `graphify` is not on PATH and `graphify-out/graph.json` does not exist in this worktree.
+- **`graphify update .` now run (closed).** `uv` 0.12.2 installed via Homebrew, then
+  `./scripts/setup-agent-tools.sh` installed `graphify 0.9.17` (`uv tool install graphifyy`,
+  pinned version from `.codex/skills/graphify/.graphify_version`), and
+  `graphify update .` rebuilt the graph: 19 471 nodes, 25 322 edges, 1 900 communities,
+  `graphify-out/graph.json` + `GRAPH_REPORT.md` regenerated. `graphify-out/` is machine-local
+  (gitignored) and is not committed. `uv tool update-shell` wrote the PATH entry to `~/.zshenv`.
 - **No physical device.** Camera and native-gap evidence still require one; the emulator is not that.
 - **Maestro flows remain written but not executed** — the CLI is not installed on this host.
 - **Consent is still reachable only in test mode**, and the v2 component slot is still the
