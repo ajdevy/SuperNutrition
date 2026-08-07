@@ -160,7 +160,16 @@ A different photo through the same flow: gateway 200, review rendered
   `graphify-out/graph.json` + `GRAPH_REPORT.md` regenerated. `graphify-out/` is machine-local
   (gitignored) and is not committed. `uv tool update-shell` wrote the PATH entry to `~/.zshenv`.
 - **No physical device.** Camera and native-gap evidence still require one; the emulator is not that.
-- **Maestro flows remain written but not executed** — the CLI is not installed on this host.
+- **Maestro flows now executed (closed):** Maestro CLI 2.7.0 installed, sha256-verified against
+  `mobile/.maestro/maestro-cli-2.7.0.sha256` (`a4ccab6b…`). All four fingerprinted flows pass on
+  the `Pixel_9_Pro` emulator (2026-08-07): `bootstrap-launch-di`,
+  `photo-analysis-capture-recovery`, `photo-analysis-remote-consent`, and
+  `photo-analysis-gateway-review` (real test-mode gateway, HTTP 200, 23.4s real-model inference).
+  First execution exposed three latent defects, fixed in `2461ebc`: the bootstrap DI marker was
+  never attached to the host composable; the picker exposes file names only as content-desc
+  (flows now tap the first thumbnail, emulator provisioned with a single image); the
+  gateway-review flow must answer the test-mode consent gate and outlive the ~20-25s inference
+  (`extendedWaitUntil`).
 - **Consent is still reachable only in test mode**, and the v2 component slot is still the
   honestly-labelled fixture. Both unfence together with the engines, in their own story.
 - **Contract-owner / iOS-owner items unchanged:** `verify-release-immutability` on
