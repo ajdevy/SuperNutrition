@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.supernutrition.core.ui.UiAutomationIds
 import com.supernutrition.domain.photoanalysis.AttemptId
 import com.supernutrition.domain.photoanalysis.AttemptScopedConsentStore
 import com.supernutrition.domain.photoanalysis.PhotoAnalysisState
@@ -249,6 +251,7 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         // accessibility tree — invisible to UI Automator and to a screen reader.
         androidx.compose.foundation.layout.Column(
             modifier = Modifier
+                .testTag(UiAutomationIds.BOOTSTRAP_LAUNCH_DI.value)
                 .systemBarsPadding()
                 .semantics { testTagsAsResourceId = true },
         ) {

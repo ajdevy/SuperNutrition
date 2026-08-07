@@ -2,9 +2,10 @@ appId: ${APP_ID}
 ---
 # UJ-2 — the remote-transfer decision.
 #
-# Fingerprinted for Maestro 2.7.0 (.maestro/maestro-cli-2.7.0.sha256). NOT
-# EXECUTED: the Maestro CLI is not installed on this host, so this flow is
-# written and reviewed but carries no run evidence yet.
+# Fingerprinted for Maestro 2.7.0 (.maestro/maestro-cli-2.7.0.sha256); run
+# evidence: emulator Pixel_9_Pro, 2026-08-07. The picker exposes file names
+# only as content-desc, so the import taps the first thumbnail (the emulator
+# is provisioned with a single image).
 #
 # The screen sets testTagsAsResourceId, so every id below is a resource id.
 - runScript:
@@ -17,7 +18,7 @@ appId: ${APP_ID}
 - tapOn:
     id: ${output.capture_import}
 - tapOn:
-    text: "meal.jpg"
+    id: "icon_thumb"
 
 # The surface must be reachable, and the two facts the contract requires to be
 # visible must be on screen BEFORE either answer is asserted.
