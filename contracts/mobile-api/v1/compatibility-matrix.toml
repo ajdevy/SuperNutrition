@@ -1,7 +1,7 @@
 schema = "supernutrition.mobile-api-compatibility-matrix.v1"
 contract_id = "mobile-api"
 release = "v1"
-digest = "d13ca2614fdb4c5c6fb6b6b3e3c3f9d28beea028d9835883c8f8245a11e8ed1f"
+digest = "b9829d6d371d6d36b8ca38ac0a0357951b15f33dca45b5567f555787543297ab"
 
 # The digest is SHA-256 over every sorted TOML file in this release. Each entry
 # contributes its release-relative path, a zero byte, then its bytes. While
