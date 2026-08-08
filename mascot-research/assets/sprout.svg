@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 360" role="img" aria-labelledby="title desc">
+  <title id="title">Abstract sprout companion concept</title>
+  <desc id="desc">A rounded amber seed with two green leaves and a small, friendly face.</desc>
+  <circle cx="180" cy="180" r="146" fill="#FFF3DF"/>
+  <path d="M143 116c-4-37 15-63 44-78 18 28 13 64-20 88" fill="#7FB693"/>
+  <path d="M202 122c10-34 35-51 68-52-5 33-29 54-65 62" fill="#5E9C7A"/>
+  <path d="M182 109v42" stroke="#4D8B65" stroke-width="8" stroke-linecap="round"/>
+  <path d="M102 177c0-38 35-62 78-62s78 24 78 62v58c0 52-33 78-78 78s-78-26-78-78v-58Z" fill="#F6C85F"/>
+  <circle cx="151" cy="192" r="9" fill="#17382B"/>
+  <circle cx="209" cy="192" r="9" fill="#17382B"/>
+  <path d="M154 228c16 15 36 15 52 0" fill="none" stroke="#17382B" stroke-width="7" stroke-linecap="round"/>
+  <path d="M112 273c19 13 37 19 68 19s49-6 68-19" fill="none" stroke="#D79A45" stroke-width="6" opacity=".65"/>
+  <circle cx="119" cy="224" r="10" fill="#F0A38F" opacity=".6"/>
+  <circle cx="241" cy="224" r="10" fill="#F0A38F" opacity=".6"/>
+</svg>

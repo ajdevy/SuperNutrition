@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420" role="img" aria-labelledby="title desc">
+  <title id="title">Mascot-assisted nutrition flow</title>
+  <desc id="desc">A five-step flow from photo capture to grounded result, with uncertainty and user confirmation in the middle.</desc>
+  <defs>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%"><feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#17382B" flood-opacity=".12"/></filter>
+  </defs>
+  <rect x="18" y="18" width="864" height="384" rx="34" fill="#F6F5EF"/>
+  <path d="M147 210h606" stroke="#B7CCBD" stroke-width="5" stroke-dasharray="10 12"/>
+  <g filter="url(#shadow)">
+    <rect x="54" y="116" width="146" height="186" rx="24" fill="#FFFDF7"/>
+    <rect x="225" y="116" width="146" height="186" rx="24" fill="#FFFDF7"/>
+    <rect x="396" y="116" width="146" height="186" rx="24" fill="#FFFDF7"/>
+    <rect x="567" y="116" width="146" height="186" rx="24" fill="#FFFDF7"/>
+    <rect x="738" y="116" width="108" height="186" rx="24" fill="#17382B"/>
+  </g>
+  <g fill="#17382B" font-family="Arial, sans-serif" text-anchor="middle">
+    <text x="127" y="150" font-size="16" font-weight="700">CAPTURE</text>
+    <text x="298" y="150" font-size="16" font-weight="700">NOTICE</text>
+    <text x="469" y="150" font-size="16" font-weight="700">CLARIFY</text>
+    <text x="640" y="150" font-size="16" font-weight="700">CONFIRM</text>
+    <text x="792" y="150" font-size="16" font-weight="700" fill="#FFFDF7">RESULT</text>
+  </g>
+  <g fill="#597D69" font-family="Arial, sans-serif" text-anchor="middle">
+    <text x="127" y="236" font-size="18">take a photo</text>
+    <text x="298" y="226" font-size="18">“I see</text><text x="298" y="250" font-size="18">two options”</text>
+    <text x="469" y="226" font-size="18">ask about</text><text x="469" y="250" font-size="18">sauce</text>
+    <text x="640" y="226" font-size="18">user chooses</text><text x="640" y="250" font-size="18">serving</text>
+  </g>
+  <g fill="#FFFDF7" font-family="Arial, sans-serif" text-anchor="middle">
+    <text x="792" y="226" font-size="18">source +</text><text x="792" y="250" font-size="18">assumptions</text>
+  </g>
+  <g fill="#F6C85F">
+    <circle cx="127" cy="332" r="10"/><circle cx="298" cy="332" r="10"/><circle cx="469" cy="332" r="10"/><circle cx="640" cy="332" r="10"/><circle cx="792" cy="332" r="10"/>
+  </g>
+</svg>
