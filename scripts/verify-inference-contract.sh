@@ -9,7 +9,10 @@ elif [[ -n "${SUPERNUTRITION_INFERENCE_CONTRACT:-}" ]]; then
 else
     contract_roots=(
         "${repo_root}/contracts/inference/v1"
-        "${repo_root}/contracts/inference/v2"
+        # The modality-neutral inference-engine/v2 release has its own validator,
+        # scripts/verify-inference-v2-contract.sh. This script validates the
+        # inference-evidence release, which lives under its own contract_id.
+        "${repo_root}/contracts/inference-evidence/v2"
     )
 fi
 

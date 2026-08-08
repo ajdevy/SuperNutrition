@@ -161,9 +161,7 @@ class StagedComponentReviewTest {
             bytes = byteArrayOf(1),
             width = 1,
             height = 1,
-            orientation = ImageOrientation.UP,
-            colorSpace = "sRGB",
-            metadataKeys = emptySet(),
+            format = PhotoFormat(ImageOrientation.UP, "sRGB", emptySet()),
             contentDigest = "a".repeat(64),
         )
         reducer.dispatch(PhotoAnalysisEvent.PhotoCaptured(ref))

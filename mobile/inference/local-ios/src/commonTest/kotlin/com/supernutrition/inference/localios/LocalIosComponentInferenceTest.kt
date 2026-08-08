@@ -42,9 +42,7 @@ class LocalIosComponentInferenceTest {
         bytes = byteArrayOf(4, 5, 6),
         width = 10,
         height = 10,
-        orientation = ImageOrientation.UP,
-        colorSpace = "sRGB",
-        metadataKeys = emptySet(),
+        format = PhotoFormat(ImageOrientation.UP, "sRGB", emptySet()),
         contentDigest = "a".repeat(64),
     )
     private val request = InferenceV2Request(

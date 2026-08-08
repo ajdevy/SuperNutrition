@@ -14,16 +14,9 @@ import com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterCopy
 import com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterModel
 import com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterState
 import com.supernutrition.platform.photoios.IosImageNormalizer
-import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSData
 
-/**
- * Shared Apple session facade; only the renderer differs between Apple targets.
- *
- * Deliberately flat: every function here is one call the Swift host makes, so
- * the count is the size of that published surface rather than a class doing too
- * much. Splitting it would split the API Swift already calls.
- */
+/** Shared Apple session facade; only the renderer differs between Apple targets. */
 @Suppress("TooManyFunctions")
 public class SharedKitPhotoAnalysisSession private constructor(
     attemptId: String,
@@ -49,7 +42,10 @@ public class SharedKitPhotoAnalysisSession private constructor(
         presenterCopy,
     ).state
 
-    public fun statusLabel(): String = PhotoAnalysisPresenterModel.from(feature.state, presenterCopy).statusLabel
+    public fun statusLabel(): String = PhotoAnalysisPresenterModel.from(
+        feature.state,
+        presenterCopy,
+    ).statusLabel
 
     public fun shouldOfferSettings(): Boolean =
         (feature.state as? PhotoAnalysisState.Recovery)?.reason == RecoveryReason.PERMISSION_DENIED

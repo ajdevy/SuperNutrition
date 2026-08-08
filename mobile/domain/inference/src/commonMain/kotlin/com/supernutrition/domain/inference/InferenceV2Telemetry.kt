@@ -16,7 +16,7 @@ data class InferenceV2TelemetryEvent(
     val componentCountBucket: ComponentCountBucket,
 ) {
     init {
-        requireContractV2(contractVersion, "Telemetry must use inference-evidence/v2")
+        requireEvidenceContractV2(contractVersion, "Telemetry must use inference-evidence/v2")
     }
 }
 

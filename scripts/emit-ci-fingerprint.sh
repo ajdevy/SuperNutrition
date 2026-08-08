@@ -58,10 +58,18 @@ lifecycle_digest="$(digest_paths \
   mobile/product-lifecycle.toml \
   web/landing/product-lifecycle.toml \
   backend/mobile-api/product-lifecycle.toml)"
+# RELEASE.md became a hashed release input for these three contracts in commit
+# 83547213, but was not added here, so a RELEASE.md edit moved each release
+# digest while leaving this fingerprint unchanged — two surfaces disagreeing
+# about what a release is. product_identity_digest below already included it.
+# The catalog and the scripts that define and enforce release identity are
+# included for the same reason: a fingerprint that cannot see the rules is not
+# evidence about them.
 contract_catalog_digest="$(digest_paths \
   contracts/mobile-api/v1/schema.toml \
   contracts/mobile-api/v1/compatibility-matrix.toml \
   contracts/mobile-api/v1/fixtures/empty-analysis-request.toml \
+  contracts/mobile-api/v1/RELEASE.md \
   contracts/inference/v1/schema.toml \
   contracts/inference/v1/compatibility-matrix.toml \
   contracts/inference/v1/RELEASE.md \
@@ -70,19 +78,34 @@ contract_catalog_digest="$(digest_paths \
   contracts/inference/v1/fixtures/candidate-result.json \
   contracts/inference/v1/fixtures/failure-result.json \
   contracts/inference/v1/fixtures/telemetry-event.json \
-  contracts/inference/v2/schema.toml \
-  contracts/inference/v2/compatibility-matrix.toml \
   contracts/inference/v2/RELEASE.md \
-  contracts/inference/v2/fixtures/capability-ready.json \
-  contracts/inference/v2/fixtures/photo-component-estimated-result.json \
-  contracts/inference/v2/fixtures/photo-component-not-evaluable-result.json \
-  contracts/inference/v2/fixtures/text-component-not-evaluable-result.json \
+  contracts/inference/v2/compatibility-matrix.toml \
   contracts/inference/v2/fixtures/abstention-result.json \
+  contracts/inference/v2/fixtures/candidate-result-photo.json \
+  contracts/inference/v2/fixtures/candidate-result-text.json \
+  contracts/inference/v2/fixtures/capability-ready.json \
   contracts/inference/v2/fixtures/failure-result.json \
+  contracts/inference/v2/fixtures/request-photo.json \
+  contracts/inference/v2/fixtures/request-text.json \
   contracts/inference/v2/fixtures/telemetry-event.json \
+  contracts/inference/v2/schema.toml \
+  contracts/inference-evidence/v2/RELEASE.md \
+  contracts/inference-evidence/v2/compatibility-matrix.toml \
+  contracts/inference-evidence/v2/fixtures/abstention-result.json \
+  contracts/inference-evidence/v2/fixtures/capability-ready.json \
+  contracts/inference-evidence/v2/fixtures/failure-result.json \
+  contracts/inference-evidence/v2/fixtures/photo-component-estimated-result.json \
+  contracts/inference-evidence/v2/fixtures/photo-component-not-evaluable-result.json \
+  contracts/inference-evidence/v2/fixtures/telemetry-event.json \
+  contracts/inference-evidence/v2/fixtures/text-component-not-evaluable-result.json \
+  contracts/inference-evidence/v2/schema.toml \
   contracts/interaction-policy/v1/schema.toml \
   contracts/interaction-policy/v1/compatibility.toml \
-  contracts/interaction-policy/v1/fixtures/defaults.toml)"
+  contracts/interaction-policy/v1/fixtures/defaults.toml \
+  contracts/interaction-policy/v1/RELEASE.md \
+  contracts/release-catalog/v1/digests.toml \
+  scripts/emit-release-digest.sh \
+  scripts/verify-release-immutability.sh)"
 product_identity_digest="$(digest_paths \
 	contracts/product-identity/v1/schema.toml \
 	contracts/product-identity/v1/compatibility.toml \
