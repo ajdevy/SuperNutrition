@@ -1,0 +1,96 @@
+schema = "supernutrition.market-policy-contract.v1"
+schema_version = 1
+contract_id = "market-policy"
+release = "v1"
+language_neutral = true
+executable = false
+canonical_json = false
+
+# A market's processing position is a legal fact, not a configuration value. It
+# is declared here so that no story, provider migration, or catalog change can
+# widen it as a side effect: those are the three ways a posture actually moves
+# without anyone deciding to move it.
+#
+# Nothing in this contract is inferred. A market absent from the instance, one
+# declared `unresolved`, and one past its `expires_on` are all the same state and
+# all forbid transfer. That equivalence is the whole design: the failure this
+# gate exists to prevent is a market getting a posture because it resembles a
+# neighbour, shares a language, or sits in the same billing region.
+
+[market]
+# Every field is required for a market to reach any state other than unresolved.
+required_fields = [
+  "market_id",
+  "jurisdiction",
+  "residency_posture",
+  "permitted_processing_regions",
+  "photo_remote_permission",
+  "text_remote_permission",
+  "photo_consent_copy_version",
+  "text_consent_copy_version",
+  "accepted_input_languages",
+  "legal_review_approver",
+  "legal_review_expires_on",
+]
+unlisted_field = "reject"
+absent_market = "unresolved"
+expired_review = "unresolved"
+
+# The postures a market may hold. `unresolved` is the default and is not a
+# lesser form of permitted: it forbids transfer exactly as a prohibition does.
+residency_posture = [
+  "unresolved",
+  "in-country-only",
+  "permitted-with-region",
+  "prohibited",
+]
+
+# Permission is per modality because the two carry different content. A typed
+# description can name a dish, a restaurant, or an address typed by mistake; a
+# photo cannot be edited after the fact by its author. A market may permit one
+# and refuse the other, and the pair is never collapsed to a single flag.
+remote_permission = ["forbidden", "permitted"]
+
+[consent]
+# One modality's reviewed copy cannot authorise the other. The photo disclosure
+# says a smaller copy of the photo is sent, which is false for a typed
+# description, so presenting it for text would be obtaining consent for
+# something that is not happening.
+per_modality_copy_version = "required"
+cross_modality_reuse = "reject"
+# The user is told where their content will be processed before deciding, not
+# afterwards in a policy document.
+jurisdiction_and_region_shown_before_decision = true
+
+[independence]
+# Catalog country answers "which food data describes this meal". Market policy
+# answers "where may this content be processed". They are independent in both
+# directions, and AD-12 already keeps country independent of language.
+catalog_country_changes_posture = false
+posture_changes_accepted_input_languages = false
+posture_changes_local_availability = false
+# The deterministic floor and on-device identification are available under every
+# posture including `prohibited`. A market that permits no transfer still has a
+# working product, which is what makes it safe to leave a market unresolved
+# rather than guessing.
+local_paths_available_under_every_posture = true
+
+[inference_rules]
+# The three ways a posture moves without a decision, each forbidden explicitly.
+neighbouring_market = "reject"
+shared_language = "reject"
+shared_currency_or_region_grouping = "reject"
+provider_migration_widens_posture = "reject"
+
+[authority]
+# Policy state is authored and reviewed, never computed. A pipeline that can
+# write policy is a pipeline that can approve a market at 3am with nobody
+# reading it.
+ci_may_write_policy_state = false
+resolver_accepts_unsigned_data = false
+owner = "principal-independent-of-consuming-products"
+
+[compatibility]
+unknown_fields = "reject"
+missing_required_fields = "reject"
+incompatible_change = "new-major-release"

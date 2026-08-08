@@ -1,0 +1,18 @@
+# The shape a reviewed market takes. The values are deliberately fictional --
+# market "ZZ", approver "fixture-approver" -- because a canonical fixture
+# carrying a real jurisdiction would be a legal position published by a fixture.
+schema = "supernutrition.market-policy-instance.v1"
+contract_release = "market-policy/v1"
+
+[[market]]
+market_id = "ZZ"
+jurisdiction = "fixture-jurisdiction"
+residency_posture = "permitted-with-region"
+permitted_processing_regions = ["fixture-region-1"]
+photo_remote_permission = "permitted"
+text_remote_permission = "forbidden"
+photo_consent_copy_version = "photo-transfer-copy-v1"
+text_consent_copy_version = "none"
+accepted_input_languages = ["en", "ru"]
+legal_review_approver = "fixture-approver"
+legal_review_expires_on = "2027-01-01"
