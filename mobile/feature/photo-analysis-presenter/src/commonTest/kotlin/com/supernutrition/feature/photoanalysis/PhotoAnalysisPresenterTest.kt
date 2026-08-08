@@ -10,6 +10,7 @@ import com.supernutrition.domain.photoanalysis.RecoveryReason
 import com.supernutrition.domain.photoanalysis.RequestId
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 class PhotoAnalysisPresenterTest {
@@ -47,7 +48,11 @@ class PhotoAnalysisPresenterTest {
             ).statusLabel,
         )
         assertEquals(
-            listOf(PhotoAnalysisPresenterAction.Cancel),
+            listOf(
+                PhotoAnalysisPresenterAction.ScanAgain,
+                PhotoAnalysisPresenterAction.ImportPhoto,
+                PhotoAnalysisPresenterAction.Cancel,
+            ),
             PhotoAnalysisPresenterModel.from(PhotoAnalysisState.Ready(input), copy).actions,
         )
         assertEquals(
@@ -107,5 +112,13 @@ class PhotoAnalysisPresenterTest {
             setOf(PhotoAnalysisPresenterAction.TakePhoto, PhotoAnalysisPresenterAction.ImportPhoto),
             model.actions.toSet(),
         )
+    }
+
+    @Test
+    fun `grid prompt action validates the nine research cells`() {
+        assertEquals(4, PhotoAnalysisPresenterAction.SelectGridCell(4).index)
+        assertFailsWith<IllegalArgumentException> {
+            PhotoAnalysisPresenterAction.SelectGridCell(9)
+        }
     }
 }

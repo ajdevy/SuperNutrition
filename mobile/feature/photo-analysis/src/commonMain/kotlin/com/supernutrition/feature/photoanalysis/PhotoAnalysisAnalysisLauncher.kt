@@ -12,13 +12,13 @@ import kotlinx.coroutines.launch
 
 /** Host-owned trigger for one request-bound local analysis attempt. */
 interface PhotoAnalysisAnalysisLauncher {
-    fun start()
+    fun start(gridCellIndex: Int? = null)
 
     fun cancel()
 
     /** No-op default for hosts that intentionally do not bind an analysis runtime. */
     object None : PhotoAnalysisAnalysisLauncher {
-        override fun start() = Unit
+        override fun start(gridCellIndex: Int?) = Unit
 
         override fun cancel() = Unit
     }
@@ -43,6 +43,7 @@ data class PhotoAnalysisAnalysisConfiguration(
  * The engines remain adapter-owned; this class never selects or activates a
  * model manifest.
  */
+@Suppress("LongParameterList")
 class CoordinatedPhotoAnalysisAnalysisLauncher(
     private val feature: PhotoAnalysisFeature,
     private val dishEngine: PhotoInferenceEngine,
@@ -50,11 +51,15 @@ class CoordinatedPhotoAnalysisAnalysisLauncher(
     private val scope: CoroutineScope,
     private val configuration: PhotoAnalysisAnalysisConfiguration,
     private val onStageChanged: (com.supernutrition.domain.photoanalysis.LocalAnalysisStage) -> Unit = {},
+    private val onFailure: (Throwable) -> Unit = {},
 ) : PhotoAnalysisAnalysisLauncher {
     private var requestSequence = 0L
     private var job: Job? = null
 
-    override fun start() {
+    override fun start(gridCellIndex: Int?) {
+        require(gridCellIndex == null || gridCellIndex in 0..8) {
+            "Grid cell index must be null or between 0 and 8"
+        }
         val ready = feature.state as? PhotoAnalysisState.Ready ?: return
         cancel()
         val requestId = RequestId("${configuration.requestPrefix}-${++requestSequence}")
@@ -63,12 +68,14 @@ class CoordinatedPhotoAnalysisAnalysisLauncher(
             requestId = requestId.value,
             configurationVersion = configuration.configurationVersion,
             configurationDigest = configuration.configurationDigest,
+            gridCellIndex = gridCellIndex,
         )
         val coordinator = PhotoAnalysisAnalysisCoordinator(
             feature = feature,
             dishEngine = dishEngine,
             componentEngine = componentEngine,
             onStageChanged = onStageChanged,
+            onFailure = onFailure,
         )
         job = scope.launch {
             coordinator.run(requestId, attemptContext)
@@ -82,4 +89,23 @@ class CoordinatedPhotoAnalysisAnalysisLauncher(
             feature.dispatch(PhotoAnalysisEvent.Cancel)
         }
     }
+}
+
+object PhotoAnalysisLauncherFactory {
+    @Suppress("LongParameterList")
+    fun create(
+        feature: PhotoAnalysisFeature,
+        dishEngine: PhotoInferenceEngine,
+        componentEngine: InferenceV2Engine,
+        scope: CoroutineScope,
+        configuration: PhotoAnalysisAnalysisConfiguration,
+        onFailure: (Throwable) -> Unit = {},
+    ): PhotoAnalysisAnalysisLauncher = CoordinatedPhotoAnalysisAnalysisLauncher(
+        feature = feature,
+        dishEngine = dishEngine,
+        componentEngine = componentEngine,
+        scope = scope,
+        configuration = configuration,
+        onFailure = onFailure,
+    )
 }

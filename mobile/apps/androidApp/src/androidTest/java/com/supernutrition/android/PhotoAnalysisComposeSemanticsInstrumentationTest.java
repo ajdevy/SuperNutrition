@@ -21,7 +21,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-/** Physical-device semantic contract for the production Compose capture surface. */
+/** Physical-device semantic contract for the Compose capture surface. */
 public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
     private static final long SEMANTICS_TIMEOUT_MS = 15_000L;
 

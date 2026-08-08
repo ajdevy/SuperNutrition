@@ -180,11 +180,11 @@ if not re.search(r'<key>CFBundleDisplayName</key>\s*<string>SuperNutrition</stri
     fail("iOS display name does not match the identity manifest")
 ios_project = (repo_root / "mobile/apps/iosApp/SuperNutritionUIAcceptance.xcodeproj/project.pbxproj").read_text(encoding="utf-8")
 acceptance_product_names = set(re.findall(
-    r'PRODUCT_BUNDLE_IDENTIFIER = "com\.supernutrition\.ios\.uiacceptance"; PRODUCT_NAME = "([^"]+)"',
+    r'PRODUCT_BUNDLE_IDENTIFIER = "?com\.supernutrition\.ios\.uiacceptance"?;\s*PRODUCT_NAME = "?([^";\n]+)"?',
     ios_project,
 ))
 production_product_names = set(re.findall(
-    r'PRODUCT_BUNDLE_IDENTIFIER = "com\.supernutrition\.ios"; PRODUCT_NAME = "([^"]+)"',
+    r'PRODUCT_BUNDLE_IDENTIFIER = "?com\.supernutrition\.ios"?;\s*PRODUCT_NAME = "?([^";\n]+)"?',
     ios_project,
 ))
 native_target_ids = {
@@ -202,9 +202,9 @@ if len(acceptance_product_names) != 1 or acceptance_product_names != {"SuperNutr
     fail("iOS acceptance target product name is missing or collides with production")
 if len(production_product_names) != 1 or production_product_names != {"SuperNutrition"}:
     fail("iOS production target product name does not match the identity manifest")
-if ios_project.count('PRODUCT_BUNDLE_IDENTIFIER = "com.supernutrition.ios.uiacceptance"') < 2:
+if len(re.findall(r'PRODUCT_BUNDLE_IDENTIFIER = "?com\.supernutrition\.ios\.uiacceptance"?;', ios_project)) < 2:
     fail("iOS acceptance bundle identifier is missing from all host configurations")
-if ios_project.count('PRODUCT_BUNDLE_IDENTIFIER = "com.supernutrition.ios"') < 2:
+if len(re.findall(r'PRODUCT_BUNDLE_IDENTIFIER = "?com\.supernutrition\.ios"?;', ios_project)) < 2:
     fail("iOS production bundle identifier is missing from all host configurations")
 scheme_root = repo_root / "mobile/apps/iosApp/SuperNutritionUIAcceptance.xcodeproj/xcshareddata/xcschemes"
 acceptance_scheme = (scheme_root / "SuperNutritionUIAcceptance.xcscheme").read_text(encoding="utf-8")

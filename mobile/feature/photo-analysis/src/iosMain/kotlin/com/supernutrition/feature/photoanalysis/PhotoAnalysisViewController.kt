@@ -1,6 +1,7 @@
 package com.supernutrition.feature.photoanalysis
 
 import androidx.compose.ui.window.ComposeUIViewController
+import androidx.compose.runtime.collectAsState
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.UIKit.UIViewController
 
@@ -13,6 +14,10 @@ fun PhotoAnalysisViewController(
     retainedPhoto: () -> IosRetainedPhotoPreview?,
     onNativeAction: (PhotoAnalysisNativeAction) -> Unit,
 ): UIViewController = ComposeUIViewController {
+    // retainedPhoto is native state, so observe the shared state stream here
+    // as well as inside the content to refresh the same-slot preview after a
+    // photo is returned or native inference finishes.
+    feature.stateFlow.collectAsState().value
     val preview = retainedPhoto()
     PhotoAnalysisCaptureContent(
         stateFlow = feature.stateFlow,

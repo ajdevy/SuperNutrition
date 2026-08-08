@@ -35,12 +35,19 @@ fun photoAnalysisVisibleComponentId(componentId: String): UiAutomationId {
     return UiAutomationId("photo_analysis_component_$encoded")
 }
 
+fun photoAnalysisGridCellId(cellIndex: Int): UiAutomationId {
+    require(cellIndex in 0..8) { "Grid cell index must be between 0 and 8" }
+    return UiAutomationId("photo_analysis_grid_cell_${cellIndex + 1}")
+}
+
 object UiAutomationIds {
     val BOOTSTRAP_LAUNCH_DI = UiAutomationId("bootstrap_shell_launch_di")
     val PHOTO_ANALYSIS_TITLE = UiAutomationId("photo_analysis_title")
     val PHOTO_ANALYSIS_STATUS = UiAutomationId("photo_analysis_status")
     val PHOTO_ANALYSIS_STAGE = UiAutomationId("photo_analysis_stage")
     val PHOTO_ANALYSIS_RETAINED_PHOTO = UiAutomationId("photo_analysis_retained_photo")
+    val PHOTO_ANALYSIS_GRID_OVERLAY = UiAutomationId("photo_analysis_grid_overlay")
+    val PHOTO_ANALYSIS_LOADING = UiAutomationId("photo_analysis_loading")
     val PHOTO_ANALYSIS_MAIN_DISH_PROPOSALS = UiAutomationId("photo_analysis_main_dish_proposals")
     val PHOTO_ANALYSIS_COMPONENT_EVIDENCE = UiAutomationId("photo_analysis_component_evidence")
     val PHOTO_ANALYSIS_COMPOSITION_HINTS = UiAutomationId("photo_analysis_composition_hints")
@@ -57,6 +64,8 @@ object UiAutomationIds {
         PHOTO_ANALYSIS_STATUS,
         PHOTO_ANALYSIS_STAGE,
         PHOTO_ANALYSIS_RETAINED_PHOTO,
+        PHOTO_ANALYSIS_GRID_OVERLAY,
+        PHOTO_ANALYSIS_LOADING,
         PHOTO_ANALYSIS_MAIN_DISH_PROPOSALS,
         PHOTO_ANALYSIS_COMPONENT_EVIDENCE,
         PHOTO_ANALYSIS_COMPOSITION_HINTS,

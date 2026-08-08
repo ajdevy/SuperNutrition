@@ -121,6 +121,8 @@ struct PhotoAnalysisComposeHost: UIViewControllerRepresentable {
 final class PhotoAnalysisPresentationCoordinator {
     let session: SharedKitPhotoAnalysisSession
     private let photoBridge: IosPhotoPresentationPort
+    private let pocInference = IosPocInferenceEngine()
+    private let analysisQueue = DispatchQueue(label: "com.supernutrition.ios.poc-inference", qos: .userInitiated)
     weak var presenter: UIViewController?
     var didChange: () -> Void = {}
 
@@ -132,8 +134,12 @@ final class PhotoAnalysisPresentationCoordinator {
     func handle(action: PhotoAnalysisNativeAction) {
         guard let action = PhotoAnalysisHostAction(action) else { fail(); return }
         switch action {
-        case .takePhoto: takePhoto()
-        case .importPhoto: importPhoto()
+        case .takePhoto:
+            session.scanAgain()
+            takePhoto()
+        case .importPhoto:
+            session.scanAgain()
+            importPhoto()
         case .openSettings: openSettings()
         }
     }
@@ -174,8 +180,41 @@ final class PhotoAnalysisPresentationCoordinator {
     private func complete(_ data: Data?) {
         onMain { [weak self] in
             guard let self else { return }
-            if let data { session.photoReturned(opaqueId: UUID().uuidString, sourceData: data) }
-            else { session.captureCancelled() }
+            if let data {
+                let opaqueId = UUID().uuidString
+                let requestId = UUID().uuidString
+                session.photoReturned(opaqueId: opaqueId, sourceData: data)
+                analysisQueue.async { [weak self] in
+                    guard let self else { return }
+                    do {
+                        let result = try pocInference.analyze(data)
+                        onMain { [weak self] in
+                            guard let self else { return }
+                            session.applyNativePocAnalysis(
+                                opaqueId: opaqueId,
+                                requestId: requestId,
+                                dishLabels: result.dishes.map(\.label),
+                                dishConfidences: result.dishes.map { KotlinDouble(double: $0.confidence) },
+                                regionLabels: result.regions.map(\.label),
+                                regionConfidences: result.regions.map { KotlinDouble(double: $0.confidence) },
+                                regionLefts: result.regions.map { KotlinDouble(double: $0.left) },
+                                regionTops: result.regions.map { KotlinDouble(double: $0.top) },
+                                regionRights: result.regions.map { KotlinDouble(double: $0.right) },
+                                regionBottoms: result.regions.map { KotlinDouble(double: $0.bottom) },
+                            )
+                            changed()
+                        }
+                    } catch {
+                        onMain { [weak self] in
+                            guard let self else { return }
+                            session.nativePocFailed(opaqueId: opaqueId, requestId: requestId)
+                            changed()
+                        }
+                    }
+                }
+            } else {
+                session.captureCancelled()
+            }
             changed()
         }
     }

@@ -37,18 +37,19 @@ data class DishIngredientHint(
 object BoundedDishIngredientFusion {
     const val POLICY_VERSION = "e0-suggestion-policy.v1"
 
+    private const val MAX_DISH_PROPOSALS = 3
     private const val MAX_HINTS = 24
 
     fun merge(dishes: List<InferenceCandidate>, photoEvidence: List<VisibleComponent>): CandidateReviewDraft =
         CandidateReviewDraft(
-            mainDishProposals = dishes,
+            mainDishProposals = dishes.take(MAX_DISH_PROPOSALS),
             photoEvidence = photoEvidence,
             compositionHints = hintsFor(dishes),
         )
 
     private fun hintsFor(dishes: List<InferenceCandidate>): List<DishIngredientHint> {
         val accumulated = linkedMapOf<String, MutableHint>()
-        dishes.take(3).forEach { dish ->
+        dishes.take(MAX_DISH_PROPOSALS).forEach { dish ->
             DishIngredientPriorTable.forDish(dish)
                 .forEach { ingredientId ->
                     val current = accumulated.getOrPut(ingredientId) { MutableHint(ingredientId) }

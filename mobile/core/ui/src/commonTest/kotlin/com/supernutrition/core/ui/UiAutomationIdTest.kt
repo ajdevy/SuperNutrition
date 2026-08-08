@@ -43,6 +43,8 @@ class UiAutomationIdTest {
             assertFailsWith<IllegalArgumentException> { UiAutomationId(it) }
         }
         assertEquals("photo_analysis_title", UiAutomationIds.PHOTO_ANALYSIS_TITLE.value)
+        assertEquals("photo_analysis_grid_cell_9", photoAnalysisGridCellId(8).value)
+        assertFailsWith<IllegalArgumentException> { photoAnalysisGridCellId(-1) }
         assertTrue(UiAutomationIds.all.contains(UiAutomationIds.CAPTURE_CANCEL))
     }
 

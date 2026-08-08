@@ -43,6 +43,7 @@ import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
+import kotlin.test.assertNotNull
 
 class PhotoAnalysisAnalysisCoordinatorTest {
     @Test
@@ -121,7 +122,9 @@ class PhotoAnalysisAnalysisCoordinatorTest {
             attemptContext("coordinator-abstention", "request-abstention"),
         )
         assertEquals(PhotoAnalysisAnalysisResult.Recovery(RecoveryReason.NO_FOOD), abstentionResult)
-        assertEquals(PhotoAnalysisState.Recovery(RecoveryReason.NO_FOOD), abstained.state)
+        val noFoodRecovery = assertIs<PhotoAnalysisState.Recovery>(abstained.state)
+        assertEquals(RecoveryReason.NO_FOOD, noFoodRecovery.reason)
+        assertNotNull(noFoodRecovery.ref)
 
         val failed = preparedFeature("coordinator-failure")
         val failureResult = coordinator(

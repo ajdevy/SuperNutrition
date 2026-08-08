@@ -21,7 +21,7 @@ class PhotoAnalysisAndroidHostController(
     private val normalizer: AndroidPhotoNormalizerPort,
     private val requestCameraPermission: () -> Unit,
     private val showCameraPermissionRationale: (onContinue: () -> Unit) -> Unit,
-    private val launchCamera: (String) -> Unit,
+    private val capturePhoto: (String) -> Unit,
     private val launchImport: () -> Unit,
     private val launchSettings: () -> Unit,
     private val captureOperation: CaptureOperationState,
@@ -35,10 +35,20 @@ class PhotoAnalysisAndroidHostController(
 
     fun handleAction(action: PhotoAnalysisPresenterAction) {
         feature.route(action, ::handleNativeAction)
-        if (action == PhotoAnalysisPresenterAction.Cancel || action == PhotoAnalysisPresenterAction.ScanAgain) {
+        if (action == PhotoAnalysisPresenterAction.Cancel ||
+            action == PhotoAnalysisPresenterAction.ScanAgain ||
+            action == PhotoAnalysisPresenterAction.TakePhoto ||
+            action == PhotoAnalysisPresenterAction.ImportPhoto
+        ) {
             analysisLauncher.cancel()
             onRetainedPhotoInvalidated()
         }
+    }
+
+    fun handleGridCellSelected(index: Int) {
+        val action = PhotoAnalysisPresenterAction.SelectGridCell(index)
+        feature.route(action, ::handleNativeAction)
+        analysisLauncher.start(index)
     }
 
     fun onPermissionResult(granted: Boolean) {
@@ -48,6 +58,22 @@ class PhotoAnalysisAndroidHostController(
             openCamera()
         } else {
             feature.dispatch(PhotoAnalysisEvent.PermissionDenied)
+        }
+    }
+
+    fun onInlinePhotoResult(operationId: String, result: Result<ByteArray>) {
+        val expectedOperation = captureOperation.pendingOperationId
+        captureOperation.pendingOperationId = null
+        val sourceBytes = result.getOrNull()
+        if (expectedOperation != operationId) {
+            sourceBytes?.fill(0)
+            failPreparation(RecoveryReason.CAPTURE_FAILED)
+            return
+        }
+        if (sourceBytes == null) {
+            failPreparation(RecoveryReason.CAPTURE_FAILED)
+        } else {
+            processPhotoBytes(sourceBytes)
         }
     }
 
@@ -80,16 +106,21 @@ class PhotoAnalysisAndroidHostController(
             return
         }
 
-        analysisLauncher.cancel()
-        onRetainedPhotoInvalidated()
-        val ref = feature.issuePhotoRef(UUID.randomUUID().toString())
-        feature.dispatch(PhotoAnalysisEvent.PhotoCaptured(ref))
         val sourceBytes = photoBridge.photoBytesFromResult(data)
         if (sourceBytes == null) {
             failPreparation(RecoveryReason.CAPTURE_FAILED)
             return
         }
 
+        processPhotoBytes(sourceBytes)
+    }
+
+    @Suppress("SwallowedException", "TooGenericExceptionCaught")
+    private fun processPhotoBytes(sourceBytes: ByteArray) {
+        analysisLauncher.cancel()
+        onRetainedPhotoInvalidated()
+        val ref = feature.issuePhotoRef(UUID.randomUUID().toString())
+        feature.dispatch(PhotoAnalysisEvent.PhotoCaptured(ref))
         try {
             val input = normalizer.normalize(ref, sourceBytes)
             feature.dispatch(PhotoAnalysisEvent.PreparationSucceeded(input))
@@ -120,7 +151,7 @@ class PhotoAnalysisAndroidHostController(
                 if (captureOperation.pendingOperationId == null) {
                     UUID.randomUUID().toString().also { operationId ->
                         captureOperation.pendingOperationId = operationId
-                        launchCamera(operationId)
+                        capturePhoto(operationId)
                     }
                 }
             }

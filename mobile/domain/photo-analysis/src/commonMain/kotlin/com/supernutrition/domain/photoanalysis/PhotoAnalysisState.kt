@@ -58,6 +58,13 @@ sealed interface PhotoAnalysisEvent {
     data class AnalysisSucceeded(val requestId: RequestId) : PhotoAnalysisEvent
     data class LocalAnalysisStageChanged(val requestId: RequestId, val stage: LocalAnalysisStage) : PhotoAnalysisEvent
 
+    /** Explicit research-only 3x3 image prompt; no cell is inferred or silently selected. */
+    data class GridCellSelected(val cellIndex: Int) : PhotoAnalysisEvent {
+        init {
+            require(cellIndex in 0..8) { "Grid cell index must be between 0 and 8" }
+        }
+    }
+
     /** Typed, separate dish proposals and visible component evidence for the review boundary. */
     data class ReviewEvidenceAvailable(val requestId: RequestId, val draft: CandidateReviewDraft) : PhotoAnalysisEvent
 

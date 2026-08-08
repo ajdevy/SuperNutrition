@@ -3,6 +3,7 @@
 package com.supernutrition.feature.photoanalysis
 
 import com.supernutrition.domain.photoanalysis.PhotoAnalysisEvent
+import com.supernutrition.domain.photoanalysis.PhotoAnalysisState
 
 /** Native effects exposed as a closed, cross-language vocabulary at the host boundary. */
 enum class PhotoAnalysisNativeAction {
@@ -15,8 +16,21 @@ fun PhotoAnalysisFeature.route(action: PhotoAnalysisPresenterAction, onNative: (
     when (action) {
         PhotoAnalysisPresenterAction.Cancel -> dispatch(PhotoAnalysisEvent.Cancel)
         PhotoAnalysisPresenterAction.ScanAgain -> dispatch(PhotoAnalysisEvent.ScanAgain)
-        PhotoAnalysisPresenterAction.TakePhoto -> onNative(PhotoAnalysisNativeAction.TakePhoto)
-        PhotoAnalysisPresenterAction.ImportPhoto -> onNative(PhotoAnalysisNativeAction.ImportPhoto)
+        is PhotoAnalysisPresenterAction.SelectGridCell -> dispatch(PhotoAnalysisEvent.GridCellSelected(action.index))
+        PhotoAnalysisPresenterAction.TakePhoto -> {
+            prepareForNativePhotoAction()
+            onNative(PhotoAnalysisNativeAction.TakePhoto)
+        }
+        PhotoAnalysisPresenterAction.ImportPhoto -> {
+            prepareForNativePhotoAction()
+            onNative(PhotoAnalysisNativeAction.ImportPhoto)
+        }
         PhotoAnalysisPresenterAction.OpenSettings -> onNative(PhotoAnalysisNativeAction.OpenSettings)
+    }
+}
+
+private fun PhotoAnalysisFeature.prepareForNativePhotoAction() {
+    if (state != PhotoAnalysisState.Capture) {
+        dispatch(PhotoAnalysisEvent.ScanAgain)
     }
 }

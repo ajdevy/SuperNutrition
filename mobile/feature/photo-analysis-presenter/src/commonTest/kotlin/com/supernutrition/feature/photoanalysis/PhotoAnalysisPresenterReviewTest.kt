@@ -53,7 +53,14 @@ class PhotoAnalysisPresenterReviewTest {
 
             assertEquals(label, model.statusLabel)
             assertEquals(PhotoAnalysisPresenterState.ANALYZING, model.state)
-            assertEquals(listOf(PhotoAnalysisPresenterAction.Cancel), model.actions)
+            assertEquals(
+                listOf(
+                    PhotoAnalysisPresenterAction.ScanAgain,
+                    PhotoAnalysisPresenterAction.ImportPhoto,
+                    PhotoAnalysisPresenterAction.Cancel,
+                ),
+                model.actions,
+            )
         }
     }
 
@@ -80,6 +87,14 @@ class PhotoAnalysisPresenterReviewTest {
         )
 
         val review = assertNotNull(model.review)
+        assertEquals(
+            listOf(
+                PhotoAnalysisPresenterAction.ScanAgain,
+                PhotoAnalysisPresenterAction.ImportPhoto,
+                PhotoAnalysisPresenterAction.Cancel,
+            ),
+            model.actions,
+        )
         assertEquals(listOf("Salmon with rice"), review.mainDishProposals.map { it.label })
         assertEquals(listOf("Rice"), review.visibleComponents.map { it.label })
         assertEquals(copy.evidence.fromThisPhoto, review.visibleComponents.single().sourceLabel)
@@ -89,6 +104,42 @@ class PhotoAnalysisPresenterReviewTest {
         assertEquals(copy.evidence.notSelected, review.visibleComponents.single().selectionLabel)
         assertEquals(listOf("Tomato"), review.compositionHints.map { it.label })
         assertEquals(copy.evidence.compositionHintSource, review.compositionHints.single().sourceLabel)
+    }
+
+    @Test
+    fun `presenter displays each ingredient label once across evidence lanes`() {
+        val model = PhotoAnalysisPresenterModel.from(
+            PhotoAnalysisState.CandidateReview(
+                ref = ref,
+                requestId = requestId,
+                draft = CandidateReviewDraft(
+                    mainDishProposals = listOf(dish("dish-salad", "Salad", 1)),
+                    photoEvidence = listOf(
+                        component("component-carrot-1", "ingredient:carrot", "Carrot"),
+                        component("component-carrot-2", "coco:carrot", "carrot"),
+                    ),
+                    compositionHints = listOf(
+                        DishIngredientHint(
+                            ingredientId = "ingredient:carrot",
+                            label = "CARROT",
+                            support = 1.0,
+                            sourceDishCandidateIds = listOf("dish-salad"),
+                        ),
+                        DishIngredientHint(
+                            ingredientId = "ingredient:tomato",
+                            label = "Tomato",
+                            support = 0.9,
+                            sourceDishCandidateIds = listOf("dish-salad"),
+                        ),
+                    ),
+                ),
+            ),
+            copy,
+        )
+
+        val review = assertNotNull(model.review)
+        assertEquals(listOf("Carrot"), review.visibleComponents.map { it.label })
+        assertEquals(listOf("Tomato"), review.compositionHints.map { it.label })
     }
 
     @Test

@@ -23,6 +23,18 @@ import kotlin.test.assertTrue
 
 class BoundedDishIngredientFusionTest {
     @Test
+    fun `fusion limits dish proposals to the review contract`() {
+        val dishes = (1..5).map { rank ->
+            dish("dish-$rank", "Dish $rank", rank, 0.9 - rank * 0.1)
+        }
+
+        val draft = BoundedDishIngredientFusion.merge(dishes, emptyList())
+
+        assertEquals(dishes.take(3), draft.mainDishProposals)
+        assertTrue(draft.compositionHints.size <= 24)
+    }
+
+    @Test
     fun `bounded fusion preserves every visual component and keeps dish order`() {
         val dishes = listOf(
             dish("greek_salad", "Greek salad", 1, 0.9),

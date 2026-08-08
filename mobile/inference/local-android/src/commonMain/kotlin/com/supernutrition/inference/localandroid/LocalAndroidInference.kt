@@ -139,7 +139,17 @@ data class AndroidRuntimeCandidate(
     }
 }
 
-data class AndroidInferenceAttemptToken(val attemptId: AttemptId, val generation: Long)
+data class AndroidInferenceAttemptToken(
+    val attemptId: AttemptId,
+    val generation: Long,
+    val gridCellIndex: Int? = null,
+) {
+    init {
+        require(gridCellIndex == null || gridCellIndex in 0..8) {
+            "Grid cell index must be null or between 0 and 8"
+        }
+    }
+}
 
 interface AndroidLocalInferenceRuntime {
     suspend fun capability(): AndroidRuntimeCapability
@@ -191,6 +201,7 @@ class LocalAndroidInferenceEngine(
             val token = AndroidInferenceAttemptToken(
                 attemptId = request.attemptContext.attemptId,
                 generation = ++nextGeneration,
+                gridCellIndex = request.attemptContext.gridCellIndex,
             )
             val previousToken = activeTokens.put(token.attemptId, token)
             activeGenerations[token.attemptId] = token.generation

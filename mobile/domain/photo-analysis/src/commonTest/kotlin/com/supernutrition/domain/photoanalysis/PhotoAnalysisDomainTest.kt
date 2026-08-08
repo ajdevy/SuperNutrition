@@ -333,6 +333,30 @@ class PhotoAnalysisDomainTest {
     }
 
     @Test
+    fun `scan again clears a photo from every pre-review state`() {
+        val preparingRef = leases.issue(attempt, "scan-again-preparing")
+        reducer.dispatch(PhotoAnalysisEvent.PhotoCaptured(preparingRef))
+        reducer.dispatch(PhotoAnalysisEvent.ScanAgain)
+        assertEquals(PhotoAnalysisState.Capture, reducer.state)
+        assertFalse(leases.isActive(preparingRef))
+
+        val readyRef = leases.issue(attempt, "scan-again-ready")
+        reducer.dispatch(PhotoAnalysisEvent.PhotoCaptured(readyRef))
+        reducer.dispatch(PhotoAnalysisEvent.PreparationSucceeded(normalized(readyRef)))
+        reducer.dispatch(PhotoAnalysisEvent.ScanAgain)
+        assertEquals(PhotoAnalysisState.Capture, reducer.state)
+        assertFalse(leases.isActive(readyRef))
+
+        val analyzingRef = leases.issue(attempt, "scan-again-analyzing")
+        reducer.dispatch(PhotoAnalysisEvent.PhotoCaptured(analyzingRef))
+        reducer.dispatch(PhotoAnalysisEvent.PreparationSucceeded(normalized(analyzingRef)))
+        reducer.dispatch(PhotoAnalysisEvent.AnalysisStarted(RequestId("scan-again-request")))
+        reducer.dispatch(PhotoAnalysisEvent.ScanAgain)
+        assertEquals(PhotoAnalysisState.Capture, reducer.state)
+        assertFalse(leases.isActive(analyzingRef))
+    }
+
+    @Test
     fun `preparation failure from capture state is ignored`() {
         reducer.dispatch(PhotoAnalysisEvent.PreparationFailed(RecoveryReason.CAMERA_UNAVAILABLE))
 
