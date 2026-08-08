@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 360" role="img" aria-labelledby="title desc">
+  <title id="title">Small bird companion concept</title>
+  <desc id="desc">A soft green bird with a round body, a tiny crest, and a calm expression.</desc>
+  <circle cx="180" cy="180" r="146" fill="#F1F5EC"/>
+  <path d="M99 201c0-66 37-107 91-107 56 0 92 42 92 109 0 65-38 103-93 103-54 0-90-38-90-105Z" fill="#7FB693"/>
+  <path d="M133 112c10-29 31-45 55-50-1 23-11 45-35 57" fill="#F6C85F"/>
+  <path d="M101 196c-36-10-53 1-63 19 27 14 48 11 65-1" fill="#5E9C7A"/>
+  <path d="M278 195c36-10 53 1 63 19-27 14-48 11-65-1" fill="#5E9C7A"/>
+  <circle cx="145" cy="165" r="20" fill="#FFFDF7"/>
+  <circle cx="216" cy="165" r="20" fill="#FFFDF7"/>
+  <circle cx="149" cy="168" r="7" fill="#17382B"/>
+  <circle cx="212" cy="168" r="7" fill="#17382B"/>
+  <path d="m179 189 20 12-20 12-20-12 20-12Z" fill="#F5A97D"/>
+  <path d="M155 237c16 11 34 11 50 0" fill="none" stroke="#17382B" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="112" cy="213" r="11" fill="#F6B0A3" opacity=".7"/>
+  <circle cx="247" cy="213" r="11" fill="#F6B0A3" opacity=".7"/>
+  <path d="M145 295v17M215 295v17" stroke="#D98C55" stroke-width="8" stroke-linecap="round"/>
+  <path d="M130 314h29M201 314h29" stroke="#D98C55" stroke-width="8" stroke-linecap="round"/>
+</svg>

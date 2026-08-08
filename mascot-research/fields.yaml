@@ -1,0 +1,62 @@
+field_categories:
+  - category: Research framing
+    fields:
+      - name: research_scope
+        description: What was investigated and which users, markets, or product contexts are represented
+        detail_level: moderate
+        required: true
+      - name: evidence_summary
+        description: The strongest evidence and findings relevant to choosing a mascot
+        detail_level: detailed
+        required: true
+      - name: source_quality_and_limits
+        description: Source types, evidence strength, dates, and important gaps or uncertainties
+        detail_level: detailed
+        required: true
+  - category: Audience and product signals
+    fields:
+      - name: audience_love_signals
+        description: Observable evidence of appeal, affection, memorability, engagement, or rejection
+        detail_level: detailed
+        required: true
+      - name: relevant_brand_examples
+        description: Relevant brands or products, their mascot or character choices, and the role each character plays
+        detail_level: detailed
+        required: true
+      - name: useful_character_traits
+        description: Personality and behavioral traits that could make a nutrition companion feel lovable and trustworthy
+        detail_level: detailed
+        required: true
+  - category: Animal and visual direction
+    fields:
+      - name: candidate_animals_or_archetypes
+        description: Candidate animals or non-animal archetypes with their positive associations and product fit
+        detail_level: detailed
+        required: true
+      - name: cultural_and_safety_risks
+        description: Cross-cultural, dietary, body-image, eating-disorder, medical, ethical, or accessibility risks
+        detail_level: detailed
+        required: true
+      - name: visual_and_interaction_patterns
+        description: Visual language, expression, motion, placement, and interaction patterns that generalize across the product
+        detail_level: detailed
+        required: true
+  - category: SuperNutrition decision support
+    fields:
+      - name: implication_for_supernutrition
+        description: What the findings imply for this product's camera-first, honest, non-judgmental nutrition experience
+        detail_level: detailed
+        required: true
+      - name: recommendation
+        description: Specific recommendation or shortlist with rationale, not merely a summary
+        detail_level: detailed
+        required: true
+      - name: validation_plan
+        description: Smallest credible next research or prototype test to validate the recommendation with target users
+        detail_level: detailed
+        required: true
+uncertain:
+  - audience_love_signals
+  - source_quality_and_limits
+  - candidate_animals_or_archetypes
+  - cultural_and_safety_risks

@@ -1,0 +1,172 @@
+{
+  "research_scope": "Current as of 2026-08-08. This review compares consumer-facing nutrition, hydration, self-care, mental-wellness, walking, sleep, fitness, and habit products that use an explicit mascot, virtual pet, character cast, or character-led narrative. It includes established products with substantial public usage signals and newer products whose mascot strategy is visible but whose independent adoption evidence is limited. Popularity signals are treated as proxies for attention or satisfaction, not proof that the mascot caused retention or behavior change.",
+  "evidence_summary": "The strongest recurring pattern is a companion that converts an abstract health behavior into a small, emotionally legible action: Finch links self-care to caring for a customizable bird; Waterllama turns hydration into a playful collection and challenge loop; Plant Nanny makes the plant's visible condition a hydration cue; Wysa uses a cute penguin to lower the social barrier to reflection; Pokémon Sleep and Pikmin Bloom use familiar creatures and collection to make sleep and walking feel intrinsically enjoyable. The evidence also shows a boundary: users respond well to warmth, celebration, choice, and non-judgmental prompts, while scolding, repetitive responses, subscription gating, forced logging, inaccurate estimates, and punishment-like streak mechanics produce rejection. For SuperNutrition, a mascot should be a calm companion and interpreter around the camera workflow, not a calorie cop, weight-loss judge, or simulated medical authority. Relevant sources include https://help.finchcare.com/hc/en-us/articles/37935669335309-Our-Approach-to-Self-Care, https://apps.apple.com/us/app/water-tracker-waterllama/id1454778585?see-all=reviews, https://humanfactors.jmir.org/2022/2/e35668/PDF, https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2023.1227443/full, and https://apnews.com/article/d6f91ade776e75bc83f18fb2fa67daac.",
+  "source_quality_and_limits": [
+    "High-confidence product facts come from official product pages, official brand guidelines, first-party press material, and current Apple App Store or Google Play listings. These sources support character identity, product role, feature design, and visible ratings or download counts, but company pages may overstate causal impact.",
+    "Public popularity signals include current store ratings and review counts, Editors' Choice labels, Google Play download bands, official community statements, and reported user or media attention. They are observable but not comparable across platforms or countries, and they do not isolate the mascot from product quality, brand IP, or paid acquisition.",
+    "The strongest behavioral evidence is indirect: a systematic review found repeated associations between engagement and goal setting, self-monitoring, feedback, prompts, rewards, and social support, while evidence for a specific mascot or animal is much thinner. The review is at https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2023.1227443/full.",
+    "Qualitative reviews and community posts reveal why users may love or reject a character, but they are self-selected and anecdotal. Positive review language should not be interpreted as clinical efficacy, and severe testimonials should not be treated as evidence of safe treatment.",
+    "[uncertain] YAZIO's Yettie, Nommie, and MyFood+'s avocado have visible current positioning and ratings, but there is not yet enough independent evidence to attribute their ratings, retention, or behavior outcomes to the mascot. YAZIO's mascot is a recent rebrand and the two smaller nutrition products publish mostly first-party claims.",
+    "[uncertain] Cross-cultural associations for animals are directionally plausible but context-dependent. The shortlist needs localized testing across dietary traditions, age groups, disability experiences, and markets before a final species choice."
+  ],
+  "audience_love_signals": [
+    "Finch: the US App Store listing shows 4.9/5 from about 723,000 ratings and an Editors' Choice label. The listing and Finch's own explanation emphasize that users customize, dress, and grow the bird while completing small self-care actions. Finch says it has learned from a community of millions, but that community size and the causal role of the bird are first-party claims. Sources: https://apps.apple.com/us/app/finch-self-care-pet/id1528595748 and https://help.finchcare.com/hc/en-us/articles/37935669335309-Our-Approach-to-Self-Care.",
+    "Waterllama: the US App Store listing shows 4.9/5 from about 158,000 ratings and Editors' Choice. Reviews repeatedly describe the cute llama, animal collection, reminders that do not feel bossy, and the feeling that the user's and llama's progress are linked. Negative signals include subscription price or gating and occasional concerns that ratings can be influenced by promotional incentives. Sources: https://apps.apple.com/us/app/water-tracker-waterllama/id1454778585?see-all=reviews and https://waterllama.com/.",
+    "Plant Nanny: users report that a visibly dry or sad plant motivates them to drink, while recovery without permanently killing the plant makes a missed goal repairable. A counter-signal is that some users find the redesign too cutesy or focused on the character rather than the plant, and a reviewer explicitly warns that a reward for giving five stars may inflate perfect ratings. Source: https://apps.apple.com/us/app/plant-nanny-cute-water-tracker/id1424178757.",
+    "Wysa: the App Store listing shows 4.8/5 from about 7,400 ratings. A qualitative study of Wysa reviews found that users described the cute, approachable penguin as nonthreatening and easier to talk to without judgment. Negative signals include repetitive responses and an initial sense that the system is not personal enough. Sources: https://apps.apple.com/gb/app/wysa-mental-wellbeing-ai/id1166585565 and https://www.sciencedirect.com/org/science/article/pii/S2292949522000815.",
+    "Duolingo: Duo has become a highly recognizable social-media character. The 2025 fictional death campaign generated broad public conversation and was reported as capturing about 84% of the conversation associated with Super Bowl ads; the same strategy also made the owl a meme for relentless reminders. This is strong attention and memorability evidence, but not unambiguous affection: some users enjoy the theatrical pressure while others experience it as threatening or annoying. Sources: https://design.duolingo.com/writing/duo and https://www.axios.com/2025/02/15/duolingo-mascot-dead-duo-owl-social-media-marketing.",
+    "Pokémon Sleep: Google Play shows 10M+ downloads, about 117,000 reviews, a 4.4 rating, and Editors' Choice. The Pokémon Company explicitly designed the product to make waking up and the act of sleeping more joyful by combining sleep tracking with Pokémon collection. Negative reviews cite pay-to-win pressure and limits on historical data without a subscription, showing that beloved IP does not neutralize monetization frustration. Sources: https://play.google.com/store/apps/details?id=jp.pokemon.pokemonsleep and https://corporate.pokemon.co.jp/en/topics/detail/t-9/.",
+    "Pikmin Bloom: the US App Store listing shows 4.8/5 from about 66,000 ratings. Its public appeal is tied to tiny collectible creatures, planting flowers, decorating Pikmin, and shared step goals; community posts repeatedly describe the app as making walking feel like play and helping people leave home. These are strong motivational anecdotes, not controlled evidence. Sources: https://apps.apple.com/us/app/pikmin-bloom/id1556357398 and https://www.reddit.com/r/PikminBloomApp/.",
+    "Zombies, Run!: public reporting says the audio fitness adventure has accumulated more than 10 million users, and interviews found the story and recurring characters among its most appealing features. The product demonstrates that a mascot need not be cute: a narrative archetype can make exercise meaningful. Negative fit signals include horror, pursuit, violence, and intensity that may be inappropriate for users seeking calm or medically sensitive experiences. Sources: https://zombiesrungame.com/about, https://discovery.ucl.ac.uk/10139156/3/Potts_ZR_users_interviews_paper_Games%20for%20Health_Last%20version_NF.pdf, and https://www.commonsensemedia.org/app-reviews/zombies-run.",
+    "[uncertain] YAZIO: the app has a current App Store signal of about 4.7/5 from 49,000 ratings. The 2026 Yettie rebrand is explicitly framed as a mascot, muse, and motivator for 'Good Dopamine,' but no independent evidence yet shows that Yettie itself improves retention or nutrition behavior. Some public comments also show users who dislike added gamification. Sources: https://apps.apple.com/us/app/ai-calorie-tracker-by-yazio/id946099227?see-all=reviews, https://www.creativebloq.com/design/branding/i-would-die-for-this-brands-adorable-yeti-mascot, and https://uk.linkedin.com/company/yazio.",
+    "[uncertain] Nommie: its official site reports a 4.5 App Store rating and positions a squirrel as a camera-first nutrition buddy that celebrates meals, grows through streaks, and promises 'no shame.' The role is highly relevant to SuperNutrition, but public rating volume, retention, and independent user commentary are not visible enough to treat it as a proven success. Source: https://nommie.ai/.",
+    "[uncertain] MyFood+: the product site reports a 4.8 rating and 10M+ meals tracked, with an avocado sidekick shown across onboarding, reminders, empty states, recipes, and social posts. Those signals are self-reported first-party metrics, and the same site foregrounds weight-loss transformations, so they should be treated as directional rather than validated evidence. Source: https://my-food-tracker.olgdigital.com/."
+  ],
+  "relevant_brand_examples": [
+    {
+      "brand_or_product": "Finch",
+      "character": "Customizable finch or 'birb'",
+      "role_in_product": "The pet grows, travels, wears outfits, and receives rewards when the user completes self-care actions such as drinking water, walking, journaling, or checking in.",
+      "visual_and_personality_cues": "Soft, rounded, cute, customizable, affectionate, encouraging, and companion-like; the character is a visible representation of progress rather than an expert.",
+      "public_response_and_lesson": "Very strong store rating and review volume, with users describing the bird as making self-care feel rewarding and less lonely. The transferable pattern is reciprocal care without irreversible punishment.",
+      "sources": ["https://help.finchcare.com/hc/en-us/articles/37935669335309-Our-Approach-to-Self-Care", "https://apps.apple.com/us/app/finch-self-care-pet/id1528595748"]
+    },
+    {
+      "brand_or_product": "Waterllama",
+      "character": "Llama plus a broader cast of 45 animal characters",
+      "role_in_product": "Hydration companion; logging beverages unlocks characters, challenges, progress, and reminders through the phone, widgets, and Apple Watch.",
+      "visual_and_personality_cues": "Bright, playful, collectible, humorous, and lightweight; reminders are framed as friendly nudges rather than instructions from a clinician.",
+      "public_response_and_lesson": "4.9/5 from roughly 158,000 US App Store ratings and Editors' Choice. Users praise fun, non-bossy reminders; subscription gating is a recurring negative.",
+      "sources": ["https://waterllama.com/", "https://apps.apple.com/us/app/water-tracker-waterllama/id1454778585?see-all=reviews"]
+    },
+    {
+      "brand_or_product": "Plant Nanny",
+      "character": "A houseplant or plant family",
+      "role_in_product": "The plant grows when the user drinks and becomes visibly dry or sad when hydration is missed, while remaining recoverable.",
+      "visual_and_personality_cues": "Domestic, nurturing, growth-oriented, visually stateful, and familiar; the window-sill framing makes the habit feel like ordinary care.",
+      "public_response_and_lesson": "Users specifically cite the plant's visible condition as motivating. Some users reject the newer cutesy direction or the focus on a character over the plant, and subscription gating creates friction.",
+      "sources": ["https://apps.apple.com/us/app/plant-nanny-cute-water-tracker/id1424178757"]
+    },
+    {
+      "brand_or_product": "Wysa",
+      "character": "Gender-neutral penguin",
+      "role_in_product": "Conversational mental-wellbeing companion that guides reflection, breathing, mindfulness, and cognitive-behavioral exercises.",
+      "visual_and_personality_cues": "Cute, approachable, calm, private, patient, and explicitly non-judgmental; the small animal softens the interface around sensitive disclosure.",
+      "public_response_and_lesson": "A peer-reviewed review analysis found that users valued talking to a cute penguin without judgment. Repetition, perceived lack of personalization, and the limits of an AI companion are important negatives.",
+      "sources": ["https://apps.apple.com/gb/app/wysa-mental-wellbeing-ai/id1166585565", "https://www.sciencedirect.com/org/science/article/pii/S2292949522000815"]
+    },
+    {
+      "brand_or_product": "Duolingo",
+      "character": "Duo the green owl",
+      "role_in_product": "Brand mascot, notification actor, streak reminder, social-media character, and expressive voice for the learning habit.",
+      "visual_and_personality_cues": "Highly legible silhouette, vivid green, expressive eyes, playful and worldly voice, sometimes intentionally threatening or passive-aggressive for comic effect.",
+      "public_response_and_lesson": "Exceptional memorability and social reach, including a viral fictional-death campaign. The lesson is to give a mascot a distinct voice and cultural presence, while avoiding pressure tactics in a nutrition context.",
+      "sources": ["https://design.duolingo.com/writing/duo", "https://www.axios.com/2025/02/15/duolingo-mascot-dead-duo-owl-social-media-marketing"]
+    },
+    {
+      "brand_or_product": "Pokémon Sleep",
+      "character": "Snorlax and a large Pokémon cast, including Pikachu",
+      "role_in_product": "Sleep-tracking anchor and collection layer: users sleep near Snorlax, classify sleep styles, and build a collection.",
+      "visual_and_personality_cues": "Familiar, comforting, collectible, character-rich, and intrinsically playful; Snorlax makes rest visible as a positive activity rather than a failed productivity day.",
+      "public_response_and_lesson": "Large download and review signals show the power of recognizable IP and collection. Monetization and data-retention complaints show that affection can turn into resentment when progress feels paywalled.",
+      "sources": ["https://play.google.com/store/apps/details?id=jp.pokemon.pokemonsleep", "https://corporate.pokemon.co.jp/en/topics/detail/t-9/"]
+    },
+    {
+      "brand_or_product": "Pikmin Bloom",
+      "character": "Pikmin creatures",
+      "role_in_product": "Walking companions, collectible rewards, flower-planting agents, and social motivators tied to real-world steps.",
+      "visual_and_personality_cues": "Tiny, numerous, expressive, collectible, and environmental; the user nurtures a group instead of being evaluated by a coach.",
+      "public_response_and_lesson": "Strong store ratings and community reports suggest that collection and beautifying the world can make walking feel less like exercise. The transferable pattern is gentle externalization of effort, not body surveillance.",
+      "sources": ["https://apps.apple.com/us/app/pikmin-bloom/id1556357398", "https://www.reddit.com/r/PikminBloomApp/"]
+    },
+    {
+      "brand_or_product": "Zombies, Run!",
+      "character": "Runner Five, Sam Yao, and a recurring zombie-survival cast",
+      "role_in_product": "Audio narrative and mission framework that turns running into participation in an unfolding story.",
+      "visual_and_personality_cues": "Dramatic, urgent, suspenseful, episodic, and identity-forming rather than mascot-cute; the user inhabits the protagonist role.",
+      "public_response_and_lesson": "More than 10 million users and interview research pointing to story and characters as appealing show that narrative identity can motivate movement. The horror tone is a poor universal fit and must be opt-in.",
+      "sources": ["https://zombiesrungame.com/about", "https://discovery.ucl.ac.uk/10139156/3/Potts_ZR_users_interviews_paper_Games%20for%20Health_Last%20version_NF.pdf"]
+    },
+    {
+      "brand_or_product": "YAZIO",
+      "character": "Yettie, a friendly yeti",
+      "role_in_product": "Recent mascot, muse, and motivator intended to make nutrition tracking feel joyful and support habit formation.",
+      "visual_and_personality_cues": "Distinctive gradient fur, quirky horns, rounded face, vibrant green, playful motion, celebration of small wins, and a flexible gender-neutral presentation.",
+      "public_response_and_lesson": "[uncertain] The character is designed to be ownable and emotionally differentiated, but mascot-specific user response is not yet independently established. It is a useful example of a nutrition brand moving away from clinical or punitive visual language.",
+      "sources": ["https://www.creativebloq.com/design/branding/i-would-die-for-this-brands-adorable-yeti-mascot", "https://uk.linkedin.com/company/yazio", "https://apps.apple.com/us/app/ai-calorie-tracker-by-yazio/id946099227?see-all=reviews"]
+    },
+    {
+      "brand_or_product": "Nommie",
+      "character": "Nommie the squirrel, with optional companions Dash and Bao",
+      "role_in_product": "Camera-first nutrition buddy that reacts to logged meals, celebrates, gains looks, and levels through streaks and quests.",
+      "visual_and_personality_cues": "Small, friendly, food-adjacent, energetic, celebratory, and explicitly 'no shame'; the squirrel is positioned as a sidekick rather than a diet authority.",
+      "public_response_and_lesson": "[uncertain] The positioning is highly relevant to photo-based nutrition logging and reports a 4.5 App Store rating, but independent scale and outcome evidence are limited. The useful pattern is to connect a meal capture to immediate emotional feedback without making the character the source of nutrition truth.",
+      "sources": ["https://nommie.ai/"]
+    },
+    {
+      "brand_or_product": "MyFood+",
+      "character": "Cheerful avocado",
+      "role_in_product": "Persistent sidekick across onboarding, reminders, empty states, recipes, progress views, and social content for calorie tracking.",
+      "visual_and_personality_cues": "Warm, upbeat, simple, food-recognizable, and celebration-oriented; the avocado makes a potentially stressful tracker feel lighter.",
+      "public_response_and_lesson": "[uncertain] The company reports 4.8 stars and more than 10 million meals tracked, but these are first-party signals and are not mascot-specific. The use of before-and-after weight-loss stories is a caution for a non-judgmental product.",
+      "sources": ["https://my-food-tracker.olgdigital.com/"]
+    }
+  ],
+  "useful_character_traits": [
+    "Warmth without false intimacy: use welcoming, patient, and encouraging language; never imply that the character feels pain, disappointment, or abandonment when the user misses a day.",
+    "Non-judgmental celebration: celebrate logging, noticing, asking, and learning rather than only eating a supposedly good food or hitting a body or calorie target. This directly addresses the scolding effect reported for nutrition-app reminders in https://apnews.com/article/d6f91ade776e75bc83f18fb2fa67daac.",
+    "Curiosity and epistemic humility: the character can say what it noticed, what it cannot identify, and what would improve confidence. It should make uncertainty approachable rather than hiding it behind a confident face.",
+    "Competence expressed through transparency: pair a friendly personality with visible evidence, assumptions, editable items, and a clear boundary between an estimate and professional advice.",
+    "Agency and consent: let users mute, hide, rename, customize, pause, or reduce the character. Customization supports autonomy in gamified systems, but it must not be required to access core nutrition information.",
+    "Repairability: missed actions should lead to a neutral reset, reflection, or next-step suggestion, not a dying pet, broken streak, loss of accumulated progress, or emotional debt.",
+    "Consistent but not repetitive: a small set of recognizable states is useful, but repeated canned empathy or identical animations quickly exposes the character as a thin layer.",
+    "Inclusive neutrality: avoid assigning gender, body size, diet, ethnicity, age, or ability to the character unless users intentionally choose it. A mascot should support many diets and health goals without implying one ideal body.",
+    "Quiet companionship: the best default for nutrition is a witness and helper who appears at useful moments, not a constant chatterbox competing with the meal, camera, or accessible data presentation."
+  ],
+  "candidate_animals_or_archetypes": [
+    "Primary candidate: a soft, species-ambiguous small creature or gentle yeti archetype. Positive associations include curiosity, adaptability, warmth, and distinctiveness; it avoids making one food, diet, or animal stereotype the product identity and can scale from camera helper to uncertainty guide. [uncertain] It needs localized testing because ambiguity can also reduce semantic memorability.",
+    "Small bird or finch: strong precedent for gentle companionship, lightness, growth, and a non-authoritative helper through Finch. Risks are childlike positioning, bird-as-pest interpretations in some contexts, and a direct comparison with Finch.",
+    "Squirrel: useful associations include curiosity, gathering, preparation, and energetic exploration, with a direct camera-nutrition precedent in Nommie. [uncertain] Gathering can also read as hoarding or food fixation, so it should not be visually obsessed with storing food.",
+    "Llama or alpaca: playful, distinctive, friendly, and proven in hydration through Waterllama; it is less directly tied to calorie morality than a fruit or fitness animal. Risks include novelty fatigue, generic cuteness, and unclear semantic connection to camera nutrition.",
+    "Plant or sprout: clear associations with growth, nourishment, care, and recoverability, with Plant Nanny as a strong precedent. It can be a safer non-animal direction for a product that wants calmness, but wilting or dying states can create guilt and the metaphor may feel too familiar.",
+    "Avocado or another food-shaped character: immediate food recognition, warmth, and strong visual ownability, with MyFood+ as a current example. [uncertain] It can imply a narrow wellness diet, vegetarian assumptions, food moralization, or an overused healthy-food cliché; it should not become the symbol of a correct meal.",
+    "Penguin: calm, approachable, visually distinctive, and supported by Wysa's nonthreatening conversational precedent. Risks include childlike styling, cold or remote associations, and the expectation of therapy-like support if the character talks about mental or medical states.",
+    "Dog or cat: broad pet familiarity and immediate care/companionship associations. Risks are genericness, pet-obligation guilt, species-specific cultural preferences, and the expectation that the user must care for the animal rather than simply use a tool.",
+    "Neutral blob or abstract companion: maximizes cultural and dietary neutrality and can communicate changing states without animal symbolism. The tradeoff is weaker built-in meaning and a higher burden on personality, motion, naming, and narrative to become memorable.",
+    "[uncertain] Owl, zombie, or other strong archetype: proven for learning or narrative fitness, but wisdom, surveillance, urgency, fear, or death associations are too intense for a default nutrition companion unless offered as an optional theme."
+  ],
+  "cultural_and_safety_risks": [
+    "Eating-disorder and body-image risk: calorie targets, weight-loss framing, red/green food judgments, shrinking-body visuals, punishment for missed logs, and mascot disappointment can reinforce restriction, body surveillance, shame, or binge-restrict cycles. Recent reporting cites researchers who caution that calorie tracking can reinforce body-dysmorphia and disordered-eating behaviors: https://apnews.com/article/d6f91ade776e75bc83f18fb2fa67daac.",
+    "Food and dietary inclusion: a fruit, animal, or 'healthy food' mascot can imply that one cuisine, ingredient, diet, religion, or body type is normal. Do not equate the mascot's happiness with a particular food category, weight outcome, or dietary purity.",
+    "Guilt and dependency: plants that visibly die, pets that look abandoned, broken streaks, or characters that say they are sad can turn a supportive tool into an obligation. Use reversible, non-moralized states and an explicit pause or recovery path.",
+    "Medical authority confusion: an anthropomorphic character can feel more trustworthy than the underlying estimate. The character must not diagnose, prescribe, claim clinical certainty, or use warmth to conceal missing data; show confidence, assumptions, sources, and professional-care boundaries.",
+    "Camera and privacy risk: a friendly character must not pressure users to photograph every meal, reveal sensitive health data, or grant permissions. Make manual correction, delayed logging, local privacy choices, and no-photo paths equally legitimate.",
+    "Accessibility risk: do not encode nutrition quality, mood, or urgency only through color, facial expression, motion, or sound. Provide text labels, screen-reader descriptions, reduced-motion behavior, sufficient contrast, large touch targets, and a character-free mode.",
+    "Age and infantilization: very cute pets can help some users but can alienate adults, older users, or people managing serious health conditions. Test visual maturity and tone across age groups and avoid baby-talk by default.",
+    "Cross-cultural interpretation: animals, colors, food symbols, gestures, and humor do not have universal meanings. [uncertain] Validate the final character and name with localized participants rather than assuming Western app-store reactions generalize.",
+    "Gamification and monetization: locking the character's core care, progress, or recovery behind a subscription can feel coercive. Keep the essential nutrition explanation and correction path available without payment; monetize optional cosmetics or advanced services transparently.",
+    "Emotional simulation: a character that claims to worry, miss the user, or be hurt can be manipulative, particularly for lonely, young, or clinically vulnerable users. Prefer grounded statements about the app state and the user's chosen goal."
+  ],
+  "visual_and_interaction_patterns": [
+    "Use a small, recognizable silhouette and a restrained palette that remains legible at app-icon, camera-overlay, widget, notification, and full-screen sizes. Yettie's silhouette, Waterllama's character collection, and Duo's green owl show the memorability benefit of a distinct shape.",
+    "Make the character state-based rather than constantly animated: ready to help, observing, low-confidence, asking for clarification, celebrating an edit, and resting. Every state should have a text equivalent and a user-controlled reduced-motion version.",
+    "Place the mascot beside the action, not over the answer: camera capture, analysis progress, uncertainty disclosure, correction, and next-step suggestions are good moments; the result itself should remain readable and evidence-first.",
+    "Use a positive action loop: user action -> transparent interpretation -> editable result -> optional reward or reflection. Avoid user action -> score judgment -> punishment. The behavior-change review supports goals, self-monitoring, feedback, prompts, rewards, and social support, but does not justify coercion.",
+    "Give users agency through optional naming, outfit or color choices, theme selection, mute/hide controls, and the ability to pause progression. Customization should express identity, not force a pet-care contract.",
+    "Represent uncertainty visually with calm curiosity rather than alarm: a magnifying glass, question mark, or 'I am not sure' pose should invite correction without suggesting failure or danger. Never use a triumphant expression for a low-confidence nutrition estimate.",
+    "Use a character-free fallback for serious review, accessibility, privacy, or clinical contexts. The mascot can make the experience warm while the product remains fully usable as a precise, quiet tool.",
+    "Localize expressions, idioms, food examples, names, and gesture meanings. Build the character from modular assets so outfits, gestures, and color emphasis can be adapted without changing the underlying personality contract.",
+    "Keep reward visuals focused on exploration, confidence, meal variety, hydration, or learning about one's pattern rather than weight lost, calories under target, or moralized food labels.",
+    "For camera-first use, let the character acknowledge image quality, occlusion, multiple dishes, uncertain portions, and user edits. This makes honesty a visible personality trait instead of a disclaimer hidden in settings."
+  ],
+  "implication_for_supernutrition": "SuperNutrition should use a mascot as a calm, camera-adjacent companion that helps users understand what the system noticed and what remains uncertain. The character should welcome the photo, surface missing context, explain why a result is only an estimate, invite edits, and celebrate user understanding or a next nourishing choice. It should never act as a calorie cop, weight-loss judge, doctor, or dependent pet. The product's trust contract should be: the user stays in control; the character makes uncertainty easier to see; every inference is reversible; no meal is morally good or bad; and no skipped log creates emotional debt. Keep the mascot optional, accessible, culturally adaptable, and subordinate to readable nutrition evidence. This direction best combines Finch's gentle reciprocity, Wysa's nonthreatening warmth, Waterllama's low-friction play, Nommie's camera relevance, and the transparency demanded by SuperNutrition's honest-analysis promise.",
+  "recommendation": "Prototype three directions, with a soft species-ambiguous companion or gentle yeti-like creature as the lead candidate, a small bird as the companionship benchmark, and a plant or abstract blob as a low-pressure control. The lead should have a curious, grounded, gender-neutral personality and a compact state system: welcoming, noticing, unsure, asking, corrected, celebrating, and resting. Make progression cosmetic or exploratory rather than body- or calorie-based. Do not ship a species decision from desk research alone: the strongest evidence supports character traits and interaction patterns more confidently than any particular animal. A mascot should earn trust by being consistently honest, quiet when not needed, and easy to dismiss or customize.",
+  "validation_plan": "Run a formative prototype test with 12-15 target users across varied dietary patterns, ages, health goals, and accessibility needs. Compare no mascot, the lead ambiguous creature, the bird benchmark, and the plant/blob control in the same camera flow. Test four moments: clear meal photo, ambiguous photo, user correction, and a missed or delayed log. Measure task completion, perceived judgment, trust in the estimate, understanding of uncertainty, willingness to correct the result, recall of the character's role, and preference for mute/hide controls; include screen-reader and reduced-motion checks. Advance only a direction that does not increase perceived food judgment or pressure versus the no-mascot control and that improves approachability or correction willingness. If one direction passes, run a small two-week opt-in pilot with a character-on and character-off cohort, monitoring logging continuity, correction rate, voluntary use, notification opt-outs, and safety feedback rather than weight-loss outcomes.",
+  "uncertain": [
+    "source_quality_and_limits",
+    "audience_love_signals",
+    "relevant_brand_examples",
+    "candidate_animals_or_archetypes",
+    "cultural_and_safety_risks"
+  ]
+}
