@@ -7,5 +7,8 @@ public final class BootstrapApplication extends Application {
     public void onCreate() {
         super.onCreate();
         AndroidBootstrap.start();
+        com.supernutrition.feature.photoanalysis.PhotoAnalysisAndroidRuntimeRegistry.install(
+                new AndroidPocRuntimeFactory()
+        );
     }
 }

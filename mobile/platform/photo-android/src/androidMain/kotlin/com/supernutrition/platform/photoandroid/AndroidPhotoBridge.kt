@@ -63,6 +63,7 @@ class AndroidPhotoBridge @JvmOverloads constructor(
         type = "image/*"
         addCategory(Intent.CATEGORY_OPENABLE)
         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
     }
 
     override fun settingsIntent(): Intent = Intent(

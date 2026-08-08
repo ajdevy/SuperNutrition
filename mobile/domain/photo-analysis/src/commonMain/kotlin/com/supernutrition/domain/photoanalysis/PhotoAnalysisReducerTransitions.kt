@@ -49,6 +49,8 @@ internal class PhotoAnalysisReducerTransitions(private val context: PhotoAnalysi
 
         is PhotoAnalysisEvent.ReplacePhoto -> replace(current, current.ref, event.ref)
 
+        PhotoAnalysisEvent.ScanAgain -> clearAndCapture(current.ref)
+
         PhotoAnalysisEvent.Cancel -> cancel(current.ref)
 
         else -> unchanged(current)
@@ -65,7 +67,11 @@ internal class PhotoAnalysisReducerTransitions(private val context: PhotoAnalysi
                 )
             }
 
+            is PhotoAnalysisEvent.GridCellSelected -> unchanged(current)
+
             is PhotoAnalysisEvent.ReplacePhoto -> replace(current, current.input.ref, event.ref)
+
+            PhotoAnalysisEvent.ScanAgain -> clearAndCapture(current.input.ref)
 
             PhotoAnalysisEvent.Cancel -> cancel(current.input.ref)
 
@@ -76,6 +82,7 @@ internal class PhotoAnalysisReducerTransitions(private val context: PhotoAnalysi
         current: PhotoAnalysisState.CandidateReview,
         event: PhotoAnalysisEvent,
     ): PhotoAnalysisReduction = when (event) {
+        is PhotoAnalysisEvent.GridCellSelected -> prepareGridReanalysis(current.ref)
         is PhotoAnalysisEvent.ReplacePhoto -> replace(current, current.ref, event.ref)
         PhotoAnalysisEvent.ScanAgain -> clearAndCapture(current.ref)
         PhotoAnalysisEvent.Cancel -> cancel(current.ref)
@@ -90,6 +97,14 @@ internal class PhotoAnalysisReducerTransitions(private val context: PhotoAnalysi
         PhotoAnalysisEvent.ScanAgain -> current.ref?.let(::clearAndCapture) ?: unchanged(PhotoAnalysisState.Capture)
         else -> unchanged(current)
     }
+
+    private fun prepareGridReanalysis(ref: PhotoRef): PhotoAnalysisReduction =
+        context.sessions.read(ref)?.takeIf { context.isLive(ref, it) }?.let { input ->
+            unchanged(PhotoAnalysisState.Ready(input))
+        } ?: reduction(
+            PhotoAnalysisState.Recovery(RecoveryReason.CAPTURE_FAILED, ref),
+            PhotoAnalysisEffect.RevokePhoto(ref),
+        )
 
     private fun replace(fallback: PhotoAnalysisState, old: PhotoRef?, replacement: PhotoRef): PhotoAnalysisReduction {
         if (replacement.attemptId != context.attemptId ||

@@ -61,11 +61,16 @@ data class InferenceAttemptContext(
     val requestId: String,
     val configurationVersion: String,
     val configurationDigest: String,
+    /** Optional explicit research prompt for the bounded 3x3 photo PoC. */
+    val gridCellIndex: Int? = null,
 ) {
     init {
         requireNonBlankValue(requestId, "Inference request ID must not be blank")
         requireNonBlankValue(configurationVersion, "Configuration version must not be blank")
         requireSha256Digest(configurationDigest, "Configuration digest must be a lowercase SHA-256 digest")
+        require(gridCellIndex == null || gridCellIndex in 0..8) {
+            "Grid cell index must be null or between 0 and 8"
+        }
     }
 }
 

@@ -2,11 +2,15 @@ package com.supernutrition.feature.photoanalysis
 
 import android.Manifest
 import android.os.Bundle
+import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
@@ -30,6 +34,9 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
     private val feature: PhotoAnalysisFeature get() = retainedState.feature
     private lateinit var host: PhotoAnalysisAndroidHostController
     private var analysisLauncher: PhotoAnalysisAnalysisLauncher = PhotoAnalysisAnalysisLauncher.None
+    private var runtimeBinding: PhotoAnalysisAndroidRuntimeBinding? = null
+    private val inlineCameraController = PhotoAnalysisInlineCameraController()
+    private var cameraPermissionGranted by mutableStateOf(false)
     private var permissionRationale: android.app.AlertDialog? = null
     private var wasBackgrounded = false
 
@@ -41,6 +48,10 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
                 choosePhoto = getString(R.string.capture_import),
                 openSettings = getString(R.string.capture_open_settings),
                 cancel = getString(R.string.capture_cancel),
+                researchWarning = getString(R.string.capture_research_warning),
+                gridHintsTitle = getString(R.string.capture_grid_hints_title),
+                resultPlaceholder = getString(R.string.capture_result_placeholder),
+                loadingLabel = getString(R.string.capture_loading),
             ),
             status = StatusCopy(
                 readyToCapture = getString(R.string.capture_status_ready),
@@ -91,11 +102,6 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         )
     }
 
-    private val cameraLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult(),
-    ) { result ->
-        host.onActivityResult(result.resultCode, result.data, isCamera = true)
-    }
     private val importLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult(),
     ) { result ->
@@ -104,11 +110,33 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission(),
     ) { granted ->
+        cameraPermissionGranted = granted
         host.onPermissionResult(granted)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        restoreActivityState(savedInstanceState)
+        cameraPermissionGranted = checkSelfPermission(Manifest.permission.CAMERA) ==
+            android.content.pm.PackageManager.PERMISSION_GRANTED
+        val photoBridge = AndroidPhotoBridge(
+            context = this,
+            permissionRequestInFlight = retainedState.captureOperation.permissionRequestInFlight,
+        )
+        bindAnalysisRuntime()
+        host = createHost(photoBridge).also { it.initialize() }
+        inlineCameraController.onCaptureResult = { operationId, result ->
+            host.onInlinePhotoResult(operationId, result)
+        }
+        restoreFeatureSnapshot(savedInstanceState)
+        observeRetainedPhotoLifecycle()
+        renderContent()
+    }
+
+    private fun restoreActivityState(savedInstanceState: Bundle?) {
+        window.statusBarColor = android.graphics.Color.WHITE
+        window.decorView.systemUiVisibility =
+            window.decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         wasBackgrounded = retainedState.wasBackgrounded
         savedInstanceState?.getString(PENDING_OPERATION_ID_KEY)?.let {
             retainedState.captureOperation.pendingOperationId = it
@@ -116,12 +144,21 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         // Android does not replay an Activity Result permission callback after
         // process death. Restoring this transient guard would prevent a retry.
         retainedState.captureOperation.permissionRequestInFlight = false
-        val photoBridge = AndroidPhotoBridge(
+    }
+
+    private fun bindAnalysisRuntime() {
+        runtimeBinding = PhotoAnalysisAndroidRuntimeRegistry.current()?.create(
             context = this,
-            permissionRequestInFlight = retainedState.captureOperation.permissionRequestInFlight,
+            feature = feature,
+            leases = retainedState.leases,
+            sessions = retainedState.sessions,
+            scope = lifecycleScope,
         )
-        analysisLauncher = PhotoAnalysisAnalysisLauncher.None
-        host = PhotoAnalysisAndroidHostController(
+        analysisLauncher = runtimeBinding?.analysisLauncher ?: PhotoAnalysisAnalysisLauncher.None
+    }
+
+    private fun createHost(photoBridge: AndroidPhotoBridge): PhotoAnalysisAndroidHostController =
+        PhotoAnalysisAndroidHostController(
             feature = feature,
             photoBridge = photoBridge,
             normalizer = AndroidImageNormalizer(),
@@ -137,27 +174,44 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
                         .also { it.show() }
                 }
             },
-            launchCamera = { operationId -> cameraLauncher.launch(photoBridge.cameraCaptureIntent(operationId)) },
+            capturePhoto = inlineCameraController::requestCapture,
             launchImport = { importLauncher.launch(photoBridge.photoPickerIntent()) },
             launchSettings = { startActivity(photoBridge.settingsIntent()) },
             captureOperation = retainedState.captureOperation,
             onRetainedPhotoReady = retainedState.previewStore::show,
             onRetainedPhotoInvalidated = retainedState.previewStore::clear,
             analysisLauncher = analysisLauncher,
-        ).also { it.initialize() }
+        )
 
+    private fun restoreFeatureSnapshot(savedInstanceState: Bundle?) {
         PhotoAnalysisSnapshotBundleCodec.decode(savedInstanceState, attemptId)?.let { snapshot ->
             feature.dispatch(com.supernutrition.domain.photoanalysis.PhotoAnalysisEvent.RestoreFromSnapshot(snapshot))
         }
-        observeRetainedPhotoLifecycle()
+    }
+
+    private fun renderContent() {
         setContent {
             val preview by retainedState.previewStore.preview.collectAsState()
             PhotoAnalysisCaptureContent(
                 stateFlow = feature.stateFlow,
                 onAction = host::handleAction,
-                modifier = Modifier.semantics { testTagsAsResourceId = true },
+                modifier = Modifier
+                    .statusBarsPadding()
+                    .semantics { testTagsAsResourceId = true },
                 surface = PhotoAnalysisCaptureSurface(
                     presenterCopy = presentationCopy,
+                    liveCamera = if (preview == null) {
+                        {
+                            PhotoAnalysisLiveCameraPreview(
+                                cameraPermissionGranted = cameraPermissionGranted,
+                                permissionHint = presentationCopy.recovery.cameraPermissionRequired,
+                                unavailableHint = presentationCopy.recovery.cameraUnavailable,
+                                cameraController = inlineCameraController,
+                            )
+                        }
+                    } else {
+                        null
+                    },
                     retainedPhoto = preview?.let { current -> { AndroidRetainedPhotoBackdrop(current) } },
                     photoTextContrast = preview?.let { current ->
                         if (current.hasLightBackdrop) {
@@ -166,6 +220,10 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
                             PhotoAnalysisPhotoTextContrast.LIGHT_TEXT
                         }
                     },
+                    gridHintsEnabled = runtimeBinding != null,
+                    onGridCellSelected = { index -> host.handleGridCellSelected(index) },
+                    // Keep camera and captured photo in exactly the same slot.
+                    retainedPhotoAspectRatio = 4f / 3f,
                 ),
             )
         }
@@ -202,6 +260,13 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         wasBackgrounded = true
         retainedState.wasBackgrounded = true
         super.onStop()
+    }
+
+    override fun onDestroy() {
+        inlineCameraController.clear()
+        runtimeBinding?.close()
+        runtimeBinding = null
+        super.onDestroy()
     }
 
     private fun observeRetainedPhotoLifecycle() {

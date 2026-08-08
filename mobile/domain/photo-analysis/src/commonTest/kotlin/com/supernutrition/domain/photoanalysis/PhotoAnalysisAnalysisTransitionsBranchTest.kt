@@ -37,6 +37,28 @@ class PhotoAnalysisAnalysisTransitionsBranchTest {
     }
 
     @Test
+    fun `no-food recovery retains the photo until scan again is requested`() {
+        val fixture = Fixture()
+        val current = fixture.analyzing("no-food-photo", "no-food-request")
+
+        val recovery = fixture.reducer.reduce(
+            current,
+            PhotoAnalysisEvent.ReviewEvidenceUnavailable(
+                current.requestId,
+                RecoveryReason.NO_FOOD,
+            ),
+        )
+
+        assertEquals(PhotoAnalysisState.Recovery(RecoveryReason.NO_FOOD, current.ref), recovery.state)
+        assertTrue(recovery.effects.isEmpty())
+
+        val scanAgain = fixture.reducer.reduce(recovery.state, PhotoAnalysisEvent.ScanAgain)
+
+        assertEquals(PhotoAnalysisState.Capture, scanAgain.state)
+        assertEquals(listOf(PhotoAnalysisEffect.RevokePhoto(current.ref)), scanAgain.effects)
+    }
+
+    @Test
     fun `unavailable evidence fails closed when the photo lease expired`() {
         val fixture = Fixture()
         val current = fixture.analyzing("expired-unavailable-photo", "expired-request")
@@ -131,6 +153,82 @@ class PhotoAnalysisAnalysisTransitionsBranchTest {
         assertEquals(listOf(PhotoAnalysisEffect.RevokePhoto(current.ref)), reduction.effects)
     }
 
+    @Test
+    fun `scan again returns active analysis to capture and revokes the photo`() {
+        val fixture = Fixture()
+        val current = fixture.analyzing("scan-again-photo", "scan-again-request")
+
+        val reduction = fixture.reducer.reduce(current, PhotoAnalysisEvent.ScanAgain)
+
+        assertEquals(PhotoAnalysisState.Capture, reduction.state)
+        assertEquals(listOf(PhotoAnalysisEffect.RevokePhoto(current.ref)), reduction.effects)
+    }
+
+    @Test
+    fun `grid prompt returns a live analysis to ready without revoking the photo`() {
+        val fixture = Fixture()
+        val current = fixture.analyzing("grid-photo", "grid-request")
+
+        val reduction = fixture.reducer.reduce(
+            current,
+            PhotoAnalysisEvent.GridCellSelected(7),
+        )
+
+        assertEquals(PhotoAnalysisState.Ready(fixture.inputFor(current.ref)), reduction.state)
+        assertTrue(reduction.effects.isEmpty())
+    }
+
+    @Test
+    fun `grid prompt can restart a completed review`() {
+        val fixture = Fixture()
+        val current = fixture.analyzing("grid-review-photo", "grid-review-request")
+        val review = fixture.reducer.reduce(
+            current,
+            PhotoAnalysisEvent.ReviewEvidenceAvailable(
+                current.requestId,
+                CandidateReviewDraft(emptyList(), emptyList()),
+            ),
+        ).state
+
+        val reduction = fixture.reducer.reduce(
+            review,
+            PhotoAnalysisEvent.GridCellSelected(0),
+        )
+
+        assertEquals(PhotoAnalysisState.Ready(fixture.inputFor(current.ref)), reduction.state)
+        assertTrue(reduction.effects.isEmpty())
+    }
+
+    @Test
+    fun `grid prompt fails closed when the retained photo is no longer live`() {
+        val fixture = Fixture()
+        val current = fixture.analyzing("grid-expired-photo", "grid-expired-request")
+        fixture.leases.revoke(current.ref)
+
+        val reduction = fixture.reducer.reduce(
+            current,
+            PhotoAnalysisEvent.GridCellSelected(8),
+        )
+
+        assertEquals(
+            PhotoAnalysisState.Recovery(RecoveryReason.CAPTURE_FAILED, current.ref),
+            reduction.state,
+        )
+        assertEquals(listOf(PhotoAnalysisEffect.RevokePhoto(current.ref)), reduction.effects)
+    }
+
+    @Test
+    fun `grid prompt is a no-op before a ready request is started`() {
+        val fixture = Fixture()
+        val current = fixture.analyzing("grid-ready-photo", "grid-ready-request")
+        val ready = PhotoAnalysisState.Ready(fixture.inputFor(current.ref))
+
+        val reduction = fixture.reducer.reduce(ready, PhotoAnalysisEvent.GridCellSelected(1))
+
+        assertEquals(ready, reduction.state)
+        assertTrue(reduction.effects.isEmpty())
+    }
+
     private fun assertUnchanged(fixture: Fixture, current: PhotoAnalysisState.Analyzing, event: PhotoAnalysisEvent) {
         val reduction = fixture.reducer.reduce(current, event)
         assertEquals(current, reduction.state)
@@ -142,6 +240,8 @@ class PhotoAnalysisAnalysisTransitionsBranchTest {
         val leases = PhotoLeaseStore()
         private val sessions = PhotoSessionStore()
         val reducer = PhotoAnalysisReducer(leases, sessions, attempt)
+
+        fun inputFor(ref: PhotoRef): NormalizedPhotoInput = sessions.read(ref)!!
 
         fun analyzing(photoId: String, request: String): PhotoAnalysisState.Analyzing {
             val ref = leases.issue(attempt, photoId)

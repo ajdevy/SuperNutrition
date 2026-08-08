@@ -376,7 +376,8 @@ data class CorpusUploadBatch(val captures: List<ConsentedCorpusCapture>) {
                 "venue" to split.venueGroup,
             ).forEach { (groupType, groupRef) ->
                 val key = groupType to groupRef
-                val previous = seen.putIfAbsent(key, split.partition)
+                val previous = seen[key]
+                if (previous == null) seen[key] = split.partition
                 require(previous == null || previous == split.partition) {
                     "$groupType group must not cross corpus partitions"
                 }

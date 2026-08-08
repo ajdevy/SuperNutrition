@@ -23,12 +23,30 @@ enum class PhotoAnalysisPresenterState {
 }
 
 /** UI intents stay explicit; the presenter never invents remote consent. */
-enum class PhotoAnalysisPresenterAction {
-    TakePhoto,
-    ImportPhoto,
-    OpenSettings,
-    Cancel,
-    ScanAgain,
+sealed interface PhotoAnalysisPresenterAction {
+    data object TakePhoto : PhotoAnalysisPresenterAction
+    data object ImportPhoto : PhotoAnalysisPresenterAction
+    data object OpenSettings : PhotoAnalysisPresenterAction
+    data object Cancel : PhotoAnalysisPresenterAction
+    data object ScanAgain : PhotoAnalysisPresenterAction
+
+    /** Explicit row-major 3x3 research prompt; valid indices are 0 through 8. */
+    data class SelectGridCell(val index: Int) : PhotoAnalysisPresenterAction {
+        init {
+            require(index in 0..8) { "Grid cell index must be between 0 and 8" }
+        }
+    }
+
+    companion object {
+        /** Stable list of ordinary capture actions; dynamic grid prompts are intentionally omitted. */
+        val entries: List<PhotoAnalysisPresenterAction> = listOf(
+            TakePhoto,
+            ImportPhoto,
+            OpenSettings,
+            Cancel,
+            ScanAgain,
+        )
+    }
 }
 
 /** Localizable copy is supplied by the product host; the presenter owns no locale lookup. */
@@ -49,9 +67,24 @@ data class CaptureCopy(
     val choosePhoto: String,
     val openSettings: String,
     val cancel: String,
+    val researchWarning: String =
+        "Research PoC / ingredient labels limited to model vocabulary / grams unavailable",
+    val gridHintsTitle: String = "Grid hints",
+    val resultPlaceholder: String = "Top-3 dish candidates and model regions will appear after analysis.",
+    val loadingLabel: String = "Analysis…",
 ) {
     val values: List<String>
-        get() = listOf(title, takeMealPhoto, choosePhoto, openSettings, cancel)
+        get() = listOf(
+            title,
+            takeMealPhoto,
+            choosePhoto,
+            openSettings,
+            cancel,
+            researchWarning,
+            gridHintsTitle,
+            resultPlaceholder,
+            loadingLabel,
+        )
 }
 
 data class StatusCopy(
@@ -235,8 +268,14 @@ data class PhotoAnalysisPresenterModel(
             is PhotoAnalysisState.Ready,
             is PhotoAnalysisState.Analyzing,
             is PhotoAnalysisState.CandidateReview,
-            -> listOf(PhotoAnalysisPresenterAction.Cancel)
+            -> replacementActions()
         }
+
+        private fun replacementActions(): List<PhotoAnalysisPresenterAction> = listOf(
+            PhotoAnalysisPresenterAction.ScanAgain,
+            PhotoAnalysisPresenterAction.ImportPhoto,
+            PhotoAnalysisPresenterAction.Cancel,
+        )
     }
 }
 
@@ -288,18 +327,10 @@ enum class PhotoAnalysisMassStatus {
 
 data class PhotoAnalysisMassModel(val status: PhotoAnalysisMassStatus, val label: String)
 
-private fun CandidateReviewDraft.toPresentation(copy: PhotoAnalysisPresenterCopy): PhotoAnalysisReviewModel =
-    PhotoAnalysisReviewModel(
-        mainDishProposals = mainDishProposals.map { candidate ->
-            PhotoAnalysisDishProposalModel(
-                candidateId = candidate.candidateId,
-                label = candidate.label,
-                rank = candidate.rank,
-                confidenceLabel = confidenceLabel(candidate.confidence.band, copy.evidence),
-                provenanceLabel = provenanceLabel(candidate.provenance.route, copy.evidence),
-            )
-        },
-        visibleComponents = photoEvidence.map { component ->
+private fun CandidateReviewDraft.toPresentation(copy: PhotoAnalysisPresenterCopy): PhotoAnalysisReviewModel {
+    val visibleComponents = photoEvidence
+        .distinctBy { ingredientDisplayKey(it.candidate.label) }
+        .map { component ->
             PhotoAnalysisVisibleComponentModel(
                 componentId = component.componentId,
                 label = component.candidate.label,
@@ -319,9 +350,30 @@ private fun CandidateReviewDraft.toPresentation(copy: PhotoAnalysisPresenterCopy
                 provenanceLabel = provenanceLabel(component.provenance.route, copy.evidence),
                 selectionLabel = copy.evidence.notSelected,
             )
+        }
+    val visibleIngredientKeys = visibleComponents.map { ingredientDisplayKey(it.label) }.toSet()
+
+    return PhotoAnalysisReviewModel(
+        mainDishProposals = mainDishProposals.map { candidate ->
+            PhotoAnalysisDishProposalModel(
+                candidateId = candidate.candidateId,
+                label = candidate.label,
+                rank = candidate.rank,
+                confidenceLabel = confidenceLabel(candidate.confidence.band, copy.evidence),
+                provenanceLabel = provenanceLabel(candidate.provenance.route, copy.evidence),
+            )
         },
-        compositionHints = compositionHints.map { hint -> hint.toPresentation(copy.evidence) },
+        visibleComponents = visibleComponents,
+        compositionHints = compositionHints
+            .asSequence()
+            .filterNot { ingredientDisplayKey(it.label) in visibleIngredientKeys }
+            .distinctBy { ingredientDisplayKey(it.label) }
+            .map { hint -> hint.toPresentation(copy.evidence) }
+            .toList(),
     )
+}
+
+private fun ingredientDisplayKey(label: String): String = label.trim().lowercase()
 
 private fun DishIngredientHint.toPresentation(copy: EvidenceCopy): PhotoAnalysisDishIngredientHintModel =
     PhotoAnalysisDishIngredientHintModel(

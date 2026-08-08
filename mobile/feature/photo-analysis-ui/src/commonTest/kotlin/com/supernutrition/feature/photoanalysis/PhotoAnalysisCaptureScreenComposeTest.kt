@@ -7,9 +7,11 @@ import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.v2.runComposeUiTest
 import com.supernutrition.core.ui.UiAutomationId
 import com.supernutrition.core.ui.UiAutomationIds
+import com.supernutrition.core.ui.photoAnalysisGridCellId
 import com.supernutrition.core.ui.photoAnalysisVisibleComponentId
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -42,6 +44,56 @@ class PhotoAnalysisCaptureScreenComposeTest {
     }
 
     @Test
+    fun `live camera occupies the photo slot before capture actions`() = runComposeUiTest {
+        val copy = PhotoAnalysisPresenterCopyFixtures.localized()
+        setContent {
+            PhotoAnalysisCaptureScreen(
+                model = PhotoAnalysisPresenterModel.from(
+                    com.supernutrition.domain.photoanalysis.PhotoAnalysisState.Capture,
+                    copy,
+                ),
+                onAction = {},
+                surface = PhotoAnalysisCaptureSurface(
+                    presenterCopy = copy,
+                    liveCamera = { Text("Live camera") },
+                ),
+            )
+        }
+
+        onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_RETAINED_PHOTO.value).assertIsDisplayed()
+        onNodeWithText("Live camera").assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.CAPTURE_SHUTTER.value).performScrollTo().assertIsDisplayed()
+    }
+
+    @Test
+    fun `capture screen matches the research poc layout with warning and nine grid hints`() = runComposeUiTest {
+        val copy = PhotoAnalysisPresenterCopyFixtures.localized()
+        val selected = mutableListOf<Int>()
+        setContent {
+            PhotoAnalysisCaptureScreen(
+                model = PhotoAnalysisPresenterModel.from(
+                    com.supernutrition.domain.photoanalysis.PhotoAnalysisState.Capture,
+                    copy,
+                ),
+                onAction = {},
+                surface = PhotoAnalysisCaptureSurface(
+                    presenterCopy = copy,
+                    gridHintsEnabled = true,
+                    onGridCellSelected = selected::add,
+                ),
+            )
+        }
+
+        onNodeWithText(copy.capture.researchWarning).assertIsDisplayed()
+        onNodeWithText(copy.capture.gridHintsTitle).assertIsDisplayed()
+        (0..8).forEach { index ->
+            onNodeWithTag(photoAnalysisGridCellId(index).value).assertIsDisplayed()
+        }
+        onNodeWithTag(photoAnalysisGridCellId(4).value).performClick()
+        assertEquals(listOf(4), selected)
+    }
+
+    @Test
     fun `screen renders and dispatches every bounded action`() = runComposeUiTest {
         val copy = PhotoAnalysisPresenterCopyFixtures.localized()
         val clicked = mutableListOf<PhotoAnalysisPresenterAction>()
@@ -67,14 +119,16 @@ class PhotoAnalysisCaptureScreenComposeTest {
         }
 
         onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_TITLE.value).assertIsDisplayed()
-        onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_STATUS.value).assertIsDisplayed()
         onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_RETAINED_PHOTO.value).assertIsDisplayed()
         onNodeWithText("Retained photo").assertIsDisplayed()
-        onNodeWithTag("custom_shutter").performClick()
-        onNodeWithTag("custom_import").performClick()
-        onNodeWithTag(UiAutomationIds.CAPTURE_OPEN_SETTINGS.value).performClick()
-        onNodeWithTag(UiAutomationIds.CAPTURE_CANCEL.value).performClick()
-        onNodeWithTag(UiAutomationIds.CAPTURE_SCAN_AGAIN.value).performClick()
+        onNodeWithTag(UiAutomationIds.CAPTURE_SCAN_AGAIN.value).performScrollTo().assertIsDisplayed()
+        onNodeWithTag("custom_import").performScrollTo().assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_STATUS.value).performScrollTo().assertIsDisplayed()
+        onNodeWithTag("custom_shutter").performScrollTo().performClick()
+        onNodeWithTag("custom_import").performScrollTo().performClick()
+        onNodeWithTag(UiAutomationIds.CAPTURE_OPEN_SETTINGS.value).performScrollTo().performClick()
+        onNodeWithTag(UiAutomationIds.CAPTURE_CANCEL.value).performScrollTo().performClick()
+        onNodeWithTag(UiAutomationIds.CAPTURE_SCAN_AGAIN.value).performScrollTo().performClick()
 
         assertEquals(PhotoAnalysisPresenterAction.entries.toList(), clicked.toList())
     }
@@ -113,6 +167,8 @@ class PhotoAnalysisCaptureScreenComposeTest {
             )
         }
 
+        onNodeWithTag(UiAutomationIds.CAPTURE_SCAN_AGAIN.value).performScrollTo().assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.CAPTURE_IMPORT.value).performScrollTo().assertIsDisplayed()
         onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_MAIN_DISH_PROPOSALS.value).assertIsDisplayed()
         onNodeWithText("Salmone con riso").assertIsDisplayed()
         onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_COMPONENT_EVIDENCE.value).assertIsDisplayed()
@@ -130,7 +186,11 @@ class PhotoAnalysisCaptureScreenComposeTest {
         PhotoAnalysisPresenterModel(
             statusLabel = copy.status.reviewCandidate,
             state = PhotoAnalysisPresenterState.CANDIDATE_REVIEW,
-            actions = listOf(PhotoAnalysisPresenterAction.Cancel),
+            actions = listOf(
+                PhotoAnalysisPresenterAction.ScanAgain,
+                PhotoAnalysisPresenterAction.ImportPhoto,
+                PhotoAnalysisPresenterAction.Cancel,
+            ),
             review = PhotoAnalysisReviewModel(
                 mainDishProposals = listOf(
                     PhotoAnalysisDishProposalModel(
@@ -171,7 +231,7 @@ class PhotoAnalysisCaptureScreenComposeTest {
         )
 
     @Test
-    fun `each local wait stage exposes one cancel action and no nutrition output`() = runComposeUiTest {
+    fun `each local wait stage exposes retake import and cancel actions without nutrition output`() = runComposeUiTest {
         val copy = PhotoAnalysisPresenterCopyFixtures.localized()
         val ref = com.supernutrition.domain.photoanalysis.PhotoRef.issue(
             com.supernutrition.domain.photoanalysis.AttemptId("compose-stage-attempt"),
@@ -201,9 +261,48 @@ class PhotoAnalysisCaptureScreenComposeTest {
             }
 
             onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_STAGE.value).assertIsDisplayed()
+            onNodeWithTag(UiAutomationIds.CAPTURE_SCAN_AGAIN.value).assertIsDisplayed()
+            onNodeWithTag(UiAutomationIds.CAPTURE_IMPORT.value).assertIsDisplayed()
             onNodeWithTag(UiAutomationIds.CAPTURE_CANCEL.value).assertIsDisplayed()
             onNodeWithText("calorie", substring = true, ignoreCase = true).assertDoesNotExist()
             onNodeWithText("nutrition", substring = true, ignoreCase = true).assertDoesNotExist()
         }
+    }
+
+    @Test
+    fun `research grid exposes nine cells and loading overlay while analysis is active`() = runComposeUiTest {
+        val copy = PhotoAnalysisPresenterCopyFixtures.localized()
+        val selected = mutableListOf<Int>()
+        val ref = com.supernutrition.domain.photoanalysis.PhotoRef.issue(
+            com.supernutrition.domain.photoanalysis.AttemptId("compose-grid-attempt"),
+            "compose-grid-photo",
+        )
+        val requestId = com.supernutrition.domain.photoanalysis.RequestId("compose-grid-request")
+        setContent {
+            PhotoAnalysisCaptureScreen(
+                model = PhotoAnalysisPresenterModel.from(
+                    com.supernutrition.domain.photoanalysis.PhotoAnalysisState.Analyzing(
+                        ref,
+                        requestId,
+                    ),
+                    copy,
+                ),
+                onAction = {},
+                surface = PhotoAnalysisCaptureSurface(
+                    presenterCopy = copy,
+                    retainedPhoto = { Text("Retained photo") },
+                    gridHintsEnabled = true,
+                    onGridCellSelected = selected::add,
+                ),
+            )
+        }
+
+        onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_GRID_OVERLAY.value).assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_LOADING.value).assertIsDisplayed()
+        (0..8).forEach { index ->
+            onNodeWithTag(photoAnalysisGridCellId(index).value).performScrollTo().assertIsDisplayed()
+        }
+        onNodeWithTag(photoAnalysisGridCellId(7).value).performScrollTo().performClick()
+        assertEquals(listOf(7), selected)
     }
 }

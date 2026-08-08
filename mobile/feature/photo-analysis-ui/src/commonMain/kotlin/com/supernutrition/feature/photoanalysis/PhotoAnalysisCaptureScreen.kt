@@ -1,16 +1,21 @@
 package com.supernutrition.feature.photoanalysis
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -36,10 +41,16 @@ enum class PhotoAnalysisPhotoTextContrast {
 data class PhotoAnalysisCaptureSurface(
     val presenterCopy: PhotoAnalysisPresenterCopy,
     val automationIds: PhotoAnalysisCaptureAutomationIds = PhotoAnalysisCaptureAutomationIds(),
+    /** Native hosts supply the live camera before a retained photo exists. */
+    val liveCamera: (@Composable () -> Unit)? = null,
     /** Native hosts supply this optional preview slot; shared UI never owns a photo decoder or bytes. */
     val retainedPhoto: (@Composable () -> Unit)? = null,
     /** Null retains the app theme when there is no rendered photo backdrop. */
     val photoTextContrast: PhotoAnalysisPhotoTextContrast? = null,
+    /** Enabled when the app has a local model runtime capable of honoring grid prompts. */
+    val gridHintsEnabled: Boolean = false,
+    val onGridCellSelected: ((Int) -> Unit)? = null,
+    val retainedPhotoAspectRatio: Float? = null,
 )
 
 data class PhotoAnalysisCaptureAutomationIds(
@@ -81,41 +92,56 @@ fun PhotoAnalysisCaptureScreen(
     surface: PhotoAnalysisCaptureSurface,
     modifier: Modifier = Modifier,
 ) {
-    Box(modifier = modifier.fillMaxSize()) {
-        surface.retainedPhoto?.let { retainedPhoto ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .automationId(surface.automationIds.retainedPhoto),
-            ) {
-                retainedPhoto()
-            }
+    var selectedGridCell by remember { mutableIntStateOf(-1) }
+    val photoVisible = (surface.liveCamera != null || surface.retainedPhoto != null) &&
+        model.state != PhotoAnalysisPresenterState.BACKGROUNDED
+    val gridHintsVisible = surface.gridHintsEnabled && model.state != PhotoAnalysisPresenterState.BACKGROUNDED
+
+    LaunchedEffect(model.state) {
+        if (model.state == PhotoAnalysisPresenterState.CAPTURE) selectedGridCell = -1
+    }
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color.White)
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        PhotoAnalysisPocHeader(surface)
+
+        if (photoVisible) {
+            PhotoAnalysisPocPhotoArea(
+                review = model.review,
+                selectedGridCell = selectedGridCell,
+                analyzing = model.state == PhotoAnalysisPresenterState.ANALYZING,
+                surface = surface,
+            )
         }
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            PhotoAnalysisHeader(surface)
-            PhotoAnalysisStatus(model, surface)
-            model.review?.let { review ->
-                PhotoAnalysisReviewContent(review, surface)
-            }
+        PhotoAnalysisPocResearchWarning(surface)
+        PhotoAnalysisPocCaptureActions(model.actions, onAction, surface)
 
-            PhotoAnalysisActions(model.actions, onAction, surface)
+        if (gridHintsVisible) {
+            PhotoAnalysisGridHints(
+                selectedGridCell = selectedGridCell,
+                onGridCellSelected = { index ->
+                    selectedGridCell = index
+                    surface.onGridCellSelected?.invoke(index)
+                },
+                surface = surface,
+            )
+        }
+
+        PhotoAnalysisStatus(model, surface)
+        val review = model.review
+        if (review == null) {
+            Text(surface.presenterCopy.capture.resultPlaceholder, style = pocBodyTextStyle())
+        } else {
+            PhotoAnalysisReviewContent(review, surface)
         }
     }
-}
-
-@Composable
-private fun PhotoAnalysisHeader(surface: PhotoAnalysisCaptureSurface) {
-    Text(
-        text = surface.presenterCopy.capture.title,
-        style = surface.overlayTextStyle(),
-        modifier = Modifier.automationId(surface.automationIds.title),
-    )
 }
 
 @Composable
@@ -128,63 +154,20 @@ private fun PhotoAnalysisStatus(model: PhotoAnalysisPresenterModel, surface: Pho
     ) {
         Text(
             text = model.statusLabel,
-            style = surface.overlayTextStyle(),
+            style = pocBodyTextStyle(),
             modifier = Modifier.automationId(surface.automationIds.status),
         )
     }
 }
 
 @Composable
-private fun PhotoAnalysisActions(
-    actions: List<PhotoAnalysisPresenterAction>,
-    onAction: (PhotoAnalysisPresenterAction) -> Unit,
-    surface: PhotoAnalysisCaptureSurface,
-) {
-    actions.forEach { action ->
-        when (action) {
-            PhotoAnalysisPresenterAction.TakePhoto -> Button(
-                onClick = { onAction(action) },
-                modifier = Modifier.automationId(surface.automationIds.shutter),
-            ) {
-                Text(surface.presenterCopy.capture.takeMealPhoto)
-            }
-
-            PhotoAnalysisPresenterAction.ImportPhoto -> Button(
-                onClick = { onAction(action) },
-                modifier = Modifier.automationId(surface.automationIds.import),
-            ) {
-                Text(surface.presenterCopy.capture.choosePhoto)
-            }
-
-            PhotoAnalysisPresenterAction.OpenSettings -> Button(
-                onClick = { onAction(action) },
-                modifier = Modifier.automationId(surface.automationIds.openSettings),
-            ) {
-                Text(surface.presenterCopy.capture.openSettings)
-            }
-
-            PhotoAnalysisPresenterAction.ScanAgain -> Button(
-                onClick = { onAction(action) },
-                modifier = Modifier.automationId(surface.automationIds.scanAgain),
-            ) {
-                Text(surface.presenterCopy.recovery.scanAgain)
-            }
-
-            PhotoAnalysisPresenterAction.Cancel -> Button(
-                onClick = { onAction(action) },
-                modifier = Modifier.automationId(surface.automationIds.cancel),
-            ) {
-                Text(surface.presenterCopy.capture.cancel)
-            }
-        }
-    }
-}
-
-@Composable
 private fun PhotoAnalysisReviewContent(review: PhotoAnalysisReviewModel, surface: PhotoAnalysisCaptureSurface) {
+    Text("Top-3 dish candidates:", style = pocBodyTextStyle())
     PhotoAnalysisDishCandidates(review, surface)
+    Text("Regions: ${review.visibleComponents.count { it.region != null }}", style = pocBodyTextStyle())
     PhotoAnalysisVisibleComponents(review, surface)
     PhotoAnalysisCompositionHints(review, surface)
+    Text(surface.presenterCopy.capture.researchWarning, style = pocBodyTextStyle())
 }
 
 @Composable
@@ -198,12 +181,12 @@ private fun PhotoAnalysisDishCandidates(review: PhotoAnalysisReviewModel, surfac
     ) {
         Text(
             text = surface.presenterCopy.evidence.dishCandidatesTitle,
-            style = surface.overlayTextStyle(),
+            style = pocBodyTextStyle(),
         )
         review.mainDishProposals.forEach { dish ->
             Text(
                 text = dish.label,
-                style = surface.overlayTextStyle(),
+                style = pocBodyTextStyle(),
                 modifier = Modifier.semantics {
                     contentDescription = listOf(
                         dish.label,
@@ -228,7 +211,7 @@ private fun PhotoAnalysisVisibleComponents(review: PhotoAnalysisReviewModel, sur
     ) {
         Text(
             text = surface.presenterCopy.evidence.visibleComponentsTitle,
-            style = surface.overlayTextStyle(),
+            style = pocBodyTextStyle(),
         )
         review.visibleComponents.forEach { component ->
             Column(
@@ -249,9 +232,9 @@ private fun PhotoAnalysisVisibleComponents(review: PhotoAnalysisReviewModel, sur
                         stateDescription = component.selectionLabel
                     },
             ) {
-                Text(component.label, style = surface.overlayTextStyle())
-                Text(component.sourceLabel, style = surface.overlayTextStyle())
-                Text(component.mass.label, style = surface.overlayTextStyle())
+                Text(component.label, style = pocBodyTextStyle())
+                Text(component.sourceLabel, style = pocBodyTextStyle())
+                Text(component.mass.label, style = pocBodyTextStyle())
             }
         }
     }
@@ -268,7 +251,7 @@ private fun PhotoAnalysisCompositionHints(review: PhotoAnalysisReviewModel, surf
     ) {
         Text(
             text = surface.presenterCopy.evidence.compositionHintsTitle,
-            style = surface.overlayTextStyle(),
+            style = pocBodyTextStyle(),
         )
         review.compositionHints.forEach { hint ->
             Column(
@@ -279,16 +262,18 @@ private fun PhotoAnalysisCompositionHints(review: PhotoAnalysisReviewModel, surf
                         stateDescription = hint.sourceLabel
                     },
             ) {
-                Text(hint.label, style = surface.overlayTextStyle())
-                Text(hint.sourceLabel, style = surface.overlayTextStyle())
+                Text(hint.label, style = pocBodyTextStyle())
+                Text(hint.sourceLabel, style = pocBodyTextStyle())
             }
         }
     }
 }
 
-private fun Modifier.automationId(id: UiAutomationId): Modifier = testTag(id.value)
+internal fun Modifier.automationId(id: UiAutomationId): Modifier = testTag(id.value)
 
-private fun PhotoAnalysisCaptureSurface.overlayTextStyle(): TextStyle = TextStyle.Default.merge(
+internal fun pocBodyTextStyle(): TextStyle = TextStyle.Default.copy(color = Color(0xFF202124))
+
+internal fun PhotoAnalysisCaptureSurface.overlayTextStyle(): TextStyle = TextStyle.Default.merge(
     when (photoTextContrast) {
         PhotoAnalysisPhotoTextContrast.LIGHT_TEXT -> TextStyle(
             color = Color.White,

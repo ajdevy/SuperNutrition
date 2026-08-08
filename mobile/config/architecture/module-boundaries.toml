@@ -52,6 +52,13 @@ source_sets = ["commonMain", "commonTest", "androidMain", "iosMain"]
 production = false
 
 [[module]]
+id = "inference-local-android-poc"
+path = "mobile/inference/local-android-poc"
+kind = "research-adapter"
+source_sets = ["main"]
+production = false
+
+[[module]]
 id = "platform"
 path = "mobile/platform"
 kind = "adapter-group"
@@ -104,7 +111,12 @@ production = false
 
 [[allowed_edge]]
 from = "apps"
-to = "feature|feature-host|feature-presenter|feature-ui|platform|inference|data|core"
+to = "feature|feature-host|feature-presenter|feature-ui|platform|inference|inference-local-android-poc|data|core"
+scope = "production"
+
+[[allowed_edge]]
+from = "inference-local-android-poc"
+to = "domain|inference|core"
 scope = "production"
 
 [[allowed_edge]]

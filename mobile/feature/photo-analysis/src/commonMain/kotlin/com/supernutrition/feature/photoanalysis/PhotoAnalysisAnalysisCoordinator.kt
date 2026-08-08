@@ -41,6 +41,7 @@ class PhotoAnalysisAnalysisCoordinator(
     private val dishEngine: PhotoInferenceEngine,
     private val componentEngine: InferenceV2Engine,
     private val onStageChanged: (LocalAnalysisStage) -> Unit = {},
+    private val onFailure: (Throwable) -> Unit = {},
 ) {
     suspend fun run(requestId: RequestId, attemptContext: InferenceAttemptContext): PhotoAnalysisAnalysisResult {
         val ready = feature.state as? PhotoAnalysisState.Ready ?: return PhotoAnalysisAnalysisResult.Ignored
@@ -86,7 +87,11 @@ class PhotoAnalysisAnalysisCoordinator(
         } catch (cancellation: CancellationException) {
             if (isActive(requestId, ref)) feature.dispatch(PhotoAnalysisEvent.Cancel)
             throw cancellation
-        } catch (_: Exception) {
+        } catch (error: IllegalArgumentException) {
+            onFailure(error)
+            return recover(requestId, ref, RecoveryReason.CAPTURE_FAILED)
+        } catch (error: IllegalStateException) {
+            onFailure(error)
             return recover(requestId, ref, RecoveryReason.CAPTURE_FAILED)
         }
     }

@@ -120,8 +120,9 @@ class StagedComponentReviewTest {
             ),
         )
 
-        assertEquals(PhotoAnalysisState.Recovery(RecoveryReason.NO_FOOD), reducer.state)
-        assertEquals(null, sessions.read(setup.ref))
+        assertEquals(PhotoAnalysisState.Recovery(RecoveryReason.NO_FOOD, setup.ref), reducer.state)
+        assertEquals(setup.ref, (reducer.state as PhotoAnalysisState.Recovery).ref)
+        assertEquals(setup.ref, sessions.read(setup.ref)?.ref)
     }
 
     @Test

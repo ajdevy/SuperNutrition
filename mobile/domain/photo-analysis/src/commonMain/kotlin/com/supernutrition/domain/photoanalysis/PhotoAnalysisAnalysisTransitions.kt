@@ -8,7 +8,9 @@ internal class PhotoAnalysisAnalysisTransitions(private val context: PhotoAnalys
             is PhotoAnalysisEvent.ReviewEvidenceAvailable -> reduceReviewEvidence(current, event)
             is PhotoAnalysisEvent.ReviewEvidenceUnavailable -> reduceUnavailableEvidence(current, event)
             is PhotoAnalysisEvent.AnalysisSucceeded -> reduceLegacyCompletion(current, event)
+            is PhotoAnalysisEvent.GridCellSelected -> prepareGridReanalysis(current.ref)
             is PhotoAnalysisEvent.ReplacePhoto -> replace(current, event.ref)
+            PhotoAnalysisEvent.ScanAgain -> clearAndCapture(current.ref)
             PhotoAnalysisEvent.Cancel -> cancel(current.ref)
             else -> unchanged(current)
         }
@@ -41,10 +43,16 @@ internal class PhotoAnalysisAnalysisTransitions(private val context: PhotoAnalys
     ): PhotoAnalysisReduction = when {
         event.requestId != current.requestId -> unchanged(current)
 
-        context.isLive(current.ref) -> reduction(
-            PhotoAnalysisState.Recovery(event.reason),
-            PhotoAnalysisEffect.RevokePhoto(current.ref),
-        )
+        context.isLive(current.ref) -> if (event.reason == RecoveryReason.NO_FOOD) {
+            // Keep the captured photo visible so the user can inspect the failed
+            // attempt and explicitly choose ScanAgain before opening the camera.
+            unchanged(PhotoAnalysisState.Recovery(event.reason, current.ref))
+        } else {
+            reduction(
+                PhotoAnalysisState.Recovery(event.reason),
+                PhotoAnalysisEffect.RevokePhoto(current.ref),
+            )
+        }
 
         else -> failedAnalysis(current.ref)
     }
@@ -77,6 +85,17 @@ internal class PhotoAnalysisAnalysisTransitions(private val context: PhotoAnalys
 
     private fun cancel(ref: PhotoRef): PhotoAnalysisReduction =
         reduction(PhotoAnalysisState.Recovery(RecoveryReason.CANCELLED), PhotoAnalysisEffect.RevokePhoto(ref))
+
+    private fun clearAndCapture(ref: PhotoRef): PhotoAnalysisReduction =
+        reduction(PhotoAnalysisState.Capture, PhotoAnalysisEffect.RevokePhoto(ref))
+
+    private fun prepareGridReanalysis(ref: PhotoRef): PhotoAnalysisReduction =
+        context.sessions.read(ref)?.takeIf { context.isLive(ref, it) }?.let { input ->
+            unchanged(PhotoAnalysisState.Ready(input))
+        } ?: reduction(
+            PhotoAnalysisState.Recovery(RecoveryReason.CAPTURE_FAILED, ref),
+            PhotoAnalysisEffect.RevokePhoto(ref),
+        )
 
     private fun failedAnalysis(ref: PhotoRef) = reduction(
         PhotoAnalysisState.Recovery(RecoveryReason.CAPTURE_FAILED),

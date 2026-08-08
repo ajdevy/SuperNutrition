@@ -39,8 +39,8 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":feature:photo-analysis-presenter"))
             implementation(project(":feature:photo-analysis-ui"))
-            implementation(project(":domain:photo-analysis"))
-            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+            api(project(":domain:photo-analysis"))
+            api(libs.kotlinx.coroutines.core)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
@@ -68,6 +68,10 @@ kotlin {
             implementation(project(":domain:photo-analysis"))
             implementation(libs.androidx.activity)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.camerax.core)
+            implementation(libs.camerax.camera2)
+            implementation(libs.camerax.lifecycle)
+            implementation(libs.camerax.view)
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)

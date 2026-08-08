@@ -5,7 +5,7 @@ story_key: 3-10-integrate-bounded-dish-ingredient-hints
 
 # Story 3.10: Integrate bounded dish-ingredient hints
 
-Status: in-progress
+Status: done
 
 ## Story
 
@@ -118,17 +118,22 @@ existing manifest-gated `None` seam and verify each layer independently.
 - `BoundedDishIngredientFusion` uses `e0-suggestion-policy.v1`, preserves every
   `VisibleComponent`, and emits at most 24 separate composition hints from the
   top three dish candidates.
+- The fusion policy caps main-dish proposals at the three-item
+  `CandidateReviewDraft` contract and keeps the Android photo picker grant
+  persistable for the result reader.
 - The coordinator, presenter, Compose lane, Android copy, iOS copy, automation
   IDs, and tests are wired additively. Hints retain a source label and never
   become visual evidence, regions, mass, nutrition, catalog, or medical data.
 - `qualityCheckJvmAndroid`: PASS; JVM line coverage 98.45%, branch coverage
   87.64%. `qualityCheckApple`: PASS; local policy validated and Apple evidence
   remains good-to-have.
+- Physical Honor DNY-NX9 evidence is green: production and UI-acceptance
+  instrumentation each passed 16/16 with 0 failures, 0 errors, and 0 skipped.
+- The explicit `poc` Android flavor reaches the review-candidate screen with
+  separate dish, component, and composition-hint lanes. Its Food-101/YOLO
+  adapter remains research-only; production runtime activation is unchanged.
 - `graphify update .` and `git diff --check`: PASS. The standalone explainer
   is indexed in `_bmad-output/presentations/README.md`.
-- Physical Android rerun is pending reconnection: `adb devices -l` remained
-  empty after restarting ADB, and macOS USB inspection showed no Android/Honor/
-  Huawei device. No device pass is claimed from this checkout.
 - Android/iOS production runtime activation remains the existing explicit
   manifest-gated `None` seam; this story does not fabricate model output.
 
@@ -151,5 +156,5 @@ existing manifest-gated `None` seam and verify each layer independently.
 
 - 2026-08-03: Created story for the bounded dish-ingredient hint slice.
 - 2026-08-03: Implemented additive bounded fusion, separated UI hint lane,
-  BMAD presentation index, and host quality evidence; physical Android evidence
-  remains blocked by the disconnected device.
+  BMAD presentation index, host quality evidence, and bounded Android
+  research-only review path; physical Android production/UI evidence passed.

@@ -38,6 +38,7 @@ val scaffoldModules = listOf(
     ":domain:photo-analysis",
     ":data:nutrition",
     ":inference:local-android",
+    ":inference:local-android-poc",
     ":inference:local-ios",
     ":inference:remote",
     ":platform:photo-android",
@@ -67,7 +68,10 @@ scaffoldModules.forEach { path ->
             ":platform:photo-ios",
             ":testing:compose-support",
         )
-        "androidApp" -> path == ":apps:androidApp"
+        "androidApp" -> path in setOf(
+            ":apps:androidApp",
+            ":inference:local-android-poc",
+        )
         "photoIos" -> path in setOf(
             ":core:config",
             ":core:ui",
