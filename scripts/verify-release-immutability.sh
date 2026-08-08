@@ -74,9 +74,16 @@ while IFS=$'\t' read -r state path _rest; do
     case "$state" in
         A) continue ;;
         M|D|R*|C*|T)
+            case "$state" in
+                M) verb=modified ;;
+                D) verb=deleted ;;
+                T) verb=retyped ;;
+                R*) verb=renamed ;;
+                *) verb=copied ;;
+            esac
             printf 'published release file %s was %s since %s; releases are immutable, publish a new version instead\n' \
                 "$path" \
-                "$(case "$state" in M) echo modified ;; D) echo deleted ;; T) echo retyped ;; R*) echo renamed ;; *) echo copied ;; esac)" \
+                "$verb" \
                 "${base:0:12}" >&2
             status=1
             ;;

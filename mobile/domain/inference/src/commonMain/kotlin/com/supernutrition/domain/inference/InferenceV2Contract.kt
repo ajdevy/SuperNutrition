@@ -10,7 +10,7 @@ internal fun requireV2(condition: Boolean, message: String) {
     require(condition) { message }
 }
 
-internal fun requireContractV2(value: String, message: String): String = value.also {
+internal fun requireEvidenceContractV2(value: String, message: String): String = value.also {
     requireV2(it == INFERENCE_EVIDENCE_CONTRACT_V2, message)
 }
 

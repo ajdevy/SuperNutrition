@@ -47,9 +47,7 @@ class LocalIosInferenceEngineTest {
         bytes = byteArrayOf(1, 2, 3),
         width = 10,
         height = 10,
-        orientation = ImageOrientation.UP,
-        colorSpace = "sRGB",
-        metadataKeys = emptySet(),
+        format = PhotoFormat(ImageOrientation.UP, "sRGB", emptySet()),
         contentDigest = "a".repeat(64),
     )
     private val model = IosModelProvenance(

@@ -121,9 +121,7 @@ class LocalAndroidInferenceDeviceTest {
             bytes = bytes,
             width = 10,
             height = 10,
-            orientation = ImageOrientation.UP,
-            colorSpace = "sRGB",
-            metadataKeys = emptySet(),
+            format = PhotoFormat(ImageOrientation.UP, "sRGB", emptySet()),
             contentDigest = sha256(bytes),
         )
         val request = PhotoInferenceRequest(

@@ -30,7 +30,7 @@ data class InferenceV2Capability(
     val calibrationVersion: String,
 ) {
     init {
-        requireContractV2(contractVersion, "Capability must use inference-evidence/v2")
+        requireEvidenceContractV2(contractVersion, "Capability must use inference-evidence/v2")
         requireV2Identifier(userMessageKey, "Capability message key must be a bounded identifier")
         requireV2Identifier(engineId, "Capability engine ID must be a bounded identifier")
         // READY must pair with NONE; every unavailable state must carry a reason.
@@ -57,7 +57,7 @@ data class InferenceV2Result(
     val outcome: InferenceV2Outcome,
 ) {
     init {
-        requireContractV2(contractVersion, "Inference result must use inference-evidence/v2")
+        requireEvidenceContractV2(contractVersion, "Inference result must use inference-evidence/v2")
         if (inputModality == InferenceInputModality.TEXT && outcome is InferenceV2Outcome.Components) {
             outcome.components.forEach { component ->
                 requireV2(
@@ -345,7 +345,7 @@ data class InferenceV2Provenance(
         requireNonBlankValue(modelVersion, "Provenance model version must not be blank")
         requireNonBlankValue(taxonomyVersion, "Provenance taxonomy version must not be blank")
         requireNonBlankValue(calibrationVersion, "Provenance calibration version must not be blank")
-        requireContractV2(contractVersion, "Provenance must use inference-evidence/v2")
+        requireEvidenceContractV2(contractVersion, "Provenance must use inference-evidence/v2")
     }
 }
 

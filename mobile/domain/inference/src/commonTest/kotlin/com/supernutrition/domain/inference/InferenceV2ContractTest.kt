@@ -741,7 +741,7 @@ class InferenceV2ContractTest {
         ).also { assertEquals(InferenceV2InputError.TEXT_VALUE_TOO_LONG, it.error) }
         assertFailsWith<IllegalArgumentException> { requireV2Identifier(" ", "test") }
         assertFailsWith<IllegalArgumentException> { requireV2Locale("invalid_locale", "test") }
-        assertFailsWith<IllegalArgumentException> { requireContractV2(PHOTO_INFERENCE_CONTRACT_V1, "test") }
+        assertFailsWith<IllegalArgumentException> { requireEvidenceContractV2(PHOTO_INFERENCE_CONTRACT_V1, "test") }
 
         assertFailsWith<IllegalArgumentException> {
             InferenceV2Capability(

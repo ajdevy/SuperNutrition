@@ -17,9 +17,7 @@ class PhotoAnalysisDomainValueObjectsTest {
             bytes = byteArrayOf(1, 2, 3),
             width = 100,
             height = 200,
-            orientation = ImageOrientation.UP,
-            colorSpace = "sRGB",
-            metadataKeys = emptySet(),
+            format = PhotoFormat(ImageOrientation.UP, "sRGB", emptySet()),
         ),
     )
 
@@ -32,9 +30,7 @@ class PhotoAnalysisDomainValueObjectsTest {
             bytes = byteArrayOf(1, 2, 3),
             width = 100,
             height = 200,
-            orientation = ImageOrientation.UP,
-            colorSpace = "sRGB",
-            metadataKeys = emptySet(),
+            format = PhotoFormat(ImageOrientation.UP, "sRGB", emptySet()),
         )
 
         assertEquals(raw, raw.copy())
@@ -43,9 +39,9 @@ class PhotoAnalysisDomainValueObjectsTest {
         assertFalse(raw == raw.copy(bytes = byteArrayOf(9)))
         assertFalse(raw == raw.copy(width = 101))
         assertFalse(raw == raw.copy(height = 201))
-        assertFalse(raw == raw.copy(orientation = ImageOrientation.RIGHT))
-        assertFalse(raw == raw.copy(colorSpace = "Display-P3"))
-        assertFalse(raw == raw.copy(metadataKeys = setOf("EXIF")))
+        assertFalse(raw == raw.copy(format = raw.format.copy(orientation = ImageOrientation.RIGHT)))
+        assertFalse(raw == raw.copy(format = raw.format.copy(colorSpace = "Display-P3")))
+        assertFalse(raw == raw.copy(format = raw.format.copy(metadataKeys = setOf("EXIF"))))
         assertFalse((raw as Any).equals("raw"))
 
         val input = normalized(ref)
@@ -54,9 +50,7 @@ class PhotoAnalysisDomainValueObjectsTest {
             bytes = byteArrayOf(1, 2, 3),
             width = 100,
             height = 200,
-            orientation = ImageOrientation.UP,
-            colorSpace = "sRGB",
-            metadataKeys = emptySet(),
+            format = PhotoFormat(ImageOrientation.UP, "sRGB", emptySet()),
             contentDigest = "a".repeat(64),
         )
         assertEquals(input, input.copy())
@@ -79,9 +73,7 @@ class PhotoAnalysisDomainValueObjectsTest {
                 bytes = ByteArray(0),
                 width = 100,
                 height = 200,
-                orientation = ImageOrientation.UP,
-                colorSpace = "sRGB",
-                metadataKeys = emptySet(),
+                format = PhotoFormat(ImageOrientation.UP, "sRGB", emptySet()),
                 contentDigest = "a".repeat(64),
             )
         }
@@ -91,9 +83,7 @@ class PhotoAnalysisDomainValueObjectsTest {
                 bytes = byteArrayOf(1),
                 width = 0,
                 height = 200,
-                orientation = ImageOrientation.UP,
-                colorSpace = "sRGB",
-                metadataKeys = emptySet(),
+                format = PhotoFormat(ImageOrientation.UP, "sRGB", emptySet()),
                 contentDigest = "a".repeat(64),
             )
         }
@@ -103,9 +93,7 @@ class PhotoAnalysisDomainValueObjectsTest {
                 bytes = byteArrayOf(1),
                 width = 100,
                 height = 0,
-                orientation = ImageOrientation.UP,
-                colorSpace = "sRGB",
-                metadataKeys = emptySet(),
+                format = PhotoFormat(ImageOrientation.UP, "sRGB", emptySet()),
                 contentDigest = "a".repeat(64),
             )
         }
@@ -120,9 +108,7 @@ class PhotoAnalysisDomainValueObjectsTest {
                 bytes = byteArrayOf(1),
                 width = 100,
                 height = 200,
-                orientation = ImageOrientation.RIGHT,
-                colorSpace = "sRGB",
-                metadataKeys = emptySet(),
+                format = PhotoFormat(ImageOrientation.RIGHT, "sRGB", emptySet()),
                 contentDigest = "a".repeat(64),
             )
         }
@@ -132,9 +118,7 @@ class PhotoAnalysisDomainValueObjectsTest {
                 bytes = byteArrayOf(1),
                 width = 100,
                 height = 200,
-                orientation = ImageOrientation.UP,
-                colorSpace = "Display-P3",
-                metadataKeys = emptySet(),
+                format = PhotoFormat(ImageOrientation.UP, "Display-P3", emptySet()),
                 contentDigest = "a".repeat(64),
             )
         }
@@ -144,9 +128,7 @@ class PhotoAnalysisDomainValueObjectsTest {
                 bytes = byteArrayOf(1),
                 width = 100,
                 height = 200,
-                orientation = ImageOrientation.UP,
-                colorSpace = "sRGB",
-                metadataKeys = setOf("EXIF"),
+                format = PhotoFormat(ImageOrientation.UP, "sRGB", setOf("EXIF")),
                 contentDigest = "a".repeat(64),
             )
         }
@@ -156,9 +138,7 @@ class PhotoAnalysisDomainValueObjectsTest {
                 bytes = byteArrayOf(1),
                 width = 100,
                 height = 200,
-                orientation = ImageOrientation.UP,
-                colorSpace = "sRGB",
-                metadataKeys = emptySet(),
+                format = PhotoFormat(ImageOrientation.UP, "sRGB", emptySet()),
                 contentDigest = "not-a-digest",
             )
         }
