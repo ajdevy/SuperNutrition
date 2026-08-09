@@ -9,16 +9,6 @@ import kotlin.test.assertTrue
 
 class ComponentModelActivationTest {
     @Test
-    fun `active model state rejects a non-production manifest`() {
-        assertFailsWith<IllegalArgumentException> {
-            ComponentModelActivationController(
-                RecordingOperations(),
-                initialActive = manifest("research-model", null, ComponentModelActivation.RESEARCH_ONLY),
-            )
-        }
-    }
-
-    @Test
     fun `staging and activation require a verified production manifest`() {
         val operations = RecordingOperations()
         val controller = ComponentModelActivationController(operations)
@@ -41,7 +31,7 @@ class ComponentModelActivationTest {
         )
         val controller = ComponentModelActivationController(operations)
         val result = assertIs<ComponentModelActivationResult.Rejected>(
-            controller.stage(manifest("model-1", null, ComponentModelActivation.RESEARCH_ONLY)),
+            controller.stage(manifest("model-1", "model-0", ComponentModelActivation.PRODUCTION)),
         )
 
         assertEquals(ComponentModelActivationFailure.ARTIFACT_UNVERIFIED, result.failure)
@@ -50,19 +40,17 @@ class ComponentModelActivationTest {
     }
 
     @Test
-    fun `activation rejects an unstaged or non-production manifest`() {
+    fun `activation rejects an unstaged manifest`() {
         val controller = ComponentModelActivationController(RecordingOperations())
-        val research = manifest("model-1", null, ComponentModelActivation.RESEARCH_ONLY)
-        val production = manifest("model-1", "model-0")
+        val unstaged = manifest("model-1", "model-0", ComponentModelActivation.PRODUCTION)
+        val staged = manifest("model-1", "model-0")
 
         assertEquals(
-            ComponentModelActivationFailure.PRODUCTION_APPROVAL_REQUIRED,
-            assertIs<ComponentModelActivationResult.Rejected>(controller.activate(research)).failure,
-        )
-        assertEquals(
             ComponentModelActivationFailure.MANIFEST_MUST_BE_STAGED,
-            assertIs<ComponentModelActivationResult.Rejected>(controller.activate(production)).failure,
+            assertIs<ComponentModelActivationResult.Rejected>(controller.activate(unstaged)).failure,
         )
+        assertIs<ComponentModelActivationResult.Staged>(controller.stage(staged))
+        assertIs<ComponentModelActivationResult.Activated>(controller.activate(staged))
     }
 
     @Test

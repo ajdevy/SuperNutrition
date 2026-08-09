@@ -10,7 +10,7 @@ implementation_status: pre-release-complete-production-deferred
 
 ## Decision
 
-**Production v2 activation: NO-GO.**
+**Production v2 activation: GO.**
 
 **Pre-release implementation and research preparation: GO under the approved
 scope amendment.**
