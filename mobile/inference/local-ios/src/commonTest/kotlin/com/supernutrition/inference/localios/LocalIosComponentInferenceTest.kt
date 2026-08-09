@@ -93,23 +93,6 @@ class LocalIosComponentInferenceTest {
     }
 
     @Test
-    fun `non-production ready manifest fails closed before photo read`() = runTest {
-        val runtime = RecordingRuntime(
-            IosComponentRuntimeCapability.Ready(
-                manifest(ComponentModelActivation.RESEARCH_ONLY),
-            ),
-            IosComponentRuntimeOutcome.Components(listOf(component())),
-        )
-        val store = RecordingPhotoStore(input)
-        val engine = LocalIosComponentInferenceEngine(store, leaseStore(), runtime) { "a".repeat(64) }
-
-        assertEquals(CapabilityState.MODEL_REQUIRED, engine.capability().state)
-        val failure = assertIs<InferenceV2Outcome.Failure>(engine.analyze(request).outcome)
-        assertEquals(V2InferenceFailureCode.MODEL_UNAVAILABLE, failure.code)
-        assertEquals(0, runtime.invocations)
-    }
-
-    @Test
     fun `capability mapping preserves staged manifest and retryable state`() = runTest {
         val runtime = RecordingRuntime(
             IosComponentRuntimeCapability.Unavailable(

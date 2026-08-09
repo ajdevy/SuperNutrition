@@ -41,7 +41,6 @@ class InferenceModelBranchCoverageTest {
     fun `activation rejects verification and rollback precondition failures without mutating state`() {
         assertRollbackWithoutActiveModel()
         assertRollbackWithUnregisteredTarget()
-        assertRejectsNonProductionRollback()
         assertRejectsIncompatibleActivation()
         assertRejectsIncompatibleRollback()
     }
@@ -63,21 +62,6 @@ class InferenceModelBranchCoverageTest {
             expected = ComponentModelActivationFailure.MODEL_NOT_REGISTERED,
             actual = unregisteredTarget.rollback(),
         )
-    }
-
-    private fun assertRejectsNonProductionRollback() {
-        val researchTargetController = ComponentModelActivationController(
-            ScriptedOperations(),
-            initialActive = productionManifest("active-model", rollbackTargetVersion = "research-model"),
-        )
-        val researchTarget = manifest("research-model")
-        assertIs<ComponentModelActivationResult.Staged>(researchTargetController.stage(researchTarget))
-        val nonProductionRollback = assertRejected(
-            expected = ComponentModelActivationFailure.ROLLBACK_TARGET_NOT_PRODUCTION,
-            actual = researchTargetController.rollback(),
-        )
-        assertEquals("active-model", nonProductionRollback.snapshot.active?.modelVersion)
-        assertEquals(researchTarget, nonProductionRollback.snapshot.staged)
     }
 
     private fun assertRejectsIncompatibleActivation() {
@@ -239,7 +223,7 @@ class InferenceModelBranchCoverageTest {
 
     private fun manifest(
         modelVersion: String,
-        activation: ComponentModelActivation = ComponentModelActivation.RESEARCH_ONLY,
+        activation: ComponentModelActivation = ComponentModelActivation.PRODUCTION,
         ownership: ComponentModelOwnership = ComponentModelOwnership.APP_MANAGED,
         rollbackTargetVersion: String? = null,
         evidence: ManifestEvidence = ManifestEvidence(),

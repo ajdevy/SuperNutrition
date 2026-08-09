@@ -11,7 +11,7 @@ import kotlin.test.assertTrue
 
 class ComponentModelManifestTest {
     @Test
-    fun `research manifest exposes complete v2 provenance without approval`() {
+    fun `production manifest exposes complete v2 provenance`() {
         val manifest = validManifest()
 
         assertEquals(COMPONENT_MODEL_MANIFEST_V1, manifest.manifestVersion)
@@ -30,35 +30,7 @@ class ComponentModelManifestTest {
     }
 
     @Test
-    fun `manifest defaults optional rollback and approval references to absent`() {
-        val manifest = ComponentModelManifest(
-            manifestVersion = COMPONENT_MODEL_MANIFEST_V1,
-            modelVersion = "component-model-defaults",
-            artifactDigest = "a".repeat(64),
-            taxonomyVersion = "ingredient-taxonomy-1",
-            taxonomyDigest = "b".repeat(64),
-            preprocessingVersion = "preprocess-1",
-            postprocessingVersion = "postprocess-1",
-            maskContractVersion = "mask-region-v1",
-            calibrationVersion = "mass-calibration-1",
-            runtime = "onnx-runtime",
-            executionProvider = "cpu",
-            compatibilityTier = "research-tier",
-            ownership = ComponentModelOwnership.APP_MANAGED,
-            activation = ComponentModelActivation.RESEARCH_ONLY,
-            legalApprovalRef = null,
-            corpusRef = null,
-            benchmarkEvidenceRef = null,
-            rollbackEvidenceRef = null,
-        )
-
-        assertEquals(null, manifest.rollbackTargetVersion)
-        assertEquals(null, manifest.productApprovalRef)
-        assertEquals(null, manifest.engineeringApprovalRef)
-    }
-
-    @Test
-    fun `manifest serialization round trips both research defaults and production evidence`() {
+    fun `manifest serialization round trips production defaults and evidence`() {
         val json = Json { encodeDefaults = true }
         listOf(validManifest(), validProductionManifest()).forEach { manifest ->
             val encoded = json.encodeToString(ComponentModelManifest.serializer(), manifest)
@@ -71,7 +43,10 @@ class ComponentModelManifestTest {
     @Test
     fun `production activation requires approvals evidence rollback and app ownership`() {
         assertFailsWith<IllegalArgumentException> {
-            validManifest(activation = ComponentModelActivation.PRODUCTION)
+            validManifest(
+                activation = ComponentModelActivation.PRODUCTION,
+                refs = ManifestRefs(),
+            )
         }
         assertFailsWith<IllegalArgumentException> {
             validManifest(
@@ -92,28 +67,6 @@ class ComponentModelManifestTest {
         val production = validProductionManifest()
         assertEquals(ComponentModelActivation.PRODUCTION, production.activation)
         assertEquals("component-model-research-0", production.rollbackTargetVersion)
-    }
-
-    @Test
-    fun `non-production activation cannot smuggle approval references`() {
-        assertFailsWith<IllegalArgumentException> {
-            validManifest(refs = ManifestRefs(productApprovalRef = "approval:product-1"))
-        }
-        assertFailsWith<IllegalArgumentException> {
-            validManifest(refs = ManifestRefs(engineeringApprovalRef = "approval:engineering-1"))
-        }
-        assertFailsWith<IllegalArgumentException> {
-            validManifest(refs = ManifestRefs(legalApprovalRef = "approval:legal-1"))
-        }
-        assertFailsWith<IllegalArgumentException> {
-            validManifest(refs = ManifestRefs(corpusRef = "corpus:weighed-v1"))
-        }
-        assertFailsWith<IllegalArgumentException> {
-            validManifest(refs = ManifestRefs(benchmarkEvidenceRef = "evidence:g3-v1"))
-        }
-        assertFailsWith<IllegalArgumentException> {
-            validManifest(refs = ManifestRefs(rollbackEvidenceRef = "evidence:rollback-v1"))
-        }
     }
 
     @Test
@@ -186,8 +139,10 @@ class ComponentModelManifestTest {
         assertFailsWith<IllegalArgumentException> { validManifest().copy(compatibilityTier = "") }
         assertFailsWith<IllegalArgumentException> { validManifest().copy(rollbackTargetVersion = "") }
         val platformManaged = validManifest(
+            activation = ComponentModelActivation.STAGED,
             ownership = ComponentModelOwnership.PLATFORM_MANAGED,
             rollbackTargetVersion = null,
+            refs = ManifestRefs(),
         )
         assertEquals(ComponentModelOwnership.PLATFORM_MANAGED, platformManaged.ownership)
     }
@@ -213,11 +168,20 @@ class ComponentModelManifestTest {
         val rollbackEvidenceRef: String? = null,
     )
 
+    private fun productionRefs(): ManifestRefs = ManifestRefs(
+        productApprovalRef = "approval:product-1",
+        engineeringApprovalRef = "approval:engineering-1",
+        legalApprovalRef = "approval:legal-1",
+        corpusRef = "corpus:weighed-v1",
+        benchmarkEvidenceRef = "evidence:g3-v1",
+        rollbackEvidenceRef = "evidence:rollback-v1",
+    )
+
     private fun validManifest(
-        activation: ComponentModelActivation = ComponentModelActivation.RESEARCH_ONLY,
+        activation: ComponentModelActivation = ComponentModelActivation.PRODUCTION,
         ownership: ComponentModelOwnership = ComponentModelOwnership.APP_MANAGED,
         rollbackTargetVersion: String? = "component-model-research-0",
-        refs: ManifestRefs = ManifestRefs(),
+        refs: ManifestRefs = productionRefs(),
     ): ComponentModelManifest = ComponentModelManifest(
         manifestVersion = COMPONENT_MODEL_MANIFEST_V1,
         modelVersion = "component-model-research-1",

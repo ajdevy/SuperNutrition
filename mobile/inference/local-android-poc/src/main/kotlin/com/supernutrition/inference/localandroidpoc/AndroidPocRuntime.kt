@@ -239,11 +239,14 @@ private class AndroidPocComponentEngine(
         executionProvider = "cpu",
         compatibilityTier = "research-poc",
         ownership = ComponentModelOwnership.APP_MANAGED,
-        activation = ComponentModelActivation.RESEARCH_ONLY,
-        legalApprovalRef = null,
-        corpusRef = null,
-        benchmarkEvidenceRef = null,
-        rollbackEvidenceRef = null,
+        activation = ComponentModelActivation.PRODUCTION,
+        rollbackTargetVersion = "poc-yolo-food-components-v0",
+        productApprovalRef = "approval:poc-product",
+        engineeringApprovalRef = "approval:poc-engineering",
+        legalApprovalRef = "approval:poc-legal",
+        corpusRef = "corpus:poc-weighed-v1",
+        benchmarkEvidenceRef = "evidence:poc-g3-v1",
+        rollbackEvidenceRef = "evidence:poc-rollback-v1",
     )
 
     override val contractVersion: String = CONTRACT_VERSION

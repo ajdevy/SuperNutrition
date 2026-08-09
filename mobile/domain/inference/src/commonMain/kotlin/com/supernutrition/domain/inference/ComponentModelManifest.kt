@@ -18,9 +18,6 @@ enum class ComponentModelOwnership {
 /** Activation is deliberately separate from capability; a staged model is not production approval. */
 @Serializable
 enum class ComponentModelActivation {
-    @SerialName("research-only")
-    RESEARCH_ONLY,
-
     @SerialName("staged")
     STAGED,
 
@@ -86,7 +83,6 @@ data class ComponentModelManifest(
         }
 
         when (activation) {
-            ComponentModelActivation.RESEARCH_ONLY,
             ComponentModelActivation.STAGED,
             -> {
                 requireNoProductionReferences(
