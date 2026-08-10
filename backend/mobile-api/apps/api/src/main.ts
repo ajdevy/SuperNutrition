@@ -10,6 +10,7 @@ import {
   testModeBanner,
   TestModeFenceError,
   assertStubFence,
+  assertPaidRosterInProduction,
   ConfigError,
   type AppConfig,
 } from './config/index.js';
@@ -96,6 +97,16 @@ export const buildApplication = async (
 
   const profiles = TomlModelProfileSource.fromFile(
     resolve(process.cwd(), config.inference.modelProfilesPath),
+  );
+
+  // M9 — the roster in config/model-profiles.toml is currently OpenRouter
+  // `:free` endpoints, marked TEMPORARY because the account has no credits.
+  // Every consent receipt this gateway accepts asserts retentionDays = 0, and a
+  // free tier is not contracted to honour that. The comment said TEMPORARY; this
+  // makes it true.
+  assertPaidRosterInProduction(
+    profiles.current().profiles.map((profile) => profile.model),
+    { NODE_ENV: config.nodeEnv, APP_ENVIRONMENT: config.env },
   );
 
   // Provider credentials are read once, here, and handed to the adapter. They

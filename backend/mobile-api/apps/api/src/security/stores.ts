@@ -125,6 +125,28 @@ export class InMemoryRateLimiter implements RateLimiter {
     return layer === 'user' ? 'fail-open' : 'fail-closed';
   }
 
+  /**
+   * Drops principals whose hits have all aged out.
+   *
+   * Without this the map holds one entry per distinct principal seen since the
+   * process started, and the IP layer's principal is chosen by whoever is
+   * calling: unique source addresses accumulate for the life of the process,
+   * which is a slow leak with no upper bound.
+   */
+  /** Distinct principals currently held. Bound evidence, not behaviour. */
+  get trackedPrincipals(): number {
+    return this.#hits.size;
+  }
+
+  #sweep(now: number): void {
+    const windows = [...this.#rules.values()].map((rule) => rule.windowSeconds);
+    if (windows.length === 0) return;
+    const longestWindowMs = Math.max(...windows) * 1000;
+    for (const [id, hits] of this.#hits) {
+      if (hits.every((at) => at <= now - longestWindowMs)) this.#hits.delete(id);
+    }
+  }
+
   async check(key: RateLimitKey): Promise<RateLimitDecision> {
     const rule = this.#rules.get(key.layer);
     if (!rule) {
@@ -141,6 +163,7 @@ export class InMemoryRateLimiter implements RateLimiter {
     const windowMs = rule.windowSeconds * 1000;
     const id = `${key.layer}:${key.principal}`;
     const recent = (this.#hits.get(id) ?? []).filter((at) => at > now - windowMs);
+    this.#sweep(now);
 
     if (recent.length >= rule.limit) {
       this.#hits.set(id, recent);
@@ -179,9 +202,23 @@ export class InMemoryEffectStore implements EffectStore {
     this.#now = now;
   }
 
+  /** Claims currently held, expired ones included until the next sweep. */
+  get trackedClaims(): number {
+    return this.#claimed.size;
+  }
+
   async claimOnce(attemptId: string, effectId: string, ttlSeconds: number): Promise<boolean> {
     const key = `${attemptId}:${effectId}`;
     const now = this.#now();
+
+    // Expired claims are dead weight: past their TTL they answer nothing, but
+    // nothing removed them, so the map grew by one entry per request — and this
+    // same store also backs one-time request IDs, which are unique by
+    // construction. Over a long-lived process that is unbounded.
+    for (const [claimedKey, expiresAt] of this.#claimed) {
+      if (expiresAt <= now) this.#claimed.delete(claimedKey);
+    }
+
     const existing = this.#claimed.get(key);
     if (existing !== undefined && existing > now) return false;
     this.#claimed.set(key, now + ttlSeconds * 1000);
@@ -229,8 +266,20 @@ export class InMemoryIdempotencyStore implements IdempotencyStore {
     this.#now = now;
   }
 
+  /** Entries currently held, expired ones included until the next sweep. */
+  get trackedEntries(): number {
+    return this.#entries.size;
+  }
+
   async claim(key: string, requestDigest: string, ttlSeconds = 86_400): Promise<IdempotencyClaim> {
     const now = this.#now();
+
+    // Expired entries are already treated as absent just below, so keeping them
+    // buys nothing and costs one entry per idempotent request, forever.
+    for (const [entryKey, entry] of this.#entries) {
+      if (entry.expiresAt <= now) this.#entries.delete(entryKey);
+    }
+
     const existing = this.#entries.get(key);
     // An expired record is indistinguishable from an absent one: the 24h
     // window is what bounds how long a replay is honoured.

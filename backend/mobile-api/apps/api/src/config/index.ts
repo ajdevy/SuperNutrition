@@ -84,6 +84,7 @@ export type { Env, Environment };
 export {
   TestModeFenceError,
   assertStubFence,
+  assertPaidRosterInProduction,
   isFixtureMarket,
   mayAuthorizeRemoteTransfer,
   FIXTURE_MARKET_IDS,

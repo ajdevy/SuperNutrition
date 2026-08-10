@@ -106,3 +106,36 @@ export const testModeBanner = (env: FenceInput): string | null =>
         '',
       ].join('\n')
     : null;
+
+/**
+ * The zero-cost-roster fence.
+ *
+ * config/model-profiles.toml currently names OpenRouter `:free` models, marked
+ * TEMPORARY because the account has no credits. Free-tier endpoints are a
+ * different bargain from paid ones — providers commonly reserve the right to
+ * train on or retain what is sent to them — and every consent receipt this
+ * gateway accepts asserts `retentionDays = 0`. Shipping that roster to
+ * production would make the receipt a statement the gateway cannot support,
+ * which is the same class of problem as the cancellation record that claimed
+ * nothing had been sent.
+ *
+ * A comment saying TEMPORARY is not a control. This is, and like the rest of the
+ * fence it is a boot assertion rather than a warning.
+ */
+export const assertPaidRosterInProduction = (
+  modelIds: readonly string[],
+  environment: { NODE_ENV: Env['NODE_ENV']; APP_ENVIRONMENT: Env['APP_ENVIRONMENT'] },
+): void => {
+  const isProduction =
+    environment.NODE_ENV === 'production' || environment.APP_ENVIRONMENT === 'production';
+  if (!isProduction) return;
+
+  const free = modelIds.filter((id) => id.endsWith(':free'));
+  if (free.length === 0) return;
+
+  throw new TestModeFenceError(
+    `Zero-cost model endpoints cannot be used in production: ${[...new Set(free)].sort().join(', ')}. ` +
+      'Every accepted consent receipt asserts retentionDays = 0, which a free-tier ' +
+      'endpoint is not contracted to honour. Refusing to start.',
+  );
+};
