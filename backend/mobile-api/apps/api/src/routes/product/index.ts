@@ -140,13 +140,24 @@ interface StoredOutcome {
 const withIdempotency = async <T extends StoredOutcome>(
   deps: ProductRouteDeps,
   request: FastifyRequest,
+  userId: string,
   create: () => Promise<T>,
 ): Promise<StoredOutcome> => {
   const key = request.headers['idempotency-key'];
   if (typeof key !== 'string' || key.length === 0) return create();
 
+  // M4 — the key is namespaced by user. Idempotency-Key is chosen by the client
+  // and short values like "1" or "meal" are entirely ordinary, so a single
+  // global keyspace made one user's key collide with another's: the second user
+  // got a 409 for a request they had never made, or — worse, and the reason this
+  // is not merely an annoyance — the stored response of someone else's meal.
+  // Derived once. claim/complete/fail must all name the same entry — namespacing
+  // only the claim leaves every request holding a claim it can never complete,
+  // so the next one with that key conflicts forever.
+  const scopedKey = `${userId}:${key}`;
+
   const claim = await deps.idempotency.claim(
-    key,
+    scopedKey,
     canonicalDigest(request.body),
     IDEMPOTENCY_TTL_SECONDS,
   );
@@ -159,13 +170,13 @@ const withIdempotency = async <T extends StoredOutcome>(
 
   try {
     const result = await create();
-    await deps.idempotency.complete(key, { status: result.status, body: result.body });
+    await deps.idempotency.complete(scopedKey, { status: result.status, body: result.body });
     return result;
   } catch (error) {
     // Release the claim so a retry with the same key may run. A claim that is
     // still held (never completed, never failed) keeps conflicting, which is
     // what stops two concurrent retries from both creating.
-    await deps.idempotency.fail(key);
+    await deps.idempotency.fail(scopedKey);
     throw error;
   }
 };
@@ -196,7 +207,7 @@ export const registerProductRoutes = async (
 
     scope.post('/api/v1/meals/photo', async (request, reply) => {
       const { userId } = await authenticateAndThrottle(deps, request, reply);
-      const result = await withIdempotency(deps, request, async () => ({
+      const result = await withIdempotency(deps, request, userId, async () => ({
         status: 201,
         body: await deps.meals.createPhotoMeal(request.body, userId),
       }));
@@ -205,7 +216,7 @@ export const registerProductRoutes = async (
 
     scope.post('/api/v1/meals/manual', async (request, reply) => {
       const { userId } = await authenticateAndThrottle(deps, request, reply);
-      const result = await withIdempotency(deps, request, async () => ({
+      const result = await withIdempotency(deps, request, userId, async () => ({
         status: 201,
         body: await deps.meals.createManualMeal(request.body, userId),
       }));
@@ -214,7 +225,7 @@ export const registerProductRoutes = async (
 
     scope.post('/api/v1/meals/voice', async (request, reply) => {
       const { userId } = await authenticateAndThrottle(deps, request, reply);
-      const result = await withIdempotency(deps, request, async () => ({
+      const result = await withIdempotency(deps, request, userId, async () => ({
         status: 201,
         body: await deps.meals.createVoiceMeal(request.body, userId),
       }));

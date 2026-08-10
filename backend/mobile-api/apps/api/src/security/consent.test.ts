@@ -198,3 +198,49 @@ describe('digest binding', () => {
     expectCode('malformed-consent', { digest: 'sha256:short' });
   });
 });
+
+/**
+ * M5 — a receipt dated in the future.
+ *
+ * Validity was checked as a shape (expiresAt after recordedAt, window no longer
+ * than MAX_CONSENT_VALIDITY_SECONDS) and expiry was checked against now, but
+ * nothing checked that the receipt had actually been recorded yet. A client that
+ * stamps recordedAt a year ahead and expiresAt fifteen minutes after that
+ * satisfies every one of those rules, and the fifteen-minute window it exists to
+ * enforce becomes a year.
+ */
+describe('M5 — consent cannot be recorded in the future', () => {
+  it('rejects a receipt recorded after now', () => {
+    expect(() =>
+      verify({
+        recordedAt: '2027-07-29T10:15:00Z',
+        expiresAt: '2027-07-29T10:30:00Z',
+      }),
+    ).toThrowError(/malformed-consent/);
+  });
+
+  it('rejects a receipt whose window has not opened even when it expires soon', () => {
+    // Ten minutes ahead of NOW, so it is still "unexpired" by the old rule.
+    expect(() =>
+      verify({
+        recordedAt: '2026-07-29T10:30:00Z',
+        expiresAt: '2026-07-29T10:40:00Z',
+      }),
+    ).toThrowError(/malformed-consent/);
+  });
+
+  it('tolerates a receipt a few seconds ahead, because client clocks drift', () => {
+    // NOW is 10:20:00. A receipt stamped 10:20:30 is ordinary clock skew, not a
+    // forged window, and refusing it would fail real users on correct devices.
+    expect(() =>
+      verify({
+        recordedAt: '2026-07-29T10:20:30Z',
+        expiresAt: '2026-07-29T10:33:00Z',
+      }),
+    ).not.toThrow();
+  });
+
+  it('still accepts a receipt recorded in the past', () => {
+    expect(() => verify()).not.toThrow();
+  });
+});

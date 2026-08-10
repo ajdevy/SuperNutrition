@@ -154,7 +154,16 @@ export const runInferencePipeline = async (
 
   // ---- everything below may call a provider -------------------------------
 
-  const controller = deps.transfers.begin(context.attemptId);
+  // M7 — at-most-once on the ATTEMPT, not only on the effect. claimOnce above
+  // keys on effectId, so the same attemptId carrying a fresh effectId reached
+  // here and started a second transfer of the same photo. The claim is bound to
+  // the installation, which is what later authorises a cancellation.
+  const controller = deps.transfers.begin(context.attemptId, auth.installationId);
+  if (controller === null) {
+    throw new GatewayError(GATEWAY_CODES.VALIDATION_ERROR, {
+      details: [{ field: 'attemptId', issue: 'attempt_already_used' }],
+    });
+  }
   deps.payloads.put(context.attemptId, payload.bytes);
 
   try {

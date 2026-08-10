@@ -44,6 +44,14 @@ interface AttemptEntry {
   cancellation: CancellationRecord | null;
   /** Epoch ms when the request finished, or null while it is still running. */
   releasedAt: number | null;
+  /**
+   * The installation that started this attempt.
+   *
+   * Attempt ids are chosen by the client, so without an owner any authenticated
+   * caller could cancel — and read the transfer record of — any attempt id they
+   * cared to guess.
+   */
+  owner: string;
 }
 
 export class TransferStateTracker {
@@ -67,8 +75,20 @@ export class TransferStateTracker {
     }
   }
 
-  begin(attemptId: string): AbortController {
+  /**
+   * Claims an attempt id for one transfer, or returns null if it is taken.
+   *
+   * Null rather than an overwrite. The effect store enforces at-most-once on
+   * effectId, so the same attemptId carrying a fresh effectId walked straight
+   * past it — and the old begin() then replaced the live entry, orphaning the
+   * first request's AbortController so nothing could cancel it any more. The
+   * claim now covers the whole retention window: for as long as the gateway can
+   * describe an attempt, it also refuses to run that id a second time.
+   */
+  begin(attemptId: string, owner: string): AbortController | null {
     this.#sweep();
+    if (this.#attempts.has(attemptId)) return null;
+
     const controller = new AbortController();
     this.#attempts.set(attemptId, {
       state: 'pre-transfer',
@@ -78,6 +98,7 @@ export class TransferStateTracker {
       controller,
       cancellation: null,
       releasedAt: null,
+      owner,
     });
     return controller;
   }
@@ -128,10 +149,14 @@ export class TransferStateTracker {
    * or it finished longer ago than TERMINAL_RETENTION_SECONDS. That is not the
    * same as "nothing was sent", and the caller must not turn it into one.
    */
-  cancel(attemptId: string): CancellationRecord | null {
+  cancel(attemptId: string, owner: string): CancellationRecord | null {
     this.#sweep();
     const entry = this.#attempts.get(attemptId);
     if (!entry) return null;
+    // A cancellation from another installation is answered identically to one
+    // for an attempt that does not exist. A distinguishable "forbidden" would
+    // let a caller enumerate which attempt ids are real.
+    if (entry.owner !== owner) return null;
     if (entry.cancellation) return entry.cancellation;
 
     entry.controller.abort();

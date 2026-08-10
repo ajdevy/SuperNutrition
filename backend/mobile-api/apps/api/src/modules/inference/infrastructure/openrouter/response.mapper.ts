@@ -65,8 +65,29 @@ export const mapHttpFailure = (status: number): InferenceFailure => {
   if (status === 429) return 'rate-limited';
   if (status === 408 || status === 504) return 'timeout';
   if (status === 402) return 'budget-exceeded';
-  if (status === 400 || status === 422) return 'content-rejected';
-  if (status >= 500) return 'provider-unavailable';
+
+  // A dead, revoked or misconfigured key. This used to fall through to
+  // provider-unavailable, which RETRYABLE_FAILURES lists — so the orchestrator
+  // retried a credential that cannot start working, on every request, and the
+  // user was told "temporarily unavailable, try again" about an outage that
+  // would never clear on its own. kill-switch is the non-retryable "the remote
+  // path is not available" signal, and with a dead key that is exactly true.
+  if (status === 401 || status === 403) return 'kill-switch';
+
+  // A 400 or 422 is this gateway's request being wrong, not the user's photo.
+  // Reporting it as content-rejected put our own bug in front of the user as a
+  // verdict on their food and sent them to retake a picture that was never the
+  // problem. malformed-response is non-retryable and surfaces as an internal
+  // error, which is where an operator will look for it.
+  //
+  // The cost, stated plainly: a genuinely moderated photo now reads as an
+  // internal error rather than a content rejection. Telling the two apart needs
+  // the provider's machine-readable error code, and the response body is
+  // deliberately drained and discarded in openrouter.provider.ts so that no
+  // provider prose can reach a domain type or a log line. Of the two possible
+  // mistakes, blaming the user for our bug is the worse one.
+  if (status === 400 || status === 422) return 'malformed-response';
+
   return 'provider-unavailable';
 };
 

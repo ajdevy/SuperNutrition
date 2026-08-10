@@ -5,6 +5,7 @@ import {
   type FetchLike,
 } from './openrouter.provider.js';
 import { mapHttpFailure, mapProviderResponse } from './response.mapper.js';
+import { isRetryable } from '../../domain/inference.types.js';
 import { FOOD_IDENTIFICATION_PROMPT } from './prompts/food-identification.js';
 import type { ModelProfile } from '../../domain/model-profile.js';
 import type { ProviderRequest } from '../../domain/inference-provider.port.js';
@@ -141,13 +142,33 @@ describe('failure mapping', () => {
     [408, 'timeout'],
     [504, 'timeout'],
     [402, 'budget-exceeded'],
-    [400, 'content-rejected'],
-    [422, 'content-rejected'],
+    // M11 — a 400 or 422 is OUR request being wrong. Calling it
+    // content-rejected told the user their photo had been refused and sent them
+    // off to retake a picture that was never the problem.
+    [400, 'malformed-response'],
+    [422, 'malformed-response'],
+    // M11 — a dead or revoked key answers 401/403. Mapped to
+    // provider-unavailable it was retryable, so every request retried a
+    // credential that cannot start working, silently.
+    [401, 'kill-switch'],
+    [403, 'kill-switch'],
     [500, 'provider-unavailable'],
     [503, 'provider-unavailable'],
     [418, 'provider-unavailable'],
   ])('maps HTTP %i to %s', (status, expected) => {
     expect(mapHttpFailure(status)).toBe(expected);
+  });
+
+  it.each([401, 403, 400, 422])('does not retry HTTP %i', (status) => {
+    // The label matters less than whether anything retries: isRetryable is what
+    // the orchestrator's loop actually reads.
+    expect(isRetryable(mapHttpFailure(status))).toBe(false);
+  });
+
+  it('still retries the statuses that can succeed on a second attempt', () => {
+    for (const status of [429, 408, 504, 500, 503]) {
+      expect(isRetryable(mapHttpFailure(status)), String(status)).toBe(true);
+    }
   });
 
   it('never surfaces the provider error body', async () => {

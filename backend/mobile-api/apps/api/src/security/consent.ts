@@ -43,6 +43,12 @@ export interface ConsentVerificationInput {
 /** Maximum receipt lifetime, mirroring the contract's `max_validity_seconds`. */
 export const MAX_CONSENT_VALIDITY_SECONDS = 900;
 
+/**
+ * How far ahead of the gateway a client's clock may be before its receipt is
+ * refused. Ordinary device drift, not a window a caller gets to choose.
+ */
+export const CONSENT_CLOCK_SKEW_SECONDS = 60;
+
 export const computePayloadDigest = (payload: Uint8Array): string =>
   `sha256:${createHash('sha256').update(payload).digest('hex')}`;
 
@@ -105,6 +111,21 @@ export const verifyConsent = (input: ConsentVerificationInput): void => {
   if (expiresAt - recordedAt > MAX_CONSENT_VALIDITY_SECONDS * 1000) {
     throw new GatewayError(GATEWAY_CODES.MALFORMED_CONSENT, {
       details: [{ field: 'consentReceipt.expiresAt', issue: 'exceeds_max_validity' }],
+    });
+  }
+
+  // The window has to have OPENED, not merely be short.
+  //
+  // Every rule above is relative: expiresAt after recordedAt, and the two no
+  // more than MAX_CONSENT_VALIDITY_SECONDS apart. A receipt stamped a year ahead
+  // with a fifteen-minute window satisfies all of them, and the expiry check
+  // below passes too, because that expiry is also a year away. What the contract
+  // bounds is how long ago the user decided, so the decision has to be in the
+  // past. The tolerance is for device clock drift, not for a window the caller
+  // gets to choose.
+  if (recordedAt > now.getTime() + CONSENT_CLOCK_SKEW_SECONDS * 1000) {
+    throw new GatewayError(GATEWAY_CODES.MALFORMED_CONSENT, {
+      details: [{ field: 'consentReceipt.recordedAt', issue: 'recorded_in_the_future' }],
     });
   }
 
