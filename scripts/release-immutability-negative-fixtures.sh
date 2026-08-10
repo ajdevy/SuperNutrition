@@ -122,4 +122,187 @@ if ! run_gate "$addition" "$base"; then
     exit 1
 fi
 
+# ---------------------------------------------------------------------------
+# Fixtures for the rules added alongside the acknowledgement mechanism.
+#
+# An acknowledged edit is the one documented way past the byte-freeze, so every
+# way of abusing one needs a fixture. Without these the mechanism is a hole with
+# a comment beside it.
+# ---------------------------------------------------------------------------
+
+write_acknowledgement() {
+    # dir, path, head_sha256, expires, extra-line
+    local dir="$1"
+    mkdir -p "$dir/contracts/release-catalog/v1"
+    {
+        printf 'schema = "supernutrition.release-acknowledged-edits.v1"\n'
+        printf 'schema_version = 1\n\n[[edit]]\nrelease_id = "demo/v1"\n'
+        printf 'path = "%s"\n' "$2"
+        printf 'head_sha256 = "%s"\n' "$3"
+        printf 'expires = "%s"\n' "$4"
+        printf 'reason = "fixture"\n'
+        test -z "${5:-}" || printf '%s\n' "$5"
+    } >"$dir/contracts/release-catalog/v1/acknowledged-edits.toml"
+}
+
+sha_of() { shasum -a 256 "$1" | cut -d' ' -f1; }
+sha_at_base() { git -C "$1" show "$2:$3" | shasum -a 256 | cut -d' ' -f1; }
+commit_all() { git -C "$1" -c user.email=t@t -c user.name=t add -A && \
+               git -C "$1" -c user.email=t@t -c user.name=t commit -qm "$2"; }
+
+# --- Fixture 4: a file added to an ALREADY PUBLISHED release ----------------
+# This rule did not exist before. Every addition anywhere under contracts/ was
+# permitted, so a whole contract surface could be appended to a frozen release
+# without the gate noticing — which is what happened to mobile-api/v1.
+grow="$work/grow-published-release"
+mkdir -p "$grow"
+seed_repository "$grow"
+base=$(git -C "$grow" rev-parse HEAD)
+
+printf '{"outcome":"smuggled"}\n' >"$grow/contracts/demo/v1/fixtures/extra.json"
+commit_all "$grow" 'append a file to a published release'
+
+if run_gate "$grow" "$base"; then
+    echo "negative fixture unexpectedly passed: file added to an already-published release" >&2
+    exit 1
+fi
+
+# --- Fixture 5: modification present only in the worktree -------------------
+# The gate compared base against HEAD, so an uncommitted edit to a published
+# release was invisible to it while being perfectly visible to every validator
+# that reads the tree.
+dirty="$work/worktree-only"
+mkdir -p "$dirty"
+seed_repository "$dirty"
+base=$(git -C "$dirty" rev-parse HEAD)
+
+printf '{"outcome":"UNCOMMITTED"}\n' >"$dirty/contracts/demo/v1/fixtures/result.json"
+
+if run_gate "$dirty" "$base"; then
+    echo "negative fixture unexpectedly passed: published release modified in the worktree only" >&2
+    exit 1
+fi
+
+# --- Fixture 6: acknowledgement that no longer describes the file -----------
+# The reason head_sha256 is pinned. An acknowledgement authorises one exact
+# change, not that file forever.
+drifted="$work/acknowledgement-drift"
+mkdir -p "$drifted"
+seed_repository "$drifted"
+base=$(git -C "$drifted" rev-parse HEAD)
+target="contracts/demo/v1/fixtures/result.json"
+
+printf '{"outcome":"first-edit"}\n' >"$drifted/$target"
+write_acknowledgement "$drifted" "$target" "$(sha_of "$drifted/$target")" "2099-01-01" \
+    "base_sha256 = \"$(sha_at_base "$drifted" "$base" "$target")\""
+commit_all "$drifted" 'acknowledged edit'
+
+if ! run_gate "$drifted" "$base"; then
+    echo "positive control failed: a correctly pinned acknowledgement was rejected" >&2
+    exit 1
+fi
+
+printf '{"outcome":"second-edit"}\n' >"$drifted/$target"
+if run_gate "$drifted" "$base"; then
+    echo "negative fixture unexpectedly passed: file re-edited after being acknowledged" >&2
+    exit 1
+fi
+
+# --- Fixture 7: expired acknowledgement -------------------------------------
+# The deadline is the point: an acknowledgement defers a decision, it does not
+# replace one.
+expired="$work/acknowledgement-expired"
+mkdir -p "$expired"
+seed_repository "$expired"
+base=$(git -C "$expired" rev-parse HEAD)
+
+printf '{"outcome":"stale-permission"}\n' >"$expired/$target"
+write_acknowledgement "$expired" "$target" "$(sha_of "$expired/$target")" "2000-01-01" \
+    "base_sha256 = \"$(sha_at_base "$expired" "$base" "$target")\""
+commit_all "$expired" 'expired acknowledgement'
+
+if run_gate "$expired" "$base"; then
+    echo "negative fixture unexpectedly passed: expired acknowledgement still authorised an edit" >&2
+    exit 1
+fi
+
+# --- Fixture 8: acknowledgement of the wrong KIND of change -----------------
+# An entry written for a modification must not wave through an addition, or the
+# `added` flag is decoration.
+wrongkind="$work/acknowledgement-wrong-kind"
+mkdir -p "$wrongkind"
+seed_repository "$wrongkind"
+base=$(git -C "$wrongkind" rev-parse HEAD)
+newfile="contracts/demo/v1/fixtures/extra.json"
+
+printf '{"outcome":"new-file"}\n' >"$wrongkind/$newfile"
+write_acknowledgement "$wrongkind" "$newfile" "$(sha_of "$wrongkind/$newfile")" "2099-01-01" \
+    'base_sha256 = "0000000000000000000000000000000000000000000000000000000000000000"'
+commit_all "$wrongkind" 'addition carrying a modification acknowledgement'
+
+if run_gate "$wrongkind" "$base"; then
+    echo "negative fixture unexpectedly passed: addition authorised by a modification acknowledgement" >&2
+    exit 1
+fi
+
+# --- Fixture 9: stale acknowledgement for an unchanged file -----------------
+# Left behind, it would silently authorise the next edit to that file.
+stale="$work/acknowledgement-stale"
+mkdir -p "$stale"
+seed_repository "$stale"
+base=$(git -C "$stale" rev-parse HEAD)
+
+write_acknowledgement "$stale" "$target" "$(sha_of "$stale/$target")" "2099-01-01" \
+    'base_sha256 = "0000000000000000000000000000000000000000000000000000000000000000"'
+commit_all "$stale" 'acknowledgement with nothing to acknowledge'
+
+if run_gate "$stale" "$base"; then
+    echo "negative fixture unexpectedly passed: stale acknowledgement left in place" >&2
+    exit 1
+fi
+
+# --- Fixture 10: catalog status transitions ---------------------------------
+# current -> superseded is the documented act of recording a new digest and must
+# be allowed; the old line-count rule rejected it. The reverse would let a stale
+# row be re-pointed at the live tree.
+promote="$work/catalog-supersede"
+mkdir -p "$promote"
+seed_repository "$promote"
+base=$(git -C "$promote" rev-parse HEAD)
+
+printf '[[entry]]\nrelease_id = "demo/v1"\nstatus = "superseded"\ndigest = "%s"\n' \
+    "0000000000000000000000000000000000000000000000000000000000000000" \
+    >"$promote/contracts/release-catalog/v1/digests.toml"
+cat >>"$promote/contracts/release-catalog/v1/digests.toml" <<'ENTRY'
+
+[[entry]]
+release_id = "demo/v1"
+status = "current"
+digest = "4444444444444444444444444444444444444444444444444444444444444444"
+ENTRY
+commit_all "$promote" 'supersede and append'
+
+if ! run_gate "$promote" "$base"; then
+    echo "positive control failed: marking an entry superseded while appending a new one was rejected" >&2
+    exit 1
+fi
+
+demote="$work/catalog-demote"
+mkdir -p "$demote"
+seed_repository "$demote"
+printf '[[entry]]\nrelease_id = "demo/v1"\nstatus = "superseded"\ndigest = "%s"\n' \
+    "0000000000000000000000000000000000000000000000000000000000000000" \
+    >"$demote/contracts/release-catalog/v1/digests.toml"
+commit_all "$demote" 'supersede'
+mid=$(git -C "$demote" rev-parse HEAD)
+printf '[[entry]]\nrelease_id = "demo/v1"\nstatus = "current"\ndigest = "%s"\n' \
+    "0000000000000000000000000000000000000000000000000000000000000000" \
+    >"$demote/contracts/release-catalog/v1/digests.toml"
+commit_all "$demote" 'promote back to current'
+
+if run_gate "$demote" "$mid"; then
+    echo "negative fixture unexpectedly passed: superseded entry promoted back to current" >&2
+    exit 1
+fi
+
 echo "release immutability negative fixtures: OK"
