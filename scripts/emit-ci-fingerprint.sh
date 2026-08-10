@@ -58,33 +58,38 @@ lifecycle_digest="$(digest_paths \
   mobile/product-lifecycle.toml \
   web/landing/product-lifecycle.toml \
   backend/mobile-api/product-lifecycle.toml)"
-# RELEASE.md became a hashed release input for these three contracts in commit
-# 83547213, but was not added here, so a RELEASE.md edit moved each release
-# digest while leaving this fingerprint unchanged — two surfaces disagreeing
-# about what a release is. product_identity_digest below already included it.
+# Per-release digests rather than a hand-listed subset of files.
+#
+# This block used to name four of contracts/mobile-api/v1's eighteen declared
+# files, so an edit to gateway-response.toml, the error taxonomy, transfer
+# states, consent receipts or any fixture left the fingerprint unchanged — a
+# same-SHA evidence record that could not see most of the contract it claimed to
+# cover. Deriving from each release's own digest fixes that permanently: a
+# release digest covers every file the release declares, so nothing can be added
+# to a release and stay outside the fingerprint.
+#
 # The catalog and the scripts that define and enforce release identity are
 # included for the same reason: a fingerprint that cannot see the rules is not
 # evidence about them.
-contract_catalog_digest="$(digest_paths \
-  contracts/mobile-api/v1/schema.toml \
-  contracts/mobile-api/v1/compatibility-matrix.toml \
-  contracts/mobile-api/v1/fixtures/empty-analysis-request.toml \
-  contracts/mobile-api/v1/RELEASE.md \
-  contracts/inference/v1/schema.toml \
-  contracts/inference/v1/compatibility-matrix.toml \
-  contracts/inference/v1/RELEASE.md \
-  contracts/inference/v1/fixtures/capability-ready.json \
-  contracts/inference/v1/fixtures/abstention-result.json \
-  contracts/inference/v1/fixtures/candidate-result.json \
-  contracts/inference/v1/fixtures/failure-result.json \
-  contracts/inference/v1/fixtures/telemetry-event.json \
-  contracts/interaction-policy/v1/schema.toml \
-  contracts/interaction-policy/v1/compatibility.toml \
-  contracts/interaction-policy/v1/fixtures/defaults.toml \
-  contracts/interaction-policy/v1/RELEASE.md \
-  contracts/release-catalog/v1/digests.toml \
-  scripts/emit-release-digest.sh \
-  scripts/verify-release-immutability.sh)"
+release_digests() {
+    local release
+    for release in "$@"; do
+        printf '%s\0%s\0' "$release" "$("${repo_root}/scripts/emit-release-digest.sh" "${repo_root}/${release}")"
+    done
+}
+
+contract_catalog_digest="$( { release_digests \
+  contracts/mobile-api/v1 \
+  contracts/inference/v1 \
+  contracts/interaction-policy/v1 \
+  contracts/market-policy/v1
+  digest_paths \
+    contracts/release-catalog/v1/digests.toml \
+    contracts/release-catalog/v1/acknowledged-edits.toml \
+    scripts/lib/release_digest.py \
+    scripts/emit-release-digest.sh \
+    scripts/verify-release-catalog.sh \
+    scripts/verify-release-immutability.sh; } | hash_stream)"
 product_identity_digest="$(digest_paths \
 	contracts/product-identity/v1/schema.toml \
 	contracts/product-identity/v1/compatibility.toml \

@@ -49,7 +49,7 @@ release_id = "mobile-api/v1"
 path = "contracts/mobile-api/v1/compatibility-matrix.toml"
 base_commit = "c091a4382725db10a4524309711dd7512c833f28"
 base_sha256 = "84fd5d3b737cb8860ba56211cb0c47575bfa198edf55990d42778cb500233921"
-head_sha256 = "6282907e344cca51162bcc6ec59b5460c7d38161acd15acf166a789ff7295356"
+head_sha256 = "6c90b84bb8fc91fc2735edfd03311d994284d669e0da088b7b00b1d0a89791e0"
 expires = "2026-09-30"
 reason = """
 Carries the self-referential release digest, so it necessarily moves whenever \
