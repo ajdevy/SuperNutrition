@@ -415,26 +415,73 @@ describe('DELETE /gw/v1/inference/:attemptId', () => {
     expect(response.json().error.gatewayCode).toBe('authentication-failed');
   });
 
-  it('returns 204 and no body for an attempt that sent nothing', async () => {
-    const response = await server.app.inject({
+  it('refuses to guess about an attempt it has no record of', () => {
+    // This used to answer 204, whose contract meaning is "Nothing was sent.
+    // This is a complete guarantee." The gateway cannot know that about an
+    // attempt it never saw, and the guarantee is about a user's photo.
+    return server.app
+      .inject({
+        method: 'DELETE',
+        url: '/gw/v1/inference/att_1111111111111111',
+        headers: { authorization: TOKEN },
+      })
+      .then((response) => {
+        expect(response.statusCode).toBe(400);
+        expect(response.json().error.gatewayCode).toBe('validation-error');
+        expect(response.json().error.details).toContainEqual({
+          field: 'attemptId',
+          issue: 'unknown_attempt',
+        });
+      });
+  });
+
+  // H2, at the HTTP layer. This is the ordinary client sequence — send the
+  // photo, get the 200, then ask for the bytes to be deleted — and it was the
+  // sequence that produced the false 204, because the pipeline's `finally` had
+  // already discarded the attempt by the time the DELETE arrived.
+  it('tells the truth about an attempt that already completed', async () => {
+    const analyzed = await server.app.inject({
+      method: 'POST',
+      url: '/gw/v1/inference/photo',
+      ...multipartBody(context(), JPEG),
+    });
+    expect(analyzed.statusCode).toBe(200);
+
+    const cancelled = await server.app.inject({
       method: 'DELETE',
       url: '/gw/v1/inference/att_0000000000000000',
       headers: { authorization: TOKEN },
     });
-    expect(response.statusCode).toBe(204);
-    expect(response.body).toBe('');
+
+    expect(cancelled.statusCode).toBe(202);
+    const record = cancelled.json();
+    expect(record.transferState).toBe('transferred');
+    expect(record.bytesTransferred).toBe(JPEG.byteLength);
+    expect(record.downstreamDeletionRequested).toBe(true);
+    // The client already holds this result; it is not being discarded.
+    expect(record.resultSuppressed).toBe(false);
+    expect(record.recallClaimed).toBe(false);
   });
 
-  it('never claims recall', async () => {
-    const response = await server.app.inject({
-      method: 'DELETE',
-      url: '/gw/v1/inference/att_1111111111111111',
-      headers: { authorization: TOKEN },
+  it('returns the same terminal record when the client cancels twice', async () => {
+    // transfer-states.toml: repeat_cancellation = "returns-the-same-terminal-record".
+    await server.app.inject({
+      method: 'POST',
+      url: '/gw/v1/inference/photo',
+      ...multipartBody(context(), JPEG),
     });
-    expect([202, 204]).toContain(response.statusCode);
-    if (response.statusCode === 202) {
-      expect(response.json().recallClaimed).toBe(false);
-    }
+
+    const del = () =>
+      server.app.inject({
+        method: 'DELETE',
+        url: '/gw/v1/inference/att_0000000000000000',
+        headers: { authorization: TOKEN },
+      });
+
+    const first = await del();
+    const second = await del();
+    expect(second.statusCode).toBe(first.statusCode);
+    expect(second.json()).toEqual(first.json());
   });
 });
 

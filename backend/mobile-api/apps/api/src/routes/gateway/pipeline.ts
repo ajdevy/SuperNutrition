@@ -217,6 +217,11 @@ export const runInferencePipeline = async (
         : abstentionOutcome('no-food-detected')
       : outcomeForFailure(result.error);
 
+    // The client is about to hold this result. A cancellation arriving after
+    // this point cannot honestly say the result was suppressed, so the tracker
+    // is told before `finally` retires the attempt.
+    deps.transfers.markResultDelivered(context.attemptId);
+
     return {
       status: 200,
       headers: { ...rateLimitHeaders(rateDecision) },

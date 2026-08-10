@@ -146,6 +146,17 @@ export const registerGatewayRoutes = async (
         const record = deps.transfers.cancel(request.params.attemptId);
         deps.payloads.dispose(request.params.attemptId);
 
+        if (record === null) {
+          // No record: never begun, or finished longer ago than the retention
+          // window. This used to answer 204, which by contract means "nothing
+          // was sent, this is a complete guarantee" — a promise about the
+          // user's photo the gateway had no basis for. Declining to answer is
+          // honest and needs no new code in the published taxonomy.
+          throw new GatewayError(GATEWAY_CODES.VALIDATION_ERROR, {
+            details: [{ field: 'attemptId', issue: 'unknown_attempt' }],
+          });
+        }
+
         const status = cancellationStatus(record);
         reply.status(status).header('X-Correlation-Id', correlationId);
         // 204 carries no body by definition; the record is still authoritative
