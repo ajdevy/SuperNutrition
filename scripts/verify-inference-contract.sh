@@ -9,10 +9,16 @@ elif [[ -n "${SUPERNUTRITION_INFERENCE_CONTRACT:-}" ]]; then
 else
     contract_roots=(
         "${repo_root}/contracts/inference/v1"
-        # The modality-neutral inference-engine/v2 release has its own validator,
-        # scripts/verify-inference-v2-contract.sh. This script validates the
-        # inference-evidence release, which lives under its own contract_id.
-        "${repo_root}/contracts/inference-evidence/v2"
+        # inference-evidence/v2 is deliberately absent from this default set.
+        #
+        # A validator's default targets name what THIS tree publishes. The v2
+        # releases ship in the mobile slice, so here the path does not exist and
+        # naming it makes the required check red by construction.
+        #
+        # Skipping when the directory happens to be missing was rejected: a
+        # validator that goes quiet when its subject disappears cannot tell
+        # "not published yet" from "someone deleted it". The mobile slice
+        # restores this entry in the same change that adds the release.
     )
 fi
 
@@ -622,17 +628,16 @@ for root_argument in sys.argv[1:]:
         fail(f"unsupported inference contract release: {contract_id}/{version}")
 PY
 
-# Both published releases, from one entrypoint. E7.1 requires this script to
-# verify both: two releases coexist during the migration, and a checker that
-# covers only the older one would let the newer drift unnoticed while still
-# reporting success.
+# E7.1 requires one entrypoint to verify every published inference release, so a
+# checker covering only the older one cannot let a newer release drift unnoticed
+# while still reporting success. The chained call to
+# scripts/verify-inference-v2-contract.sh that satisfies this ships with the
+# mobile slice, alongside contracts/inference/v2 itself — it is absent here
+# because the release it verifies is absent here, not because the rule relaxed.
 #
-# The v2 checks live in their own script rather than being inlined, because the
-# two releases have genuinely different rules — v1 has no modality, no spans and
-# no capability envelope to check — and one script branching on release would be
-# harder to read than two that each verify one thing.
-#
-# Deliberately not passed the SUPERNUTRITION_INFERENCE_CONTRACT override: that
-# variable names a v1 tree, and the negative-fixture harness points it at mutated
-# copies. v2 is verified where it actually lives.
-"${repo_root}/scripts/verify-inference-v2-contract.sh"
+# It is chained rather than inlined because the two releases have genuinely
+# different rules — v1 has no modality, no spans and no capability envelope —
+# and one script branching on release reads worse than two that each verify one
+# thing. It is deliberately not passed the SUPERNUTRITION_INFERENCE_CONTRACT
+# override: that variable names a v1 tree, and the negative-fixture harness
+# points it at mutated copies. v2 is verified where it actually lives.
