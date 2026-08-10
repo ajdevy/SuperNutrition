@@ -248,3 +248,73 @@ describe('idempotency', () => {
     await expect(store.complete('missing', {})).resolves.toBeUndefined();
   });
 });
+
+/**
+ * M1 — the in-memory stores never forgot anything.
+ *
+ * REDIS_URL is required by the env schema and read into config, but nothing
+ * wires RedisRateLimiter or RedisEffectStore: every deployment runs the
+ * in-memory implementations. Two consequences. AD-18 at-most-once and AD-21
+ * replay detection hold per process, not across replicas or restarts — recorded
+ * in docs rather than fixed here, because wiring Redis means adding a client
+ * dependency and a connection lifecycle this change is not the place for. And
+ * the maps grew without bound: one entry per distinct principal, per claim, per
+ * idempotency key, for the life of the process. That half is fixed.
+ */
+describe('M1 — in-memory stores stay bounded', () => {
+  it('forgets a principal once its hits have aged out', async () => {
+    let now = 1_000_000;
+    const limiter = new InMemoryRateLimiter(
+      [{ layer: 'ip', limit: 5, windowSeconds: 60 }],
+      () => now,
+    );
+
+    for (let i = 0; i < 50; i += 1) {
+      await limiter.check({ layer: 'ip', principal: `198.51.100.${i}` });
+    }
+    expect(limiter.trackedPrincipals).toBe(50);
+
+    // Well past the window, one more call from anybody sweeps the rest.
+    now += 61_000;
+    await limiter.check({ layer: 'ip', principal: '203.0.113.1' });
+    expect(limiter.trackedPrincipals).toBe(1);
+  });
+
+  it('drops expired effect claims instead of keeping them forever', async () => {
+    let now = 1_000_000;
+    const store = new InMemoryEffectStore(() => now);
+
+    for (let i = 0; i < 20; i += 1) {
+      await store.claimOnce(`att_${i}`, `eff_${i}`, 60);
+    }
+    expect(store.trackedClaims).toBe(20);
+
+    now += 61_000;
+    await store.claimOnce('att_fresh', 'eff_fresh', 60);
+    expect(store.trackedClaims).toBe(1);
+  });
+
+  it('still refuses a replayed claim inside its TTL', async () => {
+    // The sweep must not become a way to replay: expiry is the only thing that
+    // releases a claim.
+    let now = 1_000_000;
+    const store = new InMemoryEffectStore(() => now);
+    expect(await store.claimOnce('att_1', 'eff_1', 60)).toBe(true);
+    now += 30_000;
+    expect(await store.claimOnce('att_1', 'eff_1', 60)).toBe(false);
+  });
+
+  it('drops expired idempotency entries', async () => {
+    let now = 1_000_000;
+    const store = new InMemoryIdempotencyStore(() => now);
+
+    for (let i = 0; i < 20; i += 1) {
+      await store.claim(`user:${i}`, 'digest', 60);
+    }
+    expect(store.trackedEntries).toBe(20);
+
+    now += 61_000;
+    await store.claim('user:fresh', 'digest', 60);
+    expect(store.trackedEntries).toBe(1);
+  });
+});

@@ -364,6 +364,8 @@ describe('superseding a meal', () => {
   it('points the replacement at what it supersedes and retains the original', async () => {
     const recorder = recordingDb([
       [{ id: 'meal-1' }],
+      // The M8 head check: no existing correction points at meal-1.
+      [],
       [eventRow({ id: 'meal-2', revision: 2 })],
       [],
       [],
@@ -462,7 +464,7 @@ describe('composing into a caller transaction', () => {
   });
 
   it('reuses the handle it is given on supersede', async () => {
-    const recorder = recordingDb([[{ id: 'meal-1' }], [eventRow({ id: 'meal-2' })]]);
+    const recorder = recordingDb([[{ id: 'meal-1' }], [], [eventRow({ id: 'meal-2' })]]);
     const outer = recorder.db as unknown as Parameters<DrizzleMealEventRepository['supersede']>[4];
 
     const result = await new DrizzleMealEventRepository(recorder.db).supersede(
@@ -474,6 +476,55 @@ describe('composing into a caller transaction', () => {
     );
 
     expect(recorder.transactions).toBe(0);
+    expect(result?.event.id).toBe('meal-2');
+  });
+});
+
+/**
+ * M8 — a meal could be corrected twice, and both corrections stayed live.
+ *
+ * supersede() checked that the original existed and nothing else, so a retry or
+ * a second device produced two rows pointing at the same original. Both were
+ * heads, and the feed counted the meal twice. The unique index on supersedes_id
+ * is what makes that impossible; this check is what turns the second attempt
+ * into the 404 the caller already understands rather than a constraint
+ * violation surfacing as a 500.
+ */
+describe('M8 — one correction per meal', () => {
+  it('refuses a second correction of the same original', async () => {
+    const recorder = recordingDb([
+      [{ id: 'meal-1' }], // the original is there
+      [{ id: 'meal-2' }], // ...and something already supersedes it
+    ]);
+
+    const result = await new DrizzleMealEventRepository(recorder.db).supersede(
+      'meal-1',
+      { ...newEvent, id: 'meal-3', revision: 2 },
+      [],
+      null,
+    );
+
+    expect(result).toBeNull();
+    // Nothing was written: no second head, no orphaned items or snapshot.
+    expect(recorder.calls.some((call) => call.op === 'insert')).toBe(false);
+  });
+
+  it('still allows correcting a meal that is the current head', async () => {
+    const recorder = recordingDb([
+      [{ id: 'meal-1' }],
+      [], // nothing supersedes it yet
+      [eventRow({ id: 'meal-2', revision: 2 })],
+      [],
+      [],
+    ]);
+
+    const result = await new DrizzleMealEventRepository(recorder.db).supersede(
+      'meal-1',
+      { ...newEvent, id: 'meal-2', revision: 2 },
+      [],
+      null,
+    );
+
     expect(result?.event.id).toBe('meal-2');
   });
 });

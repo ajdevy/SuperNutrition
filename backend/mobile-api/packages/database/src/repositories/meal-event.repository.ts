@@ -249,6 +249,19 @@ export class DrizzleMealEventRepository extends DrizzleRepository {
         .limit(1);
       if (!original[0]) return null;
 
+      // M8 — refuse to correct a meal that has already been corrected.
+      //
+      // The unique index on supersedes_id is what makes a second head
+      // impossible rather than merely unlikely, but a constraint violation
+      // surfaces as a 500. A repeated correction is a stale client, not a server
+      // fault, so it gets the same null the caller already turns into a 404.
+      const alreadySuperseded = await conn
+        .select({ id: mealEvents.id })
+        .from(mealEvents)
+        .where(eq(mealEvents.supersedesId, originalId))
+        .limit(1);
+      if (alreadySuperseded[0]) return null;
+
       return this.#insertAggregate(
         conn,
         { ...replacement, supersedesId: originalId },

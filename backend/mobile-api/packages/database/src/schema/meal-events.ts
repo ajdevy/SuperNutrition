@@ -6,6 +6,7 @@ import {
   date,
   timestamp,
   index,
+  uniqueIndex,
   type AnyPgColumn,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
@@ -50,6 +51,15 @@ export const mealEvents = pgTable(
     index('meal_events_user_local_date_idx').on(t.userId, t.localDate),
     index('meal_events_user_status_idx').on(t.userId, t.status),
     index('meal_events_attempt_idx').on(t.attemptId),
+    // M8 — one correction per original, enforced by the database.
+    //
+    // supersede() checked that the original existed and nothing more, so two
+    // corrections of the same meal — a retry, or two devices — both inserted,
+    // both pointed at the same original, and both became live heads. The feed
+    // then counted that meal twice. In Postgres a unique index over a nullable
+    // column still permits any number of NULLs, so this constrains corrections
+    // without touching the ordinary rows that supersede nothing.
+    uniqueIndex('meal_events_supersedes_unique_idx').on(t.supersedesId),
   ],
 );
 
