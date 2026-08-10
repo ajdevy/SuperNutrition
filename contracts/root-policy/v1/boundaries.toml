@@ -148,9 +148,15 @@ test_entrypoint = "scripts/release-immutability-negative-fixtures.sh"
 
 [[executable]]
 path = "scripts/release-immutability-negative-fixtures.sh"
-purpose = "negative fixtures for in-place release mutation, catalog rewrite, and deletion, plus a publishing positive control"
+purpose = "negative fixtures for in-place release mutation, catalog rewrite, deletion, additions to a published release, worktree-only edits, and acknowledgement drift, expiry, kind mismatch and staleness, plus publishing and supersession positive controls"
 mutates_repository = false
 test_entrypoint = "scripts/release-immutability-negative-fixtures.sh"
+
+[[executable]]
+path = "scripts/verify-release-catalog.sh"
+purpose = "read-only recomputation of every current release digest recorded in the catalog"
+mutates_repository = false
+test_entrypoint = "scripts/verify-release-catalog.sh"
 
 [[executable]]
 path = "scripts/emit-release-digest.sh"

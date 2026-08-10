@@ -19,6 +19,12 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          # Full history. The immutability gate compares this tree against the
+          # base revision, and under the default shallow clone that revision is
+          # simply absent — git merge-base then narrows the comparison, or finds
+          # nothing, and the gate reports OK having checked almost nothing.
+          fetch-depth: 0
       - name: Set up JDK 21 and Gradle cache
         uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
         with:
@@ -31,6 +37,18 @@ jobs:
         run: scripts/inference-contract-negative-fixtures.sh
       - name: Verify repository root boundaries
         run: scripts/verify-root-boundaries.sh
+      - name: Verify the release catalog describes the tree
+        run: scripts/verify-release-catalog.sh
+      - name: Verify published releases are immutable
+        # The base comes from the event, never from a file in the reviewed tree:
+        # an in-tree value is exactly what the change under review controls. On a
+        # push there is no PR base, so the gate falls back to merge-base against
+        # origin/main.
+        env:
+          SUPERNUTRITION_IMMUTABILITY_BASE: ${{ github.event.pull_request.base.sha }}
+        run: scripts/verify-release-immutability.sh
+      - name: Run release immutability negative fixtures
+        run: scripts/release-immutability-negative-fixtures.sh
       - name: Test report generators
         run: python3 -m unittest discover -s scripts/tests -p 'test_*.py'
       - name: Run mobile JVM coverage and generate reports
