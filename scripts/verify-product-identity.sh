@@ -50,10 +50,10 @@ visible_keys = (
 field_schema = schema.get("fields", {})
 expected_field_values = {
     "canonical_name": "SuperNutrition",
-    "installed_display_name": "SuperNutrition",
-    "launcher_name": "SuperNutrition",
-    "in_app_name": "SuperNutrition",
-    "accessibility_name": "SuperNutrition",
+    "installed_display_name": "Super Nutrition",
+    "launcher_name": "Super Nutrition",
+    "in_app_name": "Super Nutrition",
+    "accessibility_name": "Super Nutrition",
     "store_listing_title": "SuperNutrition AI nutritionist",
     "android_application_id": "com.supernutrition.android",
     "ios_bundle_identifier": "com.supernutrition.ios",
@@ -110,8 +110,15 @@ for relative, content in sorted(
 if compatibility.get("digest") != release_digest.hexdigest():
     fail("product-identity compatibility digest is stale")
 
+expected_visible_values = {
+    "canonical_name": "SuperNutrition",
+    "installed_display_name": "Super Nutrition",
+    "launcher_name": "Super Nutrition",
+    "in_app_name": "Super Nutrition",
+    "accessibility_name": "Super Nutrition",
+}
 for key in visible_keys:
-    if mobile.get(key) != "SuperNutrition" or contract.get(key) != "SuperNutrition":
+    if mobile.get(key) != expected_visible_values[key] or contract.get(key) != expected_visible_values[key]:
         fail(f"visible identity mismatch for {key}")
 forbidden = mobile.get("forbidden_visible_variants", {})
 if set(forbidden.get("values", [])) != {"SuperNutrition AI nutritionist", "AI nutritionist"}:
@@ -161,7 +168,7 @@ for path in android_string_files:
     if any(value in text for value in forbidden.get("values", [])):
         fail(f"forbidden visible variant found in Android resource {path.relative_to(repo_root)}")
 android_strings = (repo_root / "mobile/apps/androidApp/src/main/res/values/strings.xml").read_text(encoding="utf-8")
-if not re.search(r'<string\s+name="app_name"\s*>SuperNutrition</string>', android_strings):
+if not re.search(r'<string\s+name="app_name"\s*>Super Nutrition</string>', android_strings):
     fail("Android visible label does not match the identity manifest")
 
 ios_root = repo_root / "mobile/apps/iosApp"
@@ -176,7 +183,7 @@ for path in ios_identity_files:
     if any(value in text for value in forbidden.get("values", [])):
         fail(f"forbidden visible variant found in iOS resource {path.relative_to(repo_root)}")
 ios_info = (repo_root / "mobile/apps/iosApp/Info.plist").read_text(encoding="utf-8")
-if not re.search(r'<key>CFBundleDisplayName</key>\s*<string>SuperNutrition</string>', ios_info):
+if not re.search(r'<key>CFBundleDisplayName</key>\s*<string>Super Nutrition</string>', ios_info):
     fail("iOS display name does not match the identity manifest")
 ios_project = (repo_root / "mobile/apps/iosApp/SuperNutritionUIAcceptance.xcodeproj/project.pbxproj").read_text(encoding="utf-8")
 acceptance_product_names = set(re.findall(

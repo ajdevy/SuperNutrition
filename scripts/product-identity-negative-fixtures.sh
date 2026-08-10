@@ -127,7 +127,7 @@ import sys
 
 path = Path(sys.argv[1])
 text = path.read_text(encoding="utf-8")
-path.write_text(text.replace('in_app_name = "SuperNutrition"', 'in_app_name = "SuperNutrition AI nutritionist"', 1), encoding="utf-8")
+path.write_text(text.replace('in_app_name = "Super Nutrition"', 'in_app_name = "SuperNutrition AI nutritionist"', 1), encoding="utf-8")
 PY
 refresh_digest "$visible_store_leak/contracts/product-identity/v1"
 expect_rejected visible-store-leak "$visible_store_leak"
@@ -139,7 +139,7 @@ import sys
 
 path = Path(sys.argv[1])
 path.write_text(
-    path.read_text(encoding="utf-8").replace("SuperNutrition", "SuperNutrition AI nutritionist", 1),
+    path.read_text(encoding="utf-8").replace("Super Nutrition", "SuperNutrition AI nutritionist", 1),
     encoding="utf-8",
 )
 PY
@@ -152,7 +152,7 @@ import sys
 
 path = Path(sys.argv[1])
 path.write_text(
-    path.read_text(encoding="utf-8").replace("<string>SuperNutrition</string>", "<string>AI nutritionist</string>", 1),
+        path.read_text(encoding="utf-8").replace("<string>Super Nutrition</string>", "<string>AI nutritionist</string>", 1),
     encoding="utf-8",
 )
 PY
@@ -167,8 +167,8 @@ path = Path(sys.argv[1])
 text = path.read_text(encoding="utf-8")
 path.write_text(
     text.replace(
-        'PRODUCT_BUNDLE_IDENTIFIER = "com.supernutrition.ios.uiacceptance"; PRODUCT_NAME = "SuperNutritionUIAcceptance"',
-        'PRODUCT_BUNDLE_IDENTIFIER = "com.supernutrition.ios.uiacceptance"; PRODUCT_NAME = "SuperNutrition"',
+        'PRODUCT_BUNDLE_IDENTIFIER = com.supernutrition.ios.uiacceptance;\n\t\t\t\tPRODUCT_NAME = SuperNutritionUIAcceptance',
+        'PRODUCT_BUNDLE_IDENTIFIER = com.supernutrition.ios.uiacceptance;\n\t\t\t\tPRODUCT_NAME = SuperNutrition',
     ),
     encoding="utf-8",
 )

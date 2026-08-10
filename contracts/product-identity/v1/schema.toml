@@ -11,19 +11,19 @@ allowed_values = ["SuperNutrition"]
 
 [fields.installed_display_name]
 type = "string"
-allowed_values = ["SuperNutrition"]
+allowed_values = ["Super Nutrition"]
 
 [fields.launcher_name]
 type = "string"
-allowed_values = ["SuperNutrition"]
+allowed_values = ["Super Nutrition"]
 
 [fields.in_app_name]
 type = "string"
-allowed_values = ["SuperNutrition"]
+allowed_values = ["Super Nutrition"]
 
 [fields.accessibility_name]
 type = "string"
-allowed_values = ["SuperNutrition"]
+allowed_values = ["Super Nutrition"]
 
 [fields.store_listing_title]
 type = "string"
