@@ -4,8 +4,18 @@ set -euo pipefail
 repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 contract_root="${SUPERNUTRITION_MOBILE_API_CONTRACT:-${repo_root}/contracts/mobile-api/v1}"
 
+# The digest algorithm is shared with scripts/emit-release-digest.sh rather than
+# inlined here. Two implementations produced two different digests for the same
+# release, and the workflow RELEASE.md documents followed the other one.
+export SUPERNUTRITION_SCRIPT_LIB="${repo_root}/scripts/lib"
+
 python3 - "$contract_root" <<'PY'
 from hashlib import sha256
+import os
+import sys
+
+sys.path.insert(0, os.environ["SUPERNUTRITION_SCRIPT_LIB"])
+import release_digest
 from pathlib import Path
 import re
 import sys
@@ -30,6 +40,7 @@ def load(relative):
 
 # --- required release members -------------------------------------------------
 
+DOCUMENTATION = ["RELEASE.md"]
 SCHEMAS = [
     "schema.toml",
     "gateway-request.toml",
@@ -264,31 +275,27 @@ if pairs != required_pairs:
 
 # --- verification 6: digest over ALL sorted release files --------------------
 #
-# RELEASE.md describes the digest as covering "the sorted release files". A
-# hardcoded subset silently stops covering anything added later, so the set is
-# derived from the filesystem and cross-checked against the declared members.
+# Computed by scripts/lib/release_digest.py, the same module the emitter uses.
+# It used to be an inlined loop over `*.toml` only, while scripts/emit-release-
+# digest.sh hashed every file — so contracts/mobile-api/v1 had two defensible
+# digests, and the workflow RELEASE.md documents (run the emitter, paste the
+# value) produced a number this verifier rejected. An operator told their digest
+# is stale, who follows the only documented way to refresh it and is told the
+# same thing again, ends up editing by hand until something passes.
+#
+# All files is the correct set: RELEASE.md says "the sorted release files",
+# schema.toml declares documentation = ["RELEASE.md"] as a member, and the
+# catalog records these releases under release-sha256-v2, whose defining change
+# was RELEASE.md becoming a hashed input.
 
-toml_files = sorted(
-    path.relative_to(root).as_posix() for path in root.rglob("*.toml") if path.is_file()
-)
-if toml_files != sorted(SCHEMAS + FIXTURES):
-    fail(f"release contains undeclared or missing TOML files: {toml_files}")
+declared = sorted(SCHEMAS + FIXTURES + DOCUMENTATION)
+present = sorted(path.relative_to(root).as_posix() for path in root.rglob("*") if path.is_file())
+if present != declared:
+    fail(f"release contains undeclared or missing files: {sorted(set(present) ^ set(declared))}")
 
-digest = sha256()
-for relative in toml_files:
-    content = (root / relative).read_bytes()
-    if relative == "compatibility-matrix.toml":
-        content = re.sub(
-            rb'(?m)^digest\s*=\s*"[a-f0-9]{64}"\s*$',
-            b'digest = "<release-digest>"',
-            content,
-        )
-    digest.update(relative.encode("utf-8"))
-    digest.update(b"\0")
-    digest.update(content)
-
-if matrix.get("digest") != digest.hexdigest():
-    fail(f"compatibility digest is stale (computed {digest.hexdigest()})")
+computed = release_digest.compute(root)
+if matrix.get("digest") != computed:
+    fail(f"compatibility digest is stale (computed {computed})")
 
 # --- verification 7: no executable or source material ------------------------
 
