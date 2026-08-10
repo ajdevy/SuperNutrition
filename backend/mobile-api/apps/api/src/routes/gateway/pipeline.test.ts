@@ -102,7 +102,13 @@ const contextFor = (bytes: Uint8Array, over: Record<string, unknown> = {}) => ({
   effectId: 'eff_0000000000000000',
   modality: 'photo',
   claimedMarketJurisdiction: 'ZZ',
-  consentReceipt: receiptFor(bytes),
+  // The receipt is bound to the attempt it consents to, so overriding attemptId
+  // has to carry into the receipt or the request is refused as malformed
+  // consent — which is the binding working, not a test inconvenience.
+  consentReceipt: {
+    ...receiptFor(bytes),
+    ...(typeof over.attemptId === 'string' ? { attemptId: over.attemptId } : {}),
+  },
   inferenceContext: {
     catalogCountry: 'ZZ',
     mealType: 'lunch',
@@ -415,10 +421,19 @@ describe('provider failure is an outcome, not an HTTP error', () => {
 
     for (const [index, failure] of failures.entries()) {
       orchestrator.result = { ok: false, error: failure as never };
-      // A fresh effect id per iteration: a repeated one is a duplicate transfer
-      // start and would be refused before the orchestrator is reached.
-      const effectId = `eff_00000000000000${index.toString().padStart(2, '0')}`;
-      const outcome = (await run(contextFor(JPEG, { effectId }))).body.outcome;
+      // A fresh effect id AND a fresh attempt id per iteration. Both are
+      // at-most-once: reusing either is a duplicate transfer start and is
+      // refused before the orchestrator is reached, which is what a real client
+      // doing a second analysis does — it mints a new attempt.
+      const suffix = index.toString().padStart(2, '0');
+      const outcome = (
+        await run(
+          contextFor(JPEG, {
+            effectId: `eff_00000000000000${suffix}`,
+            attemptId: `att_00000000000000${suffix}`,
+          }),
+        )
+      ).body.outcome;
 
       if (outcome.outcomeType !== 'failure') throw new Error(`expected a failure for ${failure}`);
       expect(released.has(outcome.failureCode as never), outcome.failureCode).toBe(true);

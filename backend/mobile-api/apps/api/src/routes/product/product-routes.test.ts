@@ -410,6 +410,37 @@ describe('idempotency (docs/06 §6.7)', () => {
     expect(repository.events.size).toBe(1);
   });
 
+  // M4 — Idempotency-Key is chosen by the client, and short human keys are
+  // ordinary. Claimed in one global keyspace, two users picking the same string
+  // collided: at best the second got a 409 for a request they never made, at
+  // worst the replay branch handed them the stored response to someone else's
+  // meal.
+  it('keeps one user out of another user’s idempotency keyspace', async () => {
+    const mine = await postWithKey('/api/v1/meals/manual', meal(), 'shared-key', TOKEN);
+    expect(mine.statusCode).toBe(201);
+
+    const theirs = await postWithKey(
+      '/api/v1/meals/manual',
+      meal({ mealType: 'breakfast' }),
+      'shared-key',
+      OTHER_TOKEN,
+    );
+
+    // Not a 409: the other user has never used this key.
+    expect(theirs.statusCode).toBe(201);
+    expect(repository.events.size).toBe(2);
+  });
+
+  it('does not replay one user’s stored response to another', async () => {
+    const mine = await postWithKey('/api/v1/meals/manual', meal(), 'collide', TOKEN);
+    const theirs = await postWithKey('/api/v1/meals/manual', meal(), 'collide', OTHER_TOKEN);
+
+    expect(theirs.statusCode).toBe(201);
+    // Same key, same body, different user: two meals, two distinct responses.
+    expect(theirs.body).not.toBe(mine.body);
+    expect(repository.events.size).toBe(2);
+  });
+
   it('ignores key ordering in the body when deciding the digest', async () => {
     const bodyA = meal();
     const bodyB = JSON.parse(JSON.stringify(bodyA));

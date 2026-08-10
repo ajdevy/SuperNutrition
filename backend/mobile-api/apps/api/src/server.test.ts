@@ -406,6 +406,99 @@ describe('POST /gw/v1/inference/text', () => {
 });
 
 describe('DELETE /gw/v1/inference/:attemptId', () => {
+  // M6 — the context field is client-supplied JSON, so it can be any JSON value,
+  // not just an object. `JSON.parse("null")` produced null and every later
+  // property read went through it into a TypeError, which surfaced as a 500:
+  // the gateway reporting its own bug as a server fault for a malformed request.
+  it.each([
+    ['null', 'null'],
+    ['a number', '42'],
+    ['a string', '"context"'],
+    ['a boolean', 'true'],
+    ['an array', '[]'],
+  ])('answers 400 rather than 500 when context is %s', async (_label, raw) => {
+    const boundary = '----test-boundary';
+    const body = Buffer.concat([
+      Buffer.from(
+        `--${boundary}\r\nContent-Disposition: form-data; name="context"\r\n\r\n${raw}\r\n` +
+          `--${boundary}\r\nContent-Disposition: form-data; name="payload"; filename="a.jpg"\r\n` +
+          `Content-Type: image/jpeg\r\n\r\n`,
+      ),
+      JPEG,
+      Buffer.from(`\r\n--${boundary}--\r\n`),
+    ]);
+
+    const response = await server.app.inject({
+      method: 'POST',
+      url: '/gw/v1/inference/photo',
+      headers: {
+        'content-type': `multipart/form-data; boundary=${boundary}`,
+        authorization: TOKEN,
+        'x-contract-version': 'mobile-api/v1',
+        'x-request-id': nextRequestId(),
+      },
+      payload: body,
+    });
+
+    expect(response.statusCode).toBe(400);
+    expect(response.json().error.gatewayCode).toBe('validation-error');
+  });
+
+  it('authenticates before it reads the body (M3)', async () => {
+    // request.parts() buffers the whole photo, up to 8MB, and it used to run
+    // before authentication — so an anonymous caller could pin server memory by
+    // posting here. This request carries no context field at all: if the body
+    // is parsed first the answer is 400 "context missing", and if the caller is
+    // checked first it is 401. The status is the evidence about the ordering.
+    const { headers } = multipartBody(context(), JPEG);
+    delete headers.authorization;
+    const boundary = '----test-boundary';
+    const bodyWithoutContext = Buffer.concat([
+      Buffer.from(
+        `--${boundary}\r\nContent-Disposition: form-data; name="payload"; filename="a.jpg"\r\n` +
+          `Content-Type: image/jpeg\r\n\r\n`,
+      ),
+      JPEG,
+      Buffer.from(`\r\n--${boundary}--\r\n`),
+    ]);
+
+    const response = await server.app.inject({
+      method: 'POST',
+      url: '/gw/v1/inference/photo',
+      headers,
+      payload: bodyWithoutContext,
+    });
+
+    expect(response.statusCode).toBe(401);
+    expect(response.json().error.gatewayCode).toBe('authentication-failed');
+  });
+
+  it('refuses a second transfer for an attempt id already used (M7)', async () => {
+    const first = await server.app.inject({
+      method: 'POST',
+      url: '/gw/v1/inference/photo',
+      ...multipartBody(context(), JPEG),
+    });
+    expect(first.statusCode).toBe(200);
+
+    // A fresh effect id walked straight past at-most-once, because the effect
+    // store keys on effectId while the photo is identified by attemptId.
+    const replayed = context();
+    const second = await server.app.inject({
+      method: 'POST',
+      url: '/gw/v1/inference/photo',
+      ...multipartBody({ ...replayed, effectId: 'eff_9999999999999999' }, JPEG),
+    });
+
+    expect(second.statusCode).toBe(400);
+    expect(second.json().error.details).toContainEqual({
+      field: 'attemptId',
+      issue: 'attempt_already_used',
+    });
+  });
+});
+
+describe('DELETE /gw/v1/inference/:attemptId', () => {
   it('refuses an anonymous cancellation', async () => {
     const response = await server.app.inject({
       method: 'DELETE',

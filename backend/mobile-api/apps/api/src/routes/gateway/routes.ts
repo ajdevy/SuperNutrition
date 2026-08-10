@@ -73,6 +73,20 @@ export const registerGatewayRoutes = async (
         });
       }
 
+      // M3 — header checks and authentication happen BEFORE the body is read.
+      //
+      // request.parts() buffers the whole photo, up to 8MB, and it used to run
+      // first: an unauthenticated caller could pin 8MB of server memory per
+      // request by posting to this route. The release's validation_order puts
+      // contract version and request id ahead of authentication, and both are
+      // header-only, so the order it prescribes is preserved — only the point
+      // at which bytes are accepted has moved.
+      const { requestId } = validateGatewayHeaders({
+        contractVersion: request.headers['x-contract-version'] as string | undefined,
+        requestId: request.headers['x-request-id'] as string | undefined,
+      });
+      const auth = await deps.authenticate(request);
+
       let contextRaw: string | null = null;
       let bytes: Uint8Array | null = null;
       let contentType = '';
@@ -98,24 +112,34 @@ export const registerGatewayRoutes = async (
         });
       }
 
-      let context: InferenceRequestInput;
+      let parsedContext: unknown;
       try {
-        context = JSON.parse(contextRaw) as InferenceRequestInput;
+        parsedContext = JSON.parse(contextRaw);
       } catch {
         throw new GatewayError(GATEWAY_CODES.VALIDATION_ERROR, {
           details: [{ field: 'context', issue: 'unparseable_json' }],
         });
       }
+
+      // M6 — "parsed as JSON" is not "is the shape we expect". Valid JSON
+      // includes null, numbers, strings and arrays, and every one of those was
+      // cast straight to InferenceRequestInput. `null` then turned the first
+      // property read into a TypeError and the gateway reported its own crash as
+      // a 500 for what was a malformed client request; the scalars survived as
+      // far as the version check and came back as `unsupported-version`, which
+      // sends a client looking for the wrong problem.
+      if (
+        parsedContext === null ||
+        typeof parsedContext !== 'object' ||
+        Array.isArray(parsedContext)
+      ) {
+        throw new GatewayError(GATEWAY_CODES.VALIDATION_ERROR, {
+          details: [{ field: 'context', issue: 'not_a_json_object' }],
+        });
+      }
+      const context = parsedContext as InferenceRequestInput;
       attemptId = typeof context?.attemptId === 'string' ? context.attemptId : null;
 
-      // Contract-version and request-id shape are checked before the caller is
-      // authenticated, in the order the release's validation_order sets.
-      const { requestId } = validateGatewayHeaders({
-        contractVersion: request.headers['x-contract-version'] as string | undefined,
-        requestId: request.headers['x-request-id'] as string | undefined,
-      });
-
-      const auth = await deps.authenticate(request);
       const result = await runInferencePipeline(deps, {
         context,
         payload: { bytes, contentType },
@@ -142,16 +166,24 @@ export const registerGatewayRoutes = async (
     async (request, reply) => {
       const correlationId = correlationOf(request);
       try {
-        await deps.authenticate(request);
-        const record = deps.transfers.cancel(request.params.attemptId);
+        // M2 — the authenticated identity is USED, not merely obtained. Attempt
+        // ids are chosen by the client, so discarding this result let any
+        // authenticated installation cancel, and read the transfer record of,
+        // any attempt id it cared to guess.
+        const auth = await deps.authenticate(request);
+        const record = deps.transfers.cancel(request.params.attemptId, auth.installationId);
         deps.payloads.dispose(request.params.attemptId);
 
         if (record === null) {
-          // No record: never begun, or finished longer ago than the retention
-          // window. This used to answer 204, which by contract means "nothing
-          // was sent, this is a complete guarantee" — a promise about the
-          // user's photo the gateway had no basis for. Declining to answer is
-          // honest and needs no new code in the published taxonomy.
+          // No record the caller may see: never begun, finished longer ago than
+          // the retention window, or begun by a different installation. All
+          // three answer identically, so the response cannot be used to
+          // enumerate attempt ids.
+          //
+          // This used to answer 204, which by contract means "nothing was sent,
+          // this is a complete guarantee" — a promise about the user's photo the
+          // gateway had no basis for. Declining to answer is honest and needs no
+          // new code in the published taxonomy.
           throw new GatewayError(GATEWAY_CODES.VALIDATION_ERROR, {
             details: [{ field: 'attemptId', issue: 'unknown_attempt' }],
           });
