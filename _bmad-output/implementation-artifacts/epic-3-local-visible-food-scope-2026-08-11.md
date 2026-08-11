@@ -33,6 +33,11 @@
   — 4 tests and debug APK assembled.
 - `:apps:sharedKit:compileKotlinIosArm64 -Psupernutrition.enableIosDeviceTarget=true`
   — Kotlin/Native compile passed on the local Intel host.
-
-The full local quality task and current Android device evidence are recorded
-separately after they finish.
+- `qualityCheckJvmAndroid --continue` — passed with authoritative JVM-host
+  aggregate coverage of 98.15% line / 87.22% branch across nine production
+  modules.
+- Physical HONOR DNY-NX9 / Android 16 / API 36:
+  `connectedAndroidTest` passed 16/16 each for `pocDebug`, `productionDebug`,
+  and `uiAcceptanceDebug`, with zero failures, errors, or skips. The clean
+  evidence emitter bound the UI and PoC APK/test-APK digests to commit
+  `171eeae7771b850d5b93a3706742e46a5a758b41`.

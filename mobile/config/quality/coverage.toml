@@ -18,9 +18,12 @@ empty_or_zero_denominator = "fail"
 # denominator. All present branch counters remain mandatory.
 branchless_branch_counter_policy = "exclude-absent-branch-counter-only"
 status = "active-local"
-local_aggregate_line_percent = "pending"
-local_aggregate_branch_percent = "pending"
-local_aggregate_status = "blocked"
+# Authoritative output of qualityCoverageJvm in qualityCheckJvmAndroid.
+# It covers the nine JVM-observable production modules; native-equivalent
+# modules remain bound to the explicit physical-device records below.
+local_aggregate_line_percent = "98.15"
+local_aggregate_branch_percent = "87.22"
+local_aggregate_status = "local-verified"
 
 # Every compiled production unit has exactly one denominator. JVM observations
 # below are local-only measurements; native-equivalent records are bound to
