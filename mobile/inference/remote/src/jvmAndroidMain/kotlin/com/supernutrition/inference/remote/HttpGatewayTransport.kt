@@ -1,7 +1,9 @@
 package com.supernutrition.inference.remote
 
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import java.io.DataOutputStream
 import java.net.HttpURLConnection
@@ -37,10 +39,54 @@ class HttpGatewayTransport(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : GatewayTransport {
 
-    override suspend fun postInferencePhoto(call: GatewayCall): GatewayHttpResponse =
-        withContext(ioDispatcher) { post(call) }
+    /**
+     * P1-10 — cancellation has to reach the socket, not just the coroutine.
+     *
+     * withContext alone does not interrupt blocking I/O: HttpURLConnection sits
+     * inside write() or read() and returns only when the network does, so
+     * cancelling during an upload left the photo being sent in full and
+     * disconnect() ran afterwards, when there was nothing left to stop. On a
+     * slow connection that is the difference between a cancelled transfer and a
+     * completed one the user thinks they stopped.
+     *
+     * The connection is now disconnected from the cancellation handler, which
+     * makes the blocked write or read throw immediately, and the result is
+     * discarded if cancellation won the race.
+     */
+    override suspend fun postInferencePhoto(call: GatewayCall): GatewayHttpResponse = withContext(ioDispatcher) {
+        val holder = ConnectionHolder()
+        try {
+            suspendCancellableCoroutine { continuation ->
+                continuation.invokeOnCancellation { holder.abort() }
+                val result = runCatching { post(call, holder) }
+                if (continuation.isActive) continuation.resumeWith(result)
+            }
+        } finally {
+            holder.abort()
+        }
+    }
 
-    private fun post(call: GatewayCall): GatewayHttpResponse {
+    /** Lets the cancellation handler reach a connection the I/O thread owns. */
+    private class ConnectionHolder {
+        private var connection: HttpURLConnection? = null
+        private var aborted = false
+
+        @Synchronized
+        fun adopt(open: HttpURLConnection): Boolean {
+            if (aborted) return false
+            connection = open
+            return true
+        }
+
+        @Synchronized
+        fun abort() {
+            aborted = true
+            connection?.disconnect()
+            connection = null
+        }
+    }
+
+    private fun post(call: GatewayCall, holder: ConnectionHolder): GatewayHttpResponse {
         val boundary = "----SuperNutrition${System.nanoTime()}"
         val connection = (URL("$baseUrl/gw/v1/inference/photo").openConnection() as HttpURLConnection).apply {
             requestMethod = "POST"
@@ -51,6 +97,14 @@ class HttpGatewayTransport(
             setRequestProperty("X-Contract-Version", call.contractVersion)
             setRequestProperty("X-Request-Id", call.requestId)
             setRequestProperty("Content-Type", "multipart/form-data; boundary=$boundary")
+        }
+
+        // Registered before the first byte moves. Cancelling between opening the
+        // connection and adopting it would otherwise leave a socket nobody can
+        // close, so adopt() reports whether cancellation already happened.
+        if (!holder.adopt(connection)) {
+            connection.disconnect()
+            throw CancellationException("cancelled before the request was sent")
         }
 
         try {
