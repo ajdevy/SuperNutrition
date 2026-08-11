@@ -115,6 +115,30 @@ Intel fallback is an executable x64 simulator compatibility lane for shared
 presenter/reducer and bridge acceptance; it is never substituted for iPhone
 camera, lifecycle, or hardware evidence.
 
+### Current host limitation (2026-08-11)
+
+The configured physical iPhone runs iOS `26.5.2`. Apple's
+[Xcode system requirements](https://developer.apple.com/xcode/system-requirements/)
+require macOS Tahoe `26.2` or later for Xcode `26.5`/`26.6`, the releases that
+support iOS `26.5`; Xcode `26.3` can run on Sequoia but supports only through
+iOS `26.2`. This evidence host is an Intel MacBookPro15,1 on macOS `15.7.7`,
+which Apple does not list as compatible with Tahoe
+[in its Tahoe compatibility list](https://support.apple.com/en-us/122867).
+There is therefore no Apple-supported Xcode download that can execute the
+physical iPhone lane on this machine.
+
+Run the supported on-host iOS compile lane and record it separately from
+physical evidence:
+
+```bash
+./mobile/gradlew -p mobile :apps:sharedKit:compileKotlinIosArm64 \
+  -Psupernutrition.enableIosDeviceTarget=true \
+  --dependency-verification=strict --no-configuration-cache --console=plain
+```
+
+This compiles the `iosArm64` KMP graph only; it does not provide camera,
+lifecycle, XCTest, performance, or G-3 benchmark evidence.
+
 Run `pod install` in `mobile/apps/iosApp` before using the workspace. Its
 post-install settings keep static CocoaPods libraries unsigned; the application
 and test runner are signed by Xcode. A physical-device launch also requires the

@@ -417,9 +417,15 @@ over the local CoreDevice tunnel (iOS `26.5.2`, build `23F84`; UDID
 signed with Team `REDACTED_TEAM_ID`, but it did not begin XCTest: Xcode reported it
 could not locate DeviceSupport for `arm64`/`arm64e` while installing or
 launching the test host. The installed Xcode is `26.0.1` (`17A400`) and its
-local iPhoneOS DeviceSupport directories stop at `16.4`; this host needs an
-Xcode release supporting iOS 26.5.2, or a device on a supported iOS release,
-before the iPhone baseline or G-3 benchmark can run.
+local iPhoneOS DeviceSupport directories stop at `16.4`. This host cannot
+install a compatible Apple-supported Xcode: Xcode `26.5`/`26.6` supports iOS
+`26.5` but requires macOS Tahoe `26.2` or newer, while Xcode `26.3` supports
+Sequoia but only through iOS `26.2`. The host is an Intel MacBookPro15,1 on
+macOS `15.7.7`, a model absent from Apple's Tahoe compatibility list. The
+available update is only Sequoia `15.7.9`; no compatible Xcode download exists
+on this machine. The supported `:apps:sharedKit:compileKotlinIosArm64` lane did
+pass at `31fb1d5f`, proving the iOS arm64 KMP graph compiles, but it is not
+physical-device, XCTest, performance, or G-3 benchmark evidence.
 
 ## Acceptance and signature
 
