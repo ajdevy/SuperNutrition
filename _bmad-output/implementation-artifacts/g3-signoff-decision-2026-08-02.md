@@ -1,8 +1,9 @@
 ---
 decision_id: epic-3-g3-signoff-2026-08-02
 decision_date: 2026-08-02
+owner_decision_date: 2026-08-11
 scope: epic-3-v2-visible-component-and-mass-inference
-status: no-go-production
+status: conditional-go-production-evidence-pending
 implementation_status: pre-release-complete-production-deferred
 ---
 
@@ -10,19 +11,18 @@ implementation_status: pre-release-complete-production-deferred
 
 ## Decision
 
-**Production v2 activation: GO.**
+**Production v2 activation: GO, conditional on the required evidence below.**
 
 **Pre-release implementation and research preparation: GO under the approved
 scope amendment.**
 
-The Product and Engineering owners accept the repository-owned Epic 3
-contracts, fail-closed activation gate, adapter seams, staged review UX
-boundary, research tooling, and local quality evidence as complete for the
-approved pre-release scope. They do not approve a production component/mass
-model or production manifest. Production v2 activation remains `NO-GO` until
-every required external evidence item below is attached and independently
-verified. The post-release scope amendment explicitly allows Epic 3's
-pre-release status to be `done` while this production decision remains `NO-GO`.
+Engineering owner AJ recorded the conditional GO on 2026-08-11. The decision
+authorizes production release execution only after every required external
+evidence item below is attached and independently verified, and after the
+Product owner signs the resulting release bundle. It does not select or approve
+a production component/mass model or production manifest by itself. The
+post-release scope amendment explicitly allows Epic 3's pre-release status to
+be `done` while the release bundle remains incomplete.
 
 This decision is intentionally a signoff, not a substitute for missing
 evidence. It prevents a public-data model, dish-only classifier, UI fixture, or
@@ -32,8 +32,8 @@ unweighed photo benchmark from being treated as a production G3 approval.
 
 | Role | Owner | Decision | Scope | Reference |
 | --- | --- | --- | --- | --- |
-| Product | Anastasia | no-go for production | v2 product direction and the amended pre-release boundary are accepted; production ingredient/grams claims and release activation are not approved | `g3-benchmark-artifact.md`, current Product direction row |
-| Engineering | AJ (`ajdevy`) | no-go for production | repository seams and scoped local-wait implementation are accepted as the amended pre-release boundary; no selected runtime, model, corpus, or production activation is approved | `g3-benchmark-artifact.md`, current Engineering budget row |
+| Product | Anastasia | final release sign-off pending | v2 product direction and the amended pre-release boundary are accepted; the Product owner must sign the completed evidence bundle before activation | `g3-benchmark-artifact.md`, current Product direction row |
+| Engineering | AJ (`ajdevy`) | GO, conditional | owner-authorized 2026-08-11: engineering may release only after a selected, bound, verified model/legal/corpus/Android+iOS/rollback bundle and Product sign-off | user-authorized G2-1 in this task |
 
 ## Evidence reviewed
 
@@ -64,25 +64,26 @@ unweighed photo benchmark from being treated as a production G3 approval.
   `15/15`, and `15/15`. This strengthens implementation readiness but does
   not satisfy the missing model, corpus, iOS v2, or approval gates.
 
-### Required before production approval
+### Required before release execution
 
-| Gate | Required evidence | Current decision |
+| Gate | Required evidence | Current state |
 | --- | --- | --- |
 | Model/legal | One selected component model with legal clearance, artifact and taxonomy digests, runtime/EP, calibration, and rollback target | **Missing; no model selected** |
 | Corpus | At least 300 consented weighed cases with masks, tared component readings, QC, withdrawal handling, and train/calibration/held-out isolation | **Missing; public samples do not qualify** |
 | Android G3 | Selected model on physical Android with component quality, gram MAE/p90, latency, memory, thermal, battery, privacy, and rollback evidence | **Missing; the fresh candidate screen is recorded, but no selected component model, accepted mass quality, consented corpus, or rollback bundle exists** |
 | iOS G3 | Same selected model/corpus on physical iPhone with iOS runtime/resource and rollback evidence | **Missing for production G3; physical product acceptance is now evidenced locally (`5/5` UI, `5/5` iosArm64 fixtures) on iPhone 14 Pro, but no selected component model, consented mass corpus, calibrated mass score, or rollback bundle exists. Simulator lane remains blocked by the missing strict-verification checksum for `kotlinx-serialization-core-iosx64:1.9.0`.** |
 | Epic 3 G3 staged device flow | Bound runtime, staged wait, review evidence, Cancel, and recovery demonstrated on a physical device | **Deferred; E3.9 coordinator/UI/lifecycle implementation is complete under the amendment, both hosts intentionally bind `None`, and no production runtime is approved** |
-| Release authorization | Product and Engineering approvals referenced by the production manifest | **Withheld pending the gates above** |
+| Release authorization | Product and Engineering approvals referenced by the production manifest | **Engineering conditional GO recorded; Product final sign-off and the complete bound bundle are pending** |
 
 ## Activation rule
 
-No `ComponentModelManifest` may use `activation = production` from this
-decision. The production manifest must reference this decision only alongside
-the completed model, legal, corpus, benchmark, and rollback evidence; this
-record by itself is not a production approval reference.
+This decision is the Engineering approval reference, not a complete production
+bundle. A `ComponentModelManifest` may use `activation = production` only when
+it binds this decision together with the completed model, legal, corpus,
+benchmark, rollback, and Product approval references, and those references
+have been independently verified.
 
-## Exit criteria for a replacement APPROVED decision
+## Exit criteria for a release-ready manifest
 
 1. Attach the validated `--require-g3` corpus manifest and its immutable digest.
 2. Attach the selected model manifest, legal clearance, artifact/taxonomy
@@ -92,12 +93,12 @@ record by itself is not a production approval reference.
    slices.
 4. Bind the selected runtime to the staged UI flow and record physical-device
    staged/review/Cancel/recovery evidence.
-5. Re-run local quality gates and obtain new Product and Engineering approvals
-   that reference the complete bundle.
+5. Re-run local quality gates, attach the Product sign-off, and have
+   Engineering confirm that the manifest references the complete bundle.
 
-Epic 3 is `done` for the amended pre-release scope. Production activation
-remains blocked by policy until the replacement `APPROVED` decision below is
-issued with the complete evidence bundle.
+Epic 3 is `done` for the amended pre-release scope. Production release
+execution remains pending until the complete evidence bundle and Product
+sign-off are attached.
 
 ## Authoritative records
 

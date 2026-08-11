@@ -67,7 +67,7 @@ mandatory before any component/mass claim or `activation = production`.
 | Android v2 G3 | Physical Android is now available, but MobileSAM is `unsupported` for identity and YOLO-World v2 scores only `0.2233` exact visible-component macro F1; both have `not-evaluable` mass and neither is selected | Selected, legally cleared model run on a physical Android device with component quality, grams, latency, memory, thermal, battery, privacy, and rollback evidence |
 | iOS v2 G3 | Physical iOS correctness evidence is locally recorded on iPhone 14 Pro / iOS 26.5.2 with the configured Apple team: UI acceptance `5/5` and binary-bound `iosArm64` fixtures `5/5` (3 normalization, 2 bridge). This is not selected-model G3 evidence. | Same selected model and corpus benchmark on the physical iPhone with iOS-specific runtime/resource evidence |
 | E3.9 story implementation | Coordinator, typed UI, host lifecycle seam, and focused tests are complete under the approved pre-release scope; both hosts intentionally bind `PhotoAnalysisAnalysisLauncher.None` because no production runtime is approved | No story-level code blocker remains. At Epic 3 G3 exit, bind the selected runtime only after `ComponentModelManifest` has `APP_MANAGED` ownership, rollback target, and product/engineering/legal/corpus/benchmark/rollback refs; then execute staged/review/Cancel/recovery on a physical device and record that production-bound evidence |
-| Product/Engineering G3 signoff | Dated `NO-GO for production / pre-release implementation accepted` decision is recorded in `g3-signoff-decision-2026-08-02.md` | Replacement `APPROVED` decision referencing the complete model/corpus/benchmark/rollback bundle |
+| Product/Engineering G3 signoff | Engineering conditional GO is recorded in `g3-signoff-decision-2026-08-02.md`; Product final release sign-off is pending | Bind the complete model/legal/corpus/benchmark/rollback bundle, attach Product sign-off, and have Engineering verify the manifest references |
 
 ## Current external state
 
@@ -199,7 +199,7 @@ recognition `5/5` with init `2,150 ms`, p50/p95/max `187/218/335 ms`, PSS
 - The separate post-release upload/consent feature remains responsible for the
   300+ consented weighed cases, scale/QC metadata, withdrawal handling, and
   leakage-isolated corpus manifest.
-- This status change does not alter the G3 decision: production v2 activation
-  remains blocked until a replacement approved decision references the complete
-  model, legal, corpus, selected-model Android/iOS benchmark, and rollback
-  bundle.
+- The Engineering conditional GO does not remove the G3 prerequisites:
+  production release execution remains pending until the complete model, legal,
+  corpus, selected-model Android/iOS benchmark, rollback, and Product approval
+  bundle is bound and verified.

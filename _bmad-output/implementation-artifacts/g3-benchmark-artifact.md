@@ -402,23 +402,23 @@ component identity, calibrated mass quality, or production G-3 approval.
 | --- | --- | --- | --- | --- |
 | Engineering owner | AJ (`ajdevy`) | approved: scoped High local-wait budget for current dish-only v1 harness | 2026-08-01 | user-authorized in this task; PR #29 |
 | Product owner | Anastasia | approved: v2 visible-component and estimated-grams direction; v1 dish-only is not product acceptance | 2026-08-01 | user approval in this task; v2 G-3 signature remains pending evidence |
+| Engineering owner | AJ (`ajdevy`) | GO, conditional: release execution may proceed after the complete verified production bundle and Product sign-off | 2026-08-11 | user-authorized G2-1 in this task |
 
 ## 2026-08-02 Product/Engineering G3 decision
 
 The dated decision record is
 [`g3-signoff-decision-2026-08-02.md`](g3-signoff-decision-2026-08-02.md).
-Product and Engineering jointly record **NO-GO for production v2 activation**
-and **CONDITIONAL GO for pre-release implementation/research preparation**.
-The decision accepts the repository-owned implementation evidence but withholds
-production approval because the selected model, consented weighed corpus,
-accepted physical Android/iOS component/mass G-3 benchmark bundle, bound E3.9
-runtime evidence, and complete approval bundle are not present. The latest
-Android candidate screen is recorded separately and does not satisfy that
-bundle.
+Engineering records **GO, conditional, for production v2 release execution**;
+the Product owner's final release sign-off remains pending. The decision accepts
+the repository-owned implementation evidence, but the conditional GO does not
+substitute for the selected model, consented weighed corpus, accepted physical
+Android/iOS component/mass G-3 benchmark bundle, bound E3.9 runtime evidence,
+or complete approval and rollback references. The latest Android candidate
+screen is recorded separately and does not satisfy that bundle.
 
 Under the approved 2026-08-02 post-release scope amendment, E3.2/E3.3/E3.4
 and the rest of Epic 3 are complete for the pre-release implementation scope.
-G-3 remains open for production v2 activation: a replacement APPROVED decision
-must still reference the complete model, legal, consented-corpus, physical
-Android/iOS benchmark, staged-flow, and rollback bundle. This artifact must not
-be read as production component/mass approval.
+G-3 remains open for production v2 activation: the manifest must bind the
+complete model, legal, consented-corpus, physical Android/iOS benchmark,
+staged-flow, rollback, and Product approval bundle before release execution.
+This artifact must not be read as production component/mass approval by itself.
