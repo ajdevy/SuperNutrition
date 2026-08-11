@@ -128,6 +128,10 @@ xcodebuild test -quiet \
 scripts/run-physical-ios-fixtures.sh
 ```
 
+With a wildcard profile, the runner uses its checked-in fixture bundle ID
+`com.supernutrition.ios.arm64fixture.runner`. Set `IOS_FIXTURE_BUNDLE_ID` only
+when the profile allows a different matching bundle ID.
+
 Then emit the native-evidence bundle with the real iPhone UDID:
 
 ```bash
