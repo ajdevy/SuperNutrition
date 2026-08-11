@@ -83,7 +83,8 @@ struct PhotoAnalysisComposeHost: UIViewControllerRepresentable {
             },
         )
         let launchMarker = UIView(frame: .zero)
-        launchMarker.isAccessibilityElement = true
+        launchMarker.isAccessibilityElement = false
+        launchMarker.accessibilityElementsHidden = true
         launchMarker.accessibilityIdentifier = SharedKitAutomationIds.shared.bootstrapLaunchMarker
         launchMarker.accessibilityLabel = String(localized: "bootstrap.ready")
         launchMarker.alpha = 0.01
@@ -187,7 +188,9 @@ final class PhotoAnalysisPresentationCoordinator {
                 analysisQueue.async { [weak self] in
                     guard let self else { return }
                     do {
-                        let result = try pocInference.analyze(data)
+                        let inferenceData = session.normalizedPhotoData(opaqueId: opaqueId)
+                            .map { Data($0) } ?? data
+                        let result = try pocInference.analyze(inferenceData)
                         onMain { [weak self] in
                             guard let self else { return }
                             session.applyNativePocAnalysis(
@@ -245,6 +248,7 @@ struct PhotoAnalysisIntelCompatibilityView: View {
             Text(" ")
                 .accessibilityIdentifier(SharedKitAutomationIds.shared.bootstrapLaunchMarker)
                 .accessibilityLabel(String(localized: "bootstrap.ready"))
+                .accessibilityHidden(true)
                 .frame(width: 1, height: 1)
                 .opacity(0.01)
             Text(session.presenterCopy.capture.title)

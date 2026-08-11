@@ -39,6 +39,8 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":feature:photo-analysis-presenter"))
             implementation(project(":feature:photo-analysis-ui"))
+            // Public feature APIs expose the domain state/ports, so this is an
+            // intentional API dependency rather than an implementation leak.
             api(project(":domain:photo-analysis"))
             api(libs.kotlinx.coroutines.core)
         }

@@ -107,6 +107,15 @@ The iOS manifest/activation reuse and independent v2 adapter are complete for
 pre-release. The selected production artifact, consented corpus, and physical
 component/mass benchmark remain required before `activation = production`.
 
+## Current Epic 3 handover correction (2026-08-11)
+
+Owner ruling D1 supersedes the pre-release composition wording above for the
+running app: iOS uses the shared `IosPocInference` bridge and the same PoC
+model contract as the Android runtime. This wires the local runtime but does
+not close the G-3 quality gate or authorize component/mass claims; the missing
+consented corpus, physical benchmark, legal/rollback evidence, and replacement
+approval bundle remain explicitly open.
+
 ### File List
 
 - `mobile/domain/inference/src/commonMain/kotlin/com/supernutrition/domain/inference/ComponentModelManifest.kt`

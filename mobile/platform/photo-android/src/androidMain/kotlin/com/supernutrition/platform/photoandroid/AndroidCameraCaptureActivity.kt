@@ -97,7 +97,7 @@ class AndroidCameraCaptureActivity : ComponentActivity() {
             }
             val imageCapture = ImageCapture.Builder()
                 .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
-                .setTargetRotation(previewView.display.rotation)
+                .setTargetRotation(previewView.display?.rotation ?: android.view.Surface.ROTATION_0)
                 .build()
             val provider = cameraProviderFuture.get()
             provider.unbindAll()

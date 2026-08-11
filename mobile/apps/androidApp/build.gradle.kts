@@ -8,8 +8,7 @@ android {
 
     defaultConfig {
         applicationId = "com.supernutrition.android"
-        // The shared local ONNX model runtime requires API 24.
-        minSdk = 24
+        minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 1
         versionName = "0.0.0-scaffold"
@@ -32,7 +31,7 @@ android {
         create("poc") {
             dimension = "distribution"
             applicationIdSuffix = ".poc"
-            minSdk = 24
+            minSdk = libs.versions.minSdk.get().toInt()
         }
     }
 

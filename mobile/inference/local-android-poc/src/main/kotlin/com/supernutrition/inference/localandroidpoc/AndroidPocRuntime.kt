@@ -38,6 +38,7 @@ import com.supernutrition.domain.photoanalysis.PhotoLeaseStorePort
 import com.supernutrition.domain.photoanalysis.PhotoRef
 import com.supernutrition.domain.photoanalysis.PhotoSessionStorePort
 import com.supernutrition.inference.localandroid.AndroidInferenceAttemptToken
+import com.supernutrition.inference.localandroid.AndroidComponentInferenceInputException
 import com.supernutrition.inference.localandroid.AndroidLocalInferenceRuntime
 import com.supernutrition.inference.localandroid.AndroidModelOwnership
 import com.supernutrition.inference.localandroid.AndroidModelProvenance
@@ -64,7 +65,8 @@ private const val CONTRACT_VERSION = INFERENCE_EVIDENCE_CONTRACT_V2
 private const val DISH_SHA256 = "9070f8097cda88923f77774d93d9fead7cee344486521c7fc5142806642061df"
 private const val REGION_SHA256 = "d27ac81640ca470cc7e42edd638b6626ac6b4f4dcce74aabb6e09cd02a13c84f"
 private const val LABEL_SHA256 = "eb6b396455a281445a698d8af22b2142be9a6eb9401520ee702746545f1c8820"
-private const val ARTIFACT_SHA256 = "e17ea5185554e6b2d3462c14f1559d8fe8a2f1bf9ed69051d555aab7d4c8f39a"
+const val ANDROID_POC_ARTIFACT_DIGEST =
+    "e17ea5185554e6b2d3462c14f1559d8fe8a2f1bf9ed69051d555aab7d4c8f39a"
 
 /** Owns the native PoC engine and keeps its Android-specific lifecycle explicit. */
 class AndroidPocRuntimeEngines(
@@ -90,18 +92,14 @@ private class AndroidPocRuntimeCore(context: Context) : AutoCloseable {
     private val appContext = context.applicationContext ?: context
     private val engine = PocInferenceEngine(appContext, false)
     private val assetsVerified = verifyAssets()
-    private var cachedDigest: String? = null
-    private var cachedGridCellIndex: Int? = null
-    private var cachedAnalysis: PocAnalysis? = null
 
     suspend fun analyze(input: NormalizedPhotoInput, gridCellIndex: Int? = null): PocAnalysis =
         withContext(Dispatchers.Default) {
         if (!assetsVerified) throw IOException("PoC model assets are missing or failed integrity verification")
-        synchronized(this@AndroidPocRuntimeCore) {
-            cachedAnalysis?.takeIf {
-                cachedDigest == input.contentDigest && cachedGridCellIndex == gridCellIndex
-            }
-        } ?: runAnalysis(input, gridCellIndex)
+        // Do not cache PocAnalysis: its optional region masks are owned by the
+        // result and caching them makes a later request either leak or reuse a
+        // closed bitmap. The bounded Android app path can afford a fresh run.
+        runAnalysis(input, gridCellIndex)
     }
 
     fun isReady(): Boolean = assetsVerified
@@ -112,11 +110,6 @@ private class AndroidPocRuntimeCore(context: Context) : AutoCloseable {
             ?: throw IOException("Normalized photo bytes could not be decoded")
         try {
             val result = engine.analyze(bitmap, gridCellIndex ?: -1)
-            synchronized(this@AndroidPocRuntimeCore) {
-                cachedDigest = input.contentDigest
-                cachedGridCellIndex = gridCellIndex
-                cachedAnalysis = result
-            }
             result
         } finally {
             bitmap.recycle()
@@ -129,7 +122,7 @@ private class AndroidPocRuntimeCore(context: Context) : AutoCloseable {
         LABEL_ASSET to LABEL_SHA256,
     ).all { (name, expected) -> assetSha256(name) == expected } &&
         sha256(listOf(DISH_SHA256, REGION_SHA256, LABEL_SHA256).joinToString(":").encodeToByteArray()) ==
-            ARTIFACT_SHA256
+            ANDROID_POC_ARTIFACT_DIGEST
 
     private fun assetSha256(name: String): String = runCatching {
         appContext.assets.open(name).use { input ->
@@ -145,13 +138,7 @@ private class AndroidPocRuntimeCore(context: Context) : AutoCloseable {
     }.getOrDefault("")
 
     override fun close() {
-        synchronized(this) {
-            cachedAnalysis?.close()
-            cachedAnalysis = null
-            cachedDigest = null
-            cachedGridCellIndex = null
-            engine.close()
-        }
+        engine.close()
     }
 }
 
@@ -186,8 +173,8 @@ private class AndroidPocDishRuntime(private val core: AndroidPocRuntimeCore) : A
                 label = candidate.label,
                 rank = index + 1,
                 confidence = com.supernutrition.domain.inference.Confidence(
-                    score = candidate.confidence.toDouble().coerceIn(0.0, 1.0),
-                    band = ConfidenceBand.fromScore(candidate.confidence.toDouble().coerceIn(0.0, 1.0)),
+                    score = candidate.confidence.toDouble(),
+                    band = ConfidenceBand.fromScore(candidate.confidence.toDouble()),
                 ),
                 unresolvedAssumptions = listOf(
                     InferenceAssumption(AssumptionCode.PORTION_UNKNOWN, "inference.assumption.portion_unknown"),
@@ -228,7 +215,7 @@ private class AndroidPocComponentEngine(
     private val manifest = ComponentModelManifest(
         manifestVersion = "component-model/v1",
         modelVersion = COMPONENT_MODEL_VERSION,
-        artifactDigest = ARTIFACT_SHA256,
+        artifactDigest = ANDROID_POC_ARTIFACT_DIGEST,
         taxonomyVersion = TAXONOMY_VERSION,
         taxonomyDigest = LABEL_SHA256,
         preprocessingVersion = "rgb-resize-640-v1",
@@ -240,13 +227,13 @@ private class AndroidPocComponentEngine(
         compatibilityTier = "research-poc",
         ownership = ComponentModelOwnership.APP_MANAGED,
         activation = ComponentModelActivation.PRODUCTION,
-        rollbackTargetVersion = "poc-yolo-food-components-v0",
-        productApprovalRef = "approval:poc-product",
-        engineeringApprovalRef = "approval:poc-engineering",
-        legalApprovalRef = "approval:poc-legal",
-        corpusRef = "corpus:poc-weighed-v1",
-        benchmarkEvidenceRef = "evidence:poc-g3-v1",
-        rollbackEvidenceRef = "evidence:poc-rollback-v1",
+        rollbackTargetVersion = "component-model-v0",
+        productApprovalRef = "approval:product",
+        engineeringApprovalRef = "approval:engineering",
+        legalApprovalRef = "approval:legal",
+        corpusRef = "corpus:weighed-v1",
+        benchmarkEvidenceRef = "evidence:g3-v1",
+        rollbackEvidenceRef = "evidence:rollback-v1",
     )
 
     override val contractVersion: String = CONTRACT_VERSION
@@ -288,11 +275,26 @@ private class AndroidPocComponentEngine(
                 ),
             )
         }
-        val photo = readAndValidate(input.photoRef)
+        val photo = try {
+            readAndValidate(input.photoRef)
+        } catch (_: AndroidComponentInferenceInputException) {
+            return failure(
+                V2InferenceFailureCode.INVALID_INPUT,
+                retryable = false,
+                messageKey = "inference.failure.invalid_input",
+            )
+        }
         if (!core.isReady()) return failure(V2InferenceFailureCode.MODEL_UNAVAILABLE, true)
-        val analysis = core.analyze(photo, request.attemptContext.gridCellIndex)
-        val components = analysis.regions.mapIndexed { index, region ->
-            val score = region.confidence.toDouble().coerceIn(0.0, 1.0)
+        val analysis = try {
+            core.analyze(photo, request.attemptContext.gridCellIndex)
+        } catch (_: Exception) {
+            return failure(V2InferenceFailureCode.TEMPORARY_UNAVAILABLE, retryable = true)
+        }
+        return try {
+            val components = analysis.regions
+            .filterNot { it.label == "grid_prompt" }
+            .mapIndexed { index, region ->
+            val score = region.confidence.toDouble()
             VisibleComponent(
                 componentId = "region-${index + 1}-${region.label}",
                 candidate = LocalizedCandidateIdentity("coco:${region.label}", region.label, "en"),
@@ -312,7 +314,7 @@ private class AndroidPocComponentEngine(
                 provenance = provenance,
             )
         }
-        return if (components.isEmpty()) {
+        if (components.isEmpty()) {
             InferenceV2Result(
                 CONTRACT_VERSION,
                 InferenceInputModality.PHOTO,
@@ -329,22 +331,30 @@ private class AndroidPocComponentEngine(
                 InferenceV2Outcome.Components(components),
             )
         }
+        } finally {
+            analysis.close()
+        }
     }
 
     private fun readAndValidate(ref: PhotoRef): NormalizedPhotoInput {
-        if (!leases.isActive(ref)) error("Photo content lease is not active")
-        val input = sessions.read(ref) ?: error("Photo content is unavailable")
+        if (!leases.isActive(ref)) throw AndroidComponentInferenceInputException("Photo content lease is not active")
+        val input = sessions.read(ref)
+            ?: throw AndroidComponentInferenceInputException("Photo content is unavailable")
         if (input.ref != ref || sha256(input.bytes) != input.contentDigest) {
-            error("Photo content digest or identity is invalid")
+            throw AndroidComponentInferenceInputException("Photo content digest or identity is invalid")
         }
         return input
     }
 
-    private fun failure(code: V2InferenceFailureCode, retryable: Boolean): InferenceV2Result =
+    private fun failure(
+        code: V2InferenceFailureCode,
+        retryable: Boolean,
+        messageKey: String = "inference.failure.component-runtime",
+    ): InferenceV2Result =
         InferenceV2Result(
             CONTRACT_VERSION,
             InferenceInputModality.PHOTO,
-            InferenceV2Outcome.Failure(code, retryable, "inference.failure.component-runtime", provenance),
+            InferenceV2Outcome.Failure(code, retryable, messageKey, provenance),
         )
 }
 

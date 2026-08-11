@@ -16,6 +16,15 @@ fun interface PhotoAnalysisAndroidRuntimeFactory {
     ): PhotoAnalysisAndroidRuntimeBinding
 }
 
+/**
+ * Composition-root provider. The host owns one factory for its process instead
+ * of installing mutable global runtime state that can leak between tests or
+ * activities.
+ */
+interface PhotoAnalysisAndroidRuntimeProvider {
+    val photoAnalysisRuntimeFactory: PhotoAnalysisAndroidRuntimeFactory
+}
+
 fun interface PhotoAnalysisAndroidRuntimeCloseAction {
     fun close()
 }
@@ -28,17 +37,4 @@ class PhotoAnalysisAndroidRuntimeBinding(
         analysisLauncher.cancel()
         closeAction.close()
     }
-}
-
-object PhotoAnalysisAndroidRuntimeRegistry {
-    @Volatile
-    private var factory: PhotoAnalysisAndroidRuntimeFactory? = null
-
-    @JvmStatic
-    fun install(runtimeFactory: PhotoAnalysisAndroidRuntimeFactory) {
-        factory = runtimeFactory
-    }
-
-    @JvmStatic
-    fun current(): PhotoAnalysisAndroidRuntimeFactory? = factory
 }

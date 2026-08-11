@@ -195,14 +195,16 @@ class LocalIosComponentInferenceTest {
     @Test
     fun `digest mismatch and duplicate output fail closed`() = runTest {
         val digestRuntime = RecordingRuntime(IosComponentRuntimeCapability.Ready(manifest()))
-        assertFailsWith<IosComponentInferenceInputException> {
-            LocalIosComponentInferenceEngine(
-                RecordingPhotoStore(input),
-                leaseStore(),
-                digestRuntime,
-            ) { "c".repeat(64) }
-                .analyze(request)
-        }
+        assertEquals(
+            V2InferenceFailureCode.INVALID_INPUT,
+            assertIs<InferenceV2Outcome.Failure>(
+                LocalIosComponentInferenceEngine(
+                    RecordingPhotoStore(input),
+                    leaseStore(),
+                    digestRuntime,
+                ) { "c".repeat(64) }.analyze(request).outcome,
+            ).code,
+        )
         assertEquals(0, digestRuntime.invocations)
 
         val duplicateRuntime = RecordingRuntime(
@@ -216,27 +218,32 @@ class LocalIosComponentInferenceTest {
     @Test
     fun `photo lease validation rejects inactive missing and mismatched content`() = runTest {
         val runtime = RecordingRuntime(IosComponentRuntimeCapability.Ready(manifest()))
-        assertFailsWith<IosComponentInferenceInputException> {
-            LocalIosComponentInferenceEngine(RecordingPhotoStore(input), leaseStore(active = false), runtime) {
-                "a".repeat(64)
-            }.analyze(request)
-        }
-        assertFailsWith<IosComponentInferenceInputException> {
-            LocalIosComponentInferenceEngine(
-                RecordingPhotoStore(null),
-                leaseStore(),
-                runtime,
-            ) { "a".repeat(64) }.analyze(request)
-        }
+        assertEquals(
+            V2InferenceFailureCode.INVALID_INPUT,
+            assertIs<InferenceV2Outcome.Failure>(
+                LocalIosComponentInferenceEngine(RecordingPhotoStore(input), leaseStore(active = false), runtime) {
+                    "a".repeat(64)
+                }.analyze(request).outcome,
+            ).code,
+        )
+        assertEquals(
+            V2InferenceFailureCode.INVALID_INPUT,
+            assertIs<InferenceV2Outcome.Failure>(
+                LocalIosComponentInferenceEngine(RecordingPhotoStore(null), leaseStore(), runtime) {
+                    "a".repeat(64)
+                }.analyze(request).outcome,
+            ).code,
+        )
         val otherPhoto = PhotoRef.issue(attempt, "other-photo")
         val wrongInput = input.copy(ref = otherPhoto)
-        assertFailsWith<IosComponentInferenceInputException> {
-            LocalIosComponentInferenceEngine(
-                RecordingPhotoStore(wrongInput),
-                leaseStore(),
-                runtime,
-            ) { "a".repeat(64) }.analyze(request)
-        }
+        assertEquals(
+            V2InferenceFailureCode.INVALID_INPUT,
+            assertIs<InferenceV2Outcome.Failure>(
+                LocalIosComponentInferenceEngine(RecordingPhotoStore(wrongInput), leaseStore(), runtime) {
+                    "a".repeat(64)
+                }.analyze(request).outcome,
+            ).code,
+        )
         assertEquals(0, runtime.invocations)
     }
 

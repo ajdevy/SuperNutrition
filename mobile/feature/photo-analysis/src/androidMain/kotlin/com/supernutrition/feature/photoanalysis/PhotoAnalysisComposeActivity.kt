@@ -2,7 +2,6 @@ package com.supernutrition.feature.photoanalysis
 
 import android.Manifest
 import android.os.Bundle
-import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -50,6 +49,10 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
                 cancel = getString(R.string.capture_cancel),
                 researchWarning = getString(R.string.capture_research_warning),
                 gridHintsTitle = getString(R.string.capture_grid_hints_title),
+                gridOverlayDescription = getString(R.string.capture_grid_overlay_description),
+                gridCellDescription = getString(R.string.capture_grid_cell_description),
+                selectedState = getString(R.string.capture_selected),
+                notSelectedState = getString(R.string.capture_not_selected),
                 resultPlaceholder = getString(R.string.capture_result_placeholder),
                 loadingLabel = getString(R.string.capture_loading),
             ),
@@ -86,8 +89,10 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
                 notSelected = getString(R.string.capture_evidence_not_selected),
                 dishCandidatesTitle = getString(R.string.capture_evidence_dish_candidates),
                 visibleComponentsTitle = getString(R.string.capture_evidence_visible_components),
+                visibleRegionCount = getString(R.string.capture_evidence_visible_region_count),
                 compositionHintsTitle = getString(R.string.capture_evidence_composition_hints),
                 compositionHintSource = getString(R.string.capture_evidence_composition_hint_source),
+                partialDegradation = getString(R.string.capture_evidence_partial_degradation),
             ),
             recovery = RecoveryCopy(
                 scanAgain = getString(R.string.capture_scan_again),
@@ -98,6 +103,7 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
                 noFoodFound = getString(R.string.capture_recovery_no_food),
                 analysisOffline = getString(R.string.capture_recovery_offline),
                 analysisCancelled = getString(R.string.capture_recovery_cancelled),
+                reviewRestoreUnavailable = getString(R.string.capture_recovery_review_restore_unavailable),
             ),
         )
     }
@@ -134,9 +140,6 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
     }
 
     private fun restoreActivityState(savedInstanceState: Bundle?) {
-        window.statusBarColor = android.graphics.Color.WHITE
-        window.decorView.systemUiVisibility =
-            window.decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         wasBackgrounded = retainedState.wasBackgrounded
         savedInstanceState?.getString(PENDING_OPERATION_ID_KEY)?.let {
             retainedState.captureOperation.pendingOperationId = it
@@ -147,7 +150,8 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
     }
 
     private fun bindAnalysisRuntime() {
-        runtimeBinding = PhotoAnalysisAndroidRuntimeRegistry.current()?.create(
+        val factory = (application as? PhotoAnalysisAndroidRuntimeProvider)?.photoAnalysisRuntimeFactory
+        runtimeBinding = factory?.create(
             context = this,
             feature = feature,
             leases = retainedState.leases,
@@ -253,9 +257,6 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
     override fun onStop() {
         permissionRationale?.dismiss()
         permissionRationale = null
-        if (feature.state is com.supernutrition.domain.photoanalysis.PhotoAnalysisState.Analyzing) {
-            analysisLauncher.cancel()
-        }
         feature.dispatch(com.supernutrition.domain.photoanalysis.PhotoAnalysisEvent.Backgrounded)
         wasBackgrounded = true
         retainedState.wasBackgrounded = true

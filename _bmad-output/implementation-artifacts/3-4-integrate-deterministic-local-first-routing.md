@@ -108,6 +108,15 @@ The routing implementation closes the pre-release Epic 3 scope. Production
 component/mass activation remains fail-closed and is deferred to the approved
 post-release G3 corpus/model/device gate.
 
+## Current Epic 3 handover correction (2026-08-11)
+
+The pre-release wording above predates owner ruling D1 in the Epic 3 handover.
+The PoC is now the current local production runtime: Android composes the
+`AndroidPocRuntimeFactory`, and iOS uses the shared `IosPocInference` bridge.
+This is runtime wiring, not a G-3 quality or release-authorization claim; the
+consented corpus, physical component/mass evidence, legal/rollback evidence,
+and replacement Product/Engineering approval remain open gates.
+
 ## References
 
 - [Source: `_bmad-output/planning-artifacts/epics.md`, Story E3.4]

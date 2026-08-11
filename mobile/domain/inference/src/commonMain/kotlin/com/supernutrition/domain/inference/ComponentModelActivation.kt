@@ -67,8 +67,11 @@ class ComponentModelActivationController(
     fun snapshot(): ComponentModelActivationSnapshot = ComponentModelActivationSnapshot(active, staged)
 
     /** Verifies and records a candidate; it cannot change the active model. */
-    fun stage(manifest: ComponentModelManifest): ComponentModelActivationResult =
-        when (val check = operations.verify(manifest)) {
+    fun stage(manifest: ComponentModelManifest): ComponentModelActivationResult {
+        if (staged != null) {
+            return rejected(ComponentModelActivationFailure.MANIFEST_MUST_BE_STAGED)
+        }
+        return when (val check = operations.verify(manifest)) {
             ComponentModelArtifactCheck.Verified -> {
                 registered[manifest.modelVersion] = manifest
                 staged = manifest
@@ -77,6 +80,7 @@ class ComponentModelActivationController(
 
             is ComponentModelArtifactCheck.Rejected -> rejected(check.failure)
         }
+    }
 
     /** Activates only an exact, previously staged production manifest. */
     fun activate(manifest: ComponentModelManifest): ComponentModelActivationResult {

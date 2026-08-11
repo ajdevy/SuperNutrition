@@ -162,9 +162,15 @@ private fun PhotoAnalysisStatus(model: PhotoAnalysisPresenterModel, surface: Pho
 
 @Composable
 private fun PhotoAnalysisReviewContent(review: PhotoAnalysisReviewModel, surface: PhotoAnalysisCaptureSurface) {
-    Text("Top-3 dish candidates:", style = pocBodyTextStyle())
     PhotoAnalysisDishCandidates(review, surface)
-    Text("Regions: ${review.visibleComponents.count { it.region != null }}", style = pocBodyTextStyle())
+    Text(
+        surface.presenterCopy.evidence.visibleRegionCount.replace(
+            "{count}",
+            review.visibleComponents.count { it.region != null }.toString(),
+        ),
+        style = pocBodyTextStyle(),
+    )
+    review.degradationLabel?.let { Text(it, style = pocBodyTextStyle()) }
     PhotoAnalysisVisibleComponents(review, surface)
     PhotoAnalysisCompositionHints(review, surface)
     Text(surface.presenterCopy.capture.researchWarning, style = pocBodyTextStyle())
@@ -213,30 +219,32 @@ private fun PhotoAnalysisVisibleComponents(review: PhotoAnalysisReviewModel, sur
             text = surface.presenterCopy.evidence.visibleComponentsTitle,
             style = pocBodyTextStyle(),
         )
-        review.visibleComponents.forEach { component ->
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .automationId(photoAnalysisVisibleComponentId(component.componentId))
-                    .semantics {
-                        contentDescription = listOf(
-                            component.label,
-                            component.sourceLabel,
-                            component.confidenceLabel,
-                            component.ambiguityLabel,
-                            component.visibilityLabel,
-                            component.regionLabel,
-                            component.mass.label,
-                            component.provenanceLabel,
-                        ).joinToString()
-                        stateDescription = component.selectionLabel
-                    },
-            ) {
-                Text(component.label, style = pocBodyTextStyle())
-                Text(component.sourceLabel, style = pocBodyTextStyle())
-                Text(component.mass.label, style = pocBodyTextStyle())
+        review.visibleComponents
+            .distinctBy { it.label.trim().lowercase() }
+            .forEach { component ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .automationId(photoAnalysisVisibleComponentId(component.componentId))
+                        .semantics {
+                            contentDescription = listOf(
+                                component.label,
+                                component.sourceLabel,
+                                component.confidenceLabel,
+                                component.ambiguityLabel,
+                                component.visibilityLabel,
+                                component.regionLabel,
+                                component.mass.label,
+                                component.provenanceLabel,
+                            ).joinToString()
+                            stateDescription = component.selectionLabel
+                        },
+                ) {
+                    Text(component.label, style = pocBodyTextStyle())
+                    Text(component.sourceLabel, style = pocBodyTextStyle())
+                    Text(component.mass.label, style = pocBodyTextStyle())
+                }
             }
-        }
     }
 }
 
@@ -253,19 +261,21 @@ private fun PhotoAnalysisCompositionHints(review: PhotoAnalysisReviewModel, surf
             text = surface.presenterCopy.evidence.compositionHintsTitle,
             style = pocBodyTextStyle(),
         )
-        review.compositionHints.forEach { hint ->
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .semantics {
-                        contentDescription = listOf(hint.label, hint.sourceLabel).joinToString()
-                        stateDescription = hint.sourceLabel
-                    },
-            ) {
-                Text(hint.label, style = pocBodyTextStyle())
-                Text(hint.sourceLabel, style = pocBodyTextStyle())
+        review.compositionHints
+            .distinctBy { it.ingredientId.trim().lowercase() }
+            .forEach { hint ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .semantics {
+                            contentDescription = listOf(hint.label, hint.sourceLabel).joinToString()
+                            stateDescription = hint.sourceLabel
+                        },
+                ) {
+                    Text(hint.label, style = pocBodyTextStyle())
+                    Text(hint.sourceLabel, style = pocBodyTextStyle())
+                }
             }
-        }
     }
 }
 

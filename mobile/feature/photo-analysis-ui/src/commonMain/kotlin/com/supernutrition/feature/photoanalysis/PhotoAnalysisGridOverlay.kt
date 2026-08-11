@@ -39,7 +39,7 @@ internal fun PhotoAnalysisGridOverlay(
         modifier = Modifier
             .fillMaxSize()
             .automationId(UiAutomationIds.PHOTO_ANALYSIS_GRID_OVERLAY)
-            .semantics { contentDescription = "Photo analysis 3 by 3 grid with detected regions" },
+            .semantics { contentDescription = surface.presenterCopy.capture.gridOverlayDescription },
     ) {
         Canvas(Modifier.fillMaxSize()) {
             drawGrid(selectedGridCell)
@@ -132,8 +132,13 @@ internal fun PhotoAnalysisGridHints(
                             .height(48.dp)
                             .automationId(photoAnalysisGridCellId(index))
                             .semantics {
-                                contentDescription = "Select grid cell ${index + 1}"
-                                stateDescription = if (selectedGridCell == index) "Selected" else "Not selected"
+                                contentDescription = surface.presenterCopy.capture.gridCellDescription
+                                    .replace("{index}", (index + 1).toString())
+                                stateDescription = if (selectedGridCell == index) {
+                                    surface.presenterCopy.capture.selectedState
+                                } else {
+                                    surface.presenterCopy.capture.notSelectedState
+                                }
                             },
                         colors = if (selectedGridCell == index) {
                             ButtonDefaults.buttonColors(

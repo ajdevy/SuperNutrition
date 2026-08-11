@@ -18,19 +18,22 @@ public final class PocAnalysis implements AutoCloseable {
     public final List<IngredientSuggestion> ingredientSuggestions;
     public final String status;
     public final List<String> warnings;
+    public final List<String> failedStages;
 
     PocAnalysis(
             List<DishCandidate> dishCandidates,
             List<Region> regions,
             List<IngredientSuggestion> ingredientSuggestions,
             String status,
-            List<String> warnings
+            List<String> warnings,
+            List<String> failedStages
     ) {
         this.dishCandidates = immutableCopy(dishCandidates);
         this.regions = immutableCopy(regions);
         this.ingredientSuggestions = immutableCopy(ingredientSuggestions);
         this.status = status;
         this.warnings = immutableCopy(warnings);
+        this.failedStages = immutableCopy(failedStages);
     }
 
     public List<DishCandidate> getDishCandidates() {
@@ -51,6 +54,10 @@ public final class PocAnalysis implements AutoCloseable {
 
     public List<String> getWarnings() {
         return warnings;
+    }
+
+    public List<String> getFailedStages() {
+        return failedStages;
     }
 
     /**

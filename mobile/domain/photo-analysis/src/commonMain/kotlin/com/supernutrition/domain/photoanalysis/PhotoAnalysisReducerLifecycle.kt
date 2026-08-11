@@ -15,7 +15,7 @@ internal class PhotoAnalysisReducerLifecycle(private val context: PhotoAnalysisR
             PhotoAnalysisState.Analyzing(snapshot.ref, snapshot.requestId)
         }
 
-        is PhotoAnalysisBackgroundSnapshot.CandidateReview -> failedRestore(snapshot.ref)
+        is PhotoAnalysisBackgroundSnapshot.CandidateReview -> reviewRestoreUnavailable(snapshot.ref)
 
         is PhotoAnalysisBackgroundSnapshot.Recovery -> restoreRecovery(snapshot)
     }
@@ -71,4 +71,7 @@ internal class PhotoAnalysisReducerLifecycle(private val context: PhotoAnalysisR
 
     private fun failedRestore(ref: PhotoRef): PhotoAnalysisState =
         PhotoAnalysisState.Recovery(RecoveryReason.CAPTURE_FAILED, ref)
+
+    private fun reviewRestoreUnavailable(ref: PhotoRef): PhotoAnalysisState =
+        PhotoAnalysisState.Recovery(RecoveryReason.REVIEW_RESTORE_UNAVAILABLE, ref)
 }

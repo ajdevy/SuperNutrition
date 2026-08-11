@@ -16,7 +16,10 @@ private fun isPositiveUnitInterval(value: Double): Boolean = value > 0.0 && valu
 private fun isFiniteNonNegative(value: Double): Boolean = value.isFinite() && value >= 0.0
 
 private fun fitsNormalizedBounds(left: Double, top: Double, width: Double, height: Double): Boolean =
-    left + width <= 1.0 && top + height <= 1.0
+    left + width <= 1.0 + NORMALIZED_REGION_EPSILON &&
+        top + height <= 1.0 + NORMALIZED_REGION_EPSILON
+
+private const val NORMALIZED_REGION_EPSILON = 1e-9
 
 @Serializable
 data class InferenceV2Capability(

@@ -63,8 +63,9 @@ internal class PhotoAnalysisAnalysisTransitions(private val context: PhotoAnalys
     ): PhotoAnalysisReduction = when {
         event.requestId != current.requestId -> unchanged(current)
 
-        context.isLive(current.ref) -> unchanged(
-            PhotoAnalysisState.CandidateReview(current.ref, current.requestId),
+        context.isLive(current.ref) -> reduction(
+            PhotoAnalysisState.Recovery(RecoveryReason.CAPTURE_FAILED, current.ref),
+            PhotoAnalysisEffect.RevokePhoto(current.ref),
         )
 
         else -> failedAnalysis(current.ref)

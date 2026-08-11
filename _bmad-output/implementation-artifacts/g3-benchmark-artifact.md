@@ -96,7 +96,11 @@ candidate to bind four additional evidence references: legal clearance, the
 consented corpus, the component/mass benchmark, and rollback verification.
 Those references are rejected on research-only and staged manifests, so a
 runtime cannot promote a candidate merely by adding Product and Engineering
-approval strings. No production candidate currently satisfies this gate.
+approval strings. Owner ruling D1 now composes the Android PoC as the current
+local production runtime, but that candidate still does not satisfy the G-3
+quality/release gate: the checked-in corpus, physical component/mass evidence,
+legal/rollback evidence, and replacement Product/Engineering approval bundle
+remain absent.
 
 ### FPB research baseline for ingredient and weight work
 
@@ -134,6 +138,14 @@ the G-3 state, or the product runtime.
 | --- | --- | --- | --- |
 | MobileSAM | encoder and prompted decoder completed all five complex fixtures; p95 `2,060 ms`; PSS `729,305 KB` | `unsupported`: four masks/fixture are class-agnostic and prompt-dependent | `not-evaluable`: no mass output and no tared public-photo ground truth |
 | YOLO-World v2 | exported `640 x 640` ONNX completed all five fixtures; p95 `581 ms`; PSS `245,411 KB` | COCO-80 exact-label subset macro F1 `0.2233`; it found some carrots/broccoli but also false food labels | `not-evaluable`: no mass head and no tared public-photo ground truth |
+
+The YOLO-World measurements in this historical table are bound to the
+benchmark artifact SHA-256 `ef272175d4db2216cde08082f1accf120bdf5ee03b5bc2ba5f51735cda1e9cbc`.
+The production PoC runtime now pins the re-exported region artifact
+`d27ac81640ca470cc7e42edd638b6626ac6b4f4dcce74aabb6e09cd02a13c84f`.
+Therefore the `0.2233` macro-F1 and associated latency/resource numbers are
+historical evidence only; they are not a quality claim for the shipped
+runtime until the benchmark is rerun against the pinned production artifact.
 
 FoodSAM and FoodSeg103/ReLeM were not run on the phone: their released research
 implementations do not supply a complete Android-compatible artifact in this
@@ -173,7 +185,7 @@ neither model emits calibrated mass. The complete record is
 | OS/device tier | Physical device | Runtime and execution provider | Semantic result | Ingredient / weight result | Runtime/resource result |
 | --- | --- | --- | --- | --- |
 | Android broad-tier candidate | Honor DNY-NX9; Android 16/API 36; `arm64-v8a`; explicit ADB mDNS serial `adb-AU3N025429006787-97BOdK._adb-tls-connect._tcp` | ONNX Runtime Android `1.28.0`; CPU; available processor threads | fresh `5/5`, accuracy `1.0` under current `0.55` floor | visible ingredients `unsupported`; plated weight `not-evaluable` | latest fresh run: init `2,611 ms`; p50 `182 ms`; p95 `279 ms`; max `334 ms`; PSS `27,520 -> 273,547 KB`; battery current `-1,355 -> -1,543 µA`; thermal `0 -> 0` |
-| iOS high-tier candidate | iPhone 14 Pro; iOS 26.5.2; `arm64e`; UDID `00008120-0012295934E0C01E` | ONNX Runtime Objective-C `1.27.0`; XNNPACK; 2 threads | latest fresh `5/5`, accuracy `1.0` | visible ingredients `unsupported`; plated weight `not-evaluable` | latest fresh run: init `560 ms`; p50 `83 ms`; p95 `85 ms`; max `85 ms`; resident `261,360 -> 253,008 KB`; thermal `0 -> 0`; battery level `1 -> 1` |
+| iOS high-tier candidate | iPhone 14 Pro; iOS 26.5.2; `arm64e`; UDID `00008120-0012295934E0C01E` | Historical evidence: ONNX Runtime Objective-C `1.27.0`; XNNPACK; 2 threads. Current source pins `1.28.0`. | historical fresh `5/5`, accuracy `1.0` | visible ingredients `unsupported`; plated weight `not-evaluable` | historical run: init `560 ms`; p50 `83 ms`; p95 `85 ms`; max `85 ms`; resident `261,360 -> 253,008 KB`; thermal `0 -> 0`; battery level `1 -> 1` |
 
 The Android run above is the latest fresh physical run after the device was
 reconnected. It was repeated on 2026-08-01 in

@@ -186,6 +186,10 @@ ios_info = (repo_root / "mobile/apps/iosApp/Info.plist").read_text(encoding="utf
 if not re.search(r'<key>CFBundleDisplayName</key>\s*<string>Super Nutrition</string>', ios_info):
     fail("iOS display name does not match the identity manifest")
 ios_project = (repo_root / "mobile/apps/iosApp/SuperNutritionUIAcceptance.xcodeproj/project.pbxproj").read_text(encoding="utf-8")
+# Xcode's generated pbxproj permits these scalar values both quoted and
+# unquoted. The pattern is intentionally bounded to the exact bundle IDs and
+# rejects semicolons/newlines inside PRODUCT_NAME rather than parsing arbitrary
+# project text as identity evidence.
 acceptance_product_names = set(re.findall(
     r'PRODUCT_BUNDLE_IDENTIFIER = "?com\.supernutrition\.ios\.uiacceptance"?;\s*PRODUCT_NAME = "?([^";\n]+)"?',
     ios_project,

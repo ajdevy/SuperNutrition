@@ -13,8 +13,8 @@ final class PocInferenceMath {
         }
         float maximum = Float.NEGATIVE_INFINITY;
         for (float logit : logits) {
-            if (Float.isNaN(logit)) {
-                throw new IllegalArgumentException("logits contain NaN");
+            if (!Float.isFinite(logit)) {
+                throw new IllegalArgumentException("logits contain a non-finite value");
             }
             maximum = Math.max(maximum, logit);
         }
@@ -29,6 +29,9 @@ final class PocInferenceMath {
         }
         for (int index = 0; index < probabilities.length; index++) {
             probabilities[index] /= (float) sum;
+            if (!Float.isFinite(probabilities[index])) {
+                throw new IllegalArgumentException("softmax produced a non-finite probability");
+            }
         }
         return probabilities;
     }

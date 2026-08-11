@@ -12,6 +12,11 @@ Canonical fixtures cover a ready capability, candidate result, abstention,
 failure, and telemetry event. Unknown fields are ignored by the Kotlin decoder,
 while the checked-in release fixtures are strictly typed and minified.
 
+The in-memory `InferenceAttemptContext.gridCellIndex` is an additive,
+research-only runtime prompt for the 3x3 photo PoC. It is not serialized into
+the v1 wire fixtures or contract payload; changing that boundary requires a
+new contract release.
+
 The digest in `compatibility-matrix.toml` is SHA-256 over the sorted release
 documentation, schema, compatibility matrix, and canonical JSON fixture files.
 While hashing the matrix, its digest value is replaced by the literal

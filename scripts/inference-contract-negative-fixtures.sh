@@ -42,16 +42,21 @@ for relative, content in sorted(release_files):
 matrix_path.write_text(re.sub(
     r'(?m)^digest\s*=\s*"(?:[a-f0-9]{64}|pending)"\s*$',
     f'digest = "{digest.hexdigest()}"',
-    matrix_path.read_text(),
-))
+    matrix_path.read_text(encoding="utf-8"),
+), encoding="utf-8")
 PY
 }
 
 expect_rejected() {
     local label="$1"
     local root="$2"
-    if SUPERNUTRITION_INFERENCE_CONTRACT="$root" "${repo_root}/scripts/verify-inference-contract.sh" >/dev/null 2>&1; then
+    local output
+    if output=$(SUPERNUTRITION_INFERENCE_CONTRACT="$root" "${repo_root}/scripts/verify-inference-contract.sh" 2>&1); then
         echo "negative fixture unexpectedly passed: $label" >&2
+        exit 1
+    fi
+    if [[ -z "$output" ]]; then
+        echo "negative fixture was rejected without a reason: $label" >&2
         exit 1
     fi
 }
@@ -63,7 +68,7 @@ import sys
 
 root = Path(sys.argv[1])
 matrix = root / "compatibility-matrix.toml"
-matrix.write_text(matrix.read_text().replace('expected = "accepted"', 'expected = "rejected"', 1))
+matrix.write_text(matrix.read_text(encoding="utf-8").replace('expected = "accepted"', 'expected = "rejected"', 1), encoding="utf-8")
 PY
 refresh_digest "$fixture_root/v1-incompatible-pair"
 expect_rejected "v1 incompatible inference pair" "$fixture_root/v1-incompatible-pair"
@@ -75,9 +80,9 @@ import json
 import sys
 
 path = Path(sys.argv[1])
-data = json.loads(path.read_text())
+data = json.loads(path.read_text(encoding="utf-8"))
 data["outcome"]["candidates"][0]["calories"] = 42
-path.write_text(json.dumps(data, separators=(",", ":")) + "\n")
+path.write_text(json.dumps(data, separators=(",", ":")) + "\n", encoding="utf-8")
 PY
 refresh_digest "$fixture_root/v1-nutrition"
 expect_rejected "v1 numeric nutrition" "$fixture_root/v1-nutrition"
@@ -88,9 +93,9 @@ from pathlib import Path
 import sys
 
 path = Path(sys.argv[1])
-text = path.read_text()
+text = path.read_text(encoding="utf-8")
 needle = '"contractVersion":"photo-inference-engine/v1",'
-path.write_text(text.replace(needle, needle + '"contractVersion":"photo-inference-engine/v1",', 1))
+path.write_text(text.replace(needle, needle + '"contractVersion":"photo-inference-engine/v1",', 1), encoding="utf-8")
 PY
 expect_rejected "v1 duplicate JSON keys" "$fixture_root/v1-duplicate-keys"
 
@@ -100,7 +105,7 @@ from pathlib import Path
 import sys
 
 path = Path(sys.argv[1])
-path.write_text(path.read_text().replace('"score":0.93', '"score":NaN', 1))
+path.write_text(path.read_text(encoding="utf-8").replace('"score":0.93', '"score":NaN', 1), encoding="utf-8")
 PY
 expect_rejected "v1 non-finite confidence" "$fixture_root/v1-nonfinite"
 
@@ -111,9 +116,9 @@ import json
 import sys
 
 path = Path(sys.argv[1])
-data = json.loads(path.read_text())
+data = json.loads(path.read_text(encoding="utf-8"))
 data["outcome"]["outcomeType"] = "unsupported"
-path.write_text(json.dumps(data, separators=(",", ":")) + "\n")
+path.write_text(json.dumps(data, separators=(",", ":")) + "\n", encoding="utf-8")
 PY
 refresh_digest "$fixture_root/v1-unknown-outcome"
 expect_rejected "v1 unknown outcome type" "$fixture_root/v1-unknown-outcome"
@@ -125,9 +130,9 @@ import json
 import sys
 
 path = Path(sys.argv[1])
-data = json.loads(path.read_text())
+data = json.loads(path.read_text(encoding="utf-8"))
 data["outcome"]["candidates"][0]["rank"] = 2
-path.write_text(json.dumps(data, separators=(",", ":")) + "\n")
+path.write_text(json.dumps(data, separators=(",", ":")) + "\n", encoding="utf-8")
 PY
 refresh_digest "$fixture_root/v1-noncontiguous-rank"
 expect_rejected "v1 non-contiguous candidate rank" "$fixture_root/v1-noncontiguous-rank"
@@ -140,11 +145,11 @@ import json
 import sys
 
 path = Path(sys.argv[1])
-data = json.loads(path.read_text())
+data = json.loads(path.read_text(encoding="utf-8"))
 candidate = copy.deepcopy(data["outcome"]["candidates"][0])
 candidate["rank"] = 2
 data["outcome"]["candidates"].append(candidate)
-path.write_text(json.dumps(data, separators=(",", ":")) + "\n")
+path.write_text(json.dumps(data, separators=(",", ":")) + "\n", encoding="utf-8")
 PY
 refresh_digest "$fixture_root/v1-duplicate-candidate-id"
 expect_rejected "v1 duplicate candidate ID" "$fixture_root/v1-duplicate-candidate-id"
@@ -156,9 +161,9 @@ import json
 import sys
 
 path = Path(sys.argv[1])
-data = json.loads(path.read_text())
+data = json.loads(path.read_text(encoding="utf-8"))
 data["outcome"]["userMessageKey"] = " "
-path.write_text(json.dumps(data, separators=(",", ":")) + "\n")
+path.write_text(json.dumps(data, separators=(",", ":")) + "\n", encoding="utf-8")
 PY
 refresh_digest "$fixture_root/v1-blank-message-key"
 expect_rejected "v1 blank outcome message key" "$fixture_root/v1-blank-message-key"
@@ -170,9 +175,9 @@ import json
 import sys
 
 path = Path(sys.argv[1])
-data = json.loads(path.read_text())
+data = json.loads(path.read_text(encoding="utf-8"))
 data["reason"] = "model-missing"
-path.write_text(json.dumps(data, separators=(",", ":")) + "\n")
+path.write_text(json.dumps(data, separators=(",", ":")) + "\n", encoding="utf-8")
 PY
 refresh_digest "$fixture_root/v1-ready-capability"
 expect_rejected "v1 ready capability with unavailable reason" "$fixture_root/v1-ready-capability"
@@ -184,7 +189,7 @@ import re
 import sys
 
 path = Path(sys.argv[1]) / "compatibility-matrix.toml"
-path.write_text(re.sub(r'digest = "[a-f0-9]{64}"', 'digest = "' + ('0' * 64) + '"', path.read_text()))
+path.write_text(re.sub(r'digest = "[a-f0-9]{64}"', 'digest = "' + ('0' * 64) + '"', path.read_text(encoding="utf-8")), encoding="utf-8")
 PY
 expect_rejected "v1 stale digest" "$fixture_root/v1-stale-digest"
 
@@ -203,7 +208,7 @@ import re
 import sys
 
 path = Path(sys.argv[1]) / "compatibility-matrix.toml"
-path.write_text(re.sub(r'digest = "[a-f0-9]{64}"', 'digest = "' + ('0' * 64) + '"', path.read_text()))
+path.write_text(re.sub(r'digest = "[a-f0-9]{64}"', 'digest = "' + ('0' * 64) + '"', path.read_text(encoding="utf-8")), encoding="utf-8")
 PY
 expect_rejected "v2 stale digest" "$fixture_root/v2-stale-digest"
 
@@ -218,9 +223,9 @@ import json
 import sys
 
 path = Path(sys.argv[1])
-data = json.loads(path.read_text())
+data = json.loads(path.read_text(encoding="utf-8"))
 data["outcome"]["components"][0]["mass"]["range"]["upperGrams"] = -1
-path.write_text(json.dumps(data, separators=(",", ":")) + "\n")
+path.write_text(json.dumps(data, separators=(",", ":")) + "\n", encoding="utf-8")
 PY
 refresh_digest "$fixture_root/v2-invalid-grams"
 expect_rejected "v2 invalid gram range" "$fixture_root/v2-invalid-grams"
@@ -232,9 +237,9 @@ import json
 import sys
 
 path = Path(sys.argv[1])
-data = json.loads(path.read_text())
+data = json.loads(path.read_text(encoding="utf-8"))
 data["outcome"]["components"][0]["mass"]["range"]["upperGrams"] = 120
-path.write_text(json.dumps(data, separators=(",", ":")) + "\n")
+path.write_text(json.dumps(data, separators=(",", ":")) + "\n", encoding="utf-8")
 PY
 refresh_digest "$fixture_root/v2-degenerate-gram-range"
 expect_rejected "v2 degenerate gram range" "$fixture_root/v2-degenerate-gram-range"
@@ -246,9 +251,9 @@ import json
 import sys
 
 path = Path(sys.argv[1])
-data = json.loads(path.read_text())
+data = json.loads(path.read_text(encoding="utf-8"))
 data["outcome"]["components"][0]["mass"]["range"]["upperGrams"] = 10 ** 400
-path.write_text(json.dumps(data, separators=(",", ":")) + "\n")
+path.write_text(json.dumps(data, separators=(",", ":")) + "\n", encoding="utf-8")
 PY
 refresh_digest "$fixture_root/v2-unrepresentable-double"
 expect_rejected "v2 unrepresentable Double" "$fixture_root/v2-unrepresentable-double"
@@ -261,9 +266,9 @@ import json
 import sys
 
 path = Path(sys.argv[1])
-data = json.loads(path.read_text())
+data = json.loads(path.read_text(encoding="utf-8"))
 data["outcome"]["components"].append(copy.deepcopy(data["outcome"]["components"][0]))
-path.write_text(json.dumps(data, separators=(",", ":")) + "\n")
+path.write_text(json.dumps(data, separators=(",", ":")) + "\n", encoding="utf-8")
 PY
 refresh_digest "$fixture_root/v2-duplicate-component-id"
 expect_rejected "v2 duplicate component ID" "$fixture_root/v2-duplicate-component-id"
@@ -275,13 +280,13 @@ import json
 import sys
 
 path = Path(sys.argv[1])
-data = json.loads(path.read_text())
+data = json.loads(path.read_text(encoding="utf-8"))
 data["outcome"]["components"][0]["mass"] = {
     "massType": "estimated",
     "range": {"lowerGrams": 1, "upperGrams": 2},
     "calibrationAssumptions": ["single-view-approximation"],
 }
-path.write_text(json.dumps(data, separators=(",", ":")) + "\n")
+path.write_text(json.dumps(data, separators=(",", ":")) + "\n", encoding="utf-8")
 PY
 refresh_digest "$fixture_root/v2-text-estimated-mass"
 expect_rejected "v2 text estimated mass" "$fixture_root/v2-text-estimated-mass"
@@ -293,9 +298,9 @@ import json
 import sys
 
 path = Path(sys.argv[1])
-data = json.loads(path.read_text())
+data = json.loads(path.read_text(encoding="utf-8"))
 data["outcome"]["components"][0]["mass"]["massType"] = "exact"
-path.write_text(json.dumps(data, separators=(",", ":")) + "\n")
+path.write_text(json.dumps(data, separators=(",", ":")) + "\n", encoding="utf-8")
 PY
 refresh_digest "$fixture_root/v2-unknown-mass-state"
 expect_rejected "v2 unsupported mass state" "$fixture_root/v2-unknown-mass-state"
@@ -307,9 +312,9 @@ import json
 import sys
 
 path = Path(sys.argv[1])
-data = json.loads(path.read_text())
+data = json.loads(path.read_text(encoding="utf-8"))
 data["outcome"]["components"][0]["nutrition"] = {"calories": 42}
-path.write_text(json.dumps(data, separators=(",", ":")) + "\n")
+path.write_text(json.dumps(data, separators=(",", ":")) + "\n", encoding="utf-8")
 PY
 refresh_digest "$fixture_root/v2-nutrition-injection"
 expect_rejected "v2 nutrition injection" "$fixture_root/v2-nutrition-injection"
@@ -321,9 +326,9 @@ import json
 import sys
 
 path = Path(sys.argv[1])
-data = json.loads(path.read_text())
+data = json.loads(path.read_text(encoding="utf-8"))
 del data["outcome"]["components"][0]["provenance"]
-path.write_text(json.dumps(data, separators=(",", ":")) + "\n")
+path.write_text(json.dumps(data, separators=(",", ":")) + "\n", encoding="utf-8")
 PY
 refresh_digest "$fixture_root/v2-missing-provenance"
 expect_rejected "v2 missing provenance" "$fixture_root/v2-missing-provenance"
@@ -334,7 +339,7 @@ from pathlib import Path
 import sys
 
 path = Path(sys.argv[1]) / "compatibility-matrix.toml"
-path.write_text(path.read_text().replace('requirement = "separate-ports-required"', 'requirement = "implicit-adapter"', 1))
+path.write_text(path.read_text(encoding="utf-8").replace('requirement = "separate-ports-required"', 'requirement = "implicit-adapter"', 1), encoding="utf-8")
 PY
 refresh_digest "$fixture_root/v2-invalid-coexistence"
 expect_rejected "v2 invalid coexistence requirement" "$fixture_root/v2-invalid-coexistence"
@@ -345,7 +350,7 @@ from pathlib import Path
 import sys
 
 path = Path(sys.argv[1]) / "compatibility-matrix.toml"
-path.write_text(path.read_text() + '\n[[supported_pair]]\nproducer = "domain-inference-v2"\nconsumer = "local-android-v2"\ndirection = "forward"\nexpected = "accepted"\n')
+path.write_text(path.read_text(encoding="utf-8") + '\n[[supported_pair]]\nproducer = "domain-inference-v2"\nconsumer = "local-android-v2"\ndirection = "forward"\nexpected = "accepted"\n', encoding="utf-8")
 PY
 refresh_digest "$fixture_root/v2-duplicate-supported-pair"
 expect_rejected "v2 duplicate supported pair" "$fixture_root/v2-duplicate-supported-pair"
@@ -356,7 +361,7 @@ from pathlib import Path
 import sys
 
 path = Path(sys.argv[1]) / "schema.toml"
-path.write_text(path.read_text().replace("schema_version = 1", "schema_version = 2", 1))
+path.write_text(path.read_text(encoding="utf-8").replace("schema_version = 1", "schema_version = 2", 1), encoding="utf-8")
 PY
 refresh_digest "$fixture_root/v2-schema-drift"
 expect_rejected "v2 schema metadata drift" "$fixture_root/v2-schema-drift"

@@ -1,11 +1,17 @@
 package com.supernutrition.feature.photoanalysis
 
+import com.supernutrition.domain.inference.CapabilityState
 import com.supernutrition.domain.inference.InferenceAttemptContext
 import com.supernutrition.domain.inference.InferenceV2Engine
 import com.supernutrition.domain.inference.PhotoInferenceEngine
+import com.supernutrition.domain.photoanalysis.LocalFirstRouter
 import com.supernutrition.domain.photoanalysis.PhotoAnalysisEvent
 import com.supernutrition.domain.photoanalysis.PhotoAnalysisState
 import com.supernutrition.domain.photoanalysis.RequestId
+import com.supernutrition.domain.photoanalysis.RequestedRoute
+import com.supernutrition.domain.photoanalysis.RouteAttemptContext
+import com.supernutrition.domain.photoanalysis.RoutePolicyMode
+import com.supernutrition.domain.photoanalysis.RoutePolicySnapshot
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -70,6 +76,25 @@ class CoordinatedPhotoAnalysisAnalysisLauncher(
             configurationDigest = configuration.configurationDigest,
             gridCellIndex = gridCellIndex,
         )
+        val routeToken = feature.startRouteAttempt(
+            RouteAttemptContext(
+                requestId = requestId,
+                configurationVersion = configuration.configurationVersion,
+                configurationDigest = configuration.configurationDigest,
+                photoDigest = ready.input.contentDigest,
+            ),
+        )
+        val routeDecision = LocalFirstRouter().initial(
+            token = routeToken,
+            localCapability = CapabilityState.READY,
+            policy = RoutePolicySnapshot(
+                policyVersion = configuration.configurationVersion,
+                policyDigest = configuration.configurationDigest,
+                mode = RoutePolicyMode.LOCAL_ONLY,
+            ),
+            requestedRoute = RequestedRoute.LOCAL,
+        )
+        if (!feature.acceptRouteDecision(routeDecision)) return
         val coordinator = PhotoAnalysisAnalysisCoordinator(
             feature = feature,
             dishEngine = dishEngine,

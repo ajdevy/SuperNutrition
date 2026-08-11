@@ -1,6 +1,7 @@
 package com.supernutrition.feature.photoanalysis
 
 import com.supernutrition.domain.inference.InferenceAttemptContext
+import com.supernutrition.domain.inference.InferenceCandidate
 import com.supernutrition.domain.inference.InferenceInputModality
 import com.supernutrition.domain.inference.InferenceOutcome
 import com.supernutrition.domain.inference.InferenceV2Engine
@@ -14,6 +15,7 @@ import com.supernutrition.domain.inference.V2AbstentionReason
 import com.supernutrition.domain.inference.V2InferenceFailureCode
 import com.supernutrition.domain.inference.VisibleComponent
 import com.supernutrition.domain.photoanalysis.BoundedDishIngredientFusion
+import com.supernutrition.domain.photoanalysis.CandidateReviewDegradation
 import com.supernutrition.domain.photoanalysis.CandidateReviewDraft
 import com.supernutrition.domain.photoanalysis.LocalAnalysisStage
 import com.supernutrition.domain.photoanalysis.PhotoAnalysisEvent
@@ -72,10 +74,15 @@ class PhotoAnalysisAnalysisCoordinator(
             val dishResult = dishEngine.analyze(PhotoInferenceRequest(ref, attemptContext))
             if (!isActive(requestId, ref)) return PhotoAnalysisAnalysisResult.Ignored
 
+            val dishResolution = dishResult.outcome.toDishResolution()
+            val availableDishes = dishResolution as? DishResolution.Available
+                ?: return recover(requestId, ref, RecoveryReason.OFFLINE)
+
             dispatchStage(requestId, LocalAnalysisStage.CHECKING_RESULTS)
             val draft = BoundedDishIngredientFusion.merge(
-                dishes = dishResult.outcome.dishCandidates(),
+                dishes = availableDishes.dishes,
                 photoEvidence = components,
+                degradation = availableDishes.degradation,
             )
             feature.dispatch(PhotoAnalysisEvent.ReviewEvidenceAvailable(requestId, draft))
             val review = feature.state as? PhotoAnalysisState.CandidateReview
@@ -116,6 +123,24 @@ class PhotoAnalysisAnalysisCoordinator(
         (feature.state as? PhotoAnalysisState.Analyzing)?.let { it.requestId == requestId && it.ref == ref } == true
 }
 
+private sealed interface DishResolution {
+    data class Available(val dishes: List<InferenceCandidate>, val degradation: CandidateReviewDegradation) :
+        DishResolution
+
+    data object Unavailable : DishResolution
+}
+
+private fun InferenceOutcome.toDishResolution(): DishResolution = when (this) {
+    is InferenceOutcome.Candidates -> DishResolution.Available(candidates, CandidateReviewDegradation.NONE)
+
+    is InferenceOutcome.Abstention -> DishResolution.Available(
+        dishes = emptyList(),
+        degradation = CandidateReviewDegradation.DISH_CANDIDATES_UNAVAILABLE,
+    )
+
+    is InferenceOutcome.Failure -> DishResolution.Unavailable
+}
+
 private fun InferenceV2Result.componentsOrRecovery(): List<VisibleComponent>? {
     val value = outcome
     return if (inputModality == InferenceInputModality.PHOTO && value is InferenceV2Outcome.Components) {
@@ -145,12 +170,4 @@ private fun InferenceV2Result.recoveryReason(): RecoveryReason = when (val value
     }
 
     is InferenceV2Outcome.Components -> RecoveryReason.CAPTURE_FAILED
-}
-
-private fun InferenceOutcome.dishCandidates() = when (this) {
-    is InferenceOutcome.Candidates -> candidates
-
-    is InferenceOutcome.Abstention,
-    is InferenceOutcome.Failure,
-    -> emptyList()
 }

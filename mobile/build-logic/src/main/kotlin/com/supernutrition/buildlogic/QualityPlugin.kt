@@ -228,6 +228,11 @@ class QualityPlugin : Plugin<Project> {
         val reportRoot = rootProject.projectDir.toPath()
         val lifecycleFile = mobileRoot.resolve("product-lifecycle.toml").toFile()
         val coverageFile = mobileRoot.resolve("config/quality/coverage.toml").toFile()
+        val coverageText = Files.readString(coverageFile.toPath())
+        val aggregateLineMinimumPercent = PolicyToml.integer(coverageText, "minimum_line_percent")
+            ?: error("Coverage inventory is missing minimum_line_percent")
+        val aggregateBranchMinimumPercent = PolicyToml.integer(coverageText, "minimum_branch_percent")
+            ?: error("Coverage inventory is missing minimum_branch_percent")
         val reportFiles = productionProjects.flatMap { path ->
             JvmCoverageVerifier.reportPaths(reportRoot, path).map(Path::toFile)
         }
@@ -286,6 +291,8 @@ class QualityPlugin : Plugin<Project> {
                     reportRoot,
                     inventoryProjects,
                     coverageTargets.associateBy { it.projectPath },
+                    aggregateLineMinimumPercent = aggregateLineMinimumPercent,
+                    aggregateBranchMinimumPercent = aggregateBranchMinimumPercent,
                 )
                 logger.lifecycle(
                     "JVM host coverage: line=${formatCoverage(result.linePercent)}%, " +
@@ -309,6 +316,8 @@ class QualityPlugin : Plugin<Project> {
                     reportRoot,
                     inventoryProjects,
                     coverageTargets.associateBy { it.projectPath },
+                    aggregateLineMinimumPercent = aggregateLineMinimumPercent,
+                    aggregateBranchMinimumPercent = aggregateBranchMinimumPercent,
                 )
                 logger.lifecycle(
                     "JVM host coverage (local-only): line=${formatCoverage(result.linePercent)}%, " +

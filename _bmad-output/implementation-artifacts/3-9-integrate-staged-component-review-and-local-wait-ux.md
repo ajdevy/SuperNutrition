@@ -76,6 +76,15 @@ Epic 3 G3 exit gates owned by the selected E3.7/E3.8 runtime and approval bundle
 keeping both hosts at `None` until that gate passes is intentional and is not an
 E3.9 implementation failure.
 
+## Current Epic 3 handover correction (2026-08-11)
+
+The composition paragraph above records the pre-release state. Owner ruling D1
+now makes the PoC the current local production runtime: Android supplies the
+`AndroidPocRuntimeFactory`, while iOS supplies the shared `IosPocInference`
+bridge. The runtime is therefore available in the running app, but the signed
+G-3 quality/release gate remains open and must not be inferred from this wiring
+or from host/UI evidence.
+
 ## Tasks / Subtasks
 
 - [x] Define the typed staged-result and review boundary in `domain/photo-analysis` (AC: 1–3)

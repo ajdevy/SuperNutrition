@@ -14,6 +14,6 @@ These samples are for regression and exploratory device testing only. They are n
 
 ## Android device check
 
-On 2026-08-02 these samples were imported one by one through the system photo picker on the physical `DNY-NX9 - 16` device. All five previews rendered successfully, but all five remained at `Photo ready`; no dish candidates or ingredient regions were produced. This is an integration finding, not a model-quality score: `PhotoAnalysisComposeActivity` currently supplies `PhotoAnalysisAnalysisLauncher.None`, and the production host has no concrete dish/component runtime wired into the coordinator.
+On 2026-08-02 these samples were imported one by one through the system photo picker on the physical `DNY-NX9 - 16` device. All five previews rendered successfully, but all five remained at `Photo ready`; no dish candidates or ingredient regions were produced. This is a historical integration finding, not a model-quality score. The current app composition root provides the Android PoC dish/component runtime through `PhotoAnalysisAndroidRuntimeProvider`; this older five-sample result must not be read as evidence about the current runtime.
 
 The surrounding device gates still pass: `:apps:androidApp:connectedAndroidTest` ran production and uiAcceptance with 15 tests each and zero failures, and `:inference:local-android:connectedAndroidDeviceTest` ran 4 tests with zero failures. These prove the host/adapter smoke paths, not end-to-end food inference on these photos.

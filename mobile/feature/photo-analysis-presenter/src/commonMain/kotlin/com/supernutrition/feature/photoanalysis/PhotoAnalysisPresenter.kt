@@ -5,6 +5,7 @@ import com.supernutrition.domain.inference.ComponentVisibility
 import com.supernutrition.domain.inference.ConfidenceBand
 import com.supernutrition.domain.inference.InferenceRoute
 import com.supernutrition.domain.inference.MassEvidence
+import com.supernutrition.domain.photoanalysis.CandidateReviewDegradation
 import com.supernutrition.domain.photoanalysis.CandidateReviewDraft
 import com.supernutrition.domain.photoanalysis.DishIngredientHint
 import com.supernutrition.domain.photoanalysis.LocalAnalysisStage
@@ -67,11 +68,14 @@ data class CaptureCopy(
     val choosePhoto: String,
     val openSettings: String,
     val cancel: String,
-    val researchWarning: String =
-        "Research PoC / ingredient labels limited to model vocabulary / grams unavailable",
-    val gridHintsTitle: String = "Grid hints",
-    val resultPlaceholder: String = "Top-3 dish candidates and model regions will appear after analysis.",
-    val loadingLabel: String = "Analysis…",
+    val researchWarning: String,
+    val gridHintsTitle: String,
+    val gridOverlayDescription: String,
+    val gridCellDescription: String,
+    val selectedState: String,
+    val notSelectedState: String,
+    val resultPlaceholder: String,
+    val loadingLabel: String,
 ) {
     val values: List<String>
         get() = listOf(
@@ -82,6 +86,10 @@ data class CaptureCopy(
             cancel,
             researchWarning,
             gridHintsTitle,
+            gridOverlayDescription,
+            gridCellDescription,
+            selectedState,
+            notSelectedState,
             resultPlaceholder,
             loadingLabel,
         )
@@ -134,10 +142,12 @@ data class EvidenceCopy(
     val remoteProvenance: String,
     val selected: String,
     val notSelected: String,
-    val dishCandidatesTitle: String = "Dish candidates",
-    val visibleComponentsTitle: String = "Detected in photo",
-    val compositionHintsTitle: String = "Possible ingredients from dish",
-    val compositionHintSource: String = "Dish hint, not visual evidence",
+    val dishCandidatesTitle: String,
+    val visibleComponentsTitle: String,
+    val visibleRegionCount: String,
+    val compositionHintsTitle: String,
+    val compositionHintSource: String,
+    val partialDegradation: String,
 ) {
     init {
         require(estimatedMass.contains("{lower}") && estimatedMass.contains("{upper}")) {
@@ -167,8 +177,10 @@ data class EvidenceCopy(
             notSelected,
             dishCandidatesTitle,
             visibleComponentsTitle,
+            visibleRegionCount,
             compositionHintsTitle,
             compositionHintSource,
+            partialDegradation,
         )
 }
 
@@ -181,6 +193,7 @@ data class RecoveryCopy(
     val noFoodFound: String,
     val analysisOffline: String,
     val analysisCancelled: String,
+    val reviewRestoreUnavailable: String,
 ) {
     val values: List<String>
         get() = listOf(
@@ -192,6 +205,7 @@ data class RecoveryCopy(
             noFoodFound,
             analysisOffline,
             analysisCancelled,
+            reviewRestoreUnavailable,
         )
 }
 
@@ -241,6 +255,7 @@ data class PhotoAnalysisPresenterModel(
             RecoveryReason.PERMISSION_DENIED -> copy.recovery.cameraPermissionRequired
             RecoveryReason.CAMERA_UNAVAILABLE -> copy.recovery.cameraUnavailable
             RecoveryReason.CAPTURE_FAILED -> copy.recovery.photoCaptureFailed
+            RecoveryReason.REVIEW_RESTORE_UNAVAILABLE -> copy.recovery.reviewRestoreUnavailable
             RecoveryReason.POOR_IMAGE -> copy.recovery.photoQualityTooLow
             RecoveryReason.NO_FOOD -> copy.recovery.noFoodFound
             RecoveryReason.OFFLINE -> copy.recovery.analysisOffline
@@ -284,6 +299,7 @@ data class PhotoAnalysisReviewModel(
     val mainDishProposals: List<PhotoAnalysisDishProposalModel>,
     val visibleComponents: List<PhotoAnalysisVisibleComponentModel>,
     val compositionHints: List<PhotoAnalysisDishIngredientHintModel> = emptyList(),
+    val degradationLabel: String? = null,
 )
 
 data class PhotoAnalysisDishProposalModel(
@@ -328,31 +344,27 @@ enum class PhotoAnalysisMassStatus {
 data class PhotoAnalysisMassModel(val status: PhotoAnalysisMassStatus, val label: String)
 
 private fun CandidateReviewDraft.toPresentation(copy: PhotoAnalysisPresenterCopy): PhotoAnalysisReviewModel {
-    val visibleComponents = photoEvidence
-        .distinctBy { ingredientDisplayKey(it.candidate.label) }
-        .map { component ->
-            PhotoAnalysisVisibleComponentModel(
-                componentId = component.componentId,
-                label = component.candidate.label,
-                sourceLabel = copy.evidence.fromThisPhoto,
-                confidenceLabel = confidenceLabel(component.confidence.band, copy.evidence),
-                ambiguityLabel = ambiguityLabel(component.ambiguity, copy.evidence),
-                visibilityLabel = visibilityLabel(component.visibility, copy.evidence),
-                region = component.region?.let {
-                    PhotoAnalysisVisibleRegionModel(it.left, it.top, it.width, it.height)
-                },
-                regionLabel = if (component.region == null) {
-                    copy.evidence.regionUnavailable
-                } else {
-                    copy.evidence.regionAvailable
-                },
-                mass = massModel(component.mass, copy.evidence),
-                provenanceLabel = provenanceLabel(component.provenance.route, copy.evidence),
-                selectionLabel = copy.evidence.notSelected,
-            )
-        }
-    val visibleIngredientKeys = visibleComponents.map { ingredientDisplayKey(it.label) }.toSet()
-
+    val visibleComponents = photoEvidence.map { component ->
+        PhotoAnalysisVisibleComponentModel(
+            componentId = component.componentId,
+            label = component.candidate.label,
+            sourceLabel = copy.evidence.fromThisPhoto,
+            confidenceLabel = confidenceLabel(component.confidence.band, copy.evidence),
+            ambiguityLabel = ambiguityLabel(component.ambiguity, copy.evidence),
+            visibilityLabel = visibilityLabel(component.visibility, copy.evidence),
+            region = component.region?.let {
+                PhotoAnalysisVisibleRegionModel(it.left, it.top, it.width, it.height)
+            },
+            regionLabel = if (component.region == null) {
+                copy.evidence.regionUnavailable
+            } else {
+                copy.evidence.regionAvailable
+            },
+            mass = massModel(component.mass, copy.evidence),
+            provenanceLabel = provenanceLabel(component.provenance.route, copy.evidence),
+            selectionLabel = copy.evidence.notSelected,
+        )
+    }
     return PhotoAnalysisReviewModel(
         mainDishProposals = mainDishProposals.map { candidate ->
             PhotoAnalysisDishProposalModel(
@@ -364,16 +376,14 @@ private fun CandidateReviewDraft.toPresentation(copy: PhotoAnalysisPresenterCopy
             )
         },
         visibleComponents = visibleComponents,
-        compositionHints = compositionHints
-            .asSequence()
-            .filterNot { ingredientDisplayKey(it.label) in visibleIngredientKeys }
-            .distinctBy { ingredientDisplayKey(it.label) }
-            .map { hint -> hint.toPresentation(copy.evidence) }
-            .toList(),
+        compositionHints = compositionHints.map { hint -> hint.toPresentation(copy.evidence) },
+        degradationLabel = if (degradation == CandidateReviewDegradation.DISH_CANDIDATES_UNAVAILABLE) {
+            copy.evidence.partialDegradation
+        } else {
+            null
+        },
     )
 }
-
-private fun ingredientDisplayKey(label: String): String = label.trim().lowercase()
 
 private fun DishIngredientHint.toPresentation(copy: EvidenceCopy): PhotoAnalysisDishIngredientHintModel =
     PhotoAnalysisDishIngredientHintModel(

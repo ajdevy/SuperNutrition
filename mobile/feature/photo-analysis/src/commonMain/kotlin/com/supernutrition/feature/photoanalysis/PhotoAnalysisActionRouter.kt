@@ -15,16 +15,21 @@ enum class PhotoAnalysisNativeAction {
 fun PhotoAnalysisFeature.route(action: PhotoAnalysisPresenterAction, onNative: (PhotoAnalysisNativeAction) -> Unit) {
     when (action) {
         PhotoAnalysisPresenterAction.Cancel -> dispatch(PhotoAnalysisEvent.Cancel)
+
         PhotoAnalysisPresenterAction.ScanAgain -> dispatch(PhotoAnalysisEvent.ScanAgain)
+
         is PhotoAnalysisPresenterAction.SelectGridCell -> dispatch(PhotoAnalysisEvent.GridCellSelected(action.index))
+
         PhotoAnalysisPresenterAction.TakePhoto -> {
             prepareForNativePhotoAction()
             onNative(PhotoAnalysisNativeAction.TakePhoto)
         }
+
         PhotoAnalysisPresenterAction.ImportPhoto -> {
             prepareForNativePhotoAction()
             onNative(PhotoAnalysisNativeAction.ImportPhoto)
         }
+
         PhotoAnalysisPresenterAction.OpenSettings -> onNative(PhotoAnalysisNativeAction.OpenSettings)
     }
 }

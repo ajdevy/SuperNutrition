@@ -80,6 +80,7 @@ private fun PhotoAnalysisEvent.invalidatesRoute(): Boolean = when (this) {
     is PhotoAnalysisEvent.ReplacePhoto,
     PhotoAnalysisEvent.Cancel,
     PhotoAnalysisEvent.ScanAgain,
+    is PhotoAnalysisEvent.GridCellSelected,
     -> true
 
     else -> false

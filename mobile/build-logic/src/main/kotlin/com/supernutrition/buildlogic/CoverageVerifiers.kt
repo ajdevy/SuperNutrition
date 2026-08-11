@@ -91,6 +91,8 @@ internal object JvmCoverageVerifier {
         targets: Map<String, JvmCoverageTarget> = productionProjects.associateWith {
             JvmCoverageTarget(it, lineMinimumPercent = 85, branchMinimumPercent = 85)
         },
+        aggregateLineMinimumPercent: Int = 85,
+        aggregateBranchMinimumPercent: Int = 85,
     ): JvmCoverageSummary {
         require(productionProjects.isNotEmpty()) { "JVM host coverage has no production modules" }
         require(targets.keys == productionProjects.toSet()) {
@@ -117,7 +119,7 @@ internal object JvmCoverageVerifier {
             // empty-branch failure; other modules still contribute the
             // aggregate branch denominator.
             val branch = counter(text, "BRANCH", path, allowEmpty = true)
-            val target = targets.getValue(path)
+            val target = targets[path] ?: error("JVM coverage target is missing for module $path")
             val moduleLinePercent = percentage(line.second, line.first, "line")
             require(moduleLinePercent >= target.lineMinimumPercent) {
                 "JVM module $path line coverage is ${formatCoverage(moduleLinePercent)}%; " +
@@ -137,11 +139,13 @@ internal object JvmCoverageVerifier {
         }
         val linePercent = percentage(lineCovered, lineMissed, "line")
         val branchPercent = percentage(branchCovered, branchMissed, "branch")
-        require(linePercent >= 85.0) {
-            "JVM host line coverage is ${formatCoverage(linePercent)}%; minimum is 85%"
+        require(linePercent >= aggregateLineMinimumPercent) {
+            "JVM host line coverage is ${formatCoverage(linePercent)}%; " +
+                "minimum is $aggregateLineMinimumPercent%"
         }
-        require(branchPercent >= 85.0) {
-            "JVM host branch coverage is ${formatCoverage(branchPercent)}%; minimum is 85%"
+        require(branchPercent >= aggregateBranchMinimumPercent) {
+            "JVM host branch coverage is ${formatCoverage(branchPercent)}%; " +
+                "minimum is $aggregateBranchMinimumPercent%"
         }
         return JvmCoverageSummary(linePercent, branchPercent, productionProjects.size)
     }

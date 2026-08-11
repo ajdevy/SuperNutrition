@@ -1,12 +1,12 @@
 PODS:
-  - onnxruntime-c (1.27.0)
-  - onnxruntime-objc (1.27.0):
-    - onnxruntime-objc/Core (= 1.27.0)
-  - onnxruntime-objc/Core (1.27.0):
-    - onnxruntime-c (= 1.27.0)
+  - onnxruntime-c (1.28.0)
+  - onnxruntime-objc (1.28.0):
+    - onnxruntime-objc/Core (= 1.28.0)
+  - onnxruntime-objc/Core (1.28.0):
+    - onnxruntime-c (= 1.28.0)
 
 DEPENDENCIES:
-  - onnxruntime-objc (= 1.27.0)
+  - onnxruntime-objc (= 1.28.0)
 
 SPEC REPOS:
   trunk:
@@ -14,9 +14,9 @@ SPEC REPOS:
     - onnxruntime-objc
 
 SPEC CHECKSUMS:
-  onnxruntime-c: 412ab51682e622e3d77ddc9176aa92517d171820
-  onnxruntime-objc: f88cca350e7603f81c31b5823f3ddfaa67da9f84
+  onnxruntime-c: 1cf87aaca94f53ab33bb9729104ec0a5b88291e9
+  onnxruntime-objc: f98b9629e1f78020afc354e33a5afd947654c76d
 
-PODFILE CHECKSUM: df7596e2a15521a5b438a46a7eda0ca7a7c9319b
+PODFILE CHECKSUM: 79ec5b349647aaa69225161339fac428ae599cae
 
 COCOAPODS: 1.16.2

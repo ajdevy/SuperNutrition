@@ -5,8 +5,8 @@ lifecycle = "active"
 inventory_state = "local-verified"
 source_digest = "local-only"
 quality_claim = true
-production_source_count = 12
-coverage_denominator_count = 12
+production_source_count = 13
+coverage_denominator_count = 13
 undeclared_executable_policy = "fail"
 
 # Active local inventory: every production source has an explicit quality
@@ -83,6 +83,14 @@ kind = "production-adapter"
 production = true
 quality_task = "inference:local-ios:jvmTest"
 status = "local-verified"
+
+[[unit]]
+id = "inference-local-android-poc"
+path = "mobile/inference/local-android-poc"
+kind = "production-adapter"
+production = true
+quality_task = "inference:local-android-poc:testDebugUnitTest"
+status = "active"
 
 [[unit]]
 id = "domain-nutrition"

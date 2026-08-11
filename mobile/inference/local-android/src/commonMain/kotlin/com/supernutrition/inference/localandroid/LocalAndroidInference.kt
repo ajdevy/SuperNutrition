@@ -7,6 +7,7 @@ import com.supernutrition.domain.inference.CapabilityState
 import com.supernutrition.domain.inference.EngineCapability
 import com.supernutrition.domain.inference.InferenceCandidate
 import com.supernutrition.domain.inference.InferenceFailureCode
+import com.supernutrition.domain.inference.InferenceGenerationController
 import com.supernutrition.domain.inference.InferenceOutcome
 import com.supernutrition.domain.inference.InferenceProvenance
 import com.supernutrition.domain.inference.InferenceRoute
@@ -18,10 +19,6 @@ import com.supernutrition.domain.inference.requireSha256Digest
 import com.supernutrition.domain.photoanalysis.NormalizedPhotoInput
 import com.supernutrition.domain.photoanalysis.PhotoLeaseStorePort
 import com.supernutrition.domain.photoanalysis.PhotoSessionStorePort
-import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import kotlin.coroutines.cancellation.CancellationException
 
 const val LOCAL_ANDROID_ENGINE_ID = "local-android"
@@ -172,10 +169,10 @@ class LocalAndroidInferenceEngine(
     private val runtime: AndroidLocalInferenceRuntime,
     private val digest: (ByteArray) -> String,
 ) : PhotoInferenceEngine {
-    private var nextGeneration = 0L
-    private val stateMutex = Mutex()
-    private val activeGenerations = mutableMapOf<AttemptId, Long>()
-    private val activeTokens = mutableMapOf<AttemptId, AndroidInferenceAttemptToken>()
+    private val generations = InferenceGenerationController<AndroidInferenceAttemptToken>(
+        cancelToken = runtime::cancel,
+        releaseToken = runtime::release,
+    )
 
     override val contractVersion: String = PHOTO_INFERENCE_CONTRACT_V1
 
@@ -196,28 +193,32 @@ class LocalAndroidInferenceEngine(
             )
         }
 
-        val input = readAndValidate(request)
-        val (token, previousToken) = stateMutex.withLock {
-            val token = AndroidInferenceAttemptToken(
-                attemptId = request.attemptContext.attemptId,
-                generation = ++nextGeneration,
-                gridCellIndex = request.attemptContext.gridCellIndex,
+        val input = try {
+            readAndValidate(request)
+        } catch (_: AndroidInferenceInputException) {
+            return PhotoInferenceResult(
+                contractVersion = contractVersion,
+                outcome = InferenceOutcome.Failure(
+                    code = InferenceFailureCode.INVALID_INPUT,
+                    retryable = false,
+                    userMessageKey = "inference.failure.invalid_input",
+                    provenance = provenance,
+                ),
             )
-            val previousToken = activeTokens.put(token.attemptId, token)
-            activeGenerations[token.attemptId] = token.generation
-            token to previousToken
         }
-        previousToken?.let(runtime::cancel)
-
         return try {
-            val outcome = runtime.analyze(input, token)
-            currentCoroutineContext().ensureActive()
-            if (!stateMutex.withLock { activeGenerations[token.attemptId] == token.generation }) {
-                throw CancellationException("Android inference result was superseded")
-            }
+            val outcome = generations.run(
+                attemptId = request.attemptContext.attemptId,
+                tokenFactory = { generation ->
+                    AndroidInferenceAttemptToken(
+                        attemptId = request.attemptContext.attemptId,
+                        generation = generation,
+                        gridCellIndex = request.attemptContext.gridCellIndex,
+                    )
+                },
+            ) { token -> runtime.analyze(input, token) }
             outcome.toContractResult(provenance)
         } catch (cancellation: CancellationException) {
-            runtime.cancel(token)
             throw cancellation
         } catch (_: Exception) {
             PhotoInferenceResult(
@@ -229,26 +230,12 @@ class LocalAndroidInferenceEngine(
                     provenance = provenance,
                 ),
             )
-        } finally {
-            stateMutex.withLock {
-                if (activeGenerations[token.attemptId] == token.generation) {
-                    activeGenerations.remove(token.attemptId)
-                }
-                if (activeTokens[token.attemptId] == token) {
-                    activeTokens.remove(token.attemptId)
-                }
-            }
-            runtime.release(token)
         }
     }
 
     /** Invalidates the current generation and asks the native runtime to stop. */
     suspend fun cancel(attemptId: AttemptId) {
-        val token = stateMutex.withLock {
-            activeGenerations.remove(attemptId)
-            activeTokens.remove(attemptId)
-        }
-        token?.let(runtime::cancel)
+        generations.cancel(attemptId)
     }
 
     private fun readAndValidate(request: PhotoInferenceRequest): NormalizedPhotoInput {

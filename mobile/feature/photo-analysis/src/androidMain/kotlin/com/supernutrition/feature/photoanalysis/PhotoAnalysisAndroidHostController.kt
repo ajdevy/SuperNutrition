@@ -13,6 +13,13 @@ import com.supernutrition.platform.photoandroid.AndroidPhotoCaptureFiles
 import com.supernutrition.platform.photoandroid.AndroidPhotoNormalizerPort
 import java.util.UUID
 
+private val ACTIONS_RESETTING_ANALYSIS = setOf(
+    PhotoAnalysisPresenterAction.Cancel,
+    PhotoAnalysisPresenterAction.ScanAgain,
+    PhotoAnalysisPresenterAction.TakePhoto,
+    PhotoAnalysisPresenterAction.ImportPhoto,
+)
+
 /** Typed Android effect coordinator kept outside the Activity and platform bridge. */
 @Suppress("LongParameterList")
 class PhotoAnalysisAndroidHostController(
@@ -35,11 +42,7 @@ class PhotoAnalysisAndroidHostController(
 
     fun handleAction(action: PhotoAnalysisPresenterAction) {
         feature.route(action, ::handleNativeAction)
-        if (action == PhotoAnalysisPresenterAction.Cancel ||
-            action == PhotoAnalysisPresenterAction.ScanAgain ||
-            action == PhotoAnalysisPresenterAction.TakePhoto ||
-            action == PhotoAnalysisPresenterAction.ImportPhoto
-        ) {
+        if (action in ACTIONS_RESETTING_ANALYSIS) {
             analysisLauncher.cancel()
             onRetainedPhotoInvalidated()
         }

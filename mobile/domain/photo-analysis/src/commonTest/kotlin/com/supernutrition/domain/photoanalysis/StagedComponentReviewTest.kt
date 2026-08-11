@@ -150,7 +150,7 @@ class StagedComponentReviewTest {
         )
 
         assertEquals(
-            PhotoAnalysisState.Recovery(RecoveryReason.CAPTURE_FAILED, setup.ref),
+            PhotoAnalysisState.Recovery(RecoveryReason.REVIEW_RESTORE_UNAVAILABLE, setup.ref),
             recreated.state,
         )
     }

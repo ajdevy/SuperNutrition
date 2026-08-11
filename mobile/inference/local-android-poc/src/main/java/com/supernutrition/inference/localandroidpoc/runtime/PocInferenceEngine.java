@@ -11,6 +11,7 @@ import ai.onnxruntime.OrtSession;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -125,17 +126,20 @@ public final class PocInferenceEngine implements AutoCloseable {
         List<PocAnalysis.Region> regions = new ArrayList<>();
         List<PocAnalysis.IngredientSuggestion> ingredientSuggestions = new ArrayList<>();
         List<String> warnings = new ArrayList<>();
+        List<String> failedStages = new ArrayList<>();
         warnings.add("research-only output: dish labels and limited COCO proposals are not full ingredients; grams are never estimated");
 
         try {
             dishes.addAll(runDish(bitmap));
         } catch (Exception error) {
+            failedStages.add("dish");
             warnings.add("dish pipeline unavailable: " + reason(error));
         }
 
         try {
             detectorProposals.addAll(runRegionProposals(bitmap));
         } catch (Exception error) {
+            failedStages.add("regions");
             warnings.add("COCO region proposal pipeline unavailable: " + reason(error));
         }
 
@@ -190,10 +194,10 @@ public final class PocInferenceEngine implements AutoCloseable {
             warnings.add("no valid COCO food region proposals were produced");
         }
 
-        String status = dishes.isEmpty() && regions.isEmpty()
-                ? "fallback"
-                : (dishes.isEmpty() || regions.isEmpty() ? "partial" : "success");
-        return new PocAnalysis(dishes, regions, ingredientSuggestions, status, warnings);
+        String status = failedStages.isEmpty()
+                ? (dishes.isEmpty() && regions.isEmpty() ? "empty" : "success")
+                : (dishes.isEmpty() && regions.isEmpty() ? "failed" : "partial");
+        return new PocAnalysis(dishes, regions, ingredientSuggestions, status, warnings, failedStages);
     }
 
     /** Closes all owned ONNX sessions. It is safe to call more than once. */
@@ -507,11 +511,14 @@ public final class PocInferenceEngine implements AutoCloseable {
             float height,
             float[][] data,
             int prediction
-    ) {
+    ) throws IOException {
         int classIndex = -1;
         float confidence = 0.0f;
         for (int candidateClass = 0; candidateClass < COCO_NAMES.length; candidateClass++) {
             float score = data[4 + candidateClass][prediction];
+            if (!Float.isFinite(score) || score < 0.0f || score > 1.0f) {
+                throw new IOException("YOLO class score is not finite and bounded");
+            }
             if (score > confidence) {
                 confidence = score;
                 classIndex = candidateClass;
@@ -521,8 +528,13 @@ public final class PocInferenceEngine implements AutoCloseable {
                 || !COCO_COMPONENT_LABELS.contains(COCO_NAMES[classIndex])) {
             return;
         }
-        float scale = Math.max(Math.max(Math.abs(centerX), Math.abs(centerY)),
-                Math.max(Math.abs(width), Math.abs(height))) <= 2.0f ? 1.0f : 1.0f / REGION_SIZE;
+        if (!Float.isFinite(centerX) || !Float.isFinite(centerY)
+                || !Float.isFinite(width) || !Float.isFinite(height)
+                || width <= 0.0f || height <= 0.0f) {
+            throw new IOException("YOLO box coordinates are not finite and positive");
+        }
+        // The checked YOLO export pins box coordinates to REGION_SIZE pixels.
+        float scale = 1.0f / REGION_SIZE;
         float left = PocInferenceMath.clamp01((centerX - width * 0.5f) * scale);
         float top = PocInferenceMath.clamp01((centerY - height * 0.5f) * scale);
         float right = PocInferenceMath.clamp01((centerX + width * 0.5f) * scale);
@@ -533,11 +545,14 @@ public final class PocInferenceEngine implements AutoCloseable {
         candidates.add(new RawRegion(COCO_NAMES[classIndex], confidence, left, top, right, bottom));
     }
 
-    private static void addYoloCandidate(List<RawRegion> candidates, float[] row) {
+    private static void addYoloCandidate(List<RawRegion> candidates, float[] row) throws IOException {
         int classIndex = -1;
         float confidence = 0.0f;
         for (int candidateClass = 0; candidateClass < COCO_NAMES.length; candidateClass++) {
             float score = row[4 + candidateClass];
+            if (!Float.isFinite(score) || score < 0.0f || score > 1.0f) {
+                throw new IOException("YOLO class score is not finite and bounded");
+            }
             if (score > confidence) {
                 confidence = score;
                 classIndex = candidateClass;
@@ -551,8 +566,13 @@ public final class PocInferenceEngine implements AutoCloseable {
         float centerY = row[1];
         float width = row[2];
         float height = row[3];
-        float scale = Math.max(Math.max(Math.abs(centerX), Math.abs(centerY)),
-                Math.max(Math.abs(width), Math.abs(height))) <= 2.0f ? 1.0f : 1.0f / REGION_SIZE;
+        if (!Float.isFinite(centerX) || !Float.isFinite(centerY)
+                || !Float.isFinite(width) || !Float.isFinite(height)
+                || width <= 0.0f || height <= 0.0f) {
+            throw new IOException("YOLO box coordinates are not finite and positive");
+        }
+        // The checked YOLO export pins box coordinates to REGION_SIZE pixels.
+        float scale = 1.0f / REGION_SIZE;
         float left = PocInferenceMath.clamp01((centerX - width * 0.5f) * scale);
         float top = PocInferenceMath.clamp01((centerY - height * 0.5f) * scale);
         float right = PocInferenceMath.clamp01((centerX + width * 0.5f) * scale);
@@ -574,20 +594,32 @@ public final class PocInferenceEngine implements AutoCloseable {
         return masks[0][0];
     }
 
-    private static Bitmap toArgbMask(float[][] mask, int sourceWidth, int sourceHeight) {
+    private static Bitmap toArgbMask(float[][] mask, int sourceWidth, int sourceHeight) throws IOException {
         float scale = Math.min(1.0f, MASK_MAX_SIDE / (float) Math.max(sourceWidth, sourceHeight));
         int width = Math.max(1, Math.round(sourceWidth * scale));
         int height = Math.max(1, Math.round(sourceHeight * scale));
         Bitmap result = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         int maskHeight = mask.length;
         int maskWidth = mask[0].length;
+        boolean probabilityMask = true;
+        for (float[] row : mask) {
+            if (row.length != maskWidth) {
+                throw new IOException("MobileSAM mask rows have inconsistent widths");
+            }
+            for (float value : row) {
+                if (!Float.isFinite(value)) {
+                    throw new IOException("MobileSAM mask contains a non-finite value");
+                }
+                probabilityMask &= value >= 0.0f && value <= 1.0f;
+            }
+        }
+        float threshold = probabilityMask ? 0.5f : 0.0f;
         int[] pixels = new int[width * height];
         for (int y = 0; y < height; y++) {
             int maskY = Math.min(maskHeight - 1, y * maskHeight / height);
             for (int x = 0; x < width; x++) {
                 int maskX = Math.min(maskWidth - 1, x * maskWidth / width);
                 float value = mask[maskY][maskX];
-                float threshold = value >= 0.0f && value <= 1.0f ? 0.5f : 0.0f;
                 pixels[y * width + x] = value > threshold ? Color.WHITE : Color.TRANSPARENT;
             }
         }
@@ -646,18 +678,61 @@ public final class PocInferenceEngine implements AutoCloseable {
 
     private File copyAsset(String name) throws IOException {
         File target = new File(context.getCacheDir(), name);
-        if (target.isFile() && target.length() > 0L) {
+        String expectedDigest = assetDigest(name);
+        if (target.isFile() && target.length() > 0L && expectedDigest.equals(fileDigest(target))) {
             return target;
         }
+        File staged = new File(context.getCacheDir(), name + ".download");
         try (InputStream source = context.getAssets().open(name);
-             FileOutputStream destination = new FileOutputStream(target)) {
+             FileOutputStream destination = new FileOutputStream(staged)) {
             byte[] buffer = new byte[8192];
             int count;
             while ((count = source.read(buffer)) != -1) {
                 destination.write(buffer, 0, count);
             }
         }
+        if (!expectedDigest.equals(fileDigest(staged))) {
+            throw new IOException("Cached model digest mismatch for " + name);
+        }
+        if (target.exists() && !target.delete()) {
+            throw new IOException("Unable to replace stale cached model " + name);
+        }
+        if (!staged.renameTo(target)) {
+            throw new IOException("Unable to publish cached model " + name);
+        }
         return target;
+    }
+
+    private String assetDigest(String name) throws IOException {
+        try (InputStream input = context.getAssets().open(name)) {
+            return digest(input);
+        }
+    }
+
+    private static String fileDigest(File file) throws IOException {
+        try (InputStream input = new FileInputStream(file)) {
+            return digest(input);
+        }
+    }
+
+    private static String digest(InputStream input) throws IOException {
+        try {
+            java.security.MessageDigest digest = java.security.MessageDigest.getInstance("SHA-256");
+            byte[] buffer = new byte[16 * 1024];
+            int read;
+            while ((read = input.read(buffer)) != -1) {
+                if (read > 0) {
+                    digest.update(buffer, 0, read);
+                }
+            }
+            StringBuilder result = new StringBuilder();
+            for (byte value : digest.digest()) {
+                result.append(String.format(java.util.Locale.ROOT, "%02x", value & 0xff));
+            }
+            return result.toString();
+        } catch (java.security.NoSuchAlgorithmException error) {
+            throw new IOException("SHA-256 is unavailable", error);
+        }
     }
 
     private static OrtSession.SessionOptions newSessionOptions() throws Exception {
