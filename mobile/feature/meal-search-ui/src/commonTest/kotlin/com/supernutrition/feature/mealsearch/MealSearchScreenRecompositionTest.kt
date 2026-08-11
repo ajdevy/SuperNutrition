@@ -14,9 +14,11 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.v2.runComposeUiTest
 import com.supernutrition.core.ui.UiAutomationIds
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 /**
  * The screen across recomposition, and with its optional modifier supplied.
@@ -53,7 +55,7 @@ class MealSearchScreenRecompositionTest {
                 rows = listOf(food("food:chicken", "Chicken breast, raw", "not matched: grilled")),
             )
             waitForIdle()
-            onNodeWithTag(UiAutomationIds.mealSearchRowTitle(0).value)
+            onNodeWithTag(UiAutomationIds.mealSearchRowTitle(0).value, useUnmergedTree = true)
                 .assertTextEquals("Chicken breast, raw")
 
             // A later query that matches nothing must replace the list rather
@@ -72,7 +74,7 @@ class MealSearchScreenRecompositionTest {
             var state by mutableStateOf(MealSearchUiState(query = "chicken", rows = rows))
             setContent { MealSearchScreen(state = state, onQueryChanged = {}, copy = copy) }
 
-            onNodeWithTag(UiAutomationIds.mealSearchRowTitle(0).value)
+            onNodeWithTag(UiAutomationIds.mealSearchRowTitle(0).value, useUnmergedTree = true)
                 .assertTextEquals("Chicken breast, raw")
 
             // An equal-but-distinct instance: the screen must render the same
@@ -80,7 +82,7 @@ class MealSearchScreenRecompositionTest {
             state = MealSearchUiState(query = "chicken", rows = rows)
             waitForIdle()
 
-            onNodeWithTag(UiAutomationIds.mealSearchRowTitle(0).value)
+            onNodeWithTag(UiAutomationIds.mealSearchRowTitle(0).value, useUnmergedTree = true)
                 .assertTextEquals("Chicken breast, raw")
         }
     }
@@ -110,7 +112,10 @@ class MealSearchScreenRecompositionTest {
             )
             setContent { MealSearchScreen(state = state, onQueryChanged = {}, copy = copy) }
 
-            onNodeWithTag(UiAutomationIds.mealSearchRowTitle(0).value).assertTextEquals("Chicken")
+            onNodeWithTag(
+                UiAutomationIds.mealSearchRowTitle(0).value,
+                useUnmergedTree = true,
+            ).assertTextEquals("Chicken")
 
             state = MealSearchUiState(
                 query = "c",
@@ -121,8 +126,11 @@ class MealSearchScreenRecompositionTest {
             )
             waitForIdle()
 
-            onNodeWithTag(UiAutomationIds.mealSearchRowTitle(1).value).assertTextEquals("Cheddar")
-            onNodeWithTag(UiAutomationIds.mealSearchRowDetail(1).value)
+            onNodeWithTag(
+                UiAutomationIds.mealSearchRowTitle(1).value,
+                useUnmergedTree = true,
+            ).assertTextEquals("Cheddar")
+            onNodeWithTag(UiAutomationIds.mealSearchRowDetail(1).value, useUnmergedTree = true)
                 .assertTextEquals("not matched: aged")
         }
     }
@@ -149,7 +157,7 @@ class MealSearchScreenRecompositionTest {
             waitForIdle()
 
             onNodeWithTag(TICK_TAG).assertTextEquals("tick 1")
-            onNodeWithTag(UiAutomationIds.mealSearchRowTitle(0).value)
+            onNodeWithTag(UiAutomationIds.mealSearchRowTitle(0).value, useUnmergedTree = true)
                 .assertTextEquals("Chicken breast, raw")
         }
     }
@@ -157,5 +165,105 @@ class MealSearchScreenRecompositionTest {
     private companion object {
         const val CALLER_TAG = "meal_search_caller_modifier"
         const val TICK_TAG = "meal_search_unrelated_tick"
+    }
+
+    @Test
+    fun `a screen given a selection handler recomposes as rows change`() {
+        // Adding a parameter to a @Composable adds Compose's own
+        // recomposition-skip branches, which only a recomposition through the
+        // explicit-argument form reaches. Rendering the default form alone
+        // leaves them untested, and an untested skip is how a row silently
+        // stops updating.
+        runComposeUiTest {
+            var state by mutableStateOf(
+                MealSearchUiState(query = "c", rows = listOf(food("food:a", "Chicken", null))),
+            )
+            val selected = mutableListOf<MealSearchRow>()
+
+            setContent {
+                MealSearchScreen(
+                    state = state,
+                    onQueryChanged = {},
+                    copy = copy,
+                    modifier = Modifier,
+                    onRowSelected = selected::add,
+                )
+            }
+
+            onNodeWithTag(UiAutomationIds.mealSearchRow(0).value).assertIsDisplayed()
+
+            state = MealSearchUiState(
+                query = "ch",
+                rows = listOf(
+                    food("food:a", "Chicken", null),
+                    food("food:b", "Chickpeas", "raw only"),
+                ),
+            )
+
+            onNodeWithTag(UiAutomationIds.mealSearchRow(1).value).performClick()
+            assertEquals("food:b", selected.single().id)
+        }
+    }
+
+    @Test
+    fun `rows that did not change are skipped rather than rebuilt`() {
+        // The query moves and the row list does not. Compose should skip the
+        // rows, which is the branch that only an unchanged-argument
+        // recomposition reaches — and the rows must still work afterwards,
+        // because a skip that leaves a stale click handler is the failure mode.
+        runComposeUiTest {
+            val rows = listOf(food("food:a", "Chicken", null))
+            var state by mutableStateOf(MealSearchUiState(query = "c", rows = rows))
+            val selected = mutableListOf<MealSearchRow>()
+
+            setContent {
+                MealSearchScreen(
+                    state = state,
+                    onQueryChanged = {},
+                    copy = copy,
+                    modifier = Modifier,
+                    onRowSelected = selected::add,
+                )
+            }
+
+            state = MealSearchUiState(query = "ch", rows = rows)
+            state = MealSearchUiState(query = "chi", rows = rows)
+
+            onNodeWithTag(UiAutomationIds.mealSearchRow(0).value).performClick()
+            assertEquals("food:a", selected.single().id)
+        }
+    }
+
+    @Test
+    fun `a row picks up a replaced handler rather than holding the first one`() {
+        // The other half of the row's recomposition branch: not the arguments
+        // changing around a stable handler, but the HANDLER changing. A row that
+        // skipped on this would keep calling the lambda it was first composed
+        // with, which is a tap silently routed to a screen that has gone away.
+        runComposeUiTest {
+            val rows = listOf(food("food:a", "Chicken", null))
+            val first = mutableListOf<MealSearchRow>()
+            val second = mutableListOf<MealSearchRow>()
+            var handler by mutableStateOf<(MealSearchRow) -> Unit>({ first += it })
+
+            setContent {
+                MealSearchScreen(
+                    state = MealSearchUiState(query = "c", rows = rows),
+                    onQueryChanged = {},
+                    copy = copy,
+                    modifier = Modifier,
+                    onRowSelected = handler,
+                )
+            }
+
+            onNodeWithTag(UiAutomationIds.mealSearchRow(0).value).performClick()
+            assertEquals(1, first.size)
+
+            handler = { second += it }
+            onNodeWithTag(UiAutomationIds.mealSearchRow(0).value).performClick()
+
+            assertEquals(1, first.size, "the replaced handler kept receiving taps")
+            assertEquals("food:a", second.single().id)
+        }
     }
 }
