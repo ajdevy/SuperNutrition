@@ -133,6 +133,15 @@ enum class RemoteTransferUnavailable {
     /** No declared market, an unresolved declaration, or a lapsed legal review. */
     MARKET_UNRESOLVED,
 
+    /**
+     * The market declares that content may not leave the jurisdiction at all.
+     *
+     * Kept distinct from MARKET_UNRESOLVED: unresolved is an absence someone
+     * could resolve, and prohibited is a decision already taken. Collapsing them
+     * would tell a user their market simply has not been configured yet.
+     */
+    MARKET_PROHIBITED,
+
     /** The market declares photo transfer forbidden. */
     MODALITY_FORBIDDEN,
 
@@ -214,6 +223,7 @@ class RemoteTransferConsentPolicy(private val registry: MarketPolicyRegistry, pr
 
 private fun TransferRefusal.toUnavailable(): RemoteTransferUnavailable = when (this) {
     TransferRefusal.MARKET_UNRESOLVED -> RemoteTransferUnavailable.MARKET_UNRESOLVED
+    TransferRefusal.MARKET_PROHIBITED -> RemoteTransferUnavailable.MARKET_PROHIBITED
     TransferRefusal.MODALITY_FORBIDDEN -> RemoteTransferUnavailable.MODALITY_FORBIDDEN
     TransferRefusal.NO_PERMITTED_REGION -> RemoteTransferUnavailable.NO_PERMITTED_REGION
     TransferRefusal.CONSENT_COPY_MISMATCH -> RemoteTransferUnavailable.CONSENT_COPY_MISMATCH

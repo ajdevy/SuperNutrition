@@ -36,6 +36,7 @@ class RemoteTransferConsentScreenComposeTest {
         copyVersionLabel = "Disclosure",
         localeLabel = "Language and units",
         unavailableMarketUnresolved = "Remote analysis is not available in your market yet.",
+        unavailableMarketProhibited = "prohibited",
         unavailableModalityForbidden = "Photo analysis cannot leave the device in your market.",
         unavailableNoRegion = "No approved processing region is available.",
         unavailableCopyMismatch = "This build cannot show the approved disclosure.",
