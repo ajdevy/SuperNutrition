@@ -25,7 +25,6 @@ import {
   StaticMarketPolicyResolver,
   TestModeAuthenticator,
   TestModeProductAuthenticator,
-  generateOpaqueId,
   generateRefreshToken,
   type RateLimitRule,
 } from './security/index.js';
@@ -116,10 +115,7 @@ export const buildApplication = async (
   // STUB_INFERENCE exists so the client<->gateway path is exercisable without a
   // provider key. It is fenced to TEST_MODE: with attestation on, a stub can
   // never answer a real caller. Every other gate on the request stays real.
-  const stubAllowed = assertStubFence(
-    process.env['STUB_INFERENCE'] === 'true',
-    config.auth.testMode,
-  );
+  const stubAllowed = assertStubFence(config.stubInference, config.auth.testMode);
 
   const providers = stubAllowed
     ? [new StubInferenceProvider()]
@@ -218,7 +214,6 @@ export const buildApplication = async (
       remoteInferenceEnabled: () => config.inference.remoteEnabled,
       supportedRetentionVersions: ['retention/2'],
       now: () => new Date(),
-      requestIdFactory: () => generateOpaqueId('req'),
       authenticate: async (request) => {
         if (config.auth.testMode) {
           return testAuthenticator.authenticate(request.headers.authorization);

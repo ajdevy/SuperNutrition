@@ -7,9 +7,13 @@ if (!API_KEY) {
   console.error('OPENROUTER_API_KEY not set; export it from backend/mobile-api/.env before running');
   process.exit(1);
 }
-const BASE = 'https://openrouter.ai/api/v1';
-const IMG_DIR = resolve(join(import.meta.dirname, 'images'));
-const OUT_DIR = resolve(join(import.meta.dirname, 'results'));
+// Overridable so the negative fixtures can drive the script against a local
+// stub instead of the real provider. Defaults are the real run; nothing about
+// a normal invocation changes.
+const BASE = process.env.BENCHMARK_BASE_URL ?? 'https://openrouter.ai/api/v1';
+const REQUEST_TIMEOUT_MS = Number(process.env.BENCHMARK_REQUEST_TIMEOUT_MS ?? 120_000);
+const IMG_DIR = resolve(process.env.BENCHMARK_IMAGE_DIR ?? join(import.meta.dirname, 'images'));
+const OUT_DIR = resolve(process.env.BENCHMARK_OUT_DIR ?? join(import.meta.dirname, 'results'));
 
 const MODELS = [
   { id: 'openai/gpt-4o-mini',       label: 'GPT-4o-mini (Pass 1 fallback)', pass: 1 },
@@ -54,7 +58,11 @@ async function runInference(modelId, imagePath) {
   const mime = imagePath.endsWith('.png') ? 'image/png' : 'image/jpeg';
 
   const start = performance.now();
+  // fetch() waits forever by default. A provider that accepts the connection
+  // and never answers otherwise blocks the entire benchmark on one request,
+  // indistinguishable from a slow model.
   const resp = await fetch(`${BASE}/chat/completions`, {
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${API_KEY}`,
@@ -158,6 +166,17 @@ async function main() {
   // Generate report
   writeReport(allResults, images, MODELS);
   console.log(`\nReport: ${OUT_DIR}/BENCHMARK-REPORT.md`);
+
+  // The report is written either way — a record of what failed is worth having.
+  // The exit code is what a caller checks, and a run where nothing answered is
+  // not a successful benchmark. config/model-profiles.toml cites this report by
+  // name when it records which models were chosen, so "exited 0" has to mean
+  // "there are measurements in there".
+  const measured = allResults.filter(r => !r.error && r.foods?.length);
+  if (!measured.length) {
+    console.error(`\nFAILED: ${allResults.length} requests, none produced a usable result.`);
+    process.exitCode = 1;
+  }
 }
 
 function writeReport(allResults, images, models) {
@@ -179,6 +198,10 @@ function writeReport(allResults, images, models) {
     if (errors.length) md += `| Errors | ${errors.map(e => e.image).join(', ')}\n`;
 
     if (success.length) {
+      // Stated explicitly: these are computed over successful requests only.
+      // Read without that, a model that answers one request in ten and is quick
+      // about it outranks one that answers all ten.
+      md += `| _Averages below cover the ${success.length} successful requests only_ |\n`;
       const avgDur = success.reduce((s, r) => s + r.duration, 0) / success.length;
       const avgCost = success.reduce((s, r) => s + r.cost, 0) / success.length;
       const avgTokens = success.reduce((s, r) => s + r.totalTokens, 0) / success.length;
@@ -245,4 +268,7 @@ function writeReport(allResults, images, models) {
   console.log(`\nReport generated: ${OUT_DIR}/BENCHMARK-REPORT.md`);
 }
 
-main().catch(console.error);
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});

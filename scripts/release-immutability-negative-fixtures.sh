@@ -335,4 +335,67 @@ if PATH="$fake_bin:$PATH" SUPERNUTRITION_IMMUTABILITY_BASE="$base" "$gate" "$bli
     exit 1
 fi
 
+# --- Fixture 12: a base that is not an ancestor -----------------------------
+# A stale origin/main, or a revision from another line of development, diffs
+# against a tree that was never this branch's starting point: it reports changes
+# nobody made and misses the ones they did.
+stale="$work/stale-base"
+mkdir -p "$stale"
+seed_repository "$stale"
+git -C "$stale" -c user.email=t@t -c user.name=t checkout -q -b sidetrack
+printf 'schema = "demo.v1"\n# unrelated line\n' >"$stale/contracts/demo/v1/schema.toml"
+commit_all "$stale" 'a commit on another line of development'
+sidetrack=$(git -C "$stale" rev-parse HEAD)
+git -C "$stale" -c user.email=t@t -c user.name=t checkout -q main
+
+if run_gate "$stale" "$sidetrack"; then
+    echo "negative fixture unexpectedly passed: base was not an ancestor of HEAD" >&2
+    exit 1
+fi
+
+# --- Fixture 13: a path git would quote -------------------------------------
+# Without core.quotepath=false and -z, git renders a non-ASCII path as
+# "contracts/caf\303\251/v1/..." — a quoted form matching neither the release
+# glob nor any acknowledgement path, so the file could be edited freely.
+quoted="$work/quoted-path"
+mkdir -p "$quoted"
+seed_repository "$quoted"
+mkdir -p "$quoted/contracts/café/v1"
+printf 'schema = "cafe.v1"\n' >"$quoted/contracts/café/v1/schema.toml"
+commit_all "$quoted" 'publish a release with a non-ascii path'
+base=$(git -C "$quoted" rev-parse HEAD)
+
+printf 'schema = "cafe.v1"\n# edited after publication\n' >"$quoted/contracts/café/v1/schema.toml"
+commit_all "$quoted" 'edit the non-ascii release'
+
+if run_gate "$quoted" "$base"; then
+    echo "negative fixture unexpectedly passed: published file under a quoted path was edited" >&2
+    exit 1
+fi
+
+# --- Fixture 14: the gate names the base it compared against ----------------
+# A stale local origin/main over-reports: the merge base lands further back than
+# the branch point and the diff sweeps in files other merged pull requests
+# published. The failure then names files the author never touched, which reads
+# as a broken gate rather than a ref that needs fetching. Whichever way the base
+# was chosen, the gate has to say so and say which revision it used.
+provenance="$work/base-provenance"
+mkdir -p "$provenance"
+seed_repository "$provenance"
+provenance_base=$(git -C "$provenance" rev-parse HEAD)
+
+output=$(SUPERNUTRITION_IMMUTABILITY_BASE="$provenance_base" \
+    "$repo_root/scripts/verify-release-immutability.sh" "$provenance" 2>&1)
+
+if ! printf '%s' "$output" | grep -q "${provenance_base:0:12}"; then
+    echo "negative fixture unexpectedly passed: gate did not name the base revision it used" >&2
+    printf '%s\n' "$output" >&2
+    exit 1
+fi
+if ! printf '%s' "$output" | grep -q 'passed explicitly'; then
+    echo "negative fixture unexpectedly passed: gate did not say where the base came from" >&2
+    printf '%s\n' "$output" >&2
+    exit 1
+fi
+
 echo "release immutability negative fixtures: OK"

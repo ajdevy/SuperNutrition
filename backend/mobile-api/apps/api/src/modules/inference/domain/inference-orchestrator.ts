@@ -104,33 +104,45 @@ export class TwoPassInferenceOrchestrator implements InferenceOrchestrator {
 
     const threshold = snapshot.routing.confidenceThreshold;
     if ((pass1.value.confidence ?? 0) >= threshold) {
-      return ok(this.#accept(request, pass1.value, 1, false));
+      return ok(this.#accept(request, pass1.value, startedAt, 1, false));
+    }
+
+    // An abstention is an ANSWER, not a low-confidence identification.
+    //
+    // It carries no confidence, so `?? 0` scored it below every threshold and it
+    // escalated to the second, more expensive model — which is then asked to
+    // identify food in a photo the first model said contains none. That buys a
+    // second opinion on a question already answered, at the cost of the pass-2
+    // model on every foodless photo a user happens to take.
+    if (pass1.value.outcome === 'abstention') {
+      return ok(this.#accept(request, pass1.value, startedAt, 1, false));
     }
 
     const budgetLeft = deadlineAt - this.#clock.now();
     if (snapshot.routing.maxPasses < 2 || budgetLeft <= 0 || options.signal.aborted) {
-      return ok(this.#accept(request, pass1.value, 1, true));
+      return ok(this.#accept(request, pass1.value, startedAt, 1, true));
     }
 
     const pass2 = await this.#runPass(2, request, options, deadlineAt, snapshot.profileVersion);
     if (!pass2.ok) {
       // Pass 2 failing does not discard pass 1 — the user still gets the best
       // available evidence, flagged for confirmation.
-      return ok(this.#accept(request, pass1.value, 2, true));
+      return ok(this.#accept(request, pass1.value, startedAt, 2, true));
     }
 
     if ((pass2.value.confidence ?? 0) >= threshold) {
-      return ok(this.#accept(request, pass2.value, 2, false));
+      return ok(this.#accept(request, pass2.value, startedAt, 2, false));
     }
 
     const best =
       (pass2.value.confidence ?? 0) >= (pass1.value.confidence ?? 0) ? pass2.value : pass1.value;
-    return ok(this.#accept(request, best, 2, true));
+    return ok(this.#accept(request, best, startedAt, 2, true));
   }
 
   #accept(
     request: InferenceRequest,
     pass: PassOutcome,
+    startedAt: number,
     passesRun: number,
     requiresConfirmation: boolean,
   ): InferenceResult {
@@ -138,9 +150,13 @@ export class TwoPassInferenceOrchestrator implements InferenceOrchestrator {
       attemptId: request.attemptId,
       outcome: pass.outcome,
       candidates: pass.candidates,
-      confidence: null,
+      // Both were hardcoded. `confidence: null` discarded the number the
+      // routing decision above was just made on, and `durationMs: 0` reported
+      // every attempt as instantaneous — so the telemetry that exists to show
+      // how long inference took, and how sure it was, said nothing at all.
+      confidence: pass.confidence as InferenceResult['confidence'],
       modelId: pass.modelId,
-      durationMs: 0,
+      durationMs: Math.max(0, this.#clock.now() - startedAt),
       passesRun,
       requiresConfirmation: pass.outcome === 'candidates' ? requiresConfirmation : false,
     };

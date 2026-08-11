@@ -144,7 +144,6 @@ beforeEach(() => {
     remoteInferenceEnabled: () => true,
     supportedRetentionVersions: ['retention/2'],
     now: () => NOW,
-    requestIdFactory: () => 'req_0000000000000000',
   };
 });
 
@@ -521,5 +520,49 @@ describe('rate limiting (contract rate-limit.toml)', () => {
     // The code never says WHICH layer rejected, so a caller cannot probe the
     // limiter topology for headroom.
     expect(JSON.stringify(error.toBody('c'))).not.toContain('installation');
+  });
+});
+
+describe('the response identifies the request it answers', () => {
+  // The envelope prose in gateway-response.toml reads "Server-generated,
+  // one-time", and the pipeline took that literally: it minted a fresh id from
+  // requestIdFactory and dropped the validated X-Request-Id on the floor.
+  //
+  // All three canonical fixtures that carry a response body disagree. Each
+  // pairs request and response byte for byte:
+  //
+  //   [request.headers] "X-Request-Id" = "req_01J8X4Q2K7R9M3P5T6V8"
+  //   [response.body]   requestId      = "req_01J8X4Q2K7R9M3P5T6V8"
+  //
+  // The fixtures are the frozen artifact the contract verifier pins, so the
+  // echo is the behaviour and the prose is loose wording. A client that binds
+  // the response to its own request — checking the reply answers the call it
+  // made, and not some other in-flight one — rejects every single response
+  // while the server invents its own id.
+  it('echoes the validated X-Request-Id rather than minting a new one', async () => {
+    const requestId = 'req_2222222222222222';
+    const response = await run(contextFor(JPEG), JPEG, requestId);
+
+    expect(response.status).toBe(200);
+    expect(response.body.requestId).toBe(requestId);
+  });
+
+  it('carries a distinct id per request, so two attempts never collide', async () => {
+    // Distinct attempt and effect ids: two calls sharing either are refused as
+    // a reused attempt or a duplicate effect before a response body exists
+    // (AD-18). Only fully independent requests reach the envelope.
+    const first = await run(
+      contextFor(JPEG, { attemptId: 'att_3333333333333333', effectId: 'eff_3333333333333333' }),
+      JPEG,
+      'req_3333333333333333',
+    );
+    const second = await run(
+      contextFor(JPEG, { attemptId: 'att_4444444444444444', effectId: 'eff_4444444444444444' }),
+      JPEG,
+      'req_4444444444444444',
+    );
+
+    expect(first.body.requestId).toBe('req_3333333333333333');
+    expect(second.body.requestId).toBe('req_4444444444444444');
   });
 });

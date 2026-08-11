@@ -23,7 +23,9 @@ export interface AppConfig {
     readonly modelProfilesPath: string;
     readonly openRouterBaseUrl: string;
   };
-  readonly logging: { readonly level: Env['LOG_LEVEL']; readonly allowlistPath: string };
+  readonly logging: { readonly level: Env['LOG_LEVEL'] };
+  /** Parsed by EnvSchema; still fenced to TEST_MODE at boot. */
+  readonly stubInference: boolean;
 }
 
 export class ConfigError extends Error {
@@ -75,7 +77,8 @@ export const loadConfig = (source: NodeJS.ProcessEnv): AppConfig => {
       modelProfilesPath: env.MODEL_PROFILES_PATH,
       openRouterBaseUrl: env.OPENROUTER_BASE_URL,
     },
-    logging: { level: env.LOG_LEVEL, allowlistPath: env.TELEMETRY_ALLOWLIST_PATH },
+    logging: { level: env.LOG_LEVEL },
+    stubInference: env.STUB_INFERENCE,
   };
 };
 
