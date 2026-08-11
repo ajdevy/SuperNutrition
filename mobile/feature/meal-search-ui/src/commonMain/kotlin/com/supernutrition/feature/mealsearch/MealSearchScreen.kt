@@ -1,5 +1,6 @@
 package com.supernutrition.feature.mealsearch
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,6 +31,17 @@ fun MealSearchScreen(
     onQueryChanged: (String) -> Unit,
     copy: MealSearchCopy,
     modifier: Modifier = Modifier,
+    /**
+     * P1-12 — rows were plain Columns with no callback, so the presenter copy and
+     * the row detail both described a tap that could not happen: the detail line
+     * exists to tell a user what tapping will add, and nothing was listening.
+     *
+     * The canonical catalog id is what travels, not the row index or the title.
+     * An index is a position in a list that reorders as results arrive and a
+     * title is display text; the id is what the next catalog-grounding step can
+     * actually resolve.
+     */
+    onRowSelected: (MealSearchRow) -> Unit = {},
 ) {
     Column(
         modifier = modifier
@@ -62,7 +74,7 @@ fun MealSearchScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 itemsIndexed(state.rows) { index, row ->
-                    MealSearchResultRow(index = index, row = row, copy = copy)
+                    MealSearchResultRow(index = index, row = row, copy = copy, onSelected = onRowSelected)
                 }
             }
         }
@@ -70,8 +82,20 @@ fun MealSearchScreen(
 }
 
 @Composable
-private fun MealSearchResultRow(index: Int, row: MealSearchRow, copy: MealSearchCopy) {
-    Column(modifier = Modifier.automationId(UiAutomationIds.mealSearchRow(index))) {
+private fun MealSearchResultRow(
+    index: Int,
+    row: MealSearchRow,
+    copy: MealSearchCopy,
+    onSelected: (MealSearchRow) -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .automationId(UiAutomationIds.mealSearchRow(index))
+            .fillMaxWidth()
+            // clickable rather than a Button: the whole row is the target, which
+            // is both the larger tap area and what the detail line implies.
+            .clickable { onSelected(row) },
+    ) {
         Text(
             text = row.title,
             modifier = Modifier.automationId(UiAutomationIds.mealSearchRowTitle(index)),
