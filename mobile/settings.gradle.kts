@@ -40,6 +40,7 @@ val scaffoldModules = listOf(
     ":inference:local-android",
     ":inference:local-android-poc",
     ":inference:local-ios",
+    ":inference:local-shared",
     ":inference:remote",
     ":platform:photo-android",
     ":platform:photo-ios",

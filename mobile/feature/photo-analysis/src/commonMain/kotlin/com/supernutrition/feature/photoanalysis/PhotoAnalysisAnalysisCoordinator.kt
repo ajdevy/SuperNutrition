@@ -76,7 +76,7 @@ class PhotoAnalysisAnalysisCoordinator(
 
             val dishResolution = dishResult.outcome.toDishResolution()
             val availableDishes = dishResolution as? DishResolution.Available
-                ?: return recover(requestId, ref, RecoveryReason.OFFLINE)
+                ?: return recover(requestId, ref, RecoveryReason.ANALYSIS_FAILED)
 
             dispatchStage(requestId, LocalAnalysisStage.CHECKING_RESULTS)
             val draft = BoundedDishIngredientFusion.merge(
@@ -164,7 +164,7 @@ private fun InferenceV2Result.recoveryReason(): RecoveryReason = when (val value
         V2InferenceFailureCode.MODEL_UNAVAILABLE,
         V2InferenceFailureCode.RESOURCE_LIMIT,
         V2InferenceFailureCode.TEMPORARY_UNAVAILABLE,
-        -> RecoveryReason.OFFLINE
+        -> RecoveryReason.ANALYSIS_FAILED
 
         V2InferenceFailureCode.INVALID_INPUT -> RecoveryReason.CAPTURE_FAILED
     }

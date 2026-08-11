@@ -37,16 +37,16 @@ import com.supernutrition.domain.photoanalysis.NormalizedPhotoInput
 import com.supernutrition.domain.photoanalysis.PhotoLeaseStorePort
 import com.supernutrition.domain.photoanalysis.PhotoRef
 import com.supernutrition.domain.photoanalysis.PhotoSessionStorePort
-import com.supernutrition.inference.localandroid.AndroidInferenceAttemptToken
-import com.supernutrition.inference.localandroid.AndroidComponentInferenceInputException
-import com.supernutrition.inference.localandroid.AndroidLocalInferenceRuntime
-import com.supernutrition.inference.localandroid.AndroidModelOwnership
-import com.supernutrition.inference.localandroid.AndroidModelProvenance
-import com.supernutrition.inference.localandroid.AndroidModelVerification
-import com.supernutrition.inference.localandroid.AndroidRuntimeCapability
-import com.supernutrition.inference.localandroid.AndroidRuntimeCandidate
-import com.supernutrition.inference.localandroid.AndroidRuntimeOutcome
 import com.supernutrition.inference.localandroid.LocalAndroidInferenceEngine
+import com.supernutrition.inference.localshared.LocalComponentInferenceInputException
+import com.supernutrition.inference.localshared.LocalInferenceAttemptToken
+import com.supernutrition.inference.localshared.LocalModelOwnership
+import com.supernutrition.inference.localshared.LocalModelProvenance
+import com.supernutrition.inference.localshared.LocalModelVerification
+import com.supernutrition.inference.localshared.LocalPhotoInferenceRuntime
+import com.supernutrition.inference.localshared.LocalRuntimeCandidate
+import com.supernutrition.inference.localshared.LocalRuntimeCapability
+import com.supernutrition.inference.localshared.LocalRuntimeOutcome
 import com.supernutrition.inference.localandroidpoc.runtime.PocAnalysis
 import com.supernutrition.inference.localandroidpoc.runtime.PocInferenceEngine
 import kotlinx.coroutines.Dispatchers
@@ -142,20 +142,20 @@ private class AndroidPocRuntimeCore(context: Context) : AutoCloseable {
     }
 }
 
-private class AndroidPocDishRuntime(private val core: AndroidPocRuntimeCore) : AndroidLocalInferenceRuntime {
-    private val model = AndroidModelProvenance(
+private class AndroidPocDishRuntime(private val core: AndroidPocRuntimeCore) : LocalPhotoInferenceRuntime {
+    private val model = LocalModelProvenance(
         modelVersion = DISH_MODEL_VERSION,
         integrityIdentity = DISH_SHA256,
         compatibilityTier = "research-poc",
         calibrationVersion = "softmax-proxy-v1",
-        ownership = AndroidModelOwnership.APP_MANAGED,
-        verification = AndroidModelVerification.VERIFIED,
+        ownership = LocalModelOwnership.APP_MANAGED,
+        verification = LocalModelVerification.VERIFIED,
     )
 
-    override suspend fun capability(): AndroidRuntimeCapability = if (core.isReady()) {
-        AndroidRuntimeCapability.Ready(model)
+    override suspend fun capability(): LocalRuntimeCapability = if (core.isReady()) {
+        LocalRuntimeCapability.Ready(model)
     } else {
-        AndroidRuntimeCapability.Unavailable(
+        LocalRuntimeCapability.Unavailable(
             state = CapabilityState.MODEL_REQUIRED,
             reason = CapabilityReason.MODEL_MISSING,
             userMessageKey = "inference.capability.poc-assets-missing",
@@ -164,11 +164,11 @@ private class AndroidPocDishRuntime(private val core: AndroidPocRuntimeCore) : A
 
     override suspend fun analyze(
         input: NormalizedPhotoInput,
-        token: AndroidInferenceAttemptToken,
-    ): AndroidRuntimeOutcome {
+        token: LocalInferenceAttemptToken,
+    ): LocalRuntimeOutcome {
         val analysis = core.analyze(input, token.gridCellIndex)
         val candidates = analysis.dishCandidates.take(5).mapIndexed { index, candidate ->
-            AndroidRuntimeCandidate(
+            LocalRuntimeCandidate(
                 candidateId = "food101:${candidate.label}",
                 label = candidate.label,
                 rank = index + 1,
@@ -186,16 +186,16 @@ private class AndroidPocDishRuntime(private val core: AndroidPocRuntimeCore) : A
             )
         }
         return if (candidates.isEmpty()) {
-            AndroidRuntimeOutcome.Abstention(
+            LocalRuntimeOutcome.Abstention(
                 reason = com.supernutrition.domain.inference.AbstentionReason.NO_FOOD_DETECTED,
                 userMessageKey = "inference.abstention.no-food-detected",
             )
         } else {
-            AndroidRuntimeOutcome.Candidates(candidates)
+            LocalRuntimeOutcome.Candidates(candidates)
         }
     }
 
-    override fun release(token: AndroidInferenceAttemptToken) = Unit
+    override fun release(token: LocalInferenceAttemptToken) = Unit
 }
 
 private class AndroidPocComponentEngine(
@@ -277,7 +277,7 @@ private class AndroidPocComponentEngine(
         }
         val photo = try {
             readAndValidate(input.photoRef)
-        } catch (_: AndroidComponentInferenceInputException) {
+        } catch (_: LocalComponentInferenceInputException) {
             return failure(
                 V2InferenceFailureCode.INVALID_INPUT,
                 retryable = false,
@@ -337,11 +337,11 @@ private class AndroidPocComponentEngine(
     }
 
     private fun readAndValidate(ref: PhotoRef): NormalizedPhotoInput {
-        if (!leases.isActive(ref)) throw AndroidComponentInferenceInputException("Photo content lease is not active")
+        if (!leases.isActive(ref)) throw LocalComponentInferenceInputException("Photo content lease is not active")
         val input = sessions.read(ref)
-            ?: throw AndroidComponentInferenceInputException("Photo content is unavailable")
+            ?: throw LocalComponentInferenceInputException("Photo content is unavailable")
         if (input.ref != ref || sha256(input.bytes) != input.contentDigest) {
-            throw AndroidComponentInferenceInputException("Photo content digest or identity is invalid")
+            throw LocalComponentInferenceInputException("Photo content digest or identity is invalid")
         }
         return input
     }

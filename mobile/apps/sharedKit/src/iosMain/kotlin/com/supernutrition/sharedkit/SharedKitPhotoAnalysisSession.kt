@@ -35,10 +35,12 @@ import com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterCopy
 import com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterModel
 import com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterState
 import com.supernutrition.platform.photoios.IosImageNormalizer
+import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.usePinned
 import platform.Foundation.NSData
+import platform.Foundation.create
 
 /** Shared Apple session facade; only the renderer differs between Apple targets. */
 @Suppress("TooManyFunctions")
@@ -246,7 +248,7 @@ public class SharedKitPhotoAnalysisSession private constructor(
         val request = RequestId(requestId)
         feature.dispatch(PhotoAnalysisEvent.AnalysisStarted(request))
         if ((feature.state as? PhotoAnalysisState.Analyzing)?.requestId == request) {
-            feature.dispatch(PhotoAnalysisEvent.ReviewEvidenceUnavailable(request, RecoveryReason.OFFLINE))
+            feature.dispatch(PhotoAnalysisEvent.ReviewEvidenceUnavailable(request, RecoveryReason.ANALYSIS_FAILED))
         }
     }
 
@@ -290,7 +292,7 @@ public class SharedKitPhotoAnalysisSession private constructor(
     }
 }
 
-@OptIn(ExperimentalForeignApi::class)
+@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 private fun ByteArray.toNSData(): NSData = usePinned { pinned ->
     NSData.create(bytes = pinned.addressOf(0), length = size.toULong())
 }

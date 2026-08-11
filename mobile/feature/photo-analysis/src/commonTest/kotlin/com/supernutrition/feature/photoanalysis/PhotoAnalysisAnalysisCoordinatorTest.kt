@@ -141,8 +141,8 @@ class PhotoAnalysisAnalysisCoordinatorTest {
             RequestId("request-failure"),
             attemptContext("coordinator-failure", "request-failure"),
         )
-        assertEquals(PhotoAnalysisAnalysisResult.Recovery(RecoveryReason.OFFLINE), failureResult)
-        assertEquals(PhotoAnalysisState.Recovery(RecoveryReason.OFFLINE), failed.state)
+        assertEquals(PhotoAnalysisAnalysisResult.Recovery(RecoveryReason.ANALYSIS_FAILED), failureResult)
+        assertEquals(PhotoAnalysisState.Recovery(RecoveryReason.ANALYSIS_FAILED), failed.state)
     }
 
     @Test

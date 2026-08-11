@@ -130,3 +130,9 @@ remain required before production v2 activation.
 - `tools/g3-benchmark/test_validate_weighed_corpus.py`
 - `tools/g3-benchmark/corpus-collection-runbook.md`
 - `ingredient-weight-research/README.md`
+
+### Review Findings (adversarial PR review, 2026-08-09) — resolved 2026-08-11
+
+- [x] [Review][Patch] Partition isolation is enforced across corpus uploads rather than only within a singleton batch.
+- [x] [Review][Patch] Corpus quality review rejects meaningless mask agreement and evaluates every quality field explicitly.
+- [x] [Review][Patch] Non-visible component states accept only the not-evaluable reasons permitted for that state.

@@ -56,6 +56,7 @@
 "photo_analysis.recovery.capture_failed" = "Photo capture failed";
 "photo_analysis.recovery.quality_too_low" = "Photo quality is too low";
 "photo_analysis.recovery.no_food_found" = "No food was found in the photo";
+"photo_analysis.recovery.analysis_failed" = "We could not analyze this photo";
 "photo_analysis.recovery.offline" = "Analysis is offline";
 "photo_analysis.recovery.cancelled" = "Analysis cancelled";
 "photo_analysis.recovery.review_restore_unavailable" = "The photo is available, but analysis results could not be restored.";

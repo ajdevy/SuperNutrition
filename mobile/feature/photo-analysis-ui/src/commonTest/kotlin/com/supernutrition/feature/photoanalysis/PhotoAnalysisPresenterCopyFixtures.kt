@@ -72,6 +72,7 @@ object PhotoAnalysisPresenterCopyFixtures {
         photoCaptureFailed = "Acquisizione foto non riuscita",
         photoQualityTooLow = "Qualita foto insufficiente",
         noFoodFound = "Nessun alimento trovato",
+        analysisFailed = "Impossibile analizzare questa foto",
         analysisOffline = "Analisi offline",
         analysisCancelled = "Analisi annullata",
         reviewRestoreUnavailable = "Impossibile ripristinare i risultati",

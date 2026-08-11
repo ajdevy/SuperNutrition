@@ -44,6 +44,7 @@
     <string name="capture_recovery_failed">Photo capture failed</string>
     <string name="capture_recovery_quality">Photo quality is too low</string>
     <string name="capture_recovery_no_food">No food was found in the photo</string>
+    <string name="capture_recovery_analysis_failed">We could not analyze this photo</string>
     <string name="capture_recovery_offline">Analysis is offline</string>
     <string name="capture_recovery_cancelled">Analysis cancelled</string>
     <string name="capture_recovery_review_restore_unavailable">The photo is available, but analysis results could not be restored.</string>

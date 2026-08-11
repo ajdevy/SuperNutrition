@@ -124,3 +124,11 @@ approval bundle remain explicitly open.
 - `mobile/domain/inference/src/commonTest/kotlin/com/supernutrition/domain/inference/ComponentModelActivationTest.kt`
 - `mobile/inference/local-ios/src/commonMain/kotlin/com/supernutrition/inference/localios/LocalIosComponentInference.kt`
 - `mobile/inference/local-ios/src/commonTest/kotlin/com/supernutrition/inference/localios/LocalIosComponentInferenceTest.kt`
+
+### Review Findings (adversarial PR review, 2026-08-09) — resolved 2026-08-11
+
+- [x] [Review][Patch] The Swift softmax rejects non-finite logits before shared confidence validation.
+- [x] [Review][Patch] Native tensor output element types are verified before `Float32` binding.
+- [x] [Review][Patch] Empty rasterization produces a typed native failure instead of an invalid ONNX tensor.
+- [x] [Review][Patch] iOS inference receives the KMP-normalized and bounded photo bytes.
+- [x] [Review][Patch] iOS and Android pin ONNX Runtime 1.28.0 for the shared PoC model contract.

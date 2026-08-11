@@ -166,3 +166,15 @@ existing manifest-gated `None` seam and verify each layer independently.
 - 2026-08-03: Implemented additive bounded fusion, separated UI hint lane,
   BMAD presentation index, host quality evidence, and bounded Android
   research-only review path; physical Android production/UI evidence passed.
+
+### Review Findings (adversarial PR review, 2026-08-09) — resolved 2026-08-11
+
+- [x] [Review][Patch] Android and iOS copy is product-facing, localized, and does not promise unsupported ingredient detection or mass estimation.
+- [x] [Review][Patch] Hints are sorted before the bounded truncation is applied.
+- [x] [Review][Patch] User-visible ingredient labels use locale-invariant casing.
+- [x] [Review][Patch] The v1 `gridCellIndex` addition is represented in the shipped contract/release compatibility material.
+- [x] [Review][Patch] The presenter preserves duplicate visual components and does not remove matching hints from the intended lane.
+- [x] [Review][Patch] Capture, grid, and overlay text uses the presenter copy contract rather than hard-coded literals.
+- [x] [Review][Patch] iOS and Android overlay/status-bar contrast follows image luminance and avoids deprecated forced-theme APIs.
+- [x] [Review][Patch] The iOS launch marker is not exposed as an accessibility element.
+- [x] [Review][Patch] minSdk, artifact digest, domain dependency visibility, and factory diagnostics follow their single source and safe logging policy.

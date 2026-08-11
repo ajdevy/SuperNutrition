@@ -382,3 +382,12 @@ GPT-5 Codex
   and physical staged-result evidence remain Epic 3 G3 exit gates because the
   production manifest requires
   the complete approval, corpus, benchmark, and rollback reference bundle.
+
+### Review Findings (adversarial PR review, 2026-08-09) — status updated 2026-08-11
+
+- [x] [Review][Decision] Background cancellation/revocation is prohibited: `onStop` dispatches `Backgrounded` and restores the active analysis without discarding the photo.
+- [x] [Review][Patch] The launcher and Android host preserve analysis through backgrounding instead of reporting `CANCELLED` and revoking the lease.
+- [x] [Review][Patch] Completed `CandidateReview` restores from a typed review snapshot rather than misreporting `CAPTURE_FAILED`.
+- [x] [Review][Patch] Local model failures map to `ANALYSIS_FAILED`, not `OFFLINE`, on the common coordinator and iOS native bridge.
+- [x] [Review][Patch] Dish failure or abstention surfaces typed partial-degradation state instead of silently presenting a components-only review.
+- [x] [Review][Patch] Native evidence records were downgraded to pending when their runs predated the capture-surface rewrite; current iOS fixture execution remains separate from complete XCTest evidence.

@@ -18,6 +18,14 @@ import com.supernutrition.domain.photoanalysis.ImageOrientation
 import com.supernutrition.domain.photoanalysis.NormalizedPhotoInput
 import com.supernutrition.domain.photoanalysis.PhotoLeaseStorePort
 import com.supernutrition.domain.photoanalysis.PhotoSessionStorePort
+import com.supernutrition.inference.localshared.LocalInferenceAttemptToken
+import com.supernutrition.inference.localshared.LocalModelOwnership
+import com.supernutrition.inference.localshared.LocalModelProvenance
+import com.supernutrition.inference.localshared.LocalModelVerification
+import com.supernutrition.inference.localshared.LocalPhotoInferenceRuntime
+import com.supernutrition.inference.localshared.LocalRuntimeCandidate
+import com.supernutrition.inference.localshared.LocalRuntimeCapability
+import com.supernutrition.inference.localshared.LocalRuntimeOutcome
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.async
@@ -51,23 +59,23 @@ class LocalIosInferenceEngineTest {
         metadataKeys = emptySet(),
         contentDigest = "a".repeat(64),
     )
-    private val model = IosModelProvenance(
+    private val model = LocalModelProvenance(
         modelVersion = "ios-model-1",
         integrityIdentity = "b".repeat(64),
         compatibilityTier = "tier-test",
         calibrationVersion = "calibration-1",
-        ownership = IosModelOwnership.APP_MANAGED,
+        ownership = LocalModelOwnership.APP_MANAGED,
         rollbackTargetVersion = "ios-model-0",
-        verification = IosModelVerification.VERIFIED,
+        verification = LocalModelVerification.VERIFIED,
     )
 
     @Test
     fun `ready candidate exposes local contract provenance`() = runTest {
         val runtime = RecordingRuntime(
-            IosRuntimeCapability.Ready(model),
-            IosRuntimeOutcome.Candidates(
+            LocalRuntimeCapability.Ready(model),
+            LocalRuntimeOutcome.Candidates(
                 listOf(
-                    IosRuntimeCandidate(
+                    LocalRuntimeCandidate(
                         candidateId = "food:apple",
                         label = "Apple",
                         rank = 1,
@@ -104,7 +112,7 @@ class LocalIosInferenceEngineTest {
         )
 
         cases.forEach { (state, reason) ->
-            val runtime = RecordingRuntime(IosRuntimeCapability.Unavailable(state, reason))
+            val runtime = RecordingRuntime(LocalRuntimeCapability.Unavailable(state, reason))
             val store = RecordingPhotoStore(input)
             val engine = LocalIosInferenceEngine(store, leaseStore(), runtime) { "a".repeat(64) }
 
@@ -119,26 +127,26 @@ class LocalIosInferenceEngineTest {
     @Test
     fun `abstention and failure preserve iOS provenance`() = runTest {
         val abstentionRuntime = RecordingRuntime(
-            IosRuntimeCapability.Ready(model),
-            IosRuntimeOutcome.Abstention(AbstentionReason.IMAGE_QUALITY, "inference.abstention.image_quality"),
+            LocalRuntimeCapability.Ready(model),
+            LocalRuntimeOutcome.Abstention(AbstentionReason.IMAGE_QUALITY, "inference.abstention.image_quality"),
         )
         val abstention = assertIs<InferenceOutcome.Abstention>(engine(abstentionRuntime).analyze(request).outcome)
         assertEquals(AbstentionReason.IMAGE_QUALITY, abstention.reason)
-        assertEquals(model.toInferenceProvenance(), abstention.provenance)
+        assertEquals(model.toInferenceProvenance(LOCAL_IOS_ENGINE_ID), abstention.provenance)
 
         val failureRuntime = RecordingRuntime(
-            IosRuntimeCapability.Ready(model),
-            IosRuntimeOutcome.Failure(InferenceFailureCode.RESOURCE_LIMIT, false, "inference.failure.resource_limit"),
+            LocalRuntimeCapability.Ready(model),
+            LocalRuntimeOutcome.Failure(InferenceFailureCode.RESOURCE_LIMIT, false, "inference.failure.resource_limit"),
         )
         val failure = assertIs<InferenceOutcome.Failure>(engine(failureRuntime).analyze(request).outcome)
         assertEquals(InferenceFailureCode.RESOURCE_LIMIT, failure.code)
         assertFalse(failure.retryable)
-        assertEquals(model.toInferenceProvenance(), failure.provenance)
+        assertEquals(model.toInferenceProvenance(LOCAL_IOS_ENGINE_ID), failure.provenance)
     }
 
     @Test
     fun `missing foreign and mismatched digest input never reaches runtime`() = runTest {
-        val runtime = RecordingRuntime(IosRuntimeCapability.Ready(model))
+        val runtime = RecordingRuntime(LocalRuntimeCapability.Ready(model))
         listOf(
             null,
             input.copy(ref = PhotoRef.issue(attempt, "other-photo")),
@@ -176,7 +184,7 @@ class LocalIosInferenceEngineTest {
     @Test
     fun `revoked lease is rejected before the session store is read`() = runTest {
         val store = RecordingPhotoStore(input)
-        val runtime = RecordingRuntime(IosRuntimeCapability.Ready(model))
+        val runtime = RecordingRuntime(LocalRuntimeCapability.Ready(model))
         val revoked = LocalIosInferenceEngine(
             store,
             leaseStore(PhotoRef.issue(attempt, "revoked")),
@@ -209,7 +217,7 @@ class LocalIosInferenceEngineTest {
     @Test
     fun `runtime exception is sanitized into a typed failure`() = runTest {
         val runtime = RecordingRuntime(
-            IosRuntimeCapability.Ready(model),
+            LocalRuntimeCapability.Ready(model),
             thrown = IllegalStateException("raw-photo-payload"),
         )
 
@@ -230,7 +238,7 @@ class LocalIosInferenceEngineTest {
             "Authorization: Bearer",
         )
         val runtime = RecordingRuntime(
-            IosRuntimeCapability.Ready(model),
+            LocalRuntimeCapability.Ready(model),
             thrown = IllegalStateException(forbidden.joinToString("|")),
         )
 
@@ -244,8 +252,8 @@ class LocalIosInferenceEngineTest {
     @Test
     fun `malformed runtime candidates become typed fail-closed output`() = runTest {
         val runtime = RecordingRuntime(
-            IosRuntimeCapability.Ready(model),
-            IosRuntimeOutcome.Candidates(emptyList()),
+            LocalRuntimeCapability.Ready(model),
+            LocalRuntimeOutcome.Candidates(emptyList()),
         )
 
         val failure = assertIs<InferenceOutcome.Failure>(engine(runtime).analyze(request).outcome)
@@ -256,7 +264,7 @@ class LocalIosInferenceEngineTest {
     @Test
     fun `cancellation releases runtime and late result is suppressed`() = runTest {
         val cancellationRuntime = RecordingRuntime(
-            IosRuntimeCapability.Ready(model),
+            LocalRuntimeCapability.Ready(model),
             cancellation = CancellationException("test cancellation"),
         )
         assertFailsWith<CancellationException> { engine(cancellationRuntime).analyze(request) }
@@ -291,16 +299,16 @@ class LocalIosInferenceEngineTest {
             validModel(
                 modelVersion = "platform",
                 integrityIdentity = "aicore/runtime-1",
-                ownership = IosModelOwnership.PLATFORM_MANAGED,
+                ownership = LocalModelOwnership.PLATFORM_MANAGED,
                 rollbackTargetVersion = "previous",
             )
         }
         assertEquals(
-            IosModelOwnership.PLATFORM_MANAGED,
+            LocalModelOwnership.PLATFORM_MANAGED,
             validModel(
                 modelVersion = "platform",
                 integrityIdentity = "aicore/runtime-1",
-                ownership = IosModelOwnership.PLATFORM_MANAGED,
+                ownership = LocalModelOwnership.PLATFORM_MANAGED,
             ).ownership,
         )
         assertEquals(null, validModel().rollbackTargetVersion)
@@ -309,16 +317,16 @@ class LocalIosInferenceEngineTest {
     @Test
     fun `runtime value objects reject malformed state`() {
         assertFailsWith<IllegalArgumentException> {
-            IosRuntimeCapability.Unavailable(
+            LocalRuntimeCapability.Unavailable(
                 CapabilityState.READY,
                 CapabilityReason.MODEL_MISSING,
             )
         }
         assertFailsWith<IllegalArgumentException> {
-            IosRuntimeOutcome.Abstention(AbstentionReason.NO_FOOD_DETECTED, " ")
+            LocalRuntimeOutcome.Abstention(AbstentionReason.NO_FOOD_DETECTED, " ")
         }
         assertFailsWith<IllegalArgumentException> {
-            IosRuntimeCandidate(
+            LocalRuntimeCandidate(
                 " ",
                 "label",
                 1,
@@ -327,7 +335,7 @@ class LocalIosInferenceEngineTest {
             )
         }
         assertFailsWith<IllegalArgumentException> {
-            IosRuntimeCandidate(
+            LocalRuntimeCandidate(
                 "candidate",
                 " ",
                 1,
@@ -336,7 +344,7 @@ class LocalIosInferenceEngineTest {
             )
         }
         assertFailsWith<IllegalArgumentException> {
-            IosRuntimeCandidate(
+            LocalRuntimeCandidate(
                 "candidate",
                 "label",
                 0,
@@ -345,24 +353,24 @@ class LocalIosInferenceEngineTest {
             )
         }
         assertFailsWith<IllegalArgumentException> {
-            IosRuntimeCapability.Unavailable(
+            LocalRuntimeCapability.Unavailable(
                 CapabilityState.MODEL_REQUIRED,
                 CapabilityReason.MODEL_MISSING,
                 " ",
             )
         }
         assertFailsWith<IllegalArgumentException> {
-            IosRuntimeCapability.Unavailable(
+            LocalRuntimeCapability.Unavailable(
                 CapabilityState.TEMPORARILY_UNAVAILABLE,
                 CapabilityReason.NONE,
             )
         }
         assertFailsWith<IllegalArgumentException> {
-            IosRuntimeOutcome.Failure(InferenceFailureCode.RESOURCE_LIMIT, false, " ")
+            LocalRuntimeOutcome.Failure(InferenceFailureCode.RESOURCE_LIMIT, false, " ")
         }
     }
 
-    private fun engine(runtime: IosLocalInferenceRuntime): LocalIosInferenceEngine =
+    private fun engine(runtime: LocalPhotoInferenceRuntime): LocalIosInferenceEngine =
         LocalIosInferenceEngine(RecordingPhotoStore(input), leaseStore(), runtime) { "a".repeat(64) }
 
     @Suppress("LongParameterList")
@@ -371,16 +379,16 @@ class LocalIosInferenceEngineTest {
         integrityIdentity: String = "a".repeat(64),
         compatibilityTier: String = "tier",
         calibrationVersion: String = "calibration",
-        ownership: IosModelOwnership = IosModelOwnership.APP_MANAGED,
+        ownership: LocalModelOwnership = LocalModelOwnership.APP_MANAGED,
         rollbackTargetVersion: String? = null,
-    ) = IosModelProvenance(
+    ) = LocalModelProvenance(
         modelVersion = modelVersion,
         integrityIdentity = integrityIdentity,
         compatibilityTier = compatibilityTier,
         calibrationVersion = calibrationVersion,
         ownership = ownership,
         rollbackTargetVersion = rollbackTargetVersion,
-        verification = IosModelVerification.VERIFIED,
+        verification = LocalModelVerification.VERIFIED,
     )
 
     private fun leaseStore(active: PhotoRef = photo): PhotoLeaseStorePort = object : PhotoLeaseStorePort {
@@ -412,15 +420,15 @@ class LocalIosInferenceEngineTest {
     }
 
     private class RecordingRuntime(
-        private val currentCapability: IosRuntimeCapability,
-        private val outcome: IosRuntimeOutcome = IosRuntimeOutcome.Failure(
+        private val currentCapability: LocalRuntimeCapability,
+        private val outcome: LocalRuntimeOutcome = LocalRuntimeOutcome.Failure(
             InferenceFailureCode.TEMPORARY_UNAVAILABLE,
             true,
             "inference.failure.temporary_unavailable",
         ),
         private val cancellation: CancellationException? = null,
         private val thrown: Exception? = null,
-    ) : IosLocalInferenceRuntime {
+    ) : LocalPhotoInferenceRuntime {
         var invocations = 0
             private set
         var networkAttempts = 0
@@ -430,9 +438,12 @@ class LocalIosInferenceEngineTest {
         var releaseCount = 0
             private set
 
-        override suspend fun capability(): IosRuntimeCapability = currentCapability
+        override suspend fun capability(): LocalRuntimeCapability = currentCapability
 
-        override suspend fun analyze(input: NormalizedPhotoInput, token: IosInferenceAttemptToken): IosRuntimeOutcome {
+        override suspend fun analyze(
+            input: NormalizedPhotoInput,
+            token: LocalInferenceAttemptToken,
+        ): LocalRuntimeOutcome {
             invocations += 1
             seenBytes = input.bytes.toList()
             cancellation?.let { throw it }
@@ -440,14 +451,14 @@ class LocalIosInferenceEngineTest {
             return outcome
         }
 
-        override fun release(token: IosInferenceAttemptToken) {
+        override fun release(token: LocalInferenceAttemptToken) {
             releaseCount += 1
         }
 
-        override fun cancel(token: IosInferenceAttemptToken) = Unit
+        override fun cancel(token: LocalInferenceAttemptToken) = Unit
     }
 
-    private class BlockingRuntime(private val model: IosModelProvenance) : IosLocalInferenceRuntime {
+    private class BlockingRuntime(private val model: LocalModelProvenance) : LocalPhotoInferenceRuntime {
         val firstInvocation = CompletableDeferred<Unit>()
         val releaseFirst = CompletableDeferred<Unit>()
         var releaseCount = 0
@@ -456,31 +467,34 @@ class LocalIosInferenceEngineTest {
             private set
         private var invocations = 0
 
-        override suspend fun capability(): IosRuntimeCapability = IosRuntimeCapability.Ready(model)
+        override suspend fun capability(): LocalRuntimeCapability = LocalRuntimeCapability.Ready(model)
 
-        override suspend fun analyze(input: NormalizedPhotoInput, token: IosInferenceAttemptToken): IosRuntimeOutcome {
+        override suspend fun analyze(
+            input: NormalizedPhotoInput,
+            token: LocalInferenceAttemptToken,
+        ): LocalRuntimeOutcome {
             invocations += 1
             if (invocations == 1) {
                 firstInvocation.complete(Unit)
                 releaseFirst.await()
             }
-            return IosRuntimeOutcome.Failure(
+            return LocalRuntimeOutcome.Failure(
                 InferenceFailureCode.TEMPORARY_UNAVAILABLE,
                 true,
                 "inference.failure.temporary_unavailable",
             )
         }
 
-        override fun release(token: IosInferenceAttemptToken) {
+        override fun release(token: LocalInferenceAttemptToken) {
             releaseCount += 1
         }
 
-        override fun cancel(token: IosInferenceAttemptToken) {
+        override fun cancel(token: LocalInferenceAttemptToken) {
             cancelCount += 1
         }
     }
 
-    private inner class LocalAndroidLikeEngine(value: NormalizedPhotoInput?, runtime: IosLocalInferenceRuntime) {
+    private inner class LocalAndroidLikeEngine(value: NormalizedPhotoInput?, runtime: LocalPhotoInferenceRuntime) {
         private val delegate = LocalIosInferenceEngine(
             RecordingPhotoStore(value),
             leaseStore(),
