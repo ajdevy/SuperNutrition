@@ -96,6 +96,13 @@ sealed interface TransferDecision {
 
 enum class TransferRefusal {
     MARKET_UNRESOLVED,
+
+    /**
+     * Distinct from MARKET_UNRESOLVED on purpose. "Unresolved" invites someone
+     * to go and resolve it; prohibited is a decision that has already been
+     * made, and collapsing the two would lose that.
+     */
+    MARKET_PROHIBITED,
     MODALITY_FORBIDDEN,
     NO_PERMITTED_REGION,
     CONSENT_COPY_MISMATCH,
@@ -158,6 +165,16 @@ class MarketPolicyRegistry(policies: List<MarketPolicy>) {
             is MarketResolution.Unresolved -> return TransferDecision.Refused(TransferRefusal.MARKET_UNRESOLVED)
             is MarketResolution.Resolved -> resolution.policy
         }
+        // The posture is checked before the modality permission, because it
+        // overrides it. resolve() rejects only UNRESOLVED and lapsed reviews, so
+        // PROHIBITED came back Resolved and this function then asked only
+        // whether the modality was permitted — meaning a market whose declared
+        // legal position is "content may not leave" could authorise a photo
+        // upload. A per-modality permission grants within a posture; it cannot
+        // grant against one.
+        if (policy.residencyPosture == ResidencyPosture.PROHIBITED) {
+            return TransferDecision.Refused(TransferRefusal.MARKET_PROHIBITED)
+        }
         val permission = when (modality) {
             TransferModality.PHOTO -> policy.photoRemotePermission
             TransferModality.TEXT -> policy.textRemotePermission
@@ -172,10 +189,14 @@ class MarketPolicyRegistry(policies: List<MarketPolicy>) {
         if (authorising != presentedConsentCopyVersion) {
             return TransferDecision.Refused(TransferRefusal.CONSENT_COPY_MISMATCH)
         }
-        if (policy.permittedProcessingRegions.isEmpty()) {
+        // Blank entries are not regions. An empty list already failed closed; a
+        // list of blank strings did not, because it is non-empty — so a transfer
+        // could be permitted to a region named "".
+        val regions = policy.permittedProcessingRegions.filter { it.isNotBlank() }
+        if (regions.isEmpty()) {
             return TransferDecision.Refused(TransferRefusal.NO_PERMITTED_REGION)
         }
-        return TransferDecision.Permitted(policy.permittedProcessingRegions, authorising)
+        return TransferDecision.Permitted(regions, authorising)
     }
 
     /**

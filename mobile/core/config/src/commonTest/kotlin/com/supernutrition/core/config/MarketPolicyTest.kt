@@ -208,4 +208,95 @@ class MarketPolicyTest {
 
         assertEquals(true, failure.message.orEmpty().contains("one reconciled answer"))
     }
+
+    // --- P1-3: a prohibited market -----------------------------------------
+
+    @Test
+    fun `a prohibited market refuses transfer even when the modality permits it`() {
+        // resolve() rejected only UNRESOLVED and expired reviews, so PROHIBITED
+        // came back Resolved and mayTransfer then asked only whether the
+        // modality was permitted. A market whose declared legal position is
+        // "content may not leave" could authorise a photo upload.
+        val registry = MarketPolicyRegistry(
+            listOf(base.copy(residencyPosture = ResidencyPosture.PROHIBITED)),
+        )
+
+        val decision = registry.mayTransfer(
+            MarketId("ZZ"),
+            TransferModality.PHOTO,
+            "photo-copy-v1",
+            today,
+        )
+
+        assertIs<TransferDecision.Refused>(decision)
+    }
+
+    @Test
+    fun `a prohibited market refuses both modalities`() {
+        val registry = MarketPolicyRegistry(
+            listOf(
+                base.copy(
+                    residencyPosture = ResidencyPosture.PROHIBITED,
+                    textRemotePermission = RemotePermission.PERMITTED,
+                    textConsentCopyVersion = "text-copy-v1",
+                ),
+            ),
+        )
+
+        for (modality in TransferModality.entries) {
+            val copyVersion = if (modality == TransferModality.PHOTO) "photo-copy-v1" else "text-copy-v1"
+            assertIs<TransferDecision.Refused>(
+                registry.mayTransfer(MarketId("ZZ"), modality, copyVersion, today),
+                "$modality was permitted under a PROHIBITED posture",
+            )
+        }
+    }
+
+    @Test
+    fun `a prohibited market is not merely unresolved`() {
+        // The refusal reason matters: "unresolved" invites someone to resolve
+        // it, while prohibited is a decision that has already been made. Both
+        // refuse, and they are not the same statement.
+        val registry = MarketPolicyRegistry(
+            listOf(base.copy(residencyPosture = ResidencyPosture.PROHIBITED)),
+        )
+
+        val decision = registry.mayTransfer(
+            MarketId("ZZ"),
+            TransferModality.PHOTO,
+            "photo-copy-v1",
+            today,
+        )
+
+        assertEquals(
+            TransferRefusal.MARKET_PROHIBITED,
+            (decision as TransferDecision.Refused).reason,
+        )
+    }
+
+    @Test
+    fun `a blank processing region is no region at all`() {
+        // An empty list already failed closed. A list of blank strings did not:
+        // it is non-empty, so the transfer was permitted to a region named "".
+        val registry = MarketPolicyRegistry(
+            listOf(base.copy(permittedProcessingRegions = listOf("   "))),
+        )
+
+        assertIs<TransferDecision.Refused>(
+            registry.mayTransfer(MarketId("ZZ"), TransferModality.PHOTO, "photo-copy-v1", today),
+        )
+    }
+
+    @Test
+    fun `a permitted market with a real region still transfers`() {
+        // The positive control. A fix that refuses everything is not a fix.
+        assertIs<TransferDecision.Permitted>(
+            MarketPolicyRegistry(listOf(base)).mayTransfer(
+                MarketId("ZZ"),
+                TransferModality.PHOTO,
+                "photo-copy-v1",
+                today,
+            ),
+        )
+    }
 }
