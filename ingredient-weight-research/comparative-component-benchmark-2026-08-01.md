@@ -8,6 +8,14 @@ visibly separable components; unknown or incompatible labels remain raw rather
 than being coerced into a product ingredient. A gram metric is valid only where
 the photo has calibrated, tared scale ground truth.
 
+## 2026-08-11 YOLOX-Nano update
+
+The later fresh physical Android comparison of the official YOLOX-Nano COCO
+release and the current pinned YOLO-World artifact is recorded separately in
+[`yolox-nano-comparison-2026-08-11.md`](yolox-nano-comparison-2026-08-11.md).
+It does not revise the decisions below: both detectors remain COCO-limited,
+have no mass output, and are not production ingredient candidates.
+
 ## Common complex-meal screen
 
 The screen contains five public fixtures: steak with sides, fish with mixed

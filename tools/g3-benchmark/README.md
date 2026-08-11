@@ -168,7 +168,8 @@ not the selected runtime:
 | Activity | Asset contract | Capability boundary |
 | --- | --- | --- |
 | `MobileSamActivity` | MobileSAM encoder SHA-256 `580f5fb648ea1062c0aabc26217aed56921985f03f0cbbd852bba81d760cc749`; decoder SHA-256 `8976b90a87ba50a6a72217a5ff994f7d25ce16f2229fcc1ed259e1294c622ffe` | Point-prompted class-agnostic masks only; no ingredient identity or mass |
-| `YoloWorldActivity` | 640 px YOLO-World v2 ONNX SHA-256 `ef272175d4db2216cde08082f1accf120bdf5ee03b5bc2ba5f51735cda1e9cbc`; embedded COCO-80 vocabulary | Detector-only; no complete ingredient vocabulary, normalization, or mass |
+| `YoloWorldActivity` | 640 px current PoC YOLO-World v2 ONNX SHA-256 `d27ac81640ca470cc7e42edd638b6626ac6b4f4dcce74aabb6e09cd02a13c84f`; embedded COCO-80 vocabulary | Detector-only; no complete ingredient vocabulary, normalization, or mass |
+| `YoloXNanoActivity` | official YOLOX-Nano 416 px COCO ONNX SHA-256 `c789161ed43c8269fcd4e67c67eeeb4e80c622da2eb296a20bc6007bd18a0b7d`; BGR letterbox preprocessing | Detector-only; no complete ingredient vocabulary, normalization, or mass |
 
 For an explicit connected device, launch one activity and retrieve its local
 record with an ADB serial supplied by the operator:
@@ -186,6 +187,12 @@ Replace `MobileSamActivity`/`mobile-sam-result.json` with
 physical Android outcomes and the explicit unexecuted statuses for FoodSAM and
 FoodSeg103 are recorded in
 [`ingredient-weight-research/android-candidate-device-evidence-2026-08-01.json`](../../ingredient-weight-research/android-candidate-device-evidence-2026-08-01.json).
+
+Use `YoloXNanoActivity`/`yolox-nano-result.json` for the official YOLOX-Nano
+COCO screen. The model is downloaded by `download-assets.sh` and is never a
+product activation: the test is a five-fixture deployment comparison only.
+The 2026-08-11 physical comparison with the current YOLO-World artifact is in
+[`ingredient-weight-research/yolox-nano-android-evidence-2026-08-11.json`](../../ingredient-weight-research/yolox-nano-android-evidence-2026-08-11.json).
 
 ### Full photo-to-grid research PoC
 
