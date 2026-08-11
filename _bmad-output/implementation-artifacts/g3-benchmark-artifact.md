@@ -8,7 +8,7 @@
 | Production activation | **Blocked until user acceptance/signature and remaining gaps close** |
 | Measurement harness | [`tools/g3-benchmark/README.md`](../../tools/g3-benchmark/README.md) |
 | Research record | [`docs/research/epic-3-food-recognition-preprocessing-camera.md`](../../docs/research/epic-3-food-recognition-preprocessing-camera.md) |
-| Evidence date | 2026-08-02 |
+| Evidence date | 2026-08-11 (latest physical baseline; component/mass G-3 remains open) |
 
 This document records reproducible physical-device evidence. Evidence alone is
 not a signature; this revision records one scoped Engineering approval and a
@@ -395,6 +395,31 @@ counts. The iOS simulator lane remains unexecuted because strict dependency
 verification lacks the `kotlinx-serialization-core-iosx64:1.9.0` checksum.
 These are platform correctness/evidence results only; they do not establish
 component identity, calibrated mass quality, or production G-3 approval.
+
+### 2026-08-11 physical-baseline execution
+
+The clean worktree at `39c45216` ran the complete Android connected suite on
+the physical Honor DNY-NX9 / Android 16 (API 36), USB serial
+`AU3N025429006787`. `pocDebug`, `productionDebug`, and `uiAcceptanceDebug`
+each completed `16/16` instrumentation tests with zero failures, errors, or
+skips. The clean, digest-bound platform-evidence bundle is
+`/tmp/supernutrition-android-g3-baseline-2026-08-11`.
+
+This is a host/camera/normalization/UI platform baseline, not a component/mass
+benchmark: the checked-in PoC does not supply a selected legally cleared model
+and there is no validated consented weighed corpus or model-prediction handoff.
+Consequently component F1/mask quality, gram MAE/p90, abstention slices, and
+model resource/rollback metrics remain `not-evaluable`.
+
+The paired iPhone 14 Pro is booted, unlocked, in Developer Mode, and available
+over the local CoreDevice tunnel (iOS `26.5.2`, build `23F84`; UDID
+`00008120-0012295934E0C01E`). The physical Xcode acceptance command built and
+signed with Team `Z4JKB6L22Z`, but it did not begin XCTest: Xcode reported it
+could not locate DeviceSupport for `arm64`/`arm64e` while installing or
+launching the test host. The installed Xcode is `26.0.1` (`17A400`) and its
+local iPhoneOS DeviceSupport directories stop at `16.4`; this host needs an
+Xcode release supporting iOS 26.5.2, or a device on a supported iOS release,
+before the iPhone baseline or G-3 benchmark can run.
 
 ## Acceptance and signature
 
