@@ -59,6 +59,11 @@ expect_rejected() {
         echo "negative fixture was rejected without a reason: $label" >&2
         exit 1
     fi
+    if [[ "$output" != *"inference contract rejected:"* ]]; then
+        echo "negative fixture was not rejected by the contract verifier: $label" >&2
+        printf '%s\n' "$output" >&2
+        exit 1
+    fi
 }
 
 copy_release v1 v1-incompatible-pair

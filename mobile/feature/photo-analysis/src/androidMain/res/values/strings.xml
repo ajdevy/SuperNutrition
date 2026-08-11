@@ -1,9 +1,9 @@
 <resources>
     <string name="capture_title">Super Nutrition</string>
-    <string name="capture_shutter">Сделать фото</string>
-    <string name="capture_import">Выбрать фото</string>
+    <string name="capture_shutter">Take photo</string>
+    <string name="capture_import">Choose photo</string>
     <string name="capture_open_settings">Open settings</string>
-    <string name="capture_scan_again">Сделать фото</string>
+    <string name="capture_scan_again">Take another photo</string>
     <string name="capture_cancel">Cancel</string>
     <string name="capture_status_ready">Ready to capture</string>
     <string name="capture_status_preparing">Preparing photo</string>

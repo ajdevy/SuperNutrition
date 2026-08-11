@@ -219,32 +219,30 @@ private fun PhotoAnalysisVisibleComponents(review: PhotoAnalysisReviewModel, sur
             text = surface.presenterCopy.evidence.visibleComponentsTitle,
             style = pocBodyTextStyle(),
         )
-        review.visibleComponents
-            .distinctBy { it.label.trim().lowercase() }
-            .forEach { component ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .automationId(photoAnalysisVisibleComponentId(component.componentId))
-                        .semantics {
-                            contentDescription = listOf(
-                                component.label,
-                                component.sourceLabel,
-                                component.confidenceLabel,
-                                component.ambiguityLabel,
-                                component.visibilityLabel,
-                                component.regionLabel,
-                                component.mass.label,
-                                component.provenanceLabel,
-                            ).joinToString()
-                            stateDescription = component.selectionLabel
-                        },
-                ) {
-                    Text(component.label, style = pocBodyTextStyle())
-                    Text(component.sourceLabel, style = pocBodyTextStyle())
-                    Text(component.mass.label, style = pocBodyTextStyle())
-                }
+        review.visibleComponents.forEach { component ->
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .automationId(photoAnalysisVisibleComponentId(component.componentId))
+                    .semantics {
+                        contentDescription = listOf(
+                            component.label,
+                            component.sourceLabel,
+                            component.confidenceLabel,
+                            component.ambiguityLabel,
+                            component.visibilityLabel,
+                            component.regionLabel,
+                            component.mass.label,
+                            component.provenanceLabel,
+                        ).joinToString()
+                        stateDescription = component.selectionLabel
+                    },
+            ) {
+                Text(component.label, style = pocBodyTextStyle())
+                Text(component.sourceLabel, style = pocBodyTextStyle())
+                Text(component.mass.label, style = pocBodyTextStyle())
             }
+        }
     }
 }
 

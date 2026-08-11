@@ -93,6 +93,23 @@ class StagedComponentReviewTest {
     }
 
     @Test
+    fun `component-only evidence remains a review when dish candidates abstain`() {
+        val setup = analyzing("components-only-photo", "components-only-request")
+        val draft = CandidateReviewDraft(
+            mainDishProposals = emptyList(),
+            photoEvidence = listOf(component("component-carrot", "ingredient:carrot")),
+            degradation = CandidateReviewDegradation.DISH_CANDIDATES_UNAVAILABLE,
+        )
+
+        reducer.dispatch(PhotoAnalysisEvent.ReviewEvidenceAvailable(setup.requestId, draft))
+
+        assertEquals(
+            PhotoAnalysisState.CandidateReview(setup.ref, setup.requestId, draft),
+            reducer.state,
+        )
+    }
+
+    @Test
     fun `stale evidence is ignored and expired evidence recovers without review`() {
         val setup = analyzing("stale-review-photo", "stale-review-request")
         val draft = CandidateReviewDraft(listOf(dish("dish-stale", 1)), emptyList())

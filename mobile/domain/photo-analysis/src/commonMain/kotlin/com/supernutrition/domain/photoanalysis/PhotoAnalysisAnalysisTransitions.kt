@@ -30,6 +30,15 @@ internal class PhotoAnalysisAnalysisTransitions(private val context: PhotoAnalys
     ): PhotoAnalysisReduction = when {
         event.requestId != current.requestId -> unchanged(current)
 
+        event.draft.mainDishProposals.isEmpty() && event.draft.photoEvidence.isEmpty() ->
+            reduceUnavailableEvidence(
+                current,
+                PhotoAnalysisEvent.ReviewEvidenceUnavailable(
+                    requestId = event.requestId,
+                    reason = RecoveryReason.NO_FOOD,
+                ),
+            )
+
         context.isLive(current.ref) -> unchanged(
             PhotoAnalysisState.CandidateReview(current.ref, current.requestId, event.draft),
         )

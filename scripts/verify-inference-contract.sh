@@ -50,7 +50,7 @@ RESOURCE_BUCKETS = {"within-budget", "near-budget", "over-budget"}
 
 
 def fail(message):
-    raise SystemExit(message)
+    raise SystemExit(f"inference contract rejected: {message}")
 
 
 def reject_duplicate_keys(pairs):
