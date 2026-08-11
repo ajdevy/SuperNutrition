@@ -328,7 +328,7 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
             localeLabel = getString(R.string.consent_locale_label),
             unavailableMarketUnresolved = getString(R.string.consent_unavailable_market),
             unavailableMarketProhibited =
-                "Remote analysis is not permitted in this market.",
+            "Remote analysis is not permitted in this market.",
             unavailableModalityForbidden = getString(R.string.consent_unavailable_modality),
             unavailableNoRegion = getString(R.string.consent_unavailable_region),
             unavailableCopyMismatch = getString(R.string.consent_unavailable_copy),

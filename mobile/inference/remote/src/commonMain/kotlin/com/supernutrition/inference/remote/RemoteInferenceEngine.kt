@@ -54,6 +54,38 @@ data class RemoteConsentDecision(
     val expiresAt: String,
 )
 
+private data class Rfc3339Parts(
+    val year: Int,
+    val month: Int,
+    val day: Int,
+    val hour: Int,
+    val minute: Int,
+    val second: Int,
+) {
+    fun isInRange(): Boolean = month in 1..12 && day in 1..31 && hour in 0..23 && minute in 0..59 && second in 0..60
+
+    /** Days from the civil epoch (Howard Hinnant), so no platform calendar is used. */
+    fun daysFromCivil(): Long {
+        val shiftedYear = if (month <= 2) year - 1 else year
+        val era = (if (shiftedYear >= 0) shiftedYear else shiftedYear - 399) / 400
+        val yearOfEra = shiftedYear - era * 400
+        val dayOfYear = (153 * (if (month > 2) month - 3 else month + 9) + 2) / 5 + day - 1
+        val dayOfEra = yearOfEra * 365 + yearOfEra / 4 - yearOfEra / 100 + dayOfYear
+        return era * 146_097L + dayOfEra - 719_468L
+    }
+}
+
+private fun splitRfc3339(value: String): Rfc3339Parts? {
+    val normalized = value.trim()
+    if (normalized.length < 20 || !normalized.endsWith("Z")) return null
+    val dateParts = normalized.substringBefore('T').split('-')
+    val timeParts = normalized.substringAfter('T').removeSuffix("Z").substringBefore('.').split(':')
+    if (dateParts.size != 3 || timeParts.size != 3) return null
+
+    val numbers = (dateParts + timeParts).map { it.toIntOrNull() ?: return null }
+    return Rfc3339Parts(numbers[0], numbers[1], numbers[2], numbers[3], numbers[4], numbers[5])
+}
+
 /**
  * Parses the contract's `RFC 3339 UTC instant` to epoch milliseconds, or null.
  *
@@ -64,33 +96,62 @@ data class RemoteConsentDecision(
  * closed rather than being treated as "not expired".
  */
 internal fun parseRfc3339Utc(value: String): Long? {
-    val normalized = value.trim()
-    if (normalized.length < 20 || !normalized.endsWith("Z")) return null
-    val date = normalized.substringBefore('T')
-    val time = normalized.substringAfter('T').removeSuffix("Z").substringBefore('.')
-    val dateParts = date.split('-')
-    val timeParts = time.split(':')
-    if (dateParts.size != 3 || timeParts.size != 3) return null
+    val parts = splitRfc3339(value)?.takeIf { it.isInRange() } ?: return null
+    val seconds =
+        parts.daysFromCivil() * 86_400L + parts.hour * 3_600L + parts.minute * 60L + parts.second
+    return seconds * 1_000L
+}
 
-    val year = dateParts[0].toIntOrNull() ?: return null
-    val month = dateParts[1].toIntOrNull() ?: return null
-    val day = dateParts[2].toIntOrNull() ?: return null
-    val hour = timeParts[0].toIntOrNull() ?: return null
-    val minute = timeParts[1].toIntOrNull() ?: return null
-    val second = timeParts[2].toIntOrNull() ?: return null
-    if (month !in 1..12 || day !in 1..31 || hour !in 0..23 || minute !in 0..59 || second !in 0..60) {
-        return null
+/** The decision is about THIS request: this attempt, these bytes, this modality. */
+private fun bindingRefusal(decision: RemoteConsentDecision, domainAttemptId: String, payloadDigest: String): String? =
+    when {
+        !decision.granted -> "inference.failure.consent_required"
+        decision.attemptId != domainAttemptId -> "inference.failure.consent_attempt_mismatch"
+        decision.payloadDigest != payloadDigest -> "inference.failure.consent_digest_mismatch"
+        decision.modality != "photo" -> "inference.failure.consent_modality_mismatch"
+        else -> null
     }
 
-    // Days from the civil epoch (Howard Hinnant's algorithm), so no platform
-    // calendar is needed and the result is identical on every target.
-    val shiftedYear = if (month <= 2) year - 1 else year
-    val era = (if (shiftedYear >= 0) shiftedYear else shiftedYear - 399) / 400
-    val yearOfEra = shiftedYear - era * 400
-    val dayOfYear = (153 * (if (month > 2) month - 3 else month + 9) + 2) / 5 + day - 1
-    val dayOfEra = yearOfEra * 365 + yearOfEra / 4 - yearOfEra / 100 + dayOfYear
-    val days = era * 146_097L + dayOfEra - 719_468L
-    return ((days * 86_400L) + hour * 3_600L + minute * 60L + second) * 1_000L
+/**
+ * A granted decision with no reviewed copy, no region or no market is INCOMPLETE,
+ * not permissive. The gateway rejects each of these too, so sending anyway would
+ * transfer the photo and only then be refused — the bytes having already left.
+ */
+private fun completenessRefusal(decision: RemoteConsentDecision, environment: GatewayEnvironment): String? = when {
+    decision.consentCopyVersion.isNullOrBlank() -> "inference.failure.consent_copy_missing"
+
+    decision.processingRegion.isNullOrBlank() -> "inference.failure.consent_region_missing"
+
+    decision.marketJurisdiction.isBlank() -> "inference.failure.consent_market_missing"
+
+    decision.retentionVersion.isBlank() -> "inference.failure.consent_retention_missing"
+
+    environment.configurationVersion.isBlank() -> "inference.failure.consent_configuration_missing"
+
+    decision.marketJurisdiction != environment.claimedMarketJurisdiction ->
+        "inference.failure.consent_market_mismatch"
+
+    else -> null
+}
+
+/** The window must be readable, ordered, already open, and not yet closed. */
+private fun windowRefusal(decision: RemoteConsentDecision, nowEpochMillis: Long): String? {
+    val recordedAt = parseRfc3339Utc(decision.recordedAt)
+        ?: return "inference.failure.consent_timestamp_unreadable"
+    val expiresAt = parseRfc3339Utc(decision.expiresAt)
+        ?: return "inference.failure.consent_timestamp_unreadable"
+    return when {
+        expiresAt <= recordedAt -> "inference.failure.consent_window_invalid"
+
+        nowEpochMillis >= expiresAt -> "inference.failure.consent_expired"
+
+        // Recorded in the future: the decision has not been taken yet, and its
+        // window has not opened however short it looks.
+        recordedAt > nowEpochMillis + CLOCK_SKEW_TOLERANCE_MILLIS ->
+            "inference.failure.consent_not_yet_valid"
+
+        else -> null
+    }
 }
 
 /**
@@ -107,7 +168,9 @@ internal fun parseRfc3339Utc(value: String): Long? {
  *  - No nutrition field is read from the response. The contract forbids the
  *    gateway from sending any, and the Engine contract has nowhere to put one.
  */
-class RemoteInferenceEngine(
+class RemoteInferenceEngine
+@Suppress("LongParameterList")
+constructor(
     private val transport: GatewayTransport,
     private val environment: GatewayEnvironment,
     private val photoBytes: PhotoBytesSource,
@@ -130,7 +193,6 @@ class RemoteInferenceEngine(
 ) : PhotoInferenceEngine {
 
     override val contractVersion: String = CONTRACT_V1
-
 
     override suspend fun capability(): EngineCapability = EngineCapability(
         contractVersion = CONTRACT_V1,
@@ -155,41 +217,9 @@ class RemoteInferenceEngine(
         decision: RemoteConsentDecision,
         domainAttemptId: String,
         payloadDigest: String,
-    ): String? {
-        if (!decision.granted) return "inference.failure.consent_required"
-        if (decision.attemptId != domainAttemptId) return "inference.failure.consent_attempt_mismatch"
-        if (decision.payloadDigest != payloadDigest) return "inference.failure.consent_digest_mismatch"
-        if (decision.modality != "photo") return "inference.failure.consent_modality_mismatch"
-
-        // A granted decision with no reviewed copy, no region or no market is
-        // incomplete, not permissive. The gateway rejects each of these too, so
-        // sending anyway would transfer the photo and then be refused — the
-        // bytes having already left.
-        if (decision.consentCopyVersion.isNullOrBlank()) return "inference.failure.consent_copy_missing"
-        if (decision.processingRegion.isNullOrBlank()) return "inference.failure.consent_region_missing"
-        if (decision.marketJurisdiction.isBlank()) return "inference.failure.consent_market_missing"
-        if (decision.retentionVersion.isBlank()) return "inference.failure.consent_retention_missing"
-        if (environment.configurationVersion.isBlank()) {
-            return "inference.failure.consent_configuration_missing"
-        }
-        if (decision.marketJurisdiction != environment.claimedMarketJurisdiction) {
-            return "inference.failure.consent_market_mismatch"
-        }
-
-        val recordedAt = parseRfc3339Utc(decision.recordedAt)
-            ?: return "inference.failure.consent_timestamp_unreadable"
-        val expiresAt = parseRfc3339Utc(decision.expiresAt)
-            ?: return "inference.failure.consent_timestamp_unreadable"
-        if (expiresAt <= recordedAt) return "inference.failure.consent_window_invalid"
-
-        val now = nowEpochMillis()
-        if (now >= expiresAt) return "inference.failure.consent_expired"
-        // A decision recorded in the future has not been taken yet, and its
-        // window has not opened however short it looks.
-        if (recordedAt > now + CLOCK_SKEW_TOLERANCE_MILLIS) return "inference.failure.consent_not_yet_valid"
-
-        return null
-    }
+    ): String? = bindingRefusal(decision, domainAttemptId, payloadDigest)
+        ?: completenessRefusal(decision, environment)
+        ?: windowRefusal(decision, nowEpochMillis())
 
     override suspend fun analyze(request: PhotoInferenceRequest): PhotoInferenceResult {
         val domainAttemptId = request.attemptContext.attemptId.value

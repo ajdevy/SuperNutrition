@@ -60,9 +60,9 @@ private fun errorBody(code: String, recoverable: Boolean) = """
 """.trimIndent()
 
 private val GRANTED = RemoteConsentDecision(
-            attemptId = ATTEMPT,
-            payloadDigest = "sha256:" + "a".repeat(64),
-            modality = "photo",
+    attemptId = ATTEMPT,
+    payloadDigest = "sha256:" + "a".repeat(64),
+    modality = "photo",
     granted = true,
     consentCopyVersion = "photo-consent/fixture-1",
     processingRegion = "fixture-region",
