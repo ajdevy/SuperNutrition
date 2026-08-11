@@ -305,4 +305,34 @@ if run_gate "$demote" "$mid"; then
     exit 1
 fi
 
+# --- Fixture 11: the gate must not pass when it could not look --------------
+#
+# The diff used to end in `|| true` with its exit status swallowed by awk, so a
+# git invocation that failed produced an empty change list and the gate reported
+# OK having compared nothing. A check that goes green when it could not run is
+# worse than no check: it is a green light with nothing behind it.
+#
+# Forced by putting a git that always fails ahead of the real one on PATH.
+blind="$work/git-unavailable"
+mkdir -p "$blind"
+seed_repository "$blind"
+base=$(git -C "$blind" rev-parse HEAD)
+
+fake_bin="$work/fake-bin"
+mkdir -p "$fake_bin"
+cat >"$fake_bin/git" <<'FAKE'
+#!/usr/bin/env bash
+# Answer the gate's preflight so it gets as far as the diff, then fail there.
+case "$1" in
+  rev-parse) exit 0 ;;
+  *) echo "fatal: simulated git failure" >&2; exit 128 ;;
+esac
+FAKE
+chmod +x "$fake_bin/git"
+
+if PATH="$fake_bin:$PATH" SUPERNUTRITION_IMMUTABILITY_BASE="$base" "$gate" "$blind" >/dev/null 2>&1; then
+    echo "negative fixture unexpectedly passed: gate reported OK when git could not run" >&2
+    exit 1
+fi
+
 echo "release immutability negative fixtures: OK"
