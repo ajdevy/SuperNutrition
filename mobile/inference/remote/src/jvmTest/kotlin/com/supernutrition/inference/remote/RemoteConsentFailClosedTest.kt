@@ -1,9 +1,9 @@
 package com.supernutrition.inference.remote
 
-import com.supernutrition.domain.inference.InferenceFailureCode
-import com.supernutrition.domain.inference.InferenceOutcome
 import com.supernutrition.domain.inference.AttemptId
 import com.supernutrition.domain.inference.InferenceAttemptContext
+import com.supernutrition.domain.inference.InferenceFailureCode
+import com.supernutrition.domain.inference.InferenceOutcome
 import com.supernutrition.domain.inference.PhotoInferenceRequest
 import com.supernutrition.domain.inference.PhotoRef
 import kotlinx.coroutines.runBlocking
@@ -55,27 +55,24 @@ class RemoteConsentFailClosedTest {
         expiresAt = "2026-08-03T10:15:00Z",
     )
 
-    private fun engineFor(
-        transport: RecordingTransport,
-        decision: RemoteConsentDecision,
-        nowMillis: Long = now,
-    ) = RemoteInferenceEngine(
-        transport = transport,
-        environment = GatewayEnvironment(
-            baseUrl = "http://127.0.0.1:3000",
-            claimedMarketJurisdiction = "ZZ",
-            catalogCountry = "ZZ",
-            locale = "en-GB",
-            measurementSystem = "metric",
-            configurationVersion = "cfg/1",
-            authorization = "Bearer test.installation-0001",
-        ),
-        photoBytes = { bytes },
-        digest = { digestValue },
-        consent = { decision },
-        idFactory = { "0000000000000001" },
-        nowEpochMillis = { nowMillis },
-    )
+    private fun engineFor(transport: RecordingTransport, decision: RemoteConsentDecision, nowMillis: Long = now) =
+        RemoteInferenceEngine(
+            transport = transport,
+            environment = GatewayEnvironment(
+                baseUrl = "http://127.0.0.1:3000",
+                claimedMarketJurisdiction = "ZZ",
+                catalogCountry = "ZZ",
+                locale = "en-GB",
+                measurementSystem = "metric",
+                configurationVersion = "cfg/1",
+                authorization = "Bearer test.installation-0001",
+            ),
+            photoBytes = { bytes },
+            digest = { digestValue },
+            consent = { decision },
+            idFactory = { "0000000000000001" },
+            nowEpochMillis = { nowMillis },
+        )
 
     private fun request() = PhotoInferenceRequest(
         photoRef = PhotoRef.issue(AttemptId(attempt), "photo0000000001"),
@@ -87,10 +84,7 @@ class RemoteConsentFailClosedTest {
         ),
     )
 
-    private fun assertRefusedWithoutTransport(
-        decision: RemoteConsentDecision,
-        nowMillis: Long = now,
-    ) = runBlocking {
+    private fun assertRefusedWithoutTransport(decision: RemoteConsentDecision, nowMillis: Long = now) = runBlocking {
         val transport = RecordingTransport()
         val result = engineFor(transport, decision, nowMillis).analyze(request())
 
@@ -104,8 +98,7 @@ class RemoteConsentFailClosedTest {
     }
 
     @Test
-    fun `a declined decision sends nothing`() =
-        assertRefusedWithoutTransport(granted.copy(granted = false))
+    fun `a declined decision sends nothing`() = assertRefusedWithoutTransport(granted.copy(granted = false))
 
     @Test
     fun `a decision taken for another attempt sends nothing`() =
@@ -120,8 +113,7 @@ class RemoteConsentFailClosedTest {
         assertRefusedWithoutTransport(granted.copy(modality = "text"))
 
     @Test
-    fun `an expired decision sends nothing`() =
-        // 10:20:00Z, five minutes past the window's end.
+    fun `an expired decision sends nothing`() = // 10:20:00Z, five minutes past the window's end.
         assertRefusedWithoutTransport(granted, nowMillis = 1_785_752_400_000L)
 
     @Test
@@ -145,10 +137,9 @@ class RemoteConsentFailClosedTest {
         assertRefusedWithoutTransport(granted.copy(expiresAt = "not-a-timestamp"))
 
     @Test
-    fun `an inverted window sends nothing`() =
-        assertRefusedWithoutTransport(
-            granted.copy(recordedAt = "2026-08-03T10:15:00Z", expiresAt = "2026-08-03T10:00:00Z"),
-        )
+    fun `an inverted window sends nothing`() = assertRefusedWithoutTransport(
+        granted.copy(recordedAt = "2026-08-03T10:15:00Z", expiresAt = "2026-08-03T10:00:00Z"),
+    )
 
     @Test
     fun `a granted decision with no reviewed copy sends nothing`() =

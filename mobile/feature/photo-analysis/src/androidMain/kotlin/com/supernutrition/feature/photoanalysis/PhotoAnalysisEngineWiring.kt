@@ -186,10 +186,7 @@ internal object PhotoAnalysisEngineWiring {
     }
 
     /** No receipt is a refusal, never an absence the caller might read past. */
-    private fun refused(
-        attemptId: String = "",
-        payloadDigest: String = "",
-    ) = RemoteConsentDecision(
+    private fun refused(attemptId: String = "", payloadDigest: String = "") = RemoteConsentDecision(
         granted = false,
         attemptId = attemptId,
         payloadDigest = payloadDigest,
