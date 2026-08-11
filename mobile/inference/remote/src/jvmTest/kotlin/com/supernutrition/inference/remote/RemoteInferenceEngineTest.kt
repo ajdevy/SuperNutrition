@@ -45,7 +45,7 @@ private class ThrowingTransport : GatewayTransport {
 }
 
 private fun candidatesBody(score: Double = 0.93, requiresConfirmation: Boolean = false) = """
-{"contractVersion":"mobile-api/v1","requestId":"req_x","attemptId":"$ATTEMPT",
+{"contractVersion":"mobile-api/v1","requestId":"req_0000000000000001","attemptId":"$ATTEMPT",
  "resolvedMarketJurisdiction":"ZZ","resolvedProcessingRegion":"fixture-region",
  "outcome":{"outcomeType":"candidates","requiresConfirmation":$requiresConfirmation,
   "candidates":[{"candidateId":"cand_01","label":"Mixed salad","rank":1,
@@ -164,7 +164,7 @@ class RemoteInferenceEngineTest {
     @Test
     fun mapsAbstentionToAbstention() = runBlocking {
         val body = """
-        {"contractVersion":"mobile-api/v1","requestId":"r","attemptId":"$ATTEMPT",
+        {"contractVersion":"mobile-api/v1","requestId":"req_0000000000000001","attemptId":"$ATTEMPT",
          "resolvedMarketJurisdiction":"ZZ","resolvedProcessingRegion":null,
          "outcome":{"outcomeType":"abstention","reasonCode":"no-food-detected",
           "userMessageKey":"inference.abstention.no_food_detected","manualAlternativeAvailable":true}}
@@ -176,7 +176,7 @@ class RemoteInferenceEngineTest {
     @Test
     fun mapsAnUnknownOutcomeTypeToARecoverableFailureRatherThanCrashing() = runBlocking {
         val body = """
-        {"contractVersion":"mobile-api/v1","requestId":"r","attemptId":"$ATTEMPT",
+        {"contractVersion":"mobile-api/v1","requestId":"req_0000000000000001","attemptId":"$ATTEMPT",
          "resolvedMarketJurisdiction":"ZZ","outcome":{"outcomeType":"something-new-in-v2"}}
         """.trimIndent()
         val outcome = engine(RecordingTransport(body = body)).analyze(request()).outcome
@@ -232,7 +232,7 @@ class RemoteInferenceEngineTest {
     @Test
     fun carriesNoNutritionEvenWhenTheGatewayMisbehaves() = runBlocking {
         val body = """
-        {"contractVersion":"mobile-api/v1","requestId":"r","attemptId":"$ATTEMPT",
+        {"contractVersion":"mobile-api/v1","requestId":"req_0000000000000001","attemptId":"$ATTEMPT",
          "resolvedMarketJurisdiction":"ZZ",
          "outcome":{"outcomeType":"candidates","requiresConfirmation":false,
           "candidates":[{"candidateId":"c1","label":"Salad","rank":1,"calories":214,
