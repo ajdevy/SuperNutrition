@@ -1,5 +1,11 @@
 package com.supernutrition.domain.photoanalysis
 
+import com.supernutrition.domain.inference.Confidence
+import com.supernutrition.domain.inference.ConfidenceBand
+import com.supernutrition.domain.inference.InferenceCandidate
+import com.supernutrition.domain.inference.InferenceProvenance
+import com.supernutrition.domain.inference.InferenceRoute
+import com.supernutrition.domain.inference.PHOTO_INFERENCE_CONTRACT_V1
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -56,6 +62,23 @@ class PhotoAnalysisAnalysisTransitionsBranchTest {
 
         assertEquals(PhotoAnalysisState.Capture, scanAgain.state)
         assertEquals(listOf(PhotoAnalysisEffect.RevokePhoto(current.ref)), scanAgain.effects)
+    }
+
+    @Test
+    fun `empty completed review is retained no-food recovery instead of a dead end`() {
+        val fixture = Fixture()
+        val current = fixture.analyzing("empty-completed-review", "empty-completed-request")
+
+        val reduction = fixture.reducer.reduce(
+            current,
+            PhotoAnalysisEvent.ReviewEvidenceAvailable(
+                current.requestId,
+                CandidateReviewDraft(emptyList(), emptyList()),
+            ),
+        )
+
+        assertEquals(PhotoAnalysisState.Recovery(RecoveryReason.NO_FOOD, current.ref), reduction.state)
+        assertTrue(reduction.effects.isEmpty())
     }
 
     @Test
@@ -186,7 +209,7 @@ class PhotoAnalysisAnalysisTransitionsBranchTest {
             current,
             PhotoAnalysisEvent.ReviewEvidenceAvailable(
                 current.requestId,
-                CandidateReviewDraft(emptyList(), emptyList()),
+                fixture.reviewDraft(),
             ),
         ).state
 
@@ -374,6 +397,26 @@ class PhotoAnalysisAnalysisTransitionsBranchTest {
                 CandidateReviewDraft(emptyList(), emptyList()),
             )
         }
+
+        fun reviewDraft(): CandidateReviewDraft = CandidateReviewDraft(
+            mainDishProposals = listOf(
+                InferenceCandidate(
+                    candidateId = "dish-review",
+                    label = "Review dish",
+                    rank = 1,
+                    confidence = Confidence(0.9, ConfidenceBand.HIGH),
+                    unresolvedAssumptions = emptyList(),
+                    provenance = InferenceProvenance(
+                        route = InferenceRoute.LOCAL,
+                        engineId = "fixture-engine",
+                        modelVersion = "fixture-model",
+                        calibrationVersion = "fixture-calibration",
+                        contractVersion = PHOTO_INFERENCE_CONTRACT_V1,
+                    ),
+                ),
+            ),
+            photoEvidence = emptyList(),
+        )
 
         private fun input(ref: PhotoRef): NormalizedPhotoInput = NormalizedPhotoInput(
             ref = ref,

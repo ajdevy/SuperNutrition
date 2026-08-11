@@ -182,6 +182,33 @@ class PhotoAnalysisCaptureScreenComposeTest {
         onNodeWithText(copy.evidence.fromThisPhoto).assertExists()
     }
 
+    @Test
+    fun `review keeps separate photo evidence with the same localized label`() = runComposeUiTest {
+        val copy = PhotoAnalysisPresenterCopyFixtures.localized()
+        val initial = reviewModel(copy)
+        val review = requireNotNull(initial.review)
+        val first = review.visibleComponents.single()
+        val model = initial.copy(
+            review = review.copy(
+                visibleComponents = listOf(
+                    first,
+                    first.copy(componentId = "component-rice-second"),
+                ),
+            ),
+        )
+
+        setContent {
+            PhotoAnalysisCaptureScreen(
+                model = model,
+                onAction = {},
+                surface = PhotoAnalysisCaptureSurface(presenterCopy = copy),
+            )
+        }
+
+        onNodeWithTag(photoAnalysisVisibleComponentId("component-rice").value).assertIsDisplayed()
+        onNodeWithTag(photoAnalysisVisibleComponentId("component-rice-second").value).assertIsDisplayed()
+    }
+
     private fun reviewModel(copy: PhotoAnalysisPresenterCopy): PhotoAnalysisPresenterModel =
         PhotoAnalysisPresenterModel(
             statusLabel = copy.status.reviewCandidate,
