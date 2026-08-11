@@ -72,6 +72,19 @@ direct IP transport and once as an mDNS `_adb-tls-connect` alias), disconnect
 the duplicate alias before the connected Gradle task. Two transports for one
 package can produce `INSTALL_FAILED_DUPLICATE_PACKAGE` in the device's pending
 install requests; this is a transport cleanup, not an application failure.
+Some devices reconnect their wireless alias immediately. If that happens,
+restart only the local ADB server with mDNS auto-connect disabled, confirm the
+single USB serial again, and inherit the setting in the Gradle invocation:
+
+```bash
+ADB_MDNS_AUTO_CONNECT=0 adb kill-server
+ADB_MDNS_AUTO_CONNECT=0 adb start-server
+ADB_MDNS_AUTO_CONNECT=0 adb devices -l
+ADB_MDNS_AUTO_CONNECT=0 ./mobile/gradlew -p mobile \
+  :apps:androidApp:connectedAndroidTest \
+  -Pandroid.testInstrumentationRunnerArguments.deviceSerial=<physical-serial> \
+  --no-configuration-cache --console=plain
+```
 
 The Android acceptance host now launches the production Compose-owned
 photo-analysis surface. The activity remains thin: it owns lifecycle, Android
