@@ -30,26 +30,27 @@ setting cannot silently return to the scaffold.
    adb devices -l
    ```
 
-3. Build only the acceptance APKs:
+3. Build and run every instrumented app variant on the explicit physical serial:
 
    ```bash
    ./mobile/gradlew -p mobile \
-     :apps:androidApp:assembleUiAcceptanceDebug \
-     :apps:androidApp:assembleUiAcceptanceDebugAndroidTest \
-   --no-daemon --no-configuration-cache
+     :apps:androidApp:connectedAndroidTest \
+     -Pandroid.testInstrumentationRunnerArguments.deviceSerial=<physical-serial> \
+     --no-configuration-cache --console=plain
    ```
 
-4. Install and run against the explicit physical serial (replace the value;
-   never omit `-s`):
+   This runs the `pocDebug`, `productionDebug`, and `uiAcceptanceDebug` lanes.
+   Keep their XML reports: the evidence emitter requires both the UI-acceptance
+   and PoC result, so a successful UI-only run cannot close the PoC inference
+   coverage gap.
+
+4. For a manual acceptance launch, install and run against the explicit
+   physical serial (replace the value; never omit `-s`):
 
    ```bash
    adb -s <physical-serial> install -r mobile/apps/androidApp/build/outputs/apk/uiAcceptance/debug/androidApp-uiAcceptance-debug.apk
    adb -s <physical-serial> shell am start \
      -n com.supernutrition.android.uiAcceptance/com.supernutrition.feature.photoanalysis.PhotoAnalysisComposeActivity
-   ./mobile/gradlew -p mobile \
-   :apps:androidApp:connectedUiAcceptanceDebugAndroidTest \
-    -Pandroid.testInstrumentationRunnerArguments.deviceSerial=<physical-serial> \
-    --dependency-verification=strict
    ```
 
 To emit a reproducible native-evidence bundle after the connected run, use an
@@ -60,10 +61,11 @@ ANDROID_SERIAL=<physical-serial> \
   scripts/emit-physical-android-evidence.sh "$RUNNER_TEMP/supernutrition-android-evidence"
 ```
 
-The emitter binds the APK/test APK digest, fixture and quality-policy digests,
-commit, device/API, Gradle version, UTC timestamp, and passing XML result. It
-refuses a dirty worktree by default; `SUPERNUTRITION_ALLOW_DIRTY_EVIDENCE=1`
-produces `status=local-only` diagnostics and can never satisfy activation.
+The emitter binds independent UI-acceptance and PoC APK/test-APK digests,
+fixture and quality-policy digests, commit, device/API, Gradle version, UTC
+timestamp, and their passing XML results. It refuses a dirty worktree by
+default; `SUPERNUTRITION_ALLOW_DIRTY_EVIDENCE=1` produces `status=local-only`
+diagnostics and can never satisfy activation.
 
 If one handset appears twice in `adb devices -l` (for example, once as a
 direct IP transport and once as an mDNS `_adb-tls-connect` alias), disconnect
