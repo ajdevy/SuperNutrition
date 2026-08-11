@@ -1,7 +1,7 @@
 schema = "supernutrition.inference-evidence-compatibility-matrix.v2"
 contract_id = "inference-evidence"
 release = "v2"
-digest = "e2d3ec9fdad8d8e292fdb413647509e6ba813809f02ef31d11ea0c3f583e4c59"
+digest = "2aa355f773f8466d11350c60323ef294770efbc431fd15dd7c1018fce25bae9f"
 
 [[supported_pair]]
 producer = "domain-inference-v2"
@@ -19,13 +19,13 @@ expected = "accepted"
 producer = "domain-inference-v2"
 consumer = "text-v2"
 direction = "forward"
-expected = "accepted"
+expected = "not-yet-implemented"
 
 [[supported_pair]]
 producer = "domain-inference-v2"
 consumer = "evaluation-v2"
 direction = "forward"
-expected = "accepted"
+expected = "not-yet-implemented"
 
 [[coexistence_pair]]
 first_release = "photo-inference-engine/v1"
