@@ -116,8 +116,13 @@ const canonicalDigest = (body: unknown): string => {
     }
     return value;
   };
+  // JSON.stringify(undefined) returns undefined, not a string, and Hash.update
+  // then throws a TypeError — so a bodyless POST carrying an Idempotency-Key
+  // produced a 500 instead of the 400 its missing body deserves. Normalising to
+  // null keeps the digest total, and the body schema still rejects the request
+  // on its own terms.
   return createHash('sha256')
-    .update(JSON.stringify(normalized(body)))
+    .update(JSON.stringify(normalized(body ?? null)) ?? 'null')
     .digest('hex');
 };
 

@@ -9,6 +9,7 @@ import {
   refreshTokenMatches,
 } from './auth.js';
 import { GatewayError, GATEWAY_CODES } from './gateway-errors.js';
+import { SignJWT, importPKCS8 } from 'jose';
 
 let privateKey: string;
 let publicKey: string;
@@ -173,5 +174,46 @@ describe('test-mode authenticator', () => {
     expect(() => authenticator.authenticate(header)).toThrowError(
       expect.objectContaining({ gatewayCode: GATEWAY_CODES.AUTHENTICATION_FAILED }),
     );
+  });
+});
+
+/**
+ * Low group — a credential that names nobody.
+ *
+ * userId came from `String(payload.sub ?? '')`, so a token without `sub`
+ * authenticated as the empty string. Every such caller then shared one
+ * rate-limit bucket keyed on "", meaning one of them could exhaust the limit for
+ * all of them, and any per-user decision downstream was being made about nobody
+ * in particular.
+ */
+describe('a token must name who it speaks for', () => {
+  // Signed with the real key so verification reaches the claim checks. This is
+  // the shape a broken — or hostile — issuer emits, which is exactly the case
+  // the claim check exists for.
+  const signWithout = async (field: 'sub' | 'installationId'): Promise<string> => {
+    const claims: Record<string, unknown> = {
+      sub: 'u',
+      installationId: 'i',
+      scope: 'gateway',
+      authMode: 'attested',
+      environment: config.environment,
+    };
+    delete claims[field];
+    const key = await importPKCS8(privateKey, 'RS256');
+    return new SignJWT(claims)
+      .setProtectedHeader({ alg: 'RS256' })
+      .setIssuer(config.issuer)
+      .setIssuedAt(Math.floor(NOW.getTime() / 1000))
+      .setExpirationTime(Math.floor(NOW.getTime() / 1000) + 900)
+      .sign(key);
+  };
+
+  it.each(['sub', 'installationId'] as const)('refuses a token with no %s', async (field) => {
+    // userId came from String(payload.sub ?? ''), so this used to authenticate
+    // as the empty string — and every such caller shared one rate-limit bucket
+    // keyed on "", so one of them could exhaust the limit for all of them.
+    await expect(issuerFor().verify(await signWithout(field), NOW)).rejects.toMatchObject({
+      gatewayCode: 'authentication-failed',
+    });
   });
 });

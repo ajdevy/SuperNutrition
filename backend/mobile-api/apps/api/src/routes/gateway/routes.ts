@@ -10,7 +10,7 @@ import {
   type AuthContext,
   type MarketResolution,
 } from '../../security/index.js';
-import { mapError, resolveCorrelationId } from '../../middleware/index.js';
+import { mapError, rateLimitHeaders, resolveCorrelationId } from '../../middleware/index.js';
 import { runInferencePipeline, type PipelineDeps } from './pipeline.js';
 import { cancellationStatus } from './transfer-state.js';
 import {
@@ -220,6 +220,21 @@ export const registerGatewayRoutes = async (
   app.post('/gw/v1/session', async (request, reply) => {
     const correlationId = correlationOf(request);
     try {
+      // Unauthenticated by design — it is where a client gets its first
+      // credential — and therefore the one endpoint that must be throttled by
+      // address, or anyone can mint sessions in a loop for free. RATE_LIMIT_RULES
+      // has carried an `auth-endpoint` rule since it was written; nothing used
+      // it.
+      const decision = await deps.limiter.check({ layer: 'auth-endpoint', principal: request.ip });
+      reply.headers(rateLimitHeaders(decision));
+      if (!decision.allowed) {
+        throw new GatewayError(GATEWAY_CODES.RATE_LIMITED, {
+          ...(decision.retryAfterSeconds !== null
+            ? { retryAfterOverride: decision.retryAfterSeconds }
+            : {}),
+        });
+      }
+
       const pair = await deps.issueTestSession();
       return reply.status(201).header('X-Correlation-Id', correlationId).send(pair);
     } catch (error) {

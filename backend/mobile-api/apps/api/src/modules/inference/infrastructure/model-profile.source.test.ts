@@ -163,3 +163,25 @@ describe('the shipped configuration is valid', () => {
     expect(snapshot.routing.maxPasses).toBe(2);
   });
 });
+
+/**
+ * Low group — a deadline of zero parsed cleanly.
+ *
+ * `AbortSignal.timeout(0)` aborts before the request leaves, so a roster with
+ * pass_deadline_ms = 0 loaded without complaint and then failed every attempt
+ * with a timeout nobody could trace back to the config. Negative values were
+ * accepted the same way.
+ */
+describe('a deadline has to be a deadline', () => {
+  it.each([
+    ['zero pass deadline', 'pass_deadline_ms = 8000', 'pass_deadline_ms = 0'],
+    ['negative pass deadline', 'pass_deadline_ms = 8000', 'pass_deadline_ms = -1'],
+    ['zero total deadline', 'total_deadline_ms = 20000', 'total_deadline_ms = 0'],
+  ])('rejects %s', (_name, from, to) => {
+    expect(() => parseModelProfiles(VALID.replace(from, to))).toThrow(ConfigurationError);
+  });
+
+  it('still accepts a positive deadline', () => {
+    expect(() => parseModelProfiles(VALID)).not.toThrow();
+  });
+});

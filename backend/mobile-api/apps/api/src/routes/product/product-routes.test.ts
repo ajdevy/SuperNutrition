@@ -981,3 +981,46 @@ describe('rate limiting (docs/09 §9.3)', () => {
     expect(response.headers['access-control-allow-origin']).toBeUndefined();
   });
 });
+
+/**
+ * Low group — three requests that answered 500 for client mistakes.
+ */
+describe('client mistakes answer 4xx, not 500', () => {
+  it('rejects an impossible calendar date instead of failing at the insert', async () => {
+    // 2026-02-30 satisfies ^\d{4}-\d{2}-\d{2}$ and does not exist. It used to
+    // reach the database and fail there.
+    const response = await post('/api/v1/meals/manual', meal({ localDate: '2026-02-30' }));
+    expect(response.statusCode).toBe(400);
+  });
+
+  it('rejects a negative quantity', async () => {
+    // The decimal pattern began ^-?, so "-250" was a valid amount. The goals
+    // module already refused it; the write path did not.
+    const response = await post(
+      '/api/v1/meals/manual',
+      meal({
+        items: [
+          {
+            foodRef: 'usda:fdc:171705',
+            displayName: 'Banana, raw',
+            servingUnit: 'g',
+            servingAmount: '-118',
+            confirmedByUser: true,
+          },
+        ],
+      }),
+    );
+    expect(response.statusCode).toBe(400);
+  });
+
+  it('does not crash on a bodyless request that carries an Idempotency-Key', async () => {
+    // JSON.stringify(undefined) is undefined, and Hash.update threw on it.
+    const response = await server.app.inject({
+      method: 'POST',
+      url: '/api/v1/meals/manual',
+      headers: { authorization: TOKEN, 'idempotency-key': 'no-body' },
+    });
+    expect(response.statusCode).toBe(400);
+    expect(response.statusCode).not.toBe(500);
+  });
+});
