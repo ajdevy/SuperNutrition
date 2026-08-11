@@ -216,12 +216,8 @@ class LocalFirstRouter(
                 requireNotNull(consentReceipt),
             )
 
-        consent == RemoteConsentState.DECLINED -> RouteDecision.OfferRemote(
-            token = token.nextDecision(),
-            reason = RemoteEligibilityReason.EXPLICIT_USER_REQUEST,
-            policyVersion = policy.policyVersion,
-            policyDigest = policy.policyDigest,
-        )
+        consent == RemoteConsentState.DECLINED ->
+            RouteDecision.KeepLocal(token.nextDecision(), LocalTerminalReason.REMOTE_DECLINED)
 
         else -> offerOrRunRemote(token, policy, consent, consentReceipt, RemoteEligibilityReason.EXPLICIT_USER_REQUEST)
     }

@@ -29,6 +29,9 @@ class PhotoAnalysisFeature(attemptId: AttemptId, leases: PhotoLeaseStorePort, se
 
     val stateFlow: StateFlow<PhotoAnalysisState> = _state.asStateFlow()
 
+    /** Lets host-owned background work continue against the retained domain state. */
+    fun currentWorkState(): PhotoAnalysisState = reducer.currentWorkState()
+
     fun dispatch(event: PhotoAnalysisEvent) {
         reducer.dispatch(event)
         _state.value = reducer.state

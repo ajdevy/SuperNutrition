@@ -1,11 +1,18 @@
 package com.supernutrition.domain.inference
 
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+
 /** A verifier/install boundary owned by the platform adapter, not the domain. */
 interface ComponentModelArtifactOperations {
-    fun verify(manifest: ComponentModelManifest): ComponentModelArtifactCheck
+    /**
+     * Verifies a candidate without blocking the caller's UI dispatcher. The platform adapter
+     * chooses the appropriate execution context for any file or runtime work it needs to do.
+     */
+    suspend fun verify(manifest: ComponentModelManifest): ComponentModelArtifactCheck
 
     /** Installs the already-verified artifact as one atomic operation. */
-    fun installAtomically(manifest: ComponentModelManifest): Boolean
+    suspend fun installAtomically(manifest: ComponentModelManifest): Boolean
 }
 
 sealed interface ComponentModelArtifactCheck {
@@ -59,78 +66,82 @@ class ComponentModelActivationController(
     }
     private var staged: ComponentModelManifest? = null
     private val registered = mutableMapOf<String, ComponentModelManifest>()
+    private val stateMutex = Mutex()
 
     init {
         initialActive?.let { registered[it.modelVersion] = it }
     }
 
-    fun snapshot(): ComponentModelActivationSnapshot = ComponentModelActivationSnapshot(active, staged)
+    suspend fun snapshot(): ComponentModelActivationSnapshot = stateMutex.withLock { snapshotLocked() }
 
     /** Verifies and records a candidate; it cannot change the active model. */
-    fun stage(manifest: ComponentModelManifest): ComponentModelActivationResult {
+    suspend fun stage(manifest: ComponentModelManifest): ComponentModelActivationResult = stateMutex.withLock {
         if (staged != null) {
-            return rejected(ComponentModelActivationFailure.MANIFEST_MUST_BE_STAGED)
+            return@withLock rejectedLocked(ComponentModelActivationFailure.MANIFEST_MUST_BE_STAGED)
         }
-        return when (val check = operations.verify(manifest)) {
+        when (val check = operations.verify(manifest)) {
             ComponentModelArtifactCheck.Verified -> {
                 registered[manifest.modelVersion] = manifest
                 staged = manifest
-                ComponentModelActivationResult.Staged(snapshot())
+                ComponentModelActivationResult.Staged(snapshotLocked())
             }
 
-            is ComponentModelArtifactCheck.Rejected -> rejected(check.failure)
+            is ComponentModelArtifactCheck.Rejected -> rejectedLocked(check.failure)
         }
     }
 
     /** Activates only an exact, previously staged production manifest. */
-    fun activate(manifest: ComponentModelManifest): ComponentModelActivationResult {
+    suspend fun activate(manifest: ComponentModelManifest): ComponentModelActivationResult = stateMutex.withLock {
         if (manifest.activation != ComponentModelActivation.PRODUCTION) {
-            return rejected(ComponentModelActivationFailure.PRODUCTION_APPROVAL_REQUIRED)
+            return@withLock rejectedLocked(ComponentModelActivationFailure.PRODUCTION_APPROVAL_REQUIRED)
         }
         if (staged != manifest) {
-            return rejected(ComponentModelActivationFailure.MANIFEST_MUST_BE_STAGED)
+            return@withLock rejectedLocked(ComponentModelActivationFailure.MANIFEST_MUST_BE_STAGED)
         }
-        return when (val check = operations.verify(manifest)) {
+        when (val check = operations.verify(manifest)) {
             ComponentModelArtifactCheck.Verified -> {
                 if (!operations.installAtomically(manifest)) {
-                    rejected(ComponentModelActivationFailure.INSTALL_FAILED)
+                    rejectedLocked(ComponentModelActivationFailure.INSTALL_FAILED)
                 } else {
                     registered[manifest.modelVersion] = manifest
                     active = manifest
                     staged = null
-                    ComponentModelActivationResult.Activated(snapshot())
+                    ComponentModelActivationResult.Activated(snapshotLocked())
                 }
             }
 
-            is ComponentModelArtifactCheck.Rejected -> rejected(check.failure)
+            is ComponentModelArtifactCheck.Rejected -> rejectedLocked(check.failure)
         }
     }
 
     /** Restores the active manifest's declared production rollback target. */
-    fun rollback(): ComponentModelActivationResult {
-        val current = active ?: return rejected(ComponentModelActivationFailure.ROLLBACK_TARGET_UNAVAILABLE)
+    suspend fun rollback(): ComponentModelActivationResult = stateMutex.withLock {
+        val current = active
+            ?: return@withLock rejectedLocked(ComponentModelActivationFailure.ROLLBACK_TARGET_UNAVAILABLE)
         val targetVersion = current.rollbackTargetVersion
-            ?: return rejected(ComponentModelActivationFailure.ROLLBACK_TARGET_UNAVAILABLE)
+            ?: return@withLock rejectedLocked(ComponentModelActivationFailure.ROLLBACK_TARGET_UNAVAILABLE)
         val target = registered[targetVersion]
-            ?: return rejected(ComponentModelActivationFailure.MODEL_NOT_REGISTERED)
+            ?: return@withLock rejectedLocked(ComponentModelActivationFailure.MODEL_NOT_REGISTERED)
         if (target.activation != ComponentModelActivation.PRODUCTION) {
-            return rejected(ComponentModelActivationFailure.ROLLBACK_TARGET_NOT_PRODUCTION)
+            return@withLock rejectedLocked(ComponentModelActivationFailure.ROLLBACK_TARGET_NOT_PRODUCTION)
         }
-        return when (val check = operations.verify(target)) {
+        when (val check = operations.verify(target)) {
             ComponentModelArtifactCheck.Verified -> {
                 if (!operations.installAtomically(target)) {
-                    rejected(ComponentModelActivationFailure.ROLLBACK_FAILED)
+                    rejectedLocked(ComponentModelActivationFailure.ROLLBACK_FAILED)
                 } else {
                     active = target
                     staged = null
-                    ComponentModelActivationResult.RolledBack(snapshot())
+                    ComponentModelActivationResult.RolledBack(snapshotLocked())
                 }
             }
 
-            is ComponentModelArtifactCheck.Rejected -> rejected(check.failure)
+            is ComponentModelArtifactCheck.Rejected -> rejectedLocked(check.failure)
         }
     }
 
-    private fun rejected(failure: ComponentModelActivationFailure): ComponentModelActivationResult.Rejected =
-        ComponentModelActivationResult.Rejected(failure, snapshot())
+    private fun snapshotLocked() = ComponentModelActivationSnapshot(active, staged)
+
+    private fun rejectedLocked(failure: ComponentModelActivationFailure): ComponentModelActivationResult.Rejected =
+        ComponentModelActivationResult.Rejected(failure, snapshotLocked())
 }

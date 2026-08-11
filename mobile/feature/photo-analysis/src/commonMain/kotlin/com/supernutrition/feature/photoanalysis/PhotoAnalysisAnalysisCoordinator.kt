@@ -46,7 +46,8 @@ class PhotoAnalysisAnalysisCoordinator(
     private val onFailure: (Throwable) -> Unit = {},
 ) {
     suspend fun run(requestId: RequestId, attemptContext: InferenceAttemptContext): PhotoAnalysisAnalysisResult {
-        val ready = feature.state as? PhotoAnalysisState.Ready ?: return PhotoAnalysisAnalysisResult.Ignored
+        val ready = feature.currentWorkState() as? PhotoAnalysisState.Ready
+            ?: return PhotoAnalysisAnalysisResult.Ignored
         if (ready.input.ref.attemptId != attemptContext.attemptId || attemptContext.requestId != requestId.value) {
             return PhotoAnalysisAnalysisResult.Ignored
         }
@@ -85,7 +86,7 @@ class PhotoAnalysisAnalysisCoordinator(
                 degradation = availableDishes.degradation,
             )
             feature.dispatch(PhotoAnalysisEvent.ReviewEvidenceAvailable(requestId, draft))
-            val review = feature.state as? PhotoAnalysisState.CandidateReview
+            val review = feature.currentWorkState() as? PhotoAnalysisState.CandidateReview
             return if (review?.requestId == requestId) {
                 PhotoAnalysisAnalysisResult.Review(draft)
             } else {
@@ -104,7 +105,7 @@ class PhotoAnalysisAnalysisCoordinator(
     }
 
     private fun dispatchStage(requestId: RequestId, stage: LocalAnalysisStage) {
-        val analyzing = feature.state as? PhotoAnalysisState.Analyzing
+        val analyzing = feature.currentWorkState() as? PhotoAnalysisState.Analyzing
         if (analyzing?.requestId == requestId) {
             onStageChanged(stage)
             feature.dispatch(PhotoAnalysisEvent.LocalAnalysisStageChanged(requestId, stage))
@@ -120,7 +121,9 @@ class PhotoAnalysisAnalysisCoordinator(
         }
 
     private fun isActive(requestId: RequestId, ref: PhotoRef): Boolean =
-        (feature.state as? PhotoAnalysisState.Analyzing)?.let { it.requestId == requestId && it.ref == ref } == true
+        (feature.currentWorkState() as? PhotoAnalysisState.Analyzing)?.let {
+            it.requestId == requestId && it.ref == ref
+        } == true
 }
 
 private sealed interface DishResolution {

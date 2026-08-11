@@ -17,6 +17,7 @@ graphify-out/
 **/.gradle/
 **/.kotlin/
 **/build/
+_site/
 **/DerivedData/
 *.xcresult/
 mobile/apps/iosApp/Pods/

@@ -66,7 +66,7 @@ class CoordinatedPhotoAnalysisAnalysisLauncher(
         require(gridCellIndex == null || gridCellIndex in 0..8) {
             "Grid cell index must be null or between 0 and 8"
         }
-        val ready = feature.state as? PhotoAnalysisState.Ready ?: return
+        val ready = feature.currentWorkState() as? PhotoAnalysisState.Ready ?: return
         cancel()
         val requestId = RequestId("${configuration.requestPrefix}-${++requestSequence}")
         val attemptContext = InferenceAttemptContext(
@@ -110,7 +110,7 @@ class CoordinatedPhotoAnalysisAnalysisLauncher(
     override fun cancel() {
         job?.cancel()
         job = null
-        if (feature.state is PhotoAnalysisState.Analyzing) {
+        if (feature.currentWorkState() is PhotoAnalysisState.Analyzing) {
             feature.dispatch(PhotoAnalysisEvent.Cancel)
         }
     }
