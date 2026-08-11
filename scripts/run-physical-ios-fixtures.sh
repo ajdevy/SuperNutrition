@@ -11,6 +11,7 @@ provisioning_profile="${IOS_PROVISIONING_PROFILE:-}"
 derived_data_root="${IOS_DERIVED_DATA_ROOT:-$repo_root/mobile/apps/iosApp/build/DerivedData}"
 results_root="${IOS_ARM64_TEST_RESULTS_ROOT:-$repo_root/mobile/platform/photo-ios/build/test-results/iosArm64Test}"
 fixture_binary="$repo_root/mobile/platform/photo-ios/build/bin/iosArm64/debugTest/test.kexe"
+fixture_info_plist="$script_dir/ios-fixture-runner/Info.plist"
 
 for command_name in codesign plutil python3 security xcrun; do
   command -v "$command_name" >/dev/null 2>&1 || {
@@ -89,14 +90,17 @@ test -n "$profile_app_id" && test -n "$profile_team_id" || {
 }
 profile_bundle_pattern="${profile_app_id#*.}"
 if test -z "$bundle_id"; then
-  if test "$profile_bundle_pattern" = "*" || [[ "$profile_bundle_pattern" == *\** ]]; then
-    printf 'IOS_FIXTURE_BUNDLE_ID is required for a wildcard provisioning profile\n' >&2
-    exit 1
+  if [[ "$profile_bundle_pattern" == *\** ]]; then
+    bundle_id="$(plutil -extract CFBundleIdentifier raw -o - "$fixture_info_plist" 2>/dev/null || true)"
+    test -n "$bundle_id" || {
+      printf 'fixture runner Info.plist lacks a CFBundleIdentifier: %s\n' "$fixture_info_plist" >&2
+      exit 1
+    }
+  else
+    bundle_id="$profile_bundle_pattern"
   fi
-  bundle_id="$profile_bundle_pattern"
 fi
-if test "$profile_bundle_pattern" != "*" && [[ "$profile_bundle_pattern" != *\** ]] && \
-  test "$bundle_id" != "$profile_bundle_pattern"; then
+if [[ "$bundle_id" != $profile_bundle_pattern ]]; then
   printf 'fixture bundle id does not match provisioning profile: %s != %s\n' \
     "$bundle_id" "$profile_bundle_pattern" >&2
   exit 1

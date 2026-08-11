@@ -102,6 +102,10 @@ xcodebuild test -quiet \
 scripts/run-physical-ios-fixtures.sh
 ```
 
+With a wildcard profile, the runner uses its checked-in fixture bundle ID
+`com.supernutrition.ios.arm64fixture.runner`. Set `IOS_FIXTURE_BUNDLE_ID` only
+when the profile allows a different matching bundle ID.
+
 Kotlin 2.4.10 exposes the physical target as `iosArm64TestBinaries`, not as an
 executable Gradle `iosArm64Test` task. The checked-in runner packages that
 exact arm64 Kotlin/Native test binary into a temporary signed `.app`, installs
