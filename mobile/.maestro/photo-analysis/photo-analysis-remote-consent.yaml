@@ -17,8 +17,10 @@ appId: ${APP_ID}
 
 - tapOn:
     id: ${output.capture_import}
+# Platform-specific: see photo-analysis-locators.js. Hardcoding the Android
+# picker's thumbnail id here is what made this "shared" flow Android-only.
 - tapOn:
-    id: "icon_thumb"
+    id: ${output.system_picker_first_item}
 
 # The surface must be reachable, and the two facts the contract requires to be
 # visible must be on screen BEFORE either answer is asserted.

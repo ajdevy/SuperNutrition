@@ -255,8 +255,21 @@ class AttemptScopedConsentStore {
         current = receipt
     }
 
-    /** Whether this attempt has been asked at all, regardless of the answer. */
-    fun decidedFor(attemptKey: String): Boolean = key == attemptKey && current != null
+    /**
+     * Whether THESE BYTES have been asked about, regardless of the answer.
+     *
+     * The digest is part of the question. The Android host uses one constant
+     * attempt id for every capture, so an attempt-only check stayed true after
+     * the first decision and the consent surface was never shown again: scan a
+     * second photo and it inherited the first photo's answer. The engine's
+     * digest binding meant the transfer then refused rather than sending the
+     * wrong thing — but the user was never asked, and a decision nobody was
+     * offered is not consent.
+     *
+     * `contracts/interaction-policy/v1` scopes remote_consent to an attempt;
+     * this is stricter, and stricter in the direction of asking.
+     */
+    fun decidedFor(attemptKey: String, digest: String): Boolean = key == attemptKey && current?.digest == digest
 
     /**
      * The receipt for this attempt and these bytes, or null.

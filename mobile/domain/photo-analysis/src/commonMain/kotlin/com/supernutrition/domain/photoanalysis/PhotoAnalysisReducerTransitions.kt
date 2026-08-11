@@ -22,7 +22,13 @@ internal class PhotoAnalysisReducerTransitions(private val context: PhotoAnalysi
             }
         }
 
-        is PhotoAnalysisEvent.PreparationFailed -> unchanged(PhotoAnalysisState.Capture)
+        // The reason travels. Returning to Capture discarded it, so a camera that
+        // could not open, or a preparation that failed before the photo was
+        // registered, put the user back on the capture screen with no explanation
+        // and no recovery offered. PermissionDenied below already produced a
+        // Recovery, which made the one case anybody tested the only one that worked.
+        is PhotoAnalysisEvent.PreparationFailed ->
+            unchanged(PhotoAnalysisState.Recovery(event.reason))
 
         PhotoAnalysisEvent.PermissionDenied -> unchanged(PhotoAnalysisState.Recovery(RecoveryReason.PERMISSION_DENIED))
 

@@ -22,7 +22,7 @@ appId: ${APP_ID}
 - tapOn:
     id: ${output.capture_import}
 - tapOn:
-    id: "icon_thumb"
+    id: ${output.system_picker_first_item}
 
 # In the test-mode build the remote-transfer consent surface gates the
 # analysis; the flow must answer before the review can appear. The surface

@@ -352,13 +352,43 @@ class RemoteTransferConsentTest {
         // re-asking someone who already said no would be its own defect.
         val store = AttemptScopedConsentStore()
 
-        assertTrue(!store.decidedFor(attempt))
+        assertTrue(!store.decidedFor(attempt, digest))
 
         store.record(attempt, receipt())
-        assertTrue(store.decidedFor(attempt))
-        assertTrue(!store.decidedFor("att_0000000000000002"))
+        assertTrue(store.decidedFor(attempt, digest))
+        assertTrue(!store.decidedFor("att_0000000000000002", digest))
 
         store.clear()
-        assertTrue(!store.decidedFor(attempt))
+        assertTrue(!store.decidedFor(attempt, digest))
+    }
+
+    @Test
+    fun `a second photo is asked about again rather than inheriting the first answer`() {
+        // P2 — the Android host uses one constant attempt id for every capture,
+        // so an attempt-only check stayed true after the first decision and the
+        // consent surface was never shown again. The engine's digest binding
+        // meant the transfer then refused rather than sending the wrong thing,
+        // but the user was never asked, and a decision nobody was offered is not
+        // consent.
+        val store = AttemptScopedConsentStore()
+        val first = "sha256:" + "a".repeat(64)
+        val second = "sha256:" + "b".repeat(64)
+
+        store.record(attempt, receipt(overrides = ReceiptOverrides(digest = first)))
+
+        assertTrue(store.decidedFor(attempt, first), "the answered photo should be decided")
+        assertTrue(!store.decidedFor(attempt, second), "a new photo inherited the old answer")
+    }
+
+    @Test
+    fun `re-answering for the new photo decides it without disturbing the binding`() {
+        val store = AttemptScopedConsentStore()
+        val second = "sha256:" + "b".repeat(64)
+
+        store.record(attempt, receipt(overrides = ReceiptOverrides(digest = "sha256:" + "a".repeat(64))))
+        store.record(attempt, receipt(overrides = ReceiptOverrides(digest = second)))
+
+        assertTrue(store.decidedFor(attempt, second))
+        assertEquals(second, store.receiptFor(attempt, second)?.digest)
     }
 }
