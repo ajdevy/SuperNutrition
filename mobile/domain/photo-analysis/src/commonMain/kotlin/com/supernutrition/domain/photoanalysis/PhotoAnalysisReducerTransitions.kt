@@ -87,7 +87,23 @@ internal class PhotoAnalysisReducerTransitions(private val context: PhotoAnalysi
         event: PhotoAnalysisEvent,
     ): PhotoAnalysisReduction = when (event) {
         is PhotoAnalysisEvent.ReplacePhoto -> replace(current, current.ref, event.ref)
+
         PhotoAnalysisEvent.ScanAgain -> current.ref?.let(::clearAndCapture) ?: unchanged(PhotoAnalysisState.Capture)
+
+        // Import from the recovery screen. The host dispatches PhotoCaptured and then
+        // PreparationSucceeded; without this branch the first fell to `else` and the
+        // feature sat in Recovery for ever — the user picked a photo and nothing
+        // moved. A stuck state raises no error, which is why it lasted.
+        //
+        // Guarded exactly as the capture path is: recovery must not become a way in
+        // for a ref this attempt never issued, or one whose lease has been revoked.
+        is PhotoAnalysisEvent.PhotoCaptured ->
+            if (event.ref.attemptId == context.attemptId && context.leases.isActive(event.ref)) {
+                unchanged(PhotoAnalysisState.Preparing(event.ref))
+            } else {
+                unchanged(current)
+            }
+
         else -> unchanged(current)
     }
 
