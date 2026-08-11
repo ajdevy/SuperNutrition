@@ -134,7 +134,7 @@ class GatewayOutcomeMappingTest {
 
     @Test
     fun anEmptyCandidateListBecomesAbstentionRatherThanAnEmptyReview() {
-        val body = """{"contractVersion":"mobile-api/v1","requestId":"req_a","attemptId":"$MAP_ATTEMPT",
+        val body = """{"contractVersion":"mobile-api/v1","requestId":"req_0000000000000001","attemptId":"$MAP_ATTEMPT",
             "resolvedMarketJurisdiction":"ZZ","outcome":{"outcomeType":"candidates","candidates":[]}}"""
 
         val outcome = runBlocking { mappingEngine(FixedTransport(200, body)).analyze(mappingRequest()) }.outcome
@@ -144,7 +144,7 @@ class GatewayOutcomeMappingTest {
 
     @Test
     fun anAbstentionWithoutAMessageKeyFallsBackRatherThanRenderingBlank() {
-        val body = """{"contractVersion":"mobile-api/v1","requestId":"req_a","attemptId":"$MAP_ATTEMPT",
+        val body = """{"contractVersion":"mobile-api/v1","requestId":"req_0000000000000001","attemptId":"$MAP_ATTEMPT",
             "resolvedMarketJurisdiction":"ZZ","outcome":{"outcomeType":"abstention"}}"""
 
         val outcome = runBlocking { mappingEngine(FixedTransport(200, body)).analyze(mappingRequest()) }.outcome
@@ -155,7 +155,7 @@ class GatewayOutcomeMappingTest {
 
     @Test
     fun anOutcomeFailureWithoutRecoverabilityDefaultsToTerminal() {
-        val body = """{"contractVersion":"mobile-api/v1","requestId":"req_a","attemptId":"$MAP_ATTEMPT",
+        val body = """{"contractVersion":"mobile-api/v1","requestId":"req_0000000000000001","attemptId":"$MAP_ATTEMPT",
             "resolvedMarketJurisdiction":"ZZ",
             "outcome":{"outcomeType":"failure","failureCode":"content-rejected"}}"""
 
@@ -181,7 +181,7 @@ class GatewayOutcomeMappingTest {
 
     @Test
     fun anAssumptionThisClientCannotNameIsDroppedFromAnOtherwiseGoodCandidate() {
-        val body = """{"contractVersion":"mobile-api/v1","requestId":"req_a","attemptId":"$MAP_ATTEMPT",
+        val body = """{"contractVersion":"mobile-api/v1","requestId":"req_0000000000000001","attemptId":"$MAP_ATTEMPT",
             "resolvedMarketJurisdiction":"ZZ","outcome":{"outcomeType":"candidates","candidates":[
               {"candidateId":"cand_01","label":"Soup","rank":1,
                "confidence":{"score":0.9,"band":"high"},

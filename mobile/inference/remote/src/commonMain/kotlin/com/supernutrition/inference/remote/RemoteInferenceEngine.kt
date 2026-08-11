@@ -154,6 +154,70 @@ private fun windowRefusal(decision: RemoteConsentDecision, nowEpochMillis: Long)
     }
 }
 
+/** What the response must agree with to be an answer to this request. */
+internal data class RequestBinding(
+    val attemptId: String,
+    val requestId: String,
+    /**
+     * The region the CONSENT RECEIPT promised, not merely one the response
+     * supplies. The release makes resolvedProcessingRegion optional, so absence
+     * is legal; a region that contradicts the one shown to the user before they
+     * consented is not.
+     */
+    val consentedProcessingRegion: String?,
+)
+
+/**
+ * The first way the response fails to be an answer to this request, or null.
+ *
+ * Market and processing region are included because they are the user-visible
+ * privacy claim: the receipt said where the photo would be processed, and a
+ * reply from somewhere else means the promise shown before consent was not the
+ * promise kept.
+ */
+internal fun bindingMismatch(
+    wire: GatewayResponseWire,
+    expected: RequestBinding,
+    environment: GatewayEnvironment,
+): String? = when {
+    wire.contractVersion != environment.contractVersion ->
+        "inference.failure.response_contract_mismatch"
+
+    wire.attemptId != expected.attemptId -> "inference.failure.response_attempt_mismatch"
+
+    wire.requestId != expected.requestId -> "inference.failure.response_request_mismatch"
+
+    wire.resolvedMarketJurisdiction != environment.claimedMarketJurisdiction ->
+        "inference.failure.response_market_mismatch"
+
+    // Absence is permitted by the release. A region that DISAGREES with the one
+    // the user was shown before consenting is not: that is the privacy promise
+    // being quietly broken after the fact.
+    !wire.resolvedProcessingRegion.isNullOrBlank() &&
+        !expected.consentedProcessingRegion.isNullOrBlank() &&
+        wire.resolvedProcessingRegion != expected.consentedProcessingRegion ->
+        "inference.failure.response_region_mismatch"
+
+    else -> null
+}
+
+/**
+ * Maps a released abstention reason code onto the domain enum.
+ *
+ * Unknown codes fall back to NO_FOOD_DETECTED, which is what every code used to
+ * become. The difference is that the fallback is now explicit and reached only
+ * by a code this client does not know, rather than by all of them.
+ */
+internal fun abstentionReasonFor(code: String?): AbstentionReason = when (code) {
+    "identity-ambiguous" -> AbstentionReason.IDENTITY_AMBIGUOUS
+    "no-food-detected" -> AbstentionReason.NO_FOOD_DETECTED
+    "image-quality", "image-unusable" -> AbstentionReason.IMAGE_QUALITY
+    "portion-ambiguous" -> AbstentionReason.PORTION_AMBIGUOUS
+    "unsupported-content", "content-rejected-by-provider" -> AbstentionReason.UNSUPPORTED_CONTENT
+    "ambiguous-scene" -> AbstentionReason.IDENTITY_AMBIGUOUS
+    else -> AbstentionReason.NO_FOOD_DETECTED
+}
+
 /**
  * E4.2 — the first-party gateway Engine.
  *
@@ -221,6 +285,40 @@ constructor(
         ?: completenessRefusal(decision, environment)
         ?: windowRefusal(decision, nowEpochMillis())
 
+    /** The request envelope, built from values already validated above. */
+    private fun requestEnvelope(attemptId: String, decision: RemoteConsentDecision, payloadDigest: String) =
+        GatewayRequestWire(
+            contractVersion = environment.contractVersion,
+            attemptId = attemptId,
+            effectId = "eff_${idFactory()}",
+            modality = "photo",
+            claimedMarketJurisdiction = environment.claimedMarketJurisdiction,
+            consentReceipt = ConsentReceiptWire(
+                version = "1",
+                attemptId = attemptId,
+                digest = payloadDigest,
+                modality = "photo",
+                purpose = "food-identification",
+                decision = "granted",
+                marketJurisdiction = decision.marketJurisdiction,
+                processingRegion = decision.processingRegion,
+                consentCopyVersion = decision.consentCopyVersion,
+                retentionVersion = decision.retentionVersion,
+                retentionDays = 0,
+                configurationVersion = environment.configurationVersion,
+                recordedAt = decision.recordedAt,
+                expiresAt = decision.expiresAt,
+            ),
+            inferenceContext = InferenceContextWire(
+                catalogCountry = environment.catalogCountry,
+                mealType = "unspecified",
+                locale = environment.locale,
+                measurementSystem = environment.measurementSystem,
+                configurationVersion = environment.configurationVersion,
+                priorMealSummary = null,
+            ),
+        )
+
     override suspend fun analyze(request: PhotoInferenceRequest): PhotoInferenceResult {
         val domainAttemptId = request.attemptContext.attemptId.value
         val attemptId = contractAttemptId(domainAttemptId)
@@ -246,37 +344,12 @@ constructor(
             return failure(InferenceFailureCode.INVALID_INPUT, false, refusal)
         }
 
-        val envelope = GatewayRequestWire(
-            contractVersion = environment.contractVersion,
-            attemptId = attemptId,
-            effectId = "eff_${idFactory()}",
-            modality = "photo",
-            claimedMarketJurisdiction = environment.claimedMarketJurisdiction,
-            consentReceipt = ConsentReceiptWire(
-                version = "1",
-                attemptId = attemptId,
-                digest = digest(bytes),
-                modality = "photo",
-                purpose = "food-identification",
-                decision = "granted",
-                marketJurisdiction = decision.marketJurisdiction,
-                processingRegion = decision.processingRegion,
-                consentCopyVersion = decision.consentCopyVersion,
-                retentionVersion = decision.retentionVersion,
-                retentionDays = 0,
-                configurationVersion = environment.configurationVersion,
-                recordedAt = decision.recordedAt,
-                expiresAt = decision.expiresAt,
-            ),
-            inferenceContext = InferenceContextWire(
-                catalogCountry = environment.catalogCountry,
-                mealType = "unspecified",
-                locale = environment.locale,
-                measurementSystem = environment.measurementSystem,
-                configurationVersion = environment.configurationVersion,
-                priorMealSummary = null,
-            ),
-        )
+        // Held rather than inlined: the response is checked against exactly the
+        // values that were sent, and a freshly minted id at the call site would
+        // make that check compare a value with itself.
+        val requestId = "req_${idFactory()}"
+
+        val envelope = requestEnvelope(attemptId, decision, digest(bytes))
 
         val response = try {
             transport.postInferencePhoto(
@@ -284,7 +357,7 @@ constructor(
                     contextJson = GatewayCodec.encodeRequest(envelope).toString(),
                     payload = bytes,
                     contentType = "image/jpeg",
-                    requestId = "req_${idFactory()}",
+                    requestId = requestId,
                     contractVersion = environment.contractVersion,
                     authorization = environment.authorization,
                 ),
@@ -295,7 +368,14 @@ constructor(
             return failure(InferenceFailureCode.TEMPORARY_UNAVAILABLE, true, "inference.failure.network")
         }
 
-        return if (response.status == 200) mapSuccess(response.body) else mapError(response.body)
+        return if (response.status == 200) {
+            mapSuccess(
+                response.body,
+                expected = RequestBinding(attemptId, requestId, decision.processingRegion),
+            )
+        } else {
+            mapError(response.body)
+        }
     }
 
     /**
@@ -317,23 +397,67 @@ constructor(
         "att_" + digest(raw.encodeToByteArray()).substringAfter("sha256:").take(32)
     }
 
-    private fun mapSuccess(body: String): PhotoInferenceResult {
+    private fun mapSuccess(body: String, expected: RequestBinding): PhotoInferenceResult {
         val wire = runCatching { GatewayCodec.decodeResponse(JSON.parseToJsonElement(body).jsonObject) }
             .getOrNull()
             ?: return failure(InferenceFailureCode.TEMPORARY_UNAVAILABLE, true, "inference.failure.malformed")
 
+        // P1-8 — the response has to be an answer to THIS request. None of these
+        // were checked: a reply carrying another attempt's id, another request's
+        // id, or a contract version this client does not speak was decoded and
+        // shown to the user as their own result. A correlation that is generated
+        // and then never compared is not a correlation.
+        // Non-retryable: a response that does not match this request will not
+        // match it on a second attempt either.
+        //
+        // The code is TEMPORARY_UNAVAILABLE because InferenceFailureCode is part
+        // of the frozen contracts/inference/v1 release and has no
+        // `malformed-response` member. Adding one is a contract change and the
+        // owner's call, so the distinction is carried by the message key and by
+        // retryable=false rather than by inventing an enum value here. Flagged
+        // in the PR report.
+        bindingMismatch(wire, expected, environment)?.let {
+            return failure(InferenceFailureCode.TEMPORARY_UNAVAILABLE, false, it)
+        }
+
         return when (wire.outcome.outcomeType) {
             "candidates" -> {
-                val candidates = wire.outcome.candidates.map { it.toDomain() }
+                // P1-8 — decode-to-domain is wrapped. The domain types validate
+                // in their init blocks (contiguous ranks, unique ids, score in
+                // range), so a gateway sending an invalid rank threw an
+                // IllegalArgumentException out of the engine instead of
+                // returning a typed failure.
+                val candidates = runCatching { wire.outcome.candidates.map { it.toDomain() } }
+                    .getOrNull()
+                    ?: return failure(
+                        InferenceFailureCode.TEMPORARY_UNAVAILABLE,
+                        false,
+                        "inference.failure.malformed_candidate",
+                    )
                 if (candidates.isEmpty()) {
                     abstention(AbstentionReason.NO_FOOD_DETECTED, "inference.abstention.no_food_detected")
                 } else {
-                    PhotoInferenceResult(CONTRACT_V1, InferenceOutcome.Candidates(candidates))
+                    runCatching {
+                        PhotoInferenceResult(
+                            CONTRACT_V1,
+                            // P1-9 — carried through instead of discarded.
+                            InferenceOutcome.Candidates(candidates, wire.outcome.requiresConfirmation),
+                        )
+                    }.getOrNull() ?: failure(
+                        InferenceFailureCode.TEMPORARY_UNAVAILABLE,
+                        false,
+                        "inference.failure.malformed_candidate",
+                    )
                 }
             }
 
+            // P1-9 — every reason code the release declares is mapped, with an
+            // explicit fallback. Everything used to become NO_FOOD_DETECTED, so
+            // an unusable image, an ambiguous scene and a provider refusal all
+            // told the user "no food found" and offered the one recovery that
+            // could not help.
             "abstention" -> abstention(
-                AbstentionReason.NO_FOOD_DETECTED,
+                abstentionReasonFor(wire.outcome.reasonCode),
                 wire.outcome.userMessageKey ?: "inference.abstention.no_food_detected",
             )
 
