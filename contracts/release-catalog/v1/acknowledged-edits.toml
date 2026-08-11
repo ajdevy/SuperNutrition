@@ -1,0 +1,209 @@
+schema = "supernutrition.release-acknowledged-edits.v1"
+schema_version = 1
+
+# Named exceptions to the release-immutability gate.
+#
+# WHAT THIS IS FOR
+# scripts/verify-release-immutability.sh freezes the bytes of every published
+# contract release. This slice arrived with three files under
+# contracts/mobile-api/v1 already modified, and the gate it introduces rejects
+# exactly that. Wiring the gate without recording the edits would have meant
+# either a permanently red required check or an unwired gate that enforces
+# nothing — the second is the state the review found.
+#
+# WHY IT IS NOT A BASELINE
+# A baseline suppresses a class of findings and keeps working as the code moves
+# underneath it. Every entry here is pinned to two exact digests: the bytes at
+# the base revision and the bytes at the head being reviewed. Edit the file
+# again and head_sha256 no longer matches, so the gate fails. Revert it and the
+# file stops being modified, so the entry stops applying. An entry cannot
+# authorise anything except the precise change it describes, and it cannot
+# authorise it for longer than `expires`.
+#
+# THE DECISION THIS DEFERS
+# Whether contracts/mobile-api/v1 should be restored to its published bytes and
+# the additions published as mobile-api/v2, or whether v1 is rewritten in place
+# and the catalog records the supersession, belongs to the contract owner. It is
+# not made here. `expires` is when that decision stops being optional: after it,
+# these entries no longer apply and the gate fails until the release is either
+# reverted or superseded.
+#
+# HOW TO ADD ONE
+#   git show <base>:<path> | shasum -a 256    -> base_sha256
+#   shasum -a 256 <path>                      -> head_sha256
+
+[[edit]]
+release_id = "mobile-api/v1"
+path = "contracts/mobile-api/v1/schema.toml"
+base_commit = "c091a4382725db10a4524309711dd7512c833f28"
+base_sha256 = "3a4547948e5b1a0a986992cc12dede9854a48437f98ac143d7cd1a00373a5194"
+head_sha256 = "acb4513e6569c09e0d17f04841e7beb6bc3acdcd1fa43951073a7f061bae5591"
+expires = "2026-09-30"
+reason = """
+E4.3 gateway fields were added to the published v1 schema in this slice rather \
+than in a new release. Recorded so the gate can be enforced now; the v1-rewrite \
+versus publish-v2 decision is the contract owner's and is not made here."""
+
+[[edit]]
+release_id = "mobile-api/v1"
+path = "contracts/mobile-api/v1/compatibility-matrix.toml"
+base_commit = "c091a4382725db10a4524309711dd7512c833f28"
+base_sha256 = "84fd5d3b737cb8860ba56211cb0c47575bfa198edf55990d42778cb500233921"
+head_sha256 = "6c90b84bb8fc91fc2735edfd03311d994284d669e0da088b7b00b1d0a89791e0"
+expires = "2026-09-30"
+reason = """
+Carries the self-referential release digest, so it necessarily moves whenever \
+any other file in the release does. Same owner decision as schema.toml."""
+
+[[edit]]
+release_id = "mobile-api/v1"
+path = "contracts/mobile-api/v1/RELEASE.md"
+base_commit = "c091a4382725db10a4524309711dd7512c833f28"
+base_sha256 = "ebb606ff791cd55c609e358aadf9c4b697190ef4c7c99bdd6325ee860adc08e2"
+head_sha256 = "d3b49c599262fb191ae2489de24e4233646a6f7be672bb1aa70c5ee3619771ef"
+expires = "2026-09-30"
+reason = """
+Release notes describing the schema.toml additions above. Hashed as release \
+bytes since commit 83547213, so it is frozen like any other release file."""
+
+# --- additions to an already-published release --------------------------------
+#
+# The same deferred decision as the three edits above, and the larger half of it.
+# This slice did not merely amend contracts/mobile-api/v1: it added the entire
+# first-party gateway contract surface to it — request and response shapes, the
+# error taxonomy, transfer states, consent receipts, rate limits, market policy
+# and their canonical fixtures. The review reported three modified files; the
+# addition rule added in this change is what surfaced the other fourteen, because
+# the gate previously permitted every addition to any release unconditionally.
+#
+# Fourteen new normative files is not an amendment to v1, it is most of what v1
+# now is. That makes the v1-rewrite versus publish-v2 question sharper rather
+# than softer, and it remains the contract owner's to answer.
+
+[[edit]]
+release_id = "mobile-api/v1"
+path = "contracts/mobile-api/v1/consent-receipt.toml"
+added = true
+base_commit = "c091a4382725db10a4524309711dd7512c833f28"
+head_sha256 = "acd67f06e6d1abb4dfb2a5bbac24bb4d618c0bd275eb38161773d82e853601bf"
+expires = "2026-09-30"
+reason = "Gateway contract surface added to the published v1 release by this slice."
+
+[[edit]]
+release_id = "mobile-api/v1"
+path = "contracts/mobile-api/v1/error-taxonomy.toml"
+added = true
+base_commit = "c091a4382725db10a4524309711dd7512c833f28"
+head_sha256 = "2876df55da4ca7bfebb147044d8a92308647d33854cc36ff1e5209256dc2786e"
+expires = "2026-09-30"
+reason = "Gateway contract surface added to the published v1 release by this slice."
+
+[[edit]]
+release_id = "mobile-api/v1"
+path = "contracts/mobile-api/v1/fixtures/cancellation-pre-transfer.toml"
+added = true
+base_commit = "c091a4382725db10a4524309711dd7512c833f28"
+head_sha256 = "34df5358fa376b763faafb8cb974858af4cb6b4df6a12d72c003c2d0f30a8f71"
+expires = "2026-09-30"
+reason = "Gateway contract surface added to the published v1 release by this slice."
+
+[[edit]]
+release_id = "mobile-api/v1"
+path = "contracts/mobile-api/v1/fixtures/cancellation-transferred.toml"
+added = true
+base_commit = "c091a4382725db10a4524309711dd7512c833f28"
+head_sha256 = "a483a420740e3a2367f0983fdf0d064932f63e93652bef1ac9b44579aad6a89a"
+expires = "2026-09-30"
+reason = "Gateway contract surface added to the published v1 release by this slice."
+
+[[edit]]
+release_id = "mobile-api/v1"
+path = "contracts/mobile-api/v1/fixtures/photo-analysis-abstention.toml"
+added = true
+base_commit = "c091a4382725db10a4524309711dd7512c833f28"
+head_sha256 = "3af95f7d7171a082d38eb3de937efa0bcd632f1ef0798e2a0dd2242c070c5345"
+expires = "2026-09-30"
+reason = "Gateway contract surface added to the published v1 release by this slice."
+
+[[edit]]
+release_id = "mobile-api/v1"
+path = "contracts/mobile-api/v1/fixtures/photo-analysis-consent-expired.toml"
+added = true
+base_commit = "c091a4382725db10a4524309711dd7512c833f28"
+head_sha256 = "d64daf1a9dead3c1338f92f1436551c0846521294503ac069a6b8f7f3e28486e"
+expires = "2026-09-30"
+reason = "Gateway contract surface added to the published v1 release by this slice."
+
+[[edit]]
+release_id = "mobile-api/v1"
+path = "contracts/mobile-api/v1/fixtures/photo-analysis-low-confidence.toml"
+added = true
+base_commit = "c091a4382725db10a4524309711dd7512c833f28"
+head_sha256 = "d86c81d7bdf67c69f3c2b1964f8c8491abea4634b3065e7c79f0b13be4974765"
+expires = "2026-09-30"
+reason = "Gateway contract surface added to the published v1 release by this slice."
+
+[[edit]]
+release_id = "mobile-api/v1"
+path = "contracts/mobile-api/v1/fixtures/photo-analysis-rate-limited.toml"
+added = true
+base_commit = "c091a4382725db10a4524309711dd7512c833f28"
+head_sha256 = "62e59a07a0e4b2ab9d3dbe060507472acc7d87f5bd6afb38083478244af2b0a8"
+expires = "2026-09-30"
+reason = "Gateway contract surface added to the published v1 release by this slice."
+
+[[edit]]
+release_id = "mobile-api/v1"
+path = "contracts/mobile-api/v1/fixtures/photo-analysis-success.toml"
+added = true
+base_commit = "c091a4382725db10a4524309711dd7512c833f28"
+head_sha256 = "673d5075787c00e8d0fc31a50eafbeeade248c422210a81ce96d2fd9dd372e51"
+expires = "2026-09-30"
+reason = "Gateway contract surface added to the published v1 release by this slice."
+
+[[edit]]
+release_id = "mobile-api/v1"
+path = "contracts/mobile-api/v1/gateway-request.toml"
+added = true
+base_commit = "c091a4382725db10a4524309711dd7512c833f28"
+head_sha256 = "bf25a6e7104a2b404ee8e96674a91855be7410f4a51784ea8de56809f1543af5"
+expires = "2026-09-30"
+reason = "Gateway contract surface added to the published v1 release by this slice."
+
+[[edit]]
+release_id = "mobile-api/v1"
+path = "contracts/mobile-api/v1/gateway-response.toml"
+added = true
+base_commit = "c091a4382725db10a4524309711dd7512c833f28"
+head_sha256 = "c4b71a428ea784675b16aed0c3151d8987194ff51ccd822c4fa48a6e7f471897"
+expires = "2026-09-30"
+reason = "Gateway contract surface added to the published v1 release by this slice."
+
+[[edit]]
+release_id = "mobile-api/v1"
+path = "contracts/mobile-api/v1/market-policy.toml"
+added = true
+base_commit = "c091a4382725db10a4524309711dd7512c833f28"
+head_sha256 = "aeb8a3257bcf48c753bb636fe1276b452fc1c1f688297597f21fbd98ea4f3db1"
+expires = "2026-09-30"
+reason = "Gateway contract surface added to the published v1 release by this slice."
+
+[[edit]]
+release_id = "mobile-api/v1"
+path = "contracts/mobile-api/v1/rate-limit.toml"
+added = true
+base_commit = "c091a4382725db10a4524309711dd7512c833f28"
+head_sha256 = "fefb03476bc89c248e6e3930178431ba2c3e9ce45de4ef343a910d91c00c62ad"
+expires = "2026-09-30"
+reason = "Gateway contract surface added to the published v1 release by this slice."
+
+[[edit]]
+release_id = "mobile-api/v1"
+path = "contracts/mobile-api/v1/transfer-states.toml"
+added = true
+base_commit = "c091a4382725db10a4524309711dd7512c833f28"
+head_sha256 = "655d4dbcf9c0d4f8dbf3dc3f9b35e3fee0a11965ff2868019472bed663c8918d"
+expires = "2026-09-30"
+reason = "Gateway contract surface added to the published v1 release by this slice."
+
+# 14 additions recorded.

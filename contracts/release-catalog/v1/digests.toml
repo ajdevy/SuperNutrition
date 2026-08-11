@@ -37,10 +37,17 @@ status = "current"
 [[entry]]
 release_id = "mobile-api/v1"
 path = "contracts/mobile-api/v1"
-digest = "f42c6e319330cc3d7d79df34b3387a8721b46f99bdcc5f23a516cb57869c2c03"
+digest = "9733a365daf8ad7414de49aea73811d2a81d04701b58cf395644fde087934c06"
 algorithm = "release-sha256-v2"
-recorded_at_commit = "83547213"
+recorded_at_commit = "pr/slice-ab-backend"
 status = "current"
+note = """
+Recomputed with scripts/emit-release-digest.sh against this slice, which \
+modified schema.toml, compatibility-matrix.toml and RELEASE.md. Those three \
+edits are pinned in acknowledged-edits.toml. Whether they should have been a \
+mobile-api/v2 release instead is the contract owner's decision and is not made \
+here. The f42c6e31 row below is kept, not overwritten: it is the only evidence \
+of what this release was before the edits."""
 
 [[entry]]
 release_id = "interaction-policy/v1"
@@ -57,6 +64,43 @@ digest = "94fe1c32c33dfc0859bb0f3dfe657948320d659844d82111449a4bef1646b94b"
 algorithm = "release-sha256-v2"
 recorded_at_commit = "83547213"
 status = "current"
+
+[[entry]]
+release_id = "inference-engine/v2"
+path = "contracts/inference/v2"
+digest = "ba7221912bddbf29cf41bc881931a21e6ca4cd70259ca028e98d2b4b2b5201ba"
+algorithm = "release-sha256-v2"
+recorded_at_commit = "pr/slice-ab-mobile"
+status = "current"
+note = """
+Published by the mobile slice and absent from the catalog until now. The digest \
+reflects the P1-11 correction, which marked remote-v2, evaluation-v2 and \
+local-text-v2 not-yet-implemented rather than accepted."""
+
+[[entry]]
+release_id = "inference-evidence/v2"
+path = "contracts/inference-evidence/v2"
+digest = "2aa355f773f8466d11350c60323ef294770efbc431fd15dd7c1018fce25bae9f"
+algorithm = "release-sha256-v2"
+recorded_at_commit = "pr/slice-ab-mobile"
+status = "current"
+note = """
+Published by the mobile slice and absent from the catalog until now. The digest \
+reflects the P1-11 correction to text-v2 and evaluation-v2."""
+
+[[entry]]
+release_id = "market-policy/v1"
+path = "contracts/market-policy/v1"
+digest = "740e611fe5a3d21764c22395839951d7678bf29b241c489cd350ba732ee9f1a1"
+algorithm = "release-sha256-v2"
+recorded_at_commit = "pr/slice-ab-backend"
+status = "current"
+note = """
+Published by this slice and, until now, absent from the catalog entirely — the \
+first release to ship unrecorded. Found by scripts/verify-release-catalog.sh, \
+which requires every directory under contracts/ carrying a contract_id to have \
+exactly one current entry. An unrecorded release is one this catalog cannot \
+detect drift in, which is the failure it exists to prevent."""
 
 # --- superseded --------------------------------------------------------------
 #
@@ -114,3 +158,21 @@ status = "superseded"
 superseded_by_commit = "83547213"
 reproducible = true
 note = "the only one of the four that is checkable: its hashed set was unchanged by 83547213, so the recorded value recomputes exactly from the 7e17932c bytes. Its digest moved purely because schema.toml gained ten normative [fields.*] blocks — a pure content change to a published release"
+
+[[entry]]
+release_id = "mobile-api/v1"
+path = "contracts/mobile-api/v1"
+digest = "f42c6e319330cc3d7d79df34b3387a8721b46f99bdcc5f23a516cb57869c2c03"
+algorithm = "release-sha256-v2"
+recorded_at_commit = "83547213"
+status = "superseded"
+superseded_by_commit = "pr/slice-ab-backend"
+reproducible = true
+note = """
+The digest this release carried when the catalog was written. It recomputes \
+exactly from the bytes at c091a4382725 — the value was right; the tree moved \
+under it. This slice modified schema.toml, compatibility-matrix.toml and \
+RELEASE.md, taking the release to 9733a365. The catalog recorded neither the \
+new value nor this supersession, and no script parsed the catalog, so the drift \
+was invisible on both sides: the file said "current" about bytes that no longer \
+existed. scripts/verify-release-catalog.sh now recomputes every current entry."""
