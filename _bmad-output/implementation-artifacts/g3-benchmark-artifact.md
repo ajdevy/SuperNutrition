@@ -180,6 +180,27 @@ class-agnostic, YOLO-World is limited to COCO-80, and both mass results are
 neither model emits calibrated mass. The complete record is
 [`ingredient-weight-research/android-component-mass-benchmark-2026-08-02.json`](../../ingredient-weight-research/android-component-mass-benchmark-2026-08-02.json).
 
+### 2026-08-11 current-artifact detector comparison
+
+The current PoC YOLO-World asset was rerun on the physical Honor through its
+explicit USB serial, rather than reusing the historical `ef272…` export. The
+current artifact is `d27ac81640ca470cc7e42edd638b6626ac6b4f4dcce74aabb6e09cd02a13c84f`.
+On the same five fixtures and ONNX Runtime Android 1.28.0 CPU, it reached
+limited COCO-food macro F1 `0.2164`, p50/p95 `652/1117 ms`, and PSS
+`52,498 -> 244,210 KB`. Official YOLOX-Nano COCO ONNX artifact
+`c789161ed43c8269fcd4e67c67eeeb4e80c622da2eb296a20bc6007bd18a0b7d`
+reached limited macro F1 `0.1500`, p50/p95 `174/468 ms`, and PSS
+`23,684 -> 133,318 KB`.
+
+This is a comparative deployment screen, not a G-3 pass: each detector retains
+its upstream preprocessing/NMS, both remain COCO-limited, neither returns
+calibrated mass, and five timings make p95 equal to the maximum. It does not
+select, legally clear, activate, or replace a production model. The immutable
+record and comparison are
+[`ingredient-weight-research/yolox-nano-android-evidence-2026-08-11.json`](../../ingredient-weight-research/yolox-nano-android-evidence-2026-08-11.json)
+and
+[`ingredient-weight-research/yolox-nano-comparison-2026-08-11.md`](../../ingredient-weight-research/yolox-nano-comparison-2026-08-11.md).
+
 ## Device matrix and measured evidence
 
 | OS/device tier | Physical device | Runtime and execution provider | Semantic result | Ingredient / weight result | Runtime/resource result |

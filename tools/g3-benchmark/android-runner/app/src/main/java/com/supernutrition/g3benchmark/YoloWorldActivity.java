@@ -42,38 +42,11 @@ public final class YoloWorldActivity extends Activity {
     private static final String TAG = "SuperNutritionYoloWorld";
     private static final String MODEL_ASSET = "yolov8s-worldv2-coco.onnx";
     private static final String MODEL_SHA256 =
-            "ef272175d4db2216cde08082f1accf120bdf5ee03b5bc2ba5f51735cda1e9cbc";
+            "d27ac81640ca470cc7e42edd638b6626ac6b4f4dcce74aabb6e09cd02a13c84f";
     private static final String RESULT_FILE = "yolo-world-v2-result.json";
     private static final int IMAGE_SIZE = 640;
     private static final float CONFIDENCE_FLOOR = 0.10f;
     private static final float NMS_IOU = 0.70f;
-    private static final String[] FIXTURES = {
-            "steak-side-plate.jpg",
-            "fish-side-plate.jpg",
-            "chopped-salad.jpg",
-            "buddha-bowl.jpg",
-            "salmon-grain-plate.jpg"
-    };
-    private static final String[][] EXPECTED_VISIBLE_COMPONENTS = {
-            {"beef_steak", "quinoa", "carrot", "cucumber", "green_bean", "creamy_sauce"},
-            {"fish", "broccoli", "carrot", "onion", "celery"},
-            {"carrot", "tomato", "cucumber", "corn", "chili_pepper", "cilantro"},
-            {"avocado", "white_rice", "tempeh", "edamame", "radish", "lettuce", "bean_sprout", "bell_pepper", "sesame", "green_onion"},
-            {"fish", "white_rice", "beans", "leafy_greens", "tomato_sauce", "carrot"}
-    };
-    private static final String[] COCO_NAMES = {
-            "person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "truck", "boat", "traffic_light",
-            "fire_hydrant", "stop_sign", "parking_meter", "bench", "bird", "cat", "dog", "horse", "sheep", "cow",
-            "elephant", "bear", "zebra", "giraffe", "backpack", "umbrella", "handbag", "tie", "suitcase", "frisbee",
-            "skis", "snowboard", "sports_ball", "kite", "baseball_bat", "baseball_glove", "skateboard", "surfboard", "tennis_racket", "bottle",
-            "wine_glass", "cup", "fork", "knife", "spoon", "bowl", "banana", "apple", "sandwich", "orange",
-            "broccoli", "carrot", "hot_dog", "pizza", "donut", "cake", "chair", "couch", "potted_plant", "bed",
-            "dining_table", "toilet", "tv", "laptop", "mouse", "remote", "keyboard", "cell_phone", "microwave", "oven",
-            "toaster", "sink", "refrigerator", "book", "clock", "vase", "scissors", "teddy_bear", "hair_drier", "toothbrush"
-    };
-    private static final Set<String> COCO_FOOD_LABELS = new HashSet<>(Arrays.asList(
-            "banana", "apple", "sandwich", "orange", "broccoli", "carrot", "hot_dog", "pizza", "donut", "cake"
-    ));
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private TextView status;
@@ -108,12 +81,12 @@ public final class YoloWorldActivity extends Activity {
             try (OrtSession session = environment.createSession(modelFile.getAbsolutePath(), options)) {
                 long sessionInitMs = elapsedMs(initializationStartNs);
                 String inputName = requireOnlyInput(session);
-                runOnce(environment, session, inputName, FIXTURES[0], 0);
+                runOnce(environment, session, inputName, CocoFoodBenchmark.FIXTURES[0], 0);
                 List<Long> elapsed = new ArrayList<>();
                 List<FixtureRun> runs = new ArrayList<>();
-                for (int index = 0; index < FIXTURES.length; index++) {
+                for (int index = 0; index < CocoFoodBenchmark.FIXTURES.length; index++) {
                     long startNs = System.nanoTime();
-                    FixtureRun run = runOnce(environment, session, inputName, FIXTURES[index], index);
+                    FixtureRun run = runOnce(environment, session, inputName, CocoFoodBenchmark.FIXTURES[index], index);
                     elapsed.add(elapsedMs(startNs));
                     runs.add(run);
                 }
@@ -165,7 +138,7 @@ public final class YoloWorldActivity extends Activity {
                 throw new IOException("Unexpected YOLO-World output shape");
             }
             List<Detection> detections = nonMaximumSuppress(output[0]);
-            return new FixtureRun(fixture, EXPECTED_VISIBLE_COMPONENTS[fixtureIndex], detections);
+            return new FixtureRun(fixture, CocoFoodBenchmark.EXPECTED_VISIBLE_COMPONENTS[fixtureIndex], detections);
         }
     }
 
@@ -178,7 +151,7 @@ public final class YoloWorldActivity extends Activity {
         for (int prediction = 0; prediction < predictionCount; prediction++) {
             int classIndex = 0;
             float confidence = 0.0f;
-            for (int candidateClass = 0; candidateClass < COCO_NAMES.length; candidateClass++) {
+            for (int candidateClass = 0; candidateClass < CocoFoodBenchmark.COCO_NAMES.length; candidateClass++) {
                 float score = output[4 + candidateClass][prediction];
                 if (score > confidence) {
                     confidence = score;
@@ -386,8 +359,8 @@ public final class YoloWorldActivity extends Activity {
         private Set<String> predictedFoodLabels() {
             Set<String> labels = new LinkedHashSet<>();
             for (Detection detection : detections) {
-                String label = COCO_NAMES[detection.classIndex];
-                if (COCO_FOOD_LABELS.contains(label)) {
+                String label = CocoFoodBenchmark.COCO_NAMES[detection.classIndex];
+                if (CocoFoodBenchmark.COCO_FOOD_LABELS.contains(label)) {
                     labels.add(label);
                 }
             }
@@ -413,8 +386,8 @@ public final class YoloWorldActivity extends Activity {
             boolean first = true;
             Set<String> seen = new HashSet<>();
             for (Detection detection : detections) {
-                String label = COCO_NAMES[detection.classIndex];
-                if (!COCO_FOOD_LABELS.contains(label) || !seen.add(label)) {
+                String label = CocoFoodBenchmark.COCO_NAMES[detection.classIndex];
+                if (!CocoFoodBenchmark.COCO_FOOD_LABELS.contains(label) || !seen.add(label)) {
                     continue;
                 }
                 if (!first) {
