@@ -1,4 +1,4 @@
-package com.supernutrition.g3benchmark.poc;
+package com.supernutrition.inference.localandroidpoc.runtime;
 
 import org.junit.Test;
 

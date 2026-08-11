@@ -13,12 +13,19 @@ final class PocFusionPolicy {
     private PocFusionPolicy() {
     }
 
-    static Map<String, Float> compositionSupport(List<PocAnalysis.DishCandidate> dishes) {
+    static Map<String, Float> compositionSupport(
+            List<PocAnalysis.DishCandidate> dishes,
+            PocDishIngredientPriorProvider priorProvider
+    ) {
         Map<String, Float> support = new LinkedHashMap<>();
         int limit = Math.min(3, dishes.size());
         for (int index = 0; index < limit; index++) {
             PocAnalysis.DishCandidate dish = dishes.get(index);
-            for (String ingredient : PocDishIngredientPriors.forDish(dish.label)) {
+            List<String> ingredients = priorProvider.forDish(dish.label);
+            if (ingredients == null) {
+                continue;
+            }
+            for (String ingredient : ingredients) {
                 Float current = support.get(ingredient);
                 support.put(ingredient, (current == null ? 0.0f : current) + dish.confidence);
             }
@@ -26,8 +33,11 @@ final class PocFusionPolicy {
         return support;
     }
 
-    static List<String> compositionLabels(List<PocAnalysis.DishCandidate> dishes) {
-        return new ArrayList<>(compositionSupport(dishes).keySet());
+    static List<String> compositionLabels(
+            List<PocAnalysis.DishCandidate> dishes,
+            PocDishIngredientPriorProvider priorProvider
+    ) {
+        return new ArrayList<>(compositionSupport(dishes, priorProvider).keySet());
     }
 
     static float normalizedSupport(Map<String, Float> support, String label) {

@@ -13,6 +13,12 @@ android {
         versionCode = 1
         versionName = "g3-spike"
     }
+
+    sourceSets {
+        getByName("main") {
+            java.directories.add("../../../../mobile/inference/local-android-poc/src/main/java")
+        }
+    }
 }
 
 dependencies {

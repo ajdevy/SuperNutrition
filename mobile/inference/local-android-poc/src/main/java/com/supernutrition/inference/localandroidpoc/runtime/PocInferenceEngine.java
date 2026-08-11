@@ -72,6 +72,7 @@ public final class PocInferenceEngine implements AutoCloseable {
 
     private final Context context;
     private final boolean refineMasks;
+    private final PocDishIngredientPriorProvider ingredientPriorProvider;
     private final OrtEnvironment environment;
     private OrtSession dishSession;
     private OrtSession regionSession;
@@ -84,16 +85,33 @@ public final class PocInferenceEngine implements AutoCloseable {
 
     /** Creates an engine; model sessions are loaded lazily by {@link #analyze(Bitmap)}. */
     public PocInferenceEngine(Context context) {
-        this(context, true);
+        this(context, true, dishLabel -> Collections.<String>emptyList());
     }
 
     /** The app PoC can disable MobileSAM to keep the APK/device path bounded. */
     public PocInferenceEngine(Context context, boolean refineMasks) {
+        this(context, refineMasks, dishLabel -> Collections.<String>emptyList());
+    }
+
+    /**
+     * Creates an engine with host-owned dish-composition hints. The inference
+     * implementation stays identical in the shipped runtime and benchmark
+     * harness; only the host's canonical prior table is supplied at the edge.
+     */
+    public PocInferenceEngine(
+            Context context,
+            boolean refineMasks,
+            PocDishIngredientPriorProvider ingredientPriorProvider
+    ) {
         if (context == null) {
             throw new IllegalArgumentException("context must not be null");
         }
+        if (ingredientPriorProvider == null) {
+            throw new IllegalArgumentException("ingredientPriorProvider must not be null");
+        }
         this.context = context.getApplicationContext() == null ? context : context.getApplicationContext();
         this.refineMasks = refineMasks;
+        this.ingredientPriorProvider = ingredientPriorProvider;
         this.environment = OrtEnvironment.getEnvironment();
     }
 
@@ -439,12 +457,12 @@ public final class PocInferenceEngine implements AutoCloseable {
         return kept;
     }
 
-    private static List<RawRegion> applySuggestionFirstFusion(
+    private List<RawRegion> applySuggestionFirstFusion(
             List<PocAnalysis.DishCandidate> dishes,
             List<RawRegion> detectorProposals,
             List<String> warnings
     ) {
-        Map<String, Float> support = PocFusionPolicy.compositionSupport(dishes);
+        Map<String, Float> support = PocFusionPolicy.compositionSupport(dishes, ingredientPriorProvider);
         List<RawRegion> ranked = new ArrayList<>(detectorProposals);
         Collections.sort(ranked, (left, right) -> Float.compare(
                 PocFusionPolicy.rankScore(
@@ -461,14 +479,14 @@ public final class PocInferenceEngine implements AutoCloseable {
         return ranked;
     }
 
-    private static List<PocAnalysis.IngredientSuggestion> buildIngredientSuggestions(
+    private List<PocAnalysis.IngredientSuggestion> buildIngredientSuggestions(
             List<PocAnalysis.DishCandidate> dishes,
             List<RawRegion> detectorProposals
     ) {
-        Map<String, Float> compositionSupport = PocFusionPolicy.compositionSupport(dishes);
+        Map<String, Float> compositionSupport = PocFusionPolicy.compositionSupport(dishes, ingredientPriorProvider);
         List<PocAnalysis.IngredientSuggestion> suggestions = new ArrayList<>();
         Set<String> seen = new HashSet<>();
-        for (String label : PocFusionPolicy.compositionLabels(dishes)) {
+        for (String label : PocFusionPolicy.compositionLabels(dishes, ingredientPriorProvider)) {
             float detectorConfidence = maxDetectorConfidence(detectorProposals, label);
             suggestions.add(new PocAnalysis.IngredientSuggestion(
                     label,
