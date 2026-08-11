@@ -21,7 +21,6 @@ import com.supernutrition.domain.inference.InferenceV2Capability
 import com.supernutrition.domain.inference.InferenceV2Engine
 import com.supernutrition.domain.inference.InferenceV2Input
 import com.supernutrition.domain.inference.InferenceV2Outcome
-import com.supernutrition.domain.inference.InferenceV2Provenance
 import com.supernutrition.domain.inference.InferenceV2Request
 import com.supernutrition.domain.inference.InferenceV2Result
 import com.supernutrition.domain.inference.LocalizedCandidateIdentity
@@ -34,7 +33,6 @@ import com.supernutrition.domain.inference.V2AbstentionReason
 import com.supernutrition.domain.inference.V2InferenceFailureCode
 import com.supernutrition.domain.inference.VisibleComponent
 import com.supernutrition.domain.photoanalysis.NormalizedPhotoInput
-import com.supernutrition.domain.photoanalysis.DishIngredientPriorTable
 import com.supernutrition.domain.photoanalysis.PhotoLeaseStorePort
 import com.supernutrition.domain.photoanalysis.PhotoRef
 import com.supernutrition.domain.photoanalysis.PhotoSessionStorePort
@@ -59,8 +57,6 @@ private const val DISH_ASSET = "swin-finetuned-food101-matmul-int8.onnx"
 private const val REGION_ASSET = "yolov8s-worldv2-coco.onnx"
 private const val LABEL_ASSET = "food101-labels.txt"
 private const val DISH_MODEL_VERSION = "poc-food101-swin-int8-v1"
-private const val COMPONENT_MODEL_VERSION = "poc-yolo-food-components-v1"
-private const val TAXONOMY_VERSION = "coco-food-components-v1"
 private const val CALIBRATION_VERSION = "uncalibrated-proxy-v1"
 private const val CONTRACT_VERSION = INFERENCE_EVIDENCE_CONTRACT_V2
 private const val DISH_SHA256 = "9070f8097cda88923f77774d93d9fead7cee344486521c7fc5142806642061df"
@@ -68,6 +64,34 @@ private const val REGION_SHA256 = "d27ac81640ca470cc7e42edd638b6626ac6b4f4dcce74
 private const val LABEL_SHA256 = "eb6b396455a281445a698d8af22b2142be9a6eb9401520ee702746545f1c8820"
 const val ANDROID_POC_ARTIFACT_DIGEST =
     "e17ea5185554e6b2d3462c14f1559d8fe8a2f1bf9ed69051d555aab7d4c8f39a"
+
+/**
+ * The local runtime is limited to the five visibly separable foods in the
+ * checked-in taxonomy. It deliberately stays staged in the component/mass
+ * activation contract: this model has no component corpus or mass calibration.
+ */
+internal object AndroidPocVisibleFoodModel {
+    val manifest = ComponentModelManifest(
+        manifestVersion = "component-model/v1",
+        modelVersion = "poc-yolo-food-components-v1",
+        artifactDigest = REGION_SHA256,
+        taxonomyVersion = "supernutrition-visible-food-v1",
+        taxonomyDigest = "e8e6ee82fa7ae0de0a3f1fe8b0b219913db81dfd6413ceacbe38c48564f99605",
+        preprocessingVersion = "rgb-resize-640-v1",
+        postprocessingVersion = "yolo-coco-box-nms-v1",
+        maskContractVersion = "normalized-box-v1",
+        calibrationVersion = CALIBRATION_VERSION,
+        runtime = "onnxruntime-android-1.28.0",
+        executionProvider = "cpu",
+        compatibilityTier = "local-visible-food-v1",
+        ownership = ComponentModelOwnership.APP_MANAGED,
+        activation = ComponentModelActivation.STAGED,
+        legalApprovalRef = null,
+        corpusRef = null,
+        benchmarkEvidenceRef = null,
+        rollbackEvidenceRef = null,
+    )
+}
 
 /** Owns the native PoC engine and keeps its Android-specific lifecycle explicit. */
 class AndroidPocRuntimeEngines(
@@ -91,7 +115,7 @@ class AndroidPocRuntimeEngines(
 
 private class AndroidPocRuntimeCore(context: Context) : AutoCloseable {
     private val appContext = context.applicationContext ?: context
-    private val engine = PocInferenceEngine(appContext, false, DishIngredientPriorTable::forDish)
+    private val engine = PocInferenceEngine(appContext, false)
     private val assetsVerified = verifyAssets()
 
     suspend fun analyze(input: NormalizedPhotoInput, gridCellIndex: Int? = null): PocAnalysis =
@@ -204,38 +228,8 @@ private class AndroidPocComponentEngine(
     private val sessions: PhotoSessionStorePort,
     private val leases: PhotoLeaseStorePort,
 ) : InferenceV2Engine() {
-    private val provenance = InferenceV2Provenance(
-        route = InferenceRoute.LOCAL,
-        engineId = "local-android-poc-component",
-        modelVersion = COMPONENT_MODEL_VERSION,
-        taxonomyVersion = TAXONOMY_VERSION,
-        calibrationVersion = CALIBRATION_VERSION,
-        contractVersion = CONTRACT_VERSION,
-    )
-
-    private val manifest = ComponentModelManifest(
-        manifestVersion = "component-model/v1",
-        modelVersion = COMPONENT_MODEL_VERSION,
-        artifactDigest = ANDROID_POC_ARTIFACT_DIGEST,
-        taxonomyVersion = TAXONOMY_VERSION,
-        taxonomyDigest = LABEL_SHA256,
-        preprocessingVersion = "rgb-resize-640-v1",
-        postprocessingVersion = "yolo-coco-box-nms-v1",
-        maskContractVersion = "normalized-box-v1",
-        calibrationVersion = CALIBRATION_VERSION,
-        runtime = "onnxruntime-android-1.28.0",
-        executionProvider = "cpu",
-        compatibilityTier = "research-poc",
-        ownership = ComponentModelOwnership.APP_MANAGED,
-        activation = ComponentModelActivation.PRODUCTION,
-        rollbackTargetVersion = "component-model-v0",
-        productApprovalRef = "approval:product",
-        engineeringApprovalRef = "approval:engineering",
-        legalApprovalRef = "approval:legal",
-        corpusRef = "corpus:weighed-v1",
-        benchmarkEvidenceRef = "evidence:g3-v1",
-        rollbackEvidenceRef = "evidence:rollback-v1",
-    )
+    private val manifest = AndroidPocVisibleFoodModel.manifest
+    private val provenance = manifest.toProvenance("local-android-poc-component", InferenceRoute.LOCAL)
 
     override val contractVersion: String = CONTRACT_VERSION
 

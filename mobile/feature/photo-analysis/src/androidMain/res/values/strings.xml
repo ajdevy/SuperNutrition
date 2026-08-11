@@ -9,9 +9,9 @@
     <string name="capture_status_preparing">Preparing photo</string>
     <string name="capture_status_ready_photo">Photo ready</string>
     <string name="capture_status_analyzing">Analyzing photo</string>
-    <string name="capture_status_finding_visible_foods">Checking visible photo evidence</string>
-    <string name="capture_status_identifying_dish">Reviewing dish candidates</string>
-    <string name="capture_status_estimating_portions">Portion estimate unavailable</string>
+    <string name="capture_status_finding_visible_foods">Finding visible foods</string>
+    <string name="capture_status_identifying_dish">Identifying visible foods</string>
+    <string name="capture_status_estimating_portions">Preparing results</string>
     <string name="capture_status_checking_results">Checking results</string>
     <string name="capture_status_review">Review candidate</string>
     <string name="capture_status_restoring">Restoring photo analysis</string>
@@ -34,7 +34,7 @@
     <string name="capture_evidence_selected">Selected</string>
     <string name="capture_evidence_not_selected">Not selected</string>
     <string name="capture_evidence_dish_candidates">Dish candidates</string>
-    <string name="capture_evidence_visible_components">Detected in photo</string>
+    <string name="capture_evidence_visible_components">Visible foods</string>
     <string name="capture_evidence_visible_region_count">Visible regions: {count}</string>
     <string name="capture_evidence_composition_hints">Possible ingredients from dish</string>
     <string name="capture_evidence_composition_hint_source">Dish hint, not visual evidence</string>
@@ -50,7 +50,7 @@
     <string name="capture_recovery_review_restore_unavailable">The photo is available, but analysis results could not be restored.</string>
     <string name="capture_permission_rationale">Camera access is needed to take a meal photo.</string>
     <string name="capture_permission_continue">Continue</string>
-    <string name="capture_research_warning">Dish labels are suggestions; visible regions are photo evidence; portion estimates are unavailable.</string>
+    <string name="capture_research_warning">Visible food labels are suggestions based only on this photo.</string>
     <string name="capture_grid_hints_title">Select photo region</string>
     <string name="capture_grid_overlay_description">Photo grid with detected regions</string>
     <string name="capture_grid_cell_description">Analyze photo region {index}</string>

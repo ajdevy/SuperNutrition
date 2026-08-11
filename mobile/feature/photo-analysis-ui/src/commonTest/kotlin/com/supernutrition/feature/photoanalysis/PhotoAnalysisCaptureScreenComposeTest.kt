@@ -183,6 +183,32 @@ class PhotoAnalysisCaptureScreenComposeTest {
     }
 
     @Test
+    fun `local visible-food review omits ingredient hints and grams`() = runComposeUiTest {
+        val copy = PhotoAnalysisPresenterCopyFixtures.localized()
+        val initial = reviewModel(copy)
+        val review = requireNotNull(initial.review)
+        val model = initial.copy(
+            review = review.copy(
+                visibleComponents = review.visibleComponents.map { it.copy(mass = null) },
+                compositionHints = emptyList(),
+            ),
+        )
+
+        setContent {
+            PhotoAnalysisCaptureScreen(
+                model = model,
+                onAction = {},
+                surface = PhotoAnalysisCaptureSurface(presenterCopy = copy),
+            )
+        }
+
+        onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_COMPONENT_EVIDENCE.value).assertIsDisplayed()
+        onNodeWithText("Estimated: 120–150 g").assertDoesNotExist()
+        onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_COMPOSITION_HINTS.value).assertDoesNotExist()
+        onNodeWithText("Pomodoro").assertDoesNotExist()
+    }
+
+    @Test
     fun `review keeps separate photo evidence with the same localized label`() = runComposeUiTest {
         val copy = PhotoAnalysisPresenterCopyFixtures.localized()
         val initial = reviewModel(copy)

@@ -5,7 +5,7 @@
 "photo_analysis.capture.choose_photo" = "Choose photo";
 "photo_analysis.capture.open_settings" = "Open settings";
 "photo_analysis.capture.cancel" = "Cancel";
-"photo_analysis.capture.research_warning" = "Dish labels are suggestions; visible regions are photo evidence; portion estimates are unavailable.";
+"photo_analysis.capture.research_warning" = "Visible food labels are suggestions based only on this photo.";
 "photo_analysis.capture.grid_hints_title" = "Select photo region";
 "photo_analysis.capture.grid_overlay_description" = "Photo grid with detected regions";
 "photo_analysis.capture.grid_cell_description" = "Analyze photo region {index}";
@@ -19,9 +19,9 @@
 "photo_analysis.status.preparing_photo" = "Preparing photo";
 "photo_analysis.status.photo_ready" = "Photo ready";
 "photo_analysis.status.analyzing_photo" = "Analyzing photo";
-"photo_analysis.status.finding_visible_foods" = "Checking visible photo evidence";
-"photo_analysis.status.identifying_dish" = "Identifying the dish";
-"photo_analysis.status.estimating_portions" = "Portion estimate unavailable";
+"photo_analysis.status.finding_visible_foods" = "Finding visible foods";
+"photo_analysis.status.identifying_dish" = "Identifying visible foods";
+"photo_analysis.status.estimating_portions" = "Preparing results";
 "photo_analysis.status.checking_results" = "Checking results";
 "photo_analysis.status.review_candidate" = "Review candidate";
 "photo_analysis.status.restoring_photo_analysis" = "Restoring photo analysis";
@@ -45,7 +45,7 @@
 "photo_analysis.evidence.selected" = "Selected";
 "photo_analysis.evidence.not_selected" = "Not selected";
 "photo_analysis.evidence.dish_candidates" = "Dish candidates";
-"photo_analysis.evidence.visible_components" = "Detected in photo";
+"photo_analysis.evidence.visible_components" = "Visible foods";
 "photo_analysis.evidence.visible_region_count" = "Visible regions: {count}";
 "photo_analysis.evidence.composition_hints" = "Possible ingredients from dish";
 "photo_analysis.evidence.composition_hint_source" = "Dish hint, not visual evidence";

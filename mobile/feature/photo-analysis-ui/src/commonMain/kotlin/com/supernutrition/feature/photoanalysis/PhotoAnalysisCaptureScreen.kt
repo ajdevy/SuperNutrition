@@ -225,14 +225,14 @@ private fun PhotoAnalysisVisibleComponents(review: PhotoAnalysisReviewModel, sur
                     .fillMaxWidth()
                     .automationId(photoAnalysisVisibleComponentId(component.componentId))
                     .semantics {
-                        contentDescription = listOf(
+                        contentDescription = listOfNotNull(
                             component.label,
                             component.sourceLabel,
                             component.confidenceLabel,
                             component.ambiguityLabel,
                             component.visibilityLabel,
                             component.regionLabel,
-                            component.mass.label,
+                            component.mass?.label,
                             component.provenanceLabel,
                         ).joinToString()
                         stateDescription = component.selectionLabel
@@ -240,7 +240,7 @@ private fun PhotoAnalysisVisibleComponents(review: PhotoAnalysisReviewModel, sur
             ) {
                 Text(component.label, style = pocBodyTextStyle())
                 Text(component.sourceLabel, style = pocBodyTextStyle())
-                Text(component.mass.label, style = pocBodyTextStyle())
+                component.mass?.let { mass -> Text(mass.label, style = pocBodyTextStyle()) }
             }
         }
     }

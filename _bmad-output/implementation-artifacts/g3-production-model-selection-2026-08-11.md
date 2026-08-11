@@ -36,24 +36,33 @@ The digest is over the checked-in UTF-8 JSON bytes. Any class, name, ordering,
 or contract change creates a new taxonomy version and digest; it does not
 silently modify this candidate.
 
-## Required production manifest values
+## Local visible-food manifest
 
-| Contract field | Selected value | Activation evidence still required |
+| Contract field | Selected value | Current status |
 |---|---|---|
 | `modelVersion` | `poc-yolo-food-components-v1` | Current local runtime baseline |
-| `artifactDigest` | `d27ac81640ca470cc7e42edd638b6626ac6b4f4dcce74aabb6e09cd02a13c84f` | Asset rechecked on the physical Android comparison |
-| `taxonomyVersion` / `taxonomyDigest` | `supernutrition-visible-food-v1` / `e8e6ee82…f99605` | Included in the signed manifest |
-| Preprocessing | `rgb-resize-640-v1` | Current Android runtime contract |
-| Postprocessing | `yolo-coco-box-nms-v1` | Current Android runtime contract |
-| `maskContract` | `normalized-box-v1` | Scope test: no mask, ingredient, or mass is inferred |
-| Runtime | `onnxruntime-android-1.28.0`; `onnxruntime-objc-1.28.0` | Lockfile/dependency check on both hosts |
-| Execution provider | CPU | Android and physical-iOS benchmark must record the actual CPU EP |
-| Calibration | `uncalibrated-proxy-v1` | Current score threshold `0.10` and NMS IoU `0.70`; it is not a fitted ingredient or mass calibration |
-| Rollback target | `poc-yolo-food-components-v1` + this exact `d27ac816…c84f` asset | Existing local baseline for any future model replacement |
+| `artifactDigest` | `d27ac81640ca470cc7e42edd638b6626ac6b4f4dcce74aabb6e09cd02a13c84f` | Verified by the app before use |
+| `taxonomyVersion` / `taxonomyDigest` | `supernutrition-visible-food-v1` / `e8e6ee82…f99605` | Checked into the app manifest |
+| Preprocessing | `rgb-resize-640-v1` | One shared Android app/benchmark contract |
+| Postprocessing | `yolo-coco-box-nms-v1` | One shared Android app/benchmark contract |
+| `maskContract` | `normalized-box-v1` | No mask, ingredient, or mass is inferred |
+| Runtime | `onnxruntime-android-1.28.0`; `onnxruntime-objc-1.28.0` | Pinned on both hosts |
+| Execution provider | CPU | Recorded by benchmark execution evidence |
+| Calibration | `uncalibrated-proxy-v1` | Threshold `0.10` and NMS IoU `0.70`; never a mass calibration |
+| Activation | `STAGED` | The app may identify visible foods locally; it may not claim component/mass production approval |
+| Rollback baseline | this exact `poc-yolo-food-components-v1` asset | Future replacement must prove rollback to it |
 
-This selection makes no mass-calibration claim. A future model replacement must
-register this exact selected baseline as its rollback target instead of pointing
-to the non-existent `component-model-v0` placeholder.
+The Android `ComponentModelManifest` deliberately contains no legal, corpus,
+benchmark, Product, Engineering, or rollback-evidence reference. Those records
+belong to a future component/mass model, not to this five-label local
+identifier. A future replacement must register this exact selected baseline as
+its rollback target instead of pointing to the non-existent
+`component-model-v0` placeholder.
+
+`PocYoloWorldContract` is the single source of preprocessing, tensor-layout
+parsing, label filtering, normalisation, and NMS for both the Android runtime
+and the G3 Android benchmark runner. The benchmark therefore measures the same
+detector contract that the app ships.
 
 ## Legal use record
 

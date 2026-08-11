@@ -286,7 +286,7 @@ public class SharedKitPhotoAnalysisSession private constructor(
         const val IOS_POC_COMPONENT_ENGINE_ID = "local-ios-poc-component"
         const val IOS_POC_DISH_MODEL_VERSION = "poc-food101-swin-int8-v1"
         const val IOS_POC_COMPONENT_MODEL_VERSION = "poc-yolo-food-components-v1"
-        const val IOS_POC_COMPONENT_TAXONOMY_VERSION = "coco-food-components-v1"
+        const val IOS_POC_COMPONENT_TAXONOMY_VERSION = "supernutrition-visible-food-v1"
         const val IOS_POC_DISH_CALIBRATION_VERSION = "softmax-proxy-v1"
         const val IOS_POC_COMPONENT_CALIBRATION_VERSION = "uncalibrated-proxy-v1"
     }
