@@ -40,12 +40,16 @@ object BoundedDishIngredientFusion {
     private const val MAX_DISH_PROPOSALS = 3
     private const val MAX_HINTS = 24
 
-    fun merge(dishes: List<InferenceCandidate>, photoEvidence: List<VisibleComponent>): CandidateReviewDraft =
-        CandidateReviewDraft(
-            mainDishProposals = dishes.take(MAX_DISH_PROPOSALS),
-            photoEvidence = photoEvidence,
-            compositionHints = hintsFor(dishes),
-        )
+    fun merge(
+        dishes: List<InferenceCandidate>,
+        photoEvidence: List<VisibleComponent>,
+        degradation: CandidateReviewDegradation = CandidateReviewDegradation.NONE,
+    ): CandidateReviewDraft = CandidateReviewDraft(
+        mainDishProposals = dishes.take(MAX_DISH_PROPOSALS),
+        photoEvidence = photoEvidence,
+        compositionHints = hintsFor(dishes),
+        degradation = degradation,
+    )
 
     private fun hintsFor(dishes: List<InferenceCandidate>): List<DishIngredientHint> {
         val accumulated = linkedMapOf<String, MutableHint>()
@@ -60,8 +64,8 @@ object BoundedDishIngredientFusion {
         val maximum = accumulated.values.maxOfOrNull(MutableHint::support) ?: return emptyList()
         return accumulated.values
             .asSequence()
-            .take(MAX_HINTS)
             .sortedByDescending(MutableHint::support)
+            .take(MAX_HINTS)
             .map { hint ->
                 DishIngredientHint(
                     ingredientId = hint.ingredientId,
@@ -81,10 +85,11 @@ object BoundedDishIngredientFusion {
     private fun displayLabel(ingredientId: String): String = ingredientId
         .removePrefix("ingredient:")
         .split('_')
-        .joinToString(" ") { token -> token.replaceFirstChar { it.uppercase() } }
+        .joinToString(" ") { token -> token.replaceFirstChar { it.uppercaseChar() } }
 }
 
-private object DishIngredientPriorTable {
+/** Shared prior vocabulary used by the Android PoC and the KMP review path. */
+object DishIngredientPriorTable {
     private val priors: Map<String, List<String>> = linkedMapOf(
         "greek_salad" to listOf(
             "ingredient:cucumber",
@@ -238,6 +243,9 @@ private object DishIngredientPriorTable {
         val keys = listOf(candidate.candidateId, candidate.label).map(::normalize).distinct()
         return keys.firstNotNullOfOrNull(priors::get).orEmpty()
     }
+
+    @JvmStatic
+    fun forDish(dishLabel: String): List<String> = priors[normalize(dishLabel)].orEmpty()
 
     private fun normalize(value: String): String = value.trim().lowercase().replace(' ', '_')
 }

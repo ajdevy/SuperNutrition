@@ -132,6 +132,27 @@ class ConsentedCorpusCaptureTest {
     }
 
     @Test
+    fun `partition isolating port enforces group ownership across uploads`() {
+        val delegate = RecordingUploadPort()
+        val port = PartitionIsolatingCorpusUploadPort(delegate)
+        val first = capture()
+        val second = first.copy(caseRef = ref("meal:case-002"))
+
+        runSuspend { port.upload(CorpusUploadBatch(listOf(first))) }
+        runSuspend { port.upload(CorpusUploadBatch(listOf(second))) }
+        assertEquals(2, delegate.uploadCount)
+
+        val conflicting = first.copy(
+            caseRef = ref("meal:case-003"),
+            split = first.split.copy(partition = CorpusPartition.CALIBRATION),
+        )
+        assertFailsWith<IllegalArgumentException> {
+            runSuspend { port.upload(CorpusUploadBatch(listOf(conflicting))) }
+        }
+        assertEquals(2, delegate.uploadCount)
+    }
+
+    @Test
     fun `opaque identifiers and digests reject paths and unqualified hashes`() {
         assertFailsWith<IllegalArgumentException> { CorpusOpaqueRef.of("/private/photo.jpg") }
         assertFailsWith<IllegalArgumentException> { CorpusOpaqueRef.of("person@example.com") }

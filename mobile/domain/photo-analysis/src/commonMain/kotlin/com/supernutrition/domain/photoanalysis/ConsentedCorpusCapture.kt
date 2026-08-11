@@ -203,6 +203,16 @@ data class CorpusComponentAnnotation(
                 "Non-evaluable component cannot carry visible identity or region evidence"
             }
             val reason = requireNotNull(unknownReason) { "Non-evaluable component needs a typed reason" }
+            val expectedReason = when (state) {
+                CorpusComponentState.HIDDEN -> CorpusNotEvaluableReason.HIDDEN
+                CorpusComponentState.OCCLUDED -> CorpusNotEvaluableReason.OCCLUDED
+                CorpusComponentState.UNKNOWN -> CorpusNotEvaluableReason.UNKNOWN_FOOD
+                CorpusComponentState.INSEPARABLY_MIXED -> CorpusNotEvaluableReason.MIXED_PREPARATION
+                CorpusComponentState.VISIBLE_SEPARABLE -> error("Visible state handled above")
+            }
+            require(reason == expectedReason) {
+                "Non-evaluable component reason must match its annotation state"
+            }
             require(groundTruthMass == CorpusGroundTruthMass.NotEvaluable(reason)) {
                 "Non-evaluable mass must repeat its typed reason"
             }
@@ -281,8 +291,8 @@ data class CorpusQualityReview(
         require(privacyReviewPassed && duplicateReviewPassed) { "Corpus privacy and duplicate review must pass" }
         require(primaryAnnotatorRef != secondaryAnnotatorRef) { "Independent annotators must be distinct" }
         require(adjudicated) { "Corpus annotation disagreements must be adjudicated" }
-        require(maskAgreementIoU.isFinite() && maskAgreementIoU in 0.0..1.0) {
-            "Mask agreement IoU must be between zero and one"
+        require(maskAgreementIoU.isFinite() && maskAgreementIoU in 0.5..1.0) {
+            "Mask agreement IoU must be at least 0.5 and at most one"
         }
         require(identityAgreement) { "Independent identity review must agree" }
     }
@@ -360,10 +370,10 @@ data class CorpusUploadBatch(val captures: List<ConsentedCorpusCapture>) {
         captures.forEach {
             require(it.isUploadEligible) { "Withdrawn, expired, or unconsented captures cannot upload" }
         }
-        validatePartitionIsolation(captures)
+        validatePartitionIsolation()
     }
 
-    private fun validatePartitionIsolation(captures: List<ConsentedCorpusCapture>) {
+    internal fun partitionAssignments(): Map<Pair<String, CorpusOpaqueRef>, CorpusPartition> {
         val seen = mutableMapOf<Pair<String, CorpusOpaqueRef>, CorpusPartition>()
         captures.forEach { capture ->
             val split = capture.split
@@ -383,6 +393,11 @@ data class CorpusUploadBatch(val captures: List<ConsentedCorpusCapture>) {
                 }
             }
         }
+        return seen
+    }
+
+    private fun validatePartitionIsolation() {
+        partitionAssignments()
     }
 }
 
@@ -391,4 +406,21 @@ data class CorpusUploadReceipt(val uploadRef: CorpusOpaqueRef, val payloadDigest
 /** Domain port only. A platform/backend adapter must be supplied after explicit product approval. */
 interface ConsentedCorpusUploadPort {
     suspend fun upload(batch: CorpusUploadBatch): CorpusUploadReceipt
+}
+
+/** Adapter-side guard that keeps partition ownership across separate uploads. */
+class PartitionIsolatingCorpusUploadPort(private val delegate: ConsentedCorpusUploadPort) : ConsentedCorpusUploadPort {
+    private val seenPartitions = mutableMapOf<Pair<String, CorpusOpaqueRef>, CorpusPartition>()
+
+    override suspend fun upload(batch: CorpusUploadBatch): CorpusUploadReceipt {
+        val assignments = batch.partitionAssignments()
+        assignments.forEach { (key, partition) ->
+            require(seenPartitions[key] == null || seenPartitions[key] == partition) {
+                "Corpus group must not cross partitions across uploads"
+            }
+        }
+        val receipt = delegate.upload(batch)
+        seenPartitions.putAll(assignments)
+        return receipt
+    }
 }

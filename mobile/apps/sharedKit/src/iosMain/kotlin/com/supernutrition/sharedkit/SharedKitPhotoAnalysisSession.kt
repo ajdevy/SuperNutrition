@@ -1,33 +1,33 @@
 package com.supernutrition.sharedkit
 
-import com.supernutrition.domain.photoanalysis.AttemptId
 import com.supernutrition.domain.inference.AssumptionCode
 import com.supernutrition.domain.inference.CalibratedConfidence
+import com.supernutrition.domain.inference.ComponentAmbiguity
+import com.supernutrition.domain.inference.ComponentVisibility
 import com.supernutrition.domain.inference.Confidence
 import com.supernutrition.domain.inference.ConfidenceBand
+import com.supernutrition.domain.inference.INFERENCE_EVIDENCE_CONTRACT_V2
 import com.supernutrition.domain.inference.InferenceAssumption
 import com.supernutrition.domain.inference.InferenceCandidate
-import com.supernutrition.domain.inference.InferenceRoute
 import com.supernutrition.domain.inference.InferenceProvenance
+import com.supernutrition.domain.inference.InferenceRoute
 import com.supernutrition.domain.inference.InferenceV2Provenance
 import com.supernutrition.domain.inference.LocalizedCandidateIdentity
 import com.supernutrition.domain.inference.MassEvidence
 import com.supernutrition.domain.inference.MassNotEvaluableReason
 import com.supernutrition.domain.inference.NormalizedVisibleRegion
-import com.supernutrition.domain.inference.INFERENCE_EVIDENCE_CONTRACT_V2
 import com.supernutrition.domain.inference.PHOTO_INFERENCE_CONTRACT_V1
-import com.supernutrition.domain.inference.ComponentAmbiguity
-import com.supernutrition.domain.inference.ComponentVisibility
 import com.supernutrition.domain.inference.VisibleComponent
+import com.supernutrition.domain.photoanalysis.AttemptId
 import com.supernutrition.domain.photoanalysis.BoundedDishIngredientFusion
+import com.supernutrition.domain.photoanalysis.LocalAnalysisStage
 import com.supernutrition.domain.photoanalysis.PhotoAnalysisEvent
 import com.supernutrition.domain.photoanalysis.PhotoAnalysisState
 import com.supernutrition.domain.photoanalysis.PhotoLeaseStore
 import com.supernutrition.domain.photoanalysis.PhotoPreparationException
 import com.supernutrition.domain.photoanalysis.PhotoSessionStore
-import com.supernutrition.domain.photoanalysis.LocalAnalysisStage
-import com.supernutrition.domain.photoanalysis.RequestId
 import com.supernutrition.domain.photoanalysis.RecoveryReason
+import com.supernutrition.domain.photoanalysis.RequestId
 import com.supernutrition.feature.photoanalysis.IosRetainedPhotoPreview
 import com.supernutrition.feature.photoanalysis.PhotoAnalysisAnalysisLauncher
 import com.supernutrition.feature.photoanalysis.PhotoAnalysisFeature
@@ -36,6 +36,8 @@ import com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterModel
 import com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterState
 import com.supernutrition.platform.photoios.IosImageNormalizer
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.addressOf
+import kotlinx.cinterop.usePinned
 import platform.Foundation.NSData
 
 /** Shared Apple session facade; only the renderer differs between Apple targets. */
@@ -58,6 +60,8 @@ public class SharedKitPhotoAnalysisSession private constructor(
     /** Native display copy retained only while the current photo flow needs it. */
     public var retainedPhoto: IosRetainedPhotoPreview? = null
         private set
+    private var normalizedInferenceData: NSData? = null
+    private var normalizedInferenceOpaqueId: String? = null
 
     public fun presenterState(): PhotoAnalysisPresenterState = PhotoAnalysisPresenterModel.from(
         feature.state,
@@ -104,6 +108,8 @@ public class SharedKitPhotoAnalysisSession private constructor(
         try {
             val normalized = IosImageNormalizer().normalizeWithPreview(ref, sourceData)
             retainedPhoto = IosRetainedPhotoPreview(ref = ref, image = normalized.preview)
+            normalizedInferenceData = normalized.input.bytes.toNSData()
+            normalizedInferenceOpaqueId = opaqueId
             feature.dispatch(PhotoAnalysisEvent.PreparationSucceeded(normalized.input))
             analysisLauncher.start()
         } catch (_: PhotoPreparationException) {
@@ -116,6 +122,11 @@ public class SharedKitPhotoAnalysisSession private constructor(
             feature.dispatch(PhotoAnalysisEvent.PreparationFailed(RecoveryReason.CAPTURE_FAILED))
         }
     }
+
+    /** Returns the exact bounded bytes used by the shared photo contract. */
+    @OptIn(ExperimentalForeignApi::class)
+    public fun normalizedPhotoData(opaqueId: String): NSData? =
+        normalizedInferenceData?.takeIf { normalizedInferenceOpaqueId == opaqueId }
 
     /**
      * Completes the shared review flow with results produced by the native iOS
@@ -149,7 +160,9 @@ public class SharedKitPhotoAnalysisSession private constructor(
         feature.dispatch(PhotoAnalysisEvent.AnalysisStarted(request))
         if ((feature.state as? PhotoAnalysisState.Analyzing)?.requestId != request) return
 
-        feature.dispatch(PhotoAnalysisEvent.LocalAnalysisStageChanged(request, LocalAnalysisStage.FINDING_VISIBLE_FOODS))
+        feature.dispatch(
+            PhotoAnalysisEvent.LocalAnalysisStageChanged(request, LocalAnalysisStage.FINDING_VISIBLE_FOODS),
+        )
         if (regionLabels.isEmpty()) {
             feature.dispatch(PhotoAnalysisEvent.ReviewEvidenceUnavailable(request, RecoveryReason.NO_FOOD))
             return
@@ -164,7 +177,8 @@ public class SharedKitPhotoAnalysisSession private constructor(
             contractVersion = PHOTO_INFERENCE_CONTRACT_V1,
         )
         val dishes = dishLabels.take(MAX_DISH_PROPOSALS).mapIndexed { index, label ->
-            val score = dishConfidences[index].coerceIn(0.0, 1.0)
+            val score = dishConfidences[index]
+            require(score.isFinite() && score in 0.0..1.0) { "Dish confidence must be finite and bounded" }
             InferenceCandidate(
                 candidateId = "food101:$label",
                 label = label,
@@ -189,11 +203,20 @@ public class SharedKitPhotoAnalysisSession private constructor(
             contractVersion = INFERENCE_EVIDENCE_CONTRACT_V2,
         )
         val components = regionLabels.mapIndexed { index, label ->
-            val score = regionConfidences[index].coerceIn(0.0, 1.0)
-            val left = regionLefts[index].coerceIn(0.0, 1.0)
-            val top = regionTops[index].coerceIn(0.0, 1.0)
-            val right = regionRights[index].coerceIn(left, 1.0)
-            val bottom = regionBottoms[index].coerceIn(top, 1.0)
+            val score = regionConfidences[index]
+            val left = regionLefts[index]
+            val top = regionTops[index]
+            val right = regionRights[index]
+            val bottom = regionBottoms[index]
+            require(listOf(score, left, top, right, bottom).all { it.isFinite() }) {
+                "Region output must be finite"
+            }
+            require(
+                score in 0.0..1.0 && left in 0.0..1.0 && top in 0.0..1.0 &&
+                right in left..1.0 && bottom in top..1.0 && right > left && bottom > top
+            ) {
+                "Region output must be bounded and non-degenerate"
+            }
             VisibleComponent(
                 componentId = "region-${index + 1}-$label",
                 candidate = LocalizedCandidateIdentity("coco:$label", label, "en"),
@@ -240,8 +263,8 @@ public class SharedKitPhotoAnalysisSession private constructor(
     }
 
     public fun backgrounded() {
-        analysisLauncher.cancel()
-        clearRetainedPhoto()
+        // Backgrounding is lifecycle persistence, not user cancellation. Keep
+        // the photo lease and in-flight work so the review can be restored.
         feature.dispatch(PhotoAnalysisEvent.Backgrounded)
     }
 
@@ -251,6 +274,8 @@ public class SharedKitPhotoAnalysisSession private constructor(
 
     private fun clearRetainedPhoto() {
         retainedPhoto = null
+        normalizedInferenceData = null
+        normalizedInferenceOpaqueId = null
     }
 
     private companion object {
@@ -263,4 +288,9 @@ public class SharedKitPhotoAnalysisSession private constructor(
         const val IOS_POC_DISH_CALIBRATION_VERSION = "softmax-proxy-v1"
         const val IOS_POC_COMPONENT_CALIBRATION_VERSION = "uncalibrated-proxy-v1"
     }
+}
+
+@OptIn(ExperimentalForeignApi::class)
+private fun ByteArray.toNSData(): NSData = usePinned { pinned ->
+    NSData.create(bytes = pinned.addressOf(0), length = size.toULong())
 }

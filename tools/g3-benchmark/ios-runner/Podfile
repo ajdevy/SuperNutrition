@@ -3,5 +3,5 @@ platform :ios, '15.1'
 install! 'cocoapods', :disable_input_output_paths => true
 
 target 'SuperNutritionG3' do
-  pod 'onnxruntime-objc', '1.27.0'
+  pod 'onnxruntime-objc', '1.28.0'
 end

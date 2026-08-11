@@ -9,6 +9,7 @@ data class CandidateReviewDraft(
     val photoEvidence: List<VisibleComponent>,
     /** Dish-prior hypotheses; these are never visual evidence. */
     val compositionHints: List<DishIngredientHint> = emptyList(),
+    val degradation: CandidateReviewDegradation = CandidateReviewDegradation.NONE,
 ) {
     init {
         require(mainDishProposals.size <= MAX_MAIN_DISH_PROPOSALS) {
@@ -45,6 +46,12 @@ data class CandidateReviewDraft(
         const val MAX_MAIN_DISH_PROPOSALS = 3
         const val MAX_COMPOSITION_HINTS = 24
     }
+}
+
+/** Typed signal that review evidence is usable but one local stage abstained. */
+enum class CandidateReviewDegradation {
+    NONE,
+    DISH_CANDIDATES_UNAVAILABLE,
 }
 
 /** Only explicit session-scoped user choices; it has no catalog, serving, or nutrition fields. */

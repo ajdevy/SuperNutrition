@@ -12,6 +12,7 @@ import com.supernutrition.feature.photoanalysis.PhotoAnalysisAnalysisConfigurati
 import com.supernutrition.feature.photoanalysis.PhotoAnalysisFeature;
 import com.supernutrition.feature.photoanalysis.PhotoAnalysisLauncherFactory;
 import com.supernutrition.inference.localandroidpoc.AndroidPocRuntimeEngines;
+import com.supernutrition.inference.localandroidpoc.AndroidPocRuntimeKt;
 
 import kotlinx.coroutines.CoroutineScope;
 import kotlin.Unit;
@@ -19,9 +20,6 @@ import kotlin.jvm.functions.Function1;
 
 /** Installs the local model runtime used by the current Android app. */
 public final class AndroidPocRuntimeFactory implements PhotoAnalysisAndroidRuntimeFactory {
-    private static final String ARTIFACT_DIGEST =
-            "e17ea5185554e6b2d3462c14f1559d8fe8a2f1bf9ed69051d555aab7d4c8f39a";
-
     @Override
     public PhotoAnalysisAndroidRuntimeBinding create(
             Context context,
@@ -34,7 +32,7 @@ public final class AndroidPocRuntimeFactory implements PhotoAnalysisAndroidRunti
         PhotoAnalysisAnalysisConfiguration configuration = new PhotoAnalysisAnalysisConfiguration(
                 "android-poc-analysis",
                 "poc-analysis-v1",
-                ARTIFACT_DIGEST
+                AndroidPocRuntimeKt.ANDROID_POC_ARTIFACT_DIGEST
         );
         return new PhotoAnalysisAndroidRuntimeBinding(
                 PhotoAnalysisLauncherFactory.INSTANCE.create(
@@ -46,7 +44,8 @@ public final class AndroidPocRuntimeFactory implements PhotoAnalysisAndroidRunti
                         new Function1<Throwable, Unit>() {
                             @Override
                             public Unit invoke(Throwable error) {
-                                Log.e("SuperNutritionInference", "Photo analysis failed", error);
+                                Log.e("SuperNutritionInference", "Photo analysis failed: "
+                                        + error.getClass().getSimpleName());
                                 return Unit.INSTANCE;
                             }
                         }

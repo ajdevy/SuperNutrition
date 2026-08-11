@@ -53,6 +53,14 @@ read-only presentation. It does not activate a native model, change
 corrections, or claim G3 detector accuracy. Runtime activation remains owned by
 the approved component-model/G3 exit work.
 
+## Current Epic 3 handover correction (2026-08-11)
+
+Owner ruling D1 supersedes the pre-release `None`-binding wording above for
+the running app. The Android PoC runtime and the matching iOS PoC bridge are
+now composed for local analysis. This does not turn dish-prior hints into
+visual evidence, and it does not close the signed G-3 quality/release gate or
+authorize component/mass claims.
+
 ## Tasks / Subtasks
 
 - [x] Define and test the pure bounded fusion policy in `domain/photo-analysis`

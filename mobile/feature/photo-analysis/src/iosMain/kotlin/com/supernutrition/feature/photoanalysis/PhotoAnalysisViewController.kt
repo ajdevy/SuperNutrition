@@ -1,7 +1,7 @@
 package com.supernutrition.feature.photoanalysis
 
-import androidx.compose.ui.window.ComposeUIViewController
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.window.ComposeUIViewController
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.UIKit.UIViewController
 
@@ -25,7 +25,7 @@ fun PhotoAnalysisViewController(
         surface = PhotoAnalysisCaptureSurface(
             presenterCopy = copy,
             retainedPhoto = preview?.let { current -> { IosRetainedPhotoBackdrop(current) } },
-            photoTextContrast = preview?.let { PhotoAnalysisPhotoTextContrast.LIGHT_TEXT },
+            photoTextContrast = null,
         ),
     )
 }

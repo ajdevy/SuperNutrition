@@ -66,6 +66,17 @@ def reject_nonfinite_numbers(value):
     raise ValueError(f"non-finite JSON number is forbidden: {value}")
 
 
+def reject_nonfinite_tree(value, label="fixture"):
+    if isinstance(value, float) and not math.isfinite(value):
+        fail(f"{label} contains a non-finite numeric value")
+    if isinstance(value, dict):
+        for key, nested in value.items():
+            reject_nonfinite_tree(nested, f"{label}.{key}")
+    elif isinstance(value, list):
+        for index, nested in enumerate(value):
+            reject_nonfinite_tree(nested, f"{label}[{index}]")
+
+
 def require_keys(value, expected, label):
     if not isinstance(value, dict) or set(value) != expected:
         actual = sorted(value) if isinstance(value, dict) else type(value).__name__
@@ -139,6 +150,7 @@ def load_release(root_argument):
             )
         except (ValueError, json.JSONDecodeError) as error:
             fail(f"{path.name} is not canonical JSON: {error}")
+        reject_nonfinite_tree(value, path.name)
         canonical = json.dumps(value, ensure_ascii=False, allow_nan=False, separators=(",", ":")) + "\n"
         if text != canonical:
             fail(f"{path.name} is not canonical minified JSON")
@@ -441,7 +453,7 @@ def validate_v2(release):
             require_number_between(value[field], 0, 1, f"{label}.{field}")
         if value["width"] == 0 or value["height"] == 0:
             fail(f"{label} dimensions must be positive")
-        if value["left"] + value["width"] > 1 or value["top"] + value["height"] > 1:
+        if value["left"] + value["width"] > 1 + 1e-9 or value["top"] + value["height"] > 1 + 1e-9:
             fail(f"{label} must remain inside normalized bounds")
 
     def validate_mass(value, label):

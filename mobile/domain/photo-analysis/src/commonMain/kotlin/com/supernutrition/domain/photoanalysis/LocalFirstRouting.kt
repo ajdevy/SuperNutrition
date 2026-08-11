@@ -249,6 +249,10 @@ class LocalFirstRouter(
         policy.mode == RoutePolicyMode.LOCAL_ONLY ->
             RouteDecision.KeepLocal(token.nextDecision(), LocalTerminalReason.REMOTE_DISABLED)
 
+        policy.mode == RoutePolicyMode.MANUAL_CONFIRMATION &&
+            reason != RemoteEligibilityReason.EXPLICIT_USER_REQUEST ->
+            RouteDecision.KeepLocal(token.nextDecision(), LocalTerminalReason.REMOTE_DISABLED)
+
         consent == RemoteConsentState.DECLINED ->
             RouteDecision.KeepLocal(token.nextDecision(), LocalTerminalReason.REMOTE_DECLINED)
 
@@ -267,7 +271,15 @@ class LocalFirstRouter(
         receipt: RemoteConsentReceipt?,
         token: RouteAttemptToken,
         policy: RoutePolicySnapshot,
-    ): Boolean = receipt != null && consentVerifier.isValid(receipt, token, policy)
+    ): Boolean = receipt != null &&
+        receipt.attemptId == token.attemptId &&
+        receipt.requestId == token.context.requestId &&
+        receipt.photoDigest == token.context.photoDigest &&
+        receipt.policyVersion == policy.policyVersion &&
+        receipt.policyDigest == policy.policyDigest &&
+        receipt.configurationVersion == token.context.configurationVersion &&
+        receipt.configurationDigest == token.context.configurationDigest &&
+        consentVerifier.isValid(receipt, token, policy)
 }
 
 /** Attempt-owned token guard; replacement and cancellation invalidate old emissions. */

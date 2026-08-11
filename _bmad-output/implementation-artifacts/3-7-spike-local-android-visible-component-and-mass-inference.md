@@ -119,6 +119,15 @@ pre-release. The production model, corpus, and physical component/mass G-3
 bundle remain required before `activation = production` and are tracked in the
 post-release handoff.
 
+## Current Epic 3 handover correction (2026-08-11)
+
+Owner ruling D1 supersedes the pre-release composition wording above for the
+running app: the Android PoC model stack is the current local production
+runtime and is composed through `AndroidPocRuntimeFactory`. This does not close
+the G-3 quality gate or authorize component/mass claims; the missing consented
+corpus, physical benchmark, legal/rollback evidence, and replacement approval
+bundle remain explicitly open.
+
 ### File List
 
 - `mobile/domain/inference/src/commonMain/kotlin/com/supernutrition/domain/inference/ComponentModelManifest.kt`

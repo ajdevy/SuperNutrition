@@ -62,8 +62,11 @@ final class IosPocInferenceEngine {
     func analyze(_ data: Data) throws -> IosPocAnalysisResult {
         guard let image = UIImage(data: data) else { throw IosPocInferenceError.invalidImage }
         try verifyAssets()
-        let dishes = try runDish(image)
-        let regions = try runRegions(image)
+        let dishes = (try? runDish(image)) ?? []
+        let regions = (try? runRegions(image)) ?? []
+        guard !dishes.isEmpty || !regions.isEmpty else {
+            throw IosPocInferenceError.runtime("PoC inference produced no valid stage output")
+        }
         return IosPocAnalysisResult(dishes: dishes, regions: regions)
     }
 
@@ -91,13 +94,13 @@ final class IosPocInferenceEngine {
     private func runDish(_ image: UIImage) throws -> [IosPocDishCandidate] {
         let session = try dish()
         let input = try makeTensor(
-            rasterize(image, side: Self.dishSize, cropToSquare: true, normalization: .dish),
+            try rasterize(image, side: Self.dishSize, cropToSquare: true, normalization: .dish),
             shape: [1, 3, Self.dishSize, Self.dishSize],
         )
         let output = try run(session, input: input)
         let scores = try floats(output.value)
         guard scores.count >= 5, let labels else { throw IosPocInferenceError.invalidDishOutput }
-        let probabilities = softmax(scores)
+        let probabilities = try softmax(scores)
         return probabilities.enumerated()
             .sorted { $0.element > $1.element }
             .prefix(5)
@@ -107,7 +110,7 @@ final class IosPocInferenceEngine {
     private func runRegions(_ image: UIImage) throws -> [IosPocRegionProposal] {
         let session = try regions()
         let input = try makeTensor(
-            rasterize(image, side: Self.regionSize, cropToSquare: false, normalization: .rgb),
+            try rasterize(image, side: Self.regionSize, cropToSquare: false, normalization: .rgb),
             shape: [1, 3, Self.regionSize, Self.regionSize],
         )
         let output = try run(session, input: input)
@@ -191,6 +194,8 @@ final class IosPocInferenceEngine {
     }
 
     private func floats(_ value: ORTValue) throws -> [Float] {
+        let info = try value.tensorTypeAndShapeInfo()
+        guard info.elementType == .float else { throw IosPocInferenceError.invalidTensorType }
         let data = try value.tensorData()
         let count = data.length / MemoryLayout<Float>.size
         let pointer = data.bytes.bindMemory(to: Float.self, capacity: count)
@@ -215,6 +220,9 @@ final class IosPocInferenceEngine {
             var confidence: Float = 0
             for candidate in 0..<Self.cocoNames.count {
                 let score = at(4 + candidate)
+                guard score.isFinite, score >= 0, score <= 1 else {
+                    throw IosPocInferenceError.invalidRegionOutput
+                }
                 if score > confidence {
                     confidence = score
                     classIndex = candidate
@@ -227,8 +235,13 @@ final class IosPocInferenceEngine {
             let centerY = at(1)
             let width = at(2)
             let height = at(3)
-            let maximum = max(max(abs(centerX), abs(centerY)), max(abs(width), abs(height)))
-            let scale: Float = maximum <= 2 ? 1 : 1 / Float(Self.regionSize)
+            guard centerX.isFinite, centerY.isFinite,
+                  width.isFinite, height.isFinite,
+                  width > 0, height > 0 else {
+                throw IosPocInferenceError.invalidRegionOutput
+            }
+            // The checked YOLO export pins box coordinates to regionSize pixels.
+            let scale: Float = 1 / Float(Self.regionSize)
             let left = clamp((centerX - width * 0.5) * scale)
             let top = clamp((centerY - height * 0.5) * scale)
             let right = clamp((centerX + width * 0.5) * scale)
@@ -257,7 +270,12 @@ final class IosPocInferenceEngine {
 
     private enum Normalization { case dish, rgb }
 
-    private func rasterize(_ image: UIImage, side: Int, cropToSquare: Bool, normalization: Normalization) -> [Float] {
+    private func rasterize(
+        _ image: UIImage,
+        side: Int,
+        cropToSquare: Bool,
+        normalization: Normalization,
+    ) throws -> [Float] {
         let target = CGSize(width: side, height: side)
         let renderer = UIGraphicsImageRenderer(size: target)
         let rendered = renderer.image { _ in
@@ -276,7 +294,9 @@ final class IosPocInferenceEngine {
         }
         guard let cgImage = rendered.cgImage,
               let providerData = cgImage.dataProvider?.data,
-              let bytes = CFDataGetBytePtr(providerData) else { return [] }
+              let bytes = CFDataGetBytePtr(providerData) else {
+            throw IosPocInferenceError.invalidRaster
+        }
         let bytesPerPixel = cgImage.bitsPerPixel / 8
         let bytesPerRow = cgImage.bytesPerRow
         let plane = side * side
@@ -313,11 +333,17 @@ final class IosPocInferenceEngine {
         SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
     }
 
-    private func softmax(_ values: [Float]) -> [Float] {
+    private func softmax(_ values: [Float]) throws -> [Float] {
+        guard !values.isEmpty, values.allSatisfy(\.isFinite) else {
+            throw IosPocInferenceError.invalidDishOutput
+        }
         let maximum = values.max() ?? 0
         let exponentials = values.map { exp($0 - maximum) }
         let total = exponentials.reduce(0, +)
-        return total == 0 ? values.map { _ in 0 } : exponentials.map { $0 / total }
+        guard total.isFinite, total > 0 else { throw IosPocInferenceError.invalidDishOutput }
+        let result = exponentials.map { $0 / total }
+        guard result.allSatisfy(\.isFinite) else { throw IosPocInferenceError.invalidDishOutput }
+        return result
     }
 
     private func clamp(_ value: Float) -> Float { min(1, max(0, value)) }
@@ -341,6 +367,8 @@ private enum IosPocInferenceError: Error {
     case assetIntegrity
     case invalidLabels
     case invalidDishOutput
+    case invalidTensorType
     case invalidRegionOutput
+    case invalidRaster
     case runtime(String)
 }

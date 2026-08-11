@@ -165,7 +165,7 @@ class PhotoAnalysisDomainTest {
 
         val activeWithoutSession = leases.issue(attempt, "missing-session-restore")
         assertEquals(
-            PhotoAnalysisState.Recovery(RecoveryReason.CAPTURE_FAILED, activeWithoutSession),
+            PhotoAnalysisState.Recovery(RecoveryReason.REVIEW_RESTORE_UNAVAILABLE, activeWithoutSession),
             reducer.reduce(
                 PhotoAnalysisState.Capture,
                 PhotoAnalysisEvent.RestoreFromSnapshot(
@@ -467,7 +467,7 @@ class PhotoAnalysisDomainTest {
         assertEquals(PhotoAnalysisState.Analyzing(ref, RequestId("request-background")), reducer.state)
         reducer.dispatch(PhotoAnalysisEvent.AnalysisSucceeded(RequestId("request-background")))
 
-        assertEquals(PhotoAnalysisState.CandidateReview(ref, RequestId("request-background")), reducer.state)
+        assertEquals(PhotoAnalysisState.Recovery(RecoveryReason.CAPTURE_FAILED, ref), reducer.state)
     }
 
     @Test
@@ -503,23 +503,23 @@ class PhotoAnalysisDomainTest {
         reducer.dispatch(PhotoAnalysisEvent.AnalysisSucceeded(RequestId("snapshot-request")))
         reducer.dispatch(PhotoAnalysisEvent.Backgrounded)
         assertEquals(
-            PhotoAnalysisBackgroundSnapshot.CandidateReview(readyRef, RequestId("snapshot-request")),
+            PhotoAnalysisBackgroundSnapshot.Recovery(RecoveryReason.CAPTURE_FAILED, readyRef),
             reducer.snapshotForPersistence(),
         )
         reducer.dispatch(PhotoAnalysisEvent.Restored)
         assertEquals(
-            PhotoAnalysisState.CandidateReview(readyRef, RequestId("snapshot-request")),
+            PhotoAnalysisState.Recovery(RecoveryReason.CAPTURE_FAILED, readyRef),
             reducer.state,
         )
 
         reducer.dispatch(PhotoAnalysisEvent.Cancel)
         reducer.dispatch(PhotoAnalysisEvent.Backgrounded)
         assertEquals(
-            PhotoAnalysisBackgroundSnapshot.Recovery(RecoveryReason.CANCELLED, null),
+            PhotoAnalysisBackgroundSnapshot.Recovery(RecoveryReason.CAPTURE_FAILED, readyRef),
             reducer.snapshotForPersistence(),
         )
         reducer.dispatch(PhotoAnalysisEvent.Restored)
-        assertEquals(PhotoAnalysisState.Recovery(RecoveryReason.CANCELLED), reducer.state)
+        assertEquals(PhotoAnalysisState.Recovery(RecoveryReason.CAPTURE_FAILED, readyRef), reducer.state)
     }
 
     @Test

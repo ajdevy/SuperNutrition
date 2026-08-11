@@ -207,14 +207,16 @@ class LocalAndroidComponentInferenceTest {
     @Test
     fun `digest mismatch and duplicate component output fail closed`() = runTest {
         val digestRuntime = RecordingRuntime(AndroidComponentRuntimeCapability.Ready(manifest()))
-        assertFailsWith<AndroidComponentInferenceInputException> {
-            LocalAndroidComponentInferenceEngine(
-                RecordingPhotoStore(input),
-                leaseStore(),
-                digestRuntime,
-            ) { "c".repeat(64) }
-                .analyze(request)
-        }
+        assertEquals(
+            V2InferenceFailureCode.INVALID_INPUT,
+            assertIs<InferenceV2Outcome.Failure>(
+                LocalAndroidComponentInferenceEngine(
+                    RecordingPhotoStore(input),
+                    leaseStore(),
+                    digestRuntime,
+                ) { "c".repeat(64) }.analyze(request).outcome,
+            ).code,
+        )
         assertEquals(0, digestRuntime.invocations)
 
         val duplicateRuntime = RecordingRuntime(
@@ -229,27 +231,32 @@ class LocalAndroidComponentInferenceTest {
     @Test
     fun `photo lease validation rejects inactive missing and mismatched content`() = runTest {
         val runtime = RecordingRuntime(AndroidComponentRuntimeCapability.Ready(manifest()))
-        assertFailsWith<AndroidComponentInferenceInputException> {
-            LocalAndroidComponentInferenceEngine(RecordingPhotoStore(input), leaseStore(active = false), runtime) {
-                "a".repeat(64)
-            }.analyze(request)
-        }
-        assertFailsWith<AndroidComponentInferenceInputException> {
-            LocalAndroidComponentInferenceEngine(
-                RecordingPhotoStore(null),
-                leaseStore(),
-                runtime,
-            ) { "a".repeat(64) }.analyze(request)
-        }
+        assertEquals(
+            V2InferenceFailureCode.INVALID_INPUT,
+            assertIs<InferenceV2Outcome.Failure>(
+                LocalAndroidComponentInferenceEngine(RecordingPhotoStore(input), leaseStore(active = false), runtime) {
+                    "a".repeat(64)
+                }.analyze(request).outcome,
+            ).code,
+        )
+        assertEquals(
+            V2InferenceFailureCode.INVALID_INPUT,
+            assertIs<InferenceV2Outcome.Failure>(
+                LocalAndroidComponentInferenceEngine(RecordingPhotoStore(null), leaseStore(), runtime) {
+                    "a".repeat(64)
+                }.analyze(request).outcome,
+            ).code,
+        )
         val otherPhoto = PhotoRef.issue(attempt, "other-photo")
         val wrongInput = input.copy(ref = otherPhoto)
-        assertFailsWith<AndroidComponentInferenceInputException> {
-            LocalAndroidComponentInferenceEngine(
-                RecordingPhotoStore(wrongInput),
-                leaseStore(),
-                runtime,
-            ) { "a".repeat(64) }.analyze(request)
-        }
+        assertEquals(
+            V2InferenceFailureCode.INVALID_INPUT,
+            assertIs<InferenceV2Outcome.Failure>(
+                LocalAndroidComponentInferenceEngine(RecordingPhotoStore(wrongInput), leaseStore(), runtime) {
+                    "a".repeat(64)
+                }.analyze(request).outcome,
+            ).code,
+        )
         assertEquals(0, runtime.invocations)
     }
 

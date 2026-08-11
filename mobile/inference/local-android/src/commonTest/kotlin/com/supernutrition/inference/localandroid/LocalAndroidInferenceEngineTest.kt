@@ -204,7 +204,10 @@ class LocalAndroidInferenceEngineTest {
         val runtime = RecordingRuntime(currentCapability = AndroidRuntimeCapability.Ready(model))
         val engine = LocalAndroidInferenceEngine(RecordingPhotoStore(input), leaseStore(), runtime) { "c".repeat(64) }
 
-        assertFailsWith<AndroidInferenceInputException> { engine.analyze(request) }
+        assertEquals(
+            InferenceFailureCode.INVALID_INPUT,
+            assertIs<InferenceOutcome.Failure>(engine.analyze(request).outcome).code,
+        )
         assertEquals(0, runtime.invocations)
     }
 
@@ -218,7 +221,10 @@ class LocalAndroidInferenceEngineTest {
             runtime,
         ) { "a".repeat(64) }
 
-        assertFailsWith<AndroidInferenceInputException> { revoked.analyze(request) }
+        assertEquals(
+            InferenceFailureCode.INVALID_INPUT,
+            assertIs<InferenceOutcome.Failure>(revoked.analyze(request).outcome).code,
+        )
         assertEquals(0, store.reads)
         assertEquals(0, runtime.invocations)
     }
@@ -296,17 +302,27 @@ class LocalAndroidInferenceEngineTest {
 
         cases.forEach { value ->
             val store = RecordingPhotoStore(value)
-            assertFailsWith<AndroidInferenceInputException> {
-                LocalAndroidInferenceEngine(store, leaseStore(), runtime) { "a".repeat(64) }.analyze(request)
-            }
+            assertEquals(
+                InferenceFailureCode.INVALID_INPUT,
+                assertIs<InferenceOutcome.Failure>(
+                    LocalAndroidInferenceEngine(store, leaseStore(), runtime) { "a".repeat(64) }
+                        .analyze(request).outcome,
+                ).code,
+            )
         }
-        assertFailsWith<AndroidInferenceInputException> {
-            LocalAndroidInferenceEngine(
-                RecordingPhotoStore(input.copy(ref = PhotoRef.issue(attempt, "foreign-returned")), matchRef = false),
-                leaseStore(),
-                runtime,
-            ) { "a".repeat(64) }.analyze(request)
-        }
+        assertEquals(
+            InferenceFailureCode.INVALID_INPUT,
+            assertIs<InferenceOutcome.Failure>(
+                LocalAndroidInferenceEngine(
+                    RecordingPhotoStore(
+                        input.copy(ref = PhotoRef.issue(attempt, "foreign-returned")),
+                        matchRef = false,
+                    ),
+                    leaseStore(),
+                    runtime,
+                ) { "a".repeat(64) }.analyze(request).outcome,
+            ).code,
+        )
         assertEquals(0, runtime.invocations)
     }
 

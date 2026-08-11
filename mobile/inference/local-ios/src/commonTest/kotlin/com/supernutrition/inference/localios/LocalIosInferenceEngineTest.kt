@@ -143,24 +143,33 @@ class LocalIosInferenceEngineTest {
             null,
             input.copy(ref = PhotoRef.issue(attempt, "other-photo")),
         ).forEach { value ->
-            assertFailsWith<IosInferenceInputException> {
-                LocalAndroidLikeEngine(value, runtime).analyze(request)
-            }
+            assertEquals(
+                InferenceFailureCode.INVALID_INPUT,
+                assertIs<InferenceOutcome.Failure>(
+                    LocalAndroidLikeEngine(value, runtime).analyze(request).outcome,
+                ).code,
+            )
         }
-        assertFailsWith<IosInferenceInputException> {
-            LocalIosInferenceEngine(
-                RecordingPhotoStore(input),
-                leaseStore(),
-                runtime,
-            ) { "c".repeat(64) }.analyze(request)
-        }
-        assertFailsWith<IosInferenceInputException> {
-            LocalIosInferenceEngine(
-                RecordingPhotoStore(input.copy(ref = PhotoRef.issue(attempt, "foreign-returned")), matchRef = false),
-                leaseStore(),
-                runtime,
-            ) { "a".repeat(64) }.analyze(request)
-        }
+        assertEquals(
+            InferenceFailureCode.INVALID_INPUT,
+            assertIs<InferenceOutcome.Failure>(
+                LocalIosInferenceEngine(RecordingPhotoStore(input), leaseStore(), runtime) { "c".repeat(64) }
+                    .analyze(request).outcome,
+            ).code,
+        )
+        assertEquals(
+            InferenceFailureCode.INVALID_INPUT,
+            assertIs<InferenceOutcome.Failure>(
+                LocalIosInferenceEngine(
+                    RecordingPhotoStore(
+                        input.copy(ref = PhotoRef.issue(attempt, "foreign-returned")),
+                        matchRef = false,
+                    ),
+                    leaseStore(),
+                    runtime,
+                ) { "a".repeat(64) }.analyze(request).outcome,
+            ).code,
+        )
         assertEquals(0, runtime.invocations)
     }
 
@@ -174,7 +183,10 @@ class LocalIosInferenceEngineTest {
             runtime,
         ) { "a".repeat(64) }
 
-        assertFailsWith<IosInferenceInputException> { revoked.analyze(request) }
+        assertEquals(
+            InferenceFailureCode.INVALID_INPUT,
+            assertIs<InferenceOutcome.Failure>(revoked.analyze(request).outcome).code,
+        )
         assertEquals(0, store.reads)
         assertEquals(0, runtime.invocations)
     }

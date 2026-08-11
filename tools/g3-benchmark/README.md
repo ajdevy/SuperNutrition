@@ -243,10 +243,12 @@ correctness records, separate from the G-3 model/resource result.
 
 ### iOS
 
-Fresh physical run on the approved iPhone 14 Pro iOS 26.5.2 `arm64e` tier,
+The checked-in runner currently pins ONNX Runtime Objective-C `1.28.0`. The
+physical result below is historical evidence from the earlier `1.27.0` runner
+and must be rerun before being used as a current runtime claim. It was a fresh
+physical run on the approved iPhone 14 Pro iOS 26.5.2 `arm64e` tier,
 automatically signed with the local development team. The exact UDID is bound
-in the local-only evidence record, not this repository guide. Runtime was ONNX
-Runtime Objective-C `1.27.0` with XNNPACK.
+in the local-only evidence record, not this repository guide. It used XNNPACK.
 
 The five semantic top-1 labels were exact: `steak`, `greek_salad`,
 `grilled_salmon`, `sushi`, and `waffles`; semantic accuracy was `5/5` at the

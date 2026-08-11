@@ -15,6 +15,14 @@ internal fun localizedPhotoAnalysisCopy(): PhotoAnalysisPresenterCopy = PhotoAna
         choosePhoto = localized("photo_analysis.capture.choose_photo"),
         openSettings = localized("photo_analysis.capture.open_settings"),
         cancel = localized("photo_analysis.capture.cancel"),
+        researchWarning = localized("photo_analysis.capture.research_warning"),
+        gridHintsTitle = localized("photo_analysis.capture.grid_hints_title"),
+        gridOverlayDescription = localized("photo_analysis.capture.grid_overlay_description"),
+        gridCellDescription = localized("photo_analysis.capture.grid_cell_description"),
+        selectedState = localized("photo_analysis.capture.selected"),
+        notSelectedState = localized("photo_analysis.capture.not_selected"),
+        resultPlaceholder = localized("photo_analysis.capture.result_placeholder"),
+        loadingLabel = localized("photo_analysis.capture.loading"),
     ),
     status = StatusCopy(
         readyToCapture = localized("photo_analysis.status.ready_to_capture"),
@@ -49,8 +57,10 @@ internal fun localizedPhotoAnalysisCopy(): PhotoAnalysisPresenterCopy = PhotoAna
         notSelected = localized("photo_analysis.evidence.not_selected"),
         dishCandidatesTitle = localized("photo_analysis.evidence.dish_candidates"),
         visibleComponentsTitle = localized("photo_analysis.evidence.visible_components"),
+        visibleRegionCount = localized("photo_analysis.evidence.visible_region_count"),
         compositionHintsTitle = localized("photo_analysis.evidence.composition_hints"),
         compositionHintSource = localized("photo_analysis.evidence.composition_hint_source"),
+        partialDegradation = localized("photo_analysis.evidence.partial_degradation"),
     ),
     recovery = RecoveryCopy(
         scanAgain = localized("photo_analysis.recovery.scan_again"),
@@ -61,6 +71,7 @@ internal fun localizedPhotoAnalysisCopy(): PhotoAnalysisPresenterCopy = PhotoAna
         noFoodFound = localized("photo_analysis.recovery.no_food_found"),
         analysisOffline = localized("photo_analysis.recovery.offline"),
         analysisCancelled = localized("photo_analysis.recovery.cancelled"),
+        reviewRestoreUnavailable = localized("photo_analysis.recovery.review_restore_unavailable"),
     ),
 )
 

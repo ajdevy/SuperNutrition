@@ -138,8 +138,8 @@ class PhotoAnalysisPresenterReviewTest {
         )
 
         val review = assertNotNull(model.review)
-        assertEquals(listOf("Carrot"), review.visibleComponents.map { it.label })
-        assertEquals(listOf("Tomato"), review.compositionHints.map { it.label })
+        assertEquals(listOf("Carrot", "carrot"), review.visibleComponents.map { it.label })
+        assertEquals(listOf("CARROT", "Tomato"), review.compositionHints.map { it.label })
     }
 
     @Test

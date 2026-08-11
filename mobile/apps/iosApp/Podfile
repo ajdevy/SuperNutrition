@@ -5,11 +5,11 @@ install! 'cocoapods', :disable_input_output_paths => true
 project 'SuperNutritionUIAcceptance.xcodeproj'
 
 target 'SuperNutritionUIAcceptance' do
-  pod 'onnxruntime-objc', '1.27.0'
+  pod 'onnxruntime-objc', '1.28.0'
 end
 
 target 'SuperNutrition' do
-  pod 'onnxruntime-objc', '1.27.0'
+  pod 'onnxruntime-objc', '1.28.0'
 end
 
 post_install do |installer|

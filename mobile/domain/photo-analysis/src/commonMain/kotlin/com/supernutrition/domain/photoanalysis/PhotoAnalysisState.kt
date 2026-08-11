@@ -12,11 +12,8 @@ sealed interface PhotoAnalysisState {
         val stage: LocalAnalysisStage = LocalAnalysisStage.FINDING_VISIBLE_FOODS,
     ) : PhotoAnalysisState
 
-    data class CandidateReview(
-        val ref: PhotoRef,
-        val requestId: RequestId,
-        val draft: CandidateReviewDraft = CandidateReviewDraft(emptyList(), emptyList()),
-    ) : PhotoAnalysisState
+    data class CandidateReview(val ref: PhotoRef, val requestId: RequestId, val draft: CandidateReviewDraft) :
+        PhotoAnalysisState
     data class Recovery(val reason: RecoveryReason, val ref: PhotoRef? = null) : PhotoAnalysisState
     data class Backgrounded(val snapshot: PhotoAnalysisBackgroundSnapshot) : PhotoAnalysisState
 }
@@ -35,6 +32,7 @@ enum class RecoveryReason {
     PERMISSION_DENIED,
     CAMERA_UNAVAILABLE,
     CAPTURE_FAILED,
+    REVIEW_RESTORE_UNAVAILABLE,
     POOR_IMAGE,
     NO_FOOD,
     OFFLINE,
