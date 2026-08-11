@@ -5,30 +5,33 @@
 
 [![Coverage dashboard](https://github.com/flexsent-labs/SuperNutrition/actions/workflows/ci-required.yml/badge.svg?branch=main)](https://github.com/flexsent-labs/SuperNutrition/actions/workflows/ci-required.yml) [![JVM unit coverage](https://github.com/flexsent-labs/SuperNutrition/actions/workflows/ci-required.yml/badge.svg?branch=main)](https://github.com/flexsent-labs/SuperNutrition/actions/workflows/ci-required.yml) [![Android UI coverage](https://github.com/flexsent-labs/SuperNutrition/actions/workflows/android-ui-coverage.yml/badge.svg?branch=main)](https://github.com/flexsent-labs/SuperNutrition/actions/workflows/android-ui-coverage.yml) [![iOS UI coverage](https://github.com/flexsent-labs/SuperNutrition/actions/workflows/ios-ui-coverage.yml/badge.svg?branch=main)](https://github.com/flexsent-labs/SuperNutrition/actions/workflows/ios-ui-coverage.yml)
 
-[![JVM line](https://img.shields.io/badge/JVM%20line-99.77%25-brightgreen?style=flat-square)](https://github.com/flexsent-labs/SuperNutrition/actions/workflows/ci-required.yml) [![JVM branch](https://img.shields.io/badge/JVM%20branch-89.13%25-brightgreen?style=flat-square)](https://github.com/flexsent-labs/SuperNutrition/actions/workflows/ci-required.yml) [![Source files](https://img.shields.io/badge/Source%20files-272-5865F2?style=flat-square)](https://github.com/flexsent-labs/SuperNutrition/actions/workflows/ci-required.yml) [![Code lines](https://img.shields.io/badge/Code%20lines-84%2C987-5865F2?style=flat-square)](https://github.com/flexsent-labs/SuperNutrition/actions/workflows/ci-required.yml)
+[![JVM line](https://img.shields.io/badge/JVM%20line-99.56%25-brightgreen?style=flat-square)](https://github.com/flexsent-labs/SuperNutrition/actions/workflows/ci-required.yml) [![JVM branch](https://img.shields.io/badge/JVM%20branch-90.34%25-brightgreen?style=flat-square)](https://github.com/flexsent-labs/SuperNutrition/actions/workflows/ci-required.yml) [![Source files](https://img.shields.io/badge/Source%20files-705-5865F2?style=flat-square)](https://github.com/flexsent-labs/SuperNutrition/actions/workflows/ci-required.yml) [![Code lines](https://img.shields.io/badge/Code%20lines-277%2C761-5865F2?style=flat-square)](https://github.com/flexsent-labs/SuperNutrition/actions/workflows/ci-required.yml)
 
 | Metric | Value |
 |---|---:|
-| JVM host line coverage | 99.77% |
-| JVM host branch coverage | 89.13% |
-| Tracked source files | 272 |
-| Code lines | 84,987 |
+| JVM host line coverage | 99.56% |
+| JVM host branch coverage | 90.34% |
+| Tracked source files | 705 |
+| Code lines | 277,761 |
 
 ### Coverage by denominator
 
 | Module | Kind | Line | Branch |
 |---|---|---:|---:|
-| `domain-inference` | jvm | 99.81% | 79.58% |
-| `core-config` | jvm | 98.14% | 92.16% |
-| `domain-photo-analysis` | jvm | 97.03% | 89.25% |
-| `core-ui` | jvm | 73.81% | 100.00% |
+| `domain-inference` | jvm | 99.58% | 88.02% |
+| `core-config` | jvm | 98.16% | 92.16% |
+| `domain-photo-analysis` | jvm | 98.12% | 87.28% |
+| `inference-remote` | jvm | 97.14% | 88.76% |
+| `inference-local-android` | jvm | 98.59% | 89.88% |
+| `inference-local-ios` | jvm | 96.32% | 89.29% |
+| `core-ui` | jvm | 96.25% | 90.91% |
 | `platform-photo-android` | native-equivalent | 0.00% | 0.00% |
 | `platform-photo-ios` | native-equivalent | n/a | n/a |
-| `feature-photo-analysis-ui` | native-equivalent | 84.13% | 40.00% |
-| `feature-meal-search-ui` | jvm | 100.00% | 56.25% |
+| `feature-photo-analysis-ui` | native-equivalent | 95.65% | 42.06% |
+| `feature-meal-search-ui` | jvm | 100.00% | 88.10% |
 | `feature-meal-search-presenter` | jvm | 100.00% | 100.00% |
-| `feature-photo-analysis-presenter` | jvm | 99.02% | 85.11% |
-| `feature-photo-analysis` | native-equivalent | 0.00% | 0.74% |
+| `feature-photo-analysis-presenter` | jvm | 99.05% | 91.11% |
+| `feature-photo-analysis` | native-equivalent | 0.00% | 0.25% |
 | `domain-nutrition` | jvm | 99.99% | 100.00% |
 
 ### Report links
