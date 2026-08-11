@@ -119,6 +119,7 @@ object PhotoAnalysisSnapshotBundleCodec {
             RecoveryReason.REVIEW_RESTORE_UNAVAILABLE -> "review_restore_unavailable"
             RecoveryReason.POOR_IMAGE -> "poor_image"
             RecoveryReason.NO_FOOD -> "no_food"
+            RecoveryReason.ANALYSIS_FAILED -> "analysis_failed"
             RecoveryReason.OFFLINE -> "offline"
             RecoveryReason.CANCELLED -> "cancelled"
         }
@@ -130,6 +131,7 @@ object PhotoAnalysisSnapshotBundleCodec {
         "review_restore_unavailable" -> RecoveryReason.REVIEW_RESTORE_UNAVAILABLE
         "poor_image" -> RecoveryReason.POOR_IMAGE
         "no_food" -> RecoveryReason.NO_FOOD
+        "analysis_failed" -> RecoveryReason.ANALYSIS_FAILED
         "offline" -> RecoveryReason.OFFLINE
         "cancelled" -> RecoveryReason.CANCELLED
         else -> null

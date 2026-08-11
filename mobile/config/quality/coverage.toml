@@ -4,8 +4,8 @@ product = "mobile"
 lifecycle = "active"
 source_digest = "local-only"
 quality_claim = true
-production_source_count = 13
-denominator_count = 13
+production_source_count = 14
+denominator_count = 14
 minimum_line_percent = 85
 minimum_branch_percent = 85
 changed_line_percent = 100
@@ -94,6 +94,20 @@ changed_line_minimum_percent = 100
 changed_branch_minimum_percent = 100
 observed_line_percent = "98.6111"
 observed_branch_percent = "86.8421"
+status = "local-verified"
+
+[[denominator]]
+id = "inference-local-shared"
+unit_id = "inference-local-shared"
+source_path = "mobile/inference/local-shared"
+coverage_kind = "jvm"
+test_task = ":inference:local-shared:jvmTest"
+line_minimum_percent = 85
+branch_minimum_percent = 85
+changed_line_minimum_percent = 100
+changed_branch_minimum_percent = 100
+observed_line_percent = "96.7647"
+observed_branch_percent = "90.1515"
 status = "local-verified"
 
 [[denominator]]

@@ -5,8 +5,8 @@ lifecycle = "active"
 inventory_state = "local-verified"
 source_digest = "local-only"
 quality_claim = true
-production_source_count = 13
-coverage_denominator_count = 13
+production_source_count = 14
+coverage_denominator_count = 14
 undeclared_executable_policy = "fail"
 
 # Active local inventory: every production source has an explicit quality
@@ -82,6 +82,14 @@ path = "mobile/inference/local-ios"
 kind = "production-adapter"
 production = true
 quality_task = "inference:local-ios:jvmTest"
+status = "local-verified"
+
+[[unit]]
+id = "inference-local-shared"
+path = "mobile/inference/local-shared"
+kind = "production-adapter"
+production = true
+quality_task = "inference:local-shared:jvmTest"
 status = "local-verified"
 
 [[unit]]

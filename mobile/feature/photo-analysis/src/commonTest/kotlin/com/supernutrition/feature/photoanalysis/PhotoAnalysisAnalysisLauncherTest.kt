@@ -36,14 +36,14 @@ import kotlin.test.assertIs
 @Suppress("InjectDispatcher")
 class PhotoAnalysisAnalysisLauncherTest {
     @Test
-    fun `launcher runs coordinator and exposes unavailable runtime as offline recovery`() = runBlocking {
+    fun `launcher runs coordinator and exposes unavailable runtime as analysis failure`() = runBlocking {
         val feature = preparedFeature("launcher-unavailable")
         val scope = CoroutineScope(Dispatchers.Unconfined)
         val launcher = launcher(feature, scope, unavailableEngine())
 
         launcher.start()
 
-        assertEquals(PhotoAnalysisState.Recovery(RecoveryReason.OFFLINE), feature.state)
+        assertEquals(PhotoAnalysisState.Recovery(RecoveryReason.ANALYSIS_FAILED), feature.state)
         scope.cancel()
     }
 

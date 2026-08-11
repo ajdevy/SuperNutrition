@@ -69,6 +69,7 @@ internal fun localizedPhotoAnalysisCopy(): PhotoAnalysisPresenterCopy = PhotoAna
         photoCaptureFailed = localized("photo_analysis.recovery.capture_failed"),
         photoQualityTooLow = localized("photo_analysis.recovery.quality_too_low"),
         noFoodFound = localized("photo_analysis.recovery.no_food_found"),
+        analysisFailed = localized("photo_analysis.recovery.analysis_failed"),
         analysisOffline = localized("photo_analysis.recovery.offline"),
         analysisCancelled = localized("photo_analysis.recovery.cancelled"),
         reviewRestoreUnavailable = localized("photo_analysis.recovery.review_restore_unavailable"),

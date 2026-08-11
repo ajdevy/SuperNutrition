@@ -17,6 +17,14 @@ import com.supernutrition.domain.photoanalysis.ImageOrientation
 import com.supernutrition.domain.photoanalysis.NormalizedPhotoInput
 import com.supernutrition.domain.photoanalysis.PhotoLeaseStorePort
 import com.supernutrition.domain.photoanalysis.PhotoSessionStorePort
+import com.supernutrition.inference.localshared.LocalInferenceAttemptToken
+import com.supernutrition.inference.localshared.LocalModelOwnership
+import com.supernutrition.inference.localshared.LocalModelProvenance
+import com.supernutrition.inference.localshared.LocalModelVerification
+import com.supernutrition.inference.localshared.LocalPhotoInferenceRuntime
+import com.supernutrition.inference.localshared.LocalRuntimeCandidate
+import com.supernutrition.inference.localshared.LocalRuntimeCapability
+import com.supernutrition.inference.localshared.LocalRuntimeOutcome
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.async
@@ -50,23 +58,23 @@ class LocalAndroidInferenceEngineTest {
         metadataKeys = emptySet(),
         contentDigest = "a".repeat(64),
     )
-    private val model = AndroidModelProvenance(
+    private val model = LocalModelProvenance(
         modelVersion = "android-model-1",
         integrityIdentity = "b".repeat(64),
         compatibilityTier = "tier-test",
         calibrationVersion = "calibration-1",
-        ownership = AndroidModelOwnership.APP_MANAGED,
+        ownership = LocalModelOwnership.APP_MANAGED,
         rollbackTargetVersion = "android-model-0",
-        verification = AndroidModelVerification.VERIFIED,
+        verification = LocalModelVerification.VERIFIED,
     )
 
     @Test
     fun `ready capability and candidate result expose local provenance`() = runTest {
         val runtime = RecordingRuntime(
-            currentCapability = AndroidRuntimeCapability.Ready(model),
-            outcome = AndroidRuntimeOutcome.Candidates(
+            currentCapability = LocalRuntimeCapability.Ready(model),
+            outcome = LocalRuntimeOutcome.Candidates(
                 listOf(
-                    AndroidRuntimeCandidate(
+                    LocalRuntimeCandidate(
                         candidateId = "food:banana",
                         label = "Banana",
                         rank = 1,
@@ -99,7 +107,7 @@ class LocalAndroidInferenceEngineTest {
     @Test
     fun `unavailable capability does not read content or attempt a network`() = runTest {
         val runtime = RecordingRuntime(
-            currentCapability = AndroidRuntimeCapability.Unavailable(
+            currentCapability = LocalRuntimeCapability.Unavailable(
                 state = CapabilityState.MODEL_REQUIRED,
                 reason = CapabilityReason.MODEL_MISSING,
             ),
@@ -127,7 +135,7 @@ class LocalAndroidInferenceEngineTest {
 
         cases.forEach { (state, reason) ->
             val runtime = RecordingRuntime(
-                currentCapability = AndroidRuntimeCapability.Unavailable(state, reason),
+                currentCapability = LocalRuntimeCapability.Unavailable(state, reason),
             )
             val capability = engine(runtime).capability()
 
@@ -140,7 +148,7 @@ class LocalAndroidInferenceEngineTest {
     @Test
     fun `unavailable analysis is fail closed with local provenance`() = runTest {
         val runtime = RecordingRuntime(
-            currentCapability = AndroidRuntimeCapability.Unavailable(
+            currentCapability = LocalRuntimeCapability.Unavailable(
                 state = CapabilityState.TEMPORARILY_UNAVAILABLE,
                 reason = CapabilityReason.TEMPORARY_UNAVAILABLE,
                 model = model,
@@ -152,12 +160,12 @@ class LocalAndroidInferenceEngineTest {
         val failure = assertIs<InferenceOutcome.Failure>(result.outcome)
         assertEquals(InferenceFailureCode.MODEL_UNAVAILABLE, failure.code)
         assertTrue(failure.retryable)
-        assertEquals(model.toInferenceProvenance(), failure.provenance)
+        assertEquals(model.toInferenceProvenance(LOCAL_ANDROID_ENGINE_ID), failure.provenance)
         assertEquals(0, store.reads)
         assertEquals(0, runtime.invocations)
 
         val noModelRuntime = RecordingRuntime(
-            currentCapability = AndroidRuntimeCapability.Unavailable(
+            currentCapability = LocalRuntimeCapability.Unavailable(
                 state = CapabilityState.MODEL_REQUIRED,
                 reason = CapabilityReason.MODEL_MISSING,
             ),
@@ -174,8 +182,8 @@ class LocalAndroidInferenceEngineTest {
     @Test
     fun `runtime abstention and failure preserve provenance`() = runTest {
         val abstentionRuntime = RecordingRuntime(
-            currentCapability = AndroidRuntimeCapability.Ready(model),
-            outcome = AndroidRuntimeOutcome.Abstention(
+            currentCapability = LocalRuntimeCapability.Ready(model),
+            outcome = LocalRuntimeOutcome.Abstention(
                 reason = AbstentionReason.IMAGE_QUALITY,
                 userMessageKey = "inference.abstention.image_quality",
             ),
@@ -183,11 +191,11 @@ class LocalAndroidInferenceEngineTest {
         val abstention = engine(abstentionRuntime).analyze(request)
         val abstentionOutcome = assertIs<InferenceOutcome.Abstention>(abstention.outcome)
         assertEquals(AbstentionReason.IMAGE_QUALITY, abstentionOutcome.reason)
-        assertEquals(model.toInferenceProvenance(), abstentionOutcome.provenance)
+        assertEquals(model.toInferenceProvenance(LOCAL_ANDROID_ENGINE_ID), abstentionOutcome.provenance)
 
         val failureRuntime = RecordingRuntime(
-            currentCapability = AndroidRuntimeCapability.Ready(model),
-            outcome = AndroidRuntimeOutcome.Failure(
+            currentCapability = LocalRuntimeCapability.Ready(model),
+            outcome = LocalRuntimeOutcome.Failure(
                 code = InferenceFailureCode.RESOURCE_LIMIT,
                 retryable = false,
                 userMessageKey = "inference.failure.resource_limit",
@@ -196,12 +204,12 @@ class LocalAndroidInferenceEngineTest {
         val failure = assertIs<InferenceOutcome.Failure>(engine(failureRuntime).analyze(request).outcome)
         assertEquals(InferenceFailureCode.RESOURCE_LIMIT, failure.code)
         assertFalse(failure.retryable)
-        assertEquals(model.toInferenceProvenance(), failure.provenance)
+        assertEquals(model.toInferenceProvenance(LOCAL_ANDROID_ENGINE_ID), failure.provenance)
     }
 
     @Test
     fun `digest mismatch rejects input before runtime invocation`() = runTest {
-        val runtime = RecordingRuntime(currentCapability = AndroidRuntimeCapability.Ready(model))
+        val runtime = RecordingRuntime(currentCapability = LocalRuntimeCapability.Ready(model))
         val engine = LocalAndroidInferenceEngine(RecordingPhotoStore(input), leaseStore(), runtime) { "c".repeat(64) }
 
         assertEquals(
@@ -214,7 +222,7 @@ class LocalAndroidInferenceEngineTest {
     @Test
     fun `revoked lease is rejected before the session store is read`() = runTest {
         val store = RecordingPhotoStore(input)
-        val runtime = RecordingRuntime(AndroidRuntimeCapability.Ready(model))
+        val runtime = RecordingRuntime(LocalRuntimeCapability.Ready(model))
         val revoked = LocalAndroidInferenceEngine(
             store,
             leaseStore(PhotoRef.issue(attempt, "revoked")),
@@ -232,8 +240,8 @@ class LocalAndroidInferenceEngineTest {
     @Test
     fun `malformed runtime candidates become typed fail-closed output`() = runTest {
         val runtime = RecordingRuntime(
-            AndroidRuntimeCapability.Ready(model),
-            AndroidRuntimeOutcome.Candidates(emptyList()),
+            LocalRuntimeCapability.Ready(model),
+            LocalRuntimeOutcome.Candidates(emptyList()),
         )
 
         val failure = assertIs<InferenceOutcome.Failure>(engine(runtime).analyze(request).outcome)
@@ -259,7 +267,7 @@ class LocalAndroidInferenceEngineTest {
     @Test
     fun `runtime exception is sanitized into a typed failure`() = runTest {
         val runtime = RecordingRuntime(
-            AndroidRuntimeCapability.Ready(model),
+            LocalRuntimeCapability.Ready(model),
             thrown = IllegalStateException("raw-photo-payload"),
         )
 
@@ -280,7 +288,7 @@ class LocalAndroidInferenceEngineTest {
             "Authorization: Bearer",
         )
         val runtime = RecordingRuntime(
-            AndroidRuntimeCapability.Ready(model),
+            LocalRuntimeCapability.Ready(model),
             thrown = IllegalStateException(forbidden.joinToString("|")),
         )
 
@@ -293,7 +301,7 @@ class LocalAndroidInferenceEngineTest {
 
     @Test
     fun `input lease validation rejects missing foreign empty and unnormalized content`() = runTest {
-        val runtime = RecordingRuntime(currentCapability = AndroidRuntimeCapability.Ready(model))
+        val runtime = RecordingRuntime(currentCapability = LocalRuntimeCapability.Ready(model))
         val cases = listOf(
             null,
             input.copy(ref = PhotoRef.issue(attempt, "other-photo")),
@@ -329,7 +337,7 @@ class LocalAndroidInferenceEngineTest {
     @Test
     fun `runtime cancellation is rethrown and releases resources`() = runTest {
         val runtime = RecordingRuntime(
-            currentCapability = AndroidRuntimeCapability.Ready(model),
+            currentCapability = LocalRuntimeCapability.Ready(model),
             cancellation = CancellationException("test cancellation"),
         )
         val engine = engine(runtime)
@@ -357,13 +365,13 @@ class LocalAndroidInferenceEngineTest {
     @Test
     fun `model provenance rejects invalid metadata`() {
         assertFailsWith<IllegalArgumentException> {
-            AndroidModelProvenance(
+            LocalModelProvenance(
                 modelVersion = "model",
                 integrityIdentity = "not-a-digest",
                 compatibilityTier = "tier",
                 calibrationVersion = "calibration",
-                ownership = AndroidModelOwnership.APP_MANAGED,
-                verification = AndroidModelVerification.VERIFIED,
+                ownership = LocalModelOwnership.APP_MANAGED,
+                verification = LocalModelVerification.VERIFIED,
             )
         }
         listOf(
@@ -378,11 +386,11 @@ class LocalAndroidInferenceEngineTest {
     fun `model provenance enforces rollback ownership`() {
         assertEquals(null, validModel(modelVersion = "app-model-without-rollback").rollbackTargetVersion)
         assertEquals(
-            AndroidModelOwnership.PLATFORM_MANAGED,
+            LocalModelOwnership.PLATFORM_MANAGED,
             validModel(
                 modelVersion = "platform-model",
                 integrityIdentity = "aicore/runtime-1",
-                ownership = AndroidModelOwnership.PLATFORM_MANAGED,
+                ownership = LocalModelOwnership.PLATFORM_MANAGED,
             ).ownership,
         )
         assertFailsWith<IllegalArgumentException> {
@@ -394,7 +402,7 @@ class LocalAndroidInferenceEngineTest {
             validModel(
                 modelVersion = "platform-model",
                 integrityIdentity = "aicore/runtime-1",
-                ownership = AndroidModelOwnership.PLATFORM_MANAGED,
+                ownership = LocalModelOwnership.PLATFORM_MANAGED,
                 rollbackTargetVersion = "previous",
             )
         }
@@ -403,32 +411,32 @@ class LocalAndroidInferenceEngineTest {
     @Test
     fun `runtime value objects reject invalid messages and candidates`() {
         assertFailsWith<IllegalArgumentException> {
-            AndroidRuntimeCapability.Unavailable(
+            LocalRuntimeCapability.Unavailable(
                 state = CapabilityState.READY,
                 reason = CapabilityReason.MODEL_MISSING,
             )
         }
         assertFailsWith<IllegalArgumentException> {
-            AndroidRuntimeCapability.Unavailable(
+            LocalRuntimeCapability.Unavailable(
                 state = CapabilityState.MODEL_REQUIRED,
                 reason = CapabilityReason.NONE,
             )
         }
         assertFailsWith<IllegalArgumentException> {
-            AndroidRuntimeCapability.Unavailable(
+            LocalRuntimeCapability.Unavailable(
                 state = CapabilityState.MODEL_REQUIRED,
                 reason = CapabilityReason.MODEL_MISSING,
                 userMessageKey = " ",
             )
         }
         assertFailsWith<IllegalArgumentException> {
-            AndroidRuntimeOutcome.Abstention(AbstentionReason.IMAGE_QUALITY, " ")
+            LocalRuntimeOutcome.Abstention(AbstentionReason.IMAGE_QUALITY, " ")
         }
         assertFailsWith<IllegalArgumentException> {
-            AndroidRuntimeOutcome.Failure(InferenceFailureCode.INVALID_INPUT, true, " ")
+            LocalRuntimeOutcome.Failure(InferenceFailureCode.INVALID_INPUT, true, " ")
         }
         assertFailsWith<IllegalArgumentException> {
-            AndroidRuntimeCandidate(
+            LocalRuntimeCandidate(
                 candidateId = " ",
                 label = "label",
                 rank = 1,
@@ -437,7 +445,7 @@ class LocalAndroidInferenceEngineTest {
             )
         }
         assertFailsWith<IllegalArgumentException> {
-            AndroidRuntimeCandidate(
+            LocalRuntimeCandidate(
                 candidateId = "candidate",
                 label = " ",
                 rank = 1,
@@ -446,7 +454,7 @@ class LocalAndroidInferenceEngineTest {
             )
         }
         assertFailsWith<IllegalArgumentException> {
-            AndroidRuntimeCandidate(
+            LocalRuntimeCandidate(
                 candidateId = "candidate",
                 label = "label",
                 rank = 0,
@@ -456,7 +464,7 @@ class LocalAndroidInferenceEngineTest {
         }
     }
 
-    private fun engine(runtime: AndroidLocalInferenceRuntime): LocalAndroidInferenceEngine =
+    private fun engine(runtime: LocalPhotoInferenceRuntime): LocalAndroidInferenceEngine =
         LocalAndroidInferenceEngine(RecordingPhotoStore(input), leaseStore(), runtime) { "a".repeat(64) }
 
     @Suppress("LongParameterList")
@@ -465,16 +473,16 @@ class LocalAndroidInferenceEngineTest {
         integrityIdentity: String = "a".repeat(64),
         compatibilityTier: String = "tier",
         calibrationVersion: String = "calibration",
-        ownership: AndroidModelOwnership = AndroidModelOwnership.APP_MANAGED,
+        ownership: LocalModelOwnership = LocalModelOwnership.APP_MANAGED,
         rollbackTargetVersion: String? = null,
-    ) = AndroidModelProvenance(
+    ) = LocalModelProvenance(
         modelVersion = modelVersion,
         integrityIdentity = integrityIdentity,
         compatibilityTier = compatibilityTier,
         calibrationVersion = calibrationVersion,
         ownership = ownership,
         rollbackTargetVersion = rollbackTargetVersion,
-        verification = AndroidModelVerification.VERIFIED,
+        verification = LocalModelVerification.VERIFIED,
     )
 
     private fun leaseStore(active: PhotoRef = photo): PhotoLeaseStorePort = object : PhotoLeaseStorePort {
@@ -507,15 +515,15 @@ class LocalAndroidInferenceEngineTest {
     }
 
     private class RecordingRuntime(
-        private var currentCapability: AndroidRuntimeCapability,
-        private val outcome: AndroidRuntimeOutcome = AndroidRuntimeOutcome.Failure(
+        private var currentCapability: LocalRuntimeCapability,
+        private val outcome: LocalRuntimeOutcome = LocalRuntimeOutcome.Failure(
             code = InferenceFailureCode.TEMPORARY_UNAVAILABLE,
             retryable = true,
             userMessageKey = "inference.failure.temporary_unavailable",
         ),
         private val cancellation: CancellationException? = null,
         private val thrown: Exception? = null,
-    ) : AndroidLocalInferenceRuntime {
+    ) : LocalPhotoInferenceRuntime {
         var invocations: Int = 0
             private set
         var networkAttempts: Int = 0
@@ -525,12 +533,12 @@ class LocalAndroidInferenceEngineTest {
         var releaseCount: Int = 0
             private set
 
-        override suspend fun capability(): AndroidRuntimeCapability = currentCapability
+        override suspend fun capability(): LocalRuntimeCapability = currentCapability
 
         override suspend fun analyze(
             input: NormalizedPhotoInput,
-            token: AndroidInferenceAttemptToken,
-        ): AndroidRuntimeOutcome {
+            token: LocalInferenceAttemptToken,
+        ): LocalRuntimeOutcome {
             invocations += 1
             seenBytes = input.bytes.toList()
             cancellation?.let { throw it }
@@ -538,14 +546,14 @@ class LocalAndroidInferenceEngineTest {
             return outcome
         }
 
-        override fun release(token: AndroidInferenceAttemptToken) {
+        override fun release(token: LocalInferenceAttemptToken) {
             releaseCount += 1
         }
 
-        override fun cancel(token: AndroidInferenceAttemptToken) = Unit
+        override fun cancel(token: LocalInferenceAttemptToken) = Unit
     }
 
-    private class SupersedingRuntime(private val model: AndroidModelProvenance) : AndroidLocalInferenceRuntime {
+    private class SupersedingRuntime(private val model: LocalModelProvenance) : LocalPhotoInferenceRuntime {
         val firstInvocation = CompletableDeferred<Unit>()
         val releaseFirst = CompletableDeferred<Unit>()
         var releaseCount: Int = 0
@@ -554,29 +562,29 @@ class LocalAndroidInferenceEngineTest {
             private set
         private var invocations = 0
 
-        override suspend fun capability(): AndroidRuntimeCapability = AndroidRuntimeCapability.Ready(model)
+        override suspend fun capability(): LocalRuntimeCapability = LocalRuntimeCapability.Ready(model)
 
         override suspend fun analyze(
             input: NormalizedPhotoInput,
-            token: AndroidInferenceAttemptToken,
-        ): AndroidRuntimeOutcome {
+            token: LocalInferenceAttemptToken,
+        ): LocalRuntimeOutcome {
             invocations += 1
             if (invocations == 1) {
                 firstInvocation.complete(Unit)
                 releaseFirst.await()
             }
-            return AndroidRuntimeOutcome.Failure(
+            return LocalRuntimeOutcome.Failure(
                 code = InferenceFailureCode.TEMPORARY_UNAVAILABLE,
                 retryable = true,
                 userMessageKey = "inference.failure.temporary_unavailable",
             )
         }
 
-        override fun release(token: AndroidInferenceAttemptToken) {
+        override fun release(token: LocalInferenceAttemptToken) {
             releaseCount += 1
         }
 
-        override fun cancel(token: AndroidInferenceAttemptToken) {
+        override fun cancel(token: LocalInferenceAttemptToken) {
             cancelCount += 1
         }
     }

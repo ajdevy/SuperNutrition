@@ -8,6 +8,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            api(project(":inference:local-shared"))
             implementation(project(":domain:inference"))
             implementation(project(":domain:photo-analysis"))
             implementation(libs.kotlinx.coroutines.core)

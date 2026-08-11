@@ -10,6 +10,6 @@ final class PocDishIngredientPriors {
     }
 
     static List<String> forDish(String dishLabel) {
-        return DishIngredientPriorTable.forDish(dishLabel);
+        return DishIngredientPriorTable.INSTANCE.forDish(dishLabel);
     }
 }

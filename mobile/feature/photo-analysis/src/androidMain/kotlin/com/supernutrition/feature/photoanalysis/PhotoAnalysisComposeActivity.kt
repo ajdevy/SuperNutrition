@@ -101,6 +101,7 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
                 photoCaptureFailed = getString(R.string.capture_recovery_failed),
                 photoQualityTooLow = getString(R.string.capture_recovery_quality),
                 noFoodFound = getString(R.string.capture_recovery_no_food),
+                analysisFailed = getString(R.string.capture_recovery_analysis_failed),
                 analysisOffline = getString(R.string.capture_recovery_offline),
                 analysisCancelled = getString(R.string.capture_recovery_cancelled),
                 reviewRestoreUnavailable = getString(R.string.capture_recovery_review_restore_unavailable),

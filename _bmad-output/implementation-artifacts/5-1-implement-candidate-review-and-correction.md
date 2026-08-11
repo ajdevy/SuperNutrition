@@ -243,3 +243,7 @@ GPT-5 Codex
 - `_bmad-output/planning-artifacts/ux-designs/ux-SuperNutrition-2026-07-26/review-ux.md`
 - `_bmad-output/planning-artifacts/ux-designs/ux-SuperNutrition-2026-07-26/.memlog.md`
 - `_bmad-output/planning-artifacts/ux-designs/ux-SuperNutrition-2026-07-26/.working/key-candidate-review.html`
+
+### Review Findings (adversarial PR review, 2026-08-09) — resolved 2026-08-11
+
+- [x] [Review][Patch] An empty candidate draft transitions to typed `ReviewEvidenceUnavailable` recovery instead of creating an unconfirmable review state.

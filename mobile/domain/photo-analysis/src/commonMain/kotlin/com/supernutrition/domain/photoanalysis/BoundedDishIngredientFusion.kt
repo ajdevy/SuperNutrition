@@ -244,7 +244,6 @@ object DishIngredientPriorTable {
         return keys.firstNotNullOfOrNull(priors::get).orEmpty()
     }
 
-    @JvmStatic
     fun forDish(dishLabel: String): List<String> = priors[normalize(dishLabel)].orEmpty()
 
     private fun normalize(value: String): String = value.trim().lowercase().replace(' ', '_')

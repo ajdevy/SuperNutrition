@@ -13,6 +13,13 @@ import com.supernutrition.domain.photoanalysis.ImageOrientation
 import com.supernutrition.domain.photoanalysis.NormalizedPhotoInput
 import com.supernutrition.domain.photoanalysis.PhotoLeaseStore
 import com.supernutrition.domain.photoanalysis.PhotoSessionStorePort
+import com.supernutrition.inference.localshared.LocalInferenceAttemptToken
+import com.supernutrition.inference.localshared.LocalModelOwnership
+import com.supernutrition.inference.localshared.LocalModelProvenance
+import com.supernutrition.inference.localshared.LocalModelVerification
+import com.supernutrition.inference.localshared.LocalPhotoInferenceRuntime
+import com.supernutrition.inference.localshared.LocalRuntimeCapability
+import com.supernutrition.inference.localshared.LocalRuntimeOutcome
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.async
@@ -30,8 +37,8 @@ class LocalAndroidInferenceDeviceTest {
     fun readyAdapterReadsLeasedBytesLocallyWithoutNetworkAttempts() = runBlocking {
         val fixture = Fixture()
         val runtime = RecordingRuntime(
-            AndroidRuntimeCapability.Ready(fixture.model),
-            AndroidRuntimeOutcome.Failure(
+            LocalRuntimeCapability.Ready(fixture.model),
+            LocalRuntimeOutcome.Failure(
                 code = InferenceFailureCode.RESOURCE_LIMIT,
                 retryable = false,
                 userMessageKey = "inference.failure.resource_limit",
@@ -50,7 +57,7 @@ class LocalAndroidInferenceDeviceTest {
     fun unavailableAdapterDoesNotReadPhotoContent() = runBlocking {
         val fixture = Fixture()
         val runtime = RecordingRuntime(
-            AndroidRuntimeCapability.Unavailable(
+            LocalRuntimeCapability.Unavailable(
                 state = CapabilityState.MODEL_REQUIRED,
                 reason = CapabilityReason.MODEL_MISSING,
             ),
@@ -74,7 +81,7 @@ class LocalAndroidInferenceDeviceTest {
     fun resourceBudgetCapabilityFailsClosedWithoutReadingPhotoContent() = runBlocking {
         val fixture = Fixture()
         val runtime = RecordingRuntime(
-            AndroidRuntimeCapability.Unavailable(
+            LocalRuntimeCapability.Unavailable(
                 state = CapabilityState.TEMPORARILY_UNAVAILABLE,
                 reason = CapabilityReason.RESOURCE_BUDGET,
             ),
@@ -134,17 +141,17 @@ class LocalAndroidInferenceDeviceTest {
                 configurationDigest = "a".repeat(64),
             ),
         )
-        val model = AndroidModelProvenance(
+        val model = LocalModelProvenance(
             modelVersion = "android-device-fixture-model",
             integrityIdentity = "b".repeat(64),
             compatibilityTier = "physical-device-fixture",
             calibrationVersion = "android-device-fixture-calibration",
-            ownership = AndroidModelOwnership.APP_MANAGED,
+            ownership = LocalModelOwnership.APP_MANAGED,
             rollbackTargetVersion = "android-device-fixture-model-previous",
-            verification = AndroidModelVerification.VERIFIED,
+            verification = LocalModelVerification.VERIFIED,
         )
 
-        fun engine(runtime: AndroidLocalInferenceRuntime): LocalAndroidInferenceEngine = LocalAndroidInferenceEngine(
+        fun engine(runtime: LocalPhotoInferenceRuntime): LocalAndroidInferenceEngine = LocalAndroidInferenceEngine(
             photos = RecordingPhotoStore(input),
             leases = leases,
             runtime = runtime,
@@ -153,59 +160,59 @@ class LocalAndroidInferenceDeviceTest {
     }
 
     private class RecordingRuntime(
-        private val currentCapability: AndroidRuntimeCapability,
-        private val outcome: AndroidRuntimeOutcome = AndroidRuntimeOutcome.Failure(
+        private val currentCapability: LocalRuntimeCapability,
+        private val outcome: LocalRuntimeOutcome = LocalRuntimeOutcome.Failure(
             code = InferenceFailureCode.TEMPORARY_UNAVAILABLE,
             retryable = true,
             userMessageKey = "inference.failure.temporary_unavailable",
         ),
-    ) : AndroidLocalInferenceRuntime {
+    ) : LocalPhotoInferenceRuntime {
         var invocations = 0
         var networkAttempts = 0
         var seenBytes: ByteArray = byteArrayOf()
 
-        override suspend fun capability(): AndroidRuntimeCapability = currentCapability
+        override suspend fun capability(): LocalRuntimeCapability = currentCapability
 
         override suspend fun analyze(
             input: NormalizedPhotoInput,
-            token: AndroidInferenceAttemptToken,
-        ): AndroidRuntimeOutcome {
+            token: LocalInferenceAttemptToken,
+        ): LocalRuntimeOutcome {
             invocations += 1
             seenBytes = input.bytes
             return outcome
         }
 
-        override fun release(token: AndroidInferenceAttemptToken) = Unit
+        override fun release(token: LocalInferenceAttemptToken) = Unit
 
-        override fun cancel(token: AndroidInferenceAttemptToken) = Unit
+        override fun cancel(token: LocalInferenceAttemptToken) = Unit
     }
 
-    private class BlockingRuntime(private val model: AndroidModelProvenance) : AndroidLocalInferenceRuntime {
+    private class BlockingRuntime(private val model: LocalModelProvenance) : LocalPhotoInferenceRuntime {
         val started = CompletableDeferred<Unit>()
         val release = CompletableDeferred<Unit>()
         var cancelCalls = 0
         var releaseCalls = 0
 
-        override suspend fun capability(): AndroidRuntimeCapability = AndroidRuntimeCapability.Ready(model)
+        override suspend fun capability(): LocalRuntimeCapability = LocalRuntimeCapability.Ready(model)
 
         override suspend fun analyze(
             input: NormalizedPhotoInput,
-            token: AndroidInferenceAttemptToken,
-        ): AndroidRuntimeOutcome {
+            token: LocalInferenceAttemptToken,
+        ): LocalRuntimeOutcome {
             started.complete(Unit)
             release.await()
-            return AndroidRuntimeOutcome.Failure(
+            return LocalRuntimeOutcome.Failure(
                 code = InferenceFailureCode.TEMPORARY_UNAVAILABLE,
                 retryable = true,
                 userMessageKey = "inference.failure.temporary_unavailable",
             )
         }
 
-        override fun release(token: AndroidInferenceAttemptToken) {
+        override fun release(token: LocalInferenceAttemptToken) {
             releaseCalls += 1
         }
 
-        override fun cancel(token: AndroidInferenceAttemptToken) {
+        override fun cancel(token: LocalInferenceAttemptToken) {
             cancelCalls += 1
         }
     }

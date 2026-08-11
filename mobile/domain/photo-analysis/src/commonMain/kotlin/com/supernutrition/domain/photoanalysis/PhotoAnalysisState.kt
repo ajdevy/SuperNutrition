@@ -35,6 +35,7 @@ enum class RecoveryReason {
     REVIEW_RESTORE_UNAVAILABLE,
     POOR_IMAGE,
     NO_FOOD,
+    ANALYSIS_FAILED,
     OFFLINE,
     CANCELLED,
 }

@@ -79,6 +79,7 @@ class PhotoAnalysisPresenterTest {
             RecoveryReason.CAPTURE_FAILED to copy.recovery.photoCaptureFailed,
             RecoveryReason.POOR_IMAGE to copy.recovery.photoQualityTooLow,
             RecoveryReason.NO_FOOD to copy.recovery.noFoodFound,
+            RecoveryReason.ANALYSIS_FAILED to copy.recovery.analysisFailed,
             RecoveryReason.OFFLINE to copy.recovery.analysisOffline,
             RecoveryReason.CANCELLED to copy.recovery.analysisCancelled,
         )

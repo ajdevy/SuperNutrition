@@ -191,6 +191,7 @@ data class RecoveryCopy(
     val photoCaptureFailed: String,
     val photoQualityTooLow: String,
     val noFoodFound: String,
+    val analysisFailed: String,
     val analysisOffline: String,
     val analysisCancelled: String,
     val reviewRestoreUnavailable: String,
@@ -203,6 +204,7 @@ data class RecoveryCopy(
             photoCaptureFailed,
             photoQualityTooLow,
             noFoodFound,
+            analysisFailed,
             analysisOffline,
             analysisCancelled,
             reviewRestoreUnavailable,
@@ -258,6 +260,7 @@ data class PhotoAnalysisPresenterModel(
             RecoveryReason.REVIEW_RESTORE_UNAVAILABLE -> copy.recovery.reviewRestoreUnavailable
             RecoveryReason.POOR_IMAGE -> copy.recovery.photoQualityTooLow
             RecoveryReason.NO_FOOD -> copy.recovery.noFoodFound
+            RecoveryReason.ANALYSIS_FAILED -> copy.recovery.analysisFailed
             RecoveryReason.OFFLINE -> copy.recovery.analysisOffline
             RecoveryReason.CANCELLED -> copy.recovery.analysisCancelled
         }

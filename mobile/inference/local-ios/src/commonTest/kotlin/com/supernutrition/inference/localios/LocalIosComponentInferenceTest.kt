@@ -24,6 +24,11 @@ import com.supernutrition.domain.photoanalysis.ImageOrientation
 import com.supernutrition.domain.photoanalysis.NormalizedPhotoInput
 import com.supernutrition.domain.photoanalysis.PhotoLeaseStorePort
 import com.supernutrition.domain.photoanalysis.PhotoSessionStorePort
+import com.supernutrition.inference.localshared.LocalComponentInferenceRuntime
+import com.supernutrition.inference.localshared.LocalComponentRuntimeCapability
+import com.supernutrition.inference.localshared.LocalComponentRuntimeComponent
+import com.supernutrition.inference.localshared.LocalComponentRuntimeOutcome
+import com.supernutrition.inference.localshared.LocalInferenceAttemptToken
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.launch
@@ -59,8 +64,8 @@ class LocalIosComponentInferenceTest {
     @Test
     fun `ready runtime maps component evidence and provenance`() = runTest {
         val runtime = RecordingRuntime(
-            IosComponentRuntimeCapability.Ready(manifest()),
-            IosComponentRuntimeOutcome.Components(listOf(component())),
+            LocalComponentRuntimeCapability.Ready(manifest()),
+            LocalComponentRuntimeOutcome.Components(listOf(component())),
         )
         val result = engine(runtime).analyze(request)
 
@@ -73,7 +78,7 @@ class LocalIosComponentInferenceTest {
     @Test
     fun `unavailable capability and text input fail closed`() = runTest {
         val unavailable = RecordingRuntime(
-            IosComponentRuntimeCapability.Unavailable(
+            LocalComponentRuntimeCapability.Unavailable(
                 CapabilityState.MODEL_REQUIRED,
                 CapabilityReason.MODEL_MISSING,
             ),
@@ -87,7 +92,7 @@ class LocalIosComponentInferenceTest {
             input = InferenceV2Input.Text("rice", "en"),
             attemptContext = request.attemptContext,
         )
-        val ready = RecordingRuntime(IosComponentRuntimeCapability.Ready(manifest()))
+        val ready = RecordingRuntime(LocalComponentRuntimeCapability.Ready(manifest()))
         assertIs<InferenceV2Outcome.Abstention>(engine(ready).analyze(textRequest).outcome)
         assertEquals(0, ready.invocations)
     }
@@ -95,7 +100,7 @@ class LocalIosComponentInferenceTest {
     @Test
     fun `capability mapping preserves staged manifest and retryable state`() = runTest {
         val runtime = RecordingRuntime(
-            IosComponentRuntimeCapability.Unavailable(
+            LocalComponentRuntimeCapability.Unavailable(
                 state = CapabilityState.TEMPORARILY_UNAVAILABLE,
                 reason = CapabilityReason.TEMPORARY_UNAVAILABLE,
                 userMessageKey = "inference.capability.retry",
@@ -111,7 +116,7 @@ class LocalIosComponentInferenceTest {
         assertEquals("mass-calibration-1", capability.calibrationVersion)
         assertTrue(assertIs<InferenceV2Outcome.Failure>(engine.analyze(request).outcome).retryable)
         val downloading = RecordingRuntime(
-            IosComponentRuntimeCapability.Unavailable(
+            LocalComponentRuntimeCapability.Unavailable(
                 CapabilityState.DOWNLOADING,
                 CapabilityReason.MODEL_DOWNLOADING,
             ),
@@ -119,20 +124,20 @@ class LocalIosComponentInferenceTest {
         assertTrue(assertIs<InferenceV2Outcome.Failure>(engine(downloading).analyze(request).outcome).retryable)
 
         assertFailsWith<IllegalArgumentException> {
-            IosComponentRuntimeCapability.Unavailable(CapabilityState.READY, CapabilityReason.MODEL_MISSING)
+            LocalComponentRuntimeCapability.Unavailable(CapabilityState.READY, CapabilityReason.MODEL_MISSING)
         }
         assertFailsWith<IllegalArgumentException> {
-            IosComponentRuntimeCapability.Unavailable(CapabilityState.MODEL_REQUIRED, CapabilityReason.NONE)
+            LocalComponentRuntimeCapability.Unavailable(CapabilityState.MODEL_REQUIRED, CapabilityReason.NONE)
         }
         assertFailsWith<IllegalArgumentException> {
-            IosComponentRuntimeCapability.Unavailable(
+            LocalComponentRuntimeCapability.Unavailable(
                 CapabilityState.MODEL_REQUIRED,
                 CapabilityReason.MODEL_MISSING,
                 userMessageKey = "",
             )
         }
         val missingManifest = RecordingRuntime(
-            IosComponentRuntimeCapability.Unavailable(
+            LocalComponentRuntimeCapability.Unavailable(
                 CapabilityState.MODEL_REQUIRED,
                 CapabilityReason.MODEL_MISSING,
             ),
@@ -144,8 +149,8 @@ class LocalIosComponentInferenceTest {
     @Test
     fun `runtime outcome kinds map and invalid messages fail closed`() = runTest {
         val abstention = RecordingRuntime(
-            IosComponentRuntimeCapability.Ready(manifest()),
-            IosComponentRuntimeOutcome.Abstention(
+            LocalComponentRuntimeCapability.Ready(manifest()),
+            LocalComponentRuntimeOutcome.Abstention(
                 com.supernutrition.domain.inference.V2AbstentionReason.IMAGE_QUALITY,
                 "inference.abstention.image_quality",
             ),
@@ -153,8 +158,8 @@ class LocalIosComponentInferenceTest {
         assertIs<InferenceV2Outcome.Abstention>(engine(abstention).analyze(request).outcome)
 
         val failure = RecordingRuntime(
-            IosComponentRuntimeCapability.Ready(manifest()),
-            IosComponentRuntimeOutcome.Failure(
+            LocalComponentRuntimeCapability.Ready(manifest()),
+            LocalComponentRuntimeOutcome.Failure(
                 V2InferenceFailureCode.RESOURCE_LIMIT,
                 retryable = true,
                 userMessageKey = "inference.failure.resource_limit",
@@ -167,7 +172,7 @@ class LocalIosComponentInferenceTest {
 
         val validComponent = component()
         assertFailsWith<IllegalArgumentException> {
-            IosComponentRuntimeComponent(
+            LocalComponentRuntimeComponent(
                 componentId = "",
                 candidate = validComponent.candidate,
                 confidence = validComponent.confidence,
@@ -178,13 +183,13 @@ class LocalIosComponentInferenceTest {
             )
         }
         assertFailsWith<IllegalArgumentException> {
-            IosComponentRuntimeOutcome.Abstention(
+            LocalComponentRuntimeOutcome.Abstention(
                 com.supernutrition.domain.inference.V2AbstentionReason.IMAGE_QUALITY,
                 "",
             )
         }
         assertFailsWith<IllegalArgumentException> {
-            IosComponentRuntimeOutcome.Failure(
+            LocalComponentRuntimeOutcome.Failure(
                 V2InferenceFailureCode.RESOURCE_LIMIT,
                 retryable = true,
                 userMessageKey = "",
@@ -194,7 +199,7 @@ class LocalIosComponentInferenceTest {
 
     @Test
     fun `digest mismatch and duplicate output fail closed`() = runTest {
-        val digestRuntime = RecordingRuntime(IosComponentRuntimeCapability.Ready(manifest()))
+        val digestRuntime = RecordingRuntime(LocalComponentRuntimeCapability.Ready(manifest()))
         assertEquals(
             V2InferenceFailureCode.INVALID_INPUT,
             assertIs<InferenceV2Outcome.Failure>(
@@ -208,8 +213,8 @@ class LocalIosComponentInferenceTest {
         assertEquals(0, digestRuntime.invocations)
 
         val duplicateRuntime = RecordingRuntime(
-            IosComponentRuntimeCapability.Ready(manifest()),
-            IosComponentRuntimeOutcome.Components(listOf(component(), component())),
+            LocalComponentRuntimeCapability.Ready(manifest()),
+            LocalComponentRuntimeOutcome.Components(listOf(component(), component())),
         )
         val failure = assertIs<InferenceV2Outcome.Failure>(engine(duplicateRuntime).analyze(request).outcome)
         assertEquals(V2InferenceFailureCode.TEMPORARY_UNAVAILABLE, failure.code)
@@ -217,7 +222,7 @@ class LocalIosComponentInferenceTest {
 
     @Test
     fun `photo lease validation rejects inactive missing and mismatched content`() = runTest {
-        val runtime = RecordingRuntime(IosComponentRuntimeCapability.Ready(manifest()))
+        val runtime = RecordingRuntime(LocalComponentRuntimeCapability.Ready(manifest()))
         assertEquals(
             V2InferenceFailureCode.INVALID_INPUT,
             assertIs<InferenceV2Outcome.Failure>(
@@ -250,7 +255,7 @@ class LocalIosComponentInferenceTest {
     @Test
     fun `cancellation is rethrown and native resources are released`() = runTest {
         val runtime = RecordingRuntime(
-            IosComponentRuntimeCapability.Ready(manifest()),
+            LocalComponentRuntimeCapability.Ready(manifest()),
             throwsCancellation = true,
         )
         assertFailsWith<CancellationException> { engine(runtime).analyze(request) }
@@ -264,7 +269,7 @@ class LocalIosComponentInferenceTest {
         val secondStarted = CompletableDeferred<Unit>()
         val finish = CompletableDeferred<Unit>()
         val runtime = RecordingRuntime(
-            IosComponentRuntimeCapability.Ready(manifest()),
+            LocalComponentRuntimeCapability.Ready(manifest()),
             gate = finish,
             startedSignals = listOf(firstStarted, secondStarted),
         )
@@ -285,7 +290,7 @@ class LocalIosComponentInferenceTest {
         engine.cancel(AttemptId("missing-attempt"))
     }
 
-    private fun engine(runtime: IosLocalComponentInferenceRuntime) =
+    private fun engine(runtime: LocalComponentInferenceRuntime) =
         LocalIosComponentInferenceEngine(RecordingPhotoStore(input), leaseStore(), runtime) { "a".repeat(64) }
 
     private fun manifest(activation: ComponentModelActivation = ComponentModelActivation.PRODUCTION) =
@@ -329,7 +334,7 @@ class LocalIosComponentInferenceTest {
             },
         )
 
-    private fun component() = IosComponentRuntimeComponent(
+    private fun component() = LocalComponentRuntimeComponent(
         componentId = "component:rice",
         candidate = LocalizedCandidateIdentity("ingredient:rice", "Rice", "en"),
         confidence = CalibratedConfidence(0.9, ConfidenceBand.HIGH),
@@ -360,15 +365,15 @@ class LocalIosComponentInferenceTest {
     }
 
     private class RecordingRuntime(
-        private val currentCapability: IosComponentRuntimeCapability,
-        private val currentOutcome: IosComponentRuntimeOutcome = IosComponentRuntimeOutcome.Abstention(
+        private val currentCapability: LocalComponentRuntimeCapability,
+        private val currentOutcome: LocalComponentRuntimeOutcome = LocalComponentRuntimeOutcome.Abstention(
             com.supernutrition.domain.inference.V2AbstentionReason.NO_FOOD_DETECTED,
             "inference.abstention.no_food_detected",
         ),
         private val throwsCancellation: Boolean = false,
         private val gate: CompletableDeferred<Unit>? = null,
         private val startedSignals: List<CompletableDeferred<Unit>> = emptyList(),
-    ) : IosLocalComponentInferenceRuntime {
+    ) : LocalComponentInferenceRuntime {
         var invocations = 0
             private set
         var releaseCount = 0
@@ -378,12 +383,12 @@ class LocalIosComponentInferenceTest {
         var seenBytes: List<Byte> = emptyList()
             private set
 
-        override suspend fun capability(): IosComponentRuntimeCapability = currentCapability
+        override suspend fun capability(): LocalComponentRuntimeCapability = currentCapability
 
         override suspend fun analyze(
             input: NormalizedPhotoInput,
-            token: IosComponentInferenceAttemptToken,
-        ): IosComponentRuntimeOutcome {
+            token: LocalInferenceAttemptToken,
+        ): LocalComponentRuntimeOutcome {
             invocations += 1
             seenBytes = input.bytes.toList()
             startedSignals.getOrNull(invocations - 1)?.complete(Unit)
@@ -392,11 +397,11 @@ class LocalIosComponentInferenceTest {
             return currentOutcome
         }
 
-        override fun release(token: IosComponentInferenceAttemptToken) {
+        override fun release(token: LocalInferenceAttemptToken) {
             releaseCount += 1
         }
 
-        override fun cancel(token: IosComponentInferenceAttemptToken) {
+        override fun cancel(token: LocalInferenceAttemptToken) {
             cancelCount += 1
         }
     }

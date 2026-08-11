@@ -52,6 +52,13 @@ source_sets = ["commonMain", "commonTest", "androidMain", "iosMain"]
 production = false
 
 [[module]]
+id = "inference-shared"
+path = "mobile/inference/local-shared"
+kind = "shared-adapter"
+source_sets = ["commonMain", "commonTest", "androidMain", "iosMain"]
+production = true
+
+[[module]]
 id = "inference-local-android-poc"
 path = "mobile/inference/local-android-poc"
 kind = "research-adapter"
@@ -145,7 +152,17 @@ to = "domain|core"
 scope = "production"
 
 [[allowed_edge]]
-from = "platform|inference|data"
+from = "platform|data"
+to = "domain|core"
+scope = "production"
+
+[[allowed_edge]]
+from = "inference"
+to = "inference-shared|domain|core"
+scope = "production"
+
+[[allowed_edge]]
+from = "inference-shared"
 to = "domain|core"
 scope = "production"
 

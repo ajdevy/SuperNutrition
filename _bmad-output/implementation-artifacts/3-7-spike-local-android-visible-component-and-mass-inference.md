@@ -136,3 +136,13 @@ bundle remain explicitly open.
 - `mobile/domain/inference/src/commonTest/kotlin/com/supernutrition/domain/inference/ComponentModelActivationTest.kt`
 - `mobile/inference/local-android/src/commonMain/kotlin/com/supernutrition/inference/localandroid/LocalAndroidComponentInference.kt`
 - `mobile/inference/local-android/src/commonTest/kotlin/com/supernutrition/inference/localandroid/LocalAndroidComponentInferenceTest.kt`
+
+### Review Findings (adversarial PR review, 2026-08-09) — resolved 2026-08-11
+
+- [x] [Review][Patch] Synthetic class-agnostic grid prompts are excluded from visible-component mapping and review UI evidence.
+- [x] [Review][Patch] Pipeline failures are typed, and cached extracted models require their expected digest.
+- [x] [Review][Patch] Replaced cached `PocAnalysis` instances close their mask bitmaps before replacement.
+- [x] [Review][Patch] Dish ingredient priors use the shared Kotlin source with one normalization rule.
+- [x] [Review][Patch] YOLO coordinates are interpreted from tensor metadata rather than value magnitude.
+- [x] [Review][Patch] Detector scores must be finite probabilities before becoming contract confidence.
+- [x] [Review][Patch] Mask threshold convention is selected once per mask rather than per pixel.
