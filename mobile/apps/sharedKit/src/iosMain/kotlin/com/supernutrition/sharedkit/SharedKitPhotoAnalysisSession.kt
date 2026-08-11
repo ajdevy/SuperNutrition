@@ -74,7 +74,6 @@ public class SharedKitPhotoAnalysisSession private constructor(
         feature.dispatch(PhotoAnalysisEvent.PreparationFailed(RecoveryReason.CANCELLED))
     }
 
-    @OptIn(ExperimentalForeignApi::class)
     public fun photoReturned(opaqueId: String, sourceData: NSData) {
         clearRetainedPhoto()
         val ref = feature.issuePhotoRef(opaqueId)

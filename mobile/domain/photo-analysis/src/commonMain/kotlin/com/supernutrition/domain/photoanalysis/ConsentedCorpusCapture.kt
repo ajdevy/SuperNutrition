@@ -376,7 +376,13 @@ data class CorpusUploadBatch(val captures: List<ConsentedCorpusCapture>) {
                 "venue" to split.venueGroup,
             ).forEach { (groupType, groupRef) ->
                 val key = groupType to groupRef
-                val previous = seen.putIfAbsent(key, split.partition)
+                // Not putIfAbsent: that is a JVM-only MutableMap extension, and
+                // this file is commonMain — so :domain:photo-analysis could
+                // never compile for Kotlin/Native. Nothing noticed because the
+                // sharedKit host slice failed to configure before reaching any
+                // Kotlin at all.
+                val previous = seen[key]
+                if (previous == null) seen[key] = split.partition
                 require(previous == null || previous == split.partition) {
                     "$groupType group must not cross corpus partitions"
                 }
