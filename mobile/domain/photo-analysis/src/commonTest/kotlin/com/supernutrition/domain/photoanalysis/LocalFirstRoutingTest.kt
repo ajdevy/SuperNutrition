@@ -198,18 +198,38 @@ class LocalFirstRoutingTest {
     }
 
     @Test
-    fun `explicit remote request can reopen consent after an earlier decline`() {
-        val offer = assertIs<RouteDecision.OfferRemote>(
-            LocalFirstRouter().initial(
-                token,
-                CapabilityState.READY,
-                policy,
-                requestedRoute = RequestedRoute.REMOTE,
-                consent = RemoteConsentState.DECLINED,
-            ),
+    fun `a declined consent terminates explicit remote requests as well`() {
+        val decision = LocalFirstRouter().initial(
+            token,
+            CapabilityState.READY,
+            policy,
+            requestedRoute = RequestedRoute.REMOTE,
+            consent = RemoteConsentState.DECLINED,
         )
 
-        assertEquals(RemoteEligibilityReason.EXPLICIT_USER_REQUEST, offer.reason)
+        assertEquals(LocalTerminalReason.REMOTE_DECLINED, assertIs<RouteDecision.KeepLocal>(decision).reason)
+    }
+
+    @Test
+    fun `manual confirmation does not escalate an automatic local failure`() {
+        val manualPolicy = policy.copy(mode = RoutePolicyMode.MANUAL_CONFIRMATION)
+
+        val automaticFailure = LocalFirstRouter().initial(token, CapabilityState.MODEL_REQUIRED, manualPolicy)
+        assertEquals(
+            LocalTerminalReason.REMOTE_DISABLED,
+            assertIs<RouteDecision.KeepLocal>(automaticFailure).reason,
+        )
+
+        val explicitRequest = LocalFirstRouter().initial(
+            token,
+            CapabilityState.MODEL_REQUIRED,
+            manualPolicy,
+            requestedRoute = RequestedRoute.REMOTE,
+        )
+        assertEquals(
+            RemoteEligibilityReason.EXPLICIT_USER_REQUEST,
+            assertIs<RouteDecision.OfferRemote>(explicitRequest).reason,
+        )
     }
 
     @Test

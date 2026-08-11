@@ -1,5 +1,6 @@
 package com.supernutrition.domain.inference
 
+import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -39,38 +40,42 @@ class InferenceModelBranchCoverageTest {
 
     @Test
     fun `activation rejects verification and rollback precondition failures without mutating state`() {
-        assertRollbackWithoutActiveModel()
-        assertRollbackWithUnregisteredTarget()
-        assertRejectsIncompatibleActivation()
-        assertRejectsIncompatibleRollback()
+        runBlocking {
+            assertRollbackWithoutActiveModel()
+            assertRollbackWithUnregisteredTarget()
+            assertRejectsIncompatibleActivation()
+            assertRejectsIncompatibleRollback()
+        }
     }
 
     @Test
     fun `activation rejects duplicate staging non-production activation and a staged rollback target`() {
-        val operations = ScriptedOperations()
-        val controller = ComponentModelActivationController(operations)
-        val staged = manifest("staged-model", activation = ComponentModelActivation.STAGED)
+        runBlocking {
+            val operations = ScriptedOperations()
+            val controller = ComponentModelActivationController(operations)
+            val staged = manifest("staged-model", activation = ComponentModelActivation.STAGED)
 
-        assertIs<ComponentModelActivationResult.Staged>(controller.stage(staged))
-        assertRejected(
-            expected = ComponentModelActivationFailure.MANIFEST_MUST_BE_STAGED,
-            actual = controller.stage(staged),
-        )
-        assertRejected(
-            expected = ComponentModelActivationFailure.PRODUCTION_APPROVAL_REQUIRED,
-            actual = controller.activate(staged),
-        )
+            assertIs<ComponentModelActivationResult.Staged>(controller.stage(staged))
+            assertRejected(
+                expected = ComponentModelActivationFailure.MANIFEST_MUST_BE_STAGED,
+                actual = controller.stage(staged),
+            )
+            assertRejected(
+                expected = ComponentModelActivationFailure.PRODUCTION_APPROVAL_REQUIRED,
+                actual = controller.activate(staged),
+            )
 
-        val rollbackController = ComponentModelActivationController(
-            operations = ScriptedOperations(),
-            initialActive = productionManifest("active-model", rollbackTargetVersion = "staged-target"),
-        )
-        val stagedTarget = manifest("staged-target", activation = ComponentModelActivation.STAGED)
-        assertIs<ComponentModelActivationResult.Staged>(rollbackController.stage(stagedTarget))
-        assertRejected(
-            expected = ComponentModelActivationFailure.ROLLBACK_TARGET_NOT_PRODUCTION,
-            actual = rollbackController.rollback(),
-        )
+            val rollbackController = ComponentModelActivationController(
+                operations = ScriptedOperations(),
+                initialActive = productionManifest("active-model", rollbackTargetVersion = "staged-target"),
+            )
+            val stagedTarget = manifest("staged-target", activation = ComponentModelActivation.STAGED)
+            assertIs<ComponentModelActivationResult.Staged>(rollbackController.stage(stagedTarget))
+            assertRejected(
+                expected = ComponentModelActivationFailure.ROLLBACK_TARGET_NOT_PRODUCTION,
+                actual = rollbackController.rollback(),
+            )
+        }
     }
 
     @Test
@@ -83,7 +88,7 @@ class InferenceModelBranchCoverageTest {
         }
     }
 
-    private fun assertRollbackWithoutActiveModel() {
+    private suspend fun assertRollbackWithoutActiveModel() {
         val noActive = ComponentModelActivationController(ScriptedOperations())
         assertRejected(
             expected = ComponentModelActivationFailure.ROLLBACK_TARGET_UNAVAILABLE,
@@ -91,7 +96,7 @@ class InferenceModelBranchCoverageTest {
         )
     }
 
-    private fun assertRollbackWithUnregisteredTarget() {
+    private suspend fun assertRollbackWithUnregisteredTarget() {
         val unregisteredTarget = ComponentModelActivationController(
             ScriptedOperations(),
             initialActive = productionManifest("active-model", rollbackTargetVersion = "missing-model"),
@@ -102,7 +107,7 @@ class InferenceModelBranchCoverageTest {
         )
     }
 
-    private fun assertRejectsIncompatibleActivation() {
+    private suspend fun assertRejectsIncompatibleActivation() {
         val activateOperations = ScriptedOperations(
             checks = listOf(
                 ComponentModelArtifactCheck.Verified,
@@ -121,7 +126,7 @@ class InferenceModelBranchCoverageTest {
         assertEquals(2, activateOperations.verifyCalls)
     }
 
-    private fun assertRejectsIncompatibleRollback() {
+    private suspend fun assertRejectsIncompatibleRollback() {
         val rollbackOperations = ScriptedOperations(
             checks = listOf(
                 ComponentModelArtifactCheck.Verified,
@@ -294,12 +299,12 @@ class InferenceModelBranchCoverageTest {
             private set
         val installed = mutableListOf<String>()
 
-        override fun verify(manifest: ComponentModelManifest): ComponentModelArtifactCheck {
+        override suspend fun verify(manifest: ComponentModelManifest): ComponentModelArtifactCheck {
             verifyCalls += 1
             return checks.getOrElse(verifyCalls - 1) { checks.last() }
         }
 
-        override fun installAtomically(manifest: ComponentModelManifest): Boolean {
+        override suspend fun installAtomically(manifest: ComponentModelManifest): Boolean {
             installed += manifest.modelVersion
             return true
         }

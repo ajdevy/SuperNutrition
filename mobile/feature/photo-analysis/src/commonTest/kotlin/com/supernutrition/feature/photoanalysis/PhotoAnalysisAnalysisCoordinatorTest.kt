@@ -170,6 +170,32 @@ class PhotoAnalysisAnalysisCoordinatorTest {
         assertEquals(PhotoAnalysisState.Recovery(RecoveryReason.CANCELLED), cancelledFeature.state)
     }
 
+    @Test
+    fun `backgrounded analysis retains its completed review until the host restores`() = runBlocking {
+        val feature = preparedFeature("coordinator-background")
+        val result = coordinator(
+            feature,
+            v2 = v2Engine(
+                components = listOf(component()),
+                beforeReturn = { feature.dispatch(PhotoAnalysisEvent.Backgrounded) },
+            ),
+        ).run(
+            RequestId("request-background"),
+            attemptContext("coordinator-background", "request-background"),
+        )
+
+        val review = assertIs<PhotoAnalysisAnalysisResult.Review>(result)
+        assertIs<PhotoAnalysisState.Backgrounded>(feature.state)
+        val retained = assertIs<PhotoAnalysisState.CandidateReview>(feature.currentWorkState())
+        assertEquals(RequestId("request-background"), retained.requestId)
+        assertEquals(review.draft, retained.draft)
+
+        feature.dispatch(PhotoAnalysisEvent.Restored)
+
+        assertEquals(feature.currentWorkState(), feature.state)
+        assertEquals(review.draft, assertIs<PhotoAnalysisState.CandidateReview>(feature.state).draft)
+    }
+
     private fun coordinator(
         feature: PhotoAnalysisFeature,
         v2: InferenceV2Engine,

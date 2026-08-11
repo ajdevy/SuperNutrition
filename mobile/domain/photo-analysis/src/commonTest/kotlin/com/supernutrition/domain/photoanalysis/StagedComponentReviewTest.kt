@@ -172,7 +172,96 @@ class StagedComponentReviewTest {
         )
     }
 
+    @Test
+    fun `analysis evidence delivered in background is presented after restore`() {
+        val setup = analyzing("background-result-photo", "background-result-request")
+        val draft = CandidateReviewDraft(
+            mainDishProposals = listOf(dish("dish-background-result", 1)),
+            photoEvidence = listOf(component("component-background-result", "ingredient:peas")),
+        )
+
+        reducer.dispatch(PhotoAnalysisEvent.Backgrounded)
+        reducer.dispatch(PhotoAnalysisEvent.ReviewEvidenceAvailable(setup.requestId, draft))
+
+        assertEquals(
+            PhotoAnalysisState.Backgrounded(
+                PhotoAnalysisBackgroundSnapshot.CandidateReview(setup.ref, setup.requestId),
+            ),
+            reducer.state,
+        )
+
+        reducer.dispatch(PhotoAnalysisEvent.Restored)
+
+        assertEquals(
+            PhotoAnalysisState.CandidateReview(setup.ref, setup.requestId, draft),
+            reducer.state,
+        )
+        assertEquals(reducer.state, reducer.currentWorkState())
+    }
+
+    @Test
+    fun `backgrounded work retains analysis start and stage for restore`() {
+        val ref = ready("background-start-photo")
+        val request = RequestId("background-start-request")
+
+        assertIs<PhotoAnalysisState.Ready>(reducer.currentWorkState())
+        reducer.dispatch(PhotoAnalysisEvent.Backgrounded)
+        reducer.dispatch(PhotoAnalysisEvent.AnalysisStarted(request))
+        reducer.dispatch(
+            PhotoAnalysisEvent.LocalAnalysisStageChanged(request, LocalAnalysisStage.CHECKING_RESULTS),
+        )
+
+        assertEquals(
+            PhotoAnalysisState.Analyzing(ref, request, LocalAnalysisStage.CHECKING_RESULTS),
+            reducer.currentWorkState(),
+        )
+
+        reducer.dispatch(PhotoAnalysisEvent.Restored)
+
+        assertEquals(
+            PhotoAnalysisState.Analyzing(ref, request, LocalAnalysisStage.CHECKING_RESULTS),
+            reducer.state,
+        )
+    }
+
+    @Test
+    fun `backgrounded no-food result retains its photo until restore`() {
+        val setup = analyzing("background-no-food-photo", "background-no-food-request")
+
+        reducer.dispatch(PhotoAnalysisEvent.Backgrounded)
+        reducer.dispatch(PhotoAnalysisEvent.ReviewEvidenceUnavailable(setup.requestId, RecoveryReason.NO_FOOD))
+
+        assertEquals(PhotoAnalysisState.Recovery(RecoveryReason.NO_FOOD, setup.ref), reducer.currentWorkState())
+        assertEquals(setup.ref, sessions.read(setup.ref)?.ref)
+
+        reducer.dispatch(PhotoAnalysisEvent.Restored)
+
+        assertEquals(PhotoAnalysisState.Recovery(RecoveryReason.NO_FOOD, setup.ref), reducer.state)
+    }
+
+    @Test
+    fun `explicit cancellation still revokes a backgrounded analysis photo`() {
+        val setup = analyzing("background-cancel-photo", "background-cancel-request")
+
+        reducer.dispatch(PhotoAnalysisEvent.Backgrounded)
+        reducer.dispatch(PhotoAnalysisEvent.Cancel)
+
+        assertEquals(PhotoAnalysisState.Recovery(RecoveryReason.CANCELLED), reducer.currentWorkState())
+        assertEquals(null, sessions.read(setup.ref))
+
+        reducer.dispatch(PhotoAnalysisEvent.Restored)
+
+        assertEquals(PhotoAnalysisState.Recovery(RecoveryReason.CANCELLED), reducer.state)
+    }
+
     private fun analyzing(photoId: String, request: String): Setup {
+        val ref = ready(photoId)
+        val requestId = RequestId(request)
+        reducer.dispatch(PhotoAnalysisEvent.AnalysisStarted(requestId))
+        return Setup(ref, requestId)
+    }
+
+    private fun ready(photoId: String): PhotoRef {
         val ref = leases.issue(attempt, photoId)
         val input = NormalizedPhotoInput(
             ref = ref,
@@ -186,9 +275,7 @@ class StagedComponentReviewTest {
         )
         reducer.dispatch(PhotoAnalysisEvent.PhotoCaptured(ref))
         reducer.dispatch(PhotoAnalysisEvent.PreparationSucceeded(input))
-        val requestId = RequestId(request)
-        reducer.dispatch(PhotoAnalysisEvent.AnalysisStarted(requestId))
-        return Setup(ref, requestId)
+        return ref
     }
 
     private fun dish(id: String, rank: Int): InferenceCandidate = InferenceCandidate(

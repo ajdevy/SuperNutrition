@@ -61,9 +61,9 @@ production = true
 [[module]]
 id = "inference-local-android-poc"
 path = "mobile/inference/local-android-poc"
-kind = "research-adapter"
-source_sets = ["main"]
-production = false
+kind = "production-adapter"
+source_sets = ["main", "test"]
+production = true
 
 [[module]]
 id = "platform"

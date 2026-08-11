@@ -147,7 +147,7 @@ public class SharedKitPhotoAnalysisSession private constructor(
         regionRights: List<Double>,
         regionBottoms: List<Double>,
     ) {
-        val ready = feature.state as? PhotoAnalysisState.Ready ?: return
+        val ready = feature.currentWorkState() as? PhotoAnalysisState.Ready ?: return
         if (ready.input.ref.opaqueId != opaqueId) return
         require(dishLabels.size == dishConfidences.size) { "Dish labels and confidences must have equal sizes" }
         require(
@@ -160,7 +160,7 @@ public class SharedKitPhotoAnalysisSession private constructor(
 
         val request = RequestId(requestId)
         feature.dispatch(PhotoAnalysisEvent.AnalysisStarted(request))
-        if ((feature.state as? PhotoAnalysisState.Analyzing)?.requestId != request) return
+        if ((feature.currentWorkState() as? PhotoAnalysisState.Analyzing)?.requestId != request) return
 
         feature.dispatch(
             PhotoAnalysisEvent.LocalAnalysisStageChanged(request, LocalAnalysisStage.FINDING_VISIBLE_FOODS),
@@ -243,11 +243,11 @@ public class SharedKitPhotoAnalysisSession private constructor(
     }
 
     public fun nativePocFailed(opaqueId: String, requestId: String) {
-        val ready = feature.state as? PhotoAnalysisState.Ready ?: return
+        val ready = feature.currentWorkState() as? PhotoAnalysisState.Ready ?: return
         if (ready.input.ref.opaqueId != opaqueId) return
         val request = RequestId(requestId)
         feature.dispatch(PhotoAnalysisEvent.AnalysisStarted(request))
-        if ((feature.state as? PhotoAnalysisState.Analyzing)?.requestId == request) {
+        if ((feature.currentWorkState() as? PhotoAnalysisState.Analyzing)?.requestId == request) {
             feature.dispatch(PhotoAnalysisEvent.ReviewEvidenceUnavailable(request, RecoveryReason.ANALYSIS_FAILED))
         }
     }
