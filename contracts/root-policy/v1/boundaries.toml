@@ -242,3 +242,15 @@ initial_lifecycle = "preselection"
 path = "contracts"
 owner = "contract"
 content = "immutable-language-neutral-data-only"
+
+[[executable]]
+path = "scripts/secret-scan-fixtures.sh"
+purpose = "negative fixtures for the secret-scan hook: blocked key shapes and allowed placeholders"
+mutates_repository = false
+test_entrypoint = "scripts/secret-scan-fixtures.sh"
+
+[[executable]]
+path = "scripts/benchmark-negative-fixtures.sh"
+purpose = "negative fixtures for the model benchmark: failure exit code, request timeout, success-only averages"
+mutates_repository = false
+test_entrypoint = "scripts/benchmark-negative-fixtures.sh"

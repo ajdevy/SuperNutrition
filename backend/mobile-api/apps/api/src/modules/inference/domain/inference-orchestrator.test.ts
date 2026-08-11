@@ -317,3 +317,80 @@ describe('no provider available', () => {
     expect(result).toEqual({ ok: false, error: 'provider-unavailable' });
   });
 });
+
+/**
+ * Low group — three values the orchestrator reported wrongly or spent needlessly.
+ */
+describe('what an accepted result actually reports', () => {
+  const abstained: Result<ProviderResponse, InferenceFailure> = ok({
+    candidates: [],
+    modelId: 'model-fast',
+    durationMs: 10,
+    usage: { promptTokens: 1000, completionTokens: 500 },
+    outcome: 'abstention',
+  });
+
+  const orchestratorWith = (
+    responses: Array<Result<ProviderResponse, InferenceFailure>>,
+    clock?: { now: () => number },
+  ) =>
+    new TwoPassInferenceOrchestrator({
+      providers: [new ScriptedProvider(responses)],
+      profiles,
+      recorder: new RecordingRecorder(),
+      environment: 'test',
+      sleep: async () => {},
+      random: () => 0.5,
+      ...(clock ? { clock } : {}),
+    });
+
+  it('carries the confidence the routing decision was made on', async () => {
+    // Hardcoded to null, so the number that had just decided whether to
+    // escalate was discarded on the way out.
+    const result = await orchestratorWith([response(0.93)]).analyze(request, options());
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.value.confidence).toBe(0.93);
+  });
+
+  it('reports how long the attempt actually took', async () => {
+    // durationMs was hardcoded to 0, so every attempt looked instantaneous and
+    // the telemetry that exists to show inference latency showed none.
+    let now = 1_000;
+    const result = await orchestratorWith([response(0.93)], {
+      now: () => {
+        now += 120;
+        return now;
+      },
+    }).analyze(request, options());
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.value.durationMs).toBeGreaterThan(0);
+  });
+
+  it('does not escalate an abstention to the expensive second pass', async () => {
+    // An abstention carries no confidence, so `?? 0` scored it below every
+    // threshold and it escalated — asking a more expensive model to identify
+    // food in a photo the first model said contains none.
+    const result = await orchestratorWith([abstained, response(0.99)]).analyze(request, options());
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.value.passesRun).toBe(1);
+    expect(result.value.outcome).toBe('abstention');
+  });
+
+  it('still escalates a genuinely low-confidence identification', async () => {
+    // The positive control: never escalating would be a different bug.
+    const result = await orchestratorWith([response(0.1), response(0.99)]).analyze(
+      request,
+      options(),
+    );
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.value.passesRun).toBe(2);
+  });
+});

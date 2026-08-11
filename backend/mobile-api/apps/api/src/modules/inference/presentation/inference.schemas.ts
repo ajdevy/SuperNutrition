@@ -8,21 +8,35 @@ const effectId = z.string().regex(/^eff_[A-Za-z0-9]{16,64}$/);
 const sha256 = z.string().regex(/^sha256:[0-9a-f]{64}$/);
 
 /**
- * AD-8: the receipt binds the digest of the scrubbed normalized payload, the
- * purpose, market jurisdiction, processing region, retention version, and
- * configuration version. Every field is required — a partial receipt fails
- * closed.
+ * AD-8: the receipt binds the digest of the scrubbed normalized payload to one
+ * attempt, together with the purpose, decision, market jurisdiction, processing
+ * region, retention terms and configuration version the user was shown. Every
+ * field is required — a partial receipt fails closed.
+ *
+ * The field names are the release's, not this module's. An earlier shape here
+ * used `payloadDigest`/`decidedAt` and omitted the attempt binding, the
+ * decision, the retention window and the expiry, which made a receipt bound to
+ * nothing and valid forever parse as complete. `inference.schemas.test.ts`
+ * reads the canonical receipt out of contracts/mobile-api/v1 so the two cannot
+ * drift apart again.
  */
 export const ConsentReceiptSchema = z.object({
-  payloadDigest: sha256,
+  version: z.string().min(1),
+  attemptId,
+  digest: sha256,
   modality: z.enum(MODALITIES),
   purpose: z.string().min(1).max(120),
-  consentCopyVersion: z.string().min(1),
+  decision: z.enum(['granted', 'denied']),
   marketJurisdiction: z.string().regex(/^[A-Z]{2}$/),
-  processingRegion: z.string().min(1).max(64),
+  // The release permits absence: a market with no region commitment shows none
+  // rather than inventing one.
+  processingRegion: z.string().min(1).max(64).nullable(),
+  consentCopyVersion: z.string().min(1).nullable(),
   retentionVersion: z.string().min(1),
+  retentionDays: z.number().int().nonnegative(),
   configurationVersion: z.string().min(1),
-  decidedAt: z.iso.datetime({ offset: true }),
+  recordedAt: z.iso.datetime({ offset: true }),
+  expiresAt: z.iso.datetime({ offset: true }),
 });
 
 export const InferenceContextSchema = z.object({

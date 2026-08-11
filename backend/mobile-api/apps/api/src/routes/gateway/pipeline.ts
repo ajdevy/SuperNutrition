@@ -56,7 +56,6 @@ export interface PipelineDeps {
   readonly remoteInferenceEnabled: () => boolean;
   readonly supportedRetentionVersions: readonly string[];
   readonly now: () => Date;
-  readonly requestIdFactory: () => string;
 }
 
 export interface PipelineInput {
@@ -236,7 +235,7 @@ export const runInferencePipeline = async (
       headers: { ...rateLimitHeaders(rateDecision) },
       body: {
         contractVersion: 'mobile-api/v1',
-        requestId: deps.requestIdFactory(),
+        requestId: input.requestId,
         attemptId: context.attemptId,
         resolvedMarketJurisdiction: market.marketJurisdiction,
         resolvedProcessingRegion: market.processingRegion,

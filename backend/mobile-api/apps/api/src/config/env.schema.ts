@@ -44,6 +44,18 @@ export const EnvSchema = z.object({
   DATABASE_CONNECT_TIMEOUT_SECONDS: positiveInt.default(10),
 
   REDIS_URL: z.string().url(),
+  /**
+   * Read directly from process.env in main.ts, so it never went through this
+   * schema: `STUB_INFERENCE=TRUE`, `=1` and `=yes` all silently meant false,
+   * and a typo in the variable name was indistinguishable from disabling it.
+   * Declared here so the parse is one place and the accepted spellings are
+   * visible. Still fenced to TEST_MODE by assertStubFence — this only decides
+   * what the value IS, never whether it is allowed.
+   */
+  STUB_INFERENCE: z
+    .enum(['true', 'false', '1', '0', 'yes', 'no'])
+    .default('false')
+    .transform((value) => value === 'true' || value === '1' || value === 'yes'),
 
   JWT_PRIVATE_KEY: secret(32),
   JWT_PUBLIC_KEY: secret(32),
@@ -63,7 +75,6 @@ export const EnvSchema = z.object({
   USDA_API_KEY: secret(16).optional(),
 
   MODEL_PROFILES_PATH: z.string().default('./config/model-profiles.toml'),
-  TELEMETRY_ALLOWLIST_PATH: z.string().default('./config/telemetry-allowlist.toml'),
 
   /** Operator-controlled provider kill switch (AD-24). Effective without deploy. */
   REMOTE_INFERENCE_ENABLED: booleanFromEnv.default(true),

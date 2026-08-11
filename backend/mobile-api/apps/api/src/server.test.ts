@@ -39,7 +39,7 @@ const config = {
   redis: { url: 'redis://x' },
   auth: { issuer: 'i', accessTtlSeconds: 900, refreshTtlSeconds: 1000, testMode: true },
   inference: { remoteEnabled: true, modelProfilesPath: 'p', openRouterBaseUrl: 'https://x' },
-  logging: { level: 'silent', allowlistPath: 'a' },
+  logging: { level: 'silent' },
 } as unknown as AppConfig;
 
 const context = () => ({

@@ -32,8 +32,19 @@ fi
 # its own merge base. It is an explicit argument, never a value the reviewed
 # tree supplies.
 base="${SUPERNUTRITION_IMMUTABILITY_BASE:-}"
+base_origin="passed explicitly"
 if test -z "$base"; then
+    # Derived from whatever origin/main points at LOCALLY. A ref that has not
+    # been fetched recently is behind the real branch, so the merge base lands
+    # further back and the diff picks up work that other pull requests already
+    # merged. That direction is safe — it over-reports, never under-reports —
+    # but it produces failures naming files this branch never touched, which
+    # reads as a broken gate rather than a stale ref.
+    #
+    # So the derivation is stated. CI passes the pull request base SHA and never
+    # takes this path.
     base=$(git merge-base origin/main HEAD 2>/dev/null || true)
+    base_origin="derived from local origin/main ($(git rev-parse --short origin/main 2>/dev/null || echo 'unknown')); run 'git fetch origin main' if this reports files you did not touch"
 fi
 if test -z "$base"; then
     printf 'cannot determine an immutability base revision; pass SUPERNUTRITION_IMMUTABILITY_BASE\n' >&2
@@ -44,7 +55,25 @@ if ! git rev-parse --verify --quiet "${base}^{commit}" >/dev/null; then
     exit 1
 fi
 
-IMMUTABILITY_BASE="$base" python3 - <<'PY'
+# A shallow clone silently narrows what can be compared. actions/checkout fetches
+# depth 1 by default, so the base commit may exist as a graft boundary with no
+# history behind it — git diff then reports far less than it should and the gate
+# reports OK having compared almost nothing. Refuse rather than under-report.
+if test "$(git rev-parse --is-shallow-repository 2>/dev/null)" = "true"; then
+    printf 'refusing to run against a shallow clone: the comparison would be silently narrowed. Fetch full history (actions/checkout fetch-depth: 0)\n' >&2
+    exit 1
+fi
+
+# The base has to be an ANCESTOR of what is being reviewed. A stale origin/main —
+# or a hand-passed revision from another line of development — produces a diff
+# against a tree that was never this branch's starting point, which reports
+# changes nobody made and misses the ones they did.
+if ! git merge-base --is-ancestor "$base" HEAD 2>/dev/null; then
+    printf 'immutability base %s is not an ancestor of HEAD; fetch the base branch or pass the PR base SHA\n' "${base:0:12}" >&2
+    exit 1
+fi
+
+IMMUTABILITY_BASE="$base" IMMUTABILITY_BASE_ORIGIN="$base_origin" python3 - <<'PY'
 from datetime import date
 from hashlib import sha256
 import os
@@ -107,19 +136,25 @@ def git(*args):
 # HEAD ignored uncommitted edits entirely, so a published release could be
 # modified in the worktree and this gate would report OK on the very tree the
 # other validators were reading.
+# -z, so paths arrive NUL-separated and verbatim.
+#
+# Without it git quotes any path containing a non-ASCII or special character —
+# "contracts/caf\303\251/v1/schema.toml" — and the quoted form matched neither
+# the release glob nor any acknowledgement path, so such a file could be edited
+# freely. Renames are already disabled, which keeps the record shape at
+# status-then-path.
 changes = []
-for line in git("diff", "--name-status", "--no-renames", base, "--", "contracts/").splitlines():
-    if not line.strip():
-        continue
-    parts = line.split("\t")
-    if len(parts) < 2:
-        continue
-    changes.append((parts[0], parts[1]))
+raw = git("-c", "core.quotepath=false", "diff", "--name-status", "--no-renames",
+          "-z", base, "--", "contracts/")
+fields = [field for field in raw.split("\0") if field]
+for index in range(0, len(fields) - 1, 2):
+    changes.append((fields[index], fields[index + 1]))
 
 # Untracked files are additions the diff above cannot see.
 for path in git(
-    "ls-files", "--others", "--exclude-standard", "--", "contracts/"
-).splitlines():
+    "-c", "core.quotepath=false", "ls-files", "-z", "--others", "--exclude-standard",
+    "--", "contracts/",
+).split("\0"):
     if path.strip():
         changes.append(("A", path.strip()))
 
@@ -321,6 +356,7 @@ if failures:
     raise SystemExit(1)
 
 print(
-    f"release immutability: OK (no unacknowledged release or catalog change since {base[:12]})"
+    "release immutability: OK (no unacknowledged release or catalog change since "
+    f"{base[:12]}, {os.environ['IMMUTABILITY_BASE_ORIGIN']})"
 )
 PY
