@@ -5,10 +5,31 @@ repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 fixture_root=$(mktemp -d "${TMPDIR:-/tmp}/supernutrition-inference-contract.XXXXXX")
 trap 'rm -rf "$fixture_root"' EXIT
 
+# The two releases this harness mutates live under different contract_ids:
+# v1 is photo-inference-engine (contracts/inference/v1) and v2 is
+# inference-evidence (contracts/inference-evidence/v2). Deriving the source
+# path from the release tag alone sent every v2 mutation at
+# contracts/inference/v2 — a real directory holding the *other* v2 release —
+# so the copies succeeded and the mutations were applied to files the verifier
+# under test never reads. Each release now names its own root.
+release_root() {
+    case "$1" in
+        v1) printf '%s/contracts/inference/v1' "${repo_root}" ;;
+        v2) printf '%s/contracts/inference-evidence/v2' "${repo_root}" ;;
+        *) printf 'unknown release tag: %s\n' "$1" >&2; return 1 ;;
+    esac
+}
+
 copy_release() {
     local release="$1"
     local destination="$2"
-    cp -R "${repo_root}/contracts/inference/${release}" "${fixture_root}/${destination}"
+    local source
+    source=$(release_root "${release}")
+    test -d "${source}" || {
+        printf 'missing release root for %s: %s\n' "${release}" "${source}" >&2
+        return 1
+    }
+    cp -R "${source}" "${fixture_root}/${destination}"
 }
 
 refresh_digest() {
