@@ -2,7 +2,19 @@ schema = "supernutrition.inference-engine-compatibility-matrix.v2"
 contract_id = "inference-engine"
 release = "v2"
 previous_release = "photo-inference-engine/v1"
-digest = "3a00fa90ad3b8bd982fd2de05de29767337ba073cb0e7517325036e78b1d4d84"
+digest = "ba7221912bddbf29cf41bc881931a21e6ca4cd70259ca028e98d2b4b2b5201ba"
+
+# P1-11 — `accepted` means "a consumer exists and reads this release today".
+#
+# Five consumers were marked accepted. Two are real: local-android-v2 and
+# local-ios-v2 both implement InferenceV2Engine. The other three were not built
+# at all — the remote path still speaks v1, the evaluation harness has no v2
+# reference, and no TEXT modality exists anywhere in commonMain. A matrix that
+# advertises consumers nobody wrote is worse than an empty one: it is the
+# document a migration is planned against.
+#
+# `not-yet-implemented` is the honest third state, and it is already the pattern
+# used by contracts/market-policy/v1 for its future backend consumer.
 
 # v1 remains published. Consumers migrate release by release rather than in one
 # step, so both releases are supported simultaneously and v1 is retired only
@@ -24,19 +36,19 @@ expected = "accepted"
 producer = "domain-inference-v2"
 consumer = "local-text-v2"
 direction = "forward"
-expected = "accepted"
+expected = "not-yet-implemented"
 
 [[supported_pair]]
 producer = "domain-inference-v2"
 consumer = "remote-v2"
 direction = "forward"
-expected = "accepted"
+expected = "not-yet-implemented"
 
 [[supported_pair]]
 producer = "domain-inference-v2"
 consumer = "evaluation-v2"
 direction = "forward"
-expected = "accepted"
+expected = "not-yet-implemented"
 
 # A v1 consumer cannot read a v2 text request: the modality discriminator and
 # text payload do not exist in v1, and v1 requires a photo. Recorded explicitly

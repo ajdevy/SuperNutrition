@@ -392,9 +392,17 @@ def validate_v2(release):
     if matrix.get("schema") != "supernutrition.inference-evidence-compatibility-matrix.v2" or \
             matrix.get("contract_id") != "inference-evidence" or matrix.get("release") != "v2":
         fail("inference compatibility matrix must target v2")
+    # P1-11 — `accepted` asserts a consumer exists and reads this release today.
+    # text-v2 and evaluation-v2 were marked accepted and were never built: no
+    # TEXT modality exists in commonMain and the evaluation harness has no v2
+    # reference. A matrix advertising consumers nobody wrote is worse than an
+    # empty one, because it is the document a migration gets planned against.
     required_pairs = {
         ("domain-inference-v2", consumer, "forward", "accepted")
-        for consumer in ("local-android-v2", "local-ios-v2", "text-v2", "evaluation-v2")
+        for consumer in ("local-android-v2", "local-ios-v2")
+    } | {
+        ("domain-inference-v2", consumer, "forward", "not-yet-implemented")
+        for consumer in ("text-v2", "evaluation-v2")
     }
     for index, item in enumerate(matrix.get("supported_pair", [])):
         require_keys(item, {"producer", "consumer", "direction", "expected"},
