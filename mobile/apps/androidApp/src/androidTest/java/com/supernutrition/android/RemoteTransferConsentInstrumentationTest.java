@@ -75,7 +75,7 @@ public final class RemoteTransferConsentInstrumentationTest {
         AttemptScopedConsentStore store = new AttemptScopedConsentStore();
 
         assertFalse(store.isGrantedFor(ATTEMPT, sha256(jpegBytes())));
-        assertFalse(store.decidedFor(ATTEMPT));
+        assertFalse(store.decidedFor(ATTEMPT, sha256(jpegBytes())));
         assertNull(store.receiptFor(ATTEMPT, sha256(jpegBytes())));
     }
 
@@ -87,7 +87,7 @@ public final class RemoteTransferConsentInstrumentationTest {
 
         assertFalse(store.isGrantedFor(ATTEMPT, digest));
         // Proving the user said no matters as much as proving they said yes.
-        assertTrue(store.decidedFor(ATTEMPT));
+        assertTrue(store.decidedFor(ATTEMPT, digest));
         assertNotNull(store.receiptFor(ATTEMPT, digest));
         assertEquals(TransferConsentDecision.DECLINED, store.receiptFor(ATTEMPT, digest).getDecision());
     }

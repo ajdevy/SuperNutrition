@@ -209,7 +209,12 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
     private fun ConsentGate(state: PhotoAnalysisState) {
         val ready = state as? PhotoAnalysisState.Ready ?: return
         if (!PhotoAnalysisEngineWiring.isTestMode(this)) return
-        if (retainedState.consentStore.decidedFor(attemptId.value)) return
+        // Asked about THESE bytes, not merely about this attempt. The attempt id
+        // is a constant here, so an attempt-only check meant the second photo of
+        // a session inherited the first photo's answer and the surface was never
+        // shown again.
+        val pendingDigest = PhotoAnalysisEngineWiring.sha256Digest(ready.input.bytes)
+        if (retainedState.consentStore.decidedFor(attemptId.value, pendingDigest)) return
 
         val gate = PhotoAnalysisConsentWiring.gate(
             configurationVersion = "cfg/1",

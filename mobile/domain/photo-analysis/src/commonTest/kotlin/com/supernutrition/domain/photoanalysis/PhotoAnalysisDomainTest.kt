@@ -456,10 +456,15 @@ class PhotoAnalysisDomainTest {
     }
 
     @Test
-    fun `preparation failure from capture state is ignored`() {
+    fun `preparation failure from capture state offers recovery`() {
+        // Renamed and inverted deliberately. This test pinned the behaviour the
+        // P2 review calls a defect: a camera that could not open returned the
+        // user to the capture screen with the reason discarded, no explanation
+        // and no recovery. The reason is carried on the event and is now the
+        // reason the user is shown.
         reducer.dispatch(PhotoAnalysisEvent.PreparationFailed(RecoveryReason.CAMERA_UNAVAILABLE))
 
-        assertEquals(PhotoAnalysisState.Capture, reducer.state)
+        assertEquals(PhotoAnalysisState.Recovery(RecoveryReason.CAMERA_UNAVAILABLE), reducer.state)
     }
 
     @Test
