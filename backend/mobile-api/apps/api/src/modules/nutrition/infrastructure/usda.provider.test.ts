@@ -49,11 +49,13 @@ const timeout = (): Response => {
 /** Scripted transport: call N consumes reply N; the last reply repeats. */
 const transport = (...replies: ReadonlyArray<() => Response>) => {
   const urls: string[] = [];
-  const fetchImpl: FetchLike = async (url) => {
+  const headers: Array<Record<string, string>> = [];
+  const fetchImpl: FetchLike = async (url, init) => {
     urls.push(url);
+    headers.push((init?.headers ?? {}) as Record<string, string>);
     return replies[Math.min(urls.length - 1, replies.length - 1)]!();
   };
-  return { urls, fetch: fetchImpl };
+  return { urls, headers, fetch: fetchImpl };
 };
 
 const build = (fetchImpl: FetchLike, over: Partial<UsdaConfig> = {}) =>
@@ -111,7 +113,11 @@ describe('provider identity and key isolation', () => {
 
     const result = await lookupBanana(withKey);
 
-    expect(http.urls[0]).toContain(`api_key=${KEY}`);
+    // The key travels in a header, never the URL. A query parameter is recorded
+    // by every proxy, gateway access log and error report on the way to USDA,
+    // and a leaked key is not something a log rotation undoes.
+    expect(http.urls[0]).not.toContain(KEY);
+    expect(http.headers[0]?.['X-Api-Key']).toBe(KEY);
     expect(JSON.stringify(result)).not.toContain(KEY);
   });
 });
@@ -121,7 +127,7 @@ describe('lookup', () => {
     const http = transport(reply(BANANA));
     const result = await lookupBanana(build(http.fetch));
 
-    expect(http.urls).toEqual(['https://example.invalid/fdc/v1/food/171705?api_key=' + KEY]);
+    expect(http.urls).toEqual(['https://example.invalid/fdc/v1/food/171705']);
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.value.foodRef).toEqual({
@@ -366,8 +372,13 @@ describe('search', () => {
 
 describe('error mapping', () => {
   it.each([
-    ['400 bad request', httpStatus(400), 'not-found'],
-    ['403 an invalid key', httpStatus(403), 'not-found'],
+    // 404 is a statement about the FOOD. Everything else in the 4xx range is a
+    // statement about US — a wrong or revoked key, a malformed request — and
+    // reporting those as not-found told the user their search had no results
+    // while the catalog was unreachable, so they retype the same food and get
+    // the same silence.
+    ['400 bad request', httpStatus(400), 'provider-unavailable'],
+    ['403 an invalid key', httpStatus(403), 'provider-unavailable'],
     ['404 no such food', httpStatus(404), 'not-found'],
     ['429 over quota', httpStatus(429), 'rate-limited'],
     ['500 upstream fault', httpStatus(500), 'provider-unavailable'],

@@ -24,6 +24,18 @@ const FASTIFY_CODE_MAP: Readonly<Record<string, GatewayCode>> = {
   FST_ERR_CTP_INVALID_MEDIA_TYPE: GATEWAY_CODES.UNSUPPORTED_MEDIA_TYPE,
   FST_ERR_CTP_EMPTY_JSON_BODY: GATEWAY_CODES.VALIDATION_ERROR,
   FST_ERR_VALIDATION: GATEWAY_CODES.VALIDATION_ERROR,
+
+  // The rest of @fastify/multipart's error surface. Only two of its codes were
+  // mapped, so a request with too many files, too many fields, too many parts, a
+  // truncated body or a malformed multipart content-type fell through to
+  // internal-error: the gateway reporting a server fault for something the
+  // client got wrong, and telling the client to retry a request that cannot
+  // succeed however many times it is sent.
+  FST_FILES_LIMIT: GATEWAY_CODES.CONTENT_TOO_LARGE,
+  FST_FIELDS_LIMIT: GATEWAY_CODES.CONTENT_TOO_LARGE,
+  FST_PARTS_LIMIT: GATEWAY_CODES.CONTENT_TOO_LARGE,
+  FST_MP_PREMATURE_CLOSE: GATEWAY_CODES.VALIDATION_ERROR,
+  FST_INVALID_MULTIPART_CONTENT_TYPE: GATEWAY_CODES.UNSUPPORTED_MEDIA_TYPE,
 };
 
 export const toGatewayError = (error: unknown): GatewayError => {

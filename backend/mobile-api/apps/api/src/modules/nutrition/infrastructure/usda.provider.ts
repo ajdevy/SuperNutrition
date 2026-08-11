@@ -182,7 +182,7 @@ export class USDAProvider implements NutritionProvider {
     const cached = this.#cache.get(cacheKey);
     if (cached && Date.now() < cached.expiresAt) return ok(cached.result);
 
-    const url = `${this.#config.baseUrl}/food/${fdcId}?api_key=${this.#apiKey}`;
+    const url = `${this.#config.baseUrl}/food/${fdcId}`;
     return this.#fetchWithRetry<FoodLookupResult>(url, (data: UsdaFoodDetail) => {
       const nutrients = extractNutrients(data.foodNutrients);
       if (!nutrients) return null; // malformed
@@ -216,11 +216,13 @@ export class USDAProvider implements NutritionProvider {
     const blocked = this.#checkCircuit();
     if (blocked) return blocked;
 
+    // The key travels in a header, not the query string. A query parameter is
+    // recorded by every proxy, gateway access log and error report between here
+    // and USDA, and a leaked key is not something a log rotation undoes.
     const params = new URLSearchParams({
       query,
       dataType: 'Foundation,SR Legacy',
       pageSize: '5',
-      api_key: this.#apiKey,
     });
     const url = `${this.#config.baseUrl}/foods/search?${params.toString()}`;
 
@@ -269,11 +271,18 @@ export class USDAProvider implements NutritionProvider {
 
       try {
         const response = await this.#fetch(url, {
+          headers: { 'X-Api-Key': this.#apiKey },
           signal: AbortSignal.timeout(this.#config.totalTimeoutMs),
         });
 
         if (response.status === 429) return err('rate-limited');
-        if (response.status >= 400 && response.status < 500) return err('not-found');
+        // 404 means the food is not there. Every other 4xx is about US — a wrong
+        // or revoked key, a malformed request — and reporting those as
+        // "not-found" told the user their search had no results while the
+        // catalog was in fact unreachable. They then retype the same food and
+        // get the same silence.
+        if (response.status === 404) return err('not-found');
+        if (response.status >= 400 && response.status < 500) return err('provider-unavailable');
         if (response.status >= 500) {
           this.#recordFailure();
           lastFailure = 'provider-unavailable';

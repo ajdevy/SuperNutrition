@@ -143,9 +143,26 @@ export class JwtTokenIssuer {
       });
     }
 
+    // A token without `sub` used to authenticate with userId "", and every such
+    // caller then shared one rate-limit bucket keyed on the empty string —
+    // so one of them could exhaust the limit for all of them, and any per-user
+    // decision downstream was made about nobody in particular.
+    const subject = payload.sub;
+    if (typeof subject !== 'string' || subject.length === 0) {
+      throw new GatewayError(GATEWAY_CODES.AUTHENTICATION_FAILED, {
+        details: [{ field: 'sub', issue: 'missing' }],
+      });
+    }
+    const installation = payload['installationId'];
+    if (typeof installation !== 'string' || installation.length === 0) {
+      throw new GatewayError(GATEWAY_CODES.AUTHENTICATION_FAILED, {
+        details: [{ field: 'installationId', issue: 'missing' }],
+      });
+    }
+
     return {
-      userId: String(payload.sub ?? ''),
-      installationId: String(payload['installationId'] ?? ''),
+      userId: subject,
+      installationId: installation,
       scope,
       authMode,
       environment: this.#config.environment,

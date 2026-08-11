@@ -84,6 +84,18 @@ export const parseModelProfiles = (source: string): ModelProfileSnapshot => {
     totalDeadlineMs: requireNumber(routingRaw['total_deadline_ms'], 'routing.total_deadline_ms'),
   };
 
+  // A deadline of zero or less is not a deadline: AbortSignal.timeout(0) aborts
+  // before the request leaves, so the roster would parse cleanly and then fail
+  // every attempt with a timeout nobody could explain from the config.
+  for (const [name, value] of [
+    ['pass_deadline_ms', routing.passDeadlineMs],
+    ['total_deadline_ms', routing.totalDeadlineMs],
+  ] as const) {
+    if (!Number.isFinite(value) || value <= 0) {
+      throw new ConfigurationError(`model-profiles: routing.${name} must be a positive number`);
+    }
+  }
+
   if (routing.passDeadlineMs > routing.totalDeadlineMs) {
     throw new ConfigurationError(
       'model-profiles: pass_deadline_ms cannot exceed total_deadline_ms',

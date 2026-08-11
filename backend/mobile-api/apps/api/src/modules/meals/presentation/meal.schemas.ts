@@ -9,15 +9,32 @@ import { LIMITS, MEAL_TYPES, CATALOG_SOURCES, NUTRITION_ORIGINS } from '@supernu
  * is ignore-unknown, reject-missing-required.
  */
 
+// Non-negative. The `-?` accepted "-250" calories and "-1" servings, which the
+// goals module already refuses — two surfaces disagreeing about whether a meal
+// can weigh less than nothing, and the permissive one is the write path.
 const decimalString = z
   .string()
-  .regex(/^-?\d{1,7}(\.\d{1,3})?$/, 'must be a decimal with at most 3 fraction digits');
+  .regex(/^\d{1,7}(\.\d{1,3})?$/, 'must be a non-negative decimal with at most 3 fraction digits');
 
 const foodRef = z
   .string()
   .regex(/^(usda|off):[a-z0-9-]+:[A-Za-z0-9._-]+$/, 'must be a namespace-qualified food id');
 
-const localDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'must be YYYY-MM-DD');
+// Shape AND existence. The regex alone accepted 2026-02-30 and 2026-13-01,
+// which reached the insert and failed there — a 500 for a request the client
+// could have been told about immediately.
+const localDate = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/, 'must be YYYY-MM-DD')
+  .refine((value) => {
+    const [year, month, day] = value.split('-').map(Number);
+    const date = new Date(Date.UTC(year as number, (month as number) - 1, day as number));
+    return (
+      date.getUTCFullYear() === year &&
+      date.getUTCMonth() === (month as number) - 1 &&
+      date.getUTCDate() === day
+    );
+  }, 'must be a real calendar date');
 
 const timezone = z.string().refine(
   (v) => {

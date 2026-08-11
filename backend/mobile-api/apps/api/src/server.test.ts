@@ -153,6 +153,10 @@ beforeEach(async () => {
       limiter: new InMemoryRateLimiter([
         { layer: 'installation', limit: 20, windowSeconds: 3600 },
         { layer: 'ip', limit: 300, windowSeconds: 60 },
+        // Mirrors RATE_LIMIT_RULES in main.ts. Without it the limiter has no
+        // rule for this layer and allows unconditionally, which is how the
+        // session endpoint went unthrottled in the first place.
+        { layer: 'auth-endpoint', limit: 10, windowSeconds: 60 },
       ]),
       effects: new InMemoryEffectStore(),
       requestIds: new InMemoryEffectStore(),
@@ -669,5 +673,31 @@ describe('unknown routes', () => {
     const response = await server.app.inject({ method: 'GET', url: '/nope' });
     expect(response.statusCode).toBe(404);
     expect(response.json().error.gatewayCode).toBe('validation-error');
+  });
+});
+
+/**
+ * Low group — the one endpoint that hands out credentials was unthrottled.
+ *
+ * POST /gw/v1/session is unauthenticated by design: it is where a client gets
+ * its first token. That makes it the endpoint that most needs a limit, and it
+ * had none — anyone could mint sessions in a loop. RATE_LIMIT_RULES has carried
+ * an `auth-endpoint` rule since it was written; nothing used it.
+ */
+describe('POST /gw/v1/session', () => {
+  it('is throttled by address', async () => {
+    const statuses: number[] = [];
+    for (let i = 0; i < 14; i += 1) {
+      const response = await server.app.inject({ method: 'POST', url: '/gw/v1/session' });
+      statuses.push(response.statusCode);
+    }
+    expect(statuses.filter((s) => s === 429).length).toBeGreaterThan(0);
+  });
+
+  it('advertises the limit before the caller hits it', async () => {
+    // A client should be able to back off from the headers rather than learning
+    // the limit only by being refused.
+    const response = await server.app.inject({ method: 'POST', url: '/gw/v1/session' });
+    expect(response.headers['x-ratelimit-limit']).toBeDefined();
   });
 });

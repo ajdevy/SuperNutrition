@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { AppError } from '@supernutrition/shared';
 import { mapError, toGatewayError, toProductError } from './error-handler.js';
-import { GatewayError, GATEWAY_CODES } from '../security/gateway-errors.js';
+import { GatewayError, GATEWAY_CODES, GATEWAY_ERRORS } from '../security/gateway-errors.js';
 
 describe('mapping to the B-5 taxonomy', () => {
   it('passes a GatewayError through unchanged', () => {
@@ -168,5 +168,33 @@ describe('mapping to the Product API taxonomy', () => {
     const mapped = toProductError(thrown);
     expect(mapped.code).toBe('INTERNAL_ERROR');
     expect(JSON.stringify(mapped.toResponse('c1'))).not.toContain('boom');
+  });
+});
+
+/**
+ * Low group — multipart errors that answered 500.
+ *
+ * Only two of @fastify/multipart's codes were mapped. The rest fell through to
+ * internal-error, so a client that sent too many parts or a malformed
+ * content-type was told the server had broken and that retrying might help. It
+ * would not: the same request fails the same way every time.
+ */
+describe('multipart failures are client errors, not server faults', () => {
+  it.each([
+    ['FST_FILES_LIMIT', 413],
+    ['FST_FIELDS_LIMIT', 413],
+    ['FST_PARTS_LIMIT', 413],
+    ['FST_MP_PREMATURE_CLOSE', 400],
+    ['FST_INVALID_MULTIPART_CONTENT_TYPE', 415],
+  ])('maps %s to %i rather than 500', (code, expected) => {
+    const mapped = toGatewayError(Object.assign(new Error('multipart'), { code }));
+    expect(GATEWAY_ERRORS[mapped.gatewayCode].httpStatus, code).toBe(expected);
+  });
+
+  it('still sends anything genuinely unrecognised to internal-error', () => {
+    // The fallback has to stay: an unmapped throwable must not leak, and
+    // guessing a 4xx for something we do not understand would be worse.
+    const mapped = toGatewayError(Object.assign(new Error('?'), { code: 'FST_SOMETHING_NEW' }));
+    expect(mapped.gatewayCode).toBe('internal-error');
   });
 });
