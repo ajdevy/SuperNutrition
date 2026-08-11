@@ -21,8 +21,29 @@ import platform.Foundation.NSData
 public class SharedKitPhotoAnalysisSession private constructor(
     attemptId: String,
     public val presenterCopy: PhotoAnalysisPresenterCopy = localizedPhotoAnalysisCopy(),
+    /**
+     * Supplied by the iOS composition root.
+     *
+     * It used to be hardcoded to PhotoAnalysisAnalysisLauncher.None, so
+     * photoReturned() normalised the image, reached Ready, and then called a
+     * launcher that does nothing: iOS could take a photo and would never analyse
+     * it. `None` is documented as the choice for a host that deliberately binds
+     * no analysis runtime, and iOS is not that host — it had simply never been
+     * given one.
+     *
+     * The default is kept for the preview and screenshot paths that genuinely do
+     * not analyse, but it is now a decision a caller makes rather than one baked
+     * into the type.
+     */
+    private val analysisLauncher: PhotoAnalysisAnalysisLauncher = PhotoAnalysisAnalysisLauncher.None,
 ) {
     public constructor(attemptId: String) : this(attemptId, localizedPhotoAnalysisCopy())
+
+    /** The entry point the iOS composition root uses to bind a real launcher. */
+    public constructor(
+        attemptId: String,
+        analysisLauncher: PhotoAnalysisAnalysisLauncher,
+    ) : this(attemptId, localizedPhotoAnalysisCopy(), analysisLauncher)
 
     private val leases = PhotoLeaseStore()
     private val sessions = PhotoSessionStore()
@@ -31,7 +52,6 @@ public class SharedKitPhotoAnalysisSession private constructor(
         leases = leases,
         sessions = sessions,
     )
-    private val analysisLauncher: PhotoAnalysisAnalysisLauncher = PhotoAnalysisAnalysisLauncher.None
 
     /** Native display copy retained only while the current photo flow needs it. */
     public var retainedPhoto: IosRetainedPhotoPreview? = null

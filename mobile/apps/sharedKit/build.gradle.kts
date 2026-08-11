@@ -37,6 +37,26 @@ kotlin {
             iosMain.dependencies {
                 implementation(project(":platform:photo-ios"))
             }
+
+            // src/iosTest existed and was attached to nothing, so it never
+            // compiled and never ran — SharedKitBootstrapBridgeTest had been
+            // dead since it was written. Wired to the same targets as iosMain,
+            // so an iOS-only regression is caught on the iOS compiler rather
+            // than by a JVM stand-in that shares none of its code paths.
+            val iosTest = maybeCreate("iosTest")
+            val iosTestSourceSet = getByName("iosTest").also { it.dependsOn(getByName("commonTest")) }
+            if (enableIosDeviceTarget) {
+                named("iosArm64Test") { dependsOn(iosTestSourceSet) }
+                if (!hostIsIntelMac) {
+                    named("iosSimulatorArm64Test") { dependsOn(iosTestSourceSet) }
+                }
+            }
+            if (enableIntelX64) {
+                named("iosX64Test") { dependsOn(iosTestSourceSet) }
+            }
+            iosTest.dependencies {
+                implementation(kotlin("test"))
+            }
         }
         commonMain.dependencies {
             implementation(libs.koin.core)
