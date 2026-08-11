@@ -30,6 +30,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 
 class PhotoAnalysisPresenterReviewTest {
     private val copy = PhotoAnalysisPresenterCopyFixtures.localized()
@@ -65,7 +66,7 @@ class PhotoAnalysisPresenterReviewTest {
     }
 
     @Test
-    fun `presenter keeps dish proposals and visible component evidence separate`() {
+    fun `presenter keeps local visible-food evidence separate without ingredient or mass claims`() {
         val model = PhotoAnalysisPresenterModel.from(
             PhotoAnalysisState.CandidateReview(
                 ref = ref,
@@ -98,12 +99,45 @@ class PhotoAnalysisPresenterReviewTest {
         assertEquals(listOf("Salmon with rice"), review.mainDishProposals.map { it.label })
         assertEquals(listOf("Rice"), review.visibleComponents.map { it.label })
         assertEquals(copy.evidence.fromThisPhoto, review.visibleComponents.single().sourceLabel)
-        assertEquals("Estimated: 120–150 g", review.visibleComponents.single().mass.label)
+        assertNull(review.visibleComponents.single().mass)
         assertEquals(copy.evidence.localProvenance, review.visibleComponents.single().provenanceLabel)
         assertFalse(review.visibleComponents.single().isSelected)
         assertEquals(copy.evidence.notSelected, review.visibleComponents.single().selectionLabel)
+        assertEquals(emptyList(), review.compositionHints)
+    }
+
+    @Test
+    fun `presenter retains ingredient and mass evidence for remote results`() {
+        val model = PhotoAnalysisPresenterModel.from(
+            PhotoAnalysisState.CandidateReview(
+                ref = ref,
+                requestId = requestId,
+                draft = CandidateReviewDraft(
+                    mainDishProposals = listOf(dish("dish-remote", "Remote dish", 1, InferenceRoute.REMOTE)),
+                    photoEvidence = listOf(
+                        component(
+                            id = "component-remote",
+                            candidateId = "ingredient:beans",
+                            label = "Beans",
+                            evidence = ComponentEvidence(route = InferenceRoute.REMOTE),
+                        ),
+                    ),
+                    compositionHints = listOf(
+                        DishIngredientHint(
+                            ingredientId = "ingredient:tomato",
+                            label = "Tomato",
+                            support = 1.0,
+                            sourceDishCandidateIds = listOf("dish-remote"),
+                        ),
+                    ),
+                ),
+            ),
+            copy,
+        )
+
+        val review = assertNotNull(model.review)
+        assertEquals("Estimated: 120–150 g", assertNotNull(review.visibleComponents.single().mass).label)
         assertEquals(listOf("Tomato"), review.compositionHints.map { it.label })
-        assertEquals(copy.evidence.compositionHintSource, review.compositionHints.single().sourceLabel)
     }
 
     @Test
@@ -113,10 +147,20 @@ class PhotoAnalysisPresenterReviewTest {
                 ref = ref,
                 requestId = requestId,
                 draft = CandidateReviewDraft(
-                    mainDishProposals = listOf(dish("dish-salad", "Salad", 1)),
+                    mainDishProposals = listOf(dish("dish-salad", "Salad", 1, InferenceRoute.REMOTE)),
                     photoEvidence = listOf(
-                        component("component-carrot-1", "ingredient:carrot", "Carrot"),
-                        component("component-carrot-2", "coco:carrot", "carrot"),
+                        component(
+                            "component-carrot-1",
+                            "ingredient:carrot",
+                            "Carrot",
+                            ComponentEvidence(route = InferenceRoute.REMOTE),
+                        ),
+                        component(
+                            "component-carrot-2",
+                            "coco:carrot",
+                            "carrot",
+                            ComponentEvidence(route = InferenceRoute.REMOTE),
+                        ),
                     ),
                     compositionHints = listOf(
                         DishIngredientHint(
@@ -153,15 +197,15 @@ class PhotoAnalysisPresenterReviewTest {
                 PhotoAnalysisMassStatus.NOT_EVALUABLE,
                 PhotoAnalysisMassStatus.ABSTAINED,
             ),
-            review.visibleComponents.map { it.mass.status },
+            review.visibleComponents.map { assertNotNull(it.mass).status },
         )
-        assertEquals("Estimated: 20.5–30.25 g", review.visibleComponents[0].mass.label)
+        assertEquals("Estimated: 20.5–30.25 g", assertNotNull(review.visibleComponents[0].mass).label)
         assertEquals(copy.evidence.identityAmbiguous, review.visibleComponents[0].ambiguityLabel)
         assertEquals(copy.evidence.partiallyOccluded, review.visibleComponents[0].visibilityLabel)
         assertEquals(copy.evidence.regionUnavailable, review.visibleComponents[0].regionLabel)
         assertEquals(copy.evidence.mixedContent, review.visibleComponents[1].ambiguityLabel)
-        assertEquals(copy.evidence.massNotEvaluable, review.visibleComponents[1].mass.label)
-        assertEquals(copy.evidence.massAbstained, review.visibleComponents[2].mass.label)
+        assertEquals(copy.evidence.massNotEvaluable, assertNotNull(review.visibleComponents[1].mass).label)
+        assertEquals(copy.evidence.massAbstained, assertNotNull(review.visibleComponents[2].mass).label)
     }
 
     private fun factualVariantReview(): PhotoAnalysisReviewModel = assertNotNull(
@@ -198,6 +242,7 @@ class PhotoAnalysisPresenterReviewTest {
                                     MassNotEvaluableReason.MIXED_OR_OCCLUDED,
                                     "mass-not-evaluable",
                                 ),
+                                route = InferenceRoute.REMOTE,
                             ),
                         ),
                         component(
@@ -209,6 +254,7 @@ class PhotoAnalysisPresenterReviewTest {
                                     MassAbstentionReason.IDENTITY_AMBIGUOUS,
                                     "mass-abstained",
                                 ),
+                                route = InferenceRoute.REMOTE,
                             ),
                         ),
                     ),

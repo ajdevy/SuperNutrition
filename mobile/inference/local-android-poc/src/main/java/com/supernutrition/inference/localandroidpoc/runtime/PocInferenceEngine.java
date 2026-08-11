@@ -21,58 +21,32 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
- * Standalone, research-only Android PoC inference pipeline.
+ * Standalone Android local visible-food inference pipeline.
  *
  * <p>The pipeline is deliberately not production mobile code. Food-101 is
  * used only for dish candidates, YOLO-World is restricted to a small COCO
- * food-label subset for region proposals, and MobileSAM is class-agnostic
+ * food-label subset for visible-food proposals, and MobileSAM is class-agnostic
  * mask refinement. No ingredient decomposition, nutrition binding, or mass
  * estimation is performed.</p>
  */
 public final class PocInferenceEngine implements AutoCloseable {
     private static final String DISH_MODEL = "swin-finetuned-food101-matmul-int8.onnx";
     private static final String DISH_LABELS = "food101-labels.txt";
-    private static final String REGION_MODEL = "yolov8s-worldv2-coco.onnx";
+    private static final String REGION_MODEL = PocYoloWorldContract.MODEL_ASSET;
     private static final String SAM_ENCODER = "mobile-sam-encoder.onnx";
     private static final String SAM_DECODER = "mobile-sam-decoder.onnx";
     private static final int DISH_SIZE = 224;
-    private static final int REGION_SIZE = 640;
+    private static final int REGION_SIZE = PocYoloWorldContract.IMAGE_SIZE;
     private static final int SAM_SIZE = 1024;
-    private static final int MAX_REGIONS = 16;
-    private static final float REGION_CONFIDENCE = 0.10f;
-    private static final float REGION_NMS_IOU = 0.70f;
     private static final int MASK_MAX_SIDE = 512;
-    private static final String[] COCO_NAMES = {
-            "person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "truck", "boat", "traffic_light",
-            "fire_hydrant", "stop_sign", "parking_meter", "bench", "bird", "cat", "dog", "horse", "sheep", "cow",
-            "elephant", "bear", "zebra", "giraffe", "backpack", "umbrella", "handbag", "tie", "suitcase", "frisbee",
-            "skis", "snowboard", "sports_ball", "kite", "baseball_bat", "baseball_glove", "skateboard", "surfboard", "tennis_racket", "bottle",
-            "wine_glass", "cup", "fork", "knife", "spoon", "bowl", "banana", "apple", "sandwich", "orange",
-            "broccoli", "carrot", "hot_dog", "pizza", "donut", "cake", "chair", "couch", "potted_plant", "bed",
-            "dining_table", "toilet", "tv", "laptop", "mouse", "remote", "keyboard", "cell_phone", "microwave", "oven",
-            "toaster", "sink", "refrigerator", "book", "clock", "vase", "scissors", "teddy_bear", "hair_drier", "toothbrush"
-    };
-    /**
-     * Only labels that can plausibly be shown as visible component hints are
-     * retained. Composite dish labels are deliberately excluded: they are
-     * not ingredients and produced misleading results such as "pizza" on a
-     * soup photo in the first device PoC.
-     */
-    private static final Set<String> COCO_COMPONENT_LABELS = new HashSet<>(Arrays.asList(
-            "banana", "apple", "orange", "broccoli", "carrot"
-    ));
 
     private final Context context;
     private final boolean refineMasks;
-    private final PocDishIngredientPriorProvider ingredientPriorProvider;
     private final OrtEnvironment environment;
     private OrtSession dishSession;
     private OrtSession regionSession;
@@ -85,33 +59,16 @@ public final class PocInferenceEngine implements AutoCloseable {
 
     /** Creates an engine; model sessions are loaded lazily by {@link #analyze(Bitmap)}. */
     public PocInferenceEngine(Context context) {
-        this(context, true, dishLabel -> Collections.<String>emptyList());
+        this(context, false);
     }
 
     /** The app PoC can disable MobileSAM to keep the APK/device path bounded. */
     public PocInferenceEngine(Context context, boolean refineMasks) {
-        this(context, refineMasks, dishLabel -> Collections.<String>emptyList());
-    }
-
-    /**
-     * Creates an engine with host-owned dish-composition hints. The inference
-     * implementation stays identical in the shipped runtime and benchmark
-     * harness; only the host's canonical prior table is supplied at the edge.
-     */
-    public PocInferenceEngine(
-            Context context,
-            boolean refineMasks,
-            PocDishIngredientPriorProvider ingredientPriorProvider
-    ) {
         if (context == null) {
             throw new IllegalArgumentException("context must not be null");
         }
-        if (ingredientPriorProvider == null) {
-            throw new IllegalArgumentException("ingredientPriorProvider must not be null");
-        }
         this.context = context.getApplicationContext() == null ? context : context.getApplicationContext();
         this.refineMasks = refineMasks;
-        this.ingredientPriorProvider = ingredientPriorProvider;
         this.environment = OrtEnvironment.getEnvironment();
     }
 
@@ -142,7 +99,6 @@ public final class PocInferenceEngine implements AutoCloseable {
         List<PocAnalysis.DishCandidate> dishes = new ArrayList<>();
         List<RawRegion> detectorProposals = new ArrayList<>();
         List<PocAnalysis.Region> regions = new ArrayList<>();
-        List<PocAnalysis.IngredientSuggestion> ingredientSuggestions = new ArrayList<>();
         List<String> warnings = new ArrayList<>();
         List<String> failedStages = new ArrayList<>();
         warnings.add("research-only output: dish labels and limited COCO proposals are not full ingredients; grams are never estimated");
@@ -161,14 +117,13 @@ public final class PocInferenceEngine implements AutoCloseable {
             warnings.add("COCO region proposal pipeline unavailable: " + reason(error));
         }
 
-        ingredientSuggestions.addAll(buildIngredientSuggestions(dishes, detectorProposals));
-        List<RawRegion> proposals = applySuggestionFirstFusion(dishes, detectorProposals, warnings);
+        List<RawRegion> proposals = detectorProposals;
 
         if (gridCellIndex >= 0) {
             float[] bounds = PocInferenceMath.gridCellBounds(gridCellIndex);
             proposals.add(0, new RawRegion(
                     "grid_prompt", 0.0f, bounds[0], bounds[1], bounds[2], bounds[3]));
-            if (proposals.size() > MAX_REGIONS) {
+            if (proposals.size() > PocYoloWorldContract.MAX_DETECTIONS) {
                 proposals.remove(proposals.size() - 1);
             }
             warnings.add("grid prompt is class-agnostic; its mask does not identify an ingredient");
@@ -215,7 +170,7 @@ public final class PocInferenceEngine implements AutoCloseable {
         String status = failedStages.isEmpty()
                 ? (dishes.isEmpty() && regions.isEmpty() ? "empty" : "success")
                 : (dishes.isEmpty() && regions.isEmpty() ? "failed" : "partial");
-        return new PocAnalysis(dishes, regions, ingredientSuggestions, status, warnings, failedStages);
+        return new PocAnalysis(dishes, regions, status, warnings, failedStages);
     }
 
     /** Closes all owned ONNX sessions. It is safe to call more than once. */
@@ -271,21 +226,15 @@ public final class PocInferenceEngine implements AutoCloseable {
 
     private List<RawRegion> runRegionProposals(Bitmap source) throws Exception {
         ensureRegionSession();
-        Bitmap resized = null;
-        try {
-            resized = resize(source, REGION_SIZE, REGION_SIZE);
-            float[] pixels = toRgbInput(resized, REGION_SIZE);
-            try (OnnxTensor input = OnnxTensor.createTensor(
-                    environment, FloatBuffer.wrap(pixels), new long[]{1, 3, REGION_SIZE, REGION_SIZE}
-            ); OrtSession.Result result = regionSession.run(Collections.singletonMap(regionInput, input))) {
-                Object raw = result.get(0).getValue();
-                if (!(raw instanceof float[][][])) {
-                    throw new IOException("YOLO output is not a rank-3 float tensor: " + className(raw));
-                }
-                return parseYolo((float[][][]) raw);
+        float[] pixels = PocYoloWorldContract.preprocess(source);
+        try (OnnxTensor input = OnnxTensor.createTensor(
+                environment, FloatBuffer.wrap(pixels), new long[]{1, 3, REGION_SIZE, REGION_SIZE}
+        ); OrtSession.Result result = regionSession.run(Collections.singletonMap(regionInput, input))) {
+            Object raw = result.get(0).getValue();
+            if (!(raw instanceof float[][][])) {
+                throw new IOException("YOLO output is not a rank-3 float tensor: " + className(raw));
             }
-        } finally {
-            recycleIfOwned(resized, source);
+            return toRawRegions(PocYoloWorldContract.parse((float[][][]) raw));
         }
     }
 
@@ -412,192 +361,22 @@ public final class PocInferenceEngine implements AutoCloseable {
     }
 
     static List<RawRegion> parseYolo(float[][][] tensor) throws IOException {
-        if (tensor.length != 1 || tensor[0].length == 0) {
-            throw new IOException("Unexpected YOLO output batch/shape");
-        }
-        float[][] data = tensor[0];
-        List<RawRegion> candidates = new ArrayList<>();
-        int featureCount = 4 + COCO_NAMES.length;
-        boolean channelsFirst = data.length == featureCount;
-        boolean rowsFirst = data[0].length == featureCount;
-        if (channelsFirst == rowsFirst) {
-            throw new IOException("Expected exactly one YOLO feature dimension of " + featureCount
-                    + ", got [1," + data.length + "," + data[0].length + "]");
-        }
-        if (channelsFirst) {
-            int predictionCount = data[0].length;
-            for (int prediction = 0; prediction < predictionCount; prediction++) {
-                addYoloCandidate(candidates, data[0][prediction], data[1][prediction],
-                        data[2][prediction], data[3][prediction], data, prediction);
-            }
-        } else {
-            for (float[] row : data) {
-                addYoloCandidate(candidates, row);
-            }
-        }
-        Collections.sort(candidates, Comparator.comparingDouble((RawRegion item) -> item.confidence).reversed());
-        List<RawRegion> kept = new ArrayList<>();
-        for (RawRegion candidate : candidates) {
-            boolean overlaps = false;
-            for (RawRegion existing : kept) {
-                if (existing.label.equals(candidate.label)
-                        && PocInferenceMath.iou(existing.left, existing.top, existing.right, existing.bottom,
-                        candidate.left, candidate.top, candidate.right, candidate.bottom) > REGION_NMS_IOU) {
-                    overlaps = true;
-                    break;
-                }
-            }
-            if (!overlaps) {
-                kept.add(candidate);
-                if (kept.size() == MAX_REGIONS) {
-                    break;
-                }
-            }
-        }
-        return kept;
+        return toRawRegions(PocYoloWorldContract.parse(tensor));
     }
 
-    private List<RawRegion> applySuggestionFirstFusion(
-            List<PocAnalysis.DishCandidate> dishes,
-            List<RawRegion> detectorProposals,
-            List<String> warnings
-    ) {
-        Map<String, Float> support = PocFusionPolicy.compositionSupport(dishes, ingredientPriorProvider);
-        List<RawRegion> ranked = new ArrayList<>(detectorProposals);
-        Collections.sort(ranked, (left, right) -> Float.compare(
-                PocFusionPolicy.rankScore(
-                        right.confidence,
-                        PocFusionPolicy.normalizedSupport(support, right.label)),
-                PocFusionPolicy.rankScore(
-                        left.confidence,
-                        PocFusionPolicy.normalizedSupport(support, left.label))
-        ));
-        if (!ranked.isEmpty()) {
-            warnings.add("bounded late fusion applied; raw visual proposals retained and reranked");
-        }
-        warnings.add("dish-prior-only suggestions are composition hints; they never create visual overlays");
-        return ranked;
-    }
-
-    private List<PocAnalysis.IngredientSuggestion> buildIngredientSuggestions(
-            List<PocAnalysis.DishCandidate> dishes,
-            List<RawRegion> detectorProposals
-    ) {
-        Map<String, Float> compositionSupport = PocFusionPolicy.compositionSupport(dishes, ingredientPriorProvider);
-        List<PocAnalysis.IngredientSuggestion> suggestions = new ArrayList<>();
-        Set<String> seen = new HashSet<>();
-        for (String label : PocFusionPolicy.compositionLabels(dishes, ingredientPriorProvider)) {
-            float detectorConfidence = maxDetectorConfidence(detectorProposals, label);
-            suggestions.add(new PocAnalysis.IngredientSuggestion(
-                    label,
-                    detectorConfidence,
-                    true,
-                    detectorConfidence >= 0.0f,
-                    PocFusionPolicy.normalizedSupport(compositionSupport, label)
+    private static List<RawRegion> toRawRegions(List<PocYoloWorldContract.Detection> detections) {
+        List<RawRegion> regions = new ArrayList<>(detections.size());
+        for (PocYoloWorldContract.Detection detection : detections) {
+            regions.add(new RawRegion(
+                    detection.label(),
+                    detection.confidence(),
+                    detection.left(),
+                    detection.top(),
+                    detection.right(),
+                    detection.bottom()
             ));
-            seen.add(label);
         }
-        for (RawRegion proposal : detectorProposals) {
-            if (seen.add(proposal.label)) {
-                suggestions.add(new PocAnalysis.IngredientSuggestion(
-                        proposal.label,
-                        proposal.confidence,
-                        false,
-                        true,
-                        PocFusionPolicy.normalizedSupport(compositionSupport, proposal.label)
-                ));
-            }
-        }
-        return suggestions;
-    }
-
-    private static float maxDetectorConfidence(List<RawRegion> proposals, String label) {
-        float confidence = -1.0f;
-        for (RawRegion proposal : proposals) {
-            if (label.equals(proposal.label)) {
-                confidence = Math.max(confidence, proposal.confidence);
-            }
-        }
-        return confidence;
-    }
-
-    private static void addYoloCandidate(
-            List<RawRegion> candidates,
-            float centerX,
-            float centerY,
-            float width,
-            float height,
-            float[][] data,
-            int prediction
-    ) throws IOException {
-        int classIndex = -1;
-        float confidence = 0.0f;
-        for (int candidateClass = 0; candidateClass < COCO_NAMES.length; candidateClass++) {
-            float score = data[4 + candidateClass][prediction];
-            if (!Float.isFinite(score) || score < 0.0f || score > 1.0f) {
-                throw new IOException("YOLO class score is not finite and bounded");
-            }
-            if (score > confidence) {
-                confidence = score;
-                classIndex = candidateClass;
-            }
-        }
-        if (classIndex < 0 || confidence < REGION_CONFIDENCE
-                || !COCO_COMPONENT_LABELS.contains(COCO_NAMES[classIndex])) {
-            return;
-        }
-        if (!Float.isFinite(centerX) || !Float.isFinite(centerY)
-                || !Float.isFinite(width) || !Float.isFinite(height)
-                || width <= 0.0f || height <= 0.0f) {
-            throw new IOException("YOLO box coordinates are not finite and positive");
-        }
-        // The checked YOLO export pins box coordinates to REGION_SIZE pixels.
-        float scale = 1.0f / REGION_SIZE;
-        float left = PocInferenceMath.clamp01((centerX - width * 0.5f) * scale);
-        float top = PocInferenceMath.clamp01((centerY - height * 0.5f) * scale);
-        float right = PocInferenceMath.clamp01((centerX + width * 0.5f) * scale);
-        float bottom = PocInferenceMath.clamp01((centerY + height * 0.5f) * scale);
-        if (right <= left || bottom <= top) {
-            return;
-        }
-        candidates.add(new RawRegion(COCO_NAMES[classIndex], confidence, left, top, right, bottom));
-    }
-
-    private static void addYoloCandidate(List<RawRegion> candidates, float[] row) throws IOException {
-        int classIndex = -1;
-        float confidence = 0.0f;
-        for (int candidateClass = 0; candidateClass < COCO_NAMES.length; candidateClass++) {
-            float score = row[4 + candidateClass];
-            if (!Float.isFinite(score) || score < 0.0f || score > 1.0f) {
-                throw new IOException("YOLO class score is not finite and bounded");
-            }
-            if (score > confidence) {
-                confidence = score;
-                classIndex = candidateClass;
-            }
-        }
-        if (classIndex < 0 || confidence < REGION_CONFIDENCE
-                || !COCO_COMPONENT_LABELS.contains(COCO_NAMES[classIndex])) {
-            return;
-        }
-        float centerX = row[0];
-        float centerY = row[1];
-        float width = row[2];
-        float height = row[3];
-        if (!Float.isFinite(centerX) || !Float.isFinite(centerY)
-                || !Float.isFinite(width) || !Float.isFinite(height)
-                || width <= 0.0f || height <= 0.0f) {
-            throw new IOException("YOLO box coordinates are not finite and positive");
-        }
-        // The checked YOLO export pins box coordinates to REGION_SIZE pixels.
-        float scale = 1.0f / REGION_SIZE;
-        float left = PocInferenceMath.clamp01((centerX - width * 0.5f) * scale);
-        float top = PocInferenceMath.clamp01((centerY - height * 0.5f) * scale);
-        float right = PocInferenceMath.clamp01((centerX + width * 0.5f) * scale);
-        float bottom = PocInferenceMath.clamp01((centerY + height * 0.5f) * scale);
-        if (right > left && bottom > top) {
-            candidates.add(new RawRegion(COCO_NAMES[classIndex], confidence, left, top, right, bottom));
-        }
+        return regions;
     }
 
     private static float[][] firstMask(Object raw) throws IOException {
@@ -798,21 +577,6 @@ public final class PocInferenceEngine implements AutoCloseable {
                 output[offset] = normalize((pixel >> 16) & 0xff, 0.485f, 0.229f);
                 output[plane + offset] = normalize((pixel >> 8) & 0xff, 0.456f, 0.224f);
                 output[2 * plane + offset] = normalize(pixel & 0xff, 0.406f, 0.225f);
-            }
-        }
-        return output;
-    }
-
-    private static float[] toRgbInput(Bitmap bitmap, int side) {
-        int plane = side * side;
-        float[] output = new float[3 * plane];
-        for (int y = 0; y < side; y++) {
-            for (int x = 0; x < side; x++) {
-                int pixel = bitmap.getPixel(x, y);
-                int offset = y * side + x;
-                output[offset] = ((pixel >> 16) & 0xff) / 255.0f;
-                output[plane + offset] = ((pixel >> 8) & 0xff) / 255.0f;
-                output[2 * plane + offset] = (pixel & 0xff) / 255.0f;
             }
         }
         return output;

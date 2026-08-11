@@ -10,6 +10,8 @@ import android.os.PowerManager;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.supernutrition.inference.localandroidpoc.runtime.PocYoloWorldContract;
+
 import ai.onnxruntime.OnnxTensor;
 import ai.onnxruntime.OnnxValue;
 import ai.onnxruntime.OrtEnvironment;
@@ -24,7 +26,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -40,13 +41,10 @@ import java.util.concurrent.Executors;
  */
 public final class YoloWorldActivity extends Activity {
     private static final String TAG = "SuperNutritionYoloWorld";
-    private static final String MODEL_ASSET = "yolov8s-worldv2-coco.onnx";
-    private static final String MODEL_SHA256 =
-            "d27ac81640ca470cc7e42edd638b6626ac6b4f4dcce74aabb6e09cd02a13c84f";
+    private static final String MODEL_ASSET = PocYoloWorldContract.MODEL_ASSET;
+    private static final String MODEL_SHA256 = PocYoloWorldContract.MODEL_SHA256;
     private static final String RESULT_FILE = "yolo-world-v2-result.json";
-    private static final int IMAGE_SIZE = 640;
-    private static final float CONFIDENCE_FLOOR = 0.10f;
-    private static final float NMS_IOU = 0.70f;
+    private static final int IMAGE_SIZE = PocYoloWorldContract.IMAGE_SIZE;
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private TextView status;
@@ -137,58 +135,9 @@ public final class YoloWorldActivity extends Activity {
             if (output.length != 1 || output[0].length != 84) {
                 throw new IOException("Unexpected YOLO-World output shape");
             }
-            List<Detection> detections = nonMaximumSuppress(output[0]);
+            List<PocYoloWorldContract.Detection> detections = PocYoloWorldContract.parse(output);
             return new FixtureRun(fixture, CocoFoodBenchmark.EXPECTED_VISIBLE_COMPONENTS[fixtureIndex], detections);
         }
-    }
-
-    private List<Detection> nonMaximumSuppress(float[][] output) throws IOException {
-        int predictionCount = output[0].length;
-        if (predictionCount < 1) {
-            throw new IOException("YOLO-World output has no predictions");
-        }
-        List<Detection> candidates = new ArrayList<>();
-        for (int prediction = 0; prediction < predictionCount; prediction++) {
-            int classIndex = 0;
-            float confidence = 0.0f;
-            for (int candidateClass = 0; candidateClass < CocoFoodBenchmark.COCO_NAMES.length; candidateClass++) {
-                float score = output[4 + candidateClass][prediction];
-                if (score > confidence) {
-                    confidence = score;
-                    classIndex = candidateClass;
-                }
-            }
-            if (confidence < CONFIDENCE_FLOOR) {
-                continue;
-            }
-            float centerX = output[0][prediction];
-            float centerY = output[1][prediction];
-            float width = output[2][prediction];
-            float height = output[3][prediction];
-            candidates.add(new Detection(
-                    classIndex,
-                    confidence,
-                    centerX - width / 2.0f,
-                    centerY - height / 2.0f,
-                    centerX + width / 2.0f,
-                    centerY + height / 2.0f
-            ));
-        }
-        Collections.sort(candidates, Comparator.comparingDouble((Detection item) -> item.confidence).reversed());
-        List<Detection> kept = new ArrayList<>();
-        for (Detection candidate : candidates) {
-            boolean overlaps = false;
-            for (Detection existing : kept) {
-                if (existing.classIndex == candidate.classIndex && iou(existing, candidate) > NMS_IOU) {
-                    overlaps = true;
-                    break;
-                }
-            }
-            if (!overlaps) {
-                kept.add(candidate);
-            }
-        }
-        return kept;
     }
 
     private float[] preprocess(String fixture) throws IOException {
@@ -197,20 +146,11 @@ public final class YoloWorldActivity extends Activity {
             if (source == null) {
                 throw new IOException("Unable to decode " + fixture);
             }
-            Bitmap resized = Bitmap.createScaledBitmap(source, IMAGE_SIZE, IMAGE_SIZE, true);
-            float[] output = new float[3 * IMAGE_SIZE * IMAGE_SIZE];
-            for (int y = 0; y < IMAGE_SIZE; y++) {
-                for (int x = 0; x < IMAGE_SIZE; x++) {
-                    int pixel = resized.getPixel(x, y);
-                    int offset = y * IMAGE_SIZE + x;
-                    output[offset] = ((pixel >> 16) & 0xff) / 255.0f;
-                    output[IMAGE_SIZE * IMAGE_SIZE + offset] = ((pixel >> 8) & 0xff) / 255.0f;
-                    output[2 * IMAGE_SIZE * IMAGE_SIZE + offset] = (pixel & 0xff) / 255.0f;
-                }
+            try {
+                return PocYoloWorldContract.preprocess(source);
+            } finally {
+                source.recycle();
             }
-            resized.recycle();
-            source.recycle();
-            return output;
         }
     }
 
@@ -253,18 +193,6 @@ public final class YoloWorldActivity extends Activity {
 
     private static long elapsedMs(long startedNs) {
         return (System.nanoTime() - startedNs) / 1_000_000L;
-    }
-
-    private static float iou(Detection first, Detection second) {
-        float left = Math.max(first.left, second.left);
-        float top = Math.max(first.top, second.top);
-        float right = Math.min(first.right, second.right);
-        float bottom = Math.min(first.bottom, second.bottom);
-        float intersection = Math.max(0.0f, right - left) * Math.max(0.0f, bottom - top);
-        float firstArea = Math.max(0.0f, first.right - first.left) * Math.max(0.0f, first.bottom - first.top);
-        float secondArea = Math.max(0.0f, second.right - second.left) * Math.max(0.0f, second.bottom - second.top);
-        float union = firstArea + secondArea - intersection;
-        return union <= 0.0f ? 0.0f : intersection / union;
     }
 
     private static String resultJson(
@@ -327,30 +255,12 @@ public final class YoloWorldActivity extends Activity {
         return value.replace("\\", "\\\\").replace("\"", "\\\"");
     }
 
-    private static final class Detection {
-        private final int classIndex;
-        private final float confidence;
-        private final float left;
-        private final float top;
-        private final float right;
-        private final float bottom;
-
-        private Detection(int classIndex, float confidence, float left, float top, float right, float bottom) {
-            this.classIndex = classIndex;
-            this.confidence = confidence;
-            this.left = left;
-            this.top = top;
-            this.right = right;
-            this.bottom = bottom;
-        }
-    }
-
     private static final class FixtureRun {
         private final String fixture;
         private final Set<String> expected;
-        private final List<Detection> detections;
+        private final List<PocYoloWorldContract.Detection> detections;
 
-        private FixtureRun(String fixture, String[] expected, List<Detection> detections) {
+        private FixtureRun(String fixture, String[] expected, List<PocYoloWorldContract.Detection> detections) {
             this.fixture = fixture;
             this.expected = new HashSet<>(Arrays.asList(expected));
             this.detections = detections;
@@ -358,11 +268,8 @@ public final class YoloWorldActivity extends Activity {
 
         private Set<String> predictedFoodLabels() {
             Set<String> labels = new LinkedHashSet<>();
-            for (Detection detection : detections) {
-                String label = CocoFoodBenchmark.COCO_NAMES[detection.classIndex];
-                if (CocoFoodBenchmark.COCO_FOOD_LABELS.contains(label)) {
-                    labels.add(label);
-                }
+            for (PocYoloWorldContract.Detection detection : detections) {
+                labels.add(detection.label());
             }
             return labels;
         }
@@ -385,9 +292,9 @@ public final class YoloWorldActivity extends Activity {
             StringBuilder json = new StringBuilder("[");
             boolean first = true;
             Set<String> seen = new HashSet<>();
-            for (Detection detection : detections) {
-                String label = CocoFoodBenchmark.COCO_NAMES[detection.classIndex];
-                if (!CocoFoodBenchmark.COCO_FOOD_LABELS.contains(label) || !seen.add(label)) {
+            for (PocYoloWorldContract.Detection detection : detections) {
+                String label = detection.label();
+                if (!seen.add(label)) {
                     continue;
                 }
                 if (!first) {
@@ -395,7 +302,7 @@ public final class YoloWorldActivity extends Activity {
                 }
                 first = false;
                 json.append("{\"label\":\"").append(label).append("\",\"confidence\":")
-                        .append(formatFloat(detection.confidence)).append("}");
+                        .append(formatFloat(detection.confidence())).append("}");
             }
             return json.append(']').toString();
         }

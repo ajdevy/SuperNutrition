@@ -18,7 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.supernutrition.g3benchmark.poc.PocDishIngredientPriors;
 import com.supernutrition.inference.localandroidpoc.runtime.PocAnalysis;
 import com.supernutrition.inference.localandroidpoc.runtime.PocInferenceEngine;
 
@@ -32,14 +31,14 @@ import java.util.concurrent.Executors;
 
 /**
  * Research-only UI/camera slice. It intentionally does not belong to
- * production mobile/** and does not promise ingredient or weight accuracy.
+ * production mobile/** and does not promise visible-food or weight accuracy.
  */
 public final class PocActivity extends Activity {
     private static final int REQUEST_CAMERA_PERMISSION = 4101;
     private static final int REQUEST_CAPTURE = 4102;
     private static final int REQUEST_GALLERY = 4103;
     private static final String RESEARCH_WARNING =
-            "Research PoC / ingredient labels limited to model vocabulary / grams unavailable";
+            "Research PoC / visible-food labels limited to model vocabulary / grams unavailable";
     private static final String EXTRA_RESEARCH_IMAGE_PATH = "research_image_path";
 
     private final ExecutorService analysisExecutor = Executors.newSingleThreadExecutor();
@@ -314,11 +313,7 @@ public final class PocActivity extends Activity {
     }
 
     private PocInferenceEngine createEngine() {
-        return new PocInferenceEngine(
-                getApplicationContext(),
-                true,
-                PocDishIngredientPriors::forDish
-        );
+        return new PocInferenceEngine(getApplicationContext(), false);
     }
 
     private void closeEngine() {
@@ -370,26 +365,6 @@ public final class PocActivity extends Activity {
                 }
             }
             summary.append('\n');
-        }
-        summary.append("\nDebug ingredient suggestions (full):");
-        if (analysis.ingredientSuggestions.isEmpty()) {
-            summary.append("\n• none");
-        } else {
-            for (PocAnalysis.IngredientSuggestion suggestion : analysis.ingredientSuggestions) {
-                summary.append("\n• ").append(suggestion.label);
-                if (suggestion.fromDishPrior) {
-                    summary.append(" — dish prior");
-                    summary.append(", composition support ").append(percent(suggestion.compositionSupport));
-                    if (suggestion.detectorConfidence >= 0.0f) {
-                        summary.append(", detected ").append(percent(suggestion.detectorConfidence));
-                    } else {
-                        summary.append(", not detected");
-                    }
-                } else {
-                    summary.append(" — detector ").append(percent(suggestion.detectorConfidence));
-                    summary.append(", retained for visual review");
-                }
-            }
         }
         summary.append('\n').append(RESEARCH_WARNING);
         for (String warning : warnings) {

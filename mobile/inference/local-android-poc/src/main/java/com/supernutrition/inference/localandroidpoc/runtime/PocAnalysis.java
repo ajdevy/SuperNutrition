@@ -14,8 +14,6 @@ import java.util.List;
 public final class PocAnalysis implements AutoCloseable {
     public final List<DishCandidate> dishCandidates;
     public final List<Region> regions;
-    /** Full dish-prior and detector-candidate list for research debugging. */
-    public final List<IngredientSuggestion> ingredientSuggestions;
     public final String status;
     public final List<String> warnings;
     public final List<String> failedStages;
@@ -23,14 +21,12 @@ public final class PocAnalysis implements AutoCloseable {
     PocAnalysis(
             List<DishCandidate> dishCandidates,
             List<Region> regions,
-            List<IngredientSuggestion> ingredientSuggestions,
             String status,
             List<String> warnings,
             List<String> failedStages
     ) {
         this.dishCandidates = immutableCopy(dishCandidates);
         this.regions = immutableCopy(regions);
-        this.ingredientSuggestions = immutableCopy(ingredientSuggestions);
         this.status = status;
         this.warnings = immutableCopy(warnings);
         this.failedStages = immutableCopy(failedStages);
@@ -42,10 +38,6 @@ public final class PocAnalysis implements AutoCloseable {
 
     public List<Region> getRegions() {
         return regions;
-    }
-
-    public List<IngredientSuggestion> getIngredientSuggestions() {
-        return ingredientSuggestions;
     }
 
     public String getStatus() {
@@ -86,53 +78,6 @@ public final class PocAnalysis implements AutoCloseable {
 
         public float getConfidence() {
             return confidence;
-        }
-    }
-
-    /**
-     * Debug-only ingredient candidate. A dish prior is a plausibility hint,
-     * not visual evidence; detector confidence is -1 when that label was not
-     * emitted by the current detector.
-     */
-    public static final class IngredientSuggestion {
-        public final String label;
-        public final float detectorConfidence;
-        public final boolean fromDishPrior;
-        public final boolean acceptedForRegions;
-        public final float compositionSupport;
-
-        IngredientSuggestion(
-                String label,
-                float detectorConfidence,
-                boolean fromDishPrior,
-                boolean acceptedForRegions,
-                float compositionSupport
-        ) {
-            this.label = label;
-            this.detectorConfidence = detectorConfidence;
-            this.fromDishPrior = fromDishPrior;
-            this.acceptedForRegions = acceptedForRegions;
-            this.compositionSupport = compositionSupport;
-        }
-
-        public String getLabel() {
-            return label;
-        }
-
-        public float getDetectorConfidence() {
-            return detectorConfidence;
-        }
-
-        public boolean isFromDishPrior() {
-            return fromDishPrior;
-        }
-
-        public boolean isAcceptedForRegions() {
-            return acceptedForRegions;
-        }
-
-        public float getCompositionSupport() {
-            return compositionSupport;
         }
     }
 

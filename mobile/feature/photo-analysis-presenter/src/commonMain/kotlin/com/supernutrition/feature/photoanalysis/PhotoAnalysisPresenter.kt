@@ -322,7 +322,7 @@ data class PhotoAnalysisVisibleComponentModel(
     val visibilityLabel: String,
     val region: PhotoAnalysisVisibleRegionModel?,
     val regionLabel: String,
-    val mass: PhotoAnalysisMassModel,
+    val mass: PhotoAnalysisMassModel?,
     val provenanceLabel: String,
     /** E3.9 renders only immutable evidence; E5.1 owns a user-controlled selection. */
     val isSelected: Boolean = false,
@@ -363,7 +363,8 @@ private fun CandidateReviewDraft.toPresentation(copy: PhotoAnalysisPresenterCopy
             } else {
                 copy.evidence.regionAvailable
             },
-            mass = massModel(component.mass, copy.evidence),
+            mass = component.mass.takeUnless { component.provenance.route == InferenceRoute.LOCAL }
+                ?.let { massModel(it, copy.evidence) },
             provenanceLabel = provenanceLabel(component.provenance.route, copy.evidence),
             selectionLabel = copy.evidence.notSelected,
         )
@@ -379,7 +380,11 @@ private fun CandidateReviewDraft.toPresentation(copy: PhotoAnalysisPresenterCopy
             )
         },
         visibleComponents = visibleComponents,
-        compositionHints = compositionHints.map { hint -> hint.toPresentation(copy.evidence) },
+        compositionHints = if (isLocalVisibleFoodOnly()) {
+            emptyList()
+        } else {
+            compositionHints.map { hint -> hint.toPresentation(copy.evidence) }
+        },
         degradationLabel = if (degradation == CandidateReviewDegradation.DISH_CANDIDATES_UNAVAILABLE) {
             copy.evidence.partialDegradation
         } else {
@@ -387,6 +392,10 @@ private fun CandidateReviewDraft.toPresentation(copy: PhotoAnalysisPresenterCopy
         },
     )
 }
+
+private fun CandidateReviewDraft.isLocalVisibleFoodOnly(): Boolean = photoEvidence.isNotEmpty() &&
+    photoEvidence.all { it.provenance.route == InferenceRoute.LOCAL } &&
+    mainDishProposals.all { it.provenance.route == InferenceRoute.LOCAL }
 
 private fun DishIngredientHint.toPresentation(copy: EvidenceCopy): PhotoAnalysisDishIngredientHintModel =
     PhotoAnalysisDishIngredientHintModel(
