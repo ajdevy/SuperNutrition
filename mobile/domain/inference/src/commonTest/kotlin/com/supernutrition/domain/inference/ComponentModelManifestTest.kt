@@ -44,6 +44,12 @@ class ComponentModelManifestTest {
     fun `production activation requires approvals evidence rollback and app ownership`() {
         assertFailsWith<IllegalArgumentException> {
             validManifest(
+                activation = ComponentModelActivation.STAGED,
+                refs = ManifestRefs(productApprovalRef = "approval:must-not-be-staged"),
+            )
+        }
+        assertFailsWith<IllegalArgumentException> {
+            validManifest(
                 activation = ComponentModelActivation.PRODUCTION,
                 refs = ManifestRefs(),
             )

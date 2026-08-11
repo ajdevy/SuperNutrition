@@ -45,6 +45,44 @@ class InferenceModelBranchCoverageTest {
         assertRejectsIncompatibleRollback()
     }
 
+    @Test
+    fun `activation rejects duplicate staging non-production activation and a staged rollback target`() {
+        val operations = ScriptedOperations()
+        val controller = ComponentModelActivationController(operations)
+        val staged = manifest("staged-model", activation = ComponentModelActivation.STAGED)
+
+        assertIs<ComponentModelActivationResult.Staged>(controller.stage(staged))
+        assertRejected(
+            expected = ComponentModelActivationFailure.MANIFEST_MUST_BE_STAGED,
+            actual = controller.stage(staged),
+        )
+        assertRejected(
+            expected = ComponentModelActivationFailure.PRODUCTION_APPROVAL_REQUIRED,
+            actual = controller.activate(staged),
+        )
+
+        val rollbackController = ComponentModelActivationController(
+            operations = ScriptedOperations(),
+            initialActive = productionManifest("active-model", rollbackTargetVersion = "staged-target"),
+        )
+        val stagedTarget = manifest("staged-target", activation = ComponentModelActivation.STAGED)
+        assertIs<ComponentModelActivationResult.Staged>(rollbackController.stage(stagedTarget))
+        assertRejected(
+            expected = ComponentModelActivationFailure.ROLLBACK_TARGET_NOT_PRODUCTION,
+            actual = rollbackController.rollback(),
+        )
+    }
+
+    @Test
+    fun `activation controller refuses a non-production initial active manifest`() {
+        assertFailsWith<IllegalArgumentException> {
+            ComponentModelActivationController(
+                operations = ScriptedOperations(),
+                initialActive = manifest("staged-active", activation = ComponentModelActivation.STAGED),
+            )
+        }
+    }
+
     private fun assertRollbackWithoutActiveModel() {
         val noActive = ComponentModelActivationController(ScriptedOperations())
         assertRejected(
@@ -163,6 +201,28 @@ class InferenceModelBranchCoverageTest {
     }
 
     @Test
+    fun `v2 text components accept non-visual non-mass evidence and reject non-finite inputs`() {
+        val textOutcome = InferenceV2ContractFixtures.textNotEvaluableResult.outcome
+        val textComponent = (textOutcome as InferenceV2Outcome.Components).components.single()
+        val textResult = InferenceV2Result(
+            contractVersion = INFERENCE_EVIDENCE_CONTRACT_V2,
+            inputModality = InferenceInputModality.TEXT,
+            outcome = InferenceV2Outcome.Components(
+                listOf(textComponent, textComponent.copy(componentId = "text-component-2")),
+            ),
+        )
+
+        assertEquals(InferenceInputModality.TEXT, textResult.inputModality)
+        assertEquals(2, (textResult.outcome as InferenceV2Outcome.Components).components.size)
+        assertFailsWith<IllegalArgumentException> {
+            CalibratedConfidence(Double.NaN, ConfidenceBand.LOW)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            NormalizedVisibleRegion(Double.NaN, 0.0, 0.1, 0.1)
+        }
+    }
+
+    @Test
     fun `v2 capability rejects ready and unavailable reason mismatches`() {
         val ready = InferenceV2ContractFixtures.readyCapability
         val unavailable = ready.copy(
@@ -176,6 +236,45 @@ class InferenceModelBranchCoverageTest {
         }
         assertFailsWith<IllegalArgumentException> {
             ready.copy(state = CapabilityState.MODEL_REQUIRED, reason = CapabilityReason.NONE)
+        }
+    }
+
+    @Test
+    fun `v1 capability requires a concrete ready model and an unavailable reason`() {
+        val common = mapOf(
+            "contractVersion" to PHOTO_INFERENCE_CONTRACT_V1,
+            "userMessageKey" to "inference.capability",
+            "engineId" to "local-engine",
+        )
+
+        assertFailsWith<IllegalArgumentException> {
+            EngineCapability(
+                contractVersion = common.getValue("contractVersion"),
+                state = CapabilityState.READY,
+                reason = CapabilityReason.NONE,
+                userMessageKey = common.getValue("userMessageKey"),
+                engineId = common.getValue("engineId"),
+                modelVersion = null,
+            )
+        }
+        assertFailsWith<IllegalArgumentException> {
+            EngineCapability(
+                contractVersion = common.getValue("contractVersion"),
+                state = CapabilityState.READY,
+                reason = CapabilityReason.NONE,
+                userMessageKey = common.getValue("userMessageKey"),
+                engineId = common.getValue("engineId"),
+                modelVersion = " ",
+            )
+        }
+        assertFailsWith<IllegalArgumentException> {
+            EngineCapability(
+                contractVersion = common.getValue("contractVersion"),
+                state = CapabilityState.MODEL_REQUIRED,
+                reason = CapabilityReason.NONE,
+                userMessageKey = common.getValue("userMessageKey"),
+                engineId = common.getValue("engineId"),
+            )
         }
     }
 

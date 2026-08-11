@@ -34,6 +34,7 @@ import com.supernutrition.domain.inference.V2AbstentionReason
 import com.supernutrition.domain.inference.V2InferenceFailureCode
 import com.supernutrition.domain.inference.VisibleComponent
 import com.supernutrition.domain.photoanalysis.NormalizedPhotoInput
+import com.supernutrition.domain.photoanalysis.DishIngredientPriorTable
 import com.supernutrition.domain.photoanalysis.PhotoLeaseStorePort
 import com.supernutrition.domain.photoanalysis.PhotoRef
 import com.supernutrition.domain.photoanalysis.PhotoSessionStorePort
@@ -90,7 +91,7 @@ class AndroidPocRuntimeEngines(
 
 private class AndroidPocRuntimeCore(context: Context) : AutoCloseable {
     private val appContext = context.applicationContext ?: context
-    private val engine = PocInferenceEngine(appContext, false)
+    private val engine = PocInferenceEngine(appContext, false, DishIngredientPriorTable::forDish)
     private val assetsVerified = verifyAssets()
 
     suspend fun analyze(input: NormalizedPhotoInput, gridCellIndex: Int? = null): PocAnalysis =

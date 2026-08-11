@@ -63,6 +63,44 @@ class CandidateReviewSelectionTest {
     }
 
     @Test
+    fun `composition hints are bounded unique and ordered by support`() {
+        val ordered = listOf(
+            hint("ingredient:tomato", 1.0),
+            hint("ingredient:cucumber", 0.6),
+        )
+
+        val draft = CandidateReviewDraft(emptyList(), emptyList(), compositionHints = ordered)
+
+        assertEquals(ordered, draft.compositionHints)
+        assertFailsWith<IllegalArgumentException> {
+            CandidateReviewDraft(
+                emptyList(),
+                emptyList(),
+                compositionHints = List(25) { index ->
+                    hint("ingredient:hint-$index", 1.0 - index * 0.01)
+                },
+            )
+        }
+        assertFailsWith<IllegalArgumentException> {
+            CandidateReviewDraft(
+                emptyList(),
+                emptyList(),
+                compositionHints = listOf(
+                    hint("ingredient:tomato", 1.0),
+                    hint("ingredient:tomato", 0.6),
+                ),
+            )
+        }
+        assertFailsWith<IllegalArgumentException> {
+            CandidateReviewDraft(
+                emptyList(),
+                emptyList(),
+                compositionHints = ordered.reversed(),
+            )
+        }
+    }
+
+    @Test
     fun `dish selection is explicit reversible and ignores an unknown proposal`() {
         val reducer = CandidateReviewSelectionReducer
         val initial = CandidateReviewState(CandidateReviewDraft(listOf(dish("dish-1", 1)), emptyList()))
@@ -172,5 +210,12 @@ class CandidateReviewSelectionTest {
             calibrationVersion = "fixture-calibration",
             contractVersion = INFERENCE_EVIDENCE_CONTRACT_V2,
         ),
+    )
+
+    private fun hint(ingredientId: String, support: Double) = DishIngredientHint(
+        ingredientId = ingredientId,
+        label = ingredientId.removePrefix("ingredient:"),
+        support = support,
+        sourceDishCandidateIds = listOf("dish-$ingredientId"),
     )
 }

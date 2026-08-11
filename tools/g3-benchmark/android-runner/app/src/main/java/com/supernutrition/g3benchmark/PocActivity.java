@@ -18,8 +18,9 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.supernutrition.g3benchmark.poc.PocAnalysis;
-import com.supernutrition.g3benchmark.poc.PocInferenceEngine;
+import com.supernutrition.g3benchmark.poc.PocDishIngredientPriors;
+import com.supernutrition.inference.localandroidpoc.runtime.PocAnalysis;
+import com.supernutrition.inference.localandroidpoc.runtime.PocInferenceEngine;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -313,7 +314,11 @@ public final class PocActivity extends Activity {
     }
 
     private PocInferenceEngine createEngine() {
-        return new PocInferenceEngine(getApplicationContext());
+        return new PocInferenceEngine(
+                getApplicationContext(),
+                true,
+                PocDishIngredientPriors::forDish
+        );
     }
 
     private void closeEngine() {

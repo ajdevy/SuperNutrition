@@ -229,6 +229,102 @@ class PhotoAnalysisAnalysisTransitionsBranchTest {
         assertTrue(reduction.effects.isEmpty())
     }
 
+    @Test
+    fun `candidate review replace scan and cancel each preserve the correct cleanup decision`() {
+        val fixture = Fixture()
+        val review = fixture.candidateReview("candidate-controls-photo", "candidate-controls-request")
+        val replacement = fixture.leases.issue(fixture.attempt, "candidate-controls-replacement")
+
+        val replace = fixture.reducer.reduce(review, PhotoAnalysisEvent.ReplacePhoto(replacement))
+        val scanAgain = fixture.reducer.reduce(review, PhotoAnalysisEvent.ScanAgain)
+        val cancel = fixture.reducer.reduce(review, PhotoAnalysisEvent.Cancel)
+
+        assertEquals(PhotoAnalysisState.Preparing(replacement), replace.state)
+        assertEquals(listOf(PhotoAnalysisEffect.RevokePhoto(review.ref)), replace.effects)
+        assertEquals(PhotoAnalysisState.Capture, scanAgain.state)
+        assertEquals(listOf(PhotoAnalysisEffect.RevokePhoto(review.ref)), scanAgain.effects)
+        assertEquals(PhotoAnalysisState.Recovery(RecoveryReason.CANCELLED), cancel.state)
+        assertEquals(listOf(PhotoAnalysisEffect.RevokePhoto(review.ref)), cancel.effects)
+    }
+
+    @Test
+    fun `candidate grid selection fails closed when no normalized input was retained`() {
+        val fixture = Fixture()
+        val review = fixture.candidateReviewWithoutInput("candidate-missing-input", "candidate-missing-request")
+
+        val reduction = fixture.reducer.reduce(review, PhotoAnalysisEvent.GridCellSelected(0))
+
+        assertEquals(
+            PhotoAnalysisState.Recovery(RecoveryReason.CAPTURE_FAILED, review.ref),
+            reduction.state,
+        )
+        assertEquals(listOf(PhotoAnalysisEffect.RevokePhoto(review.ref)), reduction.effects)
+    }
+
+    @Test
+    fun `ready replace and cancel use their own cleanup transitions`() {
+        val fixture = Fixture()
+        val ready = fixture.ready("ready-controls-photo")
+        val replacement = fixture.leases.issue(fixture.attempt, "ready-controls-replacement")
+
+        val replace = fixture.reducer.reduce(ready, PhotoAnalysisEvent.ReplacePhoto(replacement))
+        val cancel = fixture.reducer.reduce(ready, PhotoAnalysisEvent.Cancel)
+
+        assertEquals(PhotoAnalysisState.Preparing(replacement), replace.state)
+        assertEquals(listOf(PhotoAnalysisEffect.RevokePhoto(ready.input.ref)), replace.effects)
+        assertEquals(PhotoAnalysisState.Recovery(RecoveryReason.CANCELLED), cancel.state)
+        assertEquals(listOf(PhotoAnalysisEffect.RevokePhoto(ready.input.ref)), cancel.effects)
+    }
+
+    @Test
+    fun `analysis failure releases a live photo while no photo recovery stays explicit`() {
+        val fixture = Fixture()
+        val current = fixture.analyzing("failed-analysis-photo", "failed-analysis-request")
+
+        val failed = fixture.reducer.reduce(
+            current,
+            PhotoAnalysisEvent.ReviewEvidenceUnavailable(
+                current.requestId,
+                RecoveryReason.ANALYSIS_FAILED,
+            ),
+        )
+        val emptyRecovery = fixture.reducer.reduce(
+            PhotoAnalysisState.Recovery(RecoveryReason.CAMERA_UNAVAILABLE),
+            PhotoAnalysisEvent.ScanAgain,
+        )
+
+        assertEquals(PhotoAnalysisState.Recovery(RecoveryReason.ANALYSIS_FAILED), failed.state)
+        assertEquals(listOf(PhotoAnalysisEffect.RevokePhoto(current.ref)), failed.effects)
+        assertEquals(PhotoAnalysisState.Capture, emptyRecovery.state)
+        assertTrue(emptyRecovery.effects.isEmpty())
+    }
+
+    @Test
+    fun `process restore keeps no-photo recovery and rejects a ready snapshot without input`() {
+        val fixture = Fixture()
+        val missingInputRef = fixture.leases.issue(fixture.attempt, "restore-missing-input")
+
+        val noPhotoRecovery = fixture.reducer.reduce(
+            PhotoAnalysisState.Capture,
+            PhotoAnalysisEvent.RestoreFromSnapshot(
+                PhotoAnalysisBackgroundSnapshot.Recovery(RecoveryReason.CAMERA_UNAVAILABLE, null),
+            ),
+        )
+        val missingInput = fixture.reducer.reduce(
+            PhotoAnalysisState.Capture,
+            PhotoAnalysisEvent.RestoreFromSnapshot(PhotoAnalysisBackgroundSnapshot.Ready(missingInputRef)),
+        )
+
+        assertEquals(
+            PhotoAnalysisState.Recovery(RecoveryReason.CAMERA_UNAVAILABLE),
+            noPhotoRecovery.state,
+        )
+        assertEquals(
+            PhotoAnalysisState.Recovery(RecoveryReason.CAPTURE_FAILED, missingInputRef),
+            missingInput.state,
+        )
+    }
+
     private fun assertUnchanged(fixture: Fixture, current: PhotoAnalysisState.Analyzing, event: PhotoAnalysisEvent) {
         val reduction = fixture.reducer.reduce(current, event)
         assertEquals(current, reduction.state)
@@ -243,23 +339,51 @@ class PhotoAnalysisAnalysisTransitionsBranchTest {
 
         fun inputFor(ref: PhotoRef): NormalizedPhotoInput = sessions.read(ref)!!
 
+        fun ready(photoId: String): PhotoAnalysisState.Ready {
+            val ref = leases.issue(attempt, photoId)
+            val input = input(ref)
+            reducer.dispatch(PhotoAnalysisEvent.PhotoCaptured(ref))
+            reducer.dispatch(PhotoAnalysisEvent.PreparationSucceeded(input))
+            return PhotoAnalysisState.Ready(input)
+        }
+
         fun analyzing(photoId: String, request: String): PhotoAnalysisState.Analyzing {
             val ref = leases.issue(attempt, photoId)
-            val input = NormalizedPhotoInput(
-                ref = ref,
-                bytes = byteArrayOf(1),
-                width = 1,
-                height = 1,
-                orientation = ImageOrientation.UP,
-                colorSpace = "sRGB",
-                metadataKeys = emptySet(),
-                contentDigest = "b".repeat(64),
-            )
+            val input = input(ref)
             reducer.dispatch(PhotoAnalysisEvent.PhotoCaptured(ref))
             reducer.dispatch(PhotoAnalysisEvent.PreparationSucceeded(input))
             val requestId = RequestId(request)
             reducer.dispatch(PhotoAnalysisEvent.AnalysisStarted(requestId))
             return PhotoAnalysisState.Analyzing(ref, requestId)
         }
+
+        fun candidateReview(photoId: String, request: String): PhotoAnalysisState.CandidateReview {
+            val current = analyzing(photoId, request)
+            return PhotoAnalysisState.CandidateReview(
+                current.ref,
+                current.requestId,
+                CandidateReviewDraft(emptyList(), emptyList()),
+            )
+        }
+
+        fun candidateReviewWithoutInput(photoId: String, request: String): PhotoAnalysisState.CandidateReview {
+            val ref = leases.issue(attempt, photoId)
+            return PhotoAnalysisState.CandidateReview(
+                ref,
+                RequestId(request),
+                CandidateReviewDraft(emptyList(), emptyList()),
+            )
+        }
+
+        private fun input(ref: PhotoRef): NormalizedPhotoInput = NormalizedPhotoInput(
+            ref = ref,
+            bytes = byteArrayOf(1),
+            width = 1,
+            height = 1,
+            orientation = ImageOrientation.UP,
+            colorSpace = "sRGB",
+            metadataKeys = emptySet(),
+            contentDigest = "b".repeat(64),
+        )
     }
 }

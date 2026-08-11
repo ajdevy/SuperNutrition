@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.Map;
 
 /** Research-only dish-to-ingredient plausibility priors for debug ranking. */
-final class PocDishIngredientPriors {
+public final class PocDishIngredientPriors {
     private static final Map<String, List<String>> PRIORS = createPriors();
 
     private PocDishIngredientPriors() {
     }
 
-    static List<String> forDish(String dishLabel) {
+    public static List<String> forDish(String dishLabel) {
         if (dishLabel == null) {
             return Collections.emptyList();
         }

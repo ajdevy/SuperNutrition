@@ -5,6 +5,11 @@ measures a candidate local runtime on explicit physical Android and iOS
 devices and now proves a bounded semantic recognition contract. It does not
 change the production inference adapters.
 
+The Android runner compiles the shipped
+`mobile/inference/local-android-poc` Java inference source directly. It owns
+only its research UI, fixtures, and benchmark-only prior provider, so a
+benchmark build cannot silently use an older copy of `PocInferenceEngine`.
+
 The harness deliberately separates two fixture groups:
 
 - five composite meal photographs for exploratory behavior only;
