@@ -65,6 +65,9 @@ class LiveGatewayIntegrationTest {
             digest = ::sha256,
             consent = {
                 RemoteConsentDecision(
+                    attemptId = it,
+                    payloadDigest = sha256(jpegBytes),
+                    modality = "photo",
                     granted = granted,
                     consentCopyVersion = "photo-consent/fixture-1",
                     processingRegion = "fixture-region",
@@ -75,6 +78,7 @@ class LiveGatewayIntegrationTest {
                 )
             },
             idFactory = { (1..20).joinToString("") { ('a'..'z').random().toString() } },
+            nowEpochMillis = { now.toEpochMilli() },
         )
     }
 
@@ -127,6 +131,9 @@ class LiveGatewayIntegrationTest {
             digest = ::sha256,
             consent = {
                 RemoteConsentDecision(
+                    attemptId = it,
+                    payloadDigest = sha256(jpegBytes),
+                    modality = "photo",
                     granted = false,
                     consentCopyVersion = null,
                     processingRegion = null,
@@ -137,6 +144,7 @@ class LiveGatewayIntegrationTest {
                 )
             },
             idFactory = { "0000000000000001" },
+            nowEpochMillis = { 1_785_751_500_000L },
         )
 
         val outcome = runBlocking { closed.analyze(request(attemptId())) }.outcome

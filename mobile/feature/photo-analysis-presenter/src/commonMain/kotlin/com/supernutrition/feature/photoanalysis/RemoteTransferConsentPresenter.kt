@@ -51,6 +51,13 @@ data class ConsentCopy(
     val copyVersionLabel: String,
     val localeLabel: String,
     val unavailableMarketUnresolved: String,
+    /**
+     * Distinct copy from "unresolved", because the two say different things to
+     * the user: one is "we have not set this up here yet", the other is "this is
+     * not permitted here". Reusing the unresolved string would tell someone in a
+     * prohibited market to wait for something that is never coming.
+     */
+    val unavailableMarketProhibited: String,
     val unavailableModalityForbidden: String,
     val unavailableNoRegion: String,
     val unavailableCopyMismatch: String,
@@ -63,7 +70,8 @@ data class ConsentCopy(
         get() = listOf(
             prompt, grant, decline, marketLabel, processingRegionLabel, retentionLabel,
             retentionNone, copyVersionLabel, localeLabel, unavailableMarketUnresolved,
-            unavailableModalityForbidden, unavailableNoRegion, unavailableCopyMismatch,
+            unavailableMarketProhibited, unavailableModalityForbidden, unavailableNoRegion,
+            unavailableCopyMismatch,
         )
 }
 
@@ -108,6 +116,7 @@ object RemoteTransferConsentModel {
 
 private fun ConsentCopy.messageFor(reason: RemoteTransferUnavailable): String = when (reason) {
     RemoteTransferUnavailable.MARKET_UNRESOLVED -> unavailableMarketUnresolved
+    RemoteTransferUnavailable.MARKET_PROHIBITED -> unavailableMarketProhibited
     RemoteTransferUnavailable.MODALITY_FORBIDDEN -> unavailableModalityForbidden
     RemoteTransferUnavailable.NO_PERMITTED_REGION -> unavailableNoRegion
     RemoteTransferUnavailable.CONSENT_COPY_MISMATCH -> unavailableCopyMismatch

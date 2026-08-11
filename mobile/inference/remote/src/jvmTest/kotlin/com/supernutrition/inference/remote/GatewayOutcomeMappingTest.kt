@@ -41,6 +41,9 @@ private fun mappingEngine(transport: GatewayTransport) = RemoteInferenceEngine(
     digest = { "sha256:" + "a".repeat(64) },
     consent = {
         RemoteConsentDecision(
+            attemptId = MAP_ATTEMPT,
+            payloadDigest = "sha256:" + "a".repeat(64),
+            modality = "photo",
             granted = true,
             consentCopyVersion = "photo-consent/fixture-1",
             processingRegion = "fixture-region",
@@ -51,6 +54,7 @@ private fun mappingEngine(transport: GatewayTransport) = RemoteInferenceEngine(
         )
     },
     idFactory = { "0000000000000001" },
+    nowEpochMillis = { 1_785_751_500_000L },
 )
 
 private fun mappingRequest() = PhotoInferenceRequest(

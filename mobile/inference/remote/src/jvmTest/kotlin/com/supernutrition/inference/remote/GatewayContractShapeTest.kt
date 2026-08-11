@@ -53,6 +53,13 @@ private fun shapeEngine(transport: GatewayTransport, idFactory: () -> String) = 
     digest = { "sha256:" + "a".repeat(64) },
     consent = {
         RemoteConsentDecision(
+            // The lambda receives the DOMAIN attempt id, and the decision has to
+            // be for the attempt actually being analysed — which is the binding
+            // P1-4 added. Hard-coding one here would have made these tests pass
+            // while the engine sent a receipt for a different attempt.
+            attemptId = it,
+            payloadDigest = "sha256:" + "a".repeat(64),
+            modality = "photo",
             granted = true,
             consentCopyVersion = "photo-consent/fixture-1",
             processingRegion = "fixture-region",
@@ -63,6 +70,7 @@ private fun shapeEngine(transport: GatewayTransport, idFactory: () -> String) = 
         )
     },
     idFactory = idFactory,
+    nowEpochMillis = { 1_785_751_500_000L },
 )
 
 private fun shapeRequest() = PhotoInferenceRequest(

@@ -128,6 +128,9 @@ internal object PhotoAnalysisEngineWiring {
                 digest = ::sha256Digest,
                 consent = { attemptId -> recordedConsent(consentStore, attemptId, currentInput()) },
                 idFactory = ::opaqueToken,
+                // The device clock. Injected so the expiry check is testable and
+                // so it is visible here that consent validity is time-dependent.
+                nowEpochMillis = { Instant.now().toEpochMilli() },
             ),
             componentEngine = FixtureComponentEngine,
             scope = scope,
@@ -162,10 +165,17 @@ internal object PhotoAnalysisEngineWiring {
         attemptId: String,
         input: NormalizedPhotoInput?,
     ): RemoteConsentDecision {
-        val receipt = input?.let { store.receiptFor(attemptId, sha256Digest(it.bytes)) }
-            ?: return refused()
+        val digest = input?.let { sha256Digest(it.bytes) } ?: return refused()
+        val receipt = store.receiptFor(attemptId, digest) ?: return refused(attemptId, digest)
         return RemoteConsentDecision(
             granted = receipt.decision == TransferConsentDecision.GRANTED,
+            // The three bindings the engine enforces before transport (P1-4).
+            // Taken from the receipt and the bytes, never from what the caller
+            // expected, so a receipt for another attempt or other bytes is
+            // refused rather than copied into the envelope.
+            attemptId = receipt.attemptId,
+            payloadDigest = receipt.digest,
+            modality = receipt.modality,
             consentCopyVersion = receipt.consentCopyVersion,
             processingRegion = receipt.processingRegion,
             marketJurisdiction = receipt.marketJurisdiction,
@@ -176,8 +186,14 @@ internal object PhotoAnalysisEngineWiring {
     }
 
     /** No receipt is a refusal, never an absence the caller might read past. */
-    private fun refused() = RemoteConsentDecision(
+    private fun refused(
+        attemptId: String = "",
+        payloadDigest: String = "",
+    ) = RemoteConsentDecision(
         granted = false,
+        attemptId = attemptId,
+        payloadDigest = payloadDigest,
+        modality = "photo",
         consentCopyVersion = null,
         processingRegion = null,
         marketJurisdiction = FIXTURE_MARKET,

@@ -60,6 +60,9 @@ private fun errorBody(code: String, recoverable: Boolean) = """
 """.trimIndent()
 
 private val GRANTED = RemoteConsentDecision(
+            attemptId = ATTEMPT,
+            payloadDigest = "sha256:" + "a".repeat(64),
+            modality = "photo",
     granted = true,
     consentCopyVersion = "photo-consent/fixture-1",
     processingRegion = "fixture-region",
@@ -85,6 +88,7 @@ private fun engine(transport: GatewayTransport, consent: RemoteConsentDecision =
         digest = { "sha256:" + "a".repeat(64) },
         consent = { consent },
         idFactory = { "0000000000000001" },
+        nowEpochMillis = { 1_785_751_500_000L },
     )
 
 private fun request() = PhotoInferenceRequest(
