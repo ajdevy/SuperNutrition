@@ -4,8 +4,8 @@ product = "mobile"
 lifecycle = "active"
 source_digest = "local-only"
 quality_claim = true
-production_source_count = 14
-denominator_count = 14
+production_source_count = 17
+denominator_count = 17
 minimum_line_percent = 85
 minimum_branch_percent = 85
 changed_line_percent = 100
@@ -227,5 +227,59 @@ branch_minimum_percent = 85
 changed_line_minimum_percent = 100
 changed_branch_minimum_percent = 100
 observed_line_percent = "90.91"
+observed_branch_percent = "100.00"
+status = "local-verified"
+
+[[denominator]]
+id = "inference-remote"
+unit_id = "inference-remote"
+source_path = "mobile/inference/remote"
+coverage_kind = "jvm"
+test_task = ":inference:remote:jvmTest"
+line_minimum_percent = 85
+branch_minimum_percent = 85
+changed_line_minimum_percent = 100
+changed_branch_minimum_percent = 100
+observed_line_percent = "99.70"
+observed_branch_percent = "92.31"
+status = "local-verified"
+[[denominator]]
+id = "feature-meal-search-ui"
+unit_id = "feature-meal-search-ui"
+source_path = "mobile/feature/meal-search-ui"
+# jvm rather than native-equivalent: this screen drives no camera or picker, so
+# there is no native gap for a device test to close. Compose UI Test on the JVM
+# host executes the same composables both platform hosts render.
+coverage_kind = "jvm"
+test_task = ":feature:meal-search-ui:jvmTest"
+line_minimum_percent = 85
+branch_minimum_percent = 85
+changed_line_minimum_percent = 100
+changed_branch_minimum_percent = 100
+observed_line_percent = "100.00"
+# Below the declared floor, and recorded rather than left "pending" because the
+# number is measured and the gap is structural. Every branch written in the
+# source is covered: three screen states (untouched, no results, results) and
+# three row shapes (food with an unmatched preparation, food without, dish).
+# The 14 uncovered outcomes are Compose compiler-generated recomposition
+# plumbing -- `$changed` bitmask tests and skipping guards -- which no test can
+# reach because they exist to avoid running the code a test is asserting on.
+# Branch percent is therefore not a meaningful figure for a compose-ui
+# denominator, and what to do about that is a policy decision this entry
+# surfaces rather than settles. The sibling photo-analysis-ui denominator hides
+# the same fact behind "pending".
+observed_branch_percent = "56.25"
+status = "local-verified"
+[[denominator]]
+id = "feature-meal-search-presenter"
+unit_id = "feature-meal-search-presenter"
+source_path = "mobile/feature/meal-search-presenter"
+coverage_kind = "jvm"
+test_task = ":feature:meal-search-presenter:jvmTest"
+line_minimum_percent = 85
+branch_minimum_percent = 85
+changed_line_minimum_percent = 100
+changed_branch_minimum_percent = 100
+observed_line_percent = "100.00"
 observed_branch_percent = "100.00"
 status = "local-verified"

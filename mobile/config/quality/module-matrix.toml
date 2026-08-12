@@ -133,6 +133,30 @@ quality_task = "feature:photo-analysis-ui:jvmTest"
 status = "active"
 
 [[unit]]
+id = "inference-remote"
+path = "mobile/inference/remote"
+kind = "production-adapter"
+production = true
+quality_task = "inference:remote:jvmTest"
+status = "local-verified"
+
+[[unit]]
+id = "feature-meal-search-presenter"
+path = "mobile/feature/meal-search-presenter"
+kind = "production-feature-presenter"
+production = true
+quality_task = "feature:meal-search-presenter:jvmTest"
+status = "local-verified"
+
+[[unit]]
+id = "feature-meal-search-ui"
+path = "mobile/feature/meal-search-ui"
+kind = "production-feature-ui"
+production = true
+quality_task = "feature:meal-search-ui:jvmTest"
+status = "local-verified"
+
+[[unit]]
 id = "feature-photo-analysis-presenter"
 path = "mobile/feature/photo-analysis-presenter"
 kind = "production-feature-presenter"

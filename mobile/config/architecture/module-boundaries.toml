@@ -89,6 +89,20 @@ source_sets = ["commonMain", "commonTest", "jvmTest", "androidMain", "androidDev
 production = false
 
 [[module]]
+id = "feature-meal-search-presenter"
+path = "mobile/feature/meal-search-presenter"
+kind = "presentation"
+source_sets = ["commonMain", "commonTest", "jvmTest"]
+production = false
+
+[[module]]
+id = "feature-meal-search-ui"
+path = "mobile/feature/meal-search-ui"
+kind = "compose-ui"
+source_sets = ["commonMain", "commonTest", "jvmTest"]
+production = false
+
+[[module]]
 id = "feature-presenter"
 path = "mobile/feature/photo-analysis-presenter"
 kind = "presentation"
@@ -137,12 +151,12 @@ to = "feature-presenter|feature-ui|platform|domain|core"
 scope = "production"
 
 [[allowed_edge]]
-from = "feature-ui"
-to = "feature-presenter|domain|core"
+from = "feature-ui|feature-meal-search-ui"
+to = "feature-presenter|feature-meal-search-presenter|domain|core"
 scope = "production"
 
 [[allowed_edge]]
-from = "feature-presenter"
+from = "feature-presenter|feature-meal-search-presenter"
 to = "domain|core"
 scope = "production"
 

@@ -1,0 +1,50 @@
+appId: ${APP_ID}
+---
+# photo -> analysis -> result, against the first-party gateway.
+#
+# Requires the test-mode build (debug source set) and a gateway reachable at the
+# configured base URL; outside test mode the host binds no engine and the flow
+# stops at "photo ready" by design. A minimal review assertion on purpose: the
+# full UJ-catalog coverage of the review states is a separate slice.
+- runScript:
+    file: ./photo-analysis-locators.js
+- launchApp:
+    clearState: true
+- assertVisible:
+    id: ${output.photo_analysis_title}
+- assertVisible:
+    id: ${output.capture_import}
+
+# Import rather than capture: the emulator camera cannot be driven headlessly,
+# and the analysis path under test is identical for both sources. The system
+# picker exposes file names only as content-desc, never as text, so the flow
+# taps the first thumbnail (the emulator is provisioned with a single image).
+- tapOn:
+    id: ${output.capture_import}
+- tapOn:
+    id: ${output.system_picker_first_item}
+
+# In the test-mode build the remote-transfer consent surface gates the
+# analysis; the flow must answer before the review can appear. The surface
+# shows the jurisdiction facts before either answer is offered.
+- assertVisible:
+    id: ${output.consent_surface}
+- tapOn:
+    id: ${output.consent_grant}
+
+# The gateway's dish candidates and the local component evidence must both
+# reach the review, because the review is a fusion of the two. The real-model
+# inference on this host takes ~20-25s, so the waits outlive the default
+# assertion timeout.
+- extendedWaitUntil:
+    visible:
+      text: "Review candidate"
+    timeout: 90000
+- extendedWaitUntil:
+    visible:
+      text: "Dish candidates"
+    timeout: 90000
+- extendedWaitUntil:
+    visible:
+      text: "Detected in photo"
+    timeout: 90000
