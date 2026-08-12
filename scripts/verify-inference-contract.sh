@@ -133,7 +133,7 @@ def load_release(root_argument):
         fail("inference contract release must not contain symlinks")
     fixtures = {}
     for path in fixture_paths:
-        text = path.read_text()
+        text = path.read_text(encoding="utf-8")
         try:
             value = json.loads(
                 text,
@@ -162,8 +162,8 @@ def load_release(root_argument):
         "root": root,
         "schema_path": schema_path,
         "matrix_path": matrix_path,
-        "schema": tomllib.loads(schema_path.read_text()),
-        "matrix": tomllib.loads(matrix_path.read_text()),
+        "schema": tomllib.loads(schema_path.read_text(encoding="utf-8")),
+        "matrix": tomllib.loads(matrix_path.read_text(encoding="utf-8")),
         "fixture_paths": fixture_paths,
         "fixtures": fixtures,
     }
