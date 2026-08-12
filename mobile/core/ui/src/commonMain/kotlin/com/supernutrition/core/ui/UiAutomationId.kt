@@ -51,6 +51,8 @@ object UiAutomationIds {
     val PHOTO_ANALYSIS_MAIN_DISH_PROPOSALS = UiAutomationId("photo_analysis_main_dish_proposals")
     val PHOTO_ANALYSIS_COMPONENT_EVIDENCE = UiAutomationId("photo_analysis_component_evidence")
     val PHOTO_ANALYSIS_COMPOSITION_HINTS = UiAutomationId("photo_analysis_composition_hints")
+    val PHOTO_ANALYSIS_MANUAL_INGREDIENT_INPUT = UiAutomationId("photo_analysis_manual_ingredient_input")
+    val PHOTO_ANALYSIS_MANUAL_INGREDIENT_ADD = UiAutomationId("photo_analysis_manual_ingredient_add")
     val CAPTURE_SHUTTER = UiAutomationId("capture_shutter")
     val CAPTURE_IMPORT = UiAutomationId("capture_import")
     val CAPTURE_SCAN_AGAIN = UiAutomationId("capture_scan_again")
@@ -90,6 +92,8 @@ object UiAutomationIds {
         PHOTO_ANALYSIS_MAIN_DISH_PROPOSALS,
         PHOTO_ANALYSIS_COMPONENT_EVIDENCE,
         PHOTO_ANALYSIS_COMPOSITION_HINTS,
+        PHOTO_ANALYSIS_MANUAL_INGREDIENT_INPUT,
+        PHOTO_ANALYSIS_MANUAL_INGREDIENT_ADD,
         CAPTURE_SHUTTER,
         CAPTURE_IMPORT,
         CAPTURE_SCAN_AGAIN,

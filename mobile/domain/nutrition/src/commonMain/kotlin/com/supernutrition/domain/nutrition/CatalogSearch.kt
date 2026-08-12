@@ -79,6 +79,10 @@ class MatchStrength internal constructor(internal val tier: MatchTier, internal 
 class CatalogSearch(records: List<CatalogRecord>) {
     private val indexed = records.map(::IndexedRecord)
 
+    /** Returns the catalog-owned display name for a canonical ingredient id. */
+    fun displayNameFor(canonicalItemId: String): String? =
+        indexed.firstOrNull { it.canonicalItemId == canonicalItemId }?.displayName
+
     /**
      * Three attempts, weakest last, so a stronger reading always wins outright.
      *
