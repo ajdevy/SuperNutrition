@@ -22,9 +22,13 @@ class MobilePolicyPluginTest {
         Files.writeString(
             fixture.resolve("config/quality/coverage.toml"),
             """
+                minimum_line_percent = 85
+                minimum_branch_percent = 85
                 [[denominator]]
                 source_path = "mobile/core/config"
                 coverage_kind = "jvm"
+                line_minimum_percent = 85
+                branch_minimum_percent = 85
             """.trimIndent(),
         )
         val project = ProjectBuilder.builder()

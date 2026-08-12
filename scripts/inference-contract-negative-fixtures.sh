@@ -4,144 +4,375 @@ set -euo pipefail
 repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 fixture_root=$(mktemp -d "${TMPDIR:-/tmp}/supernutrition-inference-contract.XXXXXX")
 trap 'rm -rf "$fixture_root"' EXIT
-cp -R "${repo_root}/contracts/inference/v1" "$fixture_root/v1"
 
-python3 - "$fixture_root/v1" <<'PY'
+copy_release() {
+    local release="$1"
+    local destination="$2"
+    cp -R "${repo_root}/contracts/inference/${release}" "${fixture_root}/${destination}"
+}
+
+refresh_digest() {
+    python3 - "$1" <<'PY'
+from hashlib import sha256
+from pathlib import Path
+import re
+import sys
+
+root = Path(sys.argv[1])
+matrix_path = root / "compatibility-matrix.toml"
+matrix = re.sub(
+    rb'(?m)^digest\s*=\s*"(?:[a-f0-9]{64}|pending)"\s*$',
+    b'digest = "<release-digest>"',
+    matrix_path.read_bytes(),
+)
+release_files = [
+    ("RELEASE.md", (root / "RELEASE.md").read_bytes()),
+    ("compatibility-matrix.toml", matrix),
+    ("schema.toml", (root / "schema.toml").read_bytes()),
+]
+release_files.extend(
+    (str(path.relative_to(root)), path.read_bytes())
+    for path in sorted((root / "fixtures").glob("*.json"))
+)
+digest = sha256()
+for relative, content in sorted(release_files):
+    digest.update(relative.encode("utf-8"))
+    digest.update(b"\0")
+    digest.update(content)
+matrix_path.write_text(re.sub(
+    r'(?m)^digest\s*=\s*"(?:[a-f0-9]{64}|pending)"\s*$',
+    f'digest = "{digest.hexdigest()}"',
+    matrix_path.read_text(encoding="utf-8"),
+), encoding="utf-8")
+PY
+}
+
+expect_rejected() {
+    local label="$1"
+    local root="$2"
+    local output
+    if output=$(SUPERNUTRITION_INFERENCE_CONTRACT="$root" "${repo_root}/scripts/verify-inference-contract.sh" 2>&1); then
+        echo "negative fixture unexpectedly passed: $label" >&2
+        exit 1
+    fi
+    if [[ -z "$output" ]]; then
+        echo "negative fixture was rejected without a reason: $label" >&2
+        exit 1
+    fi
+    if [[ "$output" != *"inference contract rejected:"* ]]; then
+        echo "negative fixture was not rejected by the contract verifier: $label" >&2
+        printf '%s\n' "$output" >&2
+        exit 1
+    fi
+}
+
+copy_release v1 v1-incompatible-pair
+python3 - "$fixture_root/v1-incompatible-pair" <<'PY'
 from pathlib import Path
 import sys
 
 root = Path(sys.argv[1])
 matrix = root / "compatibility-matrix.toml"
-matrix.write_text(matrix.read_text().replace('expected = "accepted"', 'expected = "rejected"', 1))
+matrix.write_text(matrix.read_text(encoding="utf-8").replace('expected = "accepted"', 'expected = "rejected"', 1), encoding="utf-8")
 PY
+refresh_digest "$fixture_root/v1-incompatible-pair"
+expect_rejected "v1 incompatible inference pair" "$fixture_root/v1-incompatible-pair"
 
-if SUPERNUTRITION_INFERENCE_CONTRACT="$fixture_root/v1" "${repo_root}/scripts/verify-inference-contract.sh" >/dev/null 2>&1; then
-    echo "negative fixture unexpectedly passed: incompatible inference pair" >&2
-    exit 1
-fi
-
-cp -R "${repo_root}/contracts/inference/v1" "$fixture_root/nutrition"
-python3 - "$fixture_root/nutrition/fixtures/candidate-result.json" <<'PY'
+copy_release v1 v1-nutrition
+python3 - "$fixture_root/v1-nutrition/fixtures/candidate-result.json" <<'PY'
 from pathlib import Path
 import json
 import sys
 
 path = Path(sys.argv[1])
-data = json.loads(path.read_text())
+data = json.loads(path.read_text(encoding="utf-8"))
 data["outcome"]["candidates"][0]["calories"] = 42
-path.write_text(json.dumps(data, separators=(",", ":")) + "\n")
+path.write_text(json.dumps(data, separators=(",", ":")) + "\n", encoding="utf-8")
 PY
+refresh_digest "$fixture_root/v1-nutrition"
+expect_rejected "v1 numeric nutrition" "$fixture_root/v1-nutrition"
 
-if SUPERNUTRITION_INFERENCE_CONTRACT="$fixture_root/nutrition" "${repo_root}/scripts/verify-inference-contract.sh" >/dev/null 2>&1; then
-    echo "negative fixture unexpectedly passed: numeric nutrition" >&2
-    exit 1
-fi
-
-expect_rejected() {
-    local label="$1"
-    local root="$2"
-    if SUPERNUTRITION_INFERENCE_CONTRACT="$root" "${repo_root}/scripts/verify-inference-contract.sh" >/dev/null 2>&1; then
-        echo "negative fixture unexpectedly passed: $label" >&2
-        exit 1
-    fi
-}
-
-cp -R "${repo_root}/contracts/inference/v1" "$fixture_root/duplicate-keys"
-python3 - "$fixture_root/duplicate-keys/fixtures/candidate-result.json" <<'PY'
+copy_release v1 v1-duplicate-keys
+python3 - "$fixture_root/v1-duplicate-keys/fixtures/candidate-result.json" <<'PY'
 from pathlib import Path
 import sys
 
 path = Path(sys.argv[1])
-text = path.read_text()
+text = path.read_text(encoding="utf-8")
 needle = '"contractVersion":"photo-inference-engine/v1",'
-path.write_text(text.replace(needle, needle + '"contractVersion":"photo-inference-engine/v1",', 1))
+path.write_text(text.replace(needle, needle + '"contractVersion":"photo-inference-engine/v1",', 1), encoding="utf-8")
 PY
-expect_rejected "duplicate JSON keys" "$fixture_root/duplicate-keys"
+expect_rejected "v1 duplicate JSON keys" "$fixture_root/v1-duplicate-keys"
 
-cp -R "${repo_root}/contracts/inference/v1" "$fixture_root/nonfinite"
-python3 - "$fixture_root/nonfinite/fixtures/candidate-result.json" <<'PY'
+copy_release v1 v1-nonfinite
+python3 - "$fixture_root/v1-nonfinite/fixtures/candidate-result.json" <<'PY'
 from pathlib import Path
 import sys
 
 path = Path(sys.argv[1])
-path.write_text(path.read_text().replace('"score":0.93', '"score":NaN', 1))
+path.write_text(path.read_text(encoding="utf-8").replace('"score":0.93', '"score":NaN', 1), encoding="utf-8")
 PY
-expect_rejected "non-finite confidence" "$fixture_root/nonfinite"
+expect_rejected "v1 non-finite confidence" "$fixture_root/v1-nonfinite"
 
-cp -R "${repo_root}/contracts/inference/v1" "$fixture_root/unknown-outcome"
-python3 - "$fixture_root/unknown-outcome/fixtures/candidate-result.json" <<'PY'
+copy_release v1 v1-unknown-outcome
+python3 - "$fixture_root/v1-unknown-outcome/fixtures/candidate-result.json" <<'PY'
 from pathlib import Path
 import json
 import sys
 
 path = Path(sys.argv[1])
-data = json.loads(path.read_text())
+data = json.loads(path.read_text(encoding="utf-8"))
 data["outcome"]["outcomeType"] = "unsupported"
-path.write_text(json.dumps(data, separators=(",", ":")) + "\n")
+path.write_text(json.dumps(data, separators=(",", ":")) + "\n", encoding="utf-8")
 PY
-expect_rejected "unknown outcome type" "$fixture_root/unknown-outcome"
+refresh_digest "$fixture_root/v1-unknown-outcome"
+expect_rejected "v1 unknown outcome type" "$fixture_root/v1-unknown-outcome"
 
-cp -R "${repo_root}/contracts/inference/v1" "$fixture_root/noncontiguous-rank"
-python3 - "$fixture_root/noncontiguous-rank/fixtures/candidate-result.json" <<'PY'
+copy_release v1 v1-noncontiguous-rank
+python3 - "$fixture_root/v1-noncontiguous-rank/fixtures/candidate-result.json" <<'PY'
 from pathlib import Path
 import json
 import sys
 
 path = Path(sys.argv[1])
-data = json.loads(path.read_text())
+data = json.loads(path.read_text(encoding="utf-8"))
 data["outcome"]["candidates"][0]["rank"] = 2
-path.write_text(json.dumps(data, separators=(",", ":")) + "\n")
+path.write_text(json.dumps(data, separators=(",", ":")) + "\n", encoding="utf-8")
 PY
-expect_rejected "non-contiguous candidate rank" "$fixture_root/noncontiguous-rank"
+refresh_digest "$fixture_root/v1-noncontiguous-rank"
+expect_rejected "v1 non-contiguous candidate rank" "$fixture_root/v1-noncontiguous-rank"
 
-cp -R "${repo_root}/contracts/inference/v1" "$fixture_root/duplicate-candidate-id"
-python3 - "$fixture_root/duplicate-candidate-id/fixtures/candidate-result.json" <<'PY'
+copy_release v1 v1-duplicate-candidate-id
+python3 - "$fixture_root/v1-duplicate-candidate-id/fixtures/candidate-result.json" <<'PY'
 from pathlib import Path
 import copy
 import json
 import sys
 
 path = Path(sys.argv[1])
-data = json.loads(path.read_text())
+data = json.loads(path.read_text(encoding="utf-8"))
 candidate = copy.deepcopy(data["outcome"]["candidates"][0])
 candidate["rank"] = 2
 data["outcome"]["candidates"].append(candidate)
-path.write_text(json.dumps(data, separators=(",", ":")) + "\n")
+path.write_text(json.dumps(data, separators=(",", ":")) + "\n", encoding="utf-8")
 PY
-expect_rejected "duplicate candidate ID" "$fixture_root/duplicate-candidate-id"
+refresh_digest "$fixture_root/v1-duplicate-candidate-id"
+expect_rejected "v1 duplicate candidate ID" "$fixture_root/v1-duplicate-candidate-id"
 
-cp -R "${repo_root}/contracts/inference/v1" "$fixture_root/blank-message-key"
-python3 - "$fixture_root/blank-message-key/fixtures/abstention-result.json" <<'PY'
+copy_release v1 v1-blank-message-key
+python3 - "$fixture_root/v1-blank-message-key/fixtures/abstention-result.json" <<'PY'
 from pathlib import Path
 import json
 import sys
 
 path = Path(sys.argv[1])
-data = json.loads(path.read_text())
+data = json.loads(path.read_text(encoding="utf-8"))
 data["outcome"]["userMessageKey"] = " "
-path.write_text(json.dumps(data, separators=(",", ":")) + "\n")
+path.write_text(json.dumps(data, separators=(",", ":")) + "\n", encoding="utf-8")
 PY
-expect_rejected "blank outcome message key" "$fixture_root/blank-message-key"
+refresh_digest "$fixture_root/v1-blank-message-key"
+expect_rejected "v1 blank outcome message key" "$fixture_root/v1-blank-message-key"
 
-cp -R "${repo_root}/contracts/inference/v1" "$fixture_root/ready-capability"
-python3 - "$fixture_root/ready-capability/fixtures/capability-ready.json" <<'PY'
+copy_release v1 v1-ready-capability
+python3 - "$fixture_root/v1-ready-capability/fixtures/capability-ready.json" <<'PY'
 from pathlib import Path
 import json
 import sys
 
 path = Path(sys.argv[1])
-data = json.loads(path.read_text())
+data = json.loads(path.read_text(encoding="utf-8"))
 data["reason"] = "model-missing"
-path.write_text(json.dumps(data, separators=(",", ":")) + "\n")
+path.write_text(json.dumps(data, separators=(",", ":")) + "\n", encoding="utf-8")
 PY
-expect_rejected "ready capability with unavailable reason" "$fixture_root/ready-capability"
+refresh_digest "$fixture_root/v1-ready-capability"
+expect_rejected "v1 ready capability with unavailable reason" "$fixture_root/v1-ready-capability"
 
-cp -R "${repo_root}/contracts/inference/v1" "$fixture_root/unhashed-json"
-printf '{}\n' > "$fixture_root/unhashed-json/unhashed.json"
-expect_rejected "unhashed release JSON" "$fixture_root/unhashed-json"
+copy_release v1 v1-stale-digest
+python3 - "$fixture_root/v1-stale-digest" <<'PY'
+from pathlib import Path
+import re
+import sys
 
-cp -R "${repo_root}/contracts/inference/v1" "$fixture_root/symlinked-directory"
-ln -s "${repo_root}/contracts/inference/v1/fixtures" "$fixture_root/symlinked-directory/fixture-link"
-expect_rejected "symlinked release directory" "$fixture_root/symlinked-directory"
+path = Path(sys.argv[1]) / "compatibility-matrix.toml"
+path.write_text(re.sub(r'digest = "[a-f0-9]{64}"', 'digest = "' + ('0' * 64) + '"', path.read_text(encoding="utf-8")), encoding="utf-8")
+PY
+expect_rejected "v1 stale digest" "$fixture_root/v1-stale-digest"
 
-echo "inference contract negative fixtures: OK"
+copy_release v1 v1-unhashed-json
+printf '{}\n' > "$fixture_root/v1-unhashed-json/unhashed.json"
+expect_rejected "v1 unhashed release JSON" "$fixture_root/v1-unhashed-json"
+
+copy_release v1 v1-symlinked-directory
+ln -s "${repo_root}/contracts/inference/v1/fixtures" "$fixture_root/v1-symlinked-directory/fixture-link"
+expect_rejected "v1 symlinked release directory" "$fixture_root/v1-symlinked-directory"
+
+copy_release v2 v2-stale-digest
+python3 - "$fixture_root/v2-stale-digest" <<'PY'
+from pathlib import Path
+import re
+import sys
+
+path = Path(sys.argv[1]) / "compatibility-matrix.toml"
+path.write_text(re.sub(r'digest = "[a-f0-9]{64}"', 'digest = "' + ('0' * 64) + '"', path.read_text(encoding="utf-8")), encoding="utf-8")
+PY
+expect_rejected "v2 stale digest" "$fixture_root/v2-stale-digest"
+
+copy_release v2 v2-malformed-json
+printf '{\n' > "$fixture_root/v2-malformed-json/fixtures/photo-component-estimated-result.json"
+expect_rejected "v2 malformed JSON" "$fixture_root/v2-malformed-json"
+
+copy_release v2 v2-invalid-grams
+python3 - "$fixture_root/v2-invalid-grams/fixtures/photo-component-estimated-result.json" <<'PY'
+from pathlib import Path
+import json
+import sys
+
+path = Path(sys.argv[1])
+data = json.loads(path.read_text(encoding="utf-8"))
+data["outcome"]["components"][0]["mass"]["range"]["upperGrams"] = -1
+path.write_text(json.dumps(data, separators=(",", ":")) + "\n", encoding="utf-8")
+PY
+refresh_digest "$fixture_root/v2-invalid-grams"
+expect_rejected "v2 invalid gram range" "$fixture_root/v2-invalid-grams"
+
+copy_release v2 v2-degenerate-gram-range
+python3 - "$fixture_root/v2-degenerate-gram-range/fixtures/photo-component-estimated-result.json" <<'PY'
+from pathlib import Path
+import json
+import sys
+
+path = Path(sys.argv[1])
+data = json.loads(path.read_text(encoding="utf-8"))
+data["outcome"]["components"][0]["mass"]["range"]["upperGrams"] = 120
+path.write_text(json.dumps(data, separators=(",", ":")) + "\n", encoding="utf-8")
+PY
+refresh_digest "$fixture_root/v2-degenerate-gram-range"
+expect_rejected "v2 degenerate gram range" "$fixture_root/v2-degenerate-gram-range"
+
+copy_release v2 v2-unrepresentable-double
+python3 - "$fixture_root/v2-unrepresentable-double/fixtures/photo-component-estimated-result.json" <<'PY'
+from pathlib import Path
+import json
+import sys
+
+path = Path(sys.argv[1])
+data = json.loads(path.read_text(encoding="utf-8"))
+data["outcome"]["components"][0]["mass"]["range"]["upperGrams"] = 10 ** 400
+path.write_text(json.dumps(data, separators=(",", ":")) + "\n", encoding="utf-8")
+PY
+refresh_digest "$fixture_root/v2-unrepresentable-double"
+expect_rejected "v2 unrepresentable Double" "$fixture_root/v2-unrepresentable-double"
+
+copy_release v2 v2-duplicate-component-id
+python3 - "$fixture_root/v2-duplicate-component-id/fixtures/photo-component-estimated-result.json" <<'PY'
+from pathlib import Path
+import copy
+import json
+import sys
+
+path = Path(sys.argv[1])
+data = json.loads(path.read_text(encoding="utf-8"))
+data["outcome"]["components"].append(copy.deepcopy(data["outcome"]["components"][0]))
+path.write_text(json.dumps(data, separators=(",", ":")) + "\n", encoding="utf-8")
+PY
+refresh_digest "$fixture_root/v2-duplicate-component-id"
+expect_rejected "v2 duplicate component ID" "$fixture_root/v2-duplicate-component-id"
+
+copy_release v2 v2-text-estimated-mass
+python3 - "$fixture_root/v2-text-estimated-mass/fixtures/text-component-not-evaluable-result.json" <<'PY'
+from pathlib import Path
+import json
+import sys
+
+path = Path(sys.argv[1])
+data = json.loads(path.read_text(encoding="utf-8"))
+data["outcome"]["components"][0]["mass"] = {
+    "massType": "estimated",
+    "range": {"lowerGrams": 1, "upperGrams": 2},
+    "calibrationAssumptions": ["single-view-approximation"],
+}
+path.write_text(json.dumps(data, separators=(",", ":")) + "\n", encoding="utf-8")
+PY
+refresh_digest "$fixture_root/v2-text-estimated-mass"
+expect_rejected "v2 text estimated mass" "$fixture_root/v2-text-estimated-mass"
+
+copy_release v2 v2-unknown-mass-state
+python3 - "$fixture_root/v2-unknown-mass-state/fixtures/photo-component-estimated-result.json" <<'PY'
+from pathlib import Path
+import json
+import sys
+
+path = Path(sys.argv[1])
+data = json.loads(path.read_text(encoding="utf-8"))
+data["outcome"]["components"][0]["mass"]["massType"] = "exact"
+path.write_text(json.dumps(data, separators=(",", ":")) + "\n", encoding="utf-8")
+PY
+refresh_digest "$fixture_root/v2-unknown-mass-state"
+expect_rejected "v2 unsupported mass state" "$fixture_root/v2-unknown-mass-state"
+
+copy_release v2 v2-nutrition-injection
+python3 - "$fixture_root/v2-nutrition-injection/fixtures/photo-component-estimated-result.json" <<'PY'
+from pathlib import Path
+import json
+import sys
+
+path = Path(sys.argv[1])
+data = json.loads(path.read_text(encoding="utf-8"))
+data["outcome"]["components"][0]["nutrition"] = {"calories": 42}
+path.write_text(json.dumps(data, separators=(",", ":")) + "\n", encoding="utf-8")
+PY
+refresh_digest "$fixture_root/v2-nutrition-injection"
+expect_rejected "v2 nutrition injection" "$fixture_root/v2-nutrition-injection"
+
+copy_release v2 v2-missing-provenance
+python3 - "$fixture_root/v2-missing-provenance/fixtures/photo-component-estimated-result.json" <<'PY'
+from pathlib import Path
+import json
+import sys
+
+path = Path(sys.argv[1])
+data = json.loads(path.read_text(encoding="utf-8"))
+del data["outcome"]["components"][0]["provenance"]
+path.write_text(json.dumps(data, separators=(",", ":")) + "\n", encoding="utf-8")
+PY
+refresh_digest "$fixture_root/v2-missing-provenance"
+expect_rejected "v2 missing provenance" "$fixture_root/v2-missing-provenance"
+
+copy_release v2 v2-invalid-coexistence
+python3 - "$fixture_root/v2-invalid-coexistence" <<'PY'
+from pathlib import Path
+import sys
+
+path = Path(sys.argv[1]) / "compatibility-matrix.toml"
+path.write_text(path.read_text(encoding="utf-8").replace('requirement = "separate-ports-required"', 'requirement = "implicit-adapter"', 1), encoding="utf-8")
+PY
+refresh_digest "$fixture_root/v2-invalid-coexistence"
+expect_rejected "v2 invalid coexistence requirement" "$fixture_root/v2-invalid-coexistence"
+
+copy_release v2 v2-duplicate-supported-pair
+python3 - "$fixture_root/v2-duplicate-supported-pair" <<'PY'
+from pathlib import Path
+import sys
+
+path = Path(sys.argv[1]) / "compatibility-matrix.toml"
+path.write_text(path.read_text(encoding="utf-8") + '\n[[supported_pair]]\nproducer = "domain-inference-v2"\nconsumer = "local-android-v2"\ndirection = "forward"\nexpected = "accepted"\n', encoding="utf-8")
+PY
+refresh_digest "$fixture_root/v2-duplicate-supported-pair"
+expect_rejected "v2 duplicate supported pair" "$fixture_root/v2-duplicate-supported-pair"
+
+copy_release v2 v2-schema-drift
+python3 - "$fixture_root/v2-schema-drift" <<'PY'
+from pathlib import Path
+import sys
+
+path = Path(sys.argv[1]) / "schema.toml"
+path.write_text(path.read_text(encoding="utf-8").replace("schema_version = 1", "schema_version = 2", 1), encoding="utf-8")
+PY
+refresh_digest "$fixture_root/v2-schema-drift"
+expect_rejected "v2 schema metadata drift" "$fixture_root/v2-schema-drift"
+
+copy_release v2 v2-symlinked-directory
+ln -s "${repo_root}/contracts/inference/v2/fixtures" "$fixture_root/v2-symlinked-directory/fixture-link"
+expect_rejected "v2 symlinked release directory" "$fixture_root/v2-symlinked-directory"
+
+echo "inference contract negative fixtures: OK (v1, v2, and v3 entrypoint)"

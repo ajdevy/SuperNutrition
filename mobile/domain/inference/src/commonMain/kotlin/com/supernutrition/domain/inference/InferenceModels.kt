@@ -160,7 +160,6 @@ enum class ConfidenceBand {
 
     @SerialName("high")
     HIGH,
-
     ;
 
     companion object {

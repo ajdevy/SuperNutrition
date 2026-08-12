@@ -19,6 +19,12 @@ internal class AndroidPhotoResultReader(private val context: Context) {
     private fun readUri(result: Intent?): ByteArray? {
         val uri = result?.data ?: result?.clipData?.takeIf { it.itemCount > 0 }?.getItemAt(0)?.uri ?: return null
         return try {
+            runCatching {
+                context.contentResolver.takePersistableUriPermission(
+                    uri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION,
+                )
+            }
             context.contentResolver.openInputStream(uri)?.use { input ->
                 val output = ByteArrayOutputStream(INITIAL_CAPACITY)
                 val buffer = ByteArray(BUFFER_SIZE)

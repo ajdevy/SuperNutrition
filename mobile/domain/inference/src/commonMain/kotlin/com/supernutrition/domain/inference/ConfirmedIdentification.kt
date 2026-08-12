@@ -20,7 +20,7 @@ data class ConfirmedIdentification(
     val label: String,
     /** The words this was chosen for. Null for a photo, which has no text to point at. */
     val sourceSpan: InferenceSourceSpan?,
-    val provenance: InferenceProvenanceV2,
+    val provenance: InferenceProvenanceV3,
 )
 
 /**
@@ -32,7 +32,7 @@ data class ConfirmedIdentification(
  * the span is what tells them apart. That is the same identity rule
  * `SegmentationReview` reached for its own edits.
  */
-fun InferenceItemGroup.confirm(candidate: InferenceCandidateV2): ConfirmedIdentification {
+fun InferenceItemGroup.confirm(candidate: InferenceCandidateV3): ConfirmedIdentification {
     require(candidate in candidates) {
         "Cannot confirm a candidate that is not among group $groupId's proposals"
     }

@@ -4,10 +4,10 @@ contract_release = "product-identity/v1"
 source_manifest = "mobile/config/product-identity.toml"
 
 canonical_name = "SuperNutrition"
-installed_display_name = "SuperNutrition"
-launcher_name = "SuperNutrition"
-in_app_name = "SuperNutrition"
-accessibility_name = "SuperNutrition"
+installed_display_name = "Super Nutrition"
+launcher_name = "Super Nutrition"
+in_app_name = "Super Nutrition"
+accessibility_name = "Super Nutrition"
 
 [web_landing]
 display_name = "SuperNutrition"

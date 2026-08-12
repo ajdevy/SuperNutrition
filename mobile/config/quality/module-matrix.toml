@@ -5,8 +5,8 @@ lifecycle = "active"
 inventory_state = "local-verified"
 source_digest = "local-only"
 quality_claim = true
-production_source_count = 12
-coverage_denominator_count = 12
+production_source_count = 14
+coverage_denominator_count = 14
 undeclared_executable_policy = "fail"
 
 # Active local inventory: every production source has an explicit quality
@@ -69,6 +69,38 @@ quality_task = "domain:photo-analysis:jvmTest"
 status = "local-verified"
 
 [[unit]]
+id = "inference-local-android"
+path = "mobile/inference/local-android"
+kind = "production-adapter"
+production = true
+quality_task = "inference:local-android:jvmTest"
+status = "local-verified"
+
+[[unit]]
+id = "inference-local-ios"
+path = "mobile/inference/local-ios"
+kind = "production-adapter"
+production = true
+quality_task = "inference:local-ios:jvmTest"
+status = "local-verified"
+
+[[unit]]
+id = "inference-local-shared"
+path = "mobile/inference/local-shared"
+kind = "production-adapter"
+production = true
+quality_task = "inference:local-shared:jvmTest"
+status = "local-verified"
+
+[[unit]]
+id = "inference-local-android-poc"
+path = "mobile/inference/local-android-poc"
+kind = "production-adapter"
+production = true
+quality_task = "inference:local-android-poc:testDebugUnitTest"
+status = "active"
+
+[[unit]]
 id = "domain-nutrition"
 path = "mobile/domain/nutrition"
 kind = "production-kmp"
@@ -99,22 +131,6 @@ kind = "production-feature-ui"
 production = true
 quality_task = "feature:photo-analysis-ui:jvmTest"
 status = "active"
-
-[[unit]]
-id = "feature-meal-search-presenter"
-path = "mobile/feature/meal-search-presenter"
-kind = "production-feature-presenter"
-production = true
-quality_task = "feature:meal-search-presenter:jvmTest"
-status = "local-verified"
-
-[[unit]]
-id = "feature-meal-search-ui"
-path = "mobile/feature/meal-search-ui"
-kind = "production-feature-ui"
-production = true
-quality_task = "feature:meal-search-ui:jvmTest"
-status = "local-verified"
 
 [[unit]]
 id = "feature-photo-analysis-presenter"

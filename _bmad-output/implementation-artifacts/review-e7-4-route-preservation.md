@@ -13,7 +13,7 @@ conversation has to be re-derived after compaction.
 
 ### F-1 — the telemetry vocabularies are pinned in neither direction (medium)
 
-`scripts/verify-inference-v2-contract.sh:163-168`
+`scripts/verify-inference-v3-contract.sh`
 
 The new vocabulary loop checks each field against only the single value the
 canonical fixture happens to carry. Seven of the twenty-four declared wire values
@@ -21,7 +21,7 @@ are pinned; seventeen are not. Nothing anywhere compares the `schema.toml` lists
 to the Kotlin `@SerialName` values that actually produce the bytes.
 
 Reproduced twice by the verifier. Renaming `@SerialName("over-5s")` to
-`"over-30s"` in `InferenceTelemetryV2.kt` breaks no test — `OVER_5S` is
+`"over-30s"` in `InferenceTelemetryV3.kt` breaks no test — `OVER_5S` is
 constructed in the failure test but never encoded, and the only encode assertions
 use the fixture's `"under-2s"`. Separately, on a scratch copy with `route` cut to
 `["local","local-text"]`, `"over-5s"` renamed, `"abstention"` renamed, and the
@@ -48,7 +48,7 @@ vocabularies in both directions, with its own negative fixtures.
 
 ### F-2 — an unrecognised modality silently disables the route-agreement rule (medium)
 
-`scripts/verify-inference-v2-contract.sh:154-178`
+`scripts/verify-inference-v3-contract.sh`
 
 `modality` is in `emitted_fields`, so the key-set equality requires the fixture to
 carry the key — but `modality` is not in `VOCABULARIES`, so its *value* is never

@@ -37,11 +37,11 @@ HTTP client anywhere in `mobile/`, and neither `AndroidManifest.xml` declares th
   returns. A provider or market supplying region-less policy simply cannot get
   there.
 - **Free text is structurally non-loggable.** The contract marks it
-  `loggable = false` and `telemetry_eligible = false`, `InferenceRequestV2.Text`
+  `loggable = false` and `telemetry_eligible = false`, `InferenceRequestV3.Text`
   redacts its own `toString`, and no telemetry field can hold a string a
   description could be written into.
 - **The route vocabulary is frozen.** `local`, `local-text`, `remote`, pinned in
-  `contracts/inference/v2` and byte-frozen by the immutability gate. A provider
+  `contracts/inference/v3` and byte-frozen by the immutability gate. A provider
   decision cannot widen it without a v3.
 
 ## What is declared and not true yet
@@ -52,7 +52,7 @@ HTTP client anywhere in `mobile/`, and neither `AndroidManifest.xml` declares th
   the enforced set.
 - **No presenter or screen calls `RemoteTextEligibility.decide` yet.** That is
   expected at this stage, not a gap G-4 is waiting on — the rest of this epic
-  ships domain logic ahead of any concrete UI, the same way `EngineCapabilityV2`
+  ships domain logic ahead of any concrete UI, the same way `EngineCapabilityV3`
   shipped ahead of a real engine, and the "domain-level orchestrator only, no
   UI" scope for this stage was a deliberate choice, not an oversight.
 

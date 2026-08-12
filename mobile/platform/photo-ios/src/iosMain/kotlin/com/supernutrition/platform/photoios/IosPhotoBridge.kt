@@ -1,6 +1,7 @@
 package com.supernutrition.platform.photoios
 
 import com.supernutrition.core.ui.UiAutomationIds
+import com.supernutrition.platform.photoios.captureinterop.SNConfigureCaptureDevice
 import com.supernutrition.platform.photoios.captureinterop.SNCreateCaptureInput
 import com.supernutrition.platform.photoios.captureinterop.SNDefaultBackCamera
 import com.supernutrition.platform.photoios.captureinterop.SNFileDataRepresentation
@@ -22,6 +23,7 @@ import platform.AVFoundation.AVCapturePhotoCaptureDelegateProtocol
 import platform.AVFoundation.AVCapturePhotoOutput
 import platform.AVFoundation.AVCapturePhotoSettings
 import platform.AVFoundation.AVCaptureSession
+import platform.AVFoundation.AVCaptureSessionPresetPhoto
 import platform.AVFoundation.AVCaptureVideoPreviewLayer
 import platform.AVFoundation.AVLayerVideoGravityResizeAspectFill
 import platform.CoreGraphics.CGRectGetHeight
@@ -61,6 +63,7 @@ interface IosPhotoPresentationPort {
 }
 
 @OptIn(ExperimentalForeignApi::class, kotlin.experimental.ExperimentalNativeApi::class)
+@Suppress("TooManyFunctions")
 class IosPhotoBridge :
     IosPhotoBridgePort,
     IosPhotoPresentationPort {
@@ -128,17 +131,13 @@ class IosPhotoBridge :
             failPresentation(onFailure)
             return
         }
-        val configuration = PHPickerConfiguration(
-            photoLibrary = platform.Photos.PHPhotoLibrary.sharedPhotoLibrary(),
-        ).apply {
+        val configuration = PHPickerConfiguration().apply {
             filter = platform.PhotosUI.PHPickerFilter.imagesFilter()
             selectionLimit = 1
         }
         val weakBridge = WeakReference(this)
         lateinit var delegate: PhotoPickerDelegate
-        val picker = TrackedPhotoPickerViewController(configuration) {
-            delegate.presentationDismissed()
-        }
+        val picker = PHPickerViewController(configuration = configuration)
         delegate = PhotoPickerDelegate(
             onResult = { data -> deliver(onResult, data) },
             onFailure = { failPresentation(onFailure) },
@@ -158,6 +157,21 @@ class IosPhotoBridge :
         activeDelegate = delegate
         return true
     }
+
+    private fun failPresentation(onFailure: () -> Unit) {
+        dispatch_async(dispatch_get_main_queue()) { onFailure() }
+    }
+
+    private fun <T> deliver(callback: (T) -> Unit, value: T) {
+        dispatch_async(dispatch_get_main_queue()) { callback(value) }
+    }
+
+    private fun cameraDevice(): AVCaptureDevice? = SNDefaultBackCamera()
+
+    private fun usageDescription(key: String): String =
+        checkNotNull(NSBundle.mainBundle.objectForInfoDictionaryKey(key) as? String) {
+            "Missing required Info.plist key: $key"
+        }
 
     private companion object {
         const val CAMERA_USAGE_KEY = "NSCameraUsageDescription"
@@ -288,6 +302,10 @@ private class CameraCaptureViewController(
 
     private fun configureCapture(input: AVCaptureDeviceInput): Boolean {
         captureSession.beginConfiguration()
+        if (captureSession.canSetSessionPreset(AVCaptureSessionPresetPhoto)) {
+            captureSession.sessionPreset = AVCaptureSessionPresetPhoto
+        }
+        SNConfigureCaptureDevice(input.device)
         val configured = captureSession.canAddInput(input) && captureSession.canAddOutput(photoOutput)
         if (configured) {
             captureSession.addInput(input)
@@ -319,23 +337,6 @@ private class CameraCaptureViewController(
 }
 
 @OptIn(ExperimentalForeignApi::class)
-private class TrackedPhotoPickerViewController(
-    configuration: PHPickerConfiguration,
-    private val onDismissed: () -> Unit,
-) : PHPickerViewController(configuration = configuration) {
-    private var programmaticDismissal = false
-
-    fun markProgrammaticDismissal() {
-        programmaticDismissal = true
-    }
-
-    override fun viewDidDisappear(animated: Boolean) {
-        super.viewDidDisappear(animated)
-        if (!programmaticDismissal) onDismissed()
-    }
-}
-
-@OptIn(ExperimentalForeignApi::class)
 private class PhotoPickerDelegate(
     private val onResult: (NSData?) -> Unit,
     private val onFailure: () -> Unit,
@@ -343,10 +344,6 @@ private class PhotoPickerDelegate(
 ) : NSObject(),
     PHPickerViewControllerDelegateProtocol {
     private var completed = false
-
-    fun presentationDismissed() {
-        complete { onResult(null) }
-    }
 
     override fun picker(picker: PHPickerViewController, didFinishPicking: List<*>) {
         if (completed) return
@@ -381,34 +378,11 @@ private class PhotoPickerDelegate(
     }
 
     private fun dismissPicker(picker: PHPickerViewController, action: () -> Unit) {
-        (picker as? TrackedPhotoPickerViewController)?.markProgrammaticDismissal()
         picker.dismissViewControllerAnimated(true) { complete(action) }
     }
 }
 
 @OptIn(ExperimentalForeignApi::class)
-// None of these four touch the bridge's state — they hop to the main queue, ask
-// the system for a device, or read Info.plist. At file level the class is left
-// holding only the presentation flow it actually coordinates.
-
-private fun failPresentation(onFailure: () -> Unit) {
-    dispatch_async(dispatch_get_main_queue()) { onFailure() }
-}
-
-private fun <T> deliver(callback: (T) -> Unit, value: T) {
-    dispatch_async(dispatch_get_main_queue()) { callback(value) }
-}
-
-// Carried explicitly now: the opt-in used to come from the enclosing class, and
-// moving this out of it took that with it.
-@OptIn(ExperimentalForeignApi::class)
-private fun cameraDevice(): AVCaptureDevice? = SNDefaultBackCamera()
-
-private fun usageDescription(key: String): String =
-    checkNotNull(NSBundle.mainBundle.objectForInfoDictionaryKey(key) as? String) {
-        "Missing required Info.plist key: $key"
-    }
-
 private fun dismissOnMain(picker: UIViewController, onDismissed: () -> Unit) {
     dispatch_async(dispatch_get_main_queue()) {
         picker.dismissViewControllerAnimated(true, completion = onDismissed)

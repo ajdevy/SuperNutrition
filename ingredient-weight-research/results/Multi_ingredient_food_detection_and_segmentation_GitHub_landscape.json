@@ -1,0 +1,664 @@
+{
+  "repositories_and_sources": {
+    "research_scope": "Primary repositories, official dataset pages, and linked papers for multi-component food detection, ingredient recognition, semantic segmentation, instance segmentation, panoptic segmentation, and the mass-ground-truth sources needed to turn masks into nutrition estimates.",
+    "accessed": "2026-07-31",
+    "entries": [
+      {
+        "name": "FoodSeg103 and FoodSeg154",
+        "repository_or_dataset": "https://github.com/LARC-CMU-SMU/FoodSeg103-Benchmark-v1",
+        "official_dataset_or_project": "https://xiongweiwu.github.io/foodseg103.html",
+        "linked_paper": "https://arxiv.org/abs/2105.05409",
+        "role": "Fine-grained semantic food and ingredient segmentation benchmark with official MMsegmentation-style baselines and ReLeM checkpoints.",
+        "production_starting_point": "Useful as an academic semantic-segmentation benchmark and teacher-data source; not sufficient by itself for production because it has no mass labels, no instance identity, and the dataset download terms are not clearly stated.",
+        "primary_evidence": "The repository README documents 7,118 images, 104 label IDs in the repository convention, an average of about six ingredient labels per image, pixel-wise masks, Apache-2.0 code, and baseline mIoU values. The paper and project page document the 9,490-image FoodSeg103 plus FoodSeg154 release with 154 ingredient classes."
+      },
+      {
+        "name": "FoodInsSeg",
+        "repository_or_dataset": "https://github.com/jamesjg/FoodInsSeg",
+        "official_dataset_or_project": "https://laura990501.github.io/FoodInsSeg_dataset/",
+        "linked_paper_or_materials": "https://sigport.org/documents/when-segment-anything-model-meets-food-instance-segmentation",
+        "role": "Ingredient-level food instance-segmentation dataset and COCO-format evaluation/visualization code.",
+        "production_starting_point": "Strongest public benchmark for ingredient-level instance masks, but not legally usable as-is in a commercial product because the dataset is explicitly academic/non-commercial under CC BY-NC-SA 4.0.",
+        "primary_evidence": "The official repository reports 7,118 images, 103 categories, 119,048 ingredient-level masks, polygon annotations, and an InsSAM-tool origin for the instance labels."
+      },
+      {
+        "name": "FoodSAM",
+        "repository_or_dataset": "https://github.com/jamesjg/FoodSAM",
+        "official_project": "https://starhiking.github.io/FoodSAM/",
+        "linked_paper": "https://arxiv.org/abs/2308.05938",
+        "role": "A research pipeline combining SAM, a semantic segmenter, and an object detector to produce semantic, instance, panoptic, and promptable food segmentation.",
+        "production_starting_point": "Useful for server-side experiments, teacher-mask generation, and comparing task formulations; a poor direct mobile starting point because it chains several GPU-oriented models and depends on restricted research datasets/checkpoints.",
+        "primary_evidence": "The official README documents semantic and panoptic inference commands, an instance-segmentation path, FoodSeg103 and UECFoodPixComplete evaluation, and FoodSAM mIoU of 46.42 on FoodSeg103 and 66.14 on UECFoodPixComplete."
+      },
+      {
+        "name": "MyFoodRepo-273 and Food Recognition Benchmark",
+        "repository_or_dataset": "https://github.com/AIcrowd/food-recognition-benchmark-starter-kit",
+        "linked_experiments_repository": "https://gitlab.aicrowd.com/aicrowd/research/myfoodrepo-experiments",
+        "linked_paper": "https://arxiv.org/abs/2106.14977",
+        "role": "Real-world user-photo benchmark with individual food-item polygons, class labels, and Detectron2/MMDetection starter code; the benchmark also discusses weight/volume tasks.",
+        "production_starting_point": "Best public-domain candidate for testing wild phone-photo robustness and multi-item detection, subject to a separate data-rights/privacy/commercial-use review; the released polygons do not establish per-component gram ground truth.",
+        "primary_evidence": "The paper reports 24,119 images, 39,325 polygons, 273 classes, and private test rounds of about 5,000 images. The GitHub starter kit provides MIT-licensed baseline code for mmdetection and detectron2."
+      },
+      {
+        "name": "UECFoodPixComplete",
+        "official_dataset": "https://mm.cs.uec.ac.jp/uecfoodpix/",
+        "linked_paper": "https://mm.cs.uec.ac.jp/e/pub/conf20/210110okamoto-ka_0.pdf",
+        "role": "Large semantic food segmentation dataset derived from UECFood-100, with manually refined pixel masks and category IDs.",
+        "production_starting_point": "Useful for semantic segmentation pretraining and Japanese/Asian food-domain evaluation; not directly usable for a commercial product because the official page restricts use to non-commercial research.",
+        "primary_evidence": "The official page documents 9,000 training and 1,000 test images, 103 category labels in its label table, 759 MB for UECFoodPixComplete, and manual mask refinement over the earlier GrabCut version."
+      },
+      {
+        "name": "UNIMIB2016 and Semantic Food Detection",
+        "official_dataset_page": "http://www.ivl.disco.unimib.it/activities/food-recognition/",
+        "linked_paper": "https://arxiv.org/abs/1711.05128",
+        "role": "Canteen-tray semantic food detection/segmentation benchmark with polygon boundaries, bounding boxes, and labels for individual food items.",
+        "production_starting_point": "Useful as a small multi-component tray benchmark and European-canteen domain slice; too small and too institution-specific to be the sole production training source.",
+        "primary_evidence": "The dataset paper reports 1,027 tray images, 73 food categories, and 3,616 food instances captured with a Samsung Galaxy S3 in a semi-controlled canteen environment."
+      },
+      {
+        "name": "Food Instance Segmentation using Synthetic Data",
+        "repository_or_dataset": "https://github.com/gist-ailab/Food-Instance-Segmentation",
+        "linked_paper": "https://arxiv.org/abs/2107.07191",
+        "role": "Blender-generated multi-object meal scenes, Mask R-CNN training/evaluation/inference code, and released weights for food instance segmentation.",
+        "production_starting_point": "Useful for synthetic pretraining, augmentation, and testing a mask pipeline before real-data fine-tuning; not a substitute for consented real phone photos and its repository does not state a clear commercial data/model license.",
+        "primary_evidence": "The paper reports a real-world mask AP@all of 52.2% from synthetic-only training and a 6.4 percentage-point improvement after fine-tuning; the repository documents Blender data and Mask R-CNN code."
+      },
+      {
+        "name": "Nutrition5k",
+        "repository_or_dataset": "https://github.com/google-research-datasets/Nutrition5k",
+        "linked_paper": "https://arxiv.org/abs/2103.03375",
+        "related_mobile_segmenter": "https://www.kaggle.com/models/google/mobile-food-segmenter-v1/tensorFlow1/seefood-segmenter-mobile-food-segmenter-v1/1",
+        "role": "Paired visual-nutrition dataset supplying ingredient lists, per-ingredient grams, total mass, calories, macronutrients, multi-view RGB video, and overhead RGB-D; it is not itself an ingredient-mask dataset.",
+        "production_starting_point": "Best public source for building and validating a mass/portion head and for designing weighed capture; not a complete visible-ingredient segmentation starter because per-ingredient pixel masks/bounding boxes are not provided.",
+        "primary_evidence": "The official repository reports 5,006 plates, four rotating side-angle videos per plate, overhead RGB-D when available, per-ingredient mass, official splits, regression scripts, a 181.4 GB download, and a California cafeteria bias disclaimer."
+      },
+      {
+        "name": "BenchSeg",
+        "repository_or_dataset": "https://github.com/GCVCG/BenchSeg",
+        "official_project": "https://amughrabi.github.io/benchseg/",
+        "linked_paper": "https://arxiv.org/abs/2601.07581",
+        "role": "Emerging multi-view food-video segmentation and temporal-consistency benchmark with segmenter plus memory-tracking baselines.",
+        "production_starting_point": "Useful for evaluating camera-motion robustness, mask flicker, temporal continuity, and multi-view capture; not a first mobile model because the repository requires Docker/submodules and large checkpoints, and its public pages do not document a commercial license or a unified ingredient taxonomy.",
+        "primary_evidence": "The paper and project page report 55 dish scenes aggregated from Nutrition5k, Vegetables & Fruits, MetaFood3D, and FoodKit, with 25,284 annotated frames and free 360-degree camera motion."
+      },
+      {
+        "name": "Food Ingredients Recognition through Multi-label Learning and Dishscan",
+        "repository_or_dataset": "https://github.com/MarcBS/food_ingredients_recognition",
+        "modern_reimplementation": "https://github.com/RameezI/dishscan",
+        "linked_paper": "https://arxiv.org/abs/1707.08816",
+        "modern_linked_paper": "https://arxiv.org/abs/2210.14147",
+        "role": "Image-level multi-label ingredient detection rather than localization; Ingredients101 and Recipes5k provide recipe/ingredient supervision, while Dishscan evaluates encoders including MobileNet.",
+        "production_starting_point": "Useful as a low-cost candidate-generator baseline for ingredient presence, but not an ingredient-boundary or portion model; the older Keras/Theano-style code needs substantial modernization and its data rights must be checked separately.",
+        "primary_evidence": "The official repository documents Ingredients101 with 446 unique ingredients across 101 Food101 types and Recipes5k with 4,826 recipes, 3,213 fine-grained ingredients, and a 1,013-ingredient simplified vocabulary."
+      }
+    ]
+  },
+  "maintenance_and_reproducibility": {
+    "status_summary": "[uncertain] This is a snapshot as of 2026-07-31; GitHub stars, issue counts, commit activity, download links, checkpoints, and dataset terms can change. The landscape is research-maintained rather than production-maintained: most repos have no releases, no mobile artifact, no CI evidence for deployment, and GPU-centric setup instructions.",
+    "observations": [
+      {
+        "source": "FoodSeg103-Benchmark-v1",
+        "observed_maintenance": "26 commits, 22 issues, 2 pull requests, Apache-2.0 code, explicit baseline configuration, and a password-protected dataset download link; strong benchmark reproducibility but an old research stack and no mobile export path.",
+        "reproducibility_risk": "The paper describes FoodSeg154/9,490 images while the repository README is centered on FoodSeg103/7,118 images; pin the dataset variant, class map, checkpoint, and split before training."
+      },
+      {
+        "source": "FoodInsSeg",
+        "observed_maintenance": "11 commits, 0 issues, 0 releases, a small evaluation/visualization codebase, and dataset downloads via Google Drive or Baidu Netdisk.",
+        "reproducibility_risk": "The COCO format is clear, but access is manual, there is no maintained training pipeline or mobile conversion, and the dataset agreement can terminate access."
+      },
+      {
+        "source": "FoodSAM",
+        "observed_maintenance": "58 commits, 13 issues, 1 pull request, 182 stars, Apache-2.0 model/repository statement, and working command examples for semantic/panoptic inference.",
+        "reproducibility_risk": "Installation spans SAM, MMsegmentation, UniDet, CUDA, and multiple checkpoints; open issues include checkpoint/setup failures. Treat it as a reproducible research baseline only after freezing dependency versions and verifying every checkpoint hash."
+      },
+      {
+        "source": "MyFoodRepo benchmark",
+        "observed_maintenance": "The GitHub starter kit has 121 commits and MIT code; the linked GitLab experiment project has 32 commits, one branch, zero tags, and Apache-2.0 metadata.",
+        "reproducibility_risk": "The public training data and older challenge rounds are usable for benchmark reproduction, but private test data, challenge endpoints, participant artifacts, and data-use terms are external to the GitHub checkout."
+      },
+      {
+        "source": "UECFoodPixComplete and UNIMIB2016",
+        "observed_maintenance": "Both are stable academic datasets with direct institutional pages and simple image/mask or polygon formats, but neither has a modern maintained mobile training repository.",
+        "reproducibility_risk": "Older download pages, HTTP links, class-index conventions, and missing explicit version hashes make it necessary to archive the downloaded data, checksums, label map, and license text internally."
+      },
+      {
+        "source": "Synthetic food instance segmentation",
+        "observed_maintenance": "14 commits, 1 issue, 0 releases visible on the repository page; training, inference, evaluation, Blender dataset, and pretrained-weight links are present.",
+        "reproducibility_risk": "The repository does not document a stable dataset version, exact Blender scene generation seed, or model/data license. Reproduce only inside an isolated environment and treat the released weights as research inputs."
+      },
+      {
+        "source": "Nutrition5k",
+        "observed_maintenance": "The official GitHub repository was archived by its owner on 2026-04-19 and is read-only; it has 11 commits, official splits, shell/data scripts, 412 stars, and a very large 181.4 GB download.",
+        "reproducibility_risk": "The content is unusually well documented, but storage and transfer costs are material and the dataset's cafeteria/capture bias is not solved by its large size."
+      },
+      {
+        "source": "BenchSeg",
+        "observed_maintenance": "42 commits, a dev branch, 0 stars, 0 issues, Docker/submodule setup, 8.15 GB of pretrained models, and explicit inference/evaluation scripts.",
+        "reproducibility_risk": "It is a very recent research release; pin the dev commit, external SAM2/XMem2 revisions, model URLs, source-dataset permissions, and annotation release before relying on it."
+      },
+      {
+        "source": "Dishscan and the older multi-label repository",
+        "observed_maintenance": "Dishscan has 12 commits, 0 releases, and MIT code; the older reference implementation has 23 commits and no visible release. Both are baseline research code, not maintained production SDKs.",
+        "reproducibility_risk": "Environment files and legacy Keras dependencies are likely to require repair; the repos do not provide a complete mobile inference contract, calibration, monitoring, or rollback path."
+      }
+    ],
+    "reproducibility_requirements_for_supernutrition": [
+      "Freeze a repository commit, dataset archive checksum, class-index map, split files, pretrained checkpoint checksum, preprocessing dimensions, and evaluation script version.",
+      "Keep repository code, dataset rights, model/checkpoint rights, and downstream nutrition-catalog rights as separate approvals.",
+      "Re-run benchmark evaluation on a held-out, person/recipe/device/time-separated SuperNutrition corpus; published scores on FoodSeg103, UECFoodPixComplete, or Nutrition5k are not phone-photo acceptance evidence."
+    ]
+  },
+  "license_and_usage": {
+    "commercial_readiness_summary": "[uncertain] Code licenses are often permissive while the image/mask dataset terms are academic-only, unspecified, or inherited from third parties. No repository in this landscape should be copied into a commercial mobile product until code, weights, images, annotations, and derived-model rights are reviewed separately.",
+    "source_matrix": [
+      {
+        "source": "FoodSeg103-Benchmark-v1",
+        "code_license": "Apache-2.0 is stated for the repository code.",
+        "dataset_license": "Not clearly stated on the official repository/project page; the download is password-protected and underlying web-image rights are not established.",
+        "commercial_use": "Do not assume commercial training or redistribution is allowed; obtain dataset-owner clearance or use it only for internal academic benchmarking."
+      },
+      {
+        "source": "FoodInsSeg",
+        "code_license": "No separate permissive code license is prominently declared on the repository page.",
+        "dataset_license": "CC BY-NC-SA 4.0, with an explicit academic-only and commercial/profit-prohibited agreement.",
+        "commercial_use": "Not suitable for commercial training, shipping, or model redistribution without a separate written license."
+      },
+      {
+        "source": "FoodSAM",
+        "code_license": "Apache-2.0 is stated for the FoodSAM model/repository.",
+        "dataset_license": "FoodSAM depends on FoodSeg103 and UECFoodPixComplete for evaluation; those dataset terms are not the same as the code license. SAM, UniDet, and individual checkpoint licenses must also be checked.",
+        "commercial_use": "The code license alone does not clear the data/checkpoint stack; use as a research or server prototype until every dependency is cleared."
+      },
+      {
+        "source": "MyFoodRepo-273 and AIcrowd starter",
+        "code_license": "The GitHub starter kit is MIT; linked GitLab experiments show Apache-2.0 project metadata.",
+        "dataset_license": "The dataset is made from user-submitted/app-collected photos and challenge distribution terms; the public paper does not provide a simple commercial redistribution grant for all images and annotations.",
+        "commercial_use": "Potentially valuable after written permission, privacy review, and confirmation that derived commercial models are allowed; do not assume the MIT code covers the data."
+      },
+      {
+        "source": "UECFoodPixComplete",
+        "code_license": "No central code license is the focus of the official dataset page.",
+        "dataset_license": "Official agreement restricts UECFoodPix and UECFoodPixComplete to non-commercial research use.",
+        "commercial_use": "Not cleared for a commercial SuperNutrition model."
+      },
+      {
+        "source": "UNIMIB2016",
+        "code_license": "Not applicable to the official dataset page.",
+        "dataset_license": "A clear commercial license was not found on the official dataset page during this research.",
+        "commercial_use": "Treat as research-only until the University of Milano-Bicocca confirms commercial training and redistribution rights."
+      },
+      {
+        "source": "Synthetic food instance segmentation",
+        "code_license": "No explicit repository license was visible in the primary page reviewed; the README says code, weights, and Blender-generated data are free to use, which is not a complete license grant.",
+        "dataset_license": "No stable dataset license or third-party asset inventory is stated.",
+        "commercial_use": "Do not ship or train a commercial model from it without author confirmation and an asset/license audit."
+      },
+      {
+        "source": "Nutrition5k",
+        "code_license": "The repository is an archived research dataset repository; separate code-license terms should be checked if redistributing scripts.",
+        "dataset_license": "The official README states Creative Commons V4.0 and explicitly permits sharing, adapting, and commercial use of the data.",
+        "commercial_use": "Most legally promising dataset in this set, subject to checking third-party source imagery, model/checkpoint dependencies, attribution, and privacy obligations."
+      },
+      {
+        "source": "BenchSeg",
+        "code_license": "No clear license is visible on the primary GitHub page reviewed.",
+        "dataset_license": "Aggregates scenes from Nutrition5k, Vegetables & Fruits, MetaFood3D, and FoodKit; upstream terms and any new annotations must be cleared individually.",
+        "commercial_use": "Not cleared; the multi-source composition makes provenance and derivative-model rights a first-order blocker."
+      },
+      {
+        "source": "Dishscan and multi-label ingredient code",
+        "code_license": "Dishscan states MIT; the older reference repository does not prominently state a license.",
+        "dataset_license": "Ingredients101, Recipes5k, Food101-derived images, and Nutrition5k data each require separate review.",
+        "commercial_use": "Code can be a baseline where MIT applies, but data/model rights and legacy dependencies remain open."
+      }
+    ],
+    "commercial_gate": "Use only cleared or newly collected data for production training. Academic-only segmentation datasets can still be used to design labels, test algorithms internally where permitted, or generate research comparisons, but not silently converted into a shipped model."
+  },
+  "task_and_labels": {
+    "landscape_matrix": [
+      {
+        "source": "FoodSeg103/FoodSeg154",
+        "tasks": ["semantic segmentation", "ingredient presence via per-pixel labels"],
+        "labels": "Food/ingredient categories; FoodSeg103 repository convention exposes 103 foreground categories plus background-like label IDs, while the paper's extension reports 154 ingredient classes.",
+        "annotation_granularity": "Pixel-wise semantic mask with one category per pixel; multiple ingredients can appear in one image, but separate touching instances of the same ingredient are not distinguished.",
+        "detection_or_instance": "No official object-detection or instance-ID annotation in the core benchmark.",
+        "panoptic": "No official panoptic ground truth; FoodSAM can derive panoptic predictions from it."
+      },
+      {
+        "source": "FoodInsSeg",
+        "tasks": ["instance segmentation", "ingredient-level food recognition"],
+        "labels": "103 food ingredient categories.",
+        "annotation_granularity": "COCO-style polygons with one annotation per food item/ingredient instance, category ID, area, and bounding box; repeated items can have distinct instances.",
+        "detection_or_instance": "Directly supports instance masks and boxes; COCO evaluation code is supplied.",
+        "panoptic": "No official panoptic category/thing-stuff ground truth is advertised."
+      },
+      {
+        "source": "FoodSAM",
+        "tasks": ["semantic segmentation", "instance segmentation", "panoptic segmentation", "promptable segmentation"],
+        "labels": "Semantic food categories from FoodSeg103/UECFoodPixComplete plus detector-provided non-food/background categories.",
+        "annotation_granularity": "Composed output: coarse semantic class masks are refined or split with SAM masks; detector prompts provide non-food objects for panoptic composition.",
+        "detection_or_instance": "Uses a detector and SAM-generated masks; not a single compact end-to-end ingredient detector.",
+        "panoptic": "Explicitly supported by the official paper and repository."
+      },
+      {
+        "source": "MyFoodRepo-273",
+        "tasks": ["food-item detection", "instance segmentation", "food-item classification"],
+        "labels": "273 food classes selected with at least 35 annotations per class in the benchmark release.",
+        "annotation_granularity": "Human-verified polygons for individual visible food items; usually one to two items per image, with a long tail up to 12 polygons in an image.",
+        "detection_or_instance": "Directly supports object/instance prediction in COCO-like benchmark workflows.",
+        "panoptic": "No panoptic stuff labels or ingredient-level hidden-recipe labels."
+      },
+      {
+        "source": "UECFoodPixComplete",
+        "tasks": ["semantic segmentation"],
+        "labels": "Official label table provides food category IDs; the page describes 103 class labels, while some papers index the foreground/background set as 102/103 categories. [uncertain]",
+        "annotation_granularity": "Pixel-wise semantic masks manually refined from GrabCut masks; all pixels of a category share a class value, with no instance IDs.",
+        "detection_or_instance": "No instance-level identity in the official format.",
+        "panoptic": "No official panoptic annotations."
+      },
+      {
+        "source": "UNIMIB2016",
+        "tasks": ["semantic food detection", "food-item localization", "polygon segmentation"],
+        "labels": "73 food categories and individual food identities.",
+        "annotation_granularity": "Per-item polygon boundary, bounding box, and food label on a tray image.",
+        "detection_or_instance": "Supports individual visible-item localization, although it predates modern COCO instance conventions.",
+        "panoptic": "No panoptic annotations."
+      },
+      {
+        "source": "Synthetic food instance segmentation",
+        "tasks": ["instance segmentation", "object detection through Mask R-CNN outputs"],
+        "labels": "Synthetic food-object categories defined by the Blender scenes/model configuration rather than a shared ingredient ontology.",
+        "annotation_granularity": "Instance masks, boxes, and class IDs generated from 3D scenes; real-world evaluation tests transfer to food items.",
+        "detection_or_instance": "Direct Mask R-CNN instance outputs.",
+        "panoptic": "No panoptic task is documented."
+      },
+      {
+        "source": "Nutrition5k",
+        "tasks": ["image-level ingredient-list prediction", "mass/nutrition regression", "related binary food segmentation model"],
+        "labels": "Fine-grained ingredient IDs and names in metadata, with per-ingredient grams and nutrient values.",
+        "annotation_granularity": "Dish-level visual frames plus structured ingredient metadata; the official dataset does not provide per-ingredient pixel masks or boxes.",
+        "detection_or_instance": "No direct component detector/instance mask ground truth in the dataset.",
+        "panoptic": "Not a panoptic dataset."
+      },
+      {
+        "source": "BenchSeg",
+        "tasks": ["frame-wise food segmentation", "multi-view video segmentation", "temporal mask propagation/tracking"],
+        "labels": "Food segmentation labels and scene/frame identities; a single unified ingredient taxonomy is not documented on the public abstract/project page.",
+        "annotation_granularity": "Per-frame masks with temporal continuity evaluation; the benchmark adds continuity, flicker-rate, and IoU-drift metrics.",
+        "detection_or_instance": "Supports segmenter and memory-tracker comparisons, not clearly a COCO ingredient-instance benchmark.",
+        "panoptic": "No panoptic task is advertised."
+      },
+      {
+        "source": "Ingredients101/Recipes5k and Dishscan",
+        "tasks": ["multi-label ingredient detection", "recipe-level ingredient recognition"],
+        "labels": "Ingredients101: 446 unique ingredients across 101 Food101 food types; Recipes5k: 3,213 fine-grained or 1,013 simplified ingredients across 4,826 recipes.",
+        "annotation_granularity": "Image-level list of ingredients, including ingredients that may be visually hidden inside a recipe; no pixel localization.",
+        "detection_or_instance": "Presence/absence prediction only.",
+        "panoptic": "Not applicable."
+      }
+    ],
+    "key_labeling_distinction": "The word ingredient is used at different levels: a visible food component in FoodSeg103/FoodInsSeg, a visible food item in MyFoodRepo/UNIMIB, and a recipe constituent that may be invisible in Ingredients101/Recipes5k/Nutrition5k. These labels are not interchangeable without an explicit ontology and visible-versus-hidden flag."
+  },
+  "dataset_scale_and_domain": {
+    "dataset_matrix": [
+      {
+        "source": "FoodSeg103/FoodSeg154",
+        "scale": "FoodSeg103 repository: 7,118 images; paper extension: 9,490 images across FoodSeg103 and FoodSeg154.",
+        "splits": "The repository provides benchmark train/test organization; the exact variant and split files must be pinned because the paper's extension and README emphasize different counts.",
+        "domain": "Web-collected food images with multiple visible ingredients and substantial overlap/appearance variation; broad but not a controlled phone-photo cohort.",
+        "meal_composition": "Average about six ingredient labels per image according to the official project/paper."
+      },
+      {
+        "source": "FoodInsSeg",
+        "scale": "7,118 images, 119,048 masks; 4,983 train images/82,716 masks and 2,135 test images/36,332 masks.",
+        "splits": "Same train/test split as FoodSeg103; average 16.59 masks per train image and 17.01 per test image; maximum 126 train masks and 186 test masks in one image.",
+        "domain": "FoodSeg103-derived images, so it increases annotation granularity more than capture diversity.",
+        "meal_composition": "High instance count per image makes it valuable for crowded mixed meals, but it inherits the source dataset's taxonomy and web-image bias."
+      },
+      {
+        "source": "FoodSAM",
+        "scale": "No separate new image corpus; reported experiments use FoodSeg103 and UECFoodPixComplete.",
+        "splits": "Uses the underlying benchmark splits and checkpoint-specific evaluation scripts.",
+        "domain": "Mixed food images plus non-food background objects; zero-shot/promptable behavior is research-oriented.",
+        "meal_composition": "Useful for testing multiple outputs from one image, not for expanding the domain distribution."
+      },
+      {
+        "source": "MyFoodRepo-273",
+        "scale": "24,119 public training images and 39,325 polygons across 273 classes; round test sets contain about 5,000 private images.",
+        "splits": "train-v0.4 is public; challenge test sets are private and round-specific.",
+        "domain": "Real user photos from the MyFoodRepo app, including free-living meal images rather than only curated web images; source population is strongly connected to Swiss nutrition cohorts.",
+        "meal_composition": "15,701 images have one polygon, 4,397 have two, 2,341 have three, then a long tail to 12 polygons; this is realistic for detection but less dense than FoodInsSeg."
+      },
+      {
+        "source": "UECFoodPixComplete",
+        "scale": "10,000 images total: 9,000 train and 1,000 test; 103-category label table in the official page.",
+        "splits": "Official train.txt and test.txt lists are provided in the archive.",
+        "domain": "UECFood-100-derived Japanese and mixed food photos with multiple foods on plates, varied camera angles, arrangements, and touching regions.",
+        "meal_composition": "Strong semantic multi-food benchmark; it has no per-component mass or instance identity."
+      },
+      {
+        "source": "UNIMIB2016",
+        "scale": "1,027 tray images, 73 food categories, and 3,616 annotated food instances; common experimental split is about 650 train and 360 test images.",
+        "splits": "The published paper and subsequent experiments use fixed research splits; preserve the official annotations and do not mix near-duplicate trays across splits.",
+        "domain": "Semi-controlled Italian university canteen trays captured with a Samsung Galaxy S3, including plates, placemats, multiple foods, and sides served together.",
+        "meal_composition": "Good for crowded tray layout and European canteen evaluation, weak for global cuisine diversity and modern smartphone capture."
+      },
+      {
+        "source": "Synthetic food instance segmentation",
+        "scale": "Blender-generated data and a real-world evaluation set are released through external links; the primary README does not state a stable image-count summary.",
+        "splits": "Repository configs define training/evaluation paths, but a versioned public split manifest is not prominent.",
+        "domain": "Synthetic plate scenes with controllable object placement, lighting, and masks; real-world transfer is the stated evaluation target.",
+        "meal_composition": "Supports controlled multi-object occlusion and synthetic rare cases, but the sim-to-real gap is substantial."
+      },
+      {
+        "source": "Nutrition5k",
+        "scale": "5,006 plates with four rotating side-angle videos, overhead RGB-D when available, fine-grained ingredients, and per-ingredient mass.",
+        "splits": "Official dish-ID train/test split keeps all incremental scans from a unique plate in one split.",
+        "domain": "A few Google cafeterias in California, captured with a custom scanning rig; approximately 181.4 GB for the complete archive.",
+        "meal_composition": "Ingredients are added incrementally, growing from simple items to complex mixed plates; excellent paired nutrition detail but narrow cuisine/capture diversity."
+      },
+      {
+        "source": "BenchSeg",
+        "scale": "55 dish scenes and 25,284 annotated frames, including source scenes from Nutrition5k, Vegetables & Fruits, MetaFood3D, and FoodKit.",
+        "splits": "Project scripts define benchmark evaluation; pin the dev branch and the external source-dataset versions.",
+        "domain": "Free 360-degree camera motion and multi-view food video, closer to viewpoint-robust capture research than a single still phone photo.",
+        "meal_composition": "Best fit for temporal/multi-view stability and mask tracking; it is not a broad recipe/ingredient corpus."
+      },
+      {
+        "source": "Ingredients101/Recipes5k and Dishscan",
+        "scale": "Ingredients101 covers 101 Food101 types and 446 unique ingredients; Recipes5k contains 4,826 recipes, 3,213 fine-grained ingredients, or 1,013 simplified ingredients.",
+        "splits": "The reference repo documents balanced train/validation/test splits by food type and recipe alternatives.",
+        "domain": "Food101-derived web images and recipe metadata, with strong recipe/composition supervision but no real-world mask or portion protocol.",
+        "meal_composition": "Useful for multi-label candidate generation and hidden-recipe ingredient reasoning, not visible component geometry."
+      }
+    ],
+    "domain_gap_summary": "No single public source combines broad cuisines, real phone photos, ingredient-level instance masks, panoptic non-food context, and independently weighed per-component grams. The landscape is inherently compositional: segmentation sources provide geometry, multi-label sources provide recipe constituents, and Nutrition5k provides controlled mass/nutrition labels."
+  },
+  "expected_ingredient_quality": {
+    "quality_summary": "[uncertain] Expected transfer to SuperNutrition is uncertain because published benchmarks use different taxonomies, image sources, capture rigs, and split protocols. The most reliable product behavior should be visible-component candidate generation with abstention and user correction, not hidden-ingredient certainty.",
+    "evidence_by_source": [
+      {
+        "source": "FoodSeg103",
+        "published_signal": "Repository baselines report mIoU from 27.8 to 35.5 depending architecture, and ReLeM-R50/FPN reports 29.1 in the README table; the paper establishes the benchmark as difficult because ingredients overlap and one ingredient changes appearance across dishes.",
+        "likely_strength": "Visible, sufficiently large components with a known 103/154-class vocabulary.",
+        "likely_failure": "Touching/overlapping ingredients, sauces, mixed recipes, rare cuisines, and same-class instance separation."
+      },
+      {
+        "source": "FoodInsSeg",
+        "published_signal": "119,048 instance masks with up to 186 masks in one test image provide much denser supervision than semantic-only datasets; the official repo supplies COCO evaluation but does not publish a single headline mask-AP score.",
+        "likely_strength": "Separating repeated visible components and training a compact instance segmenter.",
+        "likely_failure": "Inherited FoodSeg103 appearance/domain bias, small or heavily occluded ingredients, and any hidden ingredient not visibly present."
+      },
+      {
+        "source": "FoodSAM",
+        "published_signal": "FoodSAM reports 46.42 mIoU on FoodSeg103 and 66.14 mIoU on UECFoodPixComplete, and supports semantic, instance, panoptic, and promptable outputs.",
+        "likely_strength": "Flexible mask proposals, interactive correction, and non-food/background separation in research settings.",
+        "likely_failure": "Heavy multi-model composition, category errors inherited from the semantic/detector stages, mask over/under-segmentation, and poor mobile cost."
+      },
+      {
+        "source": "MyFoodRepo-273",
+        "published_signal": "Benchmark leaders reached mAP 0.568 in round 4 and mean average recall 0.885 in round 3 on private same-platform test sets.",
+        "likely_strength": "Real-world user-photo object detection and visible food-item localization.",
+        "likely_failure": "Class imbalance, out-of-taxonomy foods, clutter, cultural/cuisine shift, merged dishes, and no direct evidence that polygons translate to ingredient-level or gram-level accuracy."
+      },
+      {
+        "source": "UECFoodPixComplete and UNIMIB2016",
+        "published_signal": "UECFoodPixComplete's official DeepLabV3+ experiment reports 0.555 mIoU; UNIMIB2016 provides fine polygons on multi-food trays and is useful for spatial evaluation.",
+        "likely_strength": "Large visible regions and tray/plate food-background separation.",
+        "likely_failure": "Semantic masks merge same-class instances, food-specific regional bias, placemat/plate background confusion, and no hidden-recipe or quantity signal."
+      },
+      {
+        "source": "Synthetic instance segmentation",
+        "published_signal": "Synthetic-only training achieved 52.2% mask AP@all on a real-world set, with a further 6.4 percentage-point improvement after real-data fine-tuning.",
+        "likely_strength": "Controlled geometry, occlusion, lighting, and rare composition augmentation.",
+        "likely_failure": "Texture, cooking state, sauces, deformable food, restaurant presentation, and camera-domain shift."
+      },
+      {
+        "source": "BenchSeg",
+        "published_signal": "The benchmark reports that ordinary image segmenters degrade under novel viewpoints while memory-augmented methods improve temporal consistency, measured with continuity, flicker rate, and IoU drift.",
+        "likely_strength": "Stable masks across short video/multi-view capture and detection of temporal failure modes invisible to single-frame mIoU.",
+        "likely_failure": "Still-image phone workflows, rapid motion/blur, ingredient identity, and transfer from research cameras/source datasets."
+      }
+    ],
+    "production_metrics": [
+      "Visible-component recall and missed-component rate, including a separate score for small/occluded/sauce components.",
+      "Per-class macro-F1, top-1/top-5 candidate recall, calibration error, abstention/selective-risk curves, and correction acceptance/time.",
+      "Semantic class-balanced mIoU and pixel accuracy; instance mask AP/mAR across IoU thresholds; panoptic PQ/SQ/RQ only if panoptic labels are collected.",
+      "Per-cuisine, device, lighting, camera-angle, raw/cooked-state, mixed-dish, and component-size slices; no aggregate-only launch claim.",
+      "For video or guided multi-view capture, temporal continuity, flicker rate, IoU drift, and track identity switches."
+    ],
+    "quality_conclusion": "These datasets can make visible food decomposition materially better, but no published result establishes complete ingredient discovery, hidden-ingredient recall, allergen safety, or exact grams from one ordinary RGB photo."
+  },
+  "weight_ground_truth": {
+    "source_matrix": [
+      {
+        "source": "FoodSeg103/FoodSeg154, FoodInsSeg, FoodSAM, UECFoodPixComplete, UNIMIB2016, BenchSeg",
+        "ground_truth": "No grams, calibrated scale readings, per-component volume, or per-component depth-derived mass labels in the core sources.",
+        "collection_method": "Image/mask or polygon annotation only.",
+        "implication": "These sources can supervise where visible food is and what category it resembles, but not how much it weighs."
+      },
+      {
+        "source": "MyFoodRepo-273",
+        "ground_truth": "Public benchmark evidence establishes polygons and food classes; the starter kit mentions segmentation, classification, and weight/volume estimation as benchmark tasks, but the released 24,119-image dataset is not documented here as having verified per-polygon grams.",
+        "collection_method": "User-submitted app photos with human polygon annotation; a public component-weighing protocol is not established.",
+        "implication": "Use for visible-item detection/segmentation and domain testing, not as verified mass ground truth."
+      },
+      {
+        "source": "Nutrition5k",
+        "ground_truth": "Per-ingredient grams, total dish mass, calories, fat, protein, and carbohydrate values.",
+        "collection_method": "A custom sensor array and digital scale measured incremental weight as individual ingredients or prepared recipe items were added to each plate; nutrition values were derived from per-gram ingredient data and USDA Food and Nutrient Database mappings. Overhead RGB-D and four side-angle videos were captured for each scan when available.",
+        "implication": "The strongest source for mass-regression supervision, but it does not align each gram label to a 2D ingredient mask and uses a cafeteria capture rig."
+      },
+      {
+        "source": "Ingredients101/Recipes5k and Dishscan",
+        "ground_truth": "Ingredient presence/list labels and recipe composition; no independent mass scale ground truth in the code repository.",
+        "collection_method": "Food type/recipe metadata and image-level ingredient lists.",
+        "implication": "Useful for candidate generation and hidden-recipe research, not for portion calibration."
+      }
+    ],
+    "bottom_line": "The public landscape has a missing paired-corpus cell: phone-photo visible ingredient masks plus independently weighed per-component grams. SuperNutrition should collect that pairing rather than infer grams from mask area alone."
+  },
+  "portion_method_and_metrics": {
+    "methods_by_source": [
+      {
+        "source": "Semantic/instance segmentation benchmarks",
+        "input_and_output": "RGB image to semantic pixels or per-item polygons/boxes/class IDs.",
+        "geometry_assumption": "None that identifies height, density, or mass; mask area is only a 2D visible-footprint proxy.",
+        "reported_metrics": "mIoU, pixel accuracy, mask AP/mAR, mAP, and mAR depending dataset.",
+        "portion_readiness": "Not weight-ready without a calibrated scale, depth/volume model, or user-entered serving reference."
+      },
+      {
+        "source": "MyFoodRepo benchmark",
+        "input_and_output": "Phone/user image to food-item polygons/classes and benchmark predictions.",
+        "geometry_assumption": "No public evidence that the released polygon area is converted into grams; any weight/volume track must be verified from the specific challenge release.",
+        "reported_metrics": "Round 4 mAP 0.568 and round 3 mean average recall 0.885 for detection/segmentation benchmark results.",
+        "portion_readiness": "Good detection starting point, not a validated mass estimator."
+      },
+      {
+        "source": "Nutrition5k",
+        "input_and_output": "Overhead RGB, optional depth/volume scalar, and multi-view video to mass, calories, and macronutrient regression.",
+        "geometry_assumption": "Image-only mass regression, RGB-D/depth-as-fourth-channel, and explicit volume-assisted regression; the rig provides metric depth and scale-calibrated mass labels.",
+        "reported_metrics": "Original paper: RGB-only direct calorie MAE 26.1% and direct mass MAE 18.8%; RGB-D direct calorie MAE 18.8%; volume-assisted total mass MAE 13.7% (29.4 g); combined portion-independent plus volume-assisted end-to-end calorie MAE 16.5% (41.3 kcal).",
+        "portion_readiness": "Best benchmark for the mass head, but reported errors are under controlled cafeteria capture and should not be presented as ordinary phone-photo guarantees."
+      },
+      {
+        "source": "SuperNutrition recommended method",
+        "input_and_output": "Normalized phone RGB photo, optional device depth when available, visible-component masks, candidate identity, user-confirmed serving/portion input, and only then a catalog-grounded gram estimate.",
+        "geometry_assumption": "Use depth/scale only when device and calibration evidence supports it; otherwise treat grams as a broad estimate or require user correction instead of false precision.",
+        "reported_metrics": "Track grams MAE, signed bias, median absolute error, p90 absolute error, percentage within +/-20%, calibration/abstention, and separate errors for mixed dishes, sauces, occlusion, cuisines, devices, and raw/cooked states.",
+        "portion_readiness": "Production-ready only after a consented weighed validation set closes the G-3/G-5 acceptance gates."
+      }
+    ],
+    "important_metric_warning": "The 9.5% Nutrition5k calorie result is a portion-independent condition that relies on reliable mass information; it is not evidence that a single RGB phone image yields 9.5% calorie error."
+  },
+  "weight_limitations": {
+    "identifiability_limits": [
+      "A 2D mask measures visible footprint, not food height, density, compactness, water content, oil, or hidden layers.",
+      "The same visible area can correspond to different masses for leafy food, rice, meat, bread, sauces, or mixed recipes.",
+      "Occlusion and overlap cause both missed ingredients and double-counted regions; a semantic mask can merge adjacent same-class items.",
+      "Recipe ingredients such as oil, salt, flour, fillings, and blended components may be visually absent even when nutritionally important.",
+      "Depth improves geometry only when the sensor sees the surface, depth is calibrated, and the food shape/scale relationship is valid; device depth is not equivalent to a scale.",
+      "Nutrition5k's metric capture rig, California cafeteria menu, and incremental plating protocol do not represent all cuisines, home plates, restaurant photos, or ordinary phone angles."
+    ],
+    "false_precision_risks": [
+      "Do not convert pixel area directly to grams or show exact gram values without a measured uncertainty model.",
+      "Do not infer hidden ingredients, allergen absence, or medical-safe nutrition from a segmentation mask.",
+      "Do not treat a high mIoU or mask AP as a calorie/portion metric; component identity and quantity are separate contracts.",
+      "Do not report a single average error when failure slices for sauces, occlusion, mixed dishes, cuisines, and small components are materially worse."
+    ],
+    "minimum_calibration_requirements": [
+      "Metric or reference scale/depth when geometry is used.",
+      "Independent per-component and total mass measurement using a calibrated scale, with recipe/brand and raw/cooked state.",
+      "Uncertainty and abstention thresholds calibrated on held-out meals, not tuned on the product pilot test set.",
+      "User-visible correction for serving or portion and an explicit distinction between model estimate and catalog-derived nutrient calculation."
+    ]
+  },
+  "mobile_runtime_path": {
+    "current_repository_reality": "The primary repositories are Python/PyTorch/MMsegmentation/Detectron2/Mask R-CNN research code; FoodSAM and BenchSeg are multi-model or Docker/GPU pipelines, and none provides a supported Android/iOS production artifact for the complete ingredient-plus-weight task.",
+    "recommended_runtime_path": [
+      {
+        "stage": "Research/server baseline",
+        "implementation": "Use FoodSAM or a conventional Mask R-CNN/YOLO-seg/DeepLab baseline to compare semantic versus instance outputs on FoodSeg103, FoodInsSeg, UECFoodPixComplete, MyFoodRepo, and a newly collected corpus.",
+        "reason": "Server GPUs make error analysis and annotation-tool integration easier before optimizing model size."
+      },
+      {
+        "stage": "Compact local visual model",
+        "implementation": "Train a compact detector/instance segmenter or semantic segmenter on cleared data, with a separate lightweight per-instance classifier/retriever. Export to ONNX Runtime Mobile, LiteRT, Core ML, or ExecuTorch after accuracy is frozen; use INT8/FP16 only after per-class and mask-quality checks.",
+        "reason": "A single compact visible-component model is more realistic on Android/iOS than the FoodSAM three-model stack."
+      },
+      {
+        "stage": "Optional depth/portion adapter",
+        "implementation": "Keep RGB-only as the broad compatibility path. Add platform depth/AR/scale cues behind a separate port, with device capability reporting and calibration; do not make depth a silent prerequisite.",
+        "reason": "Nutrition5k shows depth/volume can reduce mass error, but depth availability and quality vary by phone."
+      },
+      {
+        "stage": "Remote fallback",
+        "implementation": "If local confidence is low or the meal is compositionally complex, offer a separately consented first-party remote route; preserve model/config version, provenance, deletion, and user correction in the shared inference contract.",
+        "reason": "The architecture must not hide a photo upload or treat a cloud VLM's guessed ingredients/grams as nutrition authority."
+      }
+    ],
+    "mobile_constraints": [
+      "Benchmark model file size, peak RAM, initialization time, p50/p95 latency, battery/thermal impact, and CPU/GPU/NPU fallback on named physical Android and iOS devices.",
+      "Keep image preprocessing, EXIF stripping, model version/checksum, and output schema deterministic across platforms.",
+      "Use segmentation masks for candidate review and serving guidance; compute displayed nutrients only after canonical catalog mapping and explicit serving confirmation.",
+      "Treat FoodSAM, BenchSeg, and full RGB-D Nutrition5k pipelines as research/server references rather than directly embedding them in the mobile app."
+    ],
+    "official_runtime_references": [
+      "https://developer.apple.com/documentation/coreml",
+      "https://ai.google.dev/edge/litert",
+      "https://onnxruntime.ai/docs/tutorials/mobile/",
+      "https://docs.pytorch.org/executorch/stable/"
+    ]
+  },
+  "consented_corpus_blueprint": {
+    "recommended_scale": {
+      "pilot": "300-500 complete meals for protocol and model-selection work, with at least 100 genuinely multi-component meals and deliberate coverage of sauces, mixed dishes, occlusion, raw/cooked states, and culturally diverse foods.",
+      "development": "1,500-3,000 meals for fine-tuning and slice analysis across devices, cuisines, homes/restaurants, lighting, camera angles, and repeated component classes.",
+      "pre_release": "5,000 or more meals, or a statistically justified equivalent, with an untouched acceptance set and enough examples per critical food/component slice; scale by coverage and error risk rather than image count alone."
+    },
+    "consent_and_privacy_fields": [
+      "Explicit opt-in for collection, annotation, model training, internal evaluation, commercial product improvement, and optional remote processing as separate purposes.",
+      "Country/market jurisdiction, processing region, retention version, deletion/withdrawal status, and whether the participant permits derived masks/embeddings to remain after raw-photo deletion.",
+      "No faces or unrelated people where possible; strip EXIF/GPS, filenames, device identifiers, and free-text personal data before annotation/storage.",
+      "Participant/household/meal/recipe/device IDs must be opaque and separable from account identity; support deletion and export of source photos, labels, and derived artifacts."
+    ],
+    "capture_protocol": [
+      "Capture ordinary phone RGB images in overhead and oblique views, with an optional guided short multi-view sequence; record device model, OS, camera mode, lighting, distance, and whether depth is available.",
+      "Record meal context: cuisine/region, dish/recipe name, brand where relevant, raw/cooked/served state, visible component list, hidden or mixed components, oils/sauces, edible versus inedible parts, and confidence of the human recorder.",
+      "Weigh empty container/tare, each component before plating when possible, the plated total, and leftovers if intake/consumed mass is a goal; store scale model, calibration check, timestamp, and units.",
+      "Use a repeatable reference object or calibrated depth/scale protocol only when it is acceptable for the user experience; record whether a reference was present in the image."
+    ],
+    "annotation_protocol": [
+      "Annotate visible food versus non-food first, then semantic component masks, then separate repeated instances; use COCO polygons/RLE and a panoptic map only when thing/stuff definitions are explicit.",
+      "Attach a hierarchical taxonomy: canonical catalog item, visible component name, ingredient/recipe constituent, raw/cooked state, and an explicit visible/hidden/uncertain/occluded status.",
+      "Require two independent annotators for critical masks and ingredient labels, with adjudication for disagreement; store inter-annotator IoU/agreement and an uncertainty reason.",
+      "Validate mask geometry, class IDs, no invalid overlaps, image/mask dimensions, component-count consistency, and whether per-component weights sum to the independently measured total within a documented tolerance."
+    ],
+    "split_policy": [
+      "Split by participant/household, recipe or meal instance, device, venue, and capture date where feasible; keep all frames/views/incremental weights for one meal in one split.",
+      "Hold out a culturally and geographically diverse acceptance set, not only a random image split; publish slice counts and confidence intervals.",
+      "Keep a private production-like test set with unseen devices, lighting, cuisines, mixed dishes, small ingredients, sauces, and occlusions."
+    ],
+    "quality_gates": [
+      "Image quality and privacy review before annotation; calibrated-scale checks; duplicate/near-duplicate detection; EXIF and identity scrub verification.",
+      "Coverage floors for critical classes and failure modes; mask inter-annotator agreement; label-audit samples; grams-sum and recipe-consistency checks.",
+      "Report item recall, class/mask metrics, grams MAE/bias/p90/within +/-20%, abstention risk, correction time, and device resource metrics by slice."
+    ]
+  },
+  "recommendation_for_supernutrition": {
+    "executive_recommendation": "Build a visible-component, local-first candidate pipeline and a separate weighed-portion evaluation program. Use permissively cleared sources for development, use FoodInsSeg/FoodSAM/UECFoodPixComplete for academic benchmarking or annotation design only where their terms allow, and do not claim exact grams or hidden-ingredient completeness from a single RGB photo.",
+    "ranked_shortlist": [
+      {
+        "rank": 1,
+        "source": "Nutrition5k",
+        "use": "Mass/portion ground-truth design, regression-head pretraining, and depth/volume hypothesis testing.",
+        "why": "Only source in this set with per-ingredient grams and high-quality capture metadata; official README states CC BY 4.0 commercial permission.",
+        "blocker": "California cafeteria bias, no per-ingredient 2D masks, 181.4 GB archive, and archived repository."
+      },
+      {
+        "rank": 2,
+        "source": "MyFoodRepo-273 plus AIcrowd starter kit",
+        "use": "Wild phone-photo visible-food detection/instance segmentation benchmark and server baseline.",
+        "why": "Largest realistic public polygon corpus in this landscape with 24,119 images and 273 classes, plus MIT Detectron2/MMDetection starter code.",
+        "blocker": "Commercial/data rights and per-component mass ground truth require written confirmation; class/cuisine coverage is not global."
+      },
+      {
+        "rank": 3,
+        "source": "FoodInsSeg",
+        "use": "Ingredient-instance mask research, label ontology design, and evaluation of repeated/occluded components.",
+        "why": "119,048 ingredient-level instance masks and very dense multi-component images.",
+        "blocker": "Academic-only/non-commercial CC BY-NC-SA 4.0; use only as a research benchmark or obtain a separate license."
+      },
+      {
+        "rank": 4,
+        "source": "FoodSeg103/FoodSeg154 and UECFoodPixComplete",
+        "use": "Semantic segmentation baselines, cross-domain comparison, and teacher/annotation-tool experiments.",
+        "why": "Large pixel-mask datasets with complementary ingredient/cuisine distributions and established mIoU baselines.",
+        "blocker": "No instance IDs or grams; UEC is non-commercial research-only and FoodSeg103 data terms are not sufficiently explicit for a default commercial assumption."
+      },
+      {
+        "rank": 5,
+        "source": "BenchSeg",
+        "use": "Guided multi-view capture and temporal mask stability acceptance tests.",
+        "why": "25,284 annotated frames and explicit continuity/flicker/IoU-drift evaluation address a major gap in still-image benchmarks.",
+        "blocker": "Very recent, multi-source, heavy research setup with no clear public commercial license or unified ingredient taxonomy."
+      },
+      {
+        "rank": 6,
+        "source": "Synthetic food instance segmentation",
+        "use": "Pretraining/augmentation and controlled occlusion/geometry cases.",
+        "why": "Blender scenes provide masks cheaply and the paper demonstrates real-world transfer after fine-tuning.",
+        "blocker": "Sim-to-real gap and unclear asset/data license; cannot replace real consented phone photos."
+      }
+    ],
+    "staged_plan": [
+      {
+        "stage": "G-3 research baseline",
+        "deliverable": "A reproducible server benchmark comparing a compact semantic model, a compact instance model, FoodSAM, and a multi-label candidate model on cleared public data plus 300-500 consented weighed meals.",
+        "exit_metrics": "Per-class visible-component recall, missed-component rate, mask mIoU/mAP/mAR, top-k ingredient recall, calibration/abstention, and initial device latency/RAM measurements."
+      },
+      {
+        "stage": "G-3 data and model selection",
+        "deliverable": "Select one local detector/segmenter and one per-instance candidate/embedding head; freeze a versioned label ontology with visible/hidden/uncertain states and model/checkpoint hashes.",
+        "exit_metrics": "Changed-slice metrics meet agreed floors, no critical class/cuisine/device regression, and physical Android/iOS benchmark records latency, memory, thermal, battery, and offline behavior."
+      },
+      {
+        "stage": "G-4/G-5 portion validation",
+        "deliverable": "Add the weighed corpus and optional depth/scale/reference features as a separate portion adapter; keep nutrient numbers catalog-derived after user confirmation.",
+        "exit_metrics": "Grams MAE/bias/p90 and within +/-20% on a private acceptance set, with explicit abstention and user-correction behavior for mixed dishes, sauces, occlusion, and unseen cuisines."
+      },
+      {
+        "stage": "Production rollout",
+        "deliverable": "Local-first visible-component suggestions, reversible user corrections, explicit uncertainty, and a consented remote fallback only for configured low-confidence/complex cases.",
+        "exit_metrics": "No silent upload, no exact-gram or hidden-ingredient claim, signed model/config provenance, raw-photo deletion evidence, and post-launch monitoring by slice."
+      }
+    ],
+    "architecture_alignment": "Keep the model output as identification evidence and masks/assumptions, not nutrition truth. Map accepted candidates to the versioned catalog and serving calculation only after user confirmation; keep local and remote inference adapters independent and make photo transfer explicit and reversible."
+  },
+  "uncertain": [
+    "maintenance_and_reproducibility",
+    "license_and_usage",
+    "expected_ingredient_quality",
+    "task_and_labels"
+  ]
+}

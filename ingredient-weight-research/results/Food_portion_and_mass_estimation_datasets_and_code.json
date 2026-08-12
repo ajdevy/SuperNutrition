@@ -1,0 +1,533 @@
+{
+  "repositories_and_sources": {
+    "research_scope": "Primary repositories, dataset pages, papers, and benchmark documentation for estimating food portion, volume, depth, or mass from images. Access date: 2026-07-31.",
+    "primary_sources": [
+      {
+        "name": "Nutrition5k",
+        "type": "Dataset, paper, repository, evaluation code",
+        "links": [
+          "https://github.com/google-research-datasets/Nutrition5k",
+          "https://arxiv.org/abs/2103.03375",
+          "https://openaccess.thecvf.com/content/CVPR2021/papers/Thames_Nutrition5k_Towards_Automatic_Nutritional_Understanding_of_Generic_Food_CVPR_2021_paper.pdf"
+        ],
+        "evidence": "5,006 plates with four rotating side-angle RGB videos and overhead RGB-D when available; metadata includes total plate mass and per-ingredient grams, calories, and macronutrients. The repository includes an official train/test split and evaluation that reports absolute and percentage mean average error.",
+        "why_it_matters": "The strongest public starting point for supervised mass estimation on multi-component plates with actual weighing and ingredient-level labels.",
+        "limitations_of_source": "Collected in a small number of California cafeterias, has no general-purpose phone capture protocol, and the repository is archived. It does not provide object masks or boxes for every ingredient."
+      },
+      {
+        "name": "ECUSTFD and CalorieEstimation",
+        "type": "Dataset, paper, repository",
+        "links": [
+          "https://github.com/Liang-yc/ECUSTFD-resized-",
+          "https://github.com/Liang-yc/CalorieEstimation",
+          "https://arxiv.org/abs/1705.07632"
+        ],
+        "evidence": "ECUSTFD contains 2,978 images across 19 food classes. Images are smartphone top/side pairs with a One RMB coin as a reference; images contain no more than two foods. Mass was measured with an electronic scale and volume by drainage or water displacement. The code combines Faster R-CNN and GrabCut.",
+        "why_it_matters": "A concrete reference-object and multi-view protocol with both measured mass and volume, plus released estimation code.",
+        "limitations_of_source": "The controlled single-food or two-food setting is not representative of a crowded plated meal. The public sources do not identify a clear SPDX license for the dataset or code."
+      },
+      {
+        "name": "MUSEFood and SUEC",
+        "type": "Dataset, paper, repository",
+        "links": [
+          "https://github.com/MUSEFood/MUSEFood",
+          "https://arxiv.org/abs/1903.07437"
+        ],
+        "evidence": "The repository is MIT-licensed. SUEC has 600 manually segmented images plus 31,395 GrabCut-derived images from UEC Food-256. The system uses top and side smartphone images plus microphone/speaker maximum-length-sequence echo ranging to estimate container dimensions and volume without a reference object. Real-food volume relative errors reported in the paper are 2.70% for chicken drumstick, 12.37% for fried pork, and -0.27% for congee.",
+        "why_it_matters": "Shows how an auxiliary acoustic ranging channel can resolve scale where monocular RGB cannot.",
+        "limitations_of_source": "The corpus is not mass-labeled; real volume evaluation covers only three foods. It assumes aligned views and a simplified shape/volume model, and is not a realistic phone-only mobile deployment path."
+      },
+      {
+        "name": "SimpleFood45 and Food Portion Estimation via 3D Object Scaling",
+        "type": "Dataset, paper, repository",
+        "links": [
+          "https://lorenz.ecn.purdue.edu/~gvinod/simplefood45/",
+          "https://gitlab.com/viper-purdue/monocular-food-volume-3d",
+          "https://arxiv.org/abs/2404.12257",
+          "https://openaccess.thecvf.com/content/CVPR2024W/MTF/html/Vinod_Food_Portion_Estimation_via_3D_Object_Scaling_CVPRW_2024_paper.html"
+        ],
+        "evidence": "The dataset page describes 513 real images captured with a Samsung Galaxy S22 Ultra, ground-truth volume in milliliters, weight in grams, and energy in kilocalories. A 5 by 4 checkerboard with 1.2 cm inner-corner spacing supplies physical scale; the method segments the food, selects or fits a 3D model, and estimates camera/object pose. The paper reports energy MAE of 31.10 kcal and 17.67%.",
+        "why_it_matters": "A relatively phone-like RGB protocol with physical calibration and both volume and mass targets.",
+        "limitations_of_source": "It is an object-centric, mostly single-food benchmark rather than a plated multi-component meal. The page does not fully specify the weighing protocol and does not state a clear dataset license [uncertain]. Food category counts are described inconsistently as 12 food types and 45 food items [uncertain]."
+      },
+      {
+        "name": "MetaFood3D",
+        "type": "3D dataset and downstream volume-estimation benchmark",
+        "links": [
+          "https://lorenz.ecn.purdue.edu/~food3d/",
+          "https://arxiv.org/abs/2409.01966"
+        ],
+        "evidence": "The project page currently describes 637 objects from 108 food types, textured meshes, standard and flipped RGB-D views, FNDDS codes, nutrition, weight in grams, Blender renders, camera parameters, and fiducial images. The paper abstract reports 743 objects and 131 categories, so the version/count is [uncertain]. Access is request/password controlled.",
+        "why_it_matters": "Useful for synthetic pretraining, shape completion, scale studies, and controlled evaluation when real weighed plate data are scarce.",
+        "limitations_of_source": "It is object-centric and synthetic-view heavy rather than a natural plated-meal corpus. The license is CC BY-NC 4.0, which blocks commercial mobile distribution and derivative use without permission."
+      },
+      {
+        "name": "NutritionVerse",
+        "type": "3D food dataset, synthetic image dataset, paper",
+        "links": [
+          "https://www.kaggle.com/datasets/amytai/nutritionverse-3d",
+          "https://arxiv.org/abs/2304.05619",
+          "https://arxiv.org/abs/2309.07704",
+          "https://arxiv.org/abs/2312.06192"
+        ],
+        "evidence": "The release contains 105 3D food models with names, weights, and nutrition, 84,984 synthetic images with depth and masks, and 889 real images covering 251 dishes. The synthetic and model assets are labeled CC BY-NC-SA 4.0.",
+        "why_it_matters": "Provides depth/mask supervision and nutrition-linked 3D assets for pretraining or controlled ablations.",
+        "limitations_of_source": "Most scale and label coverage are synthetic or proxy-derived; real images are much smaller in number. The non-commercial, share-alike license is incompatible with an unmodified commercial product pipeline."
+      },
+      {
+        "name": "Food Volume Estimation Based on Deep Learning View Synthesis from a Single Depth Map",
+        "type": "Paper, code/data release",
+        "links": [
+          "https://www.mdpi.com/2072-6643/10/12/2005",
+          "https://pmc.ncbi.nlm.nih.gov/articles/PMC6316017/",
+          "https://www.doc.ic.ac.uk/~ys4315/Food_dataset.zip"
+        ],
+        "evidence": "The method takes a single depth map, predicts an opposite view, completes a point cloud, and computes volume after alignment. The released data are synthetic depth renders from YCB objects and 3D models; mesh volume is the ground truth, not grams. Reported results include 2.4% point-completion error, 93.1% volume accuracy after ICP, and about 0.84 seconds per object.",
+        "why_it_matters": "A clear depth-to-volume geometry baseline and a useful test of how much depth completion can recover hidden surfaces.",
+        "limitations_of_source": "Synthetic/YCB object scenes do not model cooked food deformability, mixed plates, sauces, or density. It requires a depth sensor and does not infer mass."
+      },
+      {
+        "name": "Single Image-Based Food Volume Estimation Using Monocular Depth-Prediction Networks",
+        "type": "Paper, data release",
+        "links": [
+          "https://zenodo.org/records/3997231",
+          "https://doi.org/10.1007/978-3-030-49108-6_38"
+        ],
+        "evidence": "The RGB-only approach learns monocular depth using EPIC-KITCHENS and collected food videos, uses instance segmentation from UNIMIB2016, assumes known camera intrinsics, and evaluates estimated volume against measured volume, including combined foods.",
+        "why_it_matters": "A relevant RGB-only route when a phone has no depth sensor, with explicit recognition that camera calibration and scale are required.",
+        "limitations_of_source": "The target is volume rather than grams, the benchmark is not a large weighed multi-component corpus, and no mobile conversion or device latency evidence was found. Numeric performance details were not fully exposed by the primary release [uncertain]."
+      },
+      {
+        "name": "Food Portion Benchmark (FPB)",
+        "type": "Dataset, paper, repository",
+        "links": [
+          "https://huggingface.co/datasets/issai/Food_Portion_Benchmark",
+          "https://github.com/IS2AI/Multitask-Food-Portion-Estimation",
+          "https://issai.nu.edu.kz/fpb/",
+          "https://doi.org/10.1109/ACCESS.2025.3603287"
+        ],
+        "evidence": "FPB has 14,083 images and 138 food classes with laboratory-measured weights in grams and bounding boxes. It uses top-down and four side views captured with Intel RealSense D455 and smartphones. The split is 9,521 train, 2,365 validation, and 2,197 test images. The benchmark reports mAP50 0.974, mAP50-95 0.948, and weight MAE 90.95 g.",
+        "why_it_matters": "One of the most directly relevant public benchmarks for detection plus gram prediction, with multi-view and smartphone data.",
+        "limitations_of_source": "Images were collected in a controlled Central Asian laboratory and are not a broad natural meal distribution. The released code is research-oriented Python/GPU code, not a mobile runtime."
+      },
+      {
+        "name": "CC-FOOD-100",
+        "type": "Dataset, paper, repository",
+        "links": [
+          "https://github.com/zichengzichengzi/CC-FOOD-100",
+          "https://doi.org/10.1016/j.foodchem.2024.141739"
+        ],
+        "evidence": "The release describes 3,354 Chinese college-canteen images across 100 categories, RGB plus raw depth, JSON/VOC annotations, and recipe ingredient masses/nutrients. The method combines YOLOv8 and SAM with depth/position information for volume estimation.",
+        "why_it_matters": "A potentially useful RGB-D canteen domain source for dense food detection and depth-assisted geometry.",
+        "limitations_of_source": "The public repository does not clearly expose per-image final gram labels or a complete volume metric table. The exact dataset/code license and download terms are unclear [uncertain], and recipe-derived ingredient mass may not equal a weighed served portion."
+      },
+      {
+        "name": "OmniFood8K and NutritionSynth-115K",
+        "type": "Dataset, paper, repository, checkpoints",
+        "links": [
+          "https://yudongjian.github.io/OmniFood8K-food/",
+          "https://github.com/yudongjian/OmniFood8K-food",
+          "https://arxiv.org/abs/2604.12356",
+          "https://arxiv.org/html/2604.12356",
+          "https://drive.google.com/file/d/1tUIa1jXMLxRGLyex_jVkmqmHneIMU0wG/view?usp=sharing"
+        ],
+        "evidence": "OmniFood8K contains 8,036 samples in 165 categories. For each dish it records raw ingredient images with recorded mass, a recipe, cooking video, and six final views captured at 50 cm (two overhead and four side views). Nutrition labels are calculated from weighed ingredients and an official database; NutritionSynth-115K provides synthetic training data. The paper reports 4.5% mass PMAE and 8.6% mean mass error on OmniFood8K, while an RGB Nutrition5k baseline has 18.8% mass PMAE.",
+        "why_it_matters": "The most recent public source found that combines ingredient weighing, cooking context, and multi-view final-dish imagery at useful scale.",
+        "limitations_of_source": "Recorded raw-ingredient masses and database calculations are not necessarily independent final cooked component weights after evaporation or water absorption. Dataset/repository usage terms were not clearly stated separately from the paper license [uncertain]. The method has research checkpoints but no mobile package."
+      },
+      {
+        "name": "VolETA",
+        "type": "Paper and volume-estimation method",
+        "links": [
+          "https://arxiv.org/abs/2407.01717"
+        ],
+        "evidence": "VolETA is a multi-view 3D food-volume method evaluated on the MetaFood3D/MTF setting and reports 10.97% MAPE. It estimates volume from reconstructed geometry, not mass.",
+        "why_it_matters": "Provides a geometry baseline for multi-view food volume and helps separate volume estimation from the harder density-to-mass problem.",
+        "limitations_of_source": "It requires multi-view reconstruction and does not supply grams or ingredient density. The benchmark is object/scene controlled rather than a broad phone meal corpus."
+      },
+      {
+        "name": "VolTex",
+        "type": "Repository and paper",
+        "links": [
+          "https://github.com/GCVCG/VolTex",
+          "https://arxiv.org/abs/2506.02895"
+        ],
+        "evidence": "The pipeline uses text-guided segmentation, multi-view frames, PixSfM, DEVA, and NeuS2 to reconstruct food geometry. It reports volume from a watertight mesh on the MTF data and is designed for RGB multi-view input.",
+        "why_it_matters": "Useful reference code for a research multi-view geometry branch when phone video is available.",
+        "limitations_of_source": "It estimates mesh volume, not grams, and is substantially heavier than an on-device inference path. The repository did not expose a clear license or a verified aggregate metric table [uncertain]."
+      },
+      {
+        "name": "VolE and FoodKit",
+        "type": "Repository, paper, dataset",
+        "links": [
+          "https://github.com/GCVCG/VolE",
+          "https://umairharon.github.io/VolE/",
+          "https://arxiv.org/abs/2505.10205",
+          "https://doi.org/10.6084/m9.figshare.31158847"
+        ],
+        "evidence": "VolE uses free-motion RGB videos captured with ARCore/ARKit, without a depth sensor or reference object, then segments food and reconstructs a point cloud/mesh. The paper reports 2.22% MAPE. FoodKit is 8.76 GB and CC BY 4.0; the VolE repository is Apache-2.0. The project page shows a cake example with 173.13 cm3 ground truth and VolE EP 1.91.",
+        "why_it_matters": "Closest surveyed example to a phone RGB-video volume workflow with no special depth hardware.",
+        "limitations_of_source": "It returns volume rather than mass and depends on lengthy video capture, tracking, segmentation, and reconstruction. It has no demonstrated gram accuracy or lightweight mobile implementation."
+      },
+      {
+        "name": "Implicit-Scale 3D Reconstruction for Multi-Food Volume Estimation",
+        "type": "Paper and repository",
+        "links": [
+          "https://arxiv.org/abs/2602.13041",
+          "https://github.com/GCVCG/PerBite-CVPR-MetaFood-2026"
+        ],
+        "evidence": "The work evaluates 10 curated multi-food scenes containing 24 scanned food objects, plates, utensils, occlusion, and spatial arrangements. Plates and utensils provide implicit scale. The best reported geometry/depth method reaches MAPE 0.21 and L1 Chamfer 5.7.",
+        "why_it_matters": "Directly addresses multi-food geometry and scale ambiguity rather than only isolated objects.",
+        "limitations_of_source": "The benchmark is small and curated, targets volume/geometry rather than grams, and the repository has no stable commercial license or mature mobile runtime evidence."
+      },
+      {
+        "name": "PerBite",
+        "type": "Paper and repository",
+        "links": [
+          "https://arxiv.org/abs/2606.02021",
+          "https://github.com/GCVCG/PerBite-CVPR-MetaFood-2026"
+        ],
+        "evidence": "PerBite reconstructs pre/post-consumption food meshes using SAM3 masks, Hunyuan3D/SAM3D, plate-diameter scale, and Blender repair. The study has 17 before/after pairs and 34 meshes, with state MAPE 33.87%, consumed-volume MAPE 53.74%, Chamfer 8.31, and zero monotonicity violations.",
+        "why_it_matters": "It is a useful failure-oriented benchmark: visually plausible reconstruction and monotonic consumption behavior do not imply accurate portion volume.",
+        "limitations_of_source": "Frame selection is not fully automatic, scale depends on the plate cue, and bowls, soups, reflective plates, heavy occlusion, and small remnants are difficult. Code/license maturity and final public availability are [uncertain]."
+      }
+    ],
+    "evidence_synthesis": "The most reliable public gram-supervision sources are Nutrition5k, FPB, and OmniFood8K; ECUSTFD and SimpleFood45 add measured mass but are more controlled and object-centric. MUSEFood, depth-completion work, SimpleFood45, MetaFood3D, VolETA, VolTex, VolE, Implicit-Scale, and PerBite are primarily volume/geometry sources. A product should not treat volume as mass without an explicit food-density model or a learned, uncertainty-calibrated mass head."
+  },
+  "maintenance_and_reproducibility": {
+    "activity_summary": "The surveyed releases range from archived or older research repositories to active 2025-2026 projects. Nutrition5k is archived and was last pushed in 2021; ECUSTFD/CalorieEstimation and MUSEFood are older academic code; FPB and OmniFood8K are newer; VolE, VolTex, and PerBite are research-stage reconstruction projects.",
+    "reproducibility_evidence": {
+      "strong": [
+        "Nutrition5k provides a fixed split, metadata, download instructions, and evaluation code.",
+        "FPB provides split counts, annotation format, a Hugging Face dataset, and a GitHub implementation.",
+        "SimpleFood45 provides a capture/calibration description and a code repository.",
+        "OmniFood8K provides a project page, paper, repository, checkpoints/data link, and synthetic companion data."
+      ],
+      "partial": [
+        "ECUSTFD, MUSEFood, and the depth-volume paper provide enough method detail for research reproduction but rely on old dependencies or controlled capture assumptions.",
+        "VolE/VolTex/PerBite require multi-stage reconstruction stacks and GPU-oriented dependencies; exact mobile reproduction is not demonstrated.",
+        "CC-FOOD-100 and several data links have incomplete public documentation [uncertain]."
+      ]
+    },
+    "release_risks": [
+      "Dataset version/count discrepancies exist for MetaFood3D [uncertain].",
+      "Archived code, external download links, password/request access, and undocumented preprocessing can make exact reproduction fragile.",
+      "Reported metrics are not directly comparable because targets, camera rigs, food sets, split protocols, and error definitions differ."
+    ]
+  },
+  "license_and_usage": {
+    "commercially_favorable": [
+      "Nutrition5k repository states CC BY 4.0, with commercial use allowed subject to attribution.",
+      "MUSEFood code is MIT.",
+      "VolE repository is Apache-2.0 and FoodKit is CC BY 4.0.",
+      "FPB code is AGPL-3.0, which requires careful separation/compliance for a proprietary mobile product even though the data are separately licensed."
+    ],
+    "restricted_or_incompatible": [
+      "MetaFood3D is CC BY-NC 4.0.",
+      "NutritionVerse is CC BY-NC-SA 4.0.",
+      "FPB dataset is CC BY-NC-4.0.",
+      "SUEC is described as non-commercial research only."
+    ],
+    "unclear_or_needs_legal_review": [
+      "ECUSTFD/CalorieEstimation do not state a clear dataset/code license in the reviewed primary sources [uncertain].",
+      "SimpleFood45 data licensing is not explicit on the dataset page [uncertain].",
+      "CC-FOOD-100 download and annotation licensing is unclear [uncertain].",
+      "OmniFood8K paper licensing is not sufficient evidence that every dataset asset, recipe, video, and checkpoint has the same commercial terms [uncertain].",
+      "VolTex and the current PerBite code/data terms require direct repository review before use [uncertain]."
+    ],
+    "recommendation": "Use restricted datasets for research benchmarking or internal feasibility only unless permissions are obtained. For commercial training, retain provenance per image/label and create a consented corpus with an explicit commercial license."
+  },
+  "task_and_labels": {
+    "label_taxonomy": {
+      "detection": [
+        "FPB provides bounding boxes with mass annotations.",
+        "ECUSTFD/CalorieEstimation uses food detection and GrabCut segmentation.",
+        "CC-FOOD-100 combines object detection and segmentation.",
+        "Nutrition5k and OmniFood8K emphasize dish/ingredient metadata but do not provide a uniform public instance-mask contract for every ingredient."
+      ],
+      "segmentation": [
+        "MUSEFood/SUEC provides manual and GrabCut masks.",
+        "NutritionVerse provides synthetic masks.",
+        "SimpleFood45 provides segmentation as part of the 3D scaling pipeline.",
+        "VolE, VolTex, and PerBite rely on segmentation masks for reconstruction."
+      ],
+      "depth_and_geometry": [
+        "Nutrition5k, FPB, CC-FOOD-100, NutritionVerse, and the depth-volume paper provide RGB-D or synthetic depth.",
+        "SimpleFood45 uses calibrated 2D images plus a physical checkerboard and 3D food models.",
+        "VolE uses RGB video with ARCore/ARKit camera tracking rather than a depth sensor."
+      ],
+      "ingredients_and_semantics": [
+        "Nutrition5k includes ingredient names and per-ingredient grams for plates.",
+        "OmniFood8K records raw ingredients, recipes, cooking videos, and final dish views.",
+        "MetaFood3D uses FNDDS-linked food/nutrition metadata.",
+        "ECUSTFD, FPB, and CC-FOOD-100 are primarily food-class/category datasets, so ingredient decomposition is more limited."
+      ]
+    },
+    "annotation_granularity": "For SuperNutrition, the most useful target is an instance-level record per visible component: food identity, mask or box, gram weight if independently weighed, optional volume/depth, uncertainty, and whether the item is mixed, hidden, or residual. Dish-level mass alone is insufficient for ingredient editing."
+  },
+  "dataset_scale_and_domain": {
+    "scale_comparison": [
+      {
+        "source": "Nutrition5k",
+        "scale": "5,006 plates",
+        "domain": "Cafeteria plates from a few California locations; four side views and overhead RGB-D when available"
+      },
+      {
+        "source": "FPB",
+        "scale": "14,083 images, 138 classes; 9,521/2,365/2,197 train/validation/test",
+        "domain": "Controlled Central Asian laboratory; top and four side views; D455 and smartphones"
+      },
+      {
+        "source": "OmniFood8K",
+        "scale": "8,036 samples, 165 categories, plus NutritionSynth-115K",
+        "domain": "Multi-view dishes with raw ingredient/cooking context; broad Chinese cuisine coverage but not globally representative"
+      },
+      {
+        "source": "ECUSTFD",
+        "scale": "2,978 images, 19 classes",
+        "domain": "Controlled smartphone pairs, one or two food items per image"
+      },
+      {
+        "source": "MUSEFood/SUEC",
+        "scale": "600 manually segmented and 31,395 GrabCut-derived images",
+        "domain": "UEC Food-256-derived Asian food imagery plus controlled volume tests"
+      },
+      {
+        "source": "SimpleFood45",
+        "scale": "513 images; 12 food types and 45 food items [uncertain]",
+        "domain": "Controlled single-food images with checkerboard scale"
+      },
+      {
+        "source": "MetaFood3D/NutritionVerse",
+        "scale": "Hundreds of 3D objects or 105 models plus synthetic renders; exact MetaFood3D version count [uncertain]",
+        "domain": "Object-centric, rendered, RGB-D/mesh-heavy; limited natural meal diversity"
+      }
+    ],
+    "meal_composition_assessment": "Nutrition5k and OmniFood8K are the best matches for multi-component meals, but neither guarantees a dense instance-level ground truth for every visually mixed ingredient. FPB and CC-FOOD-100 offer useful controlled multi-food/depth coverage. Most geometry benchmarks isolate foods or use curated scenes, so their performance should not be extrapolated to sauces, stews, bowls, overlapping items, or unseen recipes.",
+    "split_and_domain_gaps": "Published splits are generally random or source-controlled rather than user-, household-, recipe-, restaurant-, and device-disjoint. A SuperNutrition corpus should explicitly hold out users, devices, cuisine families, container types, lighting, and meal compositions [uncertain]."
+  },
+  "expected_ingredient_quality": {
+    "strong_cases": [
+      "Distinct, visible, separated solids with a familiar food identity and a scale cue or multi-view capture.",
+      "Calibrated RGB-D or a fixed multi-view rig with independently weighed portions.",
+      "Repeated foods and recipes represented in the training distribution."
+    ],
+    "ambiguous_cases": [
+      "Overlapping foods, dressings, soups, stews, casseroles, grated or chopped ingredients, transparent/reflective containers, and foods whose visible geometry does not reveal hidden mass.",
+      "Cooked-food density changes caused by water loss, absorption, oil, compression, or recipe variation.",
+      "Unknown camera distance/intrinsics and single RGB images without a physical scale reference."
+    ],
+    "likely_failure_modes_on_plated_multicomponent_meals": [
+      "A model can assign one mass to a visually merged region even when several ingredients are present.",
+      "Hidden or occluded mass is not identifiable from visible pixels; volume reconstruction may hallucinate a plausible shape.",
+      "Small components and leftovers are dominated by segmentation and scale error.",
+      "A visually accurate volume estimate can still produce a wrong gram estimate when density is unknown.",
+      "The cubic effect of scale error makes small camera-scale mistakes materially affect volume and mass.",
+      "PerBite demonstrates that plausible pre/post-consumption meshes can still have 33.87% state MAPE and 53.74% consumed-volume MAPE."
+    ],
+    "quality_metrics_to_report": [
+      "Ingredient detection/segmentation: precision, recall, mAP50, mAP50-95, mask IoU, and per-class confusion.",
+      "Weight: MAE in grams, median absolute error, RMSE, signed bias, MAPE or percentage MAE where zero/small weights are handled explicitly, p90 absolute error, and coverage of prediction intervals.",
+      "Meal-level: total-weight MAE, component-weight MAE, weighted error by gram contribution, and failure rate on mixed/occluded/unknown cases.",
+      "Calibration: expected calibration error or interval coverage for uncertainty, plus abstention rate when the system cannot identify mass reliably."
+    ],
+    "assessment": "Expected ingredient quality is [uncertain] until a representative, consented SuperNutrition validation set is collected. Public benchmark numbers should be treated as upper bounds for controlled conditions, not as production promises."
+  },
+  "weight_ground_truth": {
+    "measured_grams": [
+      "Nutrition5k: plate total mass and per-ingredient grams recorded in metadata.",
+      "FPB: laboratory-measured food weights in grams linked to bounding-box annotations.",
+      "ECUSTFD: mass measured by electronic scale.",
+      "SimpleFood45: the dataset page states weight in grams, but the exact per-image weighing protocol is [uncertain].",
+      "OmniFood8K: raw ingredients have recorded mass; final cooked component mass is not necessarily independently reweighed [uncertain]."
+    ],
+    "measured_volume": [
+      "ECUSTFD: drainage or water-displacement volume; grape gaps and irregular shape reduce reliability.",
+      "MUSEFood: water-displacement checks for chicken drumstick, fried pork, and congee.",
+      "SimpleFood45: volume in milliliters with physical checkerboard calibration and 3D scaling.",
+      "Depth-volume paper and VolETA/VolTex/VolE/PerBite: geometry-derived volume targets or metrics, generally not mass."
+    ],
+    "calibrated_scale": [
+      "ECUSTFD uses a One RMB coin reference.",
+      "SimpleFood45 uses a checkerboard with known spacing.",
+      "Nutrition5k and FPB use fixed camera/depth capture protocols rather than a consumer reference object in every image.",
+      "VolE uses ARCore/ARKit tracking and scene reconstruction without a depth sensor or reference object.",
+      "Implicit-Scale and PerBite use plate/utensil or plate-diameter cues as implicit scale."
+    ],
+    "depth_or_geometry_labels": "Nutrition5k, FPB, CC-FOOD-100, NutritionVerse, and synthetic depth datasets provide depth or geometry supervision. These labels support volume and surface reconstruction but do not by themselves determine grams.",
+    "proxy_labels": [
+      "Recipe/database nutrition values are proxies for cooked mass when ingredients are weighed before cooking but water/oil changes are not independently measured.",
+      "Synthetic 3D mesh volume, FNDDS-linked weight, or rendered depth is a proxy for real plated-food mass.",
+      "Food-class labels and segmentation masks are useful auxiliary supervision but are not weight ground truth."
+    ],
+    "collection_quality": "For a production-grade corpus, weigh each visible component before plating and again after plating/serving where possible; record container tare, total plate mass, component mass, recipe/cooking state, and whether a component is mixed or hidden. Use water displacement only for suitable solids and document its uncertainty. The public sources do not consistently provide this full protocol [uncertain]."
+  },
+  "portion_method_and_metrics": {
+    "method_families": [
+      {
+        "method": "Direct supervised mass regression",
+        "examples": "Nutrition5k, FPB, OmniFood8K",
+        "inputs": "RGB or multi-view RGB, optionally depth and ingredient metadata",
+        "outputs": "Dish or component mass in grams",
+        "metrics": "Absolute/percentage MAE, PMAE, MAE in grams, and detection mAP where applicable",
+        "tradeoff": "Most direct for grams, but requires representative weighed labels and does not solve hidden-density ambiguity."
+      },
+      {
+        "method": "Reference-object or calibrated 3D scaling",
+        "examples": "ECUSTFD, SimpleFood45",
+        "inputs": "Top/side RGB, coin or checkerboard, segmentation, and a known/selected 3D shape",
+        "outputs": "Volume and sometimes weight/energy",
+        "metrics": "Relative volume error, MAE, energy error, and weight error where labels exist",
+        "tradeoff": "Improves metric scale but adds capture friction and shape/model assumptions."
+      },
+      {
+        "method": "RGB-D or depth completion",
+        "examples": "Nutrition5k, FPB, CC-FOOD-100, single-depth-map volume estimation",
+        "inputs": "RGB-D or depth plus segmentation",
+        "outputs": "Surface, point cloud, mesh, volume, and possibly mass via a separate density model",
+        "metrics": "Volume accuracy, point-completion error, Chamfer distance, IoU, and weight MAE only if separately supervised",
+        "tradeoff": "Better geometric observability but requires a depth sensor or a learned depth model and still cannot infer density."
+      },
+      {
+        "method": "Multi-view RGB reconstruction",
+        "examples": "MUSEFood, VolETA, VolTex, VolE, Implicit-Scale, PerBite",
+        "inputs": "Phone images/video, camera poses, segmentation, sometimes plate/utensil scale",
+        "outputs": "3D mesh/point cloud and volume",
+        "metrics": "MAPE, EP, Chamfer, volume error, and consumed-volume error",
+        "tradeoff": "Can work without depth hardware but is capture- and compute-heavy and remains weak on occluded or deformable foods."
+      }
+    ],
+    "reported_reference_metrics": [
+      "Nutrition5k RGB direct baseline: mass PMAE 18.8% and calorie PMAE 26.1%.",
+      "FPB: mAP50 0.974, mAP50-95 0.948, weight MAE 90.95 g.",
+      "OmniFood8K: mass PMAE 4.5% and mean mass error 8.6% on its benchmark; these results are not directly comparable to Nutrition5k.",
+      "MUSEFood real-volume relative errors: 2.70%, 12.37%, and -0.27% on three foods.",
+      "Single-depth-map volume estimation: 93.1% volume accuracy and 2.4% point-completion error.",
+      "VolETA: 10.97% MAPE on its volume benchmark.",
+      "VolE: 2.22% volume MAPE on its reported benchmark.",
+      "PerBite: 33.87% state MAPE and 53.74% consumed-volume MAPE."
+    ],
+    "metric_comparability_warning": "The metrics above use different units, datasets, food composition, camera rigs, and protocols. They must not be ranked as a single leaderboard. Aggregate MAPE can be unstable for small portions; always add gram MAE, signed bias, p90, and per-case uncertainty."
+  },
+  "weight_limitations": {
+    "identifiability": [
+      "A single RGB image generally cannot identify hidden mass, density, or cooking-water state.",
+      "Volume is not mass without density; density varies by ingredient, preparation, aeration, packing, and water/oil content.",
+      "Recipe/database labels can be useful priors but are not independent measured portion ground truth."
+    ],
+    "camera_and_depth_requirements": [
+      "RGB-only methods need known intrinsics, a physical or learned scale cue, or a prior over plate/container size; otherwise metric scale is underdetermined.",
+      "RGB-D improves surface geometry but consumer depth has missing data, reflective/transparent failures, range limits, and occlusion.",
+      "Multi-view phone video improves observability but needs stable tracking, sufficient parallax, user compliance, and extra compute.",
+      "Fixed rigs in Nutrition5k/FPB are not equivalent to an arbitrary user phone photograph."
+    ],
+    "calibration_and_false_precision": [
+      "Coin/checkerboard/plate-diameter calibration improves scale but adds capture friction and can fail when the reference is absent or partially occluded.",
+      "Scale error propagates cubically into volume and then through density into mass.",
+      "A model should abstain or report a wide interval for mixed, hidden, liquid, or unknown-density foods rather than emit a precise gram value."
+    ],
+    "plated_meal_failure_matrix": {
+      "overlap_and_occlusion": "Use multi-view capture and component uncertainty; do not infer hidden component mass as certain.",
+      "mixed_dishes": "Prefer dish-level or recipe-conditioned estimates unless ingredient boundaries and cooking-state labels exist.",
+      "soups_and_sauces": "Use container/liquid geometry and recipe or density priors; image-only component grams are [uncertain].",
+      "small_leftovers": "Expect high relative error; evaluate absolute grams and abstention separately from normal portions.",
+      "unseen_foods": "Return identity and mass confidence separately; use retrieval/nearest-neighbor priors only as calibrated estimates.",
+      "camera_scale_unknown": "Ask for a reference, short multi-view sweep, or manual portion confirmation."
+    }
+  },
+  "mobile_runtime_path": {
+    "recommended_runtime_shapes": [
+      "On-device first pass: lightweight detector/segmenter plus food-category classifier and a calibrated mass head. Export to TensorFlow Lite, LiteRT, Core ML, or ONNX Runtime Mobile depending on the chosen model stack.",
+      "Optional phone video path: sparse-frame segmentation and a small metric-depth/scale estimator; use server-side reconstruction only when the user explicitly opts in and latency/privacy allow it.",
+      "Use quantization-aware training or post-training int8 where accuracy permits, with fp16 fallback for depth/geometry components."
+    ],
+    "what_can_reasonably_run_on_device": [
+      "Single-image detection, segmentation, category retrieval, and a conservative gram estimate.",
+      "Short multi-view capture with frame selection, camera-pose metadata, and lightweight depth/scale features.",
+      "Uncertainty/abstention logic, manual correction, and offline storage of the final user-confirmed portion."
+    ],
+    "what_is_not_yet_mobile_ready": [
+      "The VolETA, VolTex, VolE, Implicit-Scale, and PerBite research pipelines involve multi-stage reconstruction and GPU-heavy dependencies; no verified Android/iOS package, memory profile, or end-to-end latency was found [uncertain].",
+      "Public Nutrition5k, FPB, ECUSTFD, and OmniFood8K code is research code rather than a mobile inference contract.",
+      "Depth sensors and AR tracking vary across Android/iOS devices, so a device capability matrix and fallback are required."
+    ],
+    "acceptance_measurements": [
+      "Measure p50/p90 latency, peak memory, model size, battery impact, and accelerator delegate coverage on representative low/mid/high Android and iOS devices.",
+      "Keep local inference outputs explicitly approximate until evaluated on a held-out, user-consented plated-meal set.",
+      "Require a confidence/abstention contract for unknown scale, mixed dishes, liquids, and severe occlusion."
+    ]
+  },
+  "consented_corpus_blueprint": {
+    "purpose": "Build a commercial-safe, privacy-preserving corpus tailored to SuperNutrition instead of relying on restricted or narrow public benchmarks.",
+    "proposed_collection": {
+      "size": "Start with at least 10,000 meals and 50,000 visible component instances, then expand by error-driven sampling [uncertain].",
+      "participants_and_consent": "Obtain explicit consent for collection, model training, retention, deletion, and commercial use; avoid faces, documents, location metadata, and unrelated household content.",
+      "capture_modes": [
+        "Natural single RGB photo with device/intrinsics metadata where available.",
+        "Optional short 3-6 frame or free-motion sweep for users who accept extra capture.",
+        "Optional RGB-D/AR metadata on supported devices, never required for the base path."
+      ],
+      "annotations": [
+        "Per-component mask or box, canonical food identity, ingredient identity when known, visible/hidden/mixed status, preparation state, container type, and human quality flags.",
+        "Total plate/container tare and final total mass.",
+        "Component mass in grams measured with a calibrated scale before/after plating where feasible.",
+        "Optional volume/depth/mesh labels for a stratified subset, with method and uncertainty recorded."
+      ],
+      "splits": [
+        "Participant-disjoint train/validation/test.",
+        "Device-disjoint and kitchen/restaurant-disjoint evaluation.",
+        "Cuisine, recipe, container, lighting, and meal-composition holdouts.",
+        "Dedicated hard sets for overlap, soups, sauces, mixed dishes, occlusion, leftovers, and unseen foods."
+      ],
+      "quality_control": [
+        "Two-person review for ambiguous boundaries and ingredient identity.",
+        "Automated mass conservation checks: component totals versus plate total and container tare.",
+        "Repeat weighing and inter-rater agreement samples.",
+        "Store label provenance, annotator confidence, scale resolution, and correction history."
+      ],
+      "privacy_and_retention": "Strip EXIF and location data, crop to the meal, use deletion requests, encrypt raw and derived data, and retain only the minimum raw imagery needed for the consented purpose."
+    },
+    "success_metrics": "Primary: component and total gram MAE, p90 absolute gram error, signed bias, interval coverage, abstention quality, and hard-case failure rate. Secondary: segmentation mAP/mask IoU, category accuracy, latency, memory, and energy on target devices."
+  },
+  "recommendation_for_supernutrition": {
+    "staged_plan": [
+      {
+        "stage": "G-0 evidence and contract",
+        "action": "Treat food identity, visible component segmentation, estimated portion, and confidence as separate outputs. Define an explicit approximate/abstain state and prohibit silent conversion from volume to grams."
+      },
+      {
+        "stage": "G-1 public-data baseline",
+        "action": "Use Nutrition5k, FPB, and OmniFood8K for gram-supervised research where licenses permit; use MetaFood3D/NutritionVerse and depth/volume sources only for auxiliary pretraining or geometry experiments after license review [uncertain]."
+      },
+      {
+        "stage": "G-2 consented corpus",
+        "action": "Collect participant- and device-disjoint phone meals with component masks, weighed total/component grams, preparation state, and uncertainty. Include deliberate mixed/occluded/liquid hard cases."
+      },
+      {
+        "stage": "G-3 product acceptance",
+        "action": "Ship only after the held-out corpus meets the agreed component/total gram MAE, p90, calibration, abstention, privacy, and on-device latency thresholds. The exact threshold should be set from user-risk and UX requirements [uncertain]."
+      }
+    ],
+    "preferred_product_architecture": "Start with on-device RGB detection/segmentation plus a calibrated mass estimator and explicit user correction. Offer an optional multi-view sweep for scale improvement. Use a server or research-only geometry branch for difficult cases, but do not represent reconstructed volume as exact ingredient grams without density evidence.",
+    "best_public_seed_set": [
+      "Nutrition5k for multi-component measured mass.",
+      "FPB for detection-plus-weight labels and smartphone/depth capture.",
+      "OmniFood8K for cooking context, multi-view imagery, and recent mass modeling.",
+      "SimpleFood45 and ECUSTFD for scale/calibration experiments.",
+      "VolE/VolETA/PerBite for geometry and failure-mode testing, not as direct gram ground truth."
+    ],
+    "decision": "Proceed with a hybrid, uncertainty-aware mass-estimation prototype, but plan a consented weighed corpus before making ingredient-level gram claims. Public data alone do not establish reliable performance on arbitrary plated multi-component meals [uncertain]."
+  },
+  "uncertain": [
+    "maintenance_and_reproducibility",
+    "license_and_usage",
+    "dataset_scale_and_domain",
+    "expected_ingredient_quality",
+    "weight_ground_truth",
+    "portion_method_and_metrics",
+    "weight_limitations",
+    "mobile_runtime_path",
+    "consented_corpus_blueprint",
+    "recommendation_for_supernutrition"
+  ]
+}
