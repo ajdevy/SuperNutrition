@@ -14,10 +14,43 @@ data class UiAutomationId(val value: String) {
     }
 }
 
+/**
+ * Stable locale-neutral identifier for one v2 photo-evidence component.
+ *
+ * Component IDs are opaque contract values and may contain punctuation or
+ * uppercase characters, so encode every code point with a type prefix instead
+ * of exposing the raw ID or relying on lossy sanitization.
+ */
+fun photoAnalysisVisibleComponentId(componentId: String): UiAutomationId {
+    require(componentId.isNotBlank()) { "Visible component ID must not be blank" }
+    val encoded = componentId.map { character ->
+        val prefix = when {
+            character in 'a'..'z' -> "l"
+            character in '0'..'9' -> "d"
+            character in 'A'..'Z' -> "u"
+            else -> "x"
+        }
+        "$prefix${character.code.toString(16)}"
+    }.joinToString("_")
+    return UiAutomationId("photo_analysis_component_$encoded")
+}
+
+fun photoAnalysisGridCellId(cellIndex: Int): UiAutomationId {
+    require(cellIndex in 0..8) { "Grid cell index must be between 0 and 8" }
+    return UiAutomationId("photo_analysis_grid_cell_${cellIndex + 1}")
+}
+
 object UiAutomationIds {
     val BOOTSTRAP_LAUNCH_DI = UiAutomationId("bootstrap_shell_launch_di")
     val PHOTO_ANALYSIS_TITLE = UiAutomationId("photo_analysis_title")
     val PHOTO_ANALYSIS_STATUS = UiAutomationId("photo_analysis_status")
+    val PHOTO_ANALYSIS_STAGE = UiAutomationId("photo_analysis_stage")
+    val PHOTO_ANALYSIS_RETAINED_PHOTO = UiAutomationId("photo_analysis_retained_photo")
+    val PHOTO_ANALYSIS_GRID_OVERLAY = UiAutomationId("photo_analysis_grid_overlay")
+    val PHOTO_ANALYSIS_LOADING = UiAutomationId("photo_analysis_loading")
+    val PHOTO_ANALYSIS_MAIN_DISH_PROPOSALS = UiAutomationId("photo_analysis_main_dish_proposals")
+    val PHOTO_ANALYSIS_COMPONENT_EVIDENCE = UiAutomationId("photo_analysis_component_evidence")
+    val PHOTO_ANALYSIS_COMPOSITION_HINTS = UiAutomationId("photo_analysis_composition_hints")
     val CAPTURE_SHUTTER = UiAutomationId("capture_shutter")
     val CAPTURE_IMPORT = UiAutomationId("capture_import")
     val CAPTURE_SCAN_AGAIN = UiAutomationId("capture_scan_again")
@@ -29,6 +62,13 @@ object UiAutomationIds {
         BOOTSTRAP_LAUNCH_DI,
         PHOTO_ANALYSIS_TITLE,
         PHOTO_ANALYSIS_STATUS,
+        PHOTO_ANALYSIS_STAGE,
+        PHOTO_ANALYSIS_RETAINED_PHOTO,
+        PHOTO_ANALYSIS_GRID_OVERLAY,
+        PHOTO_ANALYSIS_LOADING,
+        PHOTO_ANALYSIS_MAIN_DISH_PROPOSALS,
+        PHOTO_ANALYSIS_COMPONENT_EVIDENCE,
+        PHOTO_ANALYSIS_COMPOSITION_HINTS,
         CAPTURE_SHUTTER,
         CAPTURE_IMPORT,
         CAPTURE_SCAN_AGAIN,

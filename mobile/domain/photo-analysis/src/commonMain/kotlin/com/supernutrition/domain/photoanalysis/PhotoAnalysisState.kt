@@ -6,8 +6,14 @@ sealed interface PhotoAnalysisState {
     data object Capture : PhotoAnalysisState
     data class Preparing(val ref: PhotoRef) : PhotoAnalysisState
     data class Ready(val input: NormalizedPhotoInput) : PhotoAnalysisState
-    data class Analyzing(val ref: PhotoRef, val requestId: RequestId) : PhotoAnalysisState
-    data class CandidateReview(val ref: PhotoRef, val requestId: RequestId) : PhotoAnalysisState
+    data class Analyzing(
+        val ref: PhotoRef,
+        val requestId: RequestId,
+        val stage: LocalAnalysisStage = LocalAnalysisStage.FINDING_VISIBLE_FOODS,
+    ) : PhotoAnalysisState
+
+    data class CandidateReview(val ref: PhotoRef, val requestId: RequestId, val draft: CandidateReviewDraft) :
+        PhotoAnalysisState
     data class Recovery(val reason: RecoveryReason, val ref: PhotoRef? = null) : PhotoAnalysisState
     data class Backgrounded(val snapshot: PhotoAnalysisBackgroundSnapshot) : PhotoAnalysisState
 }
@@ -26,10 +32,20 @@ enum class RecoveryReason {
     PERMISSION_DENIED,
     CAMERA_UNAVAILABLE,
     CAPTURE_FAILED,
+    REVIEW_RESTORE_UNAVAILABLE,
     POOR_IMAGE,
     NO_FOOD,
+    ANALYSIS_FAILED,
     OFFLINE,
     CANCELLED,
+}
+
+/** Truthful, bounded local work stages shown while photo evidence is being prepared for review. */
+enum class LocalAnalysisStage {
+    FINDING_VISIBLE_FOODS,
+    IDENTIFYING_DISH,
+    ESTIMATING_PORTIONS,
+    CHECKING_RESULTS,
 }
 
 sealed interface PhotoAnalysisEvent {
@@ -39,6 +55,21 @@ sealed interface PhotoAnalysisEvent {
     data object PermissionDenied : PhotoAnalysisEvent
     data class AnalysisStarted(val requestId: RequestId) : PhotoAnalysisEvent
     data class AnalysisSucceeded(val requestId: RequestId) : PhotoAnalysisEvent
+    data class LocalAnalysisStageChanged(val requestId: RequestId, val stage: LocalAnalysisStage) : PhotoAnalysisEvent
+
+    /** Explicit research-only 3x3 image prompt; no cell is inferred or silently selected. */
+    data class GridCellSelected(val cellIndex: Int) : PhotoAnalysisEvent {
+        init {
+            require(cellIndex in 0..8) { "Grid cell index must be between 0 and 8" }
+        }
+    }
+
+    /** Typed, separate dish proposals and visible component evidence for the review boundary. */
+    data class ReviewEvidenceAvailable(val requestId: RequestId, val draft: CandidateReviewDraft) : PhotoAnalysisEvent
+
+    /** A factual review outcome when no editable component evidence can be offered. */
+    data class ReviewEvidenceUnavailable(val requestId: RequestId, val reason: RecoveryReason) : PhotoAnalysisEvent
+
     data class ReplacePhoto(val ref: PhotoRef) : PhotoAnalysisEvent
     data object Cancel : PhotoAnalysisEvent
     data object ScanAgain : PhotoAnalysisEvent

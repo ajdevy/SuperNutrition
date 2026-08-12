@@ -140,14 +140,14 @@ object MobilePolicyValidator {
         }
 
         val identity = files.single { it.first == "config/product-identity.toml" }.second
+        requireManifestProperty(identity, "canonical_name", "SuperNutrition")
         listOf(
-            "canonical_name",
             "installed_display_name",
             "launcher_name",
             "in_app_name",
             "accessibility_name",
         ).forEach { key ->
-            requireManifestProperty(identity, key, "SuperNutrition")
+            requireManifestProperty(identity, key, "Super Nutrition")
         }
         requireManifestProperty(identity, "store_listing_title", "SuperNutrition AI nutritionist")
         val forbiddenVisibleVariants = PolicyToml.section(
@@ -169,11 +169,11 @@ object MobilePolicyValidator {
         requireManifestProperty(identity, "acceptance_android_application_id", "com.supernutrition.android.uiAcceptance")
         requireManifestProperty(identity, "acceptance_ios_bundle_identifier", "com.supernutrition.ios.uiacceptance")
         val androidStrings = mobileRoot.resolve("apps/androidApp/src/main/res/values/strings.xml")
-        require(Files.isRegularFile(androidStrings) && xmlResourceValue(androidStrings, "app_name") == "SuperNutrition") {
+        require(Files.isRegularFile(androidStrings) && xmlResourceValue(androidStrings, "app_name") == "Super Nutrition") {
             "Android visible identity must match the canonical manifest"
         }
         val iosInfo = mobileRoot.resolve("apps/iosApp/Info.plist")
-        require(Files.isRegularFile(iosInfo) && plistValue(iosInfo, "CFBundleDisplayName") == "SuperNutrition") {
+        require(Files.isRegularFile(iosInfo) && plistValue(iosInfo, "CFBundleDisplayName") == "Super Nutrition") {
             "iOS visible identity must match the canonical manifest"
         }
 

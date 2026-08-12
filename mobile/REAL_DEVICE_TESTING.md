@@ -30,26 +30,27 @@ setting cannot silently return to the scaffold.
    adb devices -l
    ```
 
-3. Build only the acceptance APKs:
+3. Build and run every instrumented app variant on the explicit physical serial:
 
    ```bash
    ./mobile/gradlew -p mobile \
-     :apps:androidApp:assembleUiAcceptanceDebug \
-     :apps:androidApp:assembleUiAcceptanceDebugAndroidTest \
-   --no-daemon --no-configuration-cache
+     :apps:androidApp:connectedAndroidTest \
+     -Pandroid.testInstrumentationRunnerArguments.deviceSerial=<physical-serial> \
+     --no-configuration-cache --console=plain
    ```
 
-4. Install and run against the explicit physical serial (replace the value;
-   never omit `-s`):
+   This runs the `pocDebug`, `productionDebug`, and `uiAcceptanceDebug` lanes.
+   Keep their XML reports: the evidence emitter requires both the UI-acceptance
+   and PoC result, so a successful UI-only run cannot close the PoC inference
+   coverage gap.
+
+4. For a manual acceptance launch, install and run against the explicit
+   physical serial (replace the value; never omit `-s`):
 
    ```bash
    adb -s <physical-serial> install -r mobile/apps/androidApp/build/outputs/apk/uiAcceptance/debug/androidApp-uiAcceptance-debug.apk
    adb -s <physical-serial> shell am start \
      -n com.supernutrition.android.uiAcceptance/com.supernutrition.feature.photoanalysis.PhotoAnalysisComposeActivity
-   ./mobile/gradlew -p mobile \
-   :apps:androidApp:connectedUiAcceptanceDebugAndroidTest \
-    -Pandroid.testInstrumentationRunnerArguments.deviceSerial=<physical-serial> \
-    --dependency-verification=strict
    ```
 
 To emit a reproducible native-evidence bundle after the connected run, use an
@@ -60,16 +61,30 @@ ANDROID_SERIAL=<physical-serial> \
   scripts/emit-physical-android-evidence.sh "$RUNNER_TEMP/supernutrition-android-evidence"
 ```
 
-The emitter binds the APK/test APK digest, fixture and quality-policy digests,
-commit, device/API, Gradle version, UTC timestamp, and passing XML result. It
-refuses a dirty worktree by default; `SUPERNUTRITION_ALLOW_DIRTY_EVIDENCE=1`
-produces `status=local-only` diagnostics and can never satisfy activation.
+The emitter binds independent UI-acceptance and PoC APK/test-APK digests,
+fixture and quality-policy digests, commit, device/API, Gradle version, UTC
+timestamp, and their passing XML results. It refuses a dirty worktree by
+default; `SUPERNUTRITION_ALLOW_DIRTY_EVIDENCE=1` produces `status=local-only`
+diagnostics and can never satisfy activation.
 
 If one handset appears twice in `adb devices -l` (for example, once as a
 direct IP transport and once as an mDNS `_adb-tls-connect` alias), disconnect
 the duplicate alias before the connected Gradle task. Two transports for one
 package can produce `INSTALL_FAILED_DUPLICATE_PACKAGE` in the device's pending
 install requests; this is a transport cleanup, not an application failure.
+Some devices reconnect their wireless alias immediately. If that happens,
+restart only the local ADB server with mDNS auto-connect disabled, confirm the
+single USB serial again, and inherit the setting in the Gradle invocation:
+
+```bash
+ADB_MDNS_AUTO_CONNECT=0 adb kill-server
+ADB_MDNS_AUTO_CONNECT=0 adb start-server
+ADB_MDNS_AUTO_CONNECT=0 adb devices -l
+ADB_MDNS_AUTO_CONNECT=0 ./mobile/gradlew -p mobile \
+  :apps:androidApp:connectedAndroidTest \
+  -Pandroid.testInstrumentationRunnerArguments.deviceSerial=<physical-serial> \
+  --no-configuration-cache --console=plain
+```
 
 The Android acceptance host now launches the production Compose-owned
 photo-analysis surface. The activity remains thin: it owns lifecycle, Android
@@ -92,10 +107,42 @@ xcrun xctrace list devices
 
 The iOS device framework is built with the `iosArm64` target, then the Xcode
 acceptance scheme is invoked with `-destination 'id=<UDID>'`. Signing/team
-settings are local machine inputs and must not be committed. The checked-in
+selection is configured in the Xcode project for the local Apple account
+`REDACTED_EMAIL` (Team `Contributor`, Team ID
+`REDACTED_TEAM_ID`). Signing certificates, private keys, and generated provisioning
+profiles remain local machine inputs and must not be committed. The checked-in
 Intel fallback is an executable x64 simulator compatibility lane for shared
 presenter/reducer and bridge acceptance; it is never substituted for iPhone
 camera, lifecycle, or hardware evidence.
+
+### Current host limitation (2026-08-11)
+
+The configured physical iPhone runs iOS `26.5.2`. Apple's
+[Xcode system requirements](https://developer.apple.com/xcode/system-requirements/)
+require macOS Tahoe `26.2` or later for Xcode `26.5`/`26.6`, the releases that
+support iOS `26.5`; Xcode `26.3` can run on Sequoia but supports only through
+iOS `26.2`. This evidence host is an Intel MacBookPro15,1 on macOS `15.7.7`,
+which Apple does not list as compatible with Tahoe
+[in its Tahoe compatibility list](https://support.apple.com/en-us/122867).
+There is therefore no Apple-supported Xcode download that can execute the
+physical iPhone lane on this machine.
+
+Run the supported on-host iOS compile lane and record it separately from
+physical evidence:
+
+```bash
+./mobile/gradlew -p mobile :apps:sharedKit:compileKotlinIosArm64 \
+  -Psupernutrition.enableIosDeviceTarget=true \
+  --dependency-verification=strict --no-configuration-cache --console=plain
+```
+
+This compiles the `iosArm64` KMP graph only; it does not provide camera,
+lifecycle, XCTest, performance, or G-3 benchmark evidence.
+
+Run `pod install` in `mobile/apps/iosApp` before using the workspace. Its
+post-install settings keep static CocoaPods libraries unsigned; the application
+and test runner are signed by Xcode. A physical-device launch also requires the
+iPhone to be paired, in Developer Mode, and unlocked.
 
 Run both the binary-bound Kotlin fixture and the physical `iosArm64` Xcode
 acceptance suite before emitting the native-evidence bundle. The emitter
@@ -103,25 +150,26 @@ requires the fixture XML as well as the physical xcresult, so a UI-only run
 cannot accidentally close the normalization gap:
 
 ```bash
-APPLE_TEAM_ID="<local-team-id>" \
-IOS_CODE_SIGN_IDENTITY="Apple Development: <name> (<certificate-id>)" \
-IOS_UDID="<physical-iphone-udid>" \
+export APPLE_TEAM_ID="${APPLE_TEAM_ID:-REDACTED_TEAM_ID}"
+export IOS_CODE_SIGN_IDENTITY="Apple Development: <name> (<certificate-id>)"
+export IOS_UDID="<physical-iphone-udid>"
 xcodebuild test -quiet \
-  -project mobile/apps/iosApp/SuperNutritionUIAcceptance.xcodeproj \
+  -workspace mobile/apps/iosApp/SuperNutritionUIAcceptance.xcworkspace \
   -scheme SuperNutritionUIAcceptance \
-  -destination "id=<physical-iphone-udid>" \
+  -destination "id=$IOS_UDID" \
   -derivedDataPath mobile/apps/iosApp/build/DerivedData \
   SHARED_KIT_FRAMEWORK_DIR="$PWD/mobile/apps/sharedKit/build/bin/iosArm64/debugFramework" \
-  DEVELOPMENT_TEAM="<local-team-id>" \
+  DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
   CODE_SIGN_STYLE=Automatic \
   CODE_SIGN_IDENTITY="Apple Development" \
   -allowProvisioningUpdates -allowProvisioningDeviceRegistration
 
-APPLE_TEAM_ID="<local-team-id>" \
-IOS_CODE_SIGN_IDENTITY="Apple Development: <name> (<certificate-id>)" \
-IOS_UDID="<physical-iphone-udid>" \
-  scripts/run-physical-ios-fixtures.sh
+scripts/run-physical-ios-fixtures.sh
 ```
+
+With a wildcard profile, the runner uses its checked-in fixture bundle ID
+`com.supernutrition.ios.arm64fixture.runner`. Set `IOS_FIXTURE_BUNDLE_ID` only
+when the profile allows a different matching bundle ID.
 
 Then emit the native-evidence bundle with the real iPhone UDID:
 

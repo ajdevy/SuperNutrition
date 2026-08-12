@@ -1,0 +1,49 @@
+field_categories:
+  - category: Repository and source identity
+    fields:
+      - name: repositories_and_sources
+        description: Primary GitHub repositories, dataset pages, papers, and official runtime documentation with direct links and access date
+        detail_level: detailed
+      - name: maintenance_and_reproducibility
+        description: Activity, release/checkpoint availability, setup quality, reproducibility, and known caveats
+        detail_level: detailed
+      - name: license_and_usage
+        description: Code, model, and dataset licenses and material restrictions for a commercial mobile product
+        detail_level: detailed
+  - category: Ingredient and segmentation capability
+    fields:
+      - name: task_and_labels
+        description: Detection, semantic or instance segmentation, panoptic segmentation, classification, ingredient labels, and annotation granularity
+        detail_level: detailed
+      - name: dataset_scale_and_domain
+        description: Image counts, meal composition, cuisine diversity, train validation test split, and domain match to plated multi-component meals
+        detail_level: detailed
+      - name: expected_ingredient_quality
+        description: Evidence-backed strengths, ambiguity classes, occlusion and mixed-dish failure modes, and meaningful metrics
+        detail_level: detailed
+  - category: Weight and portion capability
+    fields:
+      - name: weight_ground_truth
+        description: Whether ground truth is grams, calibrated scale readings, volume, depth, or proxy labels, and how it is collected
+        detail_level: detailed
+      - name: portion_method_and_metrics
+        description: Model inputs, geometry assumptions, outputs, and reported MAE, relative error, p90, or related metrics
+        detail_level: detailed
+      - name: weight_limitations
+        description: Identifiability limits, camera/depth/calibration requirements, and risks of presenting false precision
+        detail_level: detailed
+  - category: Mobile and data plan
+    fields:
+      - name: mobile_runtime_path
+        description: Android and iOS runtime, conversion, quantization, memory, latency, and accelerator implications
+        detail_level: detailed
+      - name: consented_corpus_blueprint
+        description: Recommended corpus size, consent fields, annotation protocol, independent weighing, splits, quality checks, and privacy controls
+        detail_level: detailed
+      - name: recommendation_for_supernutrition
+        description: Concrete staged recommendation for detector/segmenter, weighed corpus, acceptance metrics, and G-3 integration
+        detail_level: detailed
+uncertain:
+  - maintenance_and_reproducibility
+  - license_and_usage
+  - expected_ingredient_quality

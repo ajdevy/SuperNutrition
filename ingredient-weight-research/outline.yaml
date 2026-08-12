@@ -1,0 +1,19 @@
+topic: Ingredient detection segmentation and food weight estimation
+time_range: Current as of 2026-07-31, with historical evidence where needed
+items:
+  - name: Multi ingredient food detection and segmentation GitHub landscape
+    category: GitHub repositories and datasets
+    description: Find primary GitHub repositories and linked papers/datasets for multi-component meal ingredient detection, semantic segmentation, instance segmentation, and panoptic segmentation. Record task labels, dataset scale, annotation granularity, license, maintenance, and whether a repository is usable as a starting point for a production food-photo pipeline.
+  - name: Food portion and mass estimation datasets and code
+    category: Food weight estimation
+    description: Find primary GitHub repositories, datasets, and papers for food portion, volume, depth, and mass estimation from images. Record whether ground truth is grams, volume, calibrated scale, or proxy labels; camera/depth requirements; metrics; license; and failure modes for plated multi-component meals.
+  - name: Open food vision models for ingredients and meals
+    category: Models and checkpoints
+    description: Find open models and GitHub implementations for food recognition, ingredient classification, object detection, segmentation, depth, and multimodal meal understanding. Record model task, checkpoint availability, license, input/output contract, training data, known food-domain evidence, and conversion feasibility for ONNX, Core ML, LiteRT, or ExecuTorch.
+  - name: Mobile deployment and data collection blueprint
+    category: Mobile implementation and evaluation
+    description: Find primary GitHub examples and official runtime documentation for deploying detector/segmenter/depth or multimodal models on Android and iOS, plus reproducible consented weighed-corpus collection and annotation workflows. Record runtime constraints, quantization/conversion steps, camera/depth calibration needs, and a practical staged plan for SuperNutrition G-3.
+execution:
+  batch_size: 4
+  items_per_agent: 1
+  output_dir: ./ingredient-weight-research/results

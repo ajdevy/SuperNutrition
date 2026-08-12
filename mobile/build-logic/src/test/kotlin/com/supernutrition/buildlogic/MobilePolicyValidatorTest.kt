@@ -192,7 +192,7 @@ class MobilePolicyValidatorTest {
             strings,
             Files.readString(strings)
                 .replace(
-                    "<string name=\"app_name\">SuperNutrition</string>",
+                    "<string name=\"app_name\">Super Nutrition</string>",
                     "<string name=\"app_name\">AI nutritionist</string>",
                 )
                 .replace(
@@ -214,7 +214,7 @@ class MobilePolicyValidatorTest {
         Files.writeString(
             identity,
             Files.readString(identity).replace(
-                "in_app_name = \"SuperNutrition\"",
+                "in_app_name = \"Super Nutrition\"",
                 "in_app_name = \"SuperNutrition AI nutritionist\"",
             ),
         )
@@ -233,8 +233,8 @@ class MobilePolicyValidatorTest {
             info,
             Files.readString(info)
                 .replace(
-                    "<key>CFBundleDisplayName</key>\n\t<string>SuperNutrition</string>",
-                    "<key>CFBundleDisplayName</key>\n\t<string>AI nutritionist</string>",
+                    "<string>Super Nutrition</string>",
+                    "<string>AI nutritionist</string>",
                 )
                 .replace(
                     "</dict>",

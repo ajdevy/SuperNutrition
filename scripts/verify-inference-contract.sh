@@ -9,16 +9,7 @@ elif [[ -n "${SUPERNUTRITION_INFERENCE_CONTRACT:-}" ]]; then
 else
     contract_roots=(
         "${repo_root}/contracts/inference/v1"
-        # inference-evidence/v2 is deliberately absent from this default set.
-        #
-        # A validator's default targets name what THIS tree publishes. The v2
-        # releases ship in the mobile slice, so here the path does not exist and
-        # naming it makes the required check red by construction.
-        #
-        # Skipping when the directory happens to be missing was rejected: a
-        # validator that goes quiet when its subject disappears cannot tell
-        # "not published yet" from "someone deleted it". The mobile slice
-        # restores this entry in the same change that adds the release.
+        "${repo_root}/contracts/inference/v2"
     )
 fi
 
@@ -59,7 +50,7 @@ RESOURCE_BUCKETS = {"within-budget", "near-budget", "over-budget"}
 
 
 def fail(message):
-    raise SystemExit(message)
+    raise SystemExit(f"inference contract rejected: {message}")
 
 
 def reject_duplicate_keys(pairs):
@@ -73,6 +64,17 @@ def reject_duplicate_keys(pairs):
 
 def reject_nonfinite_numbers(value):
     raise ValueError(f"non-finite JSON number is forbidden: {value}")
+
+
+def reject_nonfinite_tree(value, label="fixture"):
+    if isinstance(value, float) and not math.isfinite(value):
+        fail(f"{label} contains a non-finite numeric value")
+    if isinstance(value, dict):
+        for key, nested in value.items():
+            reject_nonfinite_tree(nested, f"{label}.{key}")
+    elif isinstance(value, list):
+        for index, nested in enumerate(value):
+            reject_nonfinite_tree(nested, f"{label}[{index}]")
 
 
 def require_keys(value, expected, label):
@@ -148,6 +150,7 @@ def load_release(root_argument):
             )
         except (ValueError, json.JSONDecodeError) as error:
             fail(f"{path.name} is not canonical JSON: {error}")
+        reject_nonfinite_tree(value, path.name)
         canonical = json.dumps(value, ensure_ascii=False, allow_nan=False, separators=(",", ":")) + "\n"
         if text != canonical:
             fail(f"{path.name} is not canonical minified JSON")
@@ -450,7 +453,7 @@ def validate_v2(release):
             require_number_between(value[field], 0, 1, f"{label}.{field}")
         if value["width"] == 0 or value["height"] == 0:
             fail(f"{label} dimensions must be positive")
-        if value["left"] + value["width"] > 1 or value["top"] + value["height"] > 1:
+        if value["left"] + value["width"] > 1 + 1e-9 or value["top"] + value["height"] > 1 + 1e-9:
             fail(f"{label} must remain inside normalized bounds")
 
     def validate_mass(value, label):

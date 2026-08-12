@@ -1,0 +1,231 @@
+---
+baseline_commit: 84fc6d7e2128b01a45a9b7cec8b37755d04120e6
+---
+
+# Story 3.3: Implement local iOS inference
+
+Status: done
+
+The 2026-08-02 approved post-release scope amendment closes this story at the
+independent iOS adapter, physical host/bridge correctness, and fail-closed
+production seam. Component/mass model selection and the physical iOS G-3
+benchmark are deferred until the post-release consented corpus exists.
+
+## Story
+
+As an iOS local-inference owner,
+I want an iOS-specific Local Engine behind the same contract,
+so that iOS devices receive the same user-facing evidence vocabulary without
+an implicit remote transfer.
+
+## Acceptance Criteria
+
+1. `mobile/inference/local-ios` implements `PhotoInferenceEngine` contract-v1
+   and depends only on `domain:inference`, `domain:photo-analysis`, and approved
+   core ports. It never imports Android, Compose, Koin, remote inference, or
+   nutrition catalog code.
+2. Ready, unavailable, downloading, unsupported, resource-budget, and
+   temporarily-unavailable capability states map to the shared vocabulary;
+   unavailable analysis fails closed without reading photo bytes.
+3. A ready attempt reads normalized content through the existing
+   `PhotoSessionStorePort`, invokes only an injected iOS runtime, returns local
+   provenance and evidence, and performs no network transfer.
+4. Model provenance records immutable model version, integrity identity,
+   compatibility tier, calibration version, ownership, and rollback semantics.
+   App-managed packages are checksum/rollback aware; platform-managed models
+   never claim app rollback. No concrete runtime or model is selected before
+   the signed G-3 device benchmark.
+5. Cancellation is rethrown, runtime resources are released, and a late result
+   after cancellation or replacement cannot publish a terminal result.
+6. Common/JVM tests cover mapping, no-network behavior, input lease/digest,
+   provenance, cancellation, late results, and invalid model/resource state.
+   Apple compilation and the approved physical iOS fixture/host lanes are
+   executed when signing/device prerequisites are available; simulator output
+   is never reported as physical-device evidence.
+
+## Tasks / Subtasks
+
+- [x] Create `mobile/inference/local-ios` with KMP/Apple targets, lock state,
+  inward dependencies, module inventory, and coverage denominator.
+- [x] Define an injectable iOS runtime/model boundary with fail-closed
+  capability and ownership semantics; defer runtime/model selection to G-3.
+- [x] Implement `LocalIosInferenceEngine` over contract-v1 with normalized
+  photo lease validation, provenance, typed outcomes, cancellation, cleanup,
+  and late-result suppression.
+- [x] Add deterministic tests first and implementation second; cover all
+  contract outcomes, capability faults, integrity/compatibility/resource
+  rejection, and rollback ownership.
+- [x] Add explicit forbidden-artifact/log assertions for raw photo bytes,
+  filenames, paths, labels, prompts, responses, secrets, and headers.
+- [x] Run focused JVM/Apple tests, Detekt, policy/lock validation, and the
+  `iosArm64TestBinaries` device-target compile. The Intel x64 compatibility
+  lane is blocked by an untrusted Kotlin serialization klib; the signed
+  physical Xcode and arm64 fixture lanes are now recorded separately. Record
+  G-3 honestly as the remaining production gate.
+
+## Dev Notes
+
+### Boundaries and reuse
+
+- `mobile/domain/inference` is the sole owner of contract-v1 types and canonical
+  fixtures. Do not add iOS-specific DTOs to that module or edit its fixtures.
+- `mobile/domain/photo-analysis` owns the existing attempt-scoped
+  `PhotoSessionStorePort` and normalized `NormalizedPhotoInput`; do not create
+  a second content store or accept `UIImage`, `NSURL`, paths, or raw platform
+  objects in common code.
+- `mobile/inference/local-ios` is independent from local Android and remote
+  adapters. Constructor injection is required; Koin selection belongs only in
+  the app composition root.
+
+### Architecture and safety
+
+- Follow AD-2, AD-3, AD-6, AD-9, AD-10, AD-11, AD-22, and G-3 in
+  `ARCHITECTURE-SPINE.md`. Local inference is identification evidence only;
+  numeric nutrition never appears in an engine result.
+- Normalized input invariants are enforced by `NormalizedPhotoInput`; the
+  adapter must additionally verify the opaque photo ref and content digest
+  before invoking the runtime.
+- No photo bytes, labels, prompts, paths, model responses, headers, secrets,
+  or transport bodies may appear in logs, telemetry, exceptions, or fixtures.
+- A signed G-3 artifact must select OS/device tiers, runtime, model,
+  download policy, and latency/memory/thermal/battery budgets before any
+  production runtime dependency or model asset is added.
+
+### Validation
+
+- On this Apple-silicon host, `iosSimulatorArm64Test` is the canonical Apple
+  test lane; `iosX64Test` is compatibility-only when explicitly enabled.
+- Physical iOS evidence requires both `iosArm64TestBinaries` executed through
+  `scripts/run-physical-ios-fixtures.sh` and the signed Xcode acceptance scheme
+  on the real iPhone. Use `mobile/REAL_DEVICE_TESTING.md` and emit evidence
+  only from a clean, digest-bound run.
+- Aggregate `qualityCheckJvmAndroid` has been rerun and passes locally; the
+  remaining iOS-specific gaps are the signed G-3 artifact and physical
+  Xcode/device prerequisites.
+
+## Interaction-budget attestation
+
+Non-UI story. No taps, scrolls, fields, choices, defaults, consent, or
+navigation behavior changes.
+
+## References
+
+- [Source: `_bmad-output/planning-artifacts/epics.md`, Story E3.3]
+- [Source: `_bmad-output/planning-artifacts/architecture/architecture-SuperNutrition-2026-07-26/ARCHITECTURE-SPINE.md`, AD-2, AD-3, AD-6, AD-9, AD-10, AD-11, AD-22, G-3]
+- [Source: `mobile/domain/inference/src/commonMain/kotlin/com/supernutrition/domain/inference/InferenceContract.kt`]
+- [Source: `mobile/domain/photo-analysis/src/commonMain/kotlin/com/supernutrition/domain/photoanalysis/PhotoAnalysisDomain.kt`]
+- [Source: `mobile/REAL_DEVICE_TESTING.md`]
+
+### Scope amendment note
+
+The iOS adapter story is complete for the pre-release scope. The existing
+physical Xcode/arm64 evidence is host/bridge correctness only; production
+component/mass evidence remains a post-release G-3 gate and no production model
+is selected by this story.
+
+## Dev Agent Record
+
+### Agent Model Used
+
+GPT-5 / Codex
+
+### Debug Log References
+
+### Completion Notes List
+
+- Added the independent `local-ios` KMP adapter with contract-v1 mapping,
+  immutable app/platform model provenance, digest-bound photo lease reads,
+  cancellation-safe generation tokens, and runtime cleanup.
+- JVM tests pass with 98.6111% line and 86.8421% branch coverage; Detekt and
+  strict lock/policy validation pass. `iosArm64TestBinaries` completes.
+- Physical iOS evidence now passes on the paired iPhone 14 Pro using the local
+  Xcode account/team: the signed Xcode acceptance scheme passed 5/5 tests and
+  the arm64 fixture runner passed 5/5 tests (3 normalization, 2 bridge).
+  Evidence is bound to commit `1a22bff1`, the current framework/app and fixture
+  digests, device `REDACTED_PHYSICAL_DEVICE_UDID`, Xcode 26.0.1, and Gradle 9.5.0.
+  G-3 remains open because these are bridge/normalization correctness lanes,
+  not a signed runtime/model latency-memory-thermal-battery benchmark.
+- 2026-07-31 preliminary G-3 spike: the separate research harness completed
+  50/50 inferences on the paired iPhone 14 Pro and recorded latency, resident
+  memory, and thermal evidence. iOS battery/energy evidence and owner
+  acceptance remain open in
+  `_bmad-output/implementation-artifacts/g3-benchmark-artifact.md`.
+- 2026-07-31 controlled physical iOS G-3 rerun: after terminating the prior
+  runner process, the signed `SuperNutritionG3` app completed 50/50 inferences
+  on the paired iPhone 14 Pro with semantic `5/5`, session init `595 ms`,
+  p50/p95/max `87/89/89 ms`, resident memory `261,200 -> 252,864 KB`,
+  thermal `0 -> 0`, and battery level `0.850 -> 0.850`. This refreshes the
+  preliminary evidence but does not sign G-3 or add ingredient/weight support.
+- 2026-07-31 physical-device rerun: the signed Xcode acceptance scheme passed
+  `5/5` tests on iPhone 14 Pro (iOS 26.5.2), and the binary-bound arm64
+  fixture runner passed `5/5` tests (3 normalization, 2 bridge). The emitted
+  evidence is local-only because the checkout still contains the user's
+  untracked presentation work; it is correctness evidence and does not close
+  the signed G-3 runtime/model gate.
+- 2026-07-31 physical rerun on code commit `5f6c8772` (the FPB research
+  baseline): automatic signing with the local Apple Development team
+  `REDACTED_TEAM_ID` passed the Xcode acceptance scheme `5/5` on the paired iPhone
+  14 Pro (`REDACTED_PHYSICAL_DEVICE_UDID`, iOS 26.5.2), and
+  `scripts/run-physical-ios-fixtures.sh` passed `5/5` arm64 fixture tests
+  (3 normalization, 2 bridge). The result bundle is
+  `mobile/apps/iosApp/build/DerivedData/Logs/Test/Test-SuperNutritionUIAcceptance-2026.08.01_00-03-05-+0300.xcresult`;
+  evidence remains local-only because the user's untracked presentation is
+  intentionally preserved. These are bridge/normalization correctness lanes,
+  not signed G-3 ingredient/weight quality evidence.
+- 2026-08-01 verification on the unchanged production code from `5f6c8772`
+  (documentation head `6ea5954c`): the physical iPhone 14 Pro acceptance
+  xcresult passed `5/5`, and the signed `iosArm64` fixture runner passed `5/5`
+  (3 normalization, 2 bridge), with exit code 0. The latest xcresult is
+  `mobile/apps/iosApp/build/DerivedData/Logs/Test/Test-SuperNutritionUIAcceptance-2026.08.01_00-29-55-+0300.xcresult`.
+  This remains correctness evidence, not a signed G-3 runtime/model result.
+- 2026-08-01 G-3 rerun attempt: the harness built and installed, but the
+  physical iPhone was locked and CoreDevice denied launching the benchmark
+  app. No iOS resource result is recorded from this attempt; the existing
+  `5/5` UI and `5/5` arm64 fixture results remain correctness evidence only.
+- 2026-08-01 successful physical G-3 rerun after the iPhone was unlocked:
+  `/tmp/supernutrition-g3-ios-20260801-r3` completed semantic `5/5`, init
+  `560 ms`, p50/p95/max `83/85/85 ms`, resident memory
+  `261,360 -> 253,008 KB`, thermal `0 -> 0`, and battery level `1 -> 1` on
+  iPhone 14 Pro / iOS 26.5.2. Ingredient capability remains `unsupported`
+  and weight remains `not-evaluable`; the result is preliminary and does not
+  supply owner signatures.
+- 2026-08-01 native energy evidence: a trace-bound physical run completed
+  semantic `5/5`, init `572 ms`, p50/p95/max `83/84/84 ms`, resident memory
+  `255,744 -> 247,360 KB`, thermal `0 -> 0`, and battery level `1 -> 1` on the
+  same iPhone. Xcode Instruments `Power Profiler` captured
+  `/tmp/supernutrition-ios-power-20260801.trace`; the trace records process
+  exit `0` and a 32.486 s capture, and its exported process power table reports
+  zero Wi-Fi and cellular receive/transmit bytes. It supplies native trace
+  evidence, but not a calibrated joule or battery-percentage delta, so the
+  numeric battery budget and owner acceptance remain open.
+
+### File List
+
+- `mobile/inference/local-ios/build.gradle.kts`
+- `mobile/inference/local-ios/gradle.lockfile`
+- `mobile/inference/local-ios/src/commonMain/kotlin/com/supernutrition/inference/localios/LocalIosInference.kt`
+- `mobile/inference/local-ios/src/commonTest/kotlin/com/supernutrition/inference/localios/LocalIosInferenceEngineTest.kt`
+- `mobile/config/quality/module-matrix.toml`
+- `mobile/config/quality/coverage.toml`
+- `mobile/config/quality/evidence-bindings.toml`
+
+### Change Log
+
+- 2026-07-31: Created implementation-ready E3.3 context with G-3 and
+  physical-device guardrails.
+
+### Review Findings
+
+- [x] [Review][Patch] Lease validation, native cancellation, malformed-output
+  handling, and exception sanitization are now fail-closed in the iOS adapter
+  [mobile/inference/local-ios/src/commonMain/kotlin/com/supernutrition/inference/localios/LocalIosInference.kt].
+- [x] [Review][Patch] Ready model provenance now requires explicit verified
+  runtime evidence and cannot claim app rollback for platform-managed models
+  [mobile/inference/local-ios/src/commonMain/kotlin/com/supernutrition/inference/localios/LocalIosInference.kt].
+- [x] [Review][Patch] Runtime diagnostic assertions reject raw bytes, paths,
+  labels, prompts, responses, secrets, and authorization headers from the
+  typed failure surface
+  [mobile/inference/local-ios/src/commonTest/kotlin/com/supernutrition/inference/localios/LocalIosInferenceEngineTest.kt].
+- [x] [Review][Patch] Physical Xcode UI acceptance and binary-bound iOS
+  fixtures now execute on the paired device with the configured development
+  team; runtime selection remains gated by signed G-3 evidence.

@@ -17,9 +17,12 @@ graphify-out/
 **/.gradle/
 **/.kotlin/
 **/build/
+_site/
 **/DerivedData/
 *.xcresult/
+mobile/apps/iosApp/Pods/
 
 # IDE metadata is machine-local; checked-in run configuration belongs in CI or
 # the repository's documented command entrypoints.
 **/.idea/
+**/xcuserdata/

@@ -32,7 +32,8 @@ path = "contracts/inference/v1"
 digest = "b63de2850e1213815c8949fdfec82acb54903ca1b149b8bd6bdc748718b64179"
 algorithm = "release-sha256-v2"
 recorded_at_commit = "83547213"
-status = "current"
+status = "superseded"
+superseded_by_commit = "35a4693"
 
 [[entry]]
 release_id = "mobile-api/v1"
@@ -63,7 +64,8 @@ path = "contracts/product-identity/v1"
 digest = "94fe1c32c33dfc0859bb0f3dfe657948320d659844d82111449a4bef1646b94b"
 algorithm = "release-sha256-v2"
 recorded_at_commit = "83547213"
-status = "current"
+status = "superseded"
+superseded_by_commit = "35a4693"
 
 [[entry]]
 release_id = "market-policy/v1"
@@ -153,3 +155,39 @@ RELEASE.md, taking the release to 9733a365. The catalog recorded neither the \
 new value nor this supersession, and no script parsed the catalog, so the drift \
 was invisible on both sides: the file said "current" about bytes that no longer \
 existed. scripts/verify-release-catalog.sh now recomputes every current entry."""
+
+# --- arrived with origin/main 35a4693 ----------------------------------------
+#
+# Three rows this branch did not cause. main moved on while the slice was open:
+# it edited contracts/inference/v1 and contracts/product-identity/v1, and
+# published contracts/inference/v2. Their predecessors above are marked
+# superseded rather than rewritten, which is the whole point of the file.
+
+[[entry]]
+release_id = "photo-inference-engine/v1"
+path = "contracts/inference/v1"
+digest = "b92b8dc119d39315e5e439f35d0f26b1371cde99e106c088699691d6d53cb7c5"
+algorithm = "release-sha256-v2"
+recorded_at_commit = "35a4693"
+status = "current"
+
+[[entry]]
+release_id = "product-identity/v1"
+path = "contracts/product-identity/v1"
+digest = "c1e90150c971712735eb3dee95d80d86d813530fdd32400452513304a71d2c66"
+algorithm = "release-sha256-v2"
+recorded_at_commit = "35a4693"
+status = "current"
+
+[[entry]]
+release_id = "inference-evidence/v2"
+path = "contracts/inference/v2"
+digest = "e2d3ec9fdad8d8e292fdb413647509e6ba813809f02ef31d11ea0c3f583e4c59"
+algorithm = "release-sha256-v2"
+recorded_at_commit = "35a4693"
+status = "current"
+note = """
+Published by main at a path that does not match its own contract_id: the schema
+declares `inference-evidence`, and the path says `inference`. Recorded here as
+it actually ships. The mobile slice relocates it to contracts/inference-evidence/v2
+and supersedes this row."""

@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://supernutrition.local/schemas/g3-corpus-predictions-v1.json",
+  "title": "SuperNutrition G-3 consented-corpus predictions",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "modelRef", "cases"],
+  "properties": {
+    "schema": {"const": "supernutrition.g3-corpus-predictions.v1"},
+    "modelRef": {"$ref": "#/$defs/modelRef"},
+    "cases": {
+      "type": "object",
+      "propertyNames": {"$ref": "#/$defs/opaqueRef"},
+      "additionalProperties": {"$ref": "#/$defs/case"}
+    }
+  },
+  "$defs": {
+    "opaqueRef": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*:[a-z0-9][a-z0-9._-]{1,127}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "label": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:[_-][a-z0-9]+)*$"
+    },
+    "region": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["left", "top", "right", "bottom"],
+      "properties": {
+        "left": {"type": "number", "minimum": 0, "maximum": 1},
+        "top": {"type": "number", "minimum": 0, "maximum": 1},
+        "right": {"type": "number", "minimum": 0, "maximum": 1},
+        "bottom": {"type": "number", "minimum": 0, "maximum": 1}
+      }
+    },
+    "modelRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["modelId", "modelDigest", "calibrationRef"],
+      "properties": {
+        "modelId": {"$ref": "#/$defs/opaqueRef"},
+        "modelDigest": {"$ref": "#/$defs/sha256"},
+        "calibrationRef": {"$ref": "#/$defs/opaqueRef"}
+      }
+    },
+    "component": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["predictionId", "label", "massGrams", "confidence", "region", "status"],
+      "properties": {
+        "predictionId": {"$ref": "#/$defs/opaqueRef"},
+        "label": {"type": ["string", "null"], "pattern": "^[a-z0-9]+(?:[_-][a-z0-9]+)*$"},
+        "massGrams": {"type": ["number", "null"], "minimum": 0},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        "region": {"anyOf": [{"$ref": "#/$defs/region"}, {"type": "null"}]},
+        "status": {"enum": ["estimated", "abstained"]}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"status": {"const": "estimated"}}},
+          "then": {
+            "properties": {
+              "label": {"$ref": "#/$defs/label"},
+              "region": {"$ref": "#/$defs/region"}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"status": {"const": "abstained"}}},
+          "then": {
+            "properties": {
+              "label": {"type": "null"},
+              "massGrams": {"type": "null"},
+              "region": {"type": "null"}
+            }
+          }
+        }
+      ]
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["deviceRef", "latencyMs", "peakPssKb", "thermalState"],
+      "properties": {
+        "deviceRef": {"$ref": "#/$defs/opaqueRef"},
+        "latencyMs": {"type": "number", "minimum": 0},
+        "peakPssKb": {"type": "number", "minimum": 0},
+        "thermalState": {"type": "string", "minLength": 1}
+      }
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["components", "totalMassGrams"],
+      "properties": {
+        "components": {"type": "array", "items": {"$ref": "#/$defs/component"}},
+        "totalMassGrams": {"type": ["number", "null"], "minimum": 0},
+        "runtime": {"$ref": "#/$defs/runtime"}
+      }
+    }
+  }
+}
