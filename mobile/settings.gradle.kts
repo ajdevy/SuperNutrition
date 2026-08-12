@@ -47,6 +47,8 @@ val scaffoldModules = listOf(
     ":feature:photo-analysis",
     ":feature:photo-analysis-presenter",
     ":feature:photo-analysis-ui",
+    ":feature:meal-search-presenter",
+    ":feature:meal-search-ui",
     ":testing:compose-support",
     ":testing:inference",
     ":testing:scaffold-probe",
@@ -65,6 +67,15 @@ scaffoldModules.forEach { path ->
             ":feature:photo-analysis",
             ":feature:photo-analysis-presenter",
             ":feature:photo-analysis-ui",
+            // P1-2 — :feature:photo-analysis declares this in androidMain, and a
+            // project dependency resolves at configuration time whatever source
+            // set it sits in, so leaving it out did not trim the slice, it made
+            // the slice unconfigurable. The documented Apple command failed with
+            // "Project with path ':inference:remote' could not be found" before
+            // reaching a single Kotlin file, which is how a missing import in
+            // SharedKitPhotoAnalysisSession went unnoticed: nothing ever
+            // compiled that source set.
+            ":inference:remote",
             ":platform:photo-android",
             ":platform:photo-ios",
             ":testing:compose-support",

@@ -2,6 +2,7 @@ package com.supernutrition.domain.inference
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 @Serializable
 data class EngineCapability(
@@ -82,7 +83,30 @@ data class PhotoInferenceResult(val contractVersion: String, val outcome: Infere
 sealed interface InferenceOutcome {
     @Serializable
     @SerialName("candidates")
-    data class Candidates(val candidates: List<InferenceCandidate>) : InferenceOutcome {
+    data class Candidates(
+        val candidates: List<InferenceCandidate>,
+        /**
+         * The engine is not confident enough for this to be acted on without the
+         * user saying so.
+         *
+         * P1-9: the gateway has always sent this and the client parsed it and
+         * threw it away, so a low-confidence identification arrived indis-
+         * tinguishable from a confident one and could auto-advance. A field the
+         * remote engine sets and the domain cannot represent is a field that
+         * does not exist as far as the product is concerned.
+         *
+         * Defaulted to false so local engines, which have no such notion, are
+         * unaffected.
+         *
+         * @Transient because contracts/inference/v1 is frozen and its canonical
+         * candidate fixture pins the serialized shape byte for byte. This is a
+         * property of a result in memory, carried from the gateway response to
+         * the review, not a new field in a published evidence document — adding
+         * one of those is a contract change and the owner's call.
+         */
+        @Transient
+        val requiresConfirmation: Boolean = false,
+    ) : InferenceOutcome {
         init {
             require(candidates.isNotEmpty()) { "Candidate outcome must not be empty" }
             require(candidates.map(InferenceCandidate::rank).toSet().size == candidates.size) {
