@@ -208,4 +208,33 @@ data class InferenceResultV2(
             }
         }
     }
+
+    /**
+     * Bind the spans to the text they claim to quote.
+     *
+     * [InferenceSourceSpan] can only check what a span knows about itself —
+     * non-negative start, end after start. Whether it points at real characters
+     * depends on the description, which lives on the request, so the check has
+     * to happen where the two meet rather than at construction.
+     *
+     * Without it `InferenceSourceSpan(0, 900)` on a nine-character description
+     * is a valid result, and the provenance shown to the user — "these words
+     * produced this item" — is read out of range by the first surface that
+     * tries to highlight it.
+     *
+     * One overrunning span fails the whole result. A text result where some
+     * items are traceable to the user's words and some are not is the FM-6
+     * failure with provenance attached, which is what the modality rule above
+     * already refuses in its other form.
+     */
+    fun requireSpansWithin(description: String) {
+        val groups = (outcome as? InferenceOutcomeV2.Candidates)?.itemGroups.orEmpty()
+        groups.forEach { group ->
+            val span = group.sourceSpan ?: return@forEach
+            require(span.end <= description.length) {
+                "Item group ${group.groupId} quotes characters ${span.start}..${span.end} of a " +
+                    "description ${description.length} characters long"
+            }
+        }
+    }
 }

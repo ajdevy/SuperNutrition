@@ -206,3 +206,113 @@ class InferenceResultV2ValidationTest {
         assertFailsWith<IllegalArgumentException> { Confidence(-0.1, ConfidenceBand.LOW) }
     }
 }
+
+/**
+ * A span has to point INTO the description it claims to quote.
+ *
+ * `InferenceSourceSpan` checks `start >= 0` and `end > start`, which are
+ * properties of the span alone. Nothing bounded it against the text, because
+ * the result does not carry the description — it lives on the request. So
+ * `InferenceSourceSpan(0, 900)` on a nine-character description constructed
+ * happily, and the provenance the user is shown ("these words produced this
+ * item") would be read out of range at the first surface that tried to
+ * highlight it.
+ *
+ * The check therefore belongs where request and result meet, which is what
+ * `requireSpansWithin` is.
+ */
+class InferenceSourceSpanBoundsTest {
+    private val provenance = InferenceProvenanceV2(
+        route = InferenceRouteV2.LOCAL_TEXT,
+        engineId = "engine-1",
+        modelVersion = "model-1",
+        calibrationVersion = "calibration-1",
+        contractVersion = INFERENCE_CONTRACT_V2,
+    )
+
+    private fun textResult(vararg spans: InferenceSourceSpan) = InferenceResultV2(
+        contractVersion = INFERENCE_CONTRACT_V2,
+        modality = InferenceModality.TEXT,
+        outcome = InferenceOutcomeV2.Candidates(
+            itemGroups = spans.mapIndexed { index, span ->
+                InferenceItemGroup(
+                    groupId = "group-$index",
+                    sourceSpan = span,
+                    candidates = listOf(
+                        InferenceCandidateV2(
+                            candidateId = "food:egg-boiled",
+                            label = "Egg, boiled",
+                            rank = 1,
+                            confidence = Confidence(0.9, ConfidenceBand.HIGH),
+                            unresolvedAssumptions = emptyList(),
+                            provenance = provenance,
+                        ),
+                    ),
+                )
+            },
+        ),
+    )
+
+    @Test
+    fun accepts_spans_that_lie_within_the_description() {
+        val description = "two boiled eggs"
+        textResult(InferenceSourceSpan(0, 3), InferenceSourceSpan(4, 15))
+            .requireSpansWithin(description)
+    }
+
+    @Test
+    fun accepts_a_span_ending_exactly_at_the_end() {
+        textResult(InferenceSourceSpan(0, 9)).requireSpansWithin("some rice")
+    }
+
+    @Test
+    fun rejects_a_span_running_past_the_end() {
+        assertFailsWith<IllegalArgumentException> {
+            textResult(InferenceSourceSpan(0, 900)).requireSpansWithin("some rice")
+        }
+    }
+
+    @Test
+    fun rejects_a_span_starting_past_the_end() {
+        assertFailsWith<IllegalArgumentException> {
+            textResult(InferenceSourceSpan(40, 50)).requireSpansWithin("some rice")
+        }
+    }
+
+    // One anchored item and one that is not is the FM-6 failure with provenance
+    // attached, so the whole result is refused rather than the bad group alone.
+    @Test
+    fun rejects_when_only_one_of_several_spans_overruns() {
+        assertFailsWith<IllegalArgumentException> {
+            textResult(InferenceSourceSpan(0, 4), InferenceSourceSpan(5, 99))
+                .requireSpansWithin("some rice")
+        }
+    }
+
+    // A photo result has no description to be bounded by, and carries no spans.
+    @Test
+    fun a_photo_result_is_unaffected() {
+        InferenceResultV2(
+            contractVersion = INFERENCE_CONTRACT_V2,
+            modality = InferenceModality.PHOTO,
+            outcome = InferenceOutcomeV2.Candidates(
+                itemGroups = listOf(
+                    InferenceItemGroup(
+                        groupId = "group-0",
+                        sourceSpan = null,
+                        candidates = listOf(
+                            InferenceCandidateV2(
+                                candidateId = "food:egg-boiled",
+                                label = "Egg, boiled",
+                                rank = 1,
+                                confidence = Confidence(0.9, ConfidenceBand.HIGH),
+                                unresolvedAssumptions = emptyList(),
+                                provenance = provenance,
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        ).requireSpansWithin("")
+    }
+}
