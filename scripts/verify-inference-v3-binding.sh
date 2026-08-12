@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Read-only check that the Kotlin binding emits the wire values v2 declares.
+# Read-only check that the Kotlin binding emits the wire values v3 declares.
 #
 # The contract verifier proves the release is internally consistent, and it
 # deliberately refuses to look at source: a language-neutral release must be
@@ -15,8 +15,8 @@
 set -euo pipefail
 
 repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
-contract_root="${SUPERNUTRITION_INFERENCE_V2_CONTRACT:-${repo_root}/contracts/inference/v2}"
-binding_root="${SUPERNUTRITION_INFERENCE_V2_BINDING:-${repo_root}/mobile/domain/inference/src/commonMain/kotlin/com/supernutrition/domain/inference}"
+contract_root="${SUPERNUTRITION_INFERENCE_V3_CONTRACT:-${repo_root}/contracts/inference/v3}"
+binding_root="${SUPERNUTRITION_INFERENCE_V3_BINDING:-${repo_root}/mobile/domain/inference/src/commonMain/kotlin/com/supernutrition/domain/inference}"
 
 python3 - "$contract_root" "$binding_root" <<'PY'
 from pathlib import Path
@@ -29,7 +29,7 @@ binding_root = Path(sys.argv[2]).resolve()
 
 schema_path = contract_root / "schema.toml"
 if not schema_path.is_file():
-    raise SystemExit(f"missing inference v2 schema: {schema_path}")
+    raise SystemExit(f"missing inference v3 schema: {schema_path}")
 sources = sorted(binding_root.glob("*.kt"))
 if not sources:
     raise SystemExit(f"no Kotlin binding sources under {binding_root}")
@@ -37,7 +37,7 @@ if not sources:
 schema = tomllib.loads(schema_path.read_text(encoding="utf-8"))
 telemetry = schema.get("telemetry", {})
 if not telemetry:
-    raise SystemExit("v2 schema declares no [telemetry] section for the binding to satisfy")
+    raise SystemExit("v3 schema declares no [telemetry] section for the binding to satisfy")
 
 text = "\n".join(path.read_text(encoding="utf-8") for path in sources)
 
@@ -75,11 +75,11 @@ def serial_names(enum_name):
 
 # Every vocabulary the contract declares, and the enum that has to produce it.
 BINDINGS = {
-    "event_name": "TelemetryEventNameV2",
-    "route": "InferenceRouteV2",
+    "event_name": "TelemetryEventNameV3",
+    "route": "InferenceRouteV3",
     "capability_tier": "CapabilityState",
-    "duration_bucket": "TelemetryDurationBucketV2",
-    "resource_bucket": "TelemetryResourceBucketV2",
+    "duration_bucket": "TelemetryDurationBucketV3",
+    "resource_bucket": "TelemetryResourceBucketV3",
     "terminal_outcome": "InferenceTelemetryOutcome",
     "item_group_count_bucket": "TelemetryItemGroupCountBucket",
 }
@@ -87,7 +87,7 @@ BINDINGS = {
 for key, enum_name in BINDINGS.items():
     declared = set(telemetry.get(key, []))
     if not declared:
-        raise SystemExit(f"v2 schema declares no {key} vocabulary")
+        raise SystemExit(f"v3 schema declares no {key} vocabulary")
     emitted = serial_names(enum_name)
     unemittable = declared - emitted
     if unemittable:
@@ -118,7 +118,7 @@ capability_schema = schema.get("capability", {})
 for key, enum_name in (("state", "CapabilityState"), ("reason", "CapabilityReason")):
     declared = set(capability_schema.get(key, []))
     if not declared:
-        raise SystemExit(f"v2 schema declares no capability {key} vocabulary")
+        raise SystemExit(f"v3 schema declares no capability {key} vocabulary")
     emitted = serial_names(enum_name)
     if declared != emitted:
         raise SystemExit(
@@ -141,7 +141,7 @@ def constructor_parameters(type_name):
     raise SystemExit(f"{type_name}'s parameter list is not closed")
 
 
-capability_parameters = constructor_parameters("EngineCapabilityV2")
+capability_parameters = constructor_parameters("EngineCapabilityV3")
 capability_emitted = re.findall(r"\bval\s+([A-Za-z][A-Za-z0-9]*)\s*:", capability_parameters)
 capability_declared = capability_schema.get("emitted_fields", [])
 if capability_emitted != capability_declared:
@@ -162,9 +162,9 @@ if declared_optional != binding_optional:
 # The field list, not only the values. An allowlist is only as closed as the
 # type that produces it, and a property added to the event would otherwise be
 # emitted without appearing in emitted_fields.
-event_match = re.search(r"\bdata class InferenceTelemetryEventV2\s*\(", text)
+event_match = re.search(r"\bdata class InferenceTelemetryEventV3\s*\(", text)
 if not event_match:
-    raise SystemExit("binding declares no InferenceTelemetryEventV2")
+    raise SystemExit("binding declares no InferenceTelemetryEventV3")
 depth = 0
 for index in range(event_match.end() - 1, len(text)):
     if text[index] == "(":
@@ -175,12 +175,12 @@ for index in range(event_match.end() - 1, len(text)):
             parameters = text[event_match.end():index]
             break
 else:
-    raise SystemExit("InferenceTelemetryEventV2's parameter list is not closed")
+    raise SystemExit("InferenceTelemetryEventV3's parameter list is not closed")
 
 emitted_fields = re.findall(r"\bval\s+([A-Za-z][A-Za-z0-9]*)\s*:", parameters)
 declared_fields = telemetry.get("emitted_fields", [])
 if not declared_fields:
-    raise SystemExit("v2 schema declares no telemetry emitted_fields")
+    raise SystemExit("v3 schema declares no telemetry emitted_fields")
 if emitted_fields != declared_fields:
     raise SystemExit(
         "telemetry field list disagrees between schema and binding:\n"
@@ -189,5 +189,5 @@ if emitted_fields != declared_fields:
         "Order matters: canonical_json is true, so a reordered field list changes the bytes."
     )
 
-print(f"inference-engine v2 binding: OK ({len(declared_fields)} fields, {len(BINDINGS) + 1} vocabularies)")
+print(f"inference-engine v3 binding: OK ({len(declared_fields)} fields, {len(BINDINGS) + 1} vocabularies)")
 PY

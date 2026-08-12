@@ -1,0 +1,187 @@
+schema = "supernutrition.inference-engine-contract.v3"
+schema_version = 3
+contract_id = "inference-engine"
+release = "v3"
+previous_release = "photo-inference-engine/v1"
+language_neutral = true
+executable = false
+canonical_json = true
+numeric_nutrition = false
+canonical_fixture_kinds = ["request", "capability", "result", "telemetry"]
+
+# v3 exists because v1's request port admits only a PhotoRef and its contract_id
+# names the photo. A text engine cannot satisfy that shape without claiming a
+# photo it does not have. v1 is released and immutable, and its own
+# incompatible_change rule requires a new major release, so modality arrives
+# here rather than as an edit to v1.
+#
+# The contract_id is modality-neutral because "photo-inference-engine" cannot
+# name a contract that also accepts text. That rename is the reason this is a
+# major release rather than an additive one.
+
+[ports]
+request = "exactly-one-of-photo-ref-or-text-description-plus-immutable-attempt-context"
+capability = "typed-state-reason-user-safe-message-key"
+result = "ranked-identification-evidence-or-abstention-or-typed-failure"
+provenance = "route-engine-model-calibration-contract"
+telemetry = "versioned-allowlisted-operational-buckets-without-raw-payload"
+
+# Exactly one payload. A request carrying neither or both fails closed as a
+# typed contract error rather than defaulting to a modality: an ambiguous
+# request is a defect, not an input.
+[modality]
+values = ["photo", "text"]
+cardinality = "exactly-one"
+neither_or_both = "reject"
+
+[modality.photo]
+payload = "opaque-photo-ref"
+
+[modality.text]
+payload = "user-authored-description-plus-input-locale"
+# inputLocale is distinct from countryProfileId because catalog country is
+# independent of language. A description may be typed in a language the
+# activated catalog is not written in.
+input_locale = "required"
+# Free text is treated as sensitive by default. It can carry more identifying
+# detail than a food photo, and the v1 telemetry allowlist never anticipated it.
+loggable = false
+telemetry_eligible = false
+
+# Text identification returns one candidate group per detected food item,
+# mirroring the multi-item shape the photo path already produces. Each group
+# carries the span of the description it derived from, which is what makes the
+# split editable with visible provenance rather than a black box.
+[result.segmentation]
+applies_to = "text"
+grouping = "one-candidate-group-per-detected-item"
+source_span = "required"
+partial_segmentation = "reject"
+
+# The band is derived from the score, not chosen alongside it. Stated here
+# because it was previously only in one binding's Kotlin, where a second
+# implementation had no way to learn the rule existed and would have picked its
+# own thresholds — a v3 result whose band disagreed with its score would then be
+# valid on one platform and rejected on another.
+#
+# Derived rather than engine-supplied on purpose. A calibrated band is more
+# expressive, and it is also the shape in which a miscalibrated engine can show
+# "high confidence" over a score of 0.2 with nothing to catch it. A derived band
+# cannot lie about its own number, and a mismatch fails loudly at construction
+# rather than quietly in front of a user. If calibrated bands are wanted later
+# they are a new major release, not a relaxation of this one.
+[result.confidence]
+score_range = "0.0-1.0-inclusive"
+band = "derived-from-score"
+band_low_below = 0.5
+band_medium_below = 0.8
+band_high_from = 0.8
+band_mismatch = "reject"
+
+# Capability is reported per modality, not per engine. An engine serving both can
+# be ready for photos and still waiting on a text model; one answer for the pair
+# would have to be the pessimistic one, hiding a working camera behind a missing
+# text model.
+#
+# The states and reasons are v1's, unchanged, because that is what "identical
+# across modalities and unchanged from v1" requires. Only the envelope is new,
+# and it is declared here for the same reason the telemetry vocabularies are:
+# v3 publishes `capability-ready.json` as a canonical fixture with no binding
+# able to decode it, and nothing compared the two.
+[capability]
+emitted_fields = [
+  "contractVersion",
+  "modality",
+  "state",
+  "reason",
+  "userMessageKey",
+  "engineId",
+  "modelVersion",
+]
+# modelVersion is absent unless the engine is ready, because an engine with no
+# model has no version to name. Every other field is always present.
+optional_fields = ["modelVersion"]
+unlisted_field = "reject"
+state = ["unavailable", "model-required", "downloading", "ready", "temporarily-unavailable", "unsupported"]
+reason = [
+  "none",
+  "device-unsupported",
+  "model-missing",
+  "model-downloading",
+  "resource-budget",
+  "temporary-unavailable",
+]
+# "ready" is the only state that may report reason "none", and the only one that
+# must name a model version. A ready capability with a reason, or an unavailable
+# one without, is a self-contradicting report rather than an unusual one.
+ready_requires_reason = "none"
+ready_requires_model_version = true
+unavailable_forbids_reason = "none"
+
+# Telemetry carries the route because "which engine answered" is the operational
+# question this product actually has, and `local` alone cannot answer it: an
+# on-device vision engine and an on-device text engine are different engines with
+# different budgets and different failures. Flattening `local-text` to `local` at
+# the telemetry boundary loses exactly the distinction FR-6 reports separately,
+# so the field list and its vocabularies are fixed here rather than left to each
+# binding to invent. The confidence bands were previously in one binding's Kotlin
+# and a second implementation had no way to learn the rule existed; this section
+# exists so telemetry does not repeat that.
+#
+# `emitted_fields` is closed at the producer, which is a different rule from
+# `compatibility.unknown_fields = "ignore"` and does not contradict it. A decoder
+# tolerating an unknown field is forward compatibility; a producer adding one is
+# how free text reaches logs, one convenient extra at a time. The tolerance
+# belongs to the reader, never to the writer.
+[telemetry]
+emitted_fields = [
+  "contractVersion",
+  "modality",
+  "eventName",
+  "route",
+  "capabilityTier",
+  "durationBucket",
+  "resourceBucket",
+  "terminalOutcome",
+  "itemGroupCountBucket",
+  "engineId",
+  "modelVersion",
+]
+unlisted_field = "reject"
+raw_payload = "forbidden"
+# Only the attempt event is declared. v1's capability event keeps v1's shape
+# until something needs it here: a vocabulary nothing emits is a claim, not a
+# contract, and this release should not pin one on speculation.
+event_name = ["inference.attempt.completed"]
+route = ["local", "local-text", "remote"]
+capability_tier = [
+  "unavailable",
+  "model-required",
+  "downloading",
+  "ready",
+  "temporarily-unavailable",
+  "unsupported",
+]
+duration_bucket = ["under-2s", "2-to-5s", "over-5s"]
+# Absolute magnitude rather than v1's budget-relative naming. Per-device-tier
+# budgets are not set yet, so a budget-relative label would bake in a threshold
+# nobody has decided and could not be un-baked in a released contract. An
+# absolute bucket can be compared against a budget once one exists.
+resource_bucket = ["low", "moderate", "high"]
+terminal_outcome = ["candidates", "abstention", "failure", "cancelled"]
+# Bucketed, not exact. "This person logged seven items" is closer to a diary
+# entry than to an operational measurement, and the operational question is only
+# whether segmentation produced one item or many.
+item_group_count_bucket = ["none", "1", "2-3", "4-plus"]
+# A text attempt may not report `local`, and a photo attempt may not report
+# `local-text`. Either would be a route the modality cannot have produced, and
+# the text case is precisely the flattening this section exists to prevent.
+modality_route_agreement = "reject-mismatch"
+
+[compatibility]
+unknown_fields = "ignore"
+missing_required_fields = "reject"
+incompatible_change = "new-major-release"
+# v1 remains published and verifiable. Producers and consumers migrate release
+# by release; v1 is retired only when no implementation remains.
+coexists_with = "photo-inference-engine/v1"

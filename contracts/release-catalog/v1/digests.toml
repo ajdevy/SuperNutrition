@@ -191,3 +191,18 @@ Published by main at a path that does not match its own contract_id: the schema
 declares `inference-evidence`, and the path says `inference`. Recorded here as
 it actually ships. The mobile slice relocates it to contracts/inference-evidence/v2
 and supersedes this row."""
+
+[[entry]]
+release_id = "inference-engine/v3"
+path = "contracts/inference/v3"
+digest = "9f9eceece121bdca79e79c8cc4351d62578047533bde980a827dedf9567ddf3f"
+algorithm = "release-sha256-v2"
+recorded_at_commit = "feat/mobile-review-fixes"
+status = "current"
+note = """
+Published as v3, not v2. main already publishes a release at
+contracts/inference/v2 — the inference-EVIDENCE contract, at a path that
+disagrees with its own contract_id. Taking that path for the engine contract
+would have redefined a release that already shipped, so the engine contract
+takes the next free major and main's v2 is untouched."""
+

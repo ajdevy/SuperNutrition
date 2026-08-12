@@ -1,0 +1,60 @@
+schema = "supernutrition.inference-engine-compatibility-matrix.v3"
+contract_id = "inference-engine"
+release = "v3"
+previous_release = "photo-inference-engine/v1"
+digest = "9f9eceece121bdca79e79c8cc4351d62578047533bde980a827dedf9567ddf3f"
+
+# P1-11 — `accepted` means "a consumer exists and reads this release today".
+#
+# Five consumers were marked accepted. Two are real: local-android-v3 and
+# local-ios-v3 both implement InferenceEngineV3. The other three were not built
+# at all — the remote path still speaks v1, the evaluation harness has no v3
+# reference, and no TEXT modality exists anywhere in commonMain. A matrix that
+# advertises consumers nobody wrote is worse than an empty one: it is the
+# document a migration is planned against.
+#
+# `not-yet-implemented` is the honest third state, and it is already the pattern
+# used by contracts/market-policy/v1 for its future backend consumer.
+
+# v1 remains published. Consumers migrate release by release rather than in one
+# step, so both releases are supported simultaneously and v1 is retired only
+# when no implementation remains.
+
+[[supported_pair]]
+producer = "domain-inference-v3"
+consumer = "local-android-v3"
+direction = "forward"
+expected = "accepted"
+
+[[supported_pair]]
+producer = "domain-inference-v3"
+consumer = "local-ios-v3"
+direction = "forward"
+expected = "accepted"
+
+[[supported_pair]]
+producer = "domain-inference-v3"
+consumer = "local-text-v3"
+direction = "forward"
+expected = "not-yet-implemented"
+
+[[supported_pair]]
+producer = "domain-inference-v3"
+consumer = "remote-v3"
+direction = "forward"
+expected = "not-yet-implemented"
+
+[[supported_pair]]
+producer = "domain-inference-v3"
+consumer = "evaluation-v3"
+direction = "forward"
+expected = "not-yet-implemented"
+
+# A v1 consumer cannot read a v3 text request: the modality discriminator and
+# text payload do not exist in v1, and v1 requires a photo. Recorded explicitly
+# so the migration cannot be mistaken for transparent.
+[[supported_pair]]
+producer = "domain-inference-v3"
+consumer = "local-android-v1"
+direction = "backward"
+expected = "rejected"

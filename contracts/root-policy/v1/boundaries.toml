@@ -105,28 +105,28 @@ mutates_repository = false
 test_entrypoint = "scripts/inference-contract-negative-fixtures.sh"
 
 [[executable]]
-path = "scripts/verify-inference-v2-contract.sh"
+path = "scripts/verify-inference-v3-contract.sh"
 purpose = "read-only inference-engine v2 modality, span, and compatibility validation"
 mutates_repository = false
-test_entrypoint = "scripts/inference-v2-negative-fixtures.sh"
+test_entrypoint = "scripts/inference-v3-negative-fixtures.sh"
 
 [[executable]]
-path = "scripts/inference-v2-negative-fixtures.sh"
+path = "scripts/inference-v3-negative-fixtures.sh"
 purpose = "negative fixtures for v2 modality cardinality, source spans, nutrition, and telemetry leakage"
 mutates_repository = false
-test_entrypoint = "scripts/inference-v2-negative-fixtures.sh"
+test_entrypoint = "scripts/inference-v3-negative-fixtures.sh"
 
 [[executable]]
-path = "scripts/verify-inference-v2-binding.sh"
+path = "scripts/verify-inference-v3-binding.sh"
 purpose = "read-only check that the Kotlin binding emits exactly the telemetry fields and wire values inference-engine v2 declares"
 mutates_repository = false
-test_entrypoint = "scripts/inference-v2-binding-negative-fixtures.sh"
+test_entrypoint = "scripts/inference-v3-binding-negative-fixtures.sh"
 
 [[executable]]
-path = "scripts/inference-v2-binding-negative-fixtures.sh"
+path = "scripts/inference-v3-binding-negative-fixtures.sh"
 purpose = "negative fixtures for schema-to-binding vocabulary drift in both directions, plus telemetry field-list order"
 mutates_repository = false
-test_entrypoint = "scripts/inference-v2-binding-negative-fixtures.sh"
+test_entrypoint = "scripts/inference-v3-binding-negative-fixtures.sh"
 
 [[executable]]
 path = "scripts/verify-market-policy-contract.sh"
