@@ -15,6 +15,10 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     flavorDimensions += "distribution"
     productFlavors {
         create("production") {
@@ -23,6 +27,11 @@ android {
         create("uiAcceptance") {
             dimension = "distribution"
             applicationIdSuffix = ".uiAcceptance"
+        }
+        create("poc") {
+            dimension = "distribution"
+            applicationIdSuffix = ".poc"
+            minSdk = libs.versions.minSdk.get().toInt()
         }
     }
 
@@ -41,7 +50,10 @@ dependencies {
     implementation(libs.koin.core)
     implementation(project(":core:ui"))
     implementation(project(":feature:photo-analysis"))
+    implementation(project(":inference:local-android"))
     implementation(project(":platform:photo-android"))
+    // The current app uses the same local model runtime as the former PoC screen.
+    implementation(project(":inference:local-android-poc"))
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.uiautomator)
     androidTestImplementation(project(":domain:photo-analysis"))

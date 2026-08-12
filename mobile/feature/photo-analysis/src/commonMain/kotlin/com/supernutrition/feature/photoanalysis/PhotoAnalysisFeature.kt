@@ -8,16 +8,15 @@ import com.supernutrition.domain.photoanalysis.PhotoAnalysisState
 import com.supernutrition.domain.photoanalysis.PhotoLeaseStorePort
 import com.supernutrition.domain.photoanalysis.PhotoRef
 import com.supernutrition.domain.photoanalysis.PhotoSessionStorePort
+import com.supernutrition.domain.photoanalysis.RouteAttemptContext
+import com.supernutrition.domain.photoanalysis.RouteAttemptToken
+import com.supernutrition.domain.photoanalysis.RouteDecision
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 /** Composition-root feature coordinator; presenter and UI remain reusable seams. */
-class PhotoAnalysisFeature(
-    attemptId: AttemptId,
-    leases: PhotoLeaseStorePort,
-    sessions: PhotoSessionStorePort,
-) {
+class PhotoAnalysisFeature(attemptId: AttemptId, leases: PhotoLeaseStorePort, sessions: PhotoSessionStorePort) {
     private val reducer = PhotoAnalysisReducer(
         leases = leases,
         sessions = sessions,
@@ -30,6 +29,9 @@ class PhotoAnalysisFeature(
 
     val stateFlow: StateFlow<PhotoAnalysisState> = _state.asStateFlow()
 
+    /** Lets host-owned background work continue against the retained domain state. */
+    fun currentWorkState(): PhotoAnalysisState = reducer.currentWorkState()
+
     fun dispatch(event: PhotoAnalysisEvent) {
         reducer.dispatch(event)
         _state.value = reducer.state
@@ -38,4 +40,8 @@ class PhotoAnalysisFeature(
     fun snapshotForPersistence(): PhotoAnalysisBackgroundSnapshot = reducer.snapshotForPersistence()
 
     fun issuePhotoRef(opaqueId: String): PhotoRef = reducer.issuePhotoRef(opaqueId)
+
+    fun startRouteAttempt(context: RouteAttemptContext): RouteAttemptToken = reducer.startRouteAttempt(context)
+
+    fun acceptRouteDecision(decision: RouteDecision): Boolean = reducer.acceptRouteDecision(decision)
 }

@@ -1,0 +1,80 @@
+{
+  "schema_version": "supernutrition.fpb-yolov12-foodweight-composite-evidence.v1",
+  "status": "experimental-research-only",
+  "research_only": true,
+  "run": {
+    "date": "2026-08-01",
+    "checkpoint": "YOLOv12S.pt",
+    "checkpoint_sha256": "35cde167ab11e4d62a5d87bcf69f88e937972cebaf1a85869b1874e9fbe0eb1c",
+    "input_size": 640,
+    "confidence_threshold": 0.25,
+    "nms_iou": 0.7,
+    "device": "x86_64 macOS CPU",
+    "runtime": "Python 3.14.6; PyTorch 2.12.1; Ultralytics 8.4.114",
+    "compatibility_caveat": "The pinned FPB repository cannot load this checkpoint because it lacks C3k2. Current Ultralytics required a process-local extra-grams-channel adapter; it is not a production runtime."
+  },
+  "mass_quality": {
+    "status": "not-evaluable",
+    "reason": "The five public composite fixtures have no scale-derived component or total mass. Raw regression output is retained only as unscored evidence."
+  },
+  "ingredient_quality": {
+    "status": "scored-against-conservative-visible-taxonomy",
+    "taxonomy_policy": "FPB's 138 labels remain raw and are prefixed as unmapped. No approximate dish-to-ingredient mapping is permitted.",
+    "scored_cases": 5,
+    "raw_detections": 8,
+    "exact_visible_component_matches": 0,
+    "macro_f1": 0.0,
+    "case_f1": {
+      "steak-side-plate": 0.0,
+      "fish-side-plate": 0.0,
+      "chopped-salad": 0.0,
+      "buddha-bowl": 0.0,
+      "salmon-grain-plate": 0.0
+    },
+    "pass": false
+  },
+  "performance": {
+    "inference_ms_cpu": {
+      "mean": 1957.898,
+      "p50": 1488.45,
+      "p90": 3031.898,
+      "max": 3031.898
+    },
+    "not_device_evidence": true
+  },
+  "cases": {
+    "steak-side-plate": {
+      "inference_ms_cpu": 3031.898,
+      "detections": [
+        {"label": "sandwich", "class_id": 113, "confidence": 0.466435, "weight_grams_raw": 169.217987, "box_xyxy": [879.18, 0.31, 1518.87, 460.35]},
+        {"label": "sandwich", "class_id": 113, "confidence": 0.421467, "weight_grams_raw": 119.569603, "box_xyxy": [324.17, 0.34, 958.51, 171.42]},
+        {"label": "lulya_kebab", "class_id": 77, "confidence": 0.324992, "weight_grams_raw": 201.536057, "box_xyxy": [563.43, 1174.43, 1608.19, 2220.14]}
+      ]
+    },
+    "fish-side-plate": {
+      "inference_ms_cpu": 2363.553,
+      "detections": [
+        {"label": "bliny", "class_id": 13, "confidence": 0.912435, "weight_grams_raw": 270.347534, "box_xyxy": [550.04, 947.02, 1728.67, 1714.98]},
+        {"label": "grilled_vegetables", "class_id": 57, "confidence": 0.275254, "weight_grams_raw": 186.002151, "box_xyxy": [685.47, 249.63, 1402.72, 944.07]}
+      ]
+    },
+    "chopped-salad": {
+      "inference_ms_cpu": 1488.45,
+      "detections": [
+        {"label": "pizza", "class_id": 97, "confidence": 0.288358, "weight_grams_raw": 196.024429, "box_xyxy": [0.0, 1246.2, 1661.34, 2688.0]}
+      ]
+    },
+    "buddha-bowl": {
+      "inference_ms_cpu": 1443.731,
+      "detections": [
+        {"label": "chelpek", "class_id": 30, "confidence": 0.557414, "weight_grams_raw": 229.876053, "box_xyxy": [114.1, 70.65, 731.99, 645.49]}
+      ]
+    },
+    "salmon-grain-plate": {
+      "inference_ms_cpu": 1461.857,
+      "detections": [
+        {"label": "sprite", "class_id": 123, "confidence": 0.680937, "weight_grams_raw": 137.538483, "box_xyxy": [1694.63, 495.15, 1903.09, 735.59]}
+      ]
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "schema_version": "g3-predictions/research-v1",
+  "source": "fpb-yolov12-foodweight",
+  "taxonomy_status": "unmapped-raw-fpb-labels",
+  "research_only": true,
+  "cases": {
+    "steak-side-plate": {"ingredients": ["fpb_yolov12_unmapped/lulya_kebab", "fpb_yolov12_unmapped/sandwich"], "ingredient_masses_g": {}},
+    "fish-side-plate": {"ingredients": ["fpb_yolov12_unmapped/bliny", "fpb_yolov12_unmapped/grilled_vegetables"], "ingredient_masses_g": {}},
+    "chopped-salad": {"ingredients": ["fpb_yolov12_unmapped/pizza"], "ingredient_masses_g": {}},
+    "buddha-bowl": {"ingredients": ["fpb_yolov12_unmapped/chelpek"], "ingredient_masses_g": {}},
+    "salmon-grain-plate": {"ingredients": ["fpb_yolov12_unmapped/sprite"], "ingredient_masses_g": {}}
+  }
+}
