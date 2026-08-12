@@ -6,6 +6,15 @@ import kotlin.test.assertTrue
 
 class CatalogSearchTest {
     @Test
+    fun `display name lookup returns null for an unknown canonical id`() {
+        val search = CatalogSearch(
+            listOf(CatalogRecord(canonicalItemId = "food:rye-bread", displayName = "Bread, rye")),
+        )
+
+        assertEquals(null, search.displayNameFor("food:missing"))
+    }
+
+    @Test
     fun `exact name match ignores case`() {
         val search = CatalogSearch(
             listOf(CatalogRecord(canonicalItemId = "food:rye-bread", displayName = "Bread, rye")),
