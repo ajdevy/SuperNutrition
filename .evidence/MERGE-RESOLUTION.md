@@ -13,6 +13,11 @@ for a reason.
 | `scripts/verify-inference-contract.sh` | The backend slice removed the v2 wiring because it does not publish v2. After the merge v2 exists, so the wiring must come back — that was H1's design. This side also carries the P1-11 expectations. |
 | `scripts/inference-contract-negative-fixtures.sh` | Same reason: the v2 mutation groups belong with the release, and this side has the P1-1 fix (each release naming its own root). |
 
+`scripts/verify-inference-contract.sh` is why this branch carries its own
+`encoding="utf-8"` commit: the backend slice fixed the same three reads, but
+this side wins the merge, so without it the fix is lost and the backend slice's
+`test_verifier_text_reads.py` fails on the merged tree naming those lines.
+
 ## Take the BACKEND side (`--ours`)
 
 | file | why |
@@ -22,6 +27,10 @@ for a reason.
 | `scripts/emit-release-digest.sh` | M13: one shared digest implementation. |
 | `scripts/verify-release-immutability.sh` | M12 + H3: acknowledgements, worktree comparison, addition rule, structural catalog rule. |
 | `scripts/release-immutability-negative-fixtures.sh` | The seven fixtures that hold the above honest. |
+| `scripts/lib/release_digest.py` | M13's shared implementation, plus the rule that refuses release members `rglob` cannot see. This branch's copy is the older standalone one. |
+| `scripts/verify-inference-v2-binding.sh` | Differs only by `encoding="utf-8"` on its text reads. |
+| `scripts/verify-inference-v2-contract.sh` | Same — encoding only. |
+| `scripts/verify-market-policy-contract.sh` | Same — encoding only. |
 
 ## Merge BY HAND
 
