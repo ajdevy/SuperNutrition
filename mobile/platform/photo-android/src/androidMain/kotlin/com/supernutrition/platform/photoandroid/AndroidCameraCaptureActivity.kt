@@ -5,10 +5,13 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.activity.ComponentActivity
+import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.FocusMeteringAction
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
@@ -18,7 +21,7 @@ import androidx.core.content.ContextCompat
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.lang.ref.WeakReference
-import android.util.Log
+import java.util.concurrent.TimeUnit
 
 /**
  * Bridge-only CameraX surface. Product presentation remains owned by Compose;
@@ -94,10 +97,11 @@ class AndroidCameraCaptureActivity : ComponentActivity() {
             }
             val imageCapture = ImageCapture.Builder()
                 .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
+                .setTargetRotation(previewView.display?.rotation ?: android.view.Surface.ROTATION_0)
                 .build()
             val provider = cameraProviderFuture.get()
             provider.unbindAll()
-            provider.bindToLifecycle(
+            val camera = provider.bindToLifecycle(
                 this,
                 CameraSelector.DEFAULT_BACK_CAMERA,
                 preview,
@@ -108,12 +112,30 @@ class AndroidCameraCaptureActivity : ComponentActivity() {
             if (captureRequested && !captureStarted) {
                 captureStarted = true
                 captureRequested = false
-                capture()
+                prepareCapture(camera, previewView)
             }
         }.onFailure { error ->
             Log.e(TAG, "Camera binding failed", error)
             finishWithFailure(CaptureFailureReason.CAMERA_UNAVAILABLE)
         }
+    }
+
+    /**
+     * Give the camera a bounded opportunity to settle AF/AE/AWB on the food
+     * area before the one-shot capture. The action is best-effort because
+     * CameraX cannot promise that every device exposes all three regions.
+     */
+    private fun prepareCapture(camera: Camera, previewView: PreviewView) {
+        val center = previewView.meteringPointFactory.createPoint(0.5f, 0.5f)
+        val action = FocusMeteringAction.Builder(center)
+            .setAutoCancelDuration(3, TimeUnit.SECONDS)
+            .build()
+        camera.cameraControl.startFocusAndMetering(action).addListener(
+            {
+                if (!isFinishing && !isDestroyed) capture()
+            },
+            ContextCompat.getMainExecutor(this),
+        )
     }
 
     private fun capture() {
@@ -215,5 +237,5 @@ class AndroidCameraCaptureActivity : ComponentActivity() {
 private enum class CaptureFailureReason(val wireValue: String) {
     PERMISSION_DENIED("permission-denied"),
     CAMERA_UNAVAILABLE("camera-unavailable"),
-    CAPTURE_FAILED("capture-failed");
+    CAPTURE_FAILED("capture-failed"),
 }

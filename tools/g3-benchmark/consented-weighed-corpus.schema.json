@@ -1,0 +1,220 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://supernutrition.local/schemas/consented-weighed-component-corpus-v1.json",
+  "title": "SuperNutrition consented weighed component corpus",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "corpusVersion",
+    "taxonomyVersion",
+    "annotationProtocolVersion",
+    "retentionPolicyVersion",
+    "externalSources",
+    "cases"
+  ],
+  "properties": {
+    "schema": {"const": "supernutrition.consented-weighed-component-corpus.v1"},
+    "corpusVersion": {"const": "v1"},
+    "taxonomyVersion": {"type": "string", "minLength": 1},
+    "annotationProtocolVersion": {"type": "string", "minLength": 1},
+    "retentionPolicyVersion": {"type": "string", "minLength": 1},
+    "externalSources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "role", "licenseStatus", "bundledInApp", "acceptanceEvidence"],
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "role": {"enum": ["pretraining", "benchmark-design"]},
+          "licenseStatus": {"enum": ["reviewed", "not-reviewed"]},
+          "bundledInApp": {"const": false},
+          "acceptanceEvidence": {"const": false}
+        }
+      }
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/case"}
+    }
+  },
+  "$defs": {
+    "opaqueRef": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*:[a-z0-9][a-z0-9._-]{1,127}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "finiteNonNegative": {
+      "type": "number",
+      "minimum": 0
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["caseId", "consent", "capture", "measurements", "components", "quality", "split"],
+      "properties": {
+        "caseId": {"$ref": "#/$defs/opaqueRef"},
+        "consent": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["consentRef", "purpose", "retentionPolicyVersion", "withdrawalStatus", "derivedArtifactsAllowed"],
+          "properties": {
+            "consentRef": {"$ref": "#/$defs/opaqueRef"},
+            "purpose": {"const": "model-training-and-evaluation"},
+            "retentionPolicyVersion": {"type": "string", "minLength": 1},
+            "withdrawalStatus": {"const": "active"},
+            "derivedArtifactsAllowed": {"const": true}
+          }
+        },
+        "capture": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["views"],
+          "properties": {
+            "views": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["viewId", "photoDigest", "deviceRef", "angle", "lighting", "widthPx", "heightPx", "depthAvailable", "referencePresent"],
+                "properties": {
+                  "viewId": {"$ref": "#/$defs/opaqueRef"},
+                  "photoDigest": {"$ref": "#/$defs/sha256"},
+                  "deviceRef": {"$ref": "#/$defs/opaqueRef"},
+                  "angle": {"enum": ["top-down", "oblique", "multi-view"]},
+                  "lighting": {"enum": ["daylight", "indoor", "mixed", "low-light"]},
+                  "widthPx": {"type": "integer", "minimum": 1},
+                  "heightPx": {"type": "integer", "minimum": 1},
+                  "depthAvailable": {"type": "boolean"},
+                  "referencePresent": {"type": "boolean"}
+                }
+              }
+            }
+          }
+        },
+        "measurements": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["scaleRef", "scaleResolutionGrams", "calibrationCheck", "tareMassGrams", "finalPlateMassGrams", "componentReadings", "reconciliationToleranceGrams", "reconciliationDeltaGrams", "unit"],
+          "properties": {
+            "scaleRef": {"$ref": "#/$defs/opaqueRef"},
+            "scaleResolutionGrams": {"type": "number", "exclusiveMinimum": 0},
+            "calibrationCheck": {"const": "passed"},
+            "tareMassGrams": {"$ref": "#/$defs/finiteNonNegative"},
+            "finalPlateMassGrams": {"$ref": "#/$defs/finiteNonNegative"},
+            "componentReadings": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["componentId", "grams", "readBeforePlating"],
+                "properties": {
+                  "componentId": {"$ref": "#/$defs/opaqueRef"},
+                  "grams": {"type": "number", "exclusiveMinimum": 0},
+                  "readBeforePlating": {"const": true}
+                }
+              }
+            },
+            "reconciliationToleranceGrams": {"$ref": "#/$defs/finiteNonNegative"},
+            "reconciliationDeltaGrams": {"type": "number"},
+            "unit": {"const": "g"}
+          }
+        },
+        "components": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/component"}
+        },
+        "quality": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "privacyReview", "duplicateReview", "primaryAnnotatorRef", "secondaryAnnotatorRef", "adjudicated", "maskAgreementIoU", "identityAgreement"],
+          "properties": {
+            "status": {"const": "passed"},
+            "privacyReview": {"const": "passed"},
+            "duplicateReview": {"const": "passed"},
+            "primaryAnnotatorRef": {"$ref": "#/$defs/opaqueRef"},
+            "secondaryAnnotatorRef": {"$ref": "#/$defs/opaqueRef"},
+            "adjudicated": {"const": true},
+            "maskAgreementIoU": {"type": "number", "minimum": 0, "maximum": 1},
+            "identityAgreement": {"type": "boolean"}
+          }
+        },
+        "split": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["partition", "participantGroup", "mealGroup", "recipeGroup", "deviceGroup", "sessionGroup", "venueGroup"],
+          "properties": {
+            "partition": {"enum": ["train", "calibration", "held-out"]},
+            "participantGroup": {"$ref": "#/$defs/opaqueRef"},
+            "mealGroup": {"$ref": "#/$defs/opaqueRef"},
+            "recipeGroup": {"$ref": "#/$defs/opaqueRef"},
+            "deviceGroup": {"$ref": "#/$defs/opaqueRef"},
+            "sessionGroup": {"$ref": "#/$defs/opaqueRef"},
+            "venueGroup": {"$ref": "#/$defs/opaqueRef"}
+          }
+        }
+      }
+    },
+    "component": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["componentId", "state", "label", "unknownReason", "box", "mask", "groundTruthMass"],
+      "properties": {
+        "componentId": {"$ref": "#/$defs/opaqueRef"},
+        "state": {"enum": ["visible-separable", "hidden", "occluded", "unknown", "inseparably-mixed"]},
+        "label": {"type": ["string", "null"], "pattern": "^[a-z0-9]+(?:[_-][a-z0-9]+)*$"},
+        "unknownReason": {"type": ["string", "null"], "enum": ["hidden", "occluded", "unknown-food", "mixed-preparation", "not-visibly-separable", null]},
+        "box": {
+          "anyOf": [
+            {"type": "null"},
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["left", "top", "right", "bottom"],
+              "properties": {
+                "left": {"type": "number", "minimum": 0, "maximum": 1},
+                "top": {"type": "number", "minimum": 0, "maximum": 1},
+                "right": {"type": "number", "minimum": 0, "maximum": 1},
+                "bottom": {"type": "number", "minimum": 0, "maximum": 1}
+              }
+            }
+          ]
+        },
+        "mask": {
+          "anyOf": [
+            {"type": "null"},
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["digest", "format", "widthPx", "heightPx"],
+              "properties": {
+                "digest": {"$ref": "#/$defs/sha256"},
+                "format": {"enum": ["coco-rle", "coco-polygon"]},
+                "widthPx": {"type": "integer", "minimum": 1},
+                "heightPx": {"type": "integer", "minimum": 1}
+              }
+            }
+          ]
+        },
+        "groundTruthMass": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "grams", "reason"],
+          "properties": {
+            "status": {"enum": ["measured", "not_evaluable"]},
+            "grams": {"type": ["number", "null"], "exclusiveMinimum": 0},
+            "reason": {"type": ["string", "null"], "minLength": 1}
+          }
+        }
+      }
+    }
+  }
+}

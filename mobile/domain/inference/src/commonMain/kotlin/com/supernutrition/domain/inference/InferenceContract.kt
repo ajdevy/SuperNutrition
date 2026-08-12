@@ -5,8 +5,13 @@ const val PHOTO_INFERENCE_CONTRACT_V1 = "photo-inference-engine/v1"
 /** Shared domain validation for immutable, language-neutral contract values. */
 const val SHA256_DIGEST_LENGTH = 64
 
-fun isSha256Digest(value: String): Boolean =
-    value.length == SHA256_DIGEST_LENGTH && value.all { it in '0'..'9' || it in 'a'..'f' }
+fun isSha256Digest(value: String): Boolean {
+    if (value.length != SHA256_DIGEST_LENGTH) return false
+    for (character in value) {
+        if (character !in '0'..'9' && character !in 'a'..'f') return false
+    }
+    return true
+}
 
 fun requireSha256Digest(value: String, message: String): String = value.also {
     require(isSha256Digest(it)) { message }
@@ -56,11 +61,16 @@ data class InferenceAttemptContext(
     val requestId: String,
     val configurationVersion: String,
     val configurationDigest: String,
+    /** Optional explicit research prompt for the bounded 3x3 photo PoC. */
+    val gridCellIndex: Int? = null,
 ) {
     init {
         requireNonBlankValue(requestId, "Inference request ID must not be blank")
         requireNonBlankValue(configurationVersion, "Configuration version must not be blank")
         requireSha256Digest(configurationDigest, "Configuration digest must be a lowercase SHA-256 digest")
+        require(gridCellIndex == null || gridCellIndex in 0..8) {
+            "Grid cell index must be null or between 0 and 8"
+        }
     }
 }
 

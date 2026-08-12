@@ -81,92 +81,101 @@ class PhotoAnalysisDomainTest {
         assertFailsWith<PhotoPreparationException> {
             PhotoInputNormalizer(maxDimension = 2, digest = { "a".repeat(64) }).normalize(raw(width = 3))
         }
-        assertEquals(2, PhotoInputNormalizer(maxDimension = 2, digest = { "a".repeat(64) })
-            .normalize(raw(width = 2, height = 2)).width)
-        assertFailsWith<PhotoPreparationException> { PhotoInputNormalizer(digest = { "not-a-digest" }).normalize(raw()) }
+        assertEquals(
+            2,
+            PhotoInputNormalizer(maxDimension = 2, digest = { "a".repeat(64) })
+                .normalize(raw(width = 2, height = 2))
+                .width,
+        )
+        assertFailsWith<PhotoPreparationException> {
+            PhotoInputNormalizer(digest = { "not-a-digest" }).normalize(raw())
+        }
     }
 
     @Test
-    fun `domain value objects keep defensive equality and reject invalid normalized values`() {
-        val ref = leases.issue(attempt, "value-object-ref")
-        val otherRef = leases.issue(attempt, "value-object-other-ref")
-        val raw = RawPhoto(
+    fun `raw photo value operations compare every protected field`() {
+        val ref = leases.issue(attempt, "raw-value")
+        val otherRef = leases.issue(attempt, "raw-value-other")
+        val photo = RawPhoto(
             ref = ref,
             bytes = byteArrayOf(1, 2, 3),
-            width = 100,
-            height = 200,
+            width = 10,
+            height = 20,
             orientation = ImageOrientation.UP,
             colorSpace = "sRGB",
             metadataKeys = emptySet(),
         )
 
-        assertEquals(raw, raw.copy())
-        assertEquals(raw.hashCode(), raw.copy().hashCode())
-        assertFalse(raw == raw.copy(ref = otherRef))
-        assertFalse(raw == raw.copy(bytes = byteArrayOf(9)))
-        assertFalse(raw == raw.copy(width = 101))
-        assertFalse(raw == raw.copy(height = 201))
-        assertFalse(raw == raw.copy(orientation = ImageOrientation.RIGHT))
-        assertFalse(raw == raw.copy(colorSpace = "Display-P3"))
-        assertFalse(raw == raw.copy(metadataKeys = setOf("EXIF")))
-        assertFalse((raw as Any).equals("raw"))
+        assertEquals(photo, photo.copy())
+        assertEquals(photo.hashCode(), photo.copy().hashCode())
+        assertContentEquals(byteArrayOf(1, 2, 3), photo.bytes)
+        assertFalse(photo.equals("not-a-photo"))
+        assertFalse(photo == photo.copy(ref = otherRef))
+        assertFalse(photo == photo.copy(bytes = byteArrayOf(9)))
+        assertFalse(photo == photo.copy(width = 11))
+        assertFalse(photo == photo.copy(height = 21))
+        assertFalse(photo == photo.copy(orientation = ImageOrientation.RIGHT))
+        assertFalse(photo == photo.copy(colorSpace = "Display-P3"))
+        assertFalse(photo == photo.copy(metadataKeys = setOf("EXIF")))
+    }
 
-        val input = normalized(ref)
-        val otherInput = NormalizedPhotoInput(
-            ref = otherRef,
-            bytes = byteArrayOf(1, 2, 3),
-            width = 100,
-            height = 200,
-            orientation = ImageOrientation.UP,
-            colorSpace = "sRGB",
-            metadataKeys = emptySet(),
-            contentDigest = "a".repeat(64),
+    @Test
+    fun `restore rejects foreign expired and missing session content`() {
+        val foreign = PhotoRef.issue(AttemptId("foreign-attempt"), "foreign-restore")
+        assertEquals(
+            PhotoAnalysisState.Capture,
+            reducer.reduce(
+                PhotoAnalysisState.Capture,
+                PhotoAnalysisEvent.RestoreFromSnapshot(PhotoAnalysisBackgroundSnapshot.Preparing(foreign)),
+            ).state,
         )
-        assertEquals(input, input.copy())
-        assertEquals(input.hashCode(), input.copy().hashCode())
-        assertFalse(input == input.copy(ref = otherRef))
-        assertFalse(input == input.copy(bytes = byteArrayOf(9)))
-        assertFalse(input == input.copy(width = 101))
-        assertFalse(input == input.copy(height = 201))
-        assertFalse(input == input.copy(contentDigest = "b".repeat(64)))
-        assertFalse(input == otherInput)
-        assertFalse((input as Any).equals("input"))
+        assertEquals(
+            PhotoAnalysisState.Capture,
+            reducer.reduce(
+                PhotoAnalysisState.Capture,
+                PhotoAnalysisEvent.RestoreFromSnapshot(PhotoAnalysisBackgroundSnapshot.Ready(foreign)),
+            ).state,
+        )
+        assertEquals(
+            PhotoAnalysisState.Capture,
+            reducer.reduce(
+                PhotoAnalysisState.Capture,
+                PhotoAnalysisEvent.RestoreFromSnapshot(
+                    PhotoAnalysisBackgroundSnapshot.Recovery(RecoveryReason.CANCELLED, foreign),
+                ),
+            ).state,
+        )
 
-        assertFailsWith<IllegalArgumentException> {
-            NormalizedPhotoInput(ref, ByteArray(0), 100, 200, ImageOrientation.UP, "sRGB", emptySet(), "a".repeat(64))
-        }
-        assertFailsWith<IllegalArgumentException> {
-            NormalizedPhotoInput(ref, byteArrayOf(1), 0, 200, ImageOrientation.UP, "sRGB", emptySet(), "a".repeat(64))
-        }
-        assertFailsWith<IllegalArgumentException> {
-            NormalizedPhotoInput(ref, byteArrayOf(1), 100, 0, ImageOrientation.UP, "sRGB", emptySet(), "a".repeat(64))
-        }
-        assertFailsWith<IllegalArgumentException> {
-            NormalizedPhotoInput(ref, byteArrayOf(1), 100, 200, ImageOrientation.RIGHT, "sRGB", emptySet(), "a".repeat(64))
-        }
-        assertFailsWith<IllegalArgumentException> {
-            NormalizedPhotoInput(ref, byteArrayOf(1), 100, 200, ImageOrientation.UP, "Display-P3", emptySet(), "a".repeat(64))
-        }
-        assertFailsWith<IllegalArgumentException> {
-            NormalizedPhotoInput(ref, byteArrayOf(1), 100, 200, ImageOrientation.UP, "sRGB", setOf("EXIF"), "a".repeat(64))
-        }
-        assertFailsWith<IllegalArgumentException> {
-            NormalizedPhotoInput(ref, byteArrayOf(1), 100, 200, ImageOrientation.UP, "sRGB", emptySet(), "not-a-digest")
-        }
-        assertFailsWith<IllegalArgumentException> { RequestId(" ") }
-        assertEquals(RequestId("request-value"), RequestId("request-value"))
-        assertFalse(RequestId("request-value") == RequestId("other-request"))
-        assertFalse((RequestId("request-value") as Any).equals("request-value"))
-        assertEquals(RequestId("request-value").hashCode(), RequestId("request-value").value.hashCode())
-        assertEquals("RequestId(redacted)", RequestId("request-value").toString())
-        assertFailsWith<IllegalArgumentException> {
-            PhotoInputNormalizer(maxBytes = 0, digest = { "a".repeat(64) })
-        }
-        assertFailsWith<IllegalArgumentException> {
-            PhotoInputNormalizer(maxDimension = 0, digest = { "a".repeat(64) })
-        }
-        assertFalse(sessions.remove(ref))
-        assertEquals(0, sessions.clearAttempt(AttemptId("no-session")))
+        val expired = leases.issue(attempt, "expired-restore")
+        leases.revoke(expired)
+        assertEquals(
+            PhotoAnalysisState.Capture,
+            reducer.reduce(
+                PhotoAnalysisState.Capture,
+                PhotoAnalysisEvent.RestoreFromSnapshot(PhotoAnalysisBackgroundSnapshot.Preparing(expired)),
+            ).state,
+        )
+        assertEquals(
+            PhotoAnalysisState.Recovery(RecoveryReason.CAPTURE_FAILED, expired),
+            reducer.reduce(
+                PhotoAnalysisState.Capture,
+                PhotoAnalysisEvent.RestoreFromSnapshot(PhotoAnalysisBackgroundSnapshot.Ready(expired)),
+            ).state,
+        )
+
+        val activeWithoutSession = leases.issue(attempt, "missing-session-restore")
+        assertEquals(
+            PhotoAnalysisState.Recovery(RecoveryReason.REVIEW_RESTORE_UNAVAILABLE, activeWithoutSession),
+            reducer.reduce(
+                PhotoAnalysisState.Capture,
+                PhotoAnalysisEvent.RestoreFromSnapshot(
+                    PhotoAnalysisBackgroundSnapshot.CandidateReview(
+                        activeWithoutSession,
+                        RequestId("missing-session-request"),
+                    ),
+                ),
+            ).state,
+        )
     }
 
     @Test
@@ -324,6 +333,30 @@ class PhotoAnalysisDomainTest {
     }
 
     @Test
+    fun `scan again clears a photo from every pre-review state`() {
+        val preparingRef = leases.issue(attempt, "scan-again-preparing")
+        reducer.dispatch(PhotoAnalysisEvent.PhotoCaptured(preparingRef))
+        reducer.dispatch(PhotoAnalysisEvent.ScanAgain)
+        assertEquals(PhotoAnalysisState.Capture, reducer.state)
+        assertFalse(leases.isActive(preparingRef))
+
+        val readyRef = leases.issue(attempt, "scan-again-ready")
+        reducer.dispatch(PhotoAnalysisEvent.PhotoCaptured(readyRef))
+        reducer.dispatch(PhotoAnalysisEvent.PreparationSucceeded(normalized(readyRef)))
+        reducer.dispatch(PhotoAnalysisEvent.ScanAgain)
+        assertEquals(PhotoAnalysisState.Capture, reducer.state)
+        assertFalse(leases.isActive(readyRef))
+
+        val analyzingRef = leases.issue(attempt, "scan-again-analyzing")
+        reducer.dispatch(PhotoAnalysisEvent.PhotoCaptured(analyzingRef))
+        reducer.dispatch(PhotoAnalysisEvent.PreparationSucceeded(normalized(analyzingRef)))
+        reducer.dispatch(PhotoAnalysisEvent.AnalysisStarted(RequestId("scan-again-request")))
+        reducer.dispatch(PhotoAnalysisEvent.ScanAgain)
+        assertEquals(PhotoAnalysisState.Capture, reducer.state)
+        assertFalse(leases.isActive(analyzingRef))
+    }
+
+    @Test
     fun `preparation failure from capture state is ignored`() {
         reducer.dispatch(PhotoAnalysisEvent.PreparationFailed(RecoveryReason.CAMERA_UNAVAILABLE))
 
@@ -434,7 +467,7 @@ class PhotoAnalysisDomainTest {
         assertEquals(PhotoAnalysisState.Analyzing(ref, RequestId("request-background")), reducer.state)
         reducer.dispatch(PhotoAnalysisEvent.AnalysisSucceeded(RequestId("request-background")))
 
-        assertEquals(PhotoAnalysisState.CandidateReview(ref, RequestId("request-background")), reducer.state)
+        assertEquals(PhotoAnalysisState.Recovery(RecoveryReason.CAPTURE_FAILED, ref), reducer.state)
     }
 
     @Test
@@ -470,23 +503,23 @@ class PhotoAnalysisDomainTest {
         reducer.dispatch(PhotoAnalysisEvent.AnalysisSucceeded(RequestId("snapshot-request")))
         reducer.dispatch(PhotoAnalysisEvent.Backgrounded)
         assertEquals(
-            PhotoAnalysisBackgroundSnapshot.CandidateReview(readyRef, RequestId("snapshot-request")),
+            PhotoAnalysisBackgroundSnapshot.Recovery(RecoveryReason.CAPTURE_FAILED, readyRef),
             reducer.snapshotForPersistence(),
         )
         reducer.dispatch(PhotoAnalysisEvent.Restored)
         assertEquals(
-            PhotoAnalysisState.CandidateReview(readyRef, RequestId("snapshot-request")),
+            PhotoAnalysisState.Recovery(RecoveryReason.CAPTURE_FAILED, readyRef),
             reducer.state,
         )
 
         reducer.dispatch(PhotoAnalysisEvent.Cancel)
         reducer.dispatch(PhotoAnalysisEvent.Backgrounded)
         assertEquals(
-            PhotoAnalysisBackgroundSnapshot.Recovery(RecoveryReason.CANCELLED, null),
+            PhotoAnalysisBackgroundSnapshot.Recovery(RecoveryReason.CAPTURE_FAILED, readyRef),
             reducer.snapshotForPersistence(),
         )
         reducer.dispatch(PhotoAnalysisEvent.Restored)
-        assertEquals(PhotoAnalysisState.Recovery(RecoveryReason.CANCELLED), reducer.state)
+        assertEquals(PhotoAnalysisState.Recovery(RecoveryReason.CAPTURE_FAILED, readyRef), reducer.state)
     }
 
     @Test

@@ -1,14 +1,21 @@
 package com.supernutrition.platform.photoios
 
+import com.supernutrition.core.ui.UiAutomationIds
+import com.supernutrition.platform.photoios.captureinterop.SNConfigureCaptureDevice
+import com.supernutrition.platform.photoios.captureinterop.SNCreateCaptureInput
+import com.supernutrition.platform.photoios.captureinterop.SNDefaultBackCamera
 import com.supernutrition.platform.photoios.captureinterop.SNFileDataRepresentation
+import com.supernutrition.platform.photoios.captureinterop.SNSetViewAccessibilityIdentifier
 import com.supernutrition.platform.photoios.permissioninterop.SNGetCameraAuthorizationStatus
 import com.supernutrition.platform.photoios.permissioninterop.SNRequestCameraAccess
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCAction
 import kotlinx.cinterop.useContents
-import platform.CoreGraphics.CGRectGetHeight
-import platform.CoreGraphics.CGRectGetWidth
+import platform.AVFoundation.AVAuthorizationStatusAuthorized
+import platform.AVFoundation.AVAuthorizationStatusDenied
+import platform.AVFoundation.AVAuthorizationStatusNotDetermined
+import platform.AVFoundation.AVAuthorizationStatusRestricted
 import platform.AVFoundation.AVCaptureDevice
 import platform.AVFoundation.AVCaptureDeviceInput
 import platform.AVFoundation.AVCapturePhoto
@@ -16,36 +23,30 @@ import platform.AVFoundation.AVCapturePhotoCaptureDelegateProtocol
 import platform.AVFoundation.AVCapturePhotoOutput
 import platform.AVFoundation.AVCapturePhotoSettings
 import platform.AVFoundation.AVCaptureSession
+import platform.AVFoundation.AVCaptureSessionPresetPhoto
 import platform.AVFoundation.AVCaptureVideoPreviewLayer
-import platform.AVFoundation.AVAuthorizationStatusAuthorized
-import platform.AVFoundation.AVAuthorizationStatusDenied
-import platform.AVFoundation.AVAuthorizationStatusNotDetermined
-import platform.AVFoundation.AVAuthorizationStatusRestricted
 import platform.AVFoundation.AVLayerVideoGravityResizeAspectFill
-import platform.AVFoundation.AVMediaTypeVideo
+import platform.CoreGraphics.CGRectGetHeight
+import platform.CoreGraphics.CGRectGetWidth
 import platform.Foundation.NSBundle
 import platform.Foundation.NSData
 import platform.Foundation.NSError
 import platform.Foundation.NSSelectorFromString
+import platform.PhotosUI.PHPickerConfiguration
+import platform.PhotosUI.PHPickerResult
+import platform.PhotosUI.PHPickerViewController
+import platform.PhotosUI.PHPickerViewControllerDelegateProtocol
 import platform.UIKit.UIButton
 import platform.UIKit.UIColor
 import platform.UIKit.UIControlEventTouchUpInside
 import platform.UIKit.UIControlStateNormal
 import platform.UIKit.UIViewController
-import platform.darwin.NSObject
-import platform.PhotosUI.PHPickerResult
-import platform.PhotosUI.PHPickerViewController
-import platform.PhotosUI.PHPickerViewControllerDelegateProtocol
-import platform.PhotosUI.PHPickerConfiguration
 import platform.UniformTypeIdentifiers.UTTypeImage
+import platform.darwin.NSObject
 import platform.darwin.dispatch_async
 import platform.darwin.dispatch_get_main_queue
 import platform.darwin.dispatch_queue_create
 import kotlin.native.ref.WeakReference
-import com.supernutrition.platform.photoios.captureinterop.SNCreateCaptureInput
-import com.supernutrition.platform.photoios.captureinterop.SNDefaultBackCamera
-import com.supernutrition.platform.photoios.captureinterop.SNSetViewAccessibilityIdentifier
-import com.supernutrition.core.ui.UiAutomationIds
 
 /** iOS bridge seam; AVFoundation/PhotosUI objects stay behind the platform boundary. */
 interface IosPhotoPresentationPort {
@@ -58,15 +59,14 @@ interface IosPhotoPresentationPort {
         onResult: (NSData?) -> Unit,
         onFailure: () -> Unit,
     )
-    fun presentPhotoPicker(
-        from: UIViewController,
-        onResult: (NSData?) -> Unit,
-        onFailure: () -> Unit,
-    )
+    fun presentPhotoPicker(from: UIViewController, onResult: (NSData?) -> Unit, onFailure: () -> Unit)
 }
 
 @OptIn(ExperimentalForeignApi::class, kotlin.experimental.ExperimentalNativeApi::class)
-class IosPhotoBridge : IosPhotoBridgePort, IosPhotoPresentationPort {
+@Suppress("TooManyFunctions")
+class IosPhotoBridge :
+    IosPhotoBridgePort,
+    IosPhotoPresentationPort {
     override fun cameraPermissionState(): IosCameraPermissionState = when (SNGetCameraAuthorizationStatus()) {
         AVAuthorizationStatusAuthorized -> IosCameraPermissionState.GRANTED
         AVAuthorizationStatusDenied -> IosCameraPermissionState.DENIED
@@ -86,9 +86,11 @@ class IosPhotoBridge : IosPhotoBridgePort, IosPhotoPresentationPort {
     override fun ensureCameraAccess(onResult: (Boolean) -> Unit) {
         when (cameraPermissionState()) {
             IosCameraPermissionState.GRANTED -> deliver(onResult, true)
+
             IosCameraPermissionState.NOT_DETERMINED -> SNRequestCameraAccess { granted ->
                 deliver(onResult, granted)
             }
+
             IosCameraPermissionState.DENIED,
             IosCameraPermissionState.RATIONALE,
             IosCameraPermissionState.PERMANENTLY_DENIED,
@@ -124,26 +126,18 @@ class IosPhotoBridge : IosPhotoBridgePort, IosPhotoPresentationPort {
     }
 
     /** Presents the native single-selection picker and returns opaque bytes only. */
-    override fun presentPhotoPicker(
-        from: UIViewController,
-        onResult: (NSData?) -> Unit,
-        onFailure: () -> Unit,
-    ) {
+    override fun presentPhotoPicker(from: UIViewController, onResult: (NSData?) -> Unit, onFailure: () -> Unit) {
         if (from.presentedViewController != null || from.isBeingDismissed()) {
             failPresentation(onFailure)
             return
         }
-        val configuration = PHPickerConfiguration(
-            photoLibrary = platform.Photos.PHPhotoLibrary.sharedPhotoLibrary(),
-        ).apply {
+        val configuration = PHPickerConfiguration().apply {
             filter = platform.PhotosUI.PHPickerFilter.imagesFilter()
             selectionLimit = 1
         }
         val weakBridge = WeakReference(this)
         lateinit var delegate: PhotoPickerDelegate
-        val picker = TrackedPhotoPickerViewController(configuration) {
-            delegate.presentationDismissed()
-        }
+        val picker = PHPickerViewController(configuration = configuration)
         delegate = PhotoPickerDelegate(
             onResult = { data -> deliver(onResult, data) },
             onFailure = { failPresentation(onFailure) },
@@ -192,7 +186,8 @@ private class CameraCaptureViewController(
     private val onResult: (NSData?) -> Unit,
     private val onFailure: () -> Unit,
     private val clear: () -> Unit,
-) : UIViewController(nibName = null, bundle = null), AVCapturePhotoCaptureDelegateProtocol {
+) : UIViewController(nibName = null, bundle = null),
+    AVCapturePhotoCaptureDelegateProtocol {
     private val captureSession = AVCaptureSession()
     private val captureSessionQueue = dispatch_queue_create(
         "com.supernutrition.photo.capture.session",
@@ -307,6 +302,10 @@ private class CameraCaptureViewController(
 
     private fun configureCapture(input: AVCaptureDeviceInput): Boolean {
         captureSession.beginConfiguration()
+        if (captureSession.canSetSessionPreset(AVCaptureSessionPresetPhoto)) {
+            captureSession.sessionPreset = AVCaptureSessionPresetPhoto
+        }
+        SNConfigureCaptureDevice(input.device)
         val configured = captureSession.canAddInput(input) && captureSession.canAddOutput(photoOutput)
         if (configured) {
             captureSession.addInput(input)
@@ -320,31 +319,20 @@ private class CameraCaptureViewController(
         if (finished) return
         finished = true
         dispatch_async(captureSessionQueue) { captureSession.stopRunning() }
-        dismissOnMain(this) { clear(); onResult(data) }
+        dismissOnMain(this) {
+            clear()
+            onResult(data)
+        }
     }
 
     private fun finishFailure() {
         if (finished) return
         finished = true
         dispatch_async(captureSessionQueue) { captureSession.stopRunning() }
-        dismissOnMain(this) { clear(); onFailure() }
-    }
-}
-
-@OptIn(ExperimentalForeignApi::class)
-private class TrackedPhotoPickerViewController(
-    configuration: PHPickerConfiguration,
-    private val onDismissed: () -> Unit,
-) : PHPickerViewController(configuration = configuration) {
-    private var programmaticDismissal = false
-
-    fun markProgrammaticDismissal() {
-        programmaticDismissal = true
-    }
-
-    override fun viewDidDisappear(animated: Boolean) {
-        super.viewDidDisappear(animated)
-        if (!programmaticDismissal) onDismissed()
+        dismissOnMain(this) {
+            clear()
+            onFailure()
+        }
     }
 }
 
@@ -353,12 +341,9 @@ private class PhotoPickerDelegate(
     private val onResult: (NSData?) -> Unit,
     private val onFailure: () -> Unit,
     private val clear: () -> Unit,
-) : NSObject(), PHPickerViewControllerDelegateProtocol {
+) : NSObject(),
+    PHPickerViewControllerDelegateProtocol {
     private var completed = false
-
-    fun presentationDismissed() {
-        complete { onResult(null) }
-    }
 
     override fun picker(picker: PHPickerViewController, didFinishPicking: List<*>) {
         if (completed) return
@@ -393,7 +378,6 @@ private class PhotoPickerDelegate(
     }
 
     private fun dismissPicker(picker: PHPickerViewController, action: () -> Unit) {
-        (picker as? TrackedPhotoPickerViewController)?.markProgrammaticDismissal()
         picker.dismissViewControllerAnimated(true) { complete(action) }
     }
 }

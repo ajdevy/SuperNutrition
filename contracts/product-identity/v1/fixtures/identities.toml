@@ -5,7 +5,7 @@ contract_release = "product-identity/v1"
 [[case]]
 id = "canonical-visible-name"
 field = "visible_identity"
-expected = "SuperNutrition"
+expected = "Super Nutrition"
 
 [[case]]
 id = "store-only-title"

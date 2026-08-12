@@ -69,6 +69,16 @@ required_capability = "physical-android-device"
 invalidated_by = ["mobile/apps/androidApp/**", "mobile/core/ui/**"]
 
 [[gap]]
+id = "photo-android-inference-poc"
+platform = "android"
+owner = "mobile/inference/local-android-poc"
+evidence_task = "connectedAndroidTest"
+status = "success"
+max_age_days = 30
+required_capability = "physical-android-device"
+invalidated_by = ["mobile/inference/local-android-poc/**", "mobile/apps/androidApp/**"]
+
+[[gap]]
 id = "photo-ios-camera-picker"
 platform = "ios"
 owner = "mobile/platform/photo-ios"

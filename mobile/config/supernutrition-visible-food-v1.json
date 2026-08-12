@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "component-taxonomy/v1",
+  "taxonomyVersion": "supernutrition-visible-food-v1",
+  "owner": "SuperNutrition",
+  "scope": "Only visibly separable foods. Do not infer ingredients, recipe components, or mass from an absent label.",
+  "labels": [
+    {
+      "id": "apple",
+      "displayName": "Apple"
+    },
+    {
+      "id": "banana",
+      "displayName": "Banana"
+    },
+    {
+      "id": "broccoli",
+      "displayName": "Broccoli"
+    },
+    {
+      "id": "carrot",
+      "displayName": "Carrot"
+    },
+    {
+      "id": "orange",
+      "displayName": "Orange"
+    }
+  ]
+}

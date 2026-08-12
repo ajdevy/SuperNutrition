@@ -13,7 +13,7 @@ final class BootstrapLaunchTests: XCTestCase {
         let app = XCUIApplication()
         app.launch()
 
-        XCTAssertTrue(app.descendants(matching: .any)[SharedKitAutomationIds.shared.bootstrapLaunchMarker].waitForExistence(timeout: 15))
+        XCTAssertTrue(captureSurfaceIsReady(in: app, timeout: 15))
         XCTAssertTrue(app.descendants(matching: .any)[SharedKitAutomationIds.shared.photoAnalysisStatus].exists)
         XCTAssertTrue(app.buttons[SharedKitAutomationIds.shared.captureShutter].waitForExistence(timeout: 15))
         XCTAssertTrue(app.buttons[SharedKitAutomationIds.shared.captureImport].exists)
@@ -82,7 +82,7 @@ final class BootstrapLaunchTests: XCTestCase {
         XCUIDevice.shared.press(.home)
         app.activate()
 
-        XCTAssertTrue(app.descendants(matching: .any)[SharedKitAutomationIds.shared.bootstrapLaunchMarker].waitForExistence(timeout: 10))
+        XCTAssertTrue(captureSurfaceIsReady(in: app, timeout: 10))
         XCTAssertTrue(app.buttons[SharedKitAutomationIds.shared.captureShutter].exists)
         XCTAssertTrue(app.buttons[SharedKitAutomationIds.shared.captureImport].exists)
         if recovery.exists {
@@ -93,6 +93,15 @@ final class BootstrapLaunchTests: XCTestCase {
     private func nativeCameraControlIsVisible(in app: XCUIApplication) -> Bool {
         let capture = app.descendants(matching: .any)[SharedKitAutomationIds.shared.captureNative]
         return capture.waitForExistence(timeout: 10)
+    }
+
+    private func captureSurfaceIsReady(in app: XCUIApplication, timeout: TimeInterval) -> Bool {
+        let status = app.descendants(matching: .any)[SharedKitAutomationIds.shared.photoAnalysisStatus]
+        let shutter = app.buttons[SharedKitAutomationIds.shared.captureShutter]
+        let importButton = app.buttons[SharedKitAutomationIds.shared.captureImport]
+        return status.waitForExistence(timeout: timeout)
+            && shutter.waitForExistence(timeout: timeout)
+            && importButton.waitForExistence(timeout: timeout)
     }
 
     private func dismissOrRecoverPresentedCamera(from app: XCUIApplication) -> Bool {

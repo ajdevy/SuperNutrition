@@ -1,0 +1,9 @@
+# Inputs are fetched by prepare-assets.sh and are bound by SHA-256 in the artifact.
+android-runner/.gradle/
+android-runner/app/build/
+android-runner/app/src/main/assets/
+ios-runner/Pods/
+ios-runner/Resources/
+ios-runner/SuperNutritionG3.xcodeproj/
+ios-runner/SuperNutritionG3.xcworkspace/
+ios-runner/build/

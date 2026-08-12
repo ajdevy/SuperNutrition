@@ -39,7 +39,10 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":feature:photo-analysis-presenter"))
             implementation(project(":feature:photo-analysis-ui"))
-            implementation(project(":domain:photo-analysis"))
+            // Public feature APIs expose the domain state/ports, so this is an
+            // intentional API dependency rather than an implementation leak.
+            api(project(":domain:photo-analysis"))
+            api(libs.kotlinx.coroutines.core)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
@@ -67,6 +70,10 @@ kotlin {
             implementation(project(":domain:photo-analysis"))
             implementation(libs.androidx.activity)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.camerax.core)
+            implementation(libs.camerax.camera2)
+            implementation(libs.camerax.lifecycle)
+            implementation(libs.camerax.view)
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
