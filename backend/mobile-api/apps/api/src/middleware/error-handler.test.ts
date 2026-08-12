@@ -198,3 +198,48 @@ describe('multipart failures are client errors, not server faults', () => {
     expect(mapped.gatewayCode).toBe('internal-error');
   });
 });
+
+describe('the TEST_MODE fence refusing is not a server fault', () => {
+  // Production authentication is not wired: the attestation service does not
+  // exist yet, so `authenticate` throws TestModeFenceError rather than
+  // silently accepting anyone (G-4, AD-21). That refusal is the fence working.
+  //
+  // Nothing mapped it, so it fell through to internal-error: a 500 telling the
+  // client the server broke, when the server had in fact correctly declined.
+  // A 500 also invites a retry, and no number of retries wires an attestation
+  // verifier.
+  //
+  // test-mode-forbidden is what the fence firing is called, and it is the only
+  // entry in the frozen taxonomy whose client action is
+  // `no-client-action-configuration-fault` — which is exactly the situation.
+  // It is not recoverable, so the client falls back instead of retrying.
+  const fenceError = () =>
+    Object.assign(new Error('production authentication requires an attestation verifier (G-4)'), {
+      name: 'TestModeFenceError',
+    });
+
+  it('answers 403 test-mode-forbidden on the gateway surface', () => {
+    const mapped = toGatewayError(fenceError());
+
+    expect(mapped.gatewayCode).toBe(GATEWAY_CODES.TEST_MODE_FORBIDDEN);
+    expect(GATEWAY_ERRORS[mapped.gatewayCode].httpStatus).toBe(403);
+    expect(GATEWAY_ERRORS[mapped.gatewayCode].recoverable).toBe(false);
+  });
+
+  it('answers 403 TEST_MODE_FORBIDDEN on the product surface', () => {
+    // The product routes throw the same error from their own `authenticate`,
+    // and the two surfaces map thrown errors separately, so both need it.
+    const mapped = toProductError(fenceError());
+
+    expect([mapped.code, mapped.status]).toEqual(['TEST_MODE_FORBIDDEN', 403]);
+  });
+
+  it('never puts the fence message in the response body', () => {
+    // The message names an internal control and the gate it belongs to. It
+    // belongs in the log, on `cause`, not in something a client receives.
+    const mapped = mapError(fenceError(), 'corr_1');
+
+    expect(JSON.stringify(mapped.body)).not.toMatch(/attestation|G-4|TestModeFence/i);
+    expect(mapped.status).toBe(403);
+  });
+});

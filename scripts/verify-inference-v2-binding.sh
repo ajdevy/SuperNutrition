@@ -34,12 +34,12 @@ sources = sorted(binding_root.glob("*.kt"))
 if not sources:
     raise SystemExit(f"no Kotlin binding sources under {binding_root}")
 
-schema = tomllib.loads(schema_path.read_text())
+schema = tomllib.loads(schema_path.read_text(encoding="utf-8"))
 telemetry = schema.get("telemetry", {})
 if not telemetry:
     raise SystemExit("v2 schema declares no [telemetry] section for the binding to satisfy")
 
-text = "\n".join(path.read_text() for path in sources)
+text = "\n".join(path.read_text(encoding="utf-8") for path in sources)
 
 
 def enum_body(name):

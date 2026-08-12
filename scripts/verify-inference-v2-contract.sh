@@ -40,8 +40,8 @@ expected_fixtures = {
 if {path.name for path in fixture_paths} != expected_fixtures:
     raise SystemExit("inference v2 fixture set drifted; both modalities must stay covered")
 
-schema = tomllib.loads(schema_path.read_text())
-matrix = tomllib.loads(matrix_path.read_text())
+schema = tomllib.loads(schema_path.read_text(encoding="utf-8"))
+matrix = tomllib.loads(matrix_path.read_text(encoding="utf-8"))
 
 # The rename is the reason this is a major release rather than an additive
 # change, so it is asserted rather than assumed.
@@ -82,7 +82,7 @@ if segmentation.get("source_span") != "required":
 if segmentation.get("partial_segmentation") != "reject":
     raise SystemExit("a partially segmented description must abstain, not return a confident subset")
 
-fixtures = {path.name: json.loads(path.read_text()) for path in fixture_paths}
+fixtures = {path.name: json.loads(path.read_text(encoding="utf-8")) for path in fixture_paths}
 
 # Exactly one payload, per fixture, checked against the payload keys actually
 # present rather than against the declared modality alone.

@@ -50,6 +50,17 @@ export const toGatewayError = (error: unknown): GatewayError => {
     if (name === 'AbortError') {
       return new GatewayError(GATEWAY_CODES.CLIENT_CANCELLED, { cause: error });
     }
+    // The TEST_MODE fence declining to authenticate: production verification is
+    // not wired, so the surface refuses rather than accepting anyone (G-4,
+    // AD-21). That is the fence working, and answering 500 reported a server
+    // fault for a correct refusal — and invited a retry that cannot succeed.
+    //
+    // Matched by name rather than by importing the class, the same way
+    // AbortError is: the error handler stays free of a dependency on the config
+    // layer it exists to report on.
+    if (name === 'TestModeFenceError') {
+      return new GatewayError(GATEWAY_CODES.TEST_MODE_FORBIDDEN, { cause: error });
+    }
   }
 
   return new GatewayError(GATEWAY_CODES.INTERNAL_ERROR, { cause: error });
@@ -93,6 +104,16 @@ export const toProductError = (error: unknown): AppError => {
       return new AppError(ERROR_CODES.CLIENT_CANCELLED, 'Client cancelled the request.', {
         cause: error,
       });
+    }
+    // Same refusal, thrown from the product surface's own `authenticate`. The
+    // two taxonomies are mapped separately, so it has to be handled twice; the
+    // message is deliberately generic, with the detail kept on `cause`.
+    if ((error as { name?: unknown }).name === 'TestModeFenceError') {
+      return new AppError(
+        ERROR_CODES.TEST_MODE_FORBIDDEN,
+        'This deployment cannot authenticate requests.',
+        { cause: error },
+      );
     }
   }
 
