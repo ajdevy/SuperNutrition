@@ -47,6 +47,8 @@ val scaffoldModules = listOf(
     ":feature:photo-analysis",
     ":feature:photo-analysis-presenter",
     ":feature:photo-analysis-ui",
+    ":feature:meal-search-presenter",
+    ":feature:meal-search-ui",
     ":testing:compose-support",
     ":testing:inference",
     ":testing:scaffold-probe",

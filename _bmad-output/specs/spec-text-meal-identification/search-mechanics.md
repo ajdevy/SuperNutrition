@@ -30,9 +30,11 @@ Evaluated in order. The first tier that returns results is the result set; lower
 | Tier | Rule |
 | --- | --- |
 | 1 — Exact | Normalized query equals a normalized indexed name |
-| 2 — Prefix | Every query token is a prefix of some token in the record, in any order |
-| 3 — Token subset | All query tokens appear in the record; extra record tokens are permitted |
+| 2 — Token subset | Every query token appears as a complete record token; extra record tokens are permitted |
+| 3 — Prefix | Every query token is a prefix of some record token, in any order |
 | 4 — Fuzzy | Bounded edit distance per token, scaled to token length, applied only when tiers 1–3 are empty |
+
+**Token subset must precede prefix.** A complete token is also a prefix of itself, so ordering prefix first makes the token-subset tier unreachable — it could never match anything the prefix tier had not already taken. An earlier revision of this file had them the other way round; implementation surfaced it. Concretely, `rye` is a complete token of `Bread, rye` and only a prefix of `Ryebread`, and the first ordering loses that distinction.
 
 Fuzzy matching is last and bounded. An unbounded fuzzy tier turns a specific query into a wall of near-misses, which is the failure this ordering exists to prevent.
 
@@ -82,31 +84,31 @@ English-only behaviour is not a valid default for a market whose catalog is not 
 
 ### First three languages
 
-English, Spanish, and Russian. They were chosen as the first targets and they happen to exercise every branch of the matrix, so shipping all three proves the design rather than one path through it:
+English, Russian, and Spanish. Spanish was dropped on 2026-07-31 and restored on 2026-08-01; the notes below record what its absence had removed, because the reasoning explains why it is worth carrying.
 
 | Language | Script | Morphology | Dominant cost |
 | --- | --- | --- | --- |
 | English | Latin | None beyond plurals; synonyms suffice | Baseline |
-| Spanish | Latin with diacritics | Light stemming for gender and number | Regional naming variance |
+| Spanish | Latin with diacritics | Light stemming | Gender and number agreement, regional variants |
 | Russian | Cyrillic | Full lemmatization across cases | Inflection plus cross-script entry |
 
-A fourth language that fits one of these three profiles is incremental. One that does not — an unwritten tonal language, a language without whitespace word boundaries — is a new profile and a new decision.
+These three cover the matrix rather than only its ends. English needs nothing beyond plurals and Russian needs full lemmatization, and Spanish sits between them on light stemming with diacritics — the profile that was designed and untested while Spanish was out of scope. Restoring it means every declared morphology profile has a language exercising it.
+
+The diacritic fold in query normalization is load-bearing again. It was close to unexercised with Spanish out of scope — Cyrillic does not use Latin-1 accents — and was recorded then as a deletion candidate. Spanish restores its main justification: *berenjena*, *plátano*, and *jalapeño* all depend on it, and a user typing without accents must still reach the record.
 
 ### Input language is not catalog language
 
-This is the cost most easily underestimated. An accepted input language does not imply a catalog in that language: a Spanish speaker in the United States searches Spanish against English USDA records, and a Russian speaker there searches Cyrillic against the same English records.
+This is the cost most easily underestimated. An accepted input language does not imply a catalog in that language: a Russian speaker in the United States searches Cyrillic against English USDA records.
 
-So the synonym layer is keyed per **(catalog, input language)** pair, not per language. Adding Spanish input to the US catalog means mapping Spanish food names onto that catalog's canonical IDs; it does not mean shipping a Spanish catalog. Fixtures are keyed the same way — a language proven against one catalog is not proven against another.
+So the synonym layer is keyed per **(catalog, input language)** pair, not per language. Adding Russian input to the US catalog means mapping Russian food names onto that catalog's canonical IDs; it does not mean shipping a Russian catalog. Fixtures are keyed the same way — a language proven against one catalog is not proven against another.
 
 Display always uses the catalog record's own name, so a user who searches in one language and reads results in another sees exactly what the record says rather than a translation the catalog cannot vouch for.
 
-### Regional naming
+### Alternate naming
 
-Spanish is where this bites hardest, and it costs more than Spanish grammar does. Avocado is *palta* across much of South America and *aguacate* in Mexico and Spain. Beans are *frijoles*, *judías*, *porotos*, or *habichuelas* depending on where the speaker is from. None of these is a spelling variant or an inflected form; they are different words for the same food.
+One food answers to more than one word, and no amount of normalization or fuzzy matching connects those words — only data does. English alone shows it: *aubergine* and *eggplant*, *coriander* and *cilantro*. Russian adds regional and Soviet-era names alongside its inflected forms.
 
-The resolution is to accept every regional variant as a synonym onto the same canonical ID rather than selecting a regional dialect per market. Search exists to find things, and inclusiveness costs nothing at query time — a Chilean and a Mexican typing different words reach the same record. Regional preference belongs to display, which already uses the catalog's own name.
-
-The same pattern covers English (*aubergine* and *eggplant*, *coriander* and *cilantro*) and Russian regional and Soviet-era food names.
+The resolution is to accept every variant as a synonym onto the same canonical ID rather than selecting one wording per market. Search exists to find things, and inclusiveness costs nothing at query time. Preference belongs to display, which already uses the catalog's own name.
 
 ### Inflection
 

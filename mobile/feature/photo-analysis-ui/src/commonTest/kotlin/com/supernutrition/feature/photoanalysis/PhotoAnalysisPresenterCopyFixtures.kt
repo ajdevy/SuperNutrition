@@ -21,6 +21,8 @@ object PhotoAnalysisPresenterCopyFixtures {
         gridCellDescription = "Analizza area {index}",
         selectedState = "Selezionato",
         notSelectedState = "Non selezionato",
+        manualIngredientLabel = "Aggiungi alimento o piatto",
+        manualIngredientAdd = "Aggiungi",
         resultPlaceholder = "Risultati dopo l'analisi",
         loadingLabel = "Analisi",
     )
@@ -62,6 +64,7 @@ object PhotoAnalysisPresenterCopyFixtures {
         visibleRegionCount = "Aree visibili: {count}",
         compositionHintsTitle = "Possibili ingredienti",
         compositionHintSource = "Suggerimento del piatto",
+        manualIngredientSource = "Aggiunto dal testo",
         partialDegradation = "Suggerimenti piatto non disponibili",
     )
 

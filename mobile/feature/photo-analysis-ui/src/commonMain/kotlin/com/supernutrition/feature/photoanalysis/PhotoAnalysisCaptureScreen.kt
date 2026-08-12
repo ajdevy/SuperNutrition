@@ -51,6 +51,11 @@ data class PhotoAnalysisCaptureSurface(
     val gridHintsEnabled: Boolean = false,
     val onGridCellSelected: ((Int) -> Unit)? = null,
     val retainedPhotoAspectRatio: Float? = null,
+    val manualIngredientInput: String = "",
+    val manualIngredients: List<PhotoAnalysisManualIngredientModel> = emptyList(),
+    val manualIngredientUnresolved: List<String> = emptyList(),
+    val onManualIngredientInputChanged: (String) -> Unit = {},
+    val onManualIngredientAdded: () -> Unit = {},
 )
 
 data class PhotoAnalysisCaptureAutomationIds(
@@ -61,6 +66,8 @@ data class PhotoAnalysisCaptureAutomationIds(
     val mainDishProposals: UiAutomationId = UiAutomationIds.PHOTO_ANALYSIS_MAIN_DISH_PROPOSALS,
     val componentEvidence: UiAutomationId = UiAutomationIds.PHOTO_ANALYSIS_COMPONENT_EVIDENCE,
     val compositionHints: UiAutomationId = UiAutomationIds.PHOTO_ANALYSIS_COMPOSITION_HINTS,
+    val manualIngredientInput: UiAutomationId = UiAutomationIds.PHOTO_ANALYSIS_MANUAL_INGREDIENT_INPUT,
+    val manualIngredientAdd: UiAutomationId = UiAutomationIds.PHOTO_ANALYSIS_MANUAL_INGREDIENT_ADD,
     val shutter: UiAutomationId = UiAutomationIds.CAPTURE_SHUTTER,
     val import: UiAutomationId = UiAutomationIds.CAPTURE_IMPORT,
     val openSettings: UiAutomationId = UiAutomationIds.CAPTURE_OPEN_SETTINGS,
@@ -132,12 +139,14 @@ fun PhotoAnalysisCaptureScreen(
                 },
                 surface = surface,
             )
+            PhotoAnalysisManualIngredientInput(surface)
         }
 
         PhotoAnalysisStatus(model, surface)
         val review = model.review
         if (review == null) {
             Text(surface.presenterCopy.capture.resultPlaceholder, style = pocBodyTextStyle())
+            PhotoAnalysisManualIngredients(surface)
         } else {
             PhotoAnalysisReviewContent(review, surface)
         }
@@ -208,7 +217,7 @@ private fun PhotoAnalysisDishCandidates(review: PhotoAnalysisReviewModel, surfac
 
 @Composable
 private fun PhotoAnalysisVisibleComponents(review: PhotoAnalysisReviewModel, surface: PhotoAnalysisCaptureSurface) {
-    if (review.visibleComponents.isEmpty()) return
+    if (review.visibleComponents.isEmpty() && surface.manualIngredients.isEmpty()) return
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -243,6 +252,7 @@ private fun PhotoAnalysisVisibleComponents(review: PhotoAnalysisReviewModel, sur
                 component.mass?.let { mass -> Text(mass.label, style = pocBodyTextStyle()) }
             }
         }
+        PhotoAnalysisManualIngredientRows(surface)
     }
 }
 

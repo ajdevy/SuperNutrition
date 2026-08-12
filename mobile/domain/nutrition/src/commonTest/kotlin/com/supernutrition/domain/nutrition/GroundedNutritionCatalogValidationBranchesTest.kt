@@ -26,11 +26,17 @@ class GroundedNutritionCatalogValidationBranchesTest {
         assertFailsWith<IllegalArgumentException> { NutritionServing(0.0, "g", 10.0) }
         assertFailsWith<IllegalArgumentException> { NutritionServing(10.0, "", 10.0) }
         assertFailsWith<IllegalArgumentException> { NutritionServing(10.0, "g", 0.0) }
+        assertFailsWith<IllegalArgumentException> { NutritionServing(10.0, "g", -1.0) }
+        assertFailsWith<IllegalArgumentException> { NutritionServing(10.0, "g", Double.NaN) }
+        assertFailsWith<IllegalArgumentException> { NutritionServing(10.0, "g", Double.POSITIVE_INFINITY) }
         assertFailsWith<IllegalArgumentException> { NutritionServing(Double.NaN, "g", 10.0) }
 
         nutrientValues().forEachIndexed { index, value ->
             val invalid = nutrientValues().toMutableList().also { it[index] = value.copy(value = -1.0) }
             assertFailsWith<IllegalArgumentException> { nutrientProfile(invalid.map { it.value }) }
+        }
+        assertFailsWith<IllegalArgumentException> {
+            nutrientProfile(listOf(Double.NaN, 10.0, 20.0, 5.0, 3.0, 40.0))
         }
         val scaled = nutrientProfile(listOf(100.0, 10.0, 20.0, 5.0, 3.0, 40.0))
             .scaledTo(NutritionServing(150.0, "g", 150.0))

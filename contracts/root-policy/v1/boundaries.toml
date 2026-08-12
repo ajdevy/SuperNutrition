@@ -105,6 +105,60 @@ mutates_repository = false
 test_entrypoint = "scripts/inference-contract-negative-fixtures.sh"
 
 [[executable]]
+path = "scripts/verify-inference-v3-contract.sh"
+purpose = "read-only inference-evidence v3 photo component, text span, and compatibility validation"
+mutates_repository = false
+test_entrypoint = "scripts/inference-v2-negative-fixtures.sh"
+
+[[executable]]
+path = "scripts/inference-v3-negative-fixtures.sh"
+purpose = "negative fixtures for v3 modality result shapes, source spans, nutrition, and telemetry leakage"
+mutates_repository = false
+test_entrypoint = "scripts/inference-v2-negative-fixtures.sh"
+
+[[executable]]
+path = "scripts/verify-inference-v3-binding.sh"
+purpose = "read-only check that the Kotlin binding emits exactly the telemetry fields and wire values inference-evidence v3 declares"
+mutates_repository = false
+test_entrypoint = "scripts/inference-v2-binding-negative-fixtures.sh"
+
+[[executable]]
+path = "scripts/inference-v3-binding-negative-fixtures.sh"
+purpose = "negative fixtures for v3 schema-to-binding vocabulary drift and field-list changes"
+mutates_repository = false
+test_entrypoint = "scripts/inference-v2-binding-negative-fixtures.sh"
+
+[[executable]]
+path = "scripts/verify-market-policy-contract.sh"
+purpose = "read-only market-policy v1 validation: required fields, unresolved-is-default, per-modality consent, and no inferred posture"
+mutates_repository = false
+test_entrypoint = "scripts/market-policy-negative-fixtures.sh"
+
+[[executable]]
+path = "scripts/market-policy-negative-fixtures.sh"
+purpose = "negative fixtures for omission-as-permission, lapsed approval, inherited posture, borrowed consent copy, and instance drift"
+mutates_repository = false
+test_entrypoint = "scripts/market-policy-negative-fixtures.sh"
+
+[[executable]]
+path = "scripts/verify-release-immutability.sh"
+purpose = "cross-revision gate proving no published contract release or catalog entry changed since the base revision"
+mutates_repository = false
+test_entrypoint = "scripts/release-immutability-negative-fixtures.sh"
+
+[[executable]]
+path = "scripts/release-immutability-negative-fixtures.sh"
+purpose = "negative fixtures for in-place release mutation, catalog rewrite, and deletion, plus a publishing positive control"
+mutates_repository = false
+test_entrypoint = "scripts/release-immutability-negative-fixtures.sh"
+
+[[executable]]
+path = "scripts/emit-release-digest.sh"
+purpose = "single shared implementation that prints a computed contract release digest"
+mutates_repository = false
+test_entrypoint = "scripts/release-immutability-negative-fixtures.sh"
+
+[[executable]]
 path = "scripts/verify-interaction-policy-contract.sh"
 purpose = "read-only interaction-policy v1 schema and forbidden-default validation"
 mutates_repository = false

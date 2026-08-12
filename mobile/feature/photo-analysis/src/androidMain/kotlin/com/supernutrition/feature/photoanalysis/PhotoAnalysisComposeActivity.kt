@@ -53,6 +53,8 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
                 gridCellDescription = getString(R.string.capture_grid_cell_description),
                 selectedState = getString(R.string.capture_selected),
                 notSelectedState = getString(R.string.capture_not_selected),
+                manualIngredientLabel = getString(R.string.capture_manual_ingredient_label),
+                manualIngredientAdd = getString(R.string.capture_manual_ingredient_add),
                 resultPlaceholder = getString(R.string.capture_result_placeholder),
                 loadingLabel = getString(R.string.capture_loading),
             ),
@@ -92,6 +94,7 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
                 visibleRegionCount = getString(R.string.capture_evidence_visible_region_count),
                 compositionHintsTitle = getString(R.string.capture_evidence_composition_hints),
                 compositionHintSource = getString(R.string.capture_evidence_composition_hint_source),
+                manualIngredientSource = getString(R.string.capture_evidence_manual_ingredient_source),
                 partialDegradation = getString(R.string.capture_evidence_partial_degradation),
             ),
             recovery = RecoveryCopy(
@@ -197,6 +200,7 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
     private fun renderContent() {
         setContent {
             val preview by retainedState.previewStore.preview.collectAsState()
+            val manualIngredientState by feature.manualIngredientStateFlow.collectAsState()
             PhotoAnalysisCaptureContent(
                 stateFlow = feature.stateFlow,
                 onAction = host::handleAction,
@@ -227,6 +231,17 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
                     },
                     gridHintsEnabled = runtimeBinding != null,
                     onGridCellSelected = { index -> host.handleGridCellSelected(index) },
+                    manualIngredientInput = manualIngredientState.query,
+                    manualIngredients = manualIngredientState.ingredients.map { ingredient ->
+                        PhotoAnalysisManualIngredientModel(
+                            canonicalItemId = ingredient.canonicalItemId,
+                            label = ingredient.displayName,
+                            sourceDishName = ingredient.sourceDishName,
+                        )
+                    },
+                    manualIngredientUnresolved = manualIngredientState.unresolvedFragments,
+                    onManualIngredientInputChanged = feature::updateManualIngredientQuery,
+                    onManualIngredientAdded = feature::addManualIngredients,
                     // Keep camera and captured photo in exactly the same slot.
                     retainedPhotoAspectRatio = 4f / 3f,
                 ),

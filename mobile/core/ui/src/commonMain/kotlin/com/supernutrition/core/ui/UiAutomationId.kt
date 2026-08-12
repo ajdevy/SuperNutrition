@@ -51,12 +51,35 @@ object UiAutomationIds {
     val PHOTO_ANALYSIS_MAIN_DISH_PROPOSALS = UiAutomationId("photo_analysis_main_dish_proposals")
     val PHOTO_ANALYSIS_COMPONENT_EVIDENCE = UiAutomationId("photo_analysis_component_evidence")
     val PHOTO_ANALYSIS_COMPOSITION_HINTS = UiAutomationId("photo_analysis_composition_hints")
+    val PHOTO_ANALYSIS_MANUAL_INGREDIENT_INPUT = UiAutomationId("photo_analysis_manual_ingredient_input")
+    val PHOTO_ANALYSIS_MANUAL_INGREDIENT_ADD = UiAutomationId("photo_analysis_manual_ingredient_add")
     val CAPTURE_SHUTTER = UiAutomationId("capture_shutter")
     val CAPTURE_IMPORT = UiAutomationId("capture_import")
     val CAPTURE_SCAN_AGAIN = UiAutomationId("capture_scan_again")
     val CAPTURE_CANCEL = UiAutomationId("capture_cancel")
     val CAPTURE_OPEN_SETTINGS = UiAutomationId("capture_open_settings")
     val CAPTURE_NATIVE = UiAutomationId("capture_native")
+    val MEAL_SEARCH_QUERY = UiAutomationId("meal_search_query")
+    val MEAL_SEARCH_RESULTS = UiAutomationId("meal_search_results")
+    val MEAL_SEARCH_NO_RESULTS = UiAutomationId("meal_search_no_results")
+
+    /**
+     * Per-row identifiers, by position rather than by canonical record id.
+     *
+     * A record id like `food:egg-boiled` cannot be an automation id — the colon
+     * and hyphen fail [UI_AUTOMATION_ID_PATTERN] — and a description naming the
+     * same food twice would produce two rows sharing one id anyway. Position is
+     * what a test and a screen reader both actually address.
+     *
+     * These are generated rather than listed in [all], which is a registry of
+     * fixed identifiers. They are still validated: a negative index produces a
+     * value the pattern rejects, so it fails where it is built.
+     */
+    fun mealSearchRow(index: Int): UiAutomationId = UiAutomationId("meal_search_row_$index")
+
+    fun mealSearchRowTitle(index: Int): UiAutomationId = UiAutomationId("meal_search_row_${index}_title")
+
+    fun mealSearchRowDetail(index: Int): UiAutomationId = UiAutomationId("meal_search_row_${index}_detail")
 
     val all: List<UiAutomationId> = listOf(
         BOOTSTRAP_LAUNCH_DI,
@@ -69,11 +92,16 @@ object UiAutomationIds {
         PHOTO_ANALYSIS_MAIN_DISH_PROPOSALS,
         PHOTO_ANALYSIS_COMPONENT_EVIDENCE,
         PHOTO_ANALYSIS_COMPOSITION_HINTS,
+        PHOTO_ANALYSIS_MANUAL_INGREDIENT_INPUT,
+        PHOTO_ANALYSIS_MANUAL_INGREDIENT_ADD,
         CAPTURE_SHUTTER,
         CAPTURE_IMPORT,
         CAPTURE_SCAN_AGAIN,
         CAPTURE_CANCEL,
         CAPTURE_OPEN_SETTINGS,
         CAPTURE_NATIVE,
+        MEAL_SEARCH_QUERY,
+        MEAL_SEARCH_RESULTS,
+        MEAL_SEARCH_NO_RESULTS,
     )
 }
