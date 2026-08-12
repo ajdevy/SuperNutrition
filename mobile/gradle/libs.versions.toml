@@ -1,4 +1,5 @@
 [versions]
+onnxruntime = "1.28.0"
 kotlin = "2.4.10"
 compose = "1.11.1"
 composeMaterial3 = "1.9.0"
@@ -6,7 +7,7 @@ gradle = "9.5.0"
 agp = "9.1.0"
 jdk = "21"
 compileSdk = "36"
-minSdk = "23"
+minSdk = "24"
 targetSdk = "36"
 detekt = "2.0.0-alpha.5"
 kover = "0.9.8"
@@ -27,6 +28,7 @@ skiko = "0.144.6"
 camerax = "1.6.1"
 
 [libraries]
+onnxruntime-android = { module = "com.microsoft.onnxruntime:onnxruntime-android", version.ref = "onnxruntime" }
 android-gradle = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 kotlin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 compose-gradle = { module = "org.jetbrains.compose:compose-gradle-plugin", version.ref = "compose" }
@@ -67,6 +69,7 @@ androidx-test-runner = { module = "androidx.test:runner", version.ref = "android
 androidx-test-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiautomator" }
 
 [plugins]
+android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

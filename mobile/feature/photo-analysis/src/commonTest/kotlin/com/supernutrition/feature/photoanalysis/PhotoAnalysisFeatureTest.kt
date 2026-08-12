@@ -1,6 +1,8 @@
 package com.supernutrition.feature.photoanalysis
 
 import com.supernutrition.domain.photoanalysis.AttemptId
+import com.supernutrition.domain.photoanalysis.ImageOrientation
+import com.supernutrition.domain.photoanalysis.NormalizedPhotoInput
 import com.supernutrition.domain.photoanalysis.PhotoAnalysisBackgroundSnapshot
 import com.supernutrition.domain.photoanalysis.PhotoAnalysisEvent
 import com.supernutrition.domain.photoanalysis.PhotoAnalysisState
@@ -42,6 +44,33 @@ class PhotoAnalysisFeatureTest {
             nativeActions,
         )
         assertEquals(PhotoAnalysisState.Capture, feature.state)
+    }
+
+    @Test
+    fun `native replacement routing clears the retained attempt before opening a picker`() {
+        val feature = feature("attempt-native-replacement")
+        val ref = feature.issuePhotoRef("retained-photo")
+        feature.dispatch(PhotoAnalysisEvent.PhotoCaptured(ref))
+        feature.dispatch(
+            PhotoAnalysisEvent.PreparationSucceeded(
+                NormalizedPhotoInput(
+                    ref = ref,
+                    bytes = byteArrayOf(1),
+                    width = 1,
+                    height = 1,
+                    orientation = ImageOrientation.UP,
+                    colorSpace = "sRGB",
+                    metadataKeys = emptySet(),
+                    contentDigest = "a".repeat(64),
+                ),
+            ),
+        )
+        val nativeActions = mutableListOf<PhotoAnalysisNativeAction>()
+
+        feature.route(PhotoAnalysisPresenterAction.ImportPhoto, nativeActions::add)
+
+        assertEquals(PhotoAnalysisState.Capture, feature.state)
+        assertEquals(listOf(PhotoAnalysisNativeAction.ImportPhoto), nativeActions)
     }
 
     @Test

@@ -1,22 +1,32 @@
 package com.supernutrition.domain.inference
 
-/** Codec for `photo-inference-engine/v1`. Shares [INFERENCE_JSON] with v2. */
-object InferenceContractJson {
-    fun encode(result: PhotoInferenceResult): String =
-        INFERENCE_JSON.encodeToString(PhotoInferenceResult.serializer(), result)
+import kotlinx.serialization.json.Json
 
-    fun decode(payload: String): PhotoInferenceResult =
-        INFERENCE_JSON.decodeFromString(PhotoInferenceResult.serializer(), payload)
+object InferenceContractJson {
+    private val json = Json {
+        classDiscriminator = "outcomeType"
+        encodeDefaults = true
+        explicitNulls = false
+        ignoreUnknownKeys = true
+    }
+
+    fun encode(result: PhotoInferenceResult): String = json.encodeToString(
+        PhotoInferenceResult.serializer(),
+        result,
+    )
 
     fun encodeCapability(capability: EngineCapability): String =
-        INFERENCE_JSON.encodeToString(EngineCapability.serializer(), capability)
+        json.encodeToString(EngineCapability.serializer(), capability)
 
     fun decodeCapability(payload: String): EngineCapability =
-        INFERENCE_JSON.decodeFromString(EngineCapability.serializer(), payload)
+        json.decodeFromString(EngineCapability.serializer(), payload)
+
+    fun decode(payload: String): PhotoInferenceResult =
+        json.decodeFromString(PhotoInferenceResult.serializer(), payload)
 
     fun encodeTelemetry(event: InferenceTelemetryEvent): String =
-        INFERENCE_JSON.encodeToString(InferenceTelemetryEvent.serializer(), event)
+        json.encodeToString(InferenceTelemetryEvent.serializer(), event)
 
     fun decodeTelemetry(payload: String): InferenceTelemetryEvent =
-        INFERENCE_JSON.decodeFromString(InferenceTelemetryEvent.serializer(), payload)
+        json.decodeFromString(InferenceTelemetryEvent.serializer(), payload)
 }

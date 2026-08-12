@@ -1,0 +1,64 @@
+{
+  "schema_version": "fpb-yolov12-foodweight/research-v1",
+  "status": "research-only-composite-screen-failed",
+  "source": {
+    "repository": "https://github.com/IS2AI/Multitask-Food-Portion-Estimation",
+    "commit": "307a903d49ab073ed83f01c527981aafe5da59b3",
+    "checkpoint_url": "https://drive.google.com/drive/folders/1XbgdXzfX73PxUUxthcbcqbY-1TNRK51d?usp=sharing",
+    "dataset_url": "https://huggingface.co/datasets/issai/Food_Portion_Benchmark",
+    "paper": "https://doi.org/10.1109/ACCESS.2025.3603287"
+  },
+  "task": {
+    "inputs": ["rgb_image"],
+    "outputs": ["food_class", "bounding_box", "confidence", "weight_grams"],
+    "label_format": "YOLO box columns plus weight as the sixth value",
+    "dataset_summary": {
+      "images": 14083,
+      "classes": 138,
+      "split": {
+        "train": 9521,
+        "validation": 2365,
+        "test": 2197
+      }
+    }
+  },
+  "reported_reference_metrics": {
+    "map50": 0.974,
+    "map50_95": 0.948,
+    "weight_mae_grams": 90.95
+  },
+  "license_boundary": {
+    "repository": "AGPL-3.0",
+    "dataset": "CC BY-NC-4.0",
+    "commercial_mobile_shipping": "blocked_pending_legal_clearance",
+    "allowed_use_in_this_repo": "offline research, adapter validation, and non-production comparison only"
+  },
+  "g3_integration": {
+    "adapter": "fpb_to_g3_predictions.py",
+    "required_inputs": ["FPB prediction CSV", "class-id label map", "image-to-fixture map"],
+    "weight_semantics": "per-detected-box regression output; do not treat as calibrated component mass for arbitrary phone photos",
+    "mask_support": false,
+    "production_claim": false
+  },
+  "runtime_smoke": {
+    "status": "experimental-smoke-passed",
+    "evidence": "fpb-smoke-evidence.json",
+    "samples": 5,
+    "detected": 5,
+    "class_accuracy": 0.6,
+    "mean_box_iou": 0.8051846241,
+    "weight_mae_grams": 48.5408062744,
+    "p90_absolute_weight_error_grams": 110.4830622559,
+    "not_acceptance": true,
+    "runtime_caveat": "The pinned repository code and published YOLOv12S checkpoint are not directly compatible; the smoke evidence uses current Ultralytics plus a temporary grams-head compatibility shim."
+  },
+  "composite_screen": {
+    "status": "failed",
+    "evidence": "fpb-yolov12-foodweight-composite-evidence.json",
+    "fixtures": 5,
+    "raw_detections": 8,
+    "macro_visible_component_f1": 0.0,
+    "mass_quality": "not-evaluable: public fixtures have no calibrated scale ground truth",
+    "decision": "not a current v2 ingredient or mass candidate; retain only as attributed research evidence"
+  }
+}

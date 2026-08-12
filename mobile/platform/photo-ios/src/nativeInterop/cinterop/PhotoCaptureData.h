@@ -18,6 +18,24 @@ static inline AVCaptureDeviceInput * _Nullable SNCreateCaptureInput(AVCaptureDev
     return input;
 }
 
+static inline void SNConfigureCaptureDevice(AVCaptureDevice *device) {
+    NSError *error = nil;
+    if (![device lockForConfiguration:&error]) {
+        NSLog(@"Camera configuration lock failed: %@", error.localizedDescription ?: @"unknown error");
+        return;
+    }
+    if ([device isFocusModeSupported:AVCaptureFocusModeContinuousAutoFocus]) {
+        device.focusMode = AVCaptureFocusModeContinuousAutoFocus;
+    }
+    if ([device isExposureModeSupported:AVCaptureExposureModeContinuousAutoExposure]) {
+        device.exposureMode = AVCaptureExposureModeContinuousAutoExposure;
+    }
+    if ([device isWhiteBalanceModeSupported:AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance]) {
+        device.whiteBalanceMode = AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance;
+    }
+    [device unlockForConfiguration];
+}
+
 static inline void SNSetViewAccessibilityIdentifier(UIView *view, NSString *identifier) {
     view.accessibilityIdentifier = identifier;
 }

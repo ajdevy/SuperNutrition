@@ -1,0 +1,3786 @@
+{
+  "schema": "supernutrition.nutrition5k-visible-audit-review.v1",
+  "status": "model_assisted_pending_human_adjudication",
+  "source_manifest": "/Users/aj/.codex/worktrees/d550/SuperNutrition/tools/nutrition5k-benchmark/data/nutrition5k-100/visible-audit.json",
+  "ground_truth_boundary": "Independent model-assisted visual reviews, not human ground truth or calibrated probabilities.",
+  "verification": {
+    "schema_valid": true,
+    "conflict_reviewer_a_cases": 16,
+    "conflict_reviewer_b_cases": 16,
+    "control_cases": 34,
+    "unique_audit_cases": 50,
+    "normalized_regions_checked": true,
+    "exact_label_disagreement_cases": 16,
+    "human_adjudication_required_for_conflicts": true
+  },
+  "reviewers": {
+    "reviewer_a": {
+      "agent_id": "019fc670-fbe6-71a1-ad41-4a47763047ea",
+      "scope": "all 16 hard-gate conflicts",
+      "results": [
+        {
+          "case_id": "nutrition5k-017-dish_1558641320",
+          "visible_components": [
+            {
+              "label": "apple",
+              "confidence": "high",
+              "region": [
+                0.17,
+                0.24,
+                0.51,
+                0.65
+              ]
+            },
+            {
+              "label": "carrot slices",
+              "confidence": "high",
+              "region": [
+                0.25,
+                0.03,
+                0.62,
+                0.24
+              ]
+            },
+            {
+              "label": "corn on the cob",
+              "confidence": "high",
+              "region": [
+                0.59,
+                0.06,
+                0.91,
+                0.43
+              ]
+            },
+            {
+              "label": "cherry tomatoes",
+              "confidence": "high",
+              "region": [
+                0.16,
+                0.39,
+                0.72,
+                0.91
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "small browned piece near center-right"
+          ],
+          "composition_only_hypotheses": [
+            "mixed vegetable snack plate"
+          ],
+          "useful_suggestions": [
+            "apple",
+            "carrot slices",
+            "corn on the cob",
+            "cherry tomatoes"
+          ],
+          "misleading_suggestions": [
+            "orange",
+            "banana",
+            "broccoli"
+          ],
+          "abstention_needed": false,
+          "notes": "Apple and carrot are supported by the detector ontology; corn and tomatoes are clear ontology gaps."
+        },
+        {
+          "case_id": "nutrition5k-026-dish_1560367980",
+          "visible_components": [
+            {
+              "label": "spinach leaves",
+              "confidence": "high",
+              "region": [
+                0.03,
+                0.04,
+                0.96,
+                0.94
+              ]
+            },
+            {
+              "label": "asparagus spears",
+              "confidence": "high",
+              "region": [
+                0.13,
+                0.01,
+                0.58,
+                0.78
+              ]
+            },
+            {
+              "label": "pizza slice",
+              "confidence": "medium",
+              "region": [
+                0.57,
+                0.09,
+                0.95,
+                0.83
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "red sauce or tomato on pizza",
+            "brown topping on upper-right pizza edge"
+          ],
+          "composition_only_hypotheses": [
+            "vegetable pizza with salad greens",
+            "asparagus and spinach side salad"
+          ],
+          "useful_suggestions": [
+            "spinach",
+            "asparagus",
+            "pizza"
+          ],
+          "misleading_suggestions": [
+            "broccoli",
+            "carrot",
+            "apple",
+            "banana",
+            "orange"
+          ],
+          "abstention_needed": false,
+          "notes": "Hard gating to the limited ontology would miss the dominant spinach and asparagus."
+        },
+        {
+          "case_id": "nutrition5k-029-dish_1560801859",
+          "visible_components": [
+            {
+              "label": "pizza slice",
+              "confidence": "high",
+              "region": [
+                0.55,
+                0.51,
+                0.88,
+                0.89
+              ]
+            },
+            {
+              "label": "pepperoni",
+              "confidence": "medium",
+              "region": [
+                0.62,
+                0.57,
+                0.78,
+                0.73
+              ]
+            },
+            {
+              "label": "cauliflower florets",
+              "confidence": "medium",
+              "region": [
+                0.17,
+                0.74,
+                0.43,
+                0.91
+              ]
+            },
+            {
+              "label": "roasted potato pieces",
+              "confidence": "medium",
+              "region": [
+                0.2,
+                0.31,
+                0.45,
+                0.52
+              ]
+            },
+            {
+              "label": "cooked meat pieces",
+              "confidence": "medium",
+              "region": [
+                0.66,
+                0.13,
+                0.94,
+                0.52
+              ]
+            },
+            {
+              "label": "mixed greens",
+              "confidence": "low",
+              "region": [
+                0.55,
+                0.17,
+                0.78,
+                0.45
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "dark vegetable cube near center",
+            "small white bite at center",
+            "exact identity of roasted yellow pieces"
+          ],
+          "composition_only_hypotheses": [
+            "buffet plate with pizza, roasted vegetables, and meat",
+            "potato could be squash, but this is not visually certain"
+          ],
+          "useful_suggestions": [
+            "pizza",
+            "cauliflower",
+            "roasted potato or yellow vegetable",
+            "cooked meat"
+          ],
+          "misleading_suggestions": [
+            "apple",
+            "banana",
+            "orange",
+            "broccoli",
+            "carrot"
+          ],
+          "abstention_needed": false,
+          "notes": "Several components are visible, but some exact ingredient names require caution."
+        },
+        {
+          "case_id": "nutrition5k-031-dish_1561147967",
+          "visible_components": [
+            {
+              "label": "pizza slice",
+              "confidence": "high",
+              "region": [
+                0,
+                0.71,
+                0.39,
+                0.99
+              ]
+            },
+            {
+              "label": "leafy salad greens",
+              "confidence": "high",
+              "region": [
+                0.49,
+                0.32,
+                0.94,
+                0.96
+              ]
+            },
+            {
+              "label": "shredded carrot",
+              "confidence": "medium",
+              "region": [
+                0.67,
+                0.32,
+                0.86,
+                0.62
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "dark purple leaves or vegetable pieces",
+            "small pale toppings in salad"
+          ],
+          "composition_only_hypotheses": [
+            "side salad with pizza"
+          ],
+          "useful_suggestions": [
+            "pizza",
+            "leafy salad",
+            "shredded carrot"
+          ],
+          "misleading_suggestions": [
+            "apple",
+            "banana",
+            "orange",
+            "broccoli"
+          ],
+          "abstention_needed": false,
+          "notes": "Carrot is visually plausible as thin shreds, not as whole carrot pieces."
+        },
+        {
+          "case_id": "nutrition5k-035-dish_1561578800",
+          "visible_components": [
+            {
+              "label": "pizza slices",
+              "confidence": "high",
+              "region": [
+                0.39,
+                0.43,
+                0.91,
+                0.92
+              ]
+            },
+            {
+              "label": "arugula or leafy greens",
+              "confidence": "high",
+              "region": [
+                0.04,
+                0.41,
+                0.41,
+                0.94
+              ]
+            },
+            {
+              "label": "black olives",
+              "confidence": "high",
+              "region": [
+                0.31,
+                0.43,
+                0.44,
+                0.55
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "exact leafy green type"
+          ],
+          "composition_only_hypotheses": [
+            "pizza with arugula salad",
+            "olive topping may belong to the salad or pizza"
+          ],
+          "useful_suggestions": [
+            "pizza",
+            "leafy greens",
+            "black olives"
+          ],
+          "misleading_suggestions": [
+            "apple",
+            "banana",
+            "orange",
+            "broccoli",
+            "carrot"
+          ],
+          "abstention_needed": false,
+          "notes": "No detector-ontology item is clearly dominant here; greens and olives are the useful visual labels."
+        },
+        {
+          "case_id": "nutrition5k-038-dish_1561661347",
+          "visible_components": [
+            {
+              "label": "asparagus spears",
+              "confidence": "high",
+              "region": [
+                0.19,
+                0.04,
+                0.49,
+                0.85
+              ]
+            },
+            {
+              "label": "romaine or lettuce salad",
+              "confidence": "high",
+              "region": [
+                0.48,
+                0.08,
+                0.87,
+                0.77
+              ]
+            },
+            {
+              "label": "creamy dressing",
+              "confidence": "medium",
+              "region": [
+                0.5,
+                0.12,
+                0.83,
+                0.76
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "small browned food under asparagus at left",
+            "exact lettuce variety"
+          ],
+          "composition_only_hypotheses": [
+            "Caesar-style salad",
+            "asparagus side with dressed lettuce"
+          ],
+          "useful_suggestions": [
+            "asparagus",
+            "lettuce salad",
+            "creamy dressing"
+          ],
+          "misleading_suggestions": [
+            "broccoli",
+            "carrot",
+            "apple",
+            "banana",
+            "orange"
+          ],
+          "abstention_needed": false,
+          "notes": "Asparagus is clearly visible and would be suppressed by an ontology limited to the listed five foods."
+        },
+        {
+          "case_id": "nutrition5k-049-dish_1562703345",
+          "visible_components": [
+            {
+              "label": "pizza slice",
+              "confidence": "high",
+              "region": [
+                0.22,
+                0.39,
+                0.62,
+                0.68
+              ]
+            },
+            {
+              "label": "green olive or green pepper piece",
+              "confidence": "medium",
+              "region": [
+                0.25,
+                0.42,
+                0.35,
+                0.55
+              ]
+            },
+            {
+              "label": "meat topping",
+              "confidence": "medium",
+              "region": [
+                0.45,
+                0.38,
+                0.64,
+                0.58
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "green topping identity",
+            "meat topping type"
+          ],
+          "composition_only_hypotheses": [
+            "small pizza bite with meat and vegetable topping"
+          ],
+          "useful_suggestions": [
+            "pizza",
+            "meat topping",
+            "green topping"
+          ],
+          "misleading_suggestions": [
+            "apple",
+            "banana",
+            "orange",
+            "broccoli",
+            "carrot"
+          ],
+          "abstention_needed": false,
+          "notes": "The plate is sparse; pizza is the only high-confidence component."
+        },
+        {
+          "case_id": "nutrition5k-050-dish_1562703447",
+          "visible_components": [
+            {
+              "label": "leafy greens",
+              "confidence": "high",
+              "region": [
+                0.41,
+                0.03,
+                0.98,
+                0.96
+              ]
+            },
+            {
+              "label": "pizza slice",
+              "confidence": "medium",
+              "region": [
+                0.22,
+                0.39,
+                0.48,
+                0.67
+              ]
+            },
+            {
+              "label": "tomato pieces",
+              "confidence": "low",
+              "region": [
+                0.78,
+                0.54,
+                0.94,
+                0.83
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "green topping on exposed pizza edge",
+            "red pieces partly hidden by greens"
+          ],
+          "composition_only_hypotheses": [
+            "salad over pizza",
+            "arugula or mixed greens"
+          ],
+          "useful_suggestions": [
+            "leafy greens",
+            "pizza"
+          ],
+          "misleading_suggestions": [
+            "broccoli",
+            "carrot",
+            "apple",
+            "banana",
+            "orange"
+          ],
+          "abstention_needed": false,
+          "notes": "The hard gate could suppress leafy greens, which dominate the image."
+        },
+        {
+          "case_id": "nutrition5k-052-dish_1562788568",
+          "visible_components": [
+            {
+              "label": "rice or grain mixture",
+              "confidence": "medium",
+              "region": [
+                0.35,
+                0.13,
+                0.67,
+                0.68
+              ]
+            },
+            {
+              "label": "corn on the cob",
+              "confidence": "high",
+              "region": [
+                0.7,
+                0.4,
+                0.92,
+                0.74
+              ]
+            },
+            {
+              "label": "fried or breaded piece",
+              "confidence": "medium",
+              "region": [
+                0.38,
+                0.65,
+                0.67,
+                0.9
+              ]
+            },
+            {
+              "label": "carrot pieces",
+              "confidence": "medium",
+              "region": [
+                0.45,
+                0.14,
+                0.86,
+                0.34
+              ]
+            },
+            {
+              "label": "leafy herbs or greens",
+              "confidence": "medium",
+              "region": [
+                0.33,
+                0.22,
+                0.55,
+                0.59
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "exact grain type",
+            "fried or breaded item identity",
+            "small scattered bits"
+          ],
+          "composition_only_hypotheses": [
+            "grain salad with vegetables",
+            "breaded chicken or fried casserole piece"
+          ],
+          "useful_suggestions": [
+            "corn on the cob",
+            "rice or grains",
+            "carrot pieces",
+            "leafy greens",
+            "fried or breaded item"
+          ],
+          "misleading_suggestions": [
+            "apple",
+            "banana",
+            "orange",
+            "broccoli"
+          ],
+          "abstention_needed": false,
+          "notes": "Carrot is visually plausible, but corn and grain mixture are larger ontology gaps."
+        },
+        {
+          "case_id": "nutrition5k-053-dish_1562876531",
+          "visible_components": [
+            {
+              "label": "lettuce or leafy salad",
+              "confidence": "high",
+              "region": [
+                0.31,
+                0.05,
+                0.72,
+                0.83
+              ]
+            },
+            {
+              "label": "creamy dressing",
+              "confidence": "medium",
+              "region": [
+                0.38,
+                0.16,
+                0.69,
+                0.66
+              ]
+            },
+            {
+              "label": "bread or crouton piece",
+              "confidence": "medium",
+              "region": [
+                0.2,
+                0.62,
+                0.34,
+                0.76
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "small diced pale pieces around plate",
+            "exact salad type"
+          ],
+          "composition_only_hypotheses": [
+            "Caesar-style salad",
+            "dressed lettuce with croutons"
+          ],
+          "useful_suggestions": [
+            "lettuce salad",
+            "creamy dressing",
+            "crouton or bread piece"
+          ],
+          "misleading_suggestions": [
+            "broccoli",
+            "carrot",
+            "apple",
+            "banana",
+            "orange"
+          ],
+          "abstention_needed": false,
+          "notes": "The visible evidence supports salad, not any of the five local detector classes."
+        },
+        {
+          "case_id": "nutrition5k-055-dish_1563220987",
+          "visible_components": [
+            {
+              "label": "cooked chicken or light meat pieces",
+              "confidence": "medium",
+              "region": [
+                0.43,
+                0.43,
+                0.82,
+                0.86
+              ]
+            },
+            {
+              "label": "green leaf",
+              "confidence": "medium",
+              "region": [
+                0.32,
+                0.7,
+                0.5,
+                0.86
+              ]
+            },
+            {
+              "label": "lettuce piece",
+              "confidence": "low",
+              "region": [
+                0.75,
+                0.33,
+                0.91,
+                0.57
+              ]
+            },
+            {
+              "label": "yellow vegetable piece",
+              "confidence": "low",
+              "region": [
+                0.87,
+                0.53,
+                0.94,
+                0.66
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "meat versus other cooked protein",
+            "yellow item at right edge",
+            "dark sauced piece under meat"
+          ],
+          "composition_only_hypotheses": [
+            "small portion of chicken with salad remnants"
+          ],
+          "useful_suggestions": [
+            "cooked chicken or meat",
+            "leafy green"
+          ],
+          "misleading_suggestions": [
+            "apple",
+            "banana",
+            "orange",
+            "broccoli",
+            "carrot"
+          ],
+          "abstention_needed": false,
+          "notes": "No limited-detector food is visually established; a protein label should be cautious."
+        },
+        {
+          "case_id": "nutrition5k-056-dish_1563221025",
+          "visible_components": [
+            {
+              "label": "cooked chicken or light meat pieces",
+              "confidence": "medium",
+              "region": [
+                0.43,
+                0.43,
+                0.82,
+                0.86
+              ]
+            },
+            {
+              "label": "breaded or fried strip",
+              "confidence": "medium",
+              "region": [
+                0,
+                0.73,
+                0.28,
+                0.98
+              ]
+            },
+            {
+              "label": "green leaf",
+              "confidence": "medium",
+              "region": [
+                0.33,
+                0.72,
+                0.49,
+                0.85
+              ]
+            },
+            {
+              "label": "lettuce piece",
+              "confidence": "low",
+              "region": [
+                0.75,
+                0.33,
+                0.91,
+                0.57
+              ]
+            },
+            {
+              "label": "yellow vegetable piece",
+              "confidence": "low",
+              "region": [
+                0.87,
+                0.53,
+                0.94,
+                0.66
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "meat versus other cooked protein",
+            "breaded strip identity",
+            "yellow item at right edge"
+          ],
+          "composition_only_hypotheses": [
+            "chicken with a breaded side item",
+            "small mixed plate with salad remnants"
+          ],
+          "useful_suggestions": [
+            "cooked chicken or meat",
+            "breaded or fried item",
+            "leafy green"
+          ],
+          "misleading_suggestions": [
+            "apple",
+            "banana",
+            "orange",
+            "broccoli",
+            "carrot"
+          ],
+          "abstention_needed": false,
+          "notes": "The added breaded strip is visually plausible; avoid forcing any local detector class."
+        },
+        {
+          "case_id": "nutrition5k-060-dish_1563565354",
+          "visible_components": [
+            {
+              "label": "corn on the cob",
+              "confidence": "high",
+              "region": [
+                0.51,
+                0.55,
+                0.78,
+                0.88
+              ]
+            },
+            {
+              "label": "white salad or casserole portion",
+              "confidence": "medium",
+              "region": [
+                0.16,
+                0.48,
+                0.49,
+                0.86
+              ]
+            },
+            {
+              "label": "white creamy patty or salad portion",
+              "confidence": "medium",
+              "region": [
+                0.58,
+                0.22,
+                0.78,
+                0.59
+              ]
+            },
+            {
+              "label": "leafy green topping",
+              "confidence": "medium",
+              "region": [
+                0.62,
+                0.16,
+                0.78,
+                0.35
+              ]
+            },
+            {
+              "label": "orange garnish or vegetable piece",
+              "confidence": "low",
+              "region": [
+                0.43,
+                0.52,
+                0.58,
+                0.67
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "white salad or casserole ingredients",
+            "orange piece identity",
+            "leafy green topping type"
+          ],
+          "composition_only_hypotheses": [
+            "potato salad or fish salad",
+            "corn with prepared salad portions"
+          ],
+          "useful_suggestions": [
+            "corn on the cob",
+            "creamy salad or casserole",
+            "leafy green topping"
+          ],
+          "misleading_suggestions": [
+            "apple",
+            "banana",
+            "orange fruit",
+            "broccoli",
+            "carrot"
+          ],
+          "abstention_needed": false,
+          "notes": "Corn is clear but outside the listed detector ontology; orange color should not become orange fruit."
+        },
+        {
+          "case_id": "nutrition5k-078-dish_1565035830",
+          "visible_components": [
+            {
+              "label": "diced chicken or tofu",
+              "confidence": "medium",
+              "region": [
+                0.06,
+                0.09,
+                0.42,
+                0.64
+              ]
+            },
+            {
+              "label": "cauliflower florets",
+              "confidence": "high",
+              "region": [
+                0.43,
+                0.04,
+                0.73,
+                0.6
+              ]
+            },
+            {
+              "label": "cherry tomatoes",
+              "confidence": "high",
+              "region": [
+                0.08,
+                0.61,
+                0.36,
+                0.92
+              ]
+            },
+            {
+              "label": "green bell pepper slices",
+              "confidence": "high",
+              "region": [
+                0.43,
+                0.56,
+                0.69,
+                0.91
+              ]
+            },
+            {
+              "label": "red onion slices",
+              "confidence": "high",
+              "region": [
+                0.7,
+                0.47,
+                0.94,
+                0.88
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "diced pale protein could be chicken or tofu",
+            "yellow-green strips among bell pepper"
+          ],
+          "composition_only_hypotheses": [
+            "salad prep bowl",
+            "raw vegetable mix with protein"
+          ],
+          "useful_suggestions": [
+            "cauliflower",
+            "cherry tomatoes",
+            "green bell pepper",
+            "red onion",
+            "diced chicken or tofu"
+          ],
+          "misleading_suggestions": [
+            "broccoli",
+            "apple",
+            "banana",
+            "orange",
+            "carrot"
+          ],
+          "abstention_needed": false,
+          "notes": "Many clear ontology gaps; no broccoli is visible despite cauliflower being visually similar."
+        },
+        {
+          "case_id": "nutrition5k-084-dish_1565811025",
+          "visible_components": [
+            {
+              "label": "broccoli florets",
+              "confidence": "high",
+              "region": [
+                0.26,
+                0.08,
+                0.86,
+                0.87
+              ]
+            },
+            {
+              "label": "diced chicken or tofu",
+              "confidence": "medium",
+              "region": [
+                0.08,
+                0.17,
+                0.84,
+                0.94
+              ]
+            },
+            {
+              "label": "spinach leaves",
+              "confidence": "medium",
+              "region": [
+                0.03,
+                0.14,
+                0.97,
+                0.94
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "diced pale protein could be chicken or tofu",
+            "exact leafy green type"
+          ],
+          "composition_only_hypotheses": [
+            "broccoli salad with chicken",
+            "broccoli and tofu over spinach"
+          ],
+          "useful_suggestions": [
+            "broccoli",
+            "diced chicken or tofu",
+            "spinach or leafy greens"
+          ],
+          "misleading_suggestions": [
+            "apple",
+            "banana",
+            "orange",
+            "carrot"
+          ],
+          "abstention_needed": false,
+          "notes": "Broccoli is strongly visible and should not be suppressed if another prior dominates."
+        },
+        {
+          "case_id": "nutrition5k-097-dish_1566851616",
+          "visible_components": [
+            {
+              "label": "pizza slice",
+              "confidence": "high",
+              "region": [
+                0.68,
+                0.16,
+                0.93,
+                0.63
+              ]
+            },
+            {
+              "label": "lettuce salad",
+              "confidence": "high",
+              "region": [
+                0.32,
+                0.07,
+                0.69,
+                0.6
+              ]
+            },
+            {
+              "label": "broccoli florets",
+              "confidence": "high",
+              "region": [
+                0.22,
+                0.56,
+                0.48,
+                0.91
+              ]
+            },
+            {
+              "label": "asparagus or green beans",
+              "confidence": "medium",
+              "region": [
+                0.45,
+                0.11,
+                0.6,
+                0.49
+              ]
+            },
+            {
+              "label": "creamy vegetable salad",
+              "confidence": "medium",
+              "region": [
+                0.06,
+                0.27,
+                0.34,
+                0.71
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "asparagus versus green beans",
+            "creamy salad ingredients",
+            "pale topping on lettuce"
+          ],
+          "composition_only_hypotheses": [
+            "pizza with mixed vegetable sides",
+            "Caesar-style lettuce portion"
+          ],
+          "useful_suggestions": [
+            "pizza",
+            "lettuce salad",
+            "broccoli",
+            "asparagus or green beans"
+          ],
+          "misleading_suggestions": [
+            "apple",
+            "banana",
+            "orange",
+            "carrot"
+          ],
+          "abstention_needed": false,
+          "notes": "Broccoli is visually established; hard gating should not suppress it in this case."
+        }
+      ]
+    },
+    "reviewer_b": {
+      "agent_id": "019fc670-f78e-72e2-a0c0-d7d5a7864cea",
+      "scope": "all 16 hard-gate conflicts",
+      "results": [
+        {
+          "case_id": "nutrition5k-017-dish_1558641320",
+          "visible_components": [
+            {
+              "label": "apple",
+              "confidence": "high",
+              "region": [
+                0.19,
+                0.27,
+                0.49,
+                0.61
+              ]
+            },
+            {
+              "label": "carrot rounds",
+              "confidence": "high",
+              "region": [
+                0.27,
+                0.03,
+                0.61,
+                0.29
+              ]
+            },
+            {
+              "label": "corn-on-the-cob slices",
+              "confidence": "high",
+              "region": [
+                0.62,
+                0.04,
+                0.98,
+                0.45
+              ]
+            },
+            {
+              "label": "cherry tomatoes",
+              "confidence": "high",
+              "region": [
+                0.27,
+                0.61,
+                0.76,
+                0.92
+              ]
+            }
+          ],
+          "ambiguous_components": [],
+          "composition_only_hypotheses": [],
+          "useful_suggestions": [
+            "apple",
+            "carrot",
+            "corn",
+            "cherry tomatoes"
+          ],
+          "misleading_suggestions": [
+            "orange"
+          ],
+          "abstention_needed": false,
+          "notes": "Several distinct raw produce items are clearly visible."
+        },
+        {
+          "case_id": "nutrition5k-026-dish_1560367980",
+          "visible_components": [
+            {
+              "label": "leafy greens",
+              "confidence": "high",
+              "region": [
+                0.03,
+                0.1,
+                0.95,
+                0.95
+              ]
+            },
+            {
+              "label": "long green stalk vegetables",
+              "confidence": "high",
+              "region": [
+                0.15,
+                0.12,
+                0.67,
+                0.7
+              ]
+            },
+            {
+              "label": "baked cheese-and-tomato slice",
+              "confidence": "medium",
+              "region": [
+                0.55,
+                0.22,
+                0.99,
+                0.93
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "specific leafy-green variety",
+            "whether the stalks are asparagus or green beans",
+            "brown food behind the greens"
+          ],
+          "composition_only_hypotheses": [
+            "side salad served with a pizza-like baked item"
+          ],
+          "useful_suggestions": [
+            "leafy greens",
+            "green stalk vegetables",
+            "baked cheese-and-tomato slice"
+          ],
+          "misleading_suggestions": [
+            "broccoli",
+            "carrot",
+            "chicken"
+          ],
+          "abstention_needed": false,
+          "notes": "Greens obscure part of the baked item and its toppings."
+        },
+        {
+          "case_id": "nutrition5k-029-dish_1560801859",
+          "visible_components": [
+            {
+              "label": "roasted potato wedges",
+              "confidence": "high",
+              "region": [
+                0.15,
+                0.28,
+                0.4,
+                0.51
+              ]
+            },
+            {
+              "label": "cauliflower florets",
+              "confidence": "high",
+              "region": [
+                0.13,
+                0.37,
+                0.5,
+                0.93
+              ]
+            },
+            {
+              "label": "baked cheese-and-tomato slice",
+              "confidence": "high",
+              "region": [
+                0.57,
+                0.45,
+                0.99,
+                0.96
+              ]
+            },
+            {
+              "label": "brown cooked protein pieces",
+              "confidence": "medium",
+              "region": [
+                0.59,
+                0.11,
+                0.94,
+                0.55
+              ]
+            },
+            {
+              "label": "dark roasted vegetable piece",
+              "confidence": "medium",
+              "region": [
+                0.4,
+                0.56,
+                0.52,
+                0.69
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "protein type",
+            "whether red circles on the baked slice are pepperoni or tomato"
+          ],
+          "composition_only_hypotheses": [
+            "pizza with a meat topping",
+            "roasted meat-and-vegetable plate"
+          ],
+          "useful_suggestions": [
+            "roasted potatoes",
+            "cauliflower",
+            "baked cheese-and-tomato slice",
+            "cooked protein"
+          ],
+          "misleading_suggestions": [
+            "pepperoni",
+            "chicken"
+          ],
+          "abstention_needed": false,
+          "notes": "Multiple components are visible, but specific topping and meat labels are not secure."
+        },
+        {
+          "case_id": "nutrition5k-031-dish_1561147967",
+          "visible_components": [
+            {
+              "label": "mixed leafy greens",
+              "confidence": "high",
+              "region": [
+                0.39,
+                0.25,
+                0.98,
+                0.96
+              ]
+            },
+            {
+              "label": "shredded carrot",
+              "confidence": "medium",
+              "region": [
+                0.63,
+                0.32,
+                0.86,
+                0.61
+              ]
+            },
+            {
+              "label": "baked cheese-and-tomato slice",
+              "confidence": "high",
+              "region": [
+                0.1,
+                0.73,
+                0.4,
+                0.97
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "specific leafy-green varieties",
+            "small beige topping pieces in the salad"
+          ],
+          "composition_only_hypotheses": [
+            "mixed salad with carrots",
+            "pizza-like baked item with side salad"
+          ],
+          "useful_suggestions": [
+            "leafy greens",
+            "shredded carrot",
+            "baked cheese-and-tomato slice"
+          ],
+          "misleading_suggestions": [
+            "broccoli",
+            "chicken"
+          ],
+          "abstention_needed": false,
+          "notes": "The cheese-and-tomato item is only partly visible."
+        },
+        {
+          "case_id": "nutrition5k-035-dish_1561578800",
+          "visible_components": [
+            {
+              "label": "leafy greens",
+              "confidence": "high",
+              "region": [
+                0.03,
+                0.34,
+                0.43,
+                0.88
+              ]
+            },
+            {
+              "label": "black olives",
+              "confidence": "high",
+              "region": [
+                0.31,
+                0.42,
+                0.47,
+                0.59
+              ]
+            },
+            {
+              "label": "baked cheese-and-tomato slice",
+              "confidence": "high",
+              "region": [
+                0.39,
+                0.5,
+                0.99,
+                0.95
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "exact leafy-green variety"
+          ],
+          "composition_only_hypotheses": [
+            "arugula-and-olive salad",
+            "pizza-like baked item with olive topping"
+          ],
+          "useful_suggestions": [
+            "leafy greens",
+            "black olives",
+            "baked cheese-and-tomato slice"
+          ],
+          "misleading_suggestions": [
+            "broccoli",
+            "chicken"
+          ],
+          "abstention_needed": false,
+          "notes": "Olives and a leafy side are visible beside the baked slice."
+        },
+        {
+          "case_id": "nutrition5k-038-dish_1561661347",
+          "visible_components": [
+            {
+              "label": "long green stalk vegetables",
+              "confidence": "high",
+              "region": [
+                0.19,
+                0.11,
+                0.47,
+                0.83
+              ]
+            },
+            {
+              "label": "chopped leafy greens",
+              "confidence": "high",
+              "region": [
+                0.45,
+                0.08,
+                0.87,
+                0.83
+              ]
+            },
+            {
+              "label": "creamy pale dressing or cheese coating",
+              "confidence": "medium",
+              "region": [
+                0.47,
+                0.1,
+                0.82,
+                0.7
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "whether the stalks are asparagus",
+            "whether the chopped greens are lettuce or cabbage",
+            "identity of the creamy coating"
+          ],
+          "composition_only_hypotheses": [
+            "creamy dressed salad",
+            "asparagus served with a dressed green side"
+          ],
+          "useful_suggestions": [
+            "green stalk vegetables",
+            "leafy greens",
+            "creamy dressing or cheese coating"
+          ],
+          "misleading_suggestions": [
+            "broccoli",
+            "Caesar salad"
+          ],
+          "abstention_needed": false,
+          "notes": "Generic vegetable labels are supported; finer identification is not."
+        },
+        {
+          "case_id": "nutrition5k-049-dish_1562703345",
+          "visible_components": [
+            {
+              "label": "baked cheese-and-tomato piece",
+              "confidence": "high",
+              "region": [
+                0.22,
+                0.34,
+                0.64,
+                0.76
+              ]
+            },
+            {
+              "label": "brown topping pieces",
+              "confidence": "medium",
+              "region": [
+                0.36,
+                0.37,
+                0.55,
+                0.59
+              ]
+            },
+            {
+              "label": "green vegetable topping",
+              "confidence": "medium",
+              "region": [
+                0.27,
+                0.39,
+                0.4,
+                0.51
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "identity of the brown topping",
+            "identity of the green topping"
+          ],
+          "composition_only_hypotheses": [
+            "pizza-like baked item with meat and green-vegetable toppings"
+          ],
+          "useful_suggestions": [
+            "baked cheese-and-tomato piece",
+            "brown topping",
+            "green vegetable topping"
+          ],
+          "misleading_suggestions": [
+            "beef",
+            "mushroom",
+            "jalapeno"
+          ],
+          "abstention_needed": false,
+          "notes": "The item is small and dimly lit, so toppings should remain generic."
+        },
+        {
+          "case_id": "nutrition5k-050-dish_1562703447",
+          "visible_components": [
+            {
+              "label": "leafy greens",
+              "confidence": "high",
+              "region": [
+                0.41,
+                0,
+                0.99,
+                1
+              ]
+            },
+            {
+              "label": "baked cheese-and-tomato piece",
+              "confidence": "medium",
+              "region": [
+                0.22,
+                0.35,
+                0.53,
+                0.75
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "specific leafy-green varieties",
+            "red pieces partly hidden under the greens",
+            "toppings on the baked piece"
+          ],
+          "composition_only_hypotheses": [
+            "side salad served with a pizza-like baked item"
+          ],
+          "useful_suggestions": [
+            "leafy greens",
+            "baked cheese-and-tomato piece"
+          ],
+          "misleading_suggestions": [
+            "broccoli",
+            "chicken"
+          ],
+          "abstention_needed": false,
+          "notes": "Most of the baked item is occluded by greens."
+        },
+        {
+          "case_id": "nutrition5k-052-dish_1562788568",
+          "visible_components": [
+            {
+              "label": "mixed cooked grains",
+              "confidence": "high",
+              "region": [
+                0.24,
+                0.09,
+                0.7,
+                0.64
+              ]
+            },
+            {
+              "label": "leafy greens",
+              "confidence": "medium",
+              "region": [
+                0.31,
+                0.13,
+                0.65,
+                0.55
+              ]
+            },
+            {
+              "label": "red pepper pieces",
+              "confidence": "medium",
+              "region": [
+                0.33,
+                0.13,
+                0.99,
+                0.42
+              ]
+            },
+            {
+              "label": "corn-on-the-cob slices",
+              "confidence": "high",
+              "region": [
+                0.56,
+                0.5,
+                0.99,
+                0.92
+              ]
+            },
+            {
+              "label": "breaded fried item",
+              "confidence": "high",
+              "region": [
+                0.4,
+                0.71,
+                0.72,
+                0.95
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "whether the grains are rice or another grain",
+            "protein type of the breaded item"
+          ],
+          "composition_only_hypotheses": [
+            "grain salad with vegetables",
+            "breaded chicken or fish"
+          ],
+          "useful_suggestions": [
+            "mixed cooked grains",
+            "leafy greens",
+            "red pepper",
+            "corn",
+            "breaded fried item"
+          ],
+          "misleading_suggestions": [
+            "chicken",
+            "brown rice"
+          ],
+          "abstention_needed": false,
+          "notes": "The breaded item's species and the grain variety are not visually established."
+        },
+        {
+          "case_id": "nutrition5k-053-dish_1562876531",
+          "visible_components": [
+            {
+              "label": "leafy greens",
+              "confidence": "high",
+              "region": [
+                0.2,
+                0.04,
+                0.69,
+                0.9
+              ]
+            },
+            {
+              "label": "pale beige piece",
+              "confidence": "medium",
+              "region": [
+                0.2,
+                0.64,
+                0.35,
+                0.82
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "whether the pale piece is chicken, crouton, or another food",
+            "specific leafy-green variety",
+            "identity of the dressing"
+          ],
+          "composition_only_hypotheses": [
+            "dressed green salad with chicken or croutons"
+          ],
+          "useful_suggestions": [
+            "leafy greens",
+            "pale topping or protein piece"
+          ],
+          "misleading_suggestions": [
+            "chicken",
+            "croutons",
+            "broccoli"
+          ],
+          "abstention_needed": false,
+          "notes": "Only the leafy greens are reliably specific."
+        },
+        {
+          "case_id": "nutrition5k-055-dish_1563220987",
+          "visible_components": [
+            {
+              "label": "cooked light-colored meat pieces",
+              "confidence": "high",
+              "region": [
+                0.45,
+                0.37,
+                0.93,
+                0.8
+              ]
+            },
+            {
+              "label": "green pepper or chili segment",
+              "confidence": "high",
+              "region": [
+                0.31,
+                0.7,
+                0.57,
+                0.89
+              ]
+            },
+            {
+              "label": "leafy green garnish",
+              "confidence": "medium",
+              "region": [
+                0.72,
+                0.34,
+                0.95,
+                0.58
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "specific meat species",
+            "whether the green segment is jalapeno or bell pepper",
+            "brown side item at the right edge"
+          ],
+          "composition_only_hypotheses": [
+            "stir-fried chicken or pork with green pepper"
+          ],
+          "useful_suggestions": [
+            "cooked meat pieces",
+            "green pepper or chili",
+            "leafy greens"
+          ],
+          "misleading_suggestions": [
+            "chicken",
+            "pork",
+            "jalapeno"
+          ],
+          "abstention_needed": false,
+          "notes": "Meat is visible, but its animal source cannot be determined visually."
+        },
+        {
+          "case_id": "nutrition5k-056-dish_1563221025",
+          "visible_components": [
+            {
+              "label": "cooked light-colored meat pieces",
+              "confidence": "high",
+              "region": [
+                0.45,
+                0.37,
+                0.93,
+                0.8
+              ]
+            },
+            {
+              "label": "green pepper or chili segment",
+              "confidence": "high",
+              "region": [
+                0.31,
+                0.7,
+                0.57,
+                0.89
+              ]
+            },
+            {
+              "label": "breaded curved fried item",
+              "confidence": "medium",
+              "region": [
+                0.06,
+                0.75,
+                0.31,
+                0.94
+              ]
+            },
+            {
+              "label": "leafy green garnish",
+              "confidence": "medium",
+              "region": [
+                0.72,
+                0.34,
+                0.95,
+                0.58
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "specific meat species",
+            "whether the curved fried item is shrimp or another breaded food",
+            "whether the green segment is jalapeno or bell pepper"
+          ],
+          "composition_only_hypotheses": [
+            "stir-fried chicken or pork with green pepper",
+            "breaded shrimp"
+          ],
+          "useful_suggestions": [
+            "cooked meat pieces",
+            "green pepper or chili",
+            "breaded fried item"
+          ],
+          "misleading_suggestions": [
+            "breaded chicken",
+            "shrimp",
+            "pork"
+          ],
+          "abstention_needed": false,
+          "notes": "The added fried item is visible but not identifiable to species."
+        },
+        {
+          "case_id": "nutrition5k-060-dish_1563565354",
+          "visible_components": [
+            {
+              "label": "flaked pale cooked protein",
+              "confidence": "high",
+              "region": [
+                0.06,
+                0.53,
+                0.36,
+                0.86
+              ]
+            },
+            {
+              "label": "creamy pale cooked item",
+              "confidence": "medium",
+              "region": [
+                0.36,
+                0.25,
+                0.75,
+                0.65
+              ]
+            },
+            {
+              "label": "green vegetable topping",
+              "confidence": "medium",
+              "region": [
+                0.47,
+                0.2,
+                0.67,
+                0.41
+              ]
+            },
+            {
+              "label": "corn-on-the-cob slices",
+              "confidence": "high",
+              "region": [
+                0.44,
+                0.66,
+                0.81,
+                0.98
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "whether either pale protein is fish or chicken",
+            "identity of the creamy item",
+            "identity of the green topping"
+          ],
+          "composition_only_hypotheses": [
+            "fish with a creamy sauce",
+            "chicken with a creamy sauce"
+          ],
+          "useful_suggestions": [
+            "pale cooked protein",
+            "corn",
+            "green vegetable topping"
+          ],
+          "misleading_suggestions": [
+            "fish",
+            "chicken",
+            "broccoli"
+          ],
+          "abstention_needed": false,
+          "notes": "Corn is clear; the proteins should remain species-neutral."
+        },
+        {
+          "case_id": "nutrition5k-078-dish_1565035830",
+          "visible_components": [
+            {
+              "label": "diced cooked meat",
+              "confidence": "high",
+              "region": [
+                0.04,
+                0.08,
+                0.47,
+                0.73
+              ]
+            },
+            {
+              "label": "cauliflower florets",
+              "confidence": "high",
+              "region": [
+                0.29,
+                0.04,
+                0.7,
+                0.51
+              ]
+            },
+            {
+              "label": "cherry tomatoes",
+              "confidence": "high",
+              "region": [
+                0.08,
+                0.69,
+                0.48,
+                0.96
+              ]
+            },
+            {
+              "label": "green bell pepper",
+              "confidence": "high",
+              "region": [
+                0.33,
+                0.57,
+                0.67,
+                0.96
+              ]
+            },
+            {
+              "label": "red onion slices",
+              "confidence": "high",
+              "region": [
+                0.65,
+                0.56,
+                0.99,
+                0.96
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "whether the diced meat is chicken or turkey"
+          ],
+          "composition_only_hypotheses": [
+            "chopped chicken-and-vegetable salad"
+          ],
+          "useful_suggestions": [
+            "diced cooked meat",
+            "cauliflower",
+            "cherry tomatoes",
+            "green bell pepper",
+            "red onion"
+          ],
+          "misleading_suggestions": [
+            "chicken",
+            "turkey"
+          ],
+          "abstention_needed": false,
+          "notes": "The vegetables are clearly distinguishable; meat species is not."
+        },
+        {
+          "case_id": "nutrition5k-084-dish_1565811025",
+          "visible_components": [
+            {
+              "label": "broccoli florets",
+              "confidence": "high",
+              "region": [
+                0.23,
+                0.05,
+                0.93,
+                0.95
+              ]
+            },
+            {
+              "label": "diced cooked meat",
+              "confidence": "high",
+              "region": [
+                0.15,
+                0.06,
+                0.94,
+                0.95
+              ]
+            },
+            {
+              "label": "leafy greens",
+              "confidence": "high",
+              "region": [
+                0.03,
+                0.05,
+                0.98,
+                0.95
+              ]
+            },
+            {
+              "label": "green vegetable pieces",
+              "confidence": "medium",
+              "region": [
+                0.4,
+                0.54,
+                0.68,
+                0.93
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "whether the meat is chicken",
+            "identity of the darker green vegetable pieces",
+            "identity of small brown pieces"
+          ],
+          "composition_only_hypotheses": [
+            "chicken-and-broccoli salad"
+          ],
+          "useful_suggestions": [
+            "broccoli",
+            "diced cooked meat",
+            "leafy greens",
+            "green vegetables"
+          ],
+          "misleading_suggestions": [
+            "chicken",
+            "cucumber"
+          ],
+          "abstention_needed": false,
+          "notes": "Broccoli is clear, while several other salad ingredients remain generic."
+        },
+        {
+          "case_id": "nutrition5k-097-dish_1566851616",
+          "visible_components": [
+            {
+              "label": "chopped leafy greens",
+              "confidence": "high",
+              "region": [
+                0.1,
+                0.07,
+                0.61,
+                0.6
+              ]
+            },
+            {
+              "label": "creamy pale dressing or cheese coating",
+              "confidence": "medium",
+              "region": [
+                0.15,
+                0.1,
+                0.57,
+                0.62
+              ]
+            },
+            {
+              "label": "broccoli florets",
+              "confidence": "high",
+              "region": [
+                0.21,
+                0.52,
+                0.5,
+                0.92
+              ]
+            },
+            {
+              "label": "baked cheese-and-tomato slice",
+              "confidence": "high",
+              "region": [
+                0.56,
+                0.08,
+                0.99,
+                0.61
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "specific leafy-green variety",
+            "identity of the creamy coating",
+            "whether the baked slice has any meat topping"
+          ],
+          "composition_only_hypotheses": [
+            "creamy dressed green salad beside a pizza-like baked item"
+          ],
+          "useful_suggestions": [
+            "leafy greens",
+            "broccoli",
+            "creamy dressing or cheese coating",
+            "baked cheese-and-tomato slice"
+          ],
+          "misleading_suggestions": [
+            "Caesar salad",
+            "pepperoni pizza",
+            "chicken"
+          ],
+          "abstention_needed": false,
+          "notes": "Broccoli and the cheese-and-tomato baked item are visually supported."
+        }
+      ]
+    },
+    "controls": {
+      "agent_id": "019fc670-f89e-7f20-a29d-de33fb5e9025",
+      "scope": "34 controls",
+      "results": [
+        {
+          "case_id": "nutrition5k-001-dish_1557862783",
+          "visible_components": [
+            {
+              "label": "cooked rice",
+              "confidence": "high",
+              "region": [
+                0.22,
+                0.39,
+                0.88,
+                0.94
+              ]
+            },
+            {
+              "label": "browned meat-like pieces",
+              "confidence": "medium",
+              "region": [
+                0.25,
+                0.08,
+                1,
+                0.54
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "Exact meat type and preparation",
+            "Small green and red pieces are not identifiable",
+            "Pale overlapping pieces may be rice or another cooked food"
+          ],
+          "composition_only_hypotheses": [
+            "Rice with a meat-based entrée"
+          ],
+          "useful_suggestions": [
+            "rice",
+            "cooked meat-like pieces"
+          ],
+          "misleading_suggestions": [
+            "chicken",
+            "beef",
+            "stew",
+            "potatoes"
+          ],
+          "abstention_needed": false,
+          "notes": "Rice is clear; other cooked pieces are poorly resolved and overlapping."
+        },
+        {
+          "case_id": "nutrition5k-003-dish_1558030383",
+          "visible_components": [
+            {
+              "label": "bacon-like cooked meat strip",
+              "confidence": "medium",
+              "region": [
+                0.31,
+                0.14,
+                0.71,
+                0.91
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "Exact meat species",
+            "Whether this is bacon or another cured or fried meat"
+          ],
+          "composition_only_hypotheses": [],
+          "useful_suggestions": [
+            "bacon-like cooked meat",
+            "cooked meat strip"
+          ],
+          "misleading_suggestions": [
+            "pork",
+            "ham",
+            "sausage"
+          ],
+          "abstention_needed": false,
+          "notes": "A single cooked strip is visible, but its exact identity is not established."
+        },
+        {
+          "case_id": "nutrition5k-015-dish_1558630207",
+          "visible_components": [
+            {
+              "label": "almonds",
+              "confidence": "high",
+              "region": [
+                0.22,
+                0.08,
+                0.9,
+                0.76
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "Raw versus roasted preparation",
+            "Whether the almonds are salted"
+          ],
+          "composition_only_hypotheses": [],
+          "useful_suggestions": [
+            "almonds",
+            "tree nuts"
+          ],
+          "misleading_suggestions": [
+            "peanuts",
+            "cashews"
+          ],
+          "abstention_needed": false,
+          "notes": "The nut shape is visually consistent with almonds."
+        },
+        {
+          "case_id": "nutrition5k-020-dish_1558720133",
+          "visible_components": [
+            {
+              "label": "cauliflower florets",
+              "confidence": "high",
+              "region": [
+                0.27,
+                0.15,
+                0.7,
+                0.83
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "Raw versus cooked preparation"
+          ],
+          "composition_only_hypotheses": [],
+          "useful_suggestions": [
+            "cauliflower"
+          ],
+          "misleading_suggestions": [
+            "broccoli",
+            "garlic",
+            "potato"
+          ],
+          "abstention_needed": false,
+          "notes": "Several cauliflower florets are clearly visible."
+        },
+        {
+          "case_id": "nutrition5k-033-dish_1561574368",
+          "visible_components": [
+            {
+              "label": "leafy salad greens",
+              "confidence": "medium",
+              "region": [
+                0.49,
+                0.02,
+                1,
+                0.54
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "Exact leafy green type",
+            "Small brown or orange piece may be crouton or another ingredient"
+          ],
+          "composition_only_hypotheses": [
+            "A leftover green salad"
+          ],
+          "useful_suggestions": [
+            "leafy greens",
+            "salad greens"
+          ],
+          "misleading_suggestions": [
+            "carrot",
+            "chicken",
+            "cheese"
+          ],
+          "abstention_needed": false,
+          "notes": "Only a partial salad remnant is visible."
+        },
+        {
+          "case_id": "nutrition5k-040-dish_1562009006",
+          "visible_components": [
+            {
+              "label": "leafy greens with dressing",
+              "confidence": "high",
+              "region": [
+                0.41,
+                0.24,
+                0.94,
+                0.97
+              ]
+            },
+            {
+              "label": "red tomato-like pieces",
+              "confidence": "medium",
+              "region": [
+                0.06,
+                0.74,
+                0.29,
+                1
+              ]
+            },
+            {
+              "label": "browned cooked food",
+              "confidence": "medium",
+              "region": [
+                0.08,
+                0.07,
+                0.54,
+                0.62
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "Identity of the browned cooked portion",
+            "Type of dressing",
+            "Exact identity of the red pieces"
+          ],
+          "composition_only_hypotheses": [
+            "A salad served with a separate browned entrée"
+          ],
+          "useful_suggestions": [
+            "leafy greens",
+            "tomato-like pieces",
+            "browned cooked food"
+          ],
+          "misleading_suggestions": [
+            "chicken",
+            "rice",
+            "broccoli"
+          ],
+          "abstention_needed": false,
+          "notes": "Greens and a red garnish are visible, but the browned portion is unresolved."
+        },
+        {
+          "case_id": "nutrition5k-041-dish_1562009810",
+          "visible_components": [
+            {
+              "label": "cooked rice",
+              "confidence": "high",
+              "region": [
+                0.53,
+                0.17,
+                0.94,
+                0.87
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "Small colored flecks are too small to identify",
+            "Exact seasoning or preparation"
+          ],
+          "composition_only_hypotheses": [
+            "A seasoned rice side"
+          ],
+          "useful_suggestions": [
+            "rice"
+          ],
+          "misleading_suggestions": [
+            "fried rice",
+            "chicken",
+            "carrot"
+          ],
+          "abstention_needed": false,
+          "notes": "The rice pile is clear; small inclusions are unresolved."
+        },
+        {
+          "case_id": "nutrition5k-048-dish_1562700593",
+          "visible_components": [
+            {
+              "label": "leafy greens",
+              "confidence": "high",
+              "region": [
+                0.06,
+                0.43,
+                0.72,
+                1
+              ]
+            },
+            {
+              "label": "cooked meat-like slices",
+              "confidence": "medium",
+              "region": [
+                0,
+                0.27,
+                0.3,
+                0.72
+              ]
+            },
+            {
+              "label": "browned patty-like cooked food",
+              "confidence": "medium",
+              "region": [
+                0.22,
+                0.34,
+                0.61,
+                0.74
+              ]
+            },
+            {
+              "label": "pale mashed or starchy food",
+              "confidence": "medium",
+              "region": [
+                0.56,
+                0.02,
+                1,
+                0.59
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "Exact identity of the meat",
+            "Exact identity of the browned patty-like portion",
+            "Pale side may be potato or another starchy food"
+          ],
+          "composition_only_hypotheses": [
+            "A mixed plate with cooked meat, greens, and a starchy side"
+          ],
+          "useful_suggestions": [
+            "leafy greens",
+            "cooked meat",
+            "mashed or starchy food"
+          ],
+          "misleading_suggestions": [
+            "chicken",
+            "beef",
+            "potato",
+            "falafel"
+          ],
+          "abstention_needed": false,
+          "notes": "Several broad food categories are visible, but ingredient identities are uncertain."
+        },
+        {
+          "case_id": "nutrition5k-002-dish_1557937037",
+          "visible_components": [
+            {
+              "label": "red berries",
+              "confidence": "high",
+              "region": [
+                0.33,
+                0.24,
+                0.84,
+                0.8
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "Exact berry species",
+            "Whether some pieces are cut or crushed"
+          ],
+          "composition_only_hypotheses": [
+            "A small berry serving"
+          ],
+          "useful_suggestions": [
+            "red berries",
+            "berry pieces"
+          ],
+          "misleading_suggestions": [
+            "strawberries",
+            "raspberries",
+            "cherries"
+          ],
+          "abstention_needed": false,
+          "notes": "Red berry-like pieces are visible, but species-level identification is not reliable."
+        },
+        {
+          "case_id": "nutrition5k-004-dish_1558110436",
+          "visible_components": [
+            {
+              "label": "orange-fleshed cooked chunks",
+              "confidence": "medium",
+              "region": [
+                0.3,
+                0.25,
+                0.68,
+                0.69
+              ]
+            },
+            {
+              "label": "dark-skinned cooked chunks",
+              "confidence": "medium",
+              "region": [
+                0.34,
+                0.38,
+                0.72,
+                0.8
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "Exact identity of the orange-fleshed pieces",
+            "Whether the dark skins belong to the same ingredient",
+            "Cooking method"
+          ],
+          "composition_only_hypotheses": [
+            "Roasted sweet potato or another root-vegetable assortment"
+          ],
+          "useful_suggestions": [
+            "orange cooked vegetable pieces",
+            "dark-skinned cooked pieces"
+          ],
+          "misleading_suggestions": [
+            "sweet potato",
+            "carrot",
+            "beet"
+          ],
+          "abstention_needed": false,
+          "notes": "Cooked chunks are visible, but color and shape do not establish the ingredient."
+        },
+        {
+          "case_id": "nutrition5k-005-dish_1558110478",
+          "visible_components": [
+            {
+              "label": "orange-fleshed cooked chunks",
+              "confidence": "medium",
+              "region": [
+                0.23,
+                0.06,
+                0.66,
+                0.62
+              ]
+            },
+            {
+              "label": "bacon-like cooked meat",
+              "confidence": "medium",
+              "region": [
+                0.53,
+                0.05,
+                0.92,
+                0.43
+              ]
+            },
+            {
+              "label": "scrambled eggs",
+              "confidence": "high",
+              "region": [
+                0.48,
+                0.58,
+                0.98,
+                0.97
+              ]
+            },
+            {
+              "label": "red berries",
+              "confidence": "medium",
+              "region": [
+                0.18,
+                0.64,
+                0.49,
+                0.96
+              ]
+            },
+            {
+              "label": "dark berries",
+              "confidence": "medium",
+              "region": [
+                0.3,
+                0.63,
+                0.59,
+                0.91
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "Exact identity of the orange chunks",
+            "Exact meat type",
+            "Exact berry species"
+          ],
+          "composition_only_hypotheses": [
+            "A breakfast-style mixed plate"
+          ],
+          "useful_suggestions": [
+            "scrambled eggs",
+            "bacon-like cooked meat",
+            "red berries",
+            "dark berries",
+            "orange-fleshed cooked pieces"
+          ],
+          "misleading_suggestions": [
+            "sweet potato",
+            "sausage",
+            "strawberries",
+            "blueberries"
+          ],
+          "abstention_needed": false,
+          "notes": "Eggs and broad food groups are clear; several ingredient identities remain uncertain."
+        },
+        {
+          "case_id": "nutrition5k-006-dish_1558113430",
+          "visible_components": [
+            {
+              "label": "leafy greens",
+              "confidence": "high",
+              "region": [
+                0.17,
+                0.2,
+                1,
+                0.95
+              ]
+            },
+            {
+              "label": "orange vegetable shreds",
+              "confidence": "medium",
+              "region": [
+                0.2,
+                0.25,
+                0.72,
+                0.63
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "Exact leafy green type",
+            "Whether the orange shreds are carrot or another vegetable"
+          ],
+          "composition_only_hypotheses": [
+            "A green salad with an orange vegetable garnish"
+          ],
+          "useful_suggestions": [
+            "leafy greens",
+            "orange vegetable shreds"
+          ],
+          "misleading_suggestions": [
+            "spinach",
+            "carrot"
+          ],
+          "abstention_needed": false,
+          "notes": "Leafy greens are clear; thin orange shreds are visible but not species-certain."
+        },
+        {
+          "case_id": "nutrition5k-007-dish_1558114145",
+          "visible_components": [
+            {
+              "label": "grapes",
+              "confidence": "high",
+              "region": [
+                0.32,
+                0.25,
+                0.81,
+                0.78
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "Exact grape variety",
+            "Whether the grapes are seedless"
+          ],
+          "composition_only_hypotheses": [],
+          "useful_suggestions": [
+            "grapes"
+          ],
+          "misleading_suggestions": [
+            "cherries",
+            "berries",
+            "olives"
+          ],
+          "abstention_needed": false,
+          "notes": "Red, purple, and green grapes are clearly visible."
+        },
+        {
+          "case_id": "nutrition5k-008-dish_1558114209",
+          "visible_components": [
+            {
+              "label": "orange fruit pieces",
+              "confidence": "medium",
+              "region": [
+                0.28,
+                0.22,
+                0.82,
+                0.79
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "Exact fruit species",
+            "Whether the pieces are melon or another orange-fleshed fruit"
+          ],
+          "composition_only_hypotheses": [
+            "A serving of cut melon"
+          ],
+          "useful_suggestions": [
+            "orange fruit pieces",
+            "melon-like fruit"
+          ],
+          "misleading_suggestions": [
+            "orange",
+            "carrot",
+            "mango"
+          ],
+          "abstention_needed": false,
+          "notes": "Orange fruit-like chunks are visible, but the fruit identity is uncertain."
+        },
+        {
+          "case_id": "nutrition5k-009-dish_1558372948",
+          "visible_components": [
+            {
+              "label": "almonds",
+              "confidence": "high",
+              "region": [
+                0.27,
+                0.14,
+                0.81,
+                0.76
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "Raw versus roasted preparation",
+            "Whether the almonds are salted"
+          ],
+          "composition_only_hypotheses": [],
+          "useful_suggestions": [
+            "almonds",
+            "tree nuts"
+          ],
+          "misleading_suggestions": [
+            "peanuts",
+            "cashews"
+          ],
+          "abstention_needed": false,
+          "notes": "The repeated almond shape is clear."
+        },
+        {
+          "case_id": "nutrition5k-010-dish_1558373008",
+          "visible_components": [
+            {
+              "label": "brown dried-fruit pieces",
+              "confidence": "medium",
+              "region": [
+                0.33,
+                0.33,
+                0.69,
+                0.79
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "Dates versus another dried fruit",
+            "Whether the pieces contain pits"
+          ],
+          "composition_only_hypotheses": [
+            "A dried-fruit snack serving"
+          ],
+          "useful_suggestions": [
+            "dried fruit pieces",
+            "date-like dried fruit"
+          ],
+          "misleading_suggestions": [
+            "dates",
+            "prunes",
+            "meat"
+          ],
+          "abstention_needed": false,
+          "notes": "Brown oblong dried-fruit-like pieces are visible."
+        },
+        {
+          "case_id": "nutrition5k-012-dish_1558461792",
+          "visible_components": [
+            {
+              "label": "small red tomatoes",
+              "confidence": "high",
+              "region": [
+                0.25,
+                0.08,
+                0.63,
+                0.48
+              ]
+            },
+            {
+              "label": "almonds",
+              "confidence": "high",
+              "region": [
+                0.57,
+                0.08,
+                1,
+                0.57
+              ]
+            },
+            {
+              "label": "leafy greens",
+              "confidence": "high",
+              "region": [
+                0.09,
+                0.47,
+                0.43,
+                0.97
+              ]
+            },
+            {
+              "label": "grapes",
+              "confidence": "high",
+              "region": [
+                0.36,
+                0.48,
+                1,
+                1
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "Exact leafy green type",
+            "Some fruit at the lower edge is partially cropped"
+          ],
+          "composition_only_hypotheses": [
+            "A mixed salad or snack plate"
+          ],
+          "useful_suggestions": [
+            "tomatoes",
+            "almonds",
+            "leafy greens",
+            "grapes"
+          ],
+          "misleading_suggestions": [
+            "peanuts",
+            "cherries",
+            "blueberries"
+          ],
+          "abstention_needed": false,
+          "notes": "Tomatoes, almonds, greens, and grapes are visually distinct."
+        },
+        {
+          "case_id": "nutrition5k-018-dish_1558719570",
+          "visible_components": [
+            {
+              "label": "apple",
+              "confidence": "high",
+              "region": [
+                0.35,
+                0.25,
+                0.66,
+                0.68
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "Apple variety"
+          ],
+          "composition_only_hypotheses": [],
+          "useful_suggestions": [
+            "apple"
+          ],
+          "misleading_suggestions": [
+            "peach",
+            "tomato"
+          ],
+          "abstention_needed": false,
+          "notes": "A whole apple is clearly visible."
+        },
+        {
+          "case_id": "nutrition5k-019-dish_1558720097",
+          "visible_components": [
+            {
+              "label": "carrot pieces",
+              "confidence": "high",
+              "region": [
+                0.31,
+                0.13,
+                0.83,
+                0.8
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "Raw versus cooked preparation",
+            "Whether all orange pieces are carrot"
+          ],
+          "composition_only_hypotheses": [],
+          "useful_suggestions": [
+            "carrot"
+          ],
+          "misleading_suggestions": [
+            "sweet potato",
+            "orange fruit"
+          ],
+          "abstention_needed": false,
+          "notes": "The orange pieces have a consistent carrot-like appearance."
+        },
+        {
+          "case_id": "nutrition5k-022-dish_1559239369",
+          "visible_components": [
+            {
+              "label": "leafy greens",
+              "confidence": "high",
+              "region": [
+                0.22,
+                0.14,
+                0.67,
+                0.58
+              ]
+            },
+            {
+              "label": "orange vegetable shreds",
+              "confidence": "medium",
+              "region": [
+                0.31,
+                0.2,
+                0.65,
+                0.55
+              ]
+            },
+            {
+              "label": "strawberries",
+              "confidence": "high",
+              "region": [
+                0.09,
+                0.36,
+                0.65,
+                0.96
+              ]
+            },
+            {
+              "label": "blueberries",
+              "confidence": "high",
+              "region": [
+                0,
+                0.42,
+                0.75,
+                0.87
+              ]
+            },
+            {
+              "label": "orange-colored citrus fruit",
+              "confidence": "high",
+              "region": [
+                0.6,
+                0.43,
+                0.93,
+                0.91
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "Whether the orange shreds are carrot",
+            "Small red round item at the upper right is not identifiable",
+            "Exact leafy green type"
+          ],
+          "composition_only_hypotheses": [
+            "A fruit-and-greens salad"
+          ],
+          "useful_suggestions": [
+            "leafy greens",
+            "orange vegetable shreds",
+            "strawberries",
+            "blueberries",
+            "orange or citrus fruit"
+          ],
+          "misleading_suggestions": [
+            "tomato",
+            "spinach",
+            "tangerine"
+          ],
+          "abstention_needed": false,
+          "notes": "Multiple fruits and greens are clear; the small red item and orange shreds remain uncertain."
+        },
+        {
+          "case_id": "nutrition5k-023-dish_1559578579",
+          "visible_components": [
+            {
+              "label": "bacon-like cooked meat",
+              "confidence": "high",
+              "region": [
+                0.22,
+                0.06,
+                0.88,
+                0.78
+              ]
+            },
+            {
+              "label": "strawberries",
+              "confidence": "high",
+              "region": [
+                0.24,
+                0.3,
+                0.92,
+                0.95
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "Exact meat species",
+            "Whether all red pieces are strawberries"
+          ],
+          "composition_only_hypotheses": [
+            "A breakfast-style plate"
+          ],
+          "useful_suggestions": [
+            "bacon-like cooked meat",
+            "strawberries"
+          ],
+          "misleading_suggestions": [
+            "ham",
+            "sausage",
+            "raspberries"
+          ],
+          "abstention_needed": false,
+          "notes": "A bacon-like strip and strawberry pieces are clearly visible."
+        },
+        {
+          "case_id": "nutrition5k-025-dish_1559850314",
+          "visible_components": [
+            {
+              "label": "orange-colored citrus fruit",
+              "confidence": "high",
+              "region": [
+                0.25,
+                0.1,
+                0.49,
+                0.42
+              ]
+            },
+            {
+              "label": "almonds",
+              "confidence": "high",
+              "region": [
+                0.35,
+                0.2,
+                0.8,
+                0.76
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "Exact citrus variety",
+            "Raw versus roasted preparation of the almonds"
+          ],
+          "composition_only_hypotheses": [],
+          "useful_suggestions": [
+            "orange or citrus fruit",
+            "almonds"
+          ],
+          "misleading_suggestions": [
+            "tangerine",
+            "peach",
+            "peanuts"
+          ],
+          "abstention_needed": false,
+          "notes": "A whole orange-colored citrus fruit and almonds are visible."
+        },
+        {
+          "case_id": "nutrition5k-039-dish_1561739265",
+          "visible_components": [
+            {
+              "label": "broccoli",
+              "confidence": "high",
+              "region": [
+                0.25,
+                0.37,
+                0.65,
+                0.8
+              ]
+            },
+            {
+              "label": "dark berries",
+              "confidence": "high",
+              "region": [
+                0.71,
+                0.2,
+                1,
+                0.64
+              ]
+            },
+            {
+              "label": "red berries",
+              "confidence": "medium",
+              "region": [
+                0.67,
+                0.34,
+                0.95,
+                0.79
+              ]
+            },
+            {
+              "label": "cooked grain-like food",
+              "confidence": "medium",
+              "region": [
+                0.39,
+                0.04,
+                0.83,
+                0.39
+              ]
+            },
+            {
+              "label": "orange cooked pieces",
+              "confidence": "medium",
+              "region": [
+                0.46,
+                0.58,
+                0.81,
+                1
+              ]
+            },
+            {
+              "label": "pale chunky food",
+              "confidence": "low",
+              "region": [
+                0.25,
+                0,
+                0.56,
+                0.34
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "Exact identity of the red berries",
+            "Whether the grain-like food is rice",
+            "Exact identity of the orange and pale pieces"
+          ],
+          "composition_only_hypotheses": [
+            "A mixed plate combining vegetables, fruit, and starches"
+          ],
+          "useful_suggestions": [
+            "broccoli",
+            "dark berries",
+            "red berries",
+            "cooked grain-like food",
+            "orange cooked pieces"
+          ],
+          "misleading_suggestions": [
+            "chicken",
+            "strawberries",
+            "carrot",
+            "sweet potato"
+          ],
+          "abstention_needed": false,
+          "notes": "Broccoli and dark berries are clear; several other foods are only safely identifiable at broad category level."
+        },
+        {
+          "case_id": "nutrition5k-045-dish_1562690950",
+          "visible_components": [
+            {
+              "label": "broccoli",
+              "confidence": "high",
+              "region": [
+                0.13,
+                0.38,
+                0.5,
+                0.94
+              ]
+            },
+            {
+              "label": "blueberries",
+              "confidence": "high",
+              "region": [
+                0.48,
+                0.4,
+                0.75,
+                0.75
+              ]
+            },
+            {
+              "label": "red fruit pieces",
+              "confidence": "medium",
+              "region": [
+                0.4,
+                0.55,
+                0.8,
+                1
+              ]
+            },
+            {
+              "label": "yellow fruit pieces",
+              "confidence": "medium",
+              "region": [
+                0.64,
+                0.17,
+                1,
+                0.79
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "Exact identity of the yellow fruit pieces",
+            "Whether the red pieces are strawberries or another red fruit"
+          ],
+          "composition_only_hypotheses": [
+            "A fruit-and-vegetable side plate"
+          ],
+          "useful_suggestions": [
+            "broccoli",
+            "blueberries",
+            "red fruit pieces",
+            "yellow fruit pieces"
+          ],
+          "misleading_suggestions": [
+            "pineapple",
+            "banana",
+            "tomato"
+          ],
+          "abstention_needed": false,
+          "notes": "Broccoli and blueberries are clear; the other fruit pieces are less specific."
+        },
+        {
+          "case_id": "nutrition5k-011-dish_1558376874",
+          "visible_components": [
+            {
+              "label": "almonds",
+              "confidence": "high",
+              "region": [
+                0.28,
+                0.28,
+                0.79,
+                0.79
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "Raw versus roasted preparation",
+            "Whether the almonds are salted"
+          ],
+          "composition_only_hypotheses": [],
+          "useful_suggestions": [
+            "almonds",
+            "tree nuts"
+          ],
+          "misleading_suggestions": [
+            "peanuts",
+            "cashews"
+          ],
+          "abstention_needed": false,
+          "notes": "The pile consists visually consistent with almonds."
+        },
+        {
+          "case_id": "nutrition5k-013-dish_1558549773",
+          "visible_components": [
+            {
+              "label": "leafy greens",
+              "confidence": "high",
+              "region": [
+                0.34,
+                0.31,
+                0.66,
+                0.78
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "Exact leafy green type",
+            "Raw versus cooked preparation"
+          ],
+          "composition_only_hypotheses": [],
+          "useful_suggestions": [
+            "leafy greens"
+          ],
+          "misleading_suggestions": [
+            "spinach",
+            "kale",
+            "cabbage"
+          ],
+          "abstention_needed": false,
+          "notes": "A small bunch of leafy greens is clearly visible."
+        },
+        {
+          "case_id": "nutrition5k-014-dish_1558630176",
+          "visible_components": [
+            {
+              "label": "apple",
+              "confidence": "high",
+              "region": [
+                0.35,
+                0.29,
+                0.65,
+                0.7
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "Apple variety",
+            "Small orange fragment at the upper right is not identifiable"
+          ],
+          "composition_only_hypotheses": [],
+          "useful_suggestions": [
+            "apple"
+          ],
+          "misleading_suggestions": [
+            "peach",
+            "carrot"
+          ],
+          "abstention_needed": false,
+          "notes": "A whole apple is clear; tiny plate fragments should not be classified."
+        },
+        {
+          "case_id": "nutrition5k-016-dish_1558639482",
+          "visible_components": [
+            {
+              "label": "corn segment",
+              "confidence": "high",
+              "region": [
+                0.59,
+                0.39,
+                0.85,
+                0.71
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "Whether the segment is cooked"
+          ],
+          "composition_only_hypotheses": [],
+          "useful_suggestions": [
+            "corn"
+          ],
+          "misleading_suggestions": [
+            "pineapple",
+            "citrus fruit"
+          ],
+          "abstention_needed": false,
+          "notes": "Kernel pattern and cob cross-section are clearly visible."
+        },
+        {
+          "case_id": "nutrition5k-021-dish_1559238993",
+          "visible_components": [
+            {
+              "label": "strawberries",
+              "confidence": "high",
+              "region": [
+                0.24,
+                0.26,
+                0.8,
+                0.94
+              ]
+            },
+            {
+              "label": "blueberries",
+              "confidence": "high",
+              "region": [
+                0.16,
+                0.2,
+                0.78,
+                0.73
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "Whether all red pieces are strawberry"
+          ],
+          "composition_only_hypotheses": [],
+          "useful_suggestions": [
+            "strawberries",
+            "blueberries"
+          ],
+          "misleading_suggestions": [
+            "raspberries",
+            "cherries"
+          ],
+          "abstention_needed": false,
+          "notes": "Sliced strawberries and blueberries are visually clear."
+        },
+        {
+          "case_id": "nutrition5k-024-dish_1559844272",
+          "visible_components": [
+            {
+              "label": "almonds",
+              "confidence": "high",
+              "region": [
+                0.12,
+                0.17,
+                0.65,
+                0.86
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "Raw versus roasted preparation",
+            "Whether the almonds are salted"
+          ],
+          "composition_only_hypotheses": [],
+          "useful_suggestions": [
+            "almonds",
+            "tree nuts"
+          ],
+          "misleading_suggestions": [
+            "peanuts",
+            "cashews"
+          ],
+          "abstention_needed": false,
+          "notes": "A pile of almond-shaped nuts is clearly visible."
+        },
+        {
+          "case_id": "nutrition5k-027-dish_1560368506",
+          "visible_components": [
+            {
+              "label": "pale cooked meat-like slices",
+              "confidence": "medium",
+              "region": [
+                0.05,
+                0.43,
+                0.5,
+                0.94
+              ]
+            },
+            {
+              "label": "browned cooked food",
+              "confidence": "medium",
+              "region": [
+                0.07,
+                0.03,
+                0.49,
+                0.48
+              ]
+            },
+            {
+              "label": "pale green chunks",
+              "confidence": "medium",
+              "region": [
+                0.54,
+                0.38,
+                1,
+                0.83
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "Exact identity of the pale slices",
+            "Exact identity of the browned food",
+            "Pale green chunks may be fruit or vegetable"
+          ],
+          "composition_only_hypotheses": [
+            "A plate with cooked meat and a pale green fruit or vegetable side"
+          ],
+          "useful_suggestions": [
+            "cooked meat-like slices",
+            "browned cooked food",
+            "pale green chunks"
+          ],
+          "misleading_suggestions": [
+            "chicken",
+            "apple",
+            "potato",
+            "hash browns"
+          ],
+          "abstention_needed": true,
+          "notes": "Broad categories are possible, but no specific ingredient identification is sufficiently secure."
+        },
+        {
+          "case_id": "nutrition5k-028-dish_1560526447",
+          "visible_components": [
+            {
+              "label": "mixed leafy greens",
+              "confidence": "high",
+              "region": [
+                0.07,
+                0.13,
+                0.91,
+                0.71
+              ]
+            },
+            {
+              "label": "orange vegetable shreds",
+              "confidence": "medium",
+              "region": [
+                0.08,
+                0.2,
+                0.65,
+                0.67
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "Exact leafy green types",
+            "Dark small pieces may be ingredients, dressing, or shadows",
+            "Whether the orange shreds are carrot"
+          ],
+          "composition_only_hypotheses": [
+            "A mixed leafy salad"
+          ],
+          "useful_suggestions": [
+            "leafy greens",
+            "orange vegetable shreds"
+          ],
+          "misleading_suggestions": [
+            "spinach",
+            "carrot",
+            "olives"
+          ],
+          "abstention_needed": false,
+          "notes": "Mixed leaves are clear; small inclusions are not reliably identifiable."
+        },
+        {
+          "case_id": "nutrition5k-030-dish_1561147944",
+          "visible_components": [
+            {
+              "label": "mixed leafy greens",
+              "confidence": "high",
+              "region": [
+                0.45,
+                0.3,
+                1,
+                0.84
+              ]
+            },
+            {
+              "label": "orange vegetable shreds",
+              "confidence": "medium",
+              "region": [
+                0.61,
+                0.46,
+                0.98,
+                0.79
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "Exact leafy green types",
+            "Small dark pieces may be ingredients, dressing, or shadows",
+            "Whether the orange shreds are carrot"
+          ],
+          "composition_only_hypotheses": [
+            "A partial mixed salad"
+          ],
+          "useful_suggestions": [
+            "leafy greens",
+            "orange vegetable shreds"
+          ],
+          "misleading_suggestions": [
+            "spinach",
+            "carrot",
+            "olives"
+          ],
+          "abstention_needed": false,
+          "notes": "Only part of the salad is visible, but mixed greens are clear."
+        },
+        {
+          "case_id": "nutrition5k-032-dish_1561393764",
+          "visible_components": [
+            {
+              "label": "broccoli",
+              "confidence": "high",
+              "region": [
+                0.14,
+                0.28,
+                0.48,
+                0.93
+              ]
+            },
+            {
+              "label": "bacon-like cooked meat",
+              "confidence": "high",
+              "region": [
+                0.37,
+                0.05,
+                0.69,
+                0.81
+              ]
+            },
+            {
+              "label": "scrambled eggs",
+              "confidence": "high",
+              "region": [
+                0.59,
+                0.43,
+                1,
+                0.95
+              ]
+            }
+          ],
+          "ambiguous_components": [
+            "Exact meat species",
+            "Whether the broccoli is cooked"
+          ],
+          "composition_only_hypotheses": [
+            "A breakfast-style plate with vegetables"
+          ],
+          "useful_suggestions": [
+            "broccoli",
+            "bacon-like cooked meat",
+            "scrambled eggs"
+          ],
+          "misleading_suggestions": [
+            "chicken",
+            "cauliflower",
+            "cheese"
+          ],
+          "abstention_needed": false,
+          "notes": "Broccoli, bacon-like meat, and scrambled eggs are visually distinct."
+        }
+      ]
+    }
+  },
+  "conflict_disagreements": [
+    {
+      "case_id": "nutrition5k-017-dish_1558641320",
+      "reviewer_a_labels": [
+        "apple",
+        "carrot slices",
+        "cherry tomatoes",
+        "corn on the cob"
+      ],
+      "reviewer_b_labels": [
+        "apple",
+        "carrot rounds",
+        "cherry tomatoes",
+        "corn-on-the-cob slices"
+      ],
+      "exact_label_jaccard": 0.3333333333333333,
+      "needs_adjudication": true
+    },
+    {
+      "case_id": "nutrition5k-026-dish_1560367980",
+      "reviewer_a_labels": [
+        "asparagus spears",
+        "pizza slice",
+        "spinach leaves"
+      ],
+      "reviewer_b_labels": [
+        "baked cheese-and-tomato slice",
+        "leafy greens",
+        "long green stalk vegetables"
+      ],
+      "exact_label_jaccard": 0,
+      "needs_adjudication": true
+    },
+    {
+      "case_id": "nutrition5k-029-dish_1560801859",
+      "reviewer_a_labels": [
+        "cauliflower florets",
+        "cooked meat pieces",
+        "mixed greens",
+        "pepperoni",
+        "pizza slice",
+        "roasted potato pieces"
+      ],
+      "reviewer_b_labels": [
+        "baked cheese-and-tomato slice",
+        "brown cooked protein pieces",
+        "cauliflower florets",
+        "dark roasted vegetable piece",
+        "roasted potato wedges"
+      ],
+      "exact_label_jaccard": 0.1,
+      "needs_adjudication": true
+    },
+    {
+      "case_id": "nutrition5k-031-dish_1561147967",
+      "reviewer_a_labels": [
+        "leafy salad greens",
+        "pizza slice",
+        "shredded carrot"
+      ],
+      "reviewer_b_labels": [
+        "baked cheese-and-tomato slice",
+        "mixed leafy greens",
+        "shredded carrot"
+      ],
+      "exact_label_jaccard": 0.2,
+      "needs_adjudication": true
+    },
+    {
+      "case_id": "nutrition5k-035-dish_1561578800",
+      "reviewer_a_labels": [
+        "arugula or leafy greens",
+        "black olives",
+        "pizza slices"
+      ],
+      "reviewer_b_labels": [
+        "baked cheese-and-tomato slice",
+        "black olives",
+        "leafy greens"
+      ],
+      "exact_label_jaccard": 0.2,
+      "needs_adjudication": true
+    },
+    {
+      "case_id": "nutrition5k-038-dish_1561661347",
+      "reviewer_a_labels": [
+        "asparagus spears",
+        "creamy dressing",
+        "romaine or lettuce salad"
+      ],
+      "reviewer_b_labels": [
+        "chopped leafy greens",
+        "creamy pale dressing or cheese coating",
+        "long green stalk vegetables"
+      ],
+      "exact_label_jaccard": 0,
+      "needs_adjudication": true
+    },
+    {
+      "case_id": "nutrition5k-049-dish_1562703345",
+      "reviewer_a_labels": [
+        "green olive or green pepper piece",
+        "meat topping",
+        "pizza slice"
+      ],
+      "reviewer_b_labels": [
+        "baked cheese-and-tomato piece",
+        "brown topping pieces",
+        "green vegetable topping"
+      ],
+      "exact_label_jaccard": 0,
+      "needs_adjudication": true
+    },
+    {
+      "case_id": "nutrition5k-050-dish_1562703447",
+      "reviewer_a_labels": [
+        "leafy greens",
+        "pizza slice",
+        "tomato pieces"
+      ],
+      "reviewer_b_labels": [
+        "baked cheese-and-tomato piece",
+        "leafy greens"
+      ],
+      "exact_label_jaccard": 0.25,
+      "needs_adjudication": true
+    },
+    {
+      "case_id": "nutrition5k-052-dish_1562788568",
+      "reviewer_a_labels": [
+        "carrot pieces",
+        "corn on the cob",
+        "fried or breaded piece",
+        "leafy herbs or greens",
+        "rice or grain mixture"
+      ],
+      "reviewer_b_labels": [
+        "breaded fried item",
+        "corn-on-the-cob slices",
+        "leafy greens",
+        "mixed cooked grains",
+        "red pepper pieces"
+      ],
+      "exact_label_jaccard": 0,
+      "needs_adjudication": true
+    },
+    {
+      "case_id": "nutrition5k-053-dish_1562876531",
+      "reviewer_a_labels": [
+        "bread or crouton piece",
+        "creamy dressing",
+        "lettuce or leafy salad"
+      ],
+      "reviewer_b_labels": [
+        "leafy greens",
+        "pale beige piece"
+      ],
+      "exact_label_jaccard": 0,
+      "needs_adjudication": true
+    },
+    {
+      "case_id": "nutrition5k-055-dish_1563220987",
+      "reviewer_a_labels": [
+        "cooked chicken or light meat pieces",
+        "green leaf",
+        "lettuce piece",
+        "yellow vegetable piece"
+      ],
+      "reviewer_b_labels": [
+        "cooked light-colored meat pieces",
+        "green pepper or chili segment",
+        "leafy green garnish"
+      ],
+      "exact_label_jaccard": 0,
+      "needs_adjudication": true
+    },
+    {
+      "case_id": "nutrition5k-056-dish_1563221025",
+      "reviewer_a_labels": [
+        "breaded or fried strip",
+        "cooked chicken or light meat pieces",
+        "green leaf",
+        "lettuce piece",
+        "yellow vegetable piece"
+      ],
+      "reviewer_b_labels": [
+        "breaded curved fried item",
+        "cooked light-colored meat pieces",
+        "green pepper or chili segment",
+        "leafy green garnish"
+      ],
+      "exact_label_jaccard": 0,
+      "needs_adjudication": true
+    },
+    {
+      "case_id": "nutrition5k-060-dish_1563565354",
+      "reviewer_a_labels": [
+        "corn on the cob",
+        "leafy green topping",
+        "orange garnish or vegetable piece",
+        "white creamy patty or salad portion",
+        "white salad or casserole portion"
+      ],
+      "reviewer_b_labels": [
+        "corn-on-the-cob slices",
+        "creamy pale cooked item",
+        "flaked pale cooked protein",
+        "green vegetable topping"
+      ],
+      "exact_label_jaccard": 0,
+      "needs_adjudication": true
+    },
+    {
+      "case_id": "nutrition5k-078-dish_1565035830",
+      "reviewer_a_labels": [
+        "cauliflower florets",
+        "cherry tomatoes",
+        "diced chicken or tofu",
+        "green bell pepper slices",
+        "red onion slices"
+      ],
+      "reviewer_b_labels": [
+        "cauliflower florets",
+        "cherry tomatoes",
+        "diced cooked meat",
+        "green bell pepper",
+        "red onion slices"
+      ],
+      "exact_label_jaccard": 0.42857142857142855,
+      "needs_adjudication": true
+    },
+    {
+      "case_id": "nutrition5k-084-dish_1565811025",
+      "reviewer_a_labels": [
+        "broccoli florets",
+        "diced chicken or tofu",
+        "spinach leaves"
+      ],
+      "reviewer_b_labels": [
+        "broccoli florets",
+        "diced cooked meat",
+        "green vegetable pieces",
+        "leafy greens"
+      ],
+      "exact_label_jaccard": 0.16666666666666666,
+      "needs_adjudication": true
+    },
+    {
+      "case_id": "nutrition5k-097-dish_1566851616",
+      "reviewer_a_labels": [
+        "asparagus or green beans",
+        "broccoli florets",
+        "creamy vegetable salad",
+        "lettuce salad",
+        "pizza slice"
+      ],
+      "reviewer_b_labels": [
+        "baked cheese-and-tomato slice",
+        "broccoli florets",
+        "chopped leafy greens",
+        "creamy pale dressing or cheese coating"
+      ],
+      "exact_label_jaccard": 0.125,
+      "needs_adjudication": true
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 package com.supernutrition.feature.photoanalysis
 
 import com.supernutrition.core.ui.UiAutomationIds
+import com.supernutrition.core.ui.photoAnalysisVisibleComponentId
 import com.supernutrition.testing.composesupport.AcceptanceTrace
 import com.supernutrition.testing.composesupport.SemanticId
 import com.supernutrition.testing.composesupport.StepId
@@ -25,6 +26,7 @@ class PhotoAnalysisCaptureRobot(
     private val shutter = SemanticId(UiAutomationIds.CAPTURE_SHUTTER.value)
     private val import = SemanticId(UiAutomationIds.CAPTURE_IMPORT.value)
     private val scanAgain = SemanticId(UiAutomationIds.CAPTURE_SCAN_AGAIN.value)
+    private val cancel = SemanticId(UiAutomationIds.CAPTURE_CANCEL.value)
 
     fun assertCaptureSurface() {
         trace.assertFinal(PhotoAnalysisCaptureRobotContract.CAPTURE_SURFACE_STEP, title) {
@@ -53,6 +55,22 @@ class PhotoAnalysisCaptureRobot(
         }
         check(host.text(scanAgain) == copy.recovery.scanAgain)
     }
+
+    fun assertLocalWaitSurface(expectedStatus: String) {
+        trace.assertFinal(PhotoAnalysisCaptureRobotContract.LOCAL_WAIT_SURFACE_STEP, status) {
+            host.state() == PhotoAnalysisPresenterState.ANALYZING &&
+                host.text(status) == expectedStatus
+        }
+        check(host.text(cancel) == copy.capture.cancel)
+    }
+
+    fun assertVisibleComponent(componentId: String, expectedLabel: String) {
+        val component = SemanticId(photoAnalysisVisibleComponentId(componentId).value)
+        trace.assertFinal(PhotoAnalysisCaptureRobotContract.COMPONENT_EVIDENCE_STEP, component) {
+            host.state() == PhotoAnalysisPresenterState.CANDIDATE_REVIEW &&
+                host.text(component) == expectedLabel
+        }
+    }
 }
 
 internal object PhotoAnalysisCaptureRobotContract {
@@ -61,4 +79,6 @@ internal object PhotoAnalysisCaptureRobotContract {
     val TAKE_PHOTO_STEP = StepId("take-photo")
     val IMPORT_PHOTO_STEP = StepId("import-photo")
     val RECOVERY_SURFACE_STEP = StepId("recovery-surface")
+    val LOCAL_WAIT_SURFACE_STEP = StepId("local-wait-surface")
+    val COMPONENT_EVIDENCE_STEP = StepId("component-evidence")
 }

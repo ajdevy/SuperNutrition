@@ -241,6 +241,7 @@ class QualityPlugin : Plugin<Project> {
         // compatibility lane fail during configuration before its host task
         // can run. The full product build still sees every inventory entry.
         val inventoryProjects = jvmCoverageModulePaths(mobileRoot)
+        val coverageTargets = jvmCoverageTargets(mobileRoot)
         val productionProjects = inventoryProjects
             .filter { rootProject.findProject(it) != null }
         val allProductionProjects = productionModulePaths(mobileRoot)
@@ -249,6 +250,11 @@ class QualityPlugin : Plugin<Project> {
         val reportRoot = rootProject.projectDir.toPath()
         val lifecycleFile = mobileRoot.resolve("product-lifecycle.toml").toFile()
         val coverageFile = mobileRoot.resolve("config/quality/coverage.toml").toFile()
+        val coverageText = Files.readString(coverageFile.toPath())
+        val aggregateLineMinimumPercent = PolicyToml.integer(coverageText, "minimum_line_percent")
+            ?: error("Coverage inventory is missing minimum_line_percent")
+        val aggregateBranchMinimumPercent = PolicyToml.integer(coverageText, "minimum_branch_percent")
+            ?: error("Coverage inventory is missing minimum_branch_percent")
         val reportFiles = productionProjects.flatMap { path ->
             JvmCoverageVerifier.reportPaths(reportRoot, path).map(Path::toFile)
         }
@@ -303,7 +309,13 @@ class QualityPlugin : Plugin<Project> {
                     "Active JVM coverage inventory contains unresolved projects: " +
                         unresolvedInventoryProjects.joinToString()
                 }
-                val result = JvmCoverageVerifier.verify(reportRoot, inventoryProjects)
+                val result = JvmCoverageVerifier.verify(
+                    reportRoot,
+                    inventoryProjects,
+                    coverageTargets.associateBy { it.projectPath },
+                    aggregateLineMinimumPercent = aggregateLineMinimumPercent,
+                    aggregateBranchMinimumPercent = aggregateBranchMinimumPercent,
+                )
                 logger.lifecycle(
                     "JVM host coverage: line=${formatCoverage(result.linePercent)}%, " +
                         "branch=${formatCoverage(result.branchPercent)}% across " +
@@ -323,7 +335,13 @@ class QualityPlugin : Plugin<Project> {
                     "Local JVM coverage inventory contains unresolved projects: " +
                         unresolvedInventoryProjects.joinToString()
                 }
-                val result = JvmCoverageVerifier.verify(reportRoot, inventoryProjects)
+                val result = JvmCoverageVerifier.verify(
+                    reportRoot,
+                    inventoryProjects,
+                    coverageTargets.associateBy { it.projectPath },
+                    aggregateLineMinimumPercent = aggregateLineMinimumPercent,
+                    aggregateBranchMinimumPercent = aggregateBranchMinimumPercent,
+                )
                 logger.lifecycle(
                     "JVM host coverage (local-only): line=${formatCoverage(result.linePercent)}%, " +
                         "branch=${formatCoverage(result.branchPercent)}% across " +
@@ -440,6 +458,17 @@ class QualityPlugin : Plugin<Project> {
         .map { ":" + it.sourcePath.removePrefix("mobile/").replace('/', ':') }
         .also { require(it.isNotEmpty()) { "Coverage inventory contains no JVM denominators" } }
 
+    private fun jvmCoverageTargets(mobileRoot: Path): List<JvmCoverageTarget> = coverageDenominators(mobileRoot)
+        .filter { it.coverageKind == "jvm" }
+        .map {
+            JvmCoverageTarget(
+                projectPath = ":" + it.sourcePath.removePrefix("mobile/").replace('/', ':'),
+                lineMinimumPercent = it.lineMinimumPercent,
+                branchMinimumPercent = it.branchMinimumPercent,
+            )
+        }
+        .also { require(it.isNotEmpty()) { "Coverage inventory contains no JVM denominators" } }
+
     private fun coverageDenominators(mobileRoot: Path): List<CoverageDenominator> {
         val coverage = mobileRoot.resolve("config/quality/coverage.toml")
         require(Files.isRegularFile(coverage)) {
@@ -451,6 +480,10 @@ class QualityPlugin : Plugin<Project> {
                     ?: error("Coverage denominator is missing source_path"),
                 coverageKind = extractString(block, "coverage_kind")
                     ?: error("Coverage denominator is missing coverage_kind"),
+                lineMinimumPercent = PolicyToml.integer(block, "line_minimum_percent")
+                    ?: error("Coverage denominator is missing line_minimum_percent"),
+                branchMinimumPercent = PolicyToml.integer(block, "branch_minimum_percent")
+                    ?: error("Coverage denominator is missing branch_minimum_percent"),
             )
         }
     }
@@ -479,6 +512,8 @@ class QualityPlugin : Plugin<Project> {
 private data class CoverageDenominator(
     val sourcePath: String,
     val coverageKind: String,
+    val lineMinimumPercent: Int,
+    val branchMinimumPercent: Int,
 )
 
 /** Detekt's own plain task, registered by DetektPlugin rather than by this plugin. */

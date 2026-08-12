@@ -1,0 +1,63 @@
+{
+  "schema_version": "fpb-yolov12-foodweight/smoke-evidence-v1",
+  "status": "experimental-smoke-passed",
+  "research_only": true,
+  "run": {
+    "date": "2026-07-31",
+    "checkpoint": "YOLOv12S.pt",
+    "checkpoint_sha256": "35cde167ab11e4d62a5d87bcf69f88e937972cebaf1a85869b1874e9fbe0eb1c",
+    "repository_commit": "307a903d49ab073ed83f01c527981aafe5da59b3",
+    "device": "x86_64 macOS CPU",
+    "input_size": 640,
+    "confidence_threshold": 0.25,
+    "runtime": "PyTorch 2.12.1 + current Ultralytics 8.4.114 with a temporary compatibility shim",
+    "compatibility_caveat": "The pinned FPB repository code cannot unpickle YOLOv12S.pt because it lacks C3k2. Current Ultralytics can load the checkpoint only after replacing Detect.forward_head to preserve the FPB grams channel. This shim is not a production integration."
+  },
+  "metrics": {
+    "samples": 5,
+    "detected": 5,
+    "detection_rate": 1.0,
+    "class_accuracy": 0.6,
+    "mean_box_iou": 0.8051846241,
+    "weight_mae_g": 48.5408062744,
+    "p90_absolute_weight_error_g": 110.4830622559
+  },
+  "cases": [
+    {
+      "image": "achichuk_average_RGB_IMG_4140_JPG.rf.2880890c37d0a42ce686e69537102ec8.jpg",
+      "image_sha256": "751247cb15b4480c2a6d97503f123649e52ab486a8003e7e79b27146dcaa1b33",
+      "ground_truth": {"class_id": 0, "weight_grams": 46.0},
+      "prediction": {"class_id": 0, "confidence": 0.8563514352, "weight_grams": 105.4689483643, "box_iou": 0.9050976759}
+    },
+    {
+      "image": "apple_juice_RGB_IMG_4877_JPG.rf.12a7f45582c975ff92188691a00b0f3c.jpg",
+      "image_sha256": "5fc3fd76e22fe159994711533e6ae5be035e3475e9172b5083356bf7de423365",
+      "ground_truth": {"class_id": 2, "weight_grams": 203.0},
+      "prediction": {"class_id": 2, "confidence": 0.8214347363, "weight_grams": 158.1469726563, "box_iou": 0.9803021711}
+    },
+    {
+      "image": "beef_cutlet_average_RGB_IMG_2717_jpeg.rf.b16dbe87261bb737e93e1792c8ee085f.jpg",
+      "image_sha256": "844089655b9545ef5f7931576b757dc7e11c439f59d752d56c10708bcd9ba8b5",
+      "ground_truth": {"class_id": 7, "weight_grams": 82.5},
+      "prediction": {"class_id": 137, "confidence": 0.6113631725, "weight_grams": 85.8159942627, "box_iou": 0.9619553194}
+    },
+    {
+      "image": "beefstroganov_average_RGB_IMG_4949_JPG.rf.9d740f66c3ee1b5c5a54f679891bdaec.jpg",
+      "image_sha256": "a9498301f836f420a57a22151f239d7a0dc993b86e5fb2ce94e5b0fdcb14367b",
+      "ground_truth": {"class_id": 80, "weight_grams": 120.6},
+      "prediction": {"class_id": 8, "confidence": 0.8948256969, "weight_grams": 145.1829986572, "box_iou": 0.1958577666}
+    },
+    {
+      "image": "beet_salad_average_RGB_20240517_192329_jpg.rf.e906f1f065fd634a70c3f33060d64a4f.jpg",
+      "image_sha256": "eb3efcc26274dfc02c5f6837ac30b1e97cf613c722cd80f2ef3db1a37141be55",
+      "ground_truth": {"class_id": 9, "weight_grams": 207.0},
+      "prediction": {"class_id": 9, "confidence": 0.9330911636, "weight_grams": 96.5169372559, "box_iou": 0.9827101873}
+    }
+  ],
+  "interpretation": {
+    "meaningful_recognition": "Confirmed for this five-image FPB test smoke subset, with 3/5 exact class matches and 4/5 boxes at IoU >= 0.5.",
+    "weight_quality": "Not sufficient for acceptance: the five-image weight MAE is 48.54 g and the p90 absolute error is 110.48 g.",
+    "generalization": "Unknown for arbitrary phone photos, multi-ingredient meals, masks, occlusion, camera geometry, and mobile runtime.",
+    "next_gate": "Run the full FPB test split with a reproducible pinned runtime, then evaluate the separate consented weighed composite-meal corpus before any G-3 signature or product claim."
+  }
+}

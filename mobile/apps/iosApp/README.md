@@ -51,12 +51,38 @@ simulator section:
 xcrun xctrace list devices
 ```
 
-The local signing team is intentionally not committed to this project. Set
-`APPLE_TEAM_ID` to a team available in the local Xcode account, then run:
+### Apple account and provisioning
+
+The checked-in Xcode targets use the Apple Developer Team available in the
+local Xcode account `ancientslaviccalendar@gmail.com`:
+
+```text
+Team: Arturs Jaskevics
+Team ID: Z4JKB6L22Z
+```
+
+`DEVELOPMENT_TEAM` is set for the production, acceptance-host, and acceptance-
+test configurations in `SuperNutritionUIAcceptance.xcodeproj`. The signing
+certificate, private key, and generated provisioning profiles remain local
+machine inputs and must never be committed. Run CocoaPods from the iOS host
+directory before opening the workspace so its static-library targets remain
+unsigned and only the application is signed:
+
+```bash
+cd mobile/apps/iosApp
+pod install
+cd ../../..
+```
+
+Use `APPLE_TEAM_ID` only when intentionally testing with a different local
+team; the default checked-in team is `Z4JKB6L22Z`.
+
+Run the physical acceptance lane with the paired device unlocked:
 
 ```text
 export IOS_UDID="<physical-udid>"
-export APPLE_TEAM_ID="<local-team-id>"
+export APPLE_TEAM_ID="${APPLE_TEAM_ID:-Z4JKB6L22Z}"
+export IOS_CODE_SIGN_IDENTITY="Apple Development: <name> (<certificate-id>)"
 
 ./mobile/gradlew -p mobile :apps:sharedKit:linkDebugFrameworkIosArm64 \
   -Psupernutrition.enableIosDeviceTarget=true \
@@ -64,7 +90,7 @@ export APPLE_TEAM_ID="<local-team-id>"
   --dependency-verification=strict --no-configuration-cache
 
 xcodebuild test -quiet \
-  -project mobile/apps/iosApp/SuperNutritionUIAcceptance.xcodeproj \
+  -workspace mobile/apps/iosApp/SuperNutritionUIAcceptance.xcworkspace \
   -scheme SuperNutritionUIAcceptance \
   -destination "id=$IOS_UDID" \
   -derivedDataPath mobile/apps/iosApp/build/DerivedData \
@@ -76,6 +102,10 @@ xcodebuild test -quiet \
 
 scripts/run-physical-ios-fixtures.sh
 ```
+
+With a wildcard profile, the runner uses its checked-in fixture bundle ID
+`com.supernutrition.ios.arm64fixture.runner`. Set `IOS_FIXTURE_BUNDLE_ID` only
+when the profile allows a different matching bundle ID.
 
 Kotlin 2.4.10 exposes the physical target as `iosArm64TestBinaries`, not as an
 executable Gradle `iosArm64Test` task. The checked-in runner packages that
