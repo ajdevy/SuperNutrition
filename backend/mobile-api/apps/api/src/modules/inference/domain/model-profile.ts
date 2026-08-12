@@ -26,6 +26,11 @@ export interface RoutingPolicy {
 
 export interface ModelProfileSnapshot {
   readonly profileVersion: string;
+  /**
+   * The roster to return to if this one misbehaves, or null for the first
+   * published roster, which has nothing behind it.
+   */
+  readonly rollbackTarget: string | null;
   readonly routing: RoutingPolicy;
   readonly profiles: readonly ModelProfile[];
 }
