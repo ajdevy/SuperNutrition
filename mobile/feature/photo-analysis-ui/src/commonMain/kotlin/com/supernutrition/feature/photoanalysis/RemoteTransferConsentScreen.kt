@@ -95,9 +95,6 @@ private fun ConsentAnswers(state: RemoteTransferConsentState.Askable, onDecision
     }
 }
 
-/** Mirrors the capture screen's own private helper; both tag by automation id. */
-private fun Modifier.automationId(id: UiAutomationId): Modifier = testTag(id.value)
-
 private fun DisclosureField.automationId() = when (this) {
     DisclosureField.MARKET -> UiAutomationIds.CONSENT_MARKET
     DisclosureField.PROCESSING_REGION -> UiAutomationIds.CONSENT_PROCESSING_REGION

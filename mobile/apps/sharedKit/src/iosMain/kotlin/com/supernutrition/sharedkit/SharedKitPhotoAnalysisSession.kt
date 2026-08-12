@@ -47,8 +47,26 @@ import platform.Foundation.create
 public class SharedKitPhotoAnalysisSession private constructor(
     attemptId: String,
     public val presenterCopy: PhotoAnalysisPresenterCopy = localizedPhotoAnalysisCopy(),
+    /**
+     * P1-7 — this was a private property fixed at [PhotoAnalysisAnalysisLauncher.None].
+     *
+     * photoReturned() normalizes the image, dispatches PreparationSucceeded and
+     * then calls the launcher, so iOS reached Ready and stopped: no analysis, no
+     * candidate review, and nothing on screen to say why. A launcher nothing can
+     * replace is a seam that only ever holds a no-op.
+     *
+     * Still defaulted to None so the existing single-argument constructor keeps
+     * working unchanged; the iOS composition root passes a real one.
+     */
+    private val analysisLauncher: PhotoAnalysisAnalysisLauncher = PhotoAnalysisAnalysisLauncher.None,
 ) {
     public constructor(attemptId: String) : this(attemptId, localizedPhotoAnalysisCopy())
+
+    /** Entry point for a host that supplies a real analysis launcher. */
+    public constructor(
+        attemptId: String,
+        analysisLauncher: PhotoAnalysisAnalysisLauncher,
+    ) : this(attemptId, localizedPhotoAnalysisCopy(), analysisLauncher)
 
     private val leases = PhotoLeaseStore()
     private val sessions = PhotoSessionStore()
@@ -57,7 +75,6 @@ public class SharedKitPhotoAnalysisSession private constructor(
         leases = leases,
         sessions = sessions,
     )
-    private val analysisLauncher: PhotoAnalysisAnalysisLauncher = PhotoAnalysisAnalysisLauncher.None
 
     /** Native display copy retained only while the current photo flow needs it. */
     public var retainedPhoto: IosRetainedPhotoPreview? = null
@@ -215,7 +232,7 @@ public class SharedKitPhotoAnalysisSession private constructor(
             }
             require(
                 score in 0.0..1.0 && left in 0.0..1.0 && top in 0.0..1.0 &&
-                right in left..1.0 && bottom in top..1.0 && right > left && bottom > top
+                    right in left..1.0 && bottom in top..1.0 && right > left && bottom > top,
             ) {
                 "Region output must be bounded and non-degenerate"
             }

@@ -98,6 +98,7 @@ internal class PhotoAnalysisReducerTransitions(private val context: PhotoAnalysi
         event: PhotoAnalysisEvent,
     ): PhotoAnalysisReduction = when (event) {
         is PhotoAnalysisEvent.ReplacePhoto -> replace(current, current.ref, event.ref)
+
         PhotoAnalysisEvent.ScanAgain -> current.ref?.let(::clearAndCapture) ?: unchanged(PhotoAnalysisState.Capture)
 
         // P1-6 — the Android host dispatches PhotoCaptured after an import, from

@@ -58,7 +58,6 @@ object UiAutomationIds {
     val CAPTURE_OPEN_SETTINGS = UiAutomationId("capture_open_settings")
     val CAPTURE_NATIVE = UiAutomationId("capture_native")
 
-
     // Added with the remote-consent and meal-search surfaces.
     val CONSENT_SURFACE = UiAutomationId("consent_surface")
     val CONSENT_MARKET = UiAutomationId("consent_market")
