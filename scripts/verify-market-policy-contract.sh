@@ -44,7 +44,7 @@ if len(fixture_paths) < 2:
         f"fixture; found {len(fixture_paths)}"
     )
 
-schema = tomllib.loads(schema_path.read_text())
+schema = tomllib.loads(schema_path.read_text(encoding="utf-8"))
 if schema.get("contract_id") != "market-policy" or schema.get("release") != "v1":
     raise SystemExit("market-policy schema must identify the v1 release")
 if schema.get("language_neutral") is not True or schema.get("executable") is not False:
@@ -53,7 +53,7 @@ if schema.get("language_neutral") is not True or schema.get("executable") is not
 # The compatibility file was existence-checked and never opened, so its
 # `digest = "pending"` was never computed and its declared consumers were never
 # validated. A digest that says "pending" forever is not a digest.
-compat = tomllib.loads(compat_path.read_text())
+compat = tomllib.loads(compat_path.read_text(encoding="utf-8"))
 if compat.get("contract_id") != "market-policy" or compat.get("release") != "v1":
     raise SystemExit("market-policy compatibility file must target the v1 release")
 
@@ -173,12 +173,12 @@ def check_market_entry(where, entry):
 # Fixtures teach the shape, so a fixture that contradicts the rules teaches the
 # wrong one.
 for path in fixture_paths:
-    fixture = tomllib.loads(path.read_text())
+    fixture = tomllib.loads(path.read_text(encoding="utf-8"))
     for entry in fixture.get("market", []):
         check_market_entry(path.name, entry)
 
 # The instance is the shipped position. An entry here is a legal claim.
-instance = tomllib.loads(instance_path.read_text())
+instance = tomllib.loads(instance_path.read_text(encoding="utf-8"))
 if instance.get("contract_release") != "market-policy/v1":
     raise SystemExit("the mobile instance must name the contract release it conforms to")
 entries = instance.get("market", [])

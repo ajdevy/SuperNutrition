@@ -51,12 +51,46 @@ def release_files(root: Path) -> list[tuple[str, bytes]]:
     matrix = matrix_path(root)
     members: list[tuple[str, bytes]] = []
     for path in sorted(root.rglob("*")):
-        if not path.is_file():
+        relative = path.relative_to(root).as_posix()
+
+        # Refuse what hashing cannot see, rather than skipping it.
+        #
+        # The old rule skipped anything `is_file()` called false. That is every
+        # broken symlink: one added to a published release changed no digest at
+        # all, so `verify-release-immutability.sh` — which detects change purely
+        # by digest — saw the release as untouched and the addition passed
+        # without acknowledgement. That is exactly what its A-rule exists to
+        # catch.
+        #
+        # A symlinked DIRECTORY is the same hole with more inside it: rglob does
+        # not descend into one, so every file under it is invisible while
+        # looking, in a listing, like part of the release.
+        #
+        # A symlink to a regular file is deliberately NOT refused here. Its
+        # bytes are readable, so it is hashed and any change to them moves the
+        # digest — nothing is invisible. Whether a release may contain one at
+        # all is a separate question, and the contract verifiers answer it with
+        # a proper message; raising here would instead abort the digest helper
+        # that those same verifiers call to pin a release before checking it.
+        if path.is_symlink() and not path.is_file():
+            raise ValueError(
+                "release member is a symlink hashing cannot follow "
+                f"(broken, or a directory whose contents would be invisible): {relative}"
+            )
+
+        # Directories are not members; only their contents are.
+        if path.is_dir():
             continue
+
+        # A FIFO, socket or device node has no fixed content to hash, and was
+        # skipped silently for the same reason broken symlinks were.
+        if not path.is_file():
+            raise ValueError(f"release member is not a regular file: {relative}")
+
         content = path.read_bytes()
         if path == matrix:
             content = SELF_REFERENCE.sub(PLACEHOLDER, content)
-        members.append((path.relative_to(root).as_posix(), content))
+        members.append((relative, content))
     if not members:
         raise ValueError(f"release directory is empty: {root}")
     return members
