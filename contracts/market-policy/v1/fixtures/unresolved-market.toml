@@ -1,0 +1,18 @@
+# The canonical state of every market until a named approver says otherwise.
+# A reader should be able to see from the fixture alone that unresolved forbids
+# transfer for both modalities rather than merely lacking an opinion.
+schema = "supernutrition.market-policy-instance.v1"
+contract_release = "market-policy/v1"
+
+[[market]]
+market_id = "XX"
+jurisdiction = "unresolved"
+residency_posture = "unresolved"
+permitted_processing_regions = []
+photo_remote_permission = "forbidden"
+text_remote_permission = "forbidden"
+photo_consent_copy_version = "none"
+text_consent_copy_version = "none"
+accepted_input_languages = ["en"]
+legal_review_approver = "none"
+legal_review_expires_on = "1970-01-01"

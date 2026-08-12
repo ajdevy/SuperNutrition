@@ -74,6 +74,8 @@ data class CaptureCopy(
     val gridCellDescription: String,
     val selectedState: String,
     val notSelectedState: String,
+    val manualIngredientLabel: String,
+    val manualIngredientAdd: String,
     val resultPlaceholder: String,
     val loadingLabel: String,
 ) {
@@ -90,6 +92,8 @@ data class CaptureCopy(
             gridCellDescription,
             selectedState,
             notSelectedState,
+            manualIngredientLabel,
+            manualIngredientAdd,
             resultPlaceholder,
             loadingLabel,
         )
@@ -147,6 +151,7 @@ data class EvidenceCopy(
     val visibleRegionCount: String,
     val compositionHintsTitle: String,
     val compositionHintSource: String,
+    val manualIngredientSource: String,
     val partialDegradation: String,
 ) {
     init {
@@ -180,6 +185,7 @@ data class EvidenceCopy(
             visibleRegionCount,
             compositionHintsTitle,
             compositionHintSource,
+            manualIngredientSource,
             partialDegradation,
         )
 }
@@ -327,6 +333,12 @@ data class PhotoAnalysisVisibleComponentModel(
     /** E3.9 renders only immutable evidence; E5.1 owns a user-controlled selection. */
     val isSelected: Boolean = false,
     val selectionLabel: String,
+)
+
+data class PhotoAnalysisManualIngredientModel(
+    val canonicalItemId: String,
+    val label: String,
+    val sourceDishName: String? = null,
 )
 
 data class PhotoAnalysisDishIngredientHintModel(

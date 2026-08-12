@@ -80,6 +80,19 @@ contract_catalog_digest="$(digest_paths \
   contracts/inference/v2/fixtures/abstention-result.json \
   contracts/inference/v2/fixtures/failure-result.json \
   contracts/inference/v2/fixtures/telemetry-event.json \
+  contracts/inference/v3/schema.toml \
+  contracts/inference/v3/compatibility-matrix.toml \
+  contracts/inference/v3/RELEASE.md \
+  contracts/inference/v3/fixtures/request-photo.json \
+  contracts/inference/v3/fixtures/request-text.json \
+  contracts/inference/v3/fixtures/capability-ready-photo.json \
+  contracts/inference/v3/fixtures/capability-ready-text.json \
+  contracts/inference/v3/fixtures/photo-component-estimated-result.json \
+  contracts/inference/v3/fixtures/photo-component-not-evaluable-result.json \
+  contracts/inference/v3/fixtures/text-candidate-result.json \
+  contracts/inference/v3/fixtures/abstention-result.json \
+  contracts/inference/v3/fixtures/failure-result.json \
+  contracts/inference/v3/fixtures/telemetry-event.json \
   contracts/interaction-policy/v1/schema.toml \
   contracts/interaction-policy/v1/compatibility.toml \
   contracts/interaction-policy/v1/fixtures/defaults.toml)"

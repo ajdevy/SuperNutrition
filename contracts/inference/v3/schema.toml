@@ -1,0 +1,101 @@
+schema = "supernutrition.inference-evidence-contract.v3"
+schema_version = 1
+contract_id = "inference-evidence"
+release = "v3"
+previous_release = "inference-evidence/v2"
+language_neutral = true
+executable = false
+canonical_json = true
+numeric_nutrition = false
+canonical_fixture_kinds = ["request", "capability", "result", "telemetry"]
+
+[ports]
+request = "closed-photo-ref-or-text-plus-immutable-attempt-context"
+capability = "typed-state-reason-user-safe-message-key-with-modality-model-taxonomy-calibration"
+result = "photo-visible-components-or-text-ranked-item-groups-or-abstention-or-typed-failure"
+photo_component = "localized-candidate-calibrated-confidence-visibility-ambiguity-optional-normalized-region-mass"
+text_item_group = "source-span-with-ranked-candidates-and-calibrated-confidence"
+mass = "estimated-finite-ordered-gram-range-or-typed-not-evaluable-or-typed-abstained"
+provenance = "route-engine-model-taxonomy-calibration-contract"
+telemetry = "versioned-allowlisted-operational-buckets-without-raw-payload-or-component-values"
+
+[modality]
+values = ["photo", "text"]
+cardinality = "exactly-one"
+neither_or_both = "reject"
+
+[modality.photo]
+payload = "opaque-photo-ref"
+result = "components"
+mass = "estimated-or-not-evaluable-or-abstained"
+
+[modality.text]
+payload = "user-authored-description-plus-input-locale"
+result = "ranked-item-groups"
+source_span = "required"
+mass = "not-evaluable-by-definition"
+region = "forbidden"
+loggable = false
+telemetry_eligible = false
+
+[result.confidence]
+score_range = "0.0-1.0-inclusive"
+band = "derived-from-score"
+band_low_below = 0.5
+band_medium_below = 0.8
+band_high_from = 0.8
+band_mismatch = "reject"
+
+[capability]
+emitted_fields = [
+  "contractVersion",
+  "modality",
+  "state",
+  "reason",
+  "userMessageKey",
+  "engineId",
+  "modelVersion",
+  "taxonomyVersion",
+  "calibrationVersion",
+]
+optional_fields = []
+unlisted_field = "reject"
+state = ["unavailable", "model-required", "downloading", "ready", "temporarily-unavailable", "unsupported"]
+reason = ["none", "device-unsupported", "model-missing", "model-downloading", "resource-budget", "temporary-unavailable"]
+ready_requires_reason = "none"
+unavailable_forbids_reason = "none"
+
+[telemetry]
+emitted_fields = [
+  "contractVersion",
+  "modality",
+  "eventName",
+  "route",
+  "capabilityTier",
+  "durationBucket",
+  "resourceBucket",
+  "terminalOutcome",
+  "itemGroupCountBucket",
+  "componentCountBucket",
+  "engineId",
+  "modelVersion",
+  "taxonomyVersion",
+  "calibrationVersion",
+]
+unlisted_field = "reject"
+raw_payload = "forbidden"
+event_name = ["inference.attempt.completed"]
+route = ["local", "local-text", "remote"]
+capability_tier = ["unavailable", "model-required", "downloading", "ready", "temporarily-unavailable", "unsupported"]
+duration_bucket = ["under-2s", "2-to-5s", "over-5s"]
+resource_bucket = ["low", "moderate", "high"]
+terminal_outcome = ["candidates", "components", "abstention", "failure", "cancelled"]
+item_group_count_bucket = ["none", "1", "2-3", "4-plus"]
+component_count_bucket = ["zero", "one", "two-to-four", "five-or-more"]
+modality_route_agreement = "reject-mismatch"
+
+[compatibility]
+unknown_fields = "ignore"
+missing_required_fields = "reject"
+incompatible_change = "new-major-release"
+coexists_with = ["photo-inference-engine/v1", "inference-evidence/v2"]

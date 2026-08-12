@@ -1,0 +1,24 @@
+# The mobile market policy instance, conforming to contracts/market-policy/v1.
+#
+# Deliberately empty. Every market is therefore unresolved, which forbids remote
+# transfer for both modalities everywhere. That is not a gap waiting to be filled
+# in locally: a posture here is a legal position with a named human behind it,
+# and inventing one is the same class of failure as inventing a nutrition number
+# except the consequence is legal rather than dietary.
+#
+# The product works in this state. Deterministic catalog search and on-device
+# identification are available under every posture, so an unresolved market gets
+# a working app rather than a broken one. Publishing to a store market and
+# permitting remote processing there are separate decisions, and only the second
+# one lives in this file.
+#
+# To add a market, every field in `[market].required_fields` must be present,
+# including `legal_review_approver` and `legal_review_expires_on`. An expired
+# review is treated exactly as an absent one.
+schema = "supernutrition.market-policy-instance.v1"
+lifecycle = "active"
+source_digest = "local-only"
+contract_release = "market-policy/v1"
+
+# No [[market]] entries. See above -- this is the reviewed state, not an omission.
+market_count = 0

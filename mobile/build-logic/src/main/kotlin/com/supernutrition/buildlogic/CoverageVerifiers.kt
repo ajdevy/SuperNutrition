@@ -150,6 +150,27 @@ internal object JvmCoverageVerifier {
         return JvmCoverageSummary(linePercent, branchPercent, productionProjects.size)
     }
 
+    /** Enforces a stricter floor for one named module using the same report parser as the aggregate gate. */
+    fun verifyModule(
+        reportRoot: Path,
+        projectPath: String,
+        minLinePercent: Double,
+        minBranchPercent: Double,
+    ): JvmCoverageSummary {
+        val line = counter(reportText(reportRoot, projectPath), "LINE", projectPath)
+        val branch = counter(reportText(reportRoot, projectPath), "BRANCH", projectPath)
+        val linePercent = percentage(line.second, line.first, "line")
+        val branchPercent = percentage(branch.second, branch.first, "branch")
+        require(linePercent >= minLinePercent) {
+            "$projectPath line coverage is ${formatCoverage(linePercent)}%; minimum is ${formatCoverage(minLinePercent)}%"
+        }
+        require(branchPercent >= minBranchPercent) {
+            "$projectPath branch coverage is ${formatCoverage(branchPercent)}%; " +
+                "minimum is ${formatCoverage(minBranchPercent)}%"
+        }
+        return JvmCoverageSummary(linePercent, branchPercent, 1)
+    }
+
     fun counter(
         text: String,
         type: String,
@@ -174,6 +195,18 @@ internal object JvmCoverageVerifier {
             "JVM Kover report for $projectPath has an empty $type denominator"
         }
         return missed to covered
+    }
+
+    private fun reportText(reportRoot: Path, projectPath: String): String {
+        val report = reportPaths(reportRoot, projectPath).firstOrNull(Files::isRegularFile)
+        require(report != null) {
+            "Missing JVM/Android Kover report for $projectPath: ${reportPaths(reportRoot, projectPath).joinToString()}"
+        }
+        return try {
+            Files.readString(report)
+        } catch (error: Exception) {
+            throw IllegalArgumentException("Unable to read JVM Kover report for $projectPath: $report", error)
+        }
     }
 
     fun percentage(covered: Long, missed: Long, kind: String): Double {

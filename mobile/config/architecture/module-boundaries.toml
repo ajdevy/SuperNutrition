@@ -89,6 +89,20 @@ source_sets = ["commonMain", "commonTest", "jvmTest", "androidMain", "androidDev
 production = false
 
 [[module]]
+id = "feature-meal-search-presenter"
+path = "mobile/feature/meal-search-presenter"
+kind = "presentation"
+source_sets = ["commonMain", "commonTest", "jvmTest"]
+production = false
+
+[[module]]
+id = "feature-meal-search-ui"
+path = "mobile/feature/meal-search-ui"
+kind = "compose-ui"
+source_sets = ["commonMain", "commonTest", "jvmTest"]
+production = false
+
+[[module]]
 id = "feature-presenter"
 path = "mobile/feature/photo-analysis-presenter"
 kind = "presentation"
@@ -144,6 +158,22 @@ scope = "production"
 [[allowed_edge]]
 from = "feature-presenter"
 to = "domain|core"
+scope = "production"
+
+# Same shape as feature-presenter above, declared separately because edges are
+# keyed by module id and ids are unique — the photo presenter holds the plain
+# role name. A second presenter is a second edge to declare rather than a rule
+# to loosen, which is the point of an inventory that fails on anything
+# undeclared.
+[[allowed_edge]]
+from = "feature-meal-search-presenter"
+to = "domain|core"
+scope = "production"
+
+# The screen depends on its presenter and on core:ui for the automation ids.
+[[allowed_edge]]
+from = "feature-meal-search-ui"
+to = "feature-meal-search-presenter|core"
 scope = "production"
 
 [[allowed_edge]]
