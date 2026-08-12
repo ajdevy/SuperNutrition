@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Negative fixtures for inference-engine v2.
+# Negative fixtures for inference-engine v3.
 #
 # v2 exists to carry a modality, so these cover the properties v1 could not
 # express. A verifier that only passes on the happy path proves nothing about
@@ -7,10 +7,10 @@
 set -euo pipefail
 
 repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
-verifier="${repo_root}/scripts/verify-inference-v2-contract.sh"
+verifier="${repo_root}/scripts/verify-inference-v3-contract.sh"
 
 if test ! -x "$verifier"; then
-    echo "inference v2 verifier is missing or not executable: $verifier" >&2
+    echo "inference v3 verifier is missing or not executable: $verifier" >&2
     exit 1
 fi
 
@@ -20,7 +20,7 @@ trap 'rm -rf "$work"' EXIT
 # Each case gets a pristine copy, mutates one thing, and must be rejected.
 expect_rejected() {
     local label="$1" candidate="$work/$2"
-    if SUPERNUTRITION_INFERENCE_V2_CONTRACT="$candidate" "$verifier" >/dev/null 2>&1; then
+    if SUPERNUTRITION_INFERENCE_V3_CONTRACT="$candidate" "$verifier" >/dev/null 2>&1; then
         echo "negative fixture unexpectedly passed: $label" >&2
         exit 1
     fi
@@ -28,7 +28,7 @@ expect_rejected() {
 
 seed() {
     local name="$1"
-    cp -R "${repo_root}/contracts/inference/v2" "$work/$name"
+    cp -R "${repo_root}/contracts/inference/v3" "$work/$name"
 }
 
 # Rejection for the right reason. `expect_rejected` proves only that the
@@ -77,7 +77,7 @@ PY
 
 expect_rejected_because() {
     local label="$1" candidate="$work/$2" pattern="$3" output
-    if output=$(SUPERNUTRITION_INFERENCE_V2_CONTRACT="$candidate" "$verifier" 2>&1); then
+    if output=$(SUPERNUTRITION_INFERENCE_V3_CONTRACT="$candidate" "$verifier" 2>&1); then
         echo "negative fixture unexpectedly passed: $label" >&2
         exit 1
     fi
@@ -93,7 +93,7 @@ expect_rejected_because() {
 # passes. Without this, every case below could be passing on a stale digest.
 seed repin_control
 repin repin_control
-if ! SUPERNUTRITION_INFERENCE_V2_CONTRACT="$work/repin_control" "$verifier" >/dev/null 2>&1; then
+if ! SUPERNUTRITION_INFERENCE_V3_CONTRACT="$work/repin_control" "$verifier" >/dev/null 2>&1; then
     echo "positive control failed: a re-pinned unmutated v2 copy was rejected" >&2
     exit 1
 fi
@@ -101,7 +101,7 @@ fi
 # Positive control first: an unmutated copy must pass, or every rejection below
 # proves only that the copy is broken.
 seed baseline
-if ! SUPERNUTRITION_INFERENCE_V2_CONTRACT="$work/baseline" "$verifier" >/dev/null 2>&1; then
+if ! SUPERNUTRITION_INFERENCE_V3_CONTRACT="$work/baseline" "$verifier" >/dev/null 2>&1; then
     echo "positive control failed: an unmutated v2 copy was rejected" >&2
     exit 1
 fi
@@ -307,4 +307,4 @@ mutate_capability capability_silent_failure "state=unsupported" "modelVersion="
 repin capability_silent_failure
 expect_rejected_because "unavailable and reporting no reason" capability_silent_failure "reports no reason"
 
-echo "inference v2 negative fixtures: OK"
+echo "inference v3 negative fixtures: OK"

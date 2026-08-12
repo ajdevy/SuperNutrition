@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Read-only validation of the inference-engine v2 release.
+# Read-only validation of the inference-engine v3 release.
 #
 # v2 exists to carry an identification modality, so the checks that matter most
 # are the ones v1 could not express: exactly one payload per request, a
@@ -8,7 +8,7 @@
 set -euo pipefail
 
 repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
-contract_root="${SUPERNUTRITION_INFERENCE_V2_CONTRACT:-${repo_root}/contracts/inference/v2}"
+contract_root="${SUPERNUTRITION_INFERENCE_V3_CONTRACT:-${repo_root}/contracts/inference/v3}"
 
 python3 - "$contract_root" <<'PY'
 from hashlib import sha256
@@ -25,7 +25,7 @@ release_path = root / "RELEASE.md"
 fixture_paths = sorted((root / "fixtures").glob("*.json"))
 for path in (schema_path, matrix_path, release_path, *fixture_paths):
     if not path.is_file():
-        raise SystemExit(f"missing inference v2 contract file: {path}")
+        raise SystemExit(f"missing inference v3 contract file: {path}")
 
 expected_fixtures = {
     "abstention-result.json",
@@ -38,37 +38,37 @@ expected_fixtures = {
     "telemetry-event.json",
 }
 if {path.name for path in fixture_paths} != expected_fixtures:
-    raise SystemExit("inference v2 fixture set drifted; both modalities must stay covered")
+    raise SystemExit("inference v3 fixture set drifted; both modalities must stay covered")
 
 schema = tomllib.loads(schema_path.read_text())
 matrix = tomllib.loads(matrix_path.read_text())
 
 # The rename is the reason this is a major release rather than an additive
 # change, so it is asserted rather than assumed.
-if schema.get("contract_id") != "inference-engine" or schema.get("release") != "v2":
-    raise SystemExit("v2 schema must identify the modality-neutral inference-engine v2 release")
+if schema.get("contract_id") != "inference-engine" or schema.get("release") != "v3":
+    raise SystemExit("v3 schema must identify the modality-neutral inference-engine v3 release")
 if schema.get("previous_release") != "photo-inference-engine/v1":
-    raise SystemExit("v2 must record the release it supersedes")
+    raise SystemExit("v3 must record the release it supersedes")
 if schema.get("language_neutral") is not True or schema.get("executable") is not False:
     raise SystemExit("inference contract must remain language-neutral data only")
 if schema.get("numeric_nutrition") is not False:
     raise SystemExit("inference contract must forbid numeric nutrition")
 if schema.get("canonical_fixture_kinds") != ["request", "capability", "result", "telemetry"]:
-    raise SystemExit("v2 fixture kinds drifted; request is a canonical kind because modality lives there")
-if matrix.get("contract_id") != "inference-engine" or matrix.get("release") != "v2":
-    raise SystemExit("v2 compatibility matrix must target the v2 release")
+    raise SystemExit("v3 fixture kinds drifted; request is a canonical kind because modality lives there")
+if matrix.get("contract_id") != "inference-engine" or matrix.get("release") != "v3":
+    raise SystemExit("v3 compatibility matrix must target the v3 release")
 
 compatibility = schema.get("compatibility", {})
 if compatibility.get("incompatible_change") != "new-major-release":
-    raise SystemExit("v2 must keep requiring a new major release for an incompatible change")
+    raise SystemExit("v3 must keep requiring a new major release for an incompatible change")
 if compatibility.get("coexists_with") != "photo-inference-engine/v1":
-    raise SystemExit("v2 must declare that v1 remains published during migration")
+    raise SystemExit("v3 must declare that v1 remains published during migration")
 
 modality = schema.get("modality", {})
 if sorted(modality.get("values", [])) != ["photo", "text"]:
-    raise SystemExit("v2 must declare exactly the photo and text modalities")
+    raise SystemExit("v3 must declare exactly the photo and text modalities")
 if modality.get("cardinality") != "exactly-one" or modality.get("neither_or_both") != "reject":
-    raise SystemExit("v2 must require exactly one payload and reject neither-or-both")
+    raise SystemExit("v3 must require exactly one payload and reject neither-or-both")
 if modality.get("text", {}).get("input_locale") != "required":
     raise SystemExit("text modality must carry its input locale; catalog country is not language")
 if modality.get("text", {}).get("loggable") is not False:
@@ -133,7 +133,7 @@ capability_schema = schema.get("capability", {})
 capability = fixtures["capability-ready.json"]
 capability_fields = capability_schema.get("emitted_fields", [])
 if not capability_fields:
-    raise SystemExit("v2 must declare the fields a capability report carries")
+    raise SystemExit("v3 must declare the fields a capability report carries")
 if capability_schema.get("unlisted_field") != "reject":
     raise SystemExit("an allowlist that admits unlisted fields is not an allowlist")
 optional_capability_fields = set(capability_schema.get("optional_fields", []))
@@ -179,7 +179,7 @@ if "description" in json.dumps(telemetry):
 telemetry_schema = schema.get("telemetry", {})
 allowed_fields = telemetry_schema.get("emitted_fields", [])
 if not allowed_fields:
-    raise SystemExit("v2 must declare the telemetry fields a producer may emit")
+    raise SystemExit("v3 must declare the telemetry fields a producer may emit")
 if telemetry_schema.get("unlisted_field") != "reject":
     raise SystemExit("an allowlist that admits unlisted fields is not an allowlist")
 if telemetry_schema.get("raw_payload") != "forbidden":
@@ -244,7 +244,7 @@ for relative, content in sorted(release_files):
     hash_value.update(content)
 if matrix.get("digest") != hash_value.hexdigest():
     raise SystemExit(
-        f"inference v2 digest is stale: recorded {matrix.get('digest')}, computed {hash_value.hexdigest()}"
+        f"inference v3 digest is stale: recorded {matrix.get('digest')}, computed {hash_value.hexdigest()}"
     )
 
 allowed = {
@@ -257,7 +257,7 @@ entries = list(root.rglob("*"))
 if any(path.is_symlink() for path in entries) or any(
     str(path.relative_to(root)) not in allowed for path in entries if path.is_file()
 ):
-    raise SystemExit("inference v2 release contains executable or source material")
+    raise SystemExit("inference v3 release contains executable or source material")
 
-print("inference-engine contract: OK (v2 modality, both payloads, spans, and compatibility matrix)")
+print("inference-engine contract: OK (v3 modality, both payloads, spans, and compatibility matrix)")
 PY

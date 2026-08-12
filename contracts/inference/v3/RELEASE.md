@@ -1,11 +1,11 @@
-# inference-engine/v2
+# inference-engine/v3
 
 Immutable, language-neutral, data-only contract release for the shared Engine
 ports, carrying an identification modality. Engines exchange opaque attempt
 context and identification evidence only; nutrition values are calculated later
 from a confirmed catalog record and are not part of this release.
 
-## Why v2 rather than an edit to v1
+## Why v3 rather than an edit to v1
 
 `photo-inference-engine/v1` admits exactly one request payload, an opaque
 `PhotoRef`, and names the photo in its own `contract_id`. A text engine cannot

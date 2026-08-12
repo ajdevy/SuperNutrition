@@ -9,8 +9,8 @@ elif [[ -n "${SUPERNUTRITION_INFERENCE_CONTRACT:-}" ]]; then
 else
     contract_roots=(
         "${repo_root}/contracts/inference/v1"
-        # The modality-neutral inference-engine/v2 release has its own validator,
-        # scripts/verify-inference-v2-contract.sh. This script validates the
+        # The modality-neutral inference-engine/v3 release has its own validator,
+        # scripts/verify-inference-v3-contract.sh. This script validates the
         # inference-evidence release, which lives under its own contract_id.
         "${repo_root}/contracts/inference-evidence/v2"
     )
@@ -643,4 +643,4 @@ PY
 # Deliberately not passed the SUPERNUTRITION_INFERENCE_CONTRACT override: that
 # variable names a v1 tree, and the negative-fixture harness points it at mutated
 # copies. v2 is verified where it actually lives.
-"${repo_root}/scripts/verify-inference-v2-contract.sh"
+"${repo_root}/scripts/verify-inference-v3-contract.sh"

@@ -1,1 +1,0 @@
-{"contractVersion":"inference-engine/v2","modality":"text","eventName":"inference.attempt.completed","route":"local-text","capabilityTier":"ready","durationBucket":"under-2s","resourceBucket":"low","terminalOutcome":"candidates","itemGroupCountBucket":"2-3","engineId":"fixture-engine","modelVersion":"fixture-model-1"}

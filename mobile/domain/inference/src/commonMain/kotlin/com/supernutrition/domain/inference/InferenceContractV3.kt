@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /** The modality-neutral release this binding implements. */
-const val INFERENCE_CONTRACT_V2: String = "inference-engine/v2"
+const val INFERENCE_CONTRACT_V3: String = "inference-engine/v3"
 
 /**
  * Which payload an inference request carries.
@@ -35,7 +35,7 @@ enum class InferenceModality {
  * validation. A request carrying neither or both is unrepresentable, which is
  * stronger than rejecting it at runtime.
  */
-sealed interface InferenceRequestV2 {
+sealed interface InferenceRequestV3 {
     val modality: InferenceModality
     val attemptContext: InferenceAttemptContext
 
@@ -53,7 +53,7 @@ sealed interface InferenceRequestV2 {
     data class Photo internal constructor(
         val photoRef: PhotoRef,
         override val attemptContext: InferenceAttemptContext,
-    ) : InferenceRequestV2 {
+    ) : InferenceRequestV3 {
         override val modality: InferenceModality get() = InferenceModality.PHOTO
 
         init {
@@ -77,7 +77,7 @@ sealed interface InferenceRequestV2 {
         val description: String,
         val inputLocale: String,
         override val attemptContext: InferenceAttemptContext,
-    ) : InferenceRequestV2 {
+    ) : InferenceRequestV3 {
         override val modality: InferenceModality get() = InferenceModality.TEXT
 
         init {
@@ -93,7 +93,7 @@ sealed interface InferenceRequestV2 {
          * address typed by mistake — and anything that interpolates a request
          * into a log line or crash report would otherwise leak it.
          */
-        override fun toString(): String = "InferenceRequestV2.Text(description=redacted, inputLocale=$inputLocale)"
+        override fun toString(): String = "InferenceRequestV3.Text(description=redacted, inputLocale=$inputLocale)"
 
         override fun equals(other: Any?): Boolean = other is Text &&
             description == other.description &&
@@ -109,14 +109,14 @@ sealed interface InferenceRequestV2 {
     }
 
     companion object {
-        fun photo(photoRef: PhotoRef, attemptContext: InferenceAttemptContext): InferenceRequestV2 =
+        fun photo(photoRef: PhotoRef, attemptContext: InferenceAttemptContext): InferenceRequestV3 =
             Photo(photoRef, attemptContext)
 
         fun text(
             description: String,
             inputLocale: String,
             attemptContext: InferenceAttemptContext,
-        ): InferenceRequestV2 = Text(description.trim(), inputLocale, attemptContext)
+        ): InferenceRequestV3 = Text(description.trim(), inputLocale, attemptContext)
     }
 }
 
@@ -125,7 +125,7 @@ sealed interface InferenceRequestV2 {
  * property v1 established — no numeric nutrition, typed failures, abstention as
  * a first-class outcome, provenance on every result — is modality-independent.
  */
-interface InferenceEngineV2 {
+interface InferenceEngineV3 {
     /** Every implementation must explicitly bind itself to the frozen contract release. */
     val contractVersion: String
 
@@ -139,15 +139,15 @@ interface InferenceEngineV2 {
      * still waiting on a text model. v1's `PhotoInferenceEngine.capability()`
      * needs no argument because it has one modality to report on; this one does.
      */
-    suspend fun capability(modality: InferenceModality): EngineCapabilityV2
+    suspend fun capability(modality: InferenceModality): EngineCapabilityV3
 
     /**
-     * Returns [InferenceResultV2] rather than v1's `PhotoInferenceResult`.
+     * Returns [InferenceResultV3] rather than v1's `PhotoInferenceResult`.
      *
      * The interface accepted a text request and could only answer in a
      * photo-shaped result, which had no way to carry the per-item spans a typed
      * description produces — so the modality this contract exists to add was
      * representable on the way in and lost on the way out.
      */
-    suspend fun analyze(request: InferenceRequestV2): InferenceResultV2
+    suspend fun analyze(request: InferenceRequestV3): InferenceResultV3
 }

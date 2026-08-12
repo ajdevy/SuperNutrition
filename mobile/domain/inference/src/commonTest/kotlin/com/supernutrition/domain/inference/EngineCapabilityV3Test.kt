@@ -9,36 +9,36 @@ import kotlin.test.assertNull
  * The v2 capability envelope, against the contract's own canonical fixture.
  *
  * v2 shipped `capability-ready.json` and nothing could read it: `EngineCapability`
- * requires contract-v1 and has no modality field. `InferenceEngineV2` was
+ * requires contract-v1 and has no modality field. `InferenceEngineV3` was
  * meanwhile less capable than the interface it replaces — `PhotoInferenceEngine`
  * reports capability and v2 did not — so a v2 engine had no way to say its model
  * was missing, and the E7.4 promise that the floor is reachable when the engine
  * is not ready had nothing to read "not ready" from.
  */
-class EngineCapabilityV2Test {
+class EngineCapabilityV3Test {
     private val canonical =
-        "{\"contractVersion\":\"inference-engine/v2\",\"modality\":\"text\",\"state\":\"ready\",\"reason\":\"" +
+        "{\"contractVersion\":\"inference-engine/v3\",\"modality\":\"text\",\"state\":\"ready\",\"reason\":\"" +
             "none\",\"userMessageKey\":\"inference.capability.ready\",\"engineId\":\"fixture-engine\",\"model" +
             "Version\":\"fixture-model-1\"}"
 
     @Test
     fun `the canonical fixture round-trips byte for byte`() {
-        val capability = InferenceContractV2Json.decodeCapability(canonical)
+        val capability = InferenceContractV3Json.decodeCapability(canonical)
 
-        assertEquals(INFERENCE_CONTRACT_V2, capability.contractVersion)
+        assertEquals(INFERENCE_CONTRACT_V3, capability.contractVersion)
         assertEquals(InferenceModality.TEXT, capability.modality)
         assertEquals(CapabilityState.READY, capability.state)
         assertEquals(CapabilityReason.NONE, capability.reason)
         assertEquals("fixture-model-1", capability.modelVersion)
-        assertEquals(canonical, InferenceContractV2Json.encodeCapability(capability))
+        assertEquals(canonical, InferenceContractV3Json.encodeCapability(capability))
     }
 
     @Test
     fun `a v1 capability payload is rejected rather than silently accepted`() {
         // The reason this type exists rather than a widened v1 one.
         assertFailsWith<IllegalArgumentException> {
-            InferenceContractV2Json.decodeCapability(
-                canonical.replace(INFERENCE_CONTRACT_V2, "photo-inference-engine/v1"),
+            InferenceContractV3Json.decodeCapability(
+                canonical.replace(INFERENCE_CONTRACT_V3, "photo-inference-engine/v1"),
             )
         }
     }
@@ -91,8 +91,8 @@ class EngineCapabilityV2Test {
         // message key leaves a surface with an unavailable state and nothing to
         // tell the user about it.
         assertFailsWith<IllegalArgumentException> {
-            EngineCapabilityV2(
-                contractVersion = INFERENCE_CONTRACT_V2,
+            EngineCapabilityV3(
+                contractVersion = INFERENCE_CONTRACT_V3,
                 modality = InferenceModality.TEXT,
                 state = CapabilityState.READY,
                 reason = CapabilityReason.NONE,
@@ -102,8 +102,8 @@ class EngineCapabilityV2Test {
             )
         }
         assertFailsWith<IllegalArgumentException> {
-            EngineCapabilityV2(
-                contractVersion = INFERENCE_CONTRACT_V2,
+            EngineCapabilityV3(
+                contractVersion = INFERENCE_CONTRACT_V3,
                 modality = InferenceModality.TEXT,
                 state = CapabilityState.READY,
                 reason = CapabilityReason.NONE,
@@ -152,8 +152,8 @@ class EngineCapabilityV2Test {
         state: CapabilityState,
         reason: CapabilityReason,
         modelVersion: String?,
-    ) = EngineCapabilityV2(
-        contractVersion = INFERENCE_CONTRACT_V2,
+    ) = EngineCapabilityV3(
+        contractVersion = INFERENCE_CONTRACT_V3,
         modality = modality,
         state = state,
         reason = reason,

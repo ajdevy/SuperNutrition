@@ -25,29 +25,29 @@ import kotlinx.serialization.Serializable
  * it enforces that better than a rule asking a caller not to.
  */
 @Serializable
-data class InferenceTelemetryEventV2(
+data class InferenceTelemetryEventV3(
     val contractVersion: String,
     val modality: InferenceModality,
-    val eventName: TelemetryEventNameV2,
-    val route: InferenceRouteV2,
+    val eventName: TelemetryEventNameV3,
+    val route: InferenceRouteV3,
     val capabilityTier: CapabilityState,
-    val durationBucket: TelemetryDurationBucketV2,
-    val resourceBucket: TelemetryResourceBucketV2,
+    val durationBucket: TelemetryDurationBucketV3,
+    val resourceBucket: TelemetryResourceBucketV3,
     val terminalOutcome: InferenceTelemetryOutcome,
     val itemGroupCountBucket: TelemetryItemGroupCountBucket,
     val engineId: String,
     val modelVersion: String,
 ) {
     init {
-        requireContractV2(contractVersion, "Telemetry must use contract-v2")
+        requireContractV3(contractVersion, "Telemetry must use contract-v2")
         requireNonBlankValue(engineId, "Telemetry engine ID must not be blank")
         requireNonBlankValue(modelVersion, "Telemetry model version must not be blank")
         when (modality) {
-            InferenceModality.TEXT -> require(route != InferenceRouteV2.LOCAL) {
+            InferenceModality.TEXT -> require(route != InferenceRouteV3.LOCAL) {
                 "A text attempt must not report route 'local'; that is the flattening local-text prevents"
             }
 
-            InferenceModality.PHOTO -> require(route != InferenceRouteV2.LOCAL_TEXT) {
+            InferenceModality.PHOTO -> require(route != InferenceRouteV3.LOCAL_TEXT) {
                 "A photo attempt cannot have been answered by the text engine"
             }
         }
@@ -64,16 +64,16 @@ data class InferenceTelemetryEventV2(
          * capability tier, duration, resource use — are supplied.
          */
         fun forAttempt(
-            result: InferenceResultV2,
+            result: InferenceResultV3,
             capabilityTier: CapabilityState,
-            durationBucket: TelemetryDurationBucketV2,
-            resourceBucket: TelemetryResourceBucketV2,
-        ): InferenceTelemetryEventV2 {
+            durationBucket: TelemetryDurationBucketV3,
+            resourceBucket: TelemetryResourceBucketV3,
+        ): InferenceTelemetryEventV3 {
             val provenance = result.outcome.reportingProvenance()
-            return InferenceTelemetryEventV2(
-                contractVersion = INFERENCE_CONTRACT_V2,
+            return InferenceTelemetryEventV3(
+                contractVersion = INFERENCE_CONTRACT_V3,
                 modality = result.modality,
-                eventName = TelemetryEventNameV2.ATTEMPT_COMPLETED,
+                eventName = TelemetryEventNameV3.ATTEMPT_COMPLETED,
                 route = provenance.route,
                 capabilityTier = capabilityTier,
                 durationBucket = durationBucket,
@@ -97,28 +97,28 @@ data class InferenceTelemetryEventV2(
  * event per route, which nothing asks for yet, so it fails here instead of
  * guessing.
  */
-private fun InferenceOutcomeV2.reportingProvenance(): InferenceProvenanceV2 = when (this) {
-    is InferenceOutcomeV2.Candidates -> {
-        val provenances = itemGroups.flatMap { group -> group.candidates.map(InferenceCandidateV2::provenance) }
+private fun InferenceOutcomeV3.reportingProvenance(): InferenceProvenanceV3 = when (this) {
+    is InferenceOutcomeV3.Candidates -> {
+        val provenances = itemGroups.flatMap { group -> group.candidates.map(InferenceCandidateV3::provenance) }
         val distinct = provenances.distinct()
         require(distinct.size == 1) {
-            "A result spanning ${distinct.map(InferenceProvenanceV2::route)} needs one event per route, not one event"
+            "A result spanning ${distinct.map(InferenceProvenanceV3::route)} needs one event per route, not one event"
         }
         distinct.single()
     }
 
-    is InferenceOutcomeV2.Abstention -> provenance
+    is InferenceOutcomeV3.Abstention -> provenance
 
-    is InferenceOutcomeV2.Failure -> provenance
+    is InferenceOutcomeV3.Failure -> provenance
 }
 
-private fun InferenceOutcomeV2.terminalOutcome(): InferenceTelemetryOutcome = when (this) {
-    is InferenceOutcomeV2.Candidates -> InferenceTelemetryOutcome.CANDIDATES
-    is InferenceOutcomeV2.Abstention -> InferenceTelemetryOutcome.ABSTENTION
-    is InferenceOutcomeV2.Failure -> InferenceTelemetryOutcome.FAILURE
+private fun InferenceOutcomeV3.terminalOutcome(): InferenceTelemetryOutcome = when (this) {
+    is InferenceOutcomeV3.Candidates -> InferenceTelemetryOutcome.CANDIDATES
+    is InferenceOutcomeV3.Abstention -> InferenceTelemetryOutcome.ABSTENTION
+    is InferenceOutcomeV3.Failure -> InferenceTelemetryOutcome.FAILURE
 }
 
-private fun InferenceOutcomeV2.itemGroupCount(): Int = (this as? InferenceOutcomeV2.Candidates)?.itemGroups?.size ?: 0
+private fun InferenceOutcomeV3.itemGroupCount(): Int = (this as? InferenceOutcomeV3.Candidates)?.itemGroups?.size ?: 0
 
 /**
  * Only the attempt event is bound. v1's capability event keeps v1's shape until
@@ -126,14 +126,14 @@ private fun InferenceOutcomeV2.itemGroupCount(): Int = (this as? InferenceOutcom
  * contract.
  */
 @Serializable
-enum class TelemetryEventNameV2 {
+enum class TelemetryEventNameV3 {
     @SerialName("inference.attempt.completed")
     ATTEMPT_COMPLETED,
 }
 
 /** v2's boundaries, which are not v1's. Both vocabularies are pinned by their own release. */
 @Serializable
-enum class TelemetryDurationBucketV2 {
+enum class TelemetryDurationBucketV3 {
     @SerialName("under-2s")
     UNDER_2S,
 
@@ -151,7 +151,7 @@ enum class TelemetryDurationBucketV2 {
  * can be compared against a budget once one exists.
  */
 @Serializable
-enum class TelemetryResourceBucketV2 {
+enum class TelemetryResourceBucketV3 {
     @SerialName("low")
     LOW,
 

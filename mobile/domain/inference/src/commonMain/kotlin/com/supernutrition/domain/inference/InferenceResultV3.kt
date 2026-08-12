@@ -20,8 +20,8 @@ import kotlinx.serialization.Serializable
  * [InferenceFailureCode]. Duplicating those would create the second source of
  * truth this repository keeps paying for.
  */
-internal fun requireContractV2(value: String, message: String): String = value.also {
-    require(it == INFERENCE_CONTRACT_V2) { message }
+internal fun requireContractV3(value: String, message: String): String = value.also {
+    require(it == INFERENCE_CONTRACT_V3) { message }
 }
 
 /**
@@ -30,7 +30,7 @@ internal fun requireContractV2(value: String, message: String): String = value.a
  * FR-6 reports their availability separately.
  */
 @Serializable
-enum class InferenceRouteV2 {
+enum class InferenceRouteV3 {
     @SerialName("local")
     LOCAL,
 
@@ -43,7 +43,7 @@ enum class InferenceRouteV2 {
 
 /** v1's abstention reasons plus the one only typed input can produce. */
 @Serializable
-enum class AbstentionReasonV2 {
+enum class AbstentionReasonV3 {
     @SerialName("identity-ambiguous")
     IDENTITY_AMBIGUOUS,
 
@@ -68,8 +68,8 @@ enum class AbstentionReasonV2 {
 }
 
 @Serializable
-data class InferenceProvenanceV2(
-    val route: InferenceRouteV2,
+data class InferenceProvenanceV3(
+    val route: InferenceRouteV3,
     val engineId: String,
     val modelVersion: String,
     val calibrationVersion: String,
@@ -79,18 +79,18 @@ data class InferenceProvenanceV2(
         requireNonBlankValue(engineId, "Provenance engine ID must not be blank")
         requireNonBlankValue(modelVersion, "Provenance model version must not be blank")
         requireNonBlankValue(calibrationVersion, "Provenance calibration version must not be blank")
-        requireContractV2(contractVersion, "Provenance must use contract-v2")
+        requireContractV3(contractVersion, "Provenance must use contract-v2")
     }
 }
 
 @Serializable
-data class InferenceCandidateV2(
+data class InferenceCandidateV3(
     val candidateId: String,
     val label: String,
     val rank: Int,
     val confidence: Confidence,
     val unresolvedAssumptions: List<InferenceAssumption>,
-    val provenance: InferenceProvenanceV2,
+    val provenance: InferenceProvenanceV3,
 ) {
     init {
         requireNonBlankValue(candidateId, "Candidate ID must not be blank")
@@ -125,12 +125,12 @@ data class InferenceSourceSpan(val start: Int, val end: Int) {
 data class InferenceItemGroup(
     val groupId: String,
     val sourceSpan: InferenceSourceSpan? = null,
-    val candidates: List<InferenceCandidateV2>,
+    val candidates: List<InferenceCandidateV3>,
 ) {
     init {
         requireNonBlankValue(groupId, "Item group ID must not be blank")
         require(candidates.isNotEmpty()) { "Item group must carry at least one candidate" }
-        require(candidates.map(InferenceCandidateV2::rank).toSet().size == candidates.size) {
+        require(candidates.map(InferenceCandidateV3::rank).toSet().size == candidates.size) {
             "Candidate ranks must be unique within an item group"
         }
     }
@@ -138,10 +138,10 @@ data class InferenceItemGroup(
 
 /** What a v2 engine concluded. Identity and evidence only; never a number. */
 @Serializable
-sealed interface InferenceOutcomeV2 {
+sealed interface InferenceOutcomeV3 {
     @Serializable
     @SerialName("candidates")
-    data class Candidates(val itemGroups: List<InferenceItemGroup>) : InferenceOutcomeV2 {
+    data class Candidates(val itemGroups: List<InferenceItemGroup>) : InferenceOutcomeV3 {
         init {
             require(itemGroups.isNotEmpty()) { "Candidate outcome must not be empty" }
             require(itemGroups.map(InferenceItemGroup::groupId).toSet().size == itemGroups.size) {
@@ -153,10 +153,10 @@ sealed interface InferenceOutcomeV2 {
     @Serializable
     @SerialName("abstention")
     data class Abstention(
-        val reason: AbstentionReasonV2,
+        val reason: AbstentionReasonV3,
         val userMessageKey: String,
-        val provenance: InferenceProvenanceV2,
-    ) : InferenceOutcomeV2 {
+        val provenance: InferenceProvenanceV3,
+    ) : InferenceOutcomeV3 {
         init {
             requireNonBlankValue(userMessageKey, "Abstention user message key must not be blank")
         }
@@ -168,8 +168,8 @@ sealed interface InferenceOutcomeV2 {
         val code: InferenceFailureCode,
         val retryable: Boolean,
         val userMessageKey: String,
-        val provenance: InferenceProvenanceV2,
-    ) : InferenceOutcomeV2 {
+        val provenance: InferenceProvenanceV3,
+    ) : InferenceOutcomeV3 {
         init {
             requireNonBlankValue(userMessageKey, "Failure user message key must not be blank")
         }
@@ -187,14 +187,14 @@ sealed interface InferenceOutcomeV2 {
  * rather than reaching a surface that would have to decide what to do with it.
  */
 @Serializable
-data class InferenceResultV2(
+data class InferenceResultV3(
     val contractVersion: String,
     val modality: InferenceModality,
-    val outcome: InferenceOutcomeV2,
+    val outcome: InferenceOutcomeV3,
 ) {
     init {
-        requireContractV2(contractVersion, "Result must use contract-v2")
-        val groups = (outcome as? InferenceOutcomeV2.Candidates)?.itemGroups.orEmpty()
+        requireContractV3(contractVersion, "Result must use contract-v2")
+        val groups = (outcome as? InferenceOutcomeV3.Candidates)?.itemGroups.orEmpty()
         when (modality) {
             InferenceModality.TEXT -> require(groups.all { it.sourceSpan != null }) {
                 "Every text item group must carry the span it derived from"
@@ -228,7 +228,7 @@ data class InferenceResultV2(
      * already refuses in its other form.
      */
     fun requireSpansWithin(description: String) {
-        val groups = (outcome as? InferenceOutcomeV2.Candidates)?.itemGroups.orEmpty()
+        val groups = (outcome as? InferenceOutcomeV3.Candidates)?.itemGroups.orEmpty()
         groups.forEach { group ->
             val span = group.sourceSpan ?: return@forEach
             require(span.end <= description.length) {

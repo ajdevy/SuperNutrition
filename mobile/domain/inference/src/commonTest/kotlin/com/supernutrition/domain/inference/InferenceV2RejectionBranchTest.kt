@@ -20,15 +20,15 @@ class InferenceV2RejectionBranchTest {
 
     private fun rejects(block: () -> Unit) = assertFailsWith<IllegalArgumentException> { block() }
 
-    private fun provenance(route: InferenceRouteV2 = InferenceRouteV2.REMOTE) = InferenceProvenanceV2(
+    private fun provenance(route: InferenceRouteV3 = InferenceRouteV3.REMOTE) = InferenceProvenanceV3(
         route = route,
         engineId = "fixture-engine",
         modelVersion = "fixture-model-1",
         calibrationVersion = "fixture-calibration-1",
-        contractVersion = INFERENCE_CONTRACT_V2,
+        contractVersion = INFERENCE_CONTRACT_V3,
     )
 
-    private fun candidateV2(candidateId: String = "food:egg-boiled", rank: Int = 1) = InferenceCandidateV2(
+    private fun candidateV2(candidateId: String = "food:egg-boiled", rank: Int = 1) = InferenceCandidateV3(
         candidateId = candidateId,
         label = "Egg, boiled",
         rank = rank,
@@ -40,13 +40,13 @@ class InferenceV2RejectionBranchTest {
     private fun group(
         groupId: String = "group-1",
         sourceSpan: InferenceSourceSpan? = null,
-        candidates: List<InferenceCandidateV2> = listOf(candidateV2()),
+        candidates: List<InferenceCandidateV3> = listOf(candidateV2()),
     ) = InferenceItemGroup(groupId = groupId, sourceSpan = sourceSpan, candidates = candidates)
 
-    private fun result(modality: InferenceModality, groups: List<InferenceItemGroup>) = InferenceResultV2(
-        contractVersion = INFERENCE_CONTRACT_V2,
+    private fun result(modality: InferenceModality, groups: List<InferenceItemGroup>) = InferenceResultV3(
+        contractVersion = INFERENCE_CONTRACT_V3,
         modality = modality,
-        outcome = InferenceOutcomeV2.Candidates(groups),
+        outcome = InferenceOutcomeV3.Candidates(groups),
     )
 
     // --- modality/route and modality/span consistency -----------------------
@@ -55,20 +55,20 @@ class InferenceV2RejectionBranchTest {
     fun aTextAttemptCannotClaimThePhotoLocalRoute() {
         // local-text exists precisely so a text attempt is not flattened into
         // "local"; allowing it back would erase the distinction.
-        rejects { telemetry(modality = InferenceModality.TEXT, route = InferenceRouteV2.LOCAL) }
+        rejects { telemetry(modality = InferenceModality.TEXT, route = InferenceRouteV3.LOCAL) }
     }
 
     @Test
     fun aPhotoAttemptCannotClaimTheTextRoute() {
-        rejects { telemetry(modality = InferenceModality.PHOTO, route = InferenceRouteV2.LOCAL_TEXT) }
+        rejects { telemetry(modality = InferenceModality.PHOTO, route = InferenceRouteV3.LOCAL_TEXT) }
     }
 
     @Test
     fun aTelemetryEventStillAcceptsEachModalityWithItsOwnRoutes() {
-        telemetry(modality = InferenceModality.TEXT, route = InferenceRouteV2.LOCAL_TEXT)
-        telemetry(modality = InferenceModality.TEXT, route = InferenceRouteV2.REMOTE)
-        telemetry(modality = InferenceModality.PHOTO, route = InferenceRouteV2.LOCAL)
-        telemetry(modality = InferenceModality.PHOTO, route = InferenceRouteV2.REMOTE)
+        telemetry(modality = InferenceModality.TEXT, route = InferenceRouteV3.LOCAL_TEXT)
+        telemetry(modality = InferenceModality.TEXT, route = InferenceRouteV3.REMOTE)
+        telemetry(modality = InferenceModality.PHOTO, route = InferenceRouteV3.LOCAL)
+        telemetry(modality = InferenceModality.PHOTO, route = InferenceRouteV3.REMOTE)
     }
 
     @Test
@@ -190,14 +190,14 @@ class InferenceV2RejectionBranchTest {
 
     // --- helpers ------------------------------------------------------------
 
-    private fun telemetry(modality: InferenceModality, route: InferenceRouteV2) = InferenceTelemetryEventV2(
-        contractVersion = INFERENCE_CONTRACT_V2,
+    private fun telemetry(modality: InferenceModality, route: InferenceRouteV3) = InferenceTelemetryEventV3(
+        contractVersion = INFERENCE_CONTRACT_V3,
         modality = modality,
-        eventName = TelemetryEventNameV2.ATTEMPT_COMPLETED,
+        eventName = TelemetryEventNameV3.ATTEMPT_COMPLETED,
         route = route,
         capabilityTier = CapabilityState.READY,
-        durationBucket = TelemetryDurationBucketV2.UNDER_2S,
-        resourceBucket = TelemetryResourceBucketV2.LOW,
+        durationBucket = TelemetryDurationBucketV3.UNDER_2S,
+        resourceBucket = TelemetryResourceBucketV3.LOW,
         terminalOutcome = InferenceTelemetryOutcome.CANDIDATES,
         itemGroupCountBucket = TelemetryItemGroupCountBucket.TWO_TO_THREE,
         engineId = "fixture-engine",
@@ -208,8 +208,8 @@ class InferenceV2RejectionBranchTest {
         state: CapabilityState,
         reason: CapabilityReason = CapabilityReason.MODEL_MISSING,
         modelVersion: String? = "fixture-model-1",
-    ) = EngineCapabilityV2(
-        contractVersion = INFERENCE_CONTRACT_V2,
+    ) = EngineCapabilityV3(
+        contractVersion = INFERENCE_CONTRACT_V3,
         modality = InferenceModality.PHOTO,
         state = state,
         reason = reason,

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Negative fixtures for the v2 schema-to-binding check.
+# Negative fixtures for the v3 schema-to-binding check.
 #
 # The gap this closes is a rename that no gate notices, so the fixtures are
 # renames: one on each side, plus the field list. A verifier that only passes on
@@ -7,14 +7,14 @@
 set -euo pipefail
 
 repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
-verifier="${repo_root}/scripts/verify-inference-v2-binding.sh"
+verifier="${repo_root}/scripts/verify-inference-v3-binding.sh"
 
 if test ! -x "$verifier"; then
-    echo "inference v2 binding verifier is missing or not executable: $verifier" >&2
+    echo "inference v3 binding verifier is missing or not executable: $verifier" >&2
     exit 1
 fi
 
-work=$(mktemp -d "${TMPDIR:-/tmp}/supernutrition-inference-v2-binding.XXXXXX")
+work=$(mktemp -d "${TMPDIR:-/tmp}/supernutrition-inference-v3-binding.XXXXXX")
 trap 'rm -rf "$work"' EXIT
 
 binding_source="${repo_root}/mobile/domain/inference/src/commonMain/kotlin/com/supernutrition/domain/inference"
@@ -22,14 +22,14 @@ binding_source="${repo_root}/mobile/domain/inference/src/commonMain/kotlin/com/s
 seed() {
     local name="$1"
     mkdir -p "$work/$name"
-    cp -R "${repo_root}/contracts/inference/v2" "$work/$name/contract"
+    cp -R "${repo_root}/contracts/inference/v3" "$work/$name/contract"
     cp -R "$binding_source" "$work/$name/binding"
 }
 
 run_case() {
     local name="$1"
-    SUPERNUTRITION_INFERENCE_V2_CONTRACT="$work/$name/contract" \
-        SUPERNUTRITION_INFERENCE_V2_BINDING="$work/$name/binding" \
+    SUPERNUTRITION_INFERENCE_V3_CONTRACT="$work/$name/contract" \
+        SUPERNUTRITION_INFERENCE_V3_BINDING="$work/$name/binding" \
         "$verifier" 2>&1
 }
 
@@ -75,14 +75,14 @@ fi
 # directions at once — the old value is orphaned and the new one unagreed — and
 # the orphan is reported first.
 seed kotlin_rename
-replace_once "$work/kotlin_rename/binding/InferenceTelemetryV2.kt" '@SerialName("over-5s")' '@SerialName("over-30s")'
-expect_rejected_because "a bucket renamed in the binding" kotlin_rename "which TelemetryDurationBucketV2 cannot emit"
+replace_once "$work/kotlin_rename/binding/InferenceTelemetryV3.kt" '@SerialName("over-5s")' '@SerialName("over-30s")'
+expect_rejected_because "a bucket renamed in the binding" kotlin_rename "which TelemetryDurationBucketV3 cannot emit"
 
 # --- each direction on its own ----------------------------------------------
 # The rename above would pass a check that only looked one way, so both
 # directions get a case that violates it alone.
 seed kotlin_extra
-replace_once "$work/kotlin_extra/binding/InferenceTelemetryV2.kt" '    @SerialName("over-5s")
+replace_once "$work/kotlin_extra/binding/InferenceTelemetryV3.kt" '    @SerialName("over-5s")
     OVER_5S,
 }' '    @SerialName("over-5s")
     OVER_5S,
@@ -117,10 +117,10 @@ expect_rejected_because "the emitted field list reordered" field_order "field li
 
 # --- a property added to the event without declaring it ---------------------
 seed field_added
-replace_once "$work/field_added/binding/InferenceTelemetryV2.kt" '    val modelVersion: String,
+replace_once "$work/field_added/binding/InferenceTelemetryV3.kt" '    val modelVersion: String,
 )' '    val modelVersion: String,
     val deviceModel: String,
 )'
 expect_rejected_because "a field emitted without appearing in the allowlist" field_added "field list disagrees"
 
-echo "inference v2 binding negative fixtures: OK"
+echo "inference v3 binding negative fixtures: OK"

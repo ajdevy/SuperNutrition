@@ -15,16 +15,16 @@ import kotlin.test.assertTrue
  * here exists because the alternative reaches a user as a confident wrong
  * answer.
  */
-class InferenceResultV2ValidationTest {
-    private val provenance = InferenceProvenanceV2(
-        route = InferenceRouteV2.LOCAL_TEXT,
+class InferenceResultV3ValidationTest {
+    private val provenance = InferenceProvenanceV3(
+        route = InferenceRouteV3.LOCAL_TEXT,
         engineId = "engine-1",
         modelVersion = "model-1",
         calibrationVersion = "calibration-1",
-        contractVersion = INFERENCE_CONTRACT_V2,
+        contractVersion = INFERENCE_CONTRACT_V3,
     )
 
-    private fun candidate(id: String = "food:egg-boiled", rank: Int = 1) = InferenceCandidateV2(
+    private fun candidate(id: String = "food:egg-boiled", rank: Int = 1) = InferenceCandidateV3(
         candidateId = id,
         label = "Egg, boiled",
         rank = rank,
@@ -47,7 +47,7 @@ class InferenceResultV2ValidationTest {
         assertFailsWith<IllegalArgumentException> { candidate(rank = 0) }
         assertFailsWith<IllegalArgumentException> { candidate(rank = -1) }
         assertFailsWith<IllegalArgumentException> {
-            InferenceCandidateV2("food:x", " ", 1, Confidence(0.9, ConfidenceBand.HIGH), emptyList(), provenance)
+            InferenceCandidateV3("food:x", " ", 1, Confidence(0.9, ConfidenceBand.HIGH), emptyList(), provenance)
         }
     }
 
@@ -55,12 +55,12 @@ class InferenceResultV2ValidationTest {
     fun `provenance must name its engine and its contract`() {
         for (blank in listOf(1, 2, 3)) {
             assertFailsWith<IllegalArgumentException> {
-                InferenceProvenanceV2(
-                    route = InferenceRouteV2.LOCAL,
+                InferenceProvenanceV3(
+                    route = InferenceRouteV3.LOCAL,
                     engineId = if (blank == 1) " " else "engine-1",
                     modelVersion = if (blank == 2) " " else "model-1",
                     calibrationVersion = if (blank == 3) " " else "calibration-1",
-                    contractVersion = INFERENCE_CONTRACT_V2,
+                    contractVersion = INFERENCE_CONTRACT_V3,
                 )
             }
         }
@@ -86,9 +86,9 @@ class InferenceResultV2ValidationTest {
 
     @Test
     fun `a candidates outcome must carry distinct, non-empty groups`() {
-        assertFailsWith<IllegalArgumentException> { InferenceOutcomeV2.Candidates(emptyList()) }
+        assertFailsWith<IllegalArgumentException> { InferenceOutcomeV3.Candidates(emptyList()) }
         assertFailsWith<IllegalArgumentException> {
-            InferenceOutcomeV2.Candidates(
+            InferenceOutcomeV3.Candidates(
                 listOf(
                     InferenceItemGroup("item-1", null, listOf(candidate())),
                     InferenceItemGroup("item-1", null, listOf(candidate())),
@@ -100,17 +100,17 @@ class InferenceResultV2ValidationTest {
     @Test
     fun `abstention and failure must carry a message key the surface can show`() {
         assertFailsWith<IllegalArgumentException> {
-            InferenceOutcomeV2.Abstention(AbstentionReasonV2.DESCRIPTION_UNSEGMENTABLE, " ", provenance)
+            InferenceOutcomeV3.Abstention(AbstentionReasonV3.DESCRIPTION_UNSEGMENTABLE, " ", provenance)
         }
         assertFailsWith<IllegalArgumentException> {
-            InferenceOutcomeV2.Failure(InferenceFailureCode.TEMPORARY_UNAVAILABLE, true, " ", provenance)
+            InferenceOutcomeV3.Failure(InferenceFailureCode.TEMPORARY_UNAVAILABLE, true, " ", provenance)
         }
-        val abstained = InferenceOutcomeV2.Abstention(
-            AbstentionReasonV2.NO_FOOD_DETECTED,
+        val abstained = InferenceOutcomeV3.Abstention(
+            AbstentionReasonV3.NO_FOOD_DETECTED,
             "inference.abstention.no_food",
             provenance,
         )
-        assertEquals(AbstentionReasonV2.NO_FOOD_DETECTED, abstained.reason)
+        assertEquals(AbstentionReasonV3.NO_FOOD_DETECTED, abstained.reason)
     }
 
     @Test
@@ -118,11 +118,11 @@ class InferenceResultV2ValidationTest {
         // Abstention and failure have no groups to anchor, so the span rules
         // must not reject them for either modality.
         for (modality in listOf(InferenceModality.TEXT, InferenceModality.PHOTO)) {
-            val result = InferenceResultV2(
-                contractVersion = INFERENCE_CONTRACT_V2,
+            val result = InferenceResultV3(
+                contractVersion = INFERENCE_CONTRACT_V3,
                 modality = modality,
-                outcome = InferenceOutcomeV2.Abstention(
-                    AbstentionReasonV2.IDENTITY_AMBIGUOUS,
+                outcome = InferenceOutcomeV3.Abstention(
+                    AbstentionReasonV3.IDENTITY_AMBIGUOUS,
                     "inference.abstention.identity_ambiguous",
                     provenance,
                 ),
@@ -134,10 +134,10 @@ class InferenceResultV2ValidationTest {
     @Test
     fun `a result must declare the contract it speaks`() {
         assertFailsWith<IllegalArgumentException> {
-            InferenceResultV2(
+            InferenceResultV3(
                 contractVersion = PHOTO_INFERENCE_CONTRACT_V1,
                 modality = InferenceModality.TEXT,
-                outcome = InferenceOutcomeV2.Candidates(
+                outcome = InferenceOutcomeV3.Candidates(
                     listOf(InferenceItemGroup("item-1", InferenceSourceSpan(0, 3), listOf(candidate()))),
                 ),
             )
@@ -152,10 +152,10 @@ class InferenceResultV2ValidationTest {
             configurationVersion = "config-1",
             configurationDigest = "a".repeat(64),
         )
-        val one = InferenceRequestV2.text("two boiled eggs", "en-US", context)
-        val same = InferenceRequestV2.text("two boiled eggs", "en-US", context)
-        val otherText = InferenceRequestV2.text("rye toast", "en-US", context)
-        val otherLocale = InferenceRequestV2.text("two boiled eggs", "ru-RU", context)
+        val one = InferenceRequestV3.text("two boiled eggs", "en-US", context)
+        val same = InferenceRequestV3.text("two boiled eggs", "en-US", context)
+        val otherText = InferenceRequestV3.text("rye toast", "en-US", context)
+        val otherLocale = InferenceRequestV3.text("two boiled eggs", "ru-RU", context)
 
         assertEquals(one, same)
         assertEquals(one.hashCode(), same.hashCode())
@@ -176,8 +176,8 @@ class InferenceResultV2ValidationTest {
             configurationVersion = "config-1",
             configurationDigest = "a".repeat(64),
         )
-        assertFailsWith<IllegalArgumentException> { InferenceRequestV2.text("   ", "en-US", context) }
-        assertFailsWith<IllegalArgumentException> { InferenceRequestV2.text("eggs", " ", context) }
+        assertFailsWith<IllegalArgumentException> { InferenceRequestV3.text("   ", "en-US", context) }
+        assertFailsWith<IllegalArgumentException> { InferenceRequestV3.text("eggs", " ", context) }
     }
 
     @Test
@@ -222,24 +222,24 @@ class InferenceResultV2ValidationTest {
  * `requireSpansWithin` is.
  */
 class InferenceSourceSpanBoundsTest {
-    private val provenance = InferenceProvenanceV2(
-        route = InferenceRouteV2.LOCAL_TEXT,
+    private val provenance = InferenceProvenanceV3(
+        route = InferenceRouteV3.LOCAL_TEXT,
         engineId = "engine-1",
         modelVersion = "model-1",
         calibrationVersion = "calibration-1",
-        contractVersion = INFERENCE_CONTRACT_V2,
+        contractVersion = INFERENCE_CONTRACT_V3,
     )
 
-    private fun textResult(vararg spans: InferenceSourceSpan) = InferenceResultV2(
-        contractVersion = INFERENCE_CONTRACT_V2,
+    private fun textResult(vararg spans: InferenceSourceSpan) = InferenceResultV3(
+        contractVersion = INFERENCE_CONTRACT_V3,
         modality = InferenceModality.TEXT,
-        outcome = InferenceOutcomeV2.Candidates(
+        outcome = InferenceOutcomeV3.Candidates(
             itemGroups = spans.mapIndexed { index, span ->
                 InferenceItemGroup(
                     groupId = "group-$index",
                     sourceSpan = span,
                     candidates = listOf(
-                        InferenceCandidateV2(
+                        InferenceCandidateV3(
                             candidateId = "food:egg-boiled",
                             label = "Egg, boiled",
                             rank = 1,
@@ -292,16 +292,16 @@ class InferenceSourceSpanBoundsTest {
     // A photo result has no description to be bounded by, and carries no spans.
     @Test
     fun a_photo_result_is_unaffected() {
-        InferenceResultV2(
-            contractVersion = INFERENCE_CONTRACT_V2,
+        InferenceResultV3(
+            contractVersion = INFERENCE_CONTRACT_V3,
             modality = InferenceModality.PHOTO,
-            outcome = InferenceOutcomeV2.Candidates(
+            outcome = InferenceOutcomeV3.Candidates(
                 itemGroups = listOf(
                     InferenceItemGroup(
                         groupId = "group-0",
                         sourceSpan = null,
                         candidates = listOf(
-                            InferenceCandidateV2(
+                            InferenceCandidateV3(
                                 candidateId = "food:egg-boiled",
                                 label = "Egg, boiled",
                                 rank = 1,

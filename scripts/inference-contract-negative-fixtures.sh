@@ -9,7 +9,7 @@ trap 'rm -rf "$fixture_root"' EXIT
 # v1 is photo-inference-engine (contracts/inference/v1) and v2 is
 # inference-evidence (contracts/inference-evidence/v2). Deriving the source
 # path from the release tag alone sent every v2 mutation at
-# contracts/inference/v2 — a real directory holding the *other* v2 release —
+# contracts/inference/v3 — a real directory holding the *other* v2 release —
 # so the copies succeeded and the mutations were applied to files the verifier
 # under test never reads. Each release now names its own root.
 release_root() {
@@ -383,7 +383,7 @@ refresh_digest "$fixture_root/v2-schema-drift"
 expect_rejected "v2 schema metadata drift" "$fixture_root/v2-schema-drift"
 
 copy_release v2 v2-symlinked-directory
-ln -s "${repo_root}/contracts/inference/v2/fixtures" "$fixture_root/v2-symlinked-directory/fixture-link"
+ln -s "${repo_root}/contracts/inference/v3/fixtures" "$fixture_root/v2-symlinked-directory/fixture-link"
 expect_rejected "v2 symlinked release directory" "$fixture_root/v2-symlinked-directory"
 
 echo "inference contract negative fixtures: OK (v1 and v2)"

@@ -110,10 +110,10 @@ class HandWrittenSerializerStabilityTest {
         }
     }
 
-    // --- EngineCapabilityV2 -------------------------------------------------
+    // --- EngineCapabilityV3 -------------------------------------------------
 
-    private fun capability(modelVersion: String? = "fixture-model-1") = EngineCapabilityV2(
-        contractVersion = INFERENCE_CONTRACT_V2,
+    private fun capability(modelVersion: String? = "fixture-model-1") = EngineCapabilityV3(
+        contractVersion = INFERENCE_CONTRACT_V3,
         modality = InferenceModality.PHOTO,
         state = CapabilityState.READY,
         reason = CapabilityReason.NONE,
@@ -124,60 +124,60 @@ class HandWrittenSerializerStabilityTest {
 
     @Test
     fun theCapabilityEncodingIsUnchanged() {
-        val expected = "{\"contractVersion\":\"inference-engine/v2\",\"modality\":\"photo\"," +
+        val expected = "{\"contractVersion\":\"inference-engine/v3\",\"modality\":\"photo\"," +
             "\"state\":\"ready\",\"reason\":\"none\",\"userMessageKey\":\"inference.capability.ready\"," +
             "\"engineId\":\"fixture-engine\",\"modelVersion\":\"fixture-model-1\"}"
 
-        assertEquals(expected, omittedNulls.encodeToString(EngineCapabilityV2.serializer(), capability()))
+        assertEquals(expected, omittedNulls.encodeToString(EngineCapabilityV3.serializer(), capability()))
     }
 
     @Test
     fun theCapabilitySurvivesEncodeDecodeEncode() {
         listOf(explicitNulls, omittedNulls).forEach { json ->
-            val once = json.encodeToString(EngineCapabilityV2.serializer(), capability())
-            val decoded = json.decodeFromString(EngineCapabilityV2.serializer(), once)
+            val once = json.encodeToString(EngineCapabilityV3.serializer(), capability())
+            val decoded = json.decodeFromString(EngineCapabilityV3.serializer(), once)
 
             assertEquals(capability(), decoded)
-            assertEquals(once, json.encodeToString(EngineCapabilityV2.serializer(), decoded))
+            assertEquals(once, json.encodeToString(EngineCapabilityV3.serializer(), decoded))
         }
     }
 
     @Test
     fun aCapabilityDecodedFromJsonStillEnforcesItsRules() {
         val readyWithoutModel = omittedNulls
-            .encodeToString(EngineCapabilityV2.serializer(), capability())
+            .encodeToString(EngineCapabilityV3.serializer(), capability())
             .replace(",\"modelVersion\":\"fixture-model-1\"", "")
 
         assertFailsWith<IllegalArgumentException> {
-            omittedNulls.decodeFromString(EngineCapabilityV2.serializer(), readyWithoutModel)
+            omittedNulls.decodeFromString(EngineCapabilityV3.serializer(), readyWithoutModel)
         }
     }
 
     @Test
     fun aCapabilityMissingARequiredFieldIsRejected() {
         val without = omittedNulls
-            .encodeToString(EngineCapabilityV2.serializer(), capability())
+            .encodeToString(EngineCapabilityV3.serializer(), capability())
             .replace("\"engineId\":\"fixture-engine\",", "")
 
         assertFailsWith<IllegalArgumentException> {
-            omittedNulls.decodeFromString(EngineCapabilityV2.serializer(), without)
+            omittedNulls.decodeFromString(EngineCapabilityV3.serializer(), without)
         }
     }
 
     // --- InferenceItemGroup -------------------------------------------------
 
-    private fun candidate(rank: Int = 1, id: String = "food:egg-boiled") = InferenceCandidateV2(
+    private fun candidate(rank: Int = 1, id: String = "food:egg-boiled") = InferenceCandidateV3(
         candidateId = id,
         label = "Egg, boiled",
         rank = rank,
         confidence = Confidence(score = 0.91, band = ConfidenceBand.HIGH),
         unresolvedAssumptions = emptyList(),
-        provenance = InferenceProvenanceV2(
-            route = InferenceRouteV2.REMOTE,
+        provenance = InferenceProvenanceV3(
+            route = InferenceRouteV3.REMOTE,
             engineId = "fixture-engine",
             modelVersion = "fixture-model-1",
             calibrationVersion = "fixture-calibration-1",
-            contractVersion = INFERENCE_CONTRACT_V2,
+            contractVersion = INFERENCE_CONTRACT_V3,
         ),
     )
 

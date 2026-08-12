@@ -66,13 +66,19 @@ recorded_at_commit = "83547213"
 status = "current"
 
 [[entry]]
-release_id = "inference-engine/v2"
-path = "contracts/inference/v2"
-digest = "ba7221912bddbf29cf41bc881931a21e6ca4cd70259ca028e98d2b4b2b5201ba"
+release_id = "inference-engine/v3"
+path = "contracts/inference/v3"
+digest = "9f9eceece121bdca79e79c8cc4351d62578047533bde980a827dedf9567ddf3f"
 algorithm = "release-sha256-v2"
 recorded_at_commit = "pr/slice-ab-mobile"
 status = "current"
 note = """
+Published as v3, not v2. main published an unrelated release at \
+contracts/inference/v2 — the inference-EVIDENCE contract, at a path \
+disagreeing with its own contract_id. Taking that path for the engine contract \
+would have redefined a release that already shipped, which the immutability \
+gate exists to refuse. v2 on main is left exactly as it is.
+
 Published by the mobile slice and absent from the catalog until now. The digest \
 reflects the P1-11 correction, which marked remote-v2, evaluation-v2 and \
 local-text-v2 not-yet-implemented rather than accepted."""

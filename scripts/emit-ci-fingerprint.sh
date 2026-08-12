@@ -78,17 +78,17 @@ contract_catalog_digest="$(digest_paths \
   contracts/inference/v1/fixtures/candidate-result.json \
   contracts/inference/v1/fixtures/failure-result.json \
   contracts/inference/v1/fixtures/telemetry-event.json \
-  contracts/inference/v2/RELEASE.md \
-  contracts/inference/v2/compatibility-matrix.toml \
-  contracts/inference/v2/fixtures/abstention-result.json \
-  contracts/inference/v2/fixtures/candidate-result-photo.json \
-  contracts/inference/v2/fixtures/candidate-result-text.json \
-  contracts/inference/v2/fixtures/capability-ready.json \
-  contracts/inference/v2/fixtures/failure-result.json \
-  contracts/inference/v2/fixtures/request-photo.json \
-  contracts/inference/v2/fixtures/request-text.json \
-  contracts/inference/v2/fixtures/telemetry-event.json \
-  contracts/inference/v2/schema.toml \
+  contracts/inference/v3/RELEASE.md \
+  contracts/inference/v3/compatibility-matrix.toml \
+  contracts/inference/v3/fixtures/abstention-result.json \
+  contracts/inference/v3/fixtures/candidate-result-photo.json \
+  contracts/inference/v3/fixtures/candidate-result-text.json \
+  contracts/inference/v3/fixtures/capability-ready.json \
+  contracts/inference/v3/fixtures/failure-result.json \
+  contracts/inference/v3/fixtures/request-photo.json \
+  contracts/inference/v3/fixtures/request-text.json \
+  contracts/inference/v3/fixtures/telemetry-event.json \
+  contracts/inference/v3/schema.toml \
   contracts/inference-evidence/v2/RELEASE.md \
   contracts/inference-evidence/v2/compatibility-matrix.toml \
   contracts/inference-evidence/v2/fixtures/abstention-result.json \

@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
  * v2 published `capability-ready.json` as a canonical fixture from the start and
  * had nothing that could decode it: [EngineCapability] calls `requireContractV1`
  * and carries no modality, so the fixture was reference data no binding could
- * read. `InferenceEngineV2` was worse off than the interface it replaces —
+ * read. `InferenceEngineV3` was worse off than the interface it replaces —
  * `PhotoInferenceEngine` has `capability()`, and v2 had `supportedModalities`
  * and nothing else, so a v2 engine could not report that its model was missing.
  *
@@ -21,7 +21,7 @@ import kotlinx.serialization.Serializable
  * exactly that. Only the envelope is new.
  */
 @Serializable(with = EngineCapabilityV2Serializer::class)
-data class EngineCapabilityV2(
+data class EngineCapabilityV3(
     val contractVersion: String,
     val modality: InferenceModality,
     val state: CapabilityState,
@@ -31,7 +31,7 @@ data class EngineCapabilityV2(
     val modelVersion: String? = null,
 ) {
     init {
-        requireContractV2(contractVersion, "Capability must use contract-v2")
+        requireContractV3(contractVersion, "Capability must use contract-v2")
         requireNonBlankValue(userMessageKey, "Capability user message key must not be blank")
         requireNonBlankValue(engineId, "Capability engine ID must not be blank")
         if (state == CapabilityState.READY) {

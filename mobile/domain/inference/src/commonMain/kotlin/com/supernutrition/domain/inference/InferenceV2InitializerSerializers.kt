@@ -34,10 +34,10 @@ import kotlinx.serialization.encoding.encodeStructure
  * deciding null handling exactly as before.
  */
 
-internal object EngineCapabilityV2Serializer : KSerializer<EngineCapabilityV2> {
+internal object EngineCapabilityV2Serializer : KSerializer<EngineCapabilityV3> {
 
     override val descriptor: SerialDescriptor =
-        buildClassSerialDescriptor("com.supernutrition.domain.inference.EngineCapabilityV2") {
+        buildClassSerialDescriptor("com.supernutrition.domain.inference.EngineCapabilityV3") {
             element<String>("contractVersion")
             element<InferenceModality>("modality")
             element<CapabilityState>("state")
@@ -47,7 +47,7 @@ internal object EngineCapabilityV2Serializer : KSerializer<EngineCapabilityV2> {
             element<String?>("modelVersion")
         }
 
-    override fun serialize(encoder: Encoder, value: EngineCapabilityV2) {
+    override fun serialize(encoder: Encoder, value: EngineCapabilityV3) {
         encoder.encodeStructure(descriptor) {
             encodeStringElement(descriptor, 0, value.contractVersion)
             encodeSerializableElement(descriptor, 1, InferenceModality.serializer(), value.modality)
@@ -59,7 +59,7 @@ internal object EngineCapabilityV2Serializer : KSerializer<EngineCapabilityV2> {
         }
     }
 
-    override fun deserialize(decoder: Decoder): EngineCapabilityV2 = decoder.decodeStructure(descriptor) {
+    override fun deserialize(decoder: Decoder): EngineCapabilityV3 = decoder.decodeStructure(descriptor) {
         var contractVersion: String? = null
         var modality: InferenceModality? = null
         var state: CapabilityState? = null
@@ -82,7 +82,7 @@ internal object EngineCapabilityV2Serializer : KSerializer<EngineCapabilityV2> {
             }
         }
 
-        EngineCapabilityV2(
+        EngineCapabilityV3(
             contractVersion = requireNotNull(contractVersion) { "Capability is missing contractVersion" },
             modality = requireNotNull(modality) { "Capability is missing modality" },
             state = requireNotNull(state) { "Capability is missing state" },
@@ -96,7 +96,7 @@ internal object EngineCapabilityV2Serializer : KSerializer<EngineCapabilityV2> {
 
 internal object InferenceItemGroupSerializer : KSerializer<InferenceItemGroup> {
 
-    private val candidatesSerializer = ListSerializer(InferenceCandidateV2.serializer())
+    private val candidatesSerializer = ListSerializer(InferenceCandidateV3.serializer())
 
     override val descriptor: SerialDescriptor =
         buildClassSerialDescriptor("com.supernutrition.domain.inference.InferenceItemGroup") {
@@ -121,7 +121,7 @@ internal object InferenceItemGroupSerializer : KSerializer<InferenceItemGroup> {
     override fun deserialize(decoder: Decoder): InferenceItemGroup = decoder.decodeStructure(descriptor) {
         var groupId: String? = null
         var sourceSpan: InferenceSourceSpan? = null
-        var candidates: List<InferenceCandidateV2>? = null
+        var candidates: List<InferenceCandidateV3>? = null
 
         while (true) {
             when (val index = decodeElementIndex(descriptor)) {

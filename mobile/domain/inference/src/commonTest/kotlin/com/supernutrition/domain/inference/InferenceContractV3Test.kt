@@ -5,7 +5,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
-class InferenceContractV2Test {
+class InferenceContractV3Test {
     private val attemptId = AttemptId("attempt-1")
     private val context = InferenceAttemptContext(
         attemptId = attemptId,
@@ -16,14 +16,14 @@ class InferenceContractV2Test {
 
     @Test
     fun `a photo request reports the photo modality`() {
-        val request = InferenceRequestV2.photo(PhotoRef.issue(attemptId, "photo-ref-1"), context)
+        val request = InferenceRequestV3.photo(PhotoRef.issue(attemptId, "photo-ref-1"), context)
 
         assertEquals(InferenceModality.PHOTO, request.modality)
     }
 
     @Test
     fun `a text request reports the text modality and keeps its input locale`() {
-        val request = InferenceRequestV2.text(
+        val request = InferenceRequestV3.text(
             description = "two boiled eggs and rye toast",
             inputLocale = "ru-RU",
             attemptContext = context,
@@ -32,20 +32,20 @@ class InferenceContractV2Test {
         assertEquals(InferenceModality.TEXT, request.modality)
         // AD-12: the language a description was typed in is its own value, not
         // something derived from the catalog country.
-        assertEquals("ru-RU", (request as InferenceRequestV2.Text).inputLocale)
+        assertEquals("ru-RU", (request as InferenceRequestV3.Text).inputLocale)
     }
 
     @Test
     fun `a blank description is rejected rather than sent to an engine`() {
         assertFailsWith<IllegalArgumentException> {
-            InferenceRequestV2.text("   ", "en-US", context)
+            InferenceRequestV3.text("   ", "en-US", context)
         }
     }
 
     @Test
     fun `a blank input locale is rejected`() {
         assertFailsWith<IllegalArgumentException> {
-            InferenceRequestV2.text("rye toast", "  ", context)
+            InferenceRequestV3.text("rye toast", "  ", context)
         }
     }
 
@@ -54,7 +54,7 @@ class InferenceContractV2Test {
         val foreignPhoto = PhotoRef.issue(AttemptId("attempt-other"), "photo-ref-1")
 
         assertFailsWith<IllegalArgumentException> {
-            InferenceRequestV2.photo(foreignPhoto, context)
+            InferenceRequestV3.photo(foreignPhoto, context)
         }
     }
 
@@ -63,7 +63,7 @@ class InferenceContractV2Test {
         // User-authored free text can carry more identifying detail than a food
         // photo. A crash report or log line interpolating the request must not
         // leak what someone ate or where they ate it.
-        val request = InferenceRequestV2.text(
+        val request = InferenceRequestV3.text(
             "leftover curry from the place on Baker Street",
             "en-GB",
             context,
@@ -75,7 +75,7 @@ class InferenceContractV2Test {
 
     @Test
     fun `the contract version names the modality-neutral v2 release`() {
-        assertEquals("inference-engine/v2", INFERENCE_CONTRACT_V2)
+        assertEquals("inference-engine/v3", INFERENCE_CONTRACT_V3)
     }
 
     @Test
@@ -84,11 +84,11 @@ class InferenceContractV2Test {
         // around it: a request whose PhotoRef and attempt context named
         // different attempts was constructible from any caller. Moving the check
         // into the type closes that whichever way the instance is made.
-        val request = InferenceRequestV2.photo(PhotoRef.issue(attemptId, "photo-ref-1"), context)
+        val request = InferenceRequestV3.photo(PhotoRef.issue(attemptId, "photo-ref-1"), context)
         val foreign = PhotoRef.issue(AttemptId("attempt-2"), "photo-ref-2")
 
         val failure = assertFailsWith<IllegalArgumentException> {
-            (request as InferenceRequestV2.Photo).copy(photoRef = foreign)
+            (request as InferenceRequestV3.Photo).copy(photoRef = foreign)
         }
 
         assertTrue("same attempt" in failure.message.orEmpty())
@@ -99,10 +99,10 @@ class InferenceContractV2Test {
         // Same reasoning from the other side: constructing directly must not be
         // a way to obtain a request the factory would have refused.
         assertFailsWith<IllegalArgumentException> {
-            InferenceRequestV2.Text(description = "", inputLocale = "en-US", attemptContext = context)
+            InferenceRequestV3.Text(description = "", inputLocale = "en-US", attemptContext = context)
         }
         assertFailsWith<IllegalArgumentException> {
-            InferenceRequestV2.Text(description = "rye toast", inputLocale = " ", attemptContext = context)
+            InferenceRequestV3.Text(description = "rye toast", inputLocale = " ", attemptContext = context)
         }
     }
 }

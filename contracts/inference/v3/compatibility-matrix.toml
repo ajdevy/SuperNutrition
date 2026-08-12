@@ -1,14 +1,14 @@
-schema = "supernutrition.inference-engine-compatibility-matrix.v2"
+schema = "supernutrition.inference-engine-compatibility-matrix.v3"
 contract_id = "inference-engine"
-release = "v2"
+release = "v3"
 previous_release = "photo-inference-engine/v1"
-digest = "ba7221912bddbf29cf41bc881931a21e6ca4cd70259ca028e98d2b4b2b5201ba"
+digest = "9f9eceece121bdca79e79c8cc4351d62578047533bde980a827dedf9567ddf3f"
 
 # P1-11 — `accepted` means "a consumer exists and reads this release today".
 #
-# Five consumers were marked accepted. Two are real: local-android-v2 and
-# local-ios-v2 both implement InferenceV2Engine. The other three were not built
-# at all — the remote path still speaks v1, the evaluation harness has no v2
+# Five consumers were marked accepted. Two are real: local-android-v3 and
+# local-ios-v3 both implement InferenceEngineV3. The other three were not built
+# at all — the remote path still speaks v1, the evaluation harness has no v3
 # reference, and no TEXT modality exists anywhere in commonMain. A matrix that
 # advertises consumers nobody wrote is worse than an empty one: it is the
 # document a migration is planned against.
@@ -21,40 +21,40 @@ digest = "ba7221912bddbf29cf41bc881931a21e6ca4cd70259ca028e98d2b4b2b5201ba"
 # when no implementation remains.
 
 [[supported_pair]]
-producer = "domain-inference-v2"
-consumer = "local-android-v2"
+producer = "domain-inference-v3"
+consumer = "local-android-v3"
 direction = "forward"
 expected = "accepted"
 
 [[supported_pair]]
-producer = "domain-inference-v2"
-consumer = "local-ios-v2"
+producer = "domain-inference-v3"
+consumer = "local-ios-v3"
 direction = "forward"
 expected = "accepted"
 
 [[supported_pair]]
-producer = "domain-inference-v2"
-consumer = "local-text-v2"
+producer = "domain-inference-v3"
+consumer = "local-text-v3"
 direction = "forward"
 expected = "not-yet-implemented"
 
 [[supported_pair]]
-producer = "domain-inference-v2"
-consumer = "remote-v2"
+producer = "domain-inference-v3"
+consumer = "remote-v3"
 direction = "forward"
 expected = "not-yet-implemented"
 
 [[supported_pair]]
-producer = "domain-inference-v2"
-consumer = "evaluation-v2"
+producer = "domain-inference-v3"
+consumer = "evaluation-v3"
 direction = "forward"
 expected = "not-yet-implemented"
 
-# A v1 consumer cannot read a v2 text request: the modality discriminator and
+# A v1 consumer cannot read a v3 text request: the modality discriminator and
 # text payload do not exist in v1, and v1 requires a photo. Recorded explicitly
 # so the migration cannot be mistaken for transparent.
 [[supported_pair]]
-producer = "domain-inference-v2"
+producer = "domain-inference-v3"
 consumer = "local-android-v1"
 direction = "backward"
 expected = "rejected"
