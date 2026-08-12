@@ -185,3 +185,34 @@ describe('a deadline has to be a deadline', () => {
     expect(() => parseModelProfiles(VALID)).not.toThrow();
   });
 });
+
+describe('rollback_target names a roster you could actually roll back to', () => {
+  // config/model-profiles.toml carries `rollback_target = "2026-07-29.2"` and
+  // the parser never read it. Every other key in this schema'd file is parsed
+  // and validated, so it reads as machine-consumed — an operator following the
+  // roll-back comment has no way to learn the value is malformed, or that it
+  // names the version already running, until the roll back does nothing.
+  const withRollback = (value: string) =>
+    VALID.replace(
+      'profile_version = "2026-07-29.1"',
+      `profile_version = "2026-07-29.1"\nrollback_target = ${value}`,
+    );
+
+  it('parses the target when it is present', () => {
+    expect(parseModelProfiles(withRollback('"2026-07-01.3"')).rollbackTarget).toBe('2026-07-01.3');
+  });
+
+  it('is optional, because the first published roster has nothing behind it', () => {
+    expect(parseModelProfiles(VALID).rollbackTarget).toBeNull();
+  });
+
+  it('refuses a blank target', () => {
+    expect(() => parseModelProfiles(withRollback('""'))).toThrow(ConfigurationError);
+  });
+
+  // A rollback target equal to the version in force is not a rollback. It would
+  // parse, deploy, and change nothing, which is the worst moment to discover it.
+  it('refuses a target identical to the running version', () => {
+    expect(() => parseModelProfiles(withRollback('"2026-07-29.1"'))).toThrow(ConfigurationError);
+  });
+});

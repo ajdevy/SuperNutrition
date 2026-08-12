@@ -56,6 +56,22 @@ export const parseModelProfiles = (source: string): ModelProfileSnapshot => {
   const raw = parse(source) as Record<string, unknown>;
 
   const profileVersion = requireString(raw['profile_version'], 'profile_version');
+
+  // Read, rather than left as prose. Every other key here is parsed, so an
+  // unvalidated one reads as machine-consumed when it is not: an operator
+  // following the roll-back comment would find out it is malformed, or that it
+  // names the roster already running, at the moment they needed it to work.
+  const rollbackRaw = raw['rollback_target'];
+  let rollbackTarget: string | null = null;
+  if (rollbackRaw !== undefined) {
+    rollbackTarget = requireString(rollbackRaw, 'rollback_target');
+    if (rollbackTarget === profileVersion) {
+      throw new ConfigurationError(
+        'model-profiles: rollback_target must differ from profile_version; ' +
+          'rolling back to the version in force changes nothing',
+      );
+    }
+  }
   const routingRaw = (raw['routing'] ?? {}) as Record<string, unknown>;
 
   const maxPasses = requireNumber(routingRaw['max_passes'], 'routing.max_passes');
@@ -140,7 +156,7 @@ export const parseModelProfiles = (source: string): ModelProfileSnapshot => {
     throw new ConfigurationError('model-profiles: at least one enabled pass-1 profile is required');
   }
 
-  return { profileVersion, routing, profiles };
+  return { profileVersion, rollbackTarget, routing, profiles };
 };
 
 export class TomlModelProfileSource implements ModelProfileSource {
