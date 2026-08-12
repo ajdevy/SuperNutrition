@@ -1,6 +1,7 @@
 package com.supernutrition.sharedkit
 
 import com.supernutrition.feature.photoanalysis.CaptureCopy
+import com.supernutrition.feature.photoanalysis.EvidenceCopy
 import com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterCopy
 import com.supernutrition.feature.photoanalysis.RecoveryCopy
 import com.supernutrition.feature.photoanalysis.StatusCopy
@@ -14,14 +15,52 @@ internal fun localizedPhotoAnalysisCopy(): PhotoAnalysisPresenterCopy = PhotoAna
         choosePhoto = localized("photo_analysis.capture.choose_photo"),
         openSettings = localized("photo_analysis.capture.open_settings"),
         cancel = localized("photo_analysis.capture.cancel"),
+        researchWarning = localized("photo_analysis.capture.research_warning"),
+        gridHintsTitle = localized("photo_analysis.capture.grid_hints_title"),
+        gridOverlayDescription = localized("photo_analysis.capture.grid_overlay_description"),
+        gridCellDescription = localized("photo_analysis.capture.grid_cell_description"),
+        selectedState = localized("photo_analysis.capture.selected"),
+        notSelectedState = localized("photo_analysis.capture.not_selected"),
+        resultPlaceholder = localized("photo_analysis.capture.result_placeholder"),
+        loadingLabel = localized("photo_analysis.capture.loading"),
     ),
     status = StatusCopy(
         readyToCapture = localized("photo_analysis.status.ready_to_capture"),
         preparingPhoto = localized("photo_analysis.status.preparing_photo"),
         photoReady = localized("photo_analysis.status.photo_ready"),
         analyzingPhoto = localized("photo_analysis.status.analyzing_photo"),
+        findingVisibleFoods = localized("photo_analysis.status.finding_visible_foods"),
+        identifyingDish = localized("photo_analysis.status.identifying_dish"),
+        estimatingPortions = localized("photo_analysis.status.estimating_portions"),
+        checkingResults = localized("photo_analysis.status.checking_results"),
         reviewCandidate = localized("photo_analysis.status.review_candidate"),
         restoringPhotoAnalysis = localized("photo_analysis.status.restoring_photo_analysis"),
+    ),
+    evidence = EvidenceCopy(
+        fromThisPhoto = localized("photo_analysis.evidence.from_photo"),
+        highConfidence = localized("photo_analysis.evidence.high_confidence"),
+        mediumConfidence = localized("photo_analysis.evidence.medium_confidence"),
+        lowConfidence = localized("photo_analysis.evidence.low_confidence"),
+        identityClear = localized("photo_analysis.evidence.identity_clear"),
+        identityAmbiguous = localized("photo_analysis.evidence.identity_ambiguous"),
+        mixedContent = localized("photo_analysis.evidence.mixed_content"),
+        fullyVisible = localized("photo_analysis.evidence.fully_visible"),
+        partiallyOccluded = localized("photo_analysis.evidence.partially_occluded"),
+        regionAvailable = localized("photo_analysis.evidence.region_available"),
+        regionUnavailable = localized("photo_analysis.evidence.region_unavailable"),
+        estimatedMass = localized("photo_analysis.evidence.estimated_mass"),
+        massNotEvaluable = localized("photo_analysis.evidence.mass_not_evaluable"),
+        massAbstained = localized("photo_analysis.evidence.mass_abstained"),
+        localProvenance = localized("photo_analysis.evidence.local_provenance"),
+        remoteProvenance = localized("photo_analysis.evidence.remote_provenance"),
+        selected = localized("photo_analysis.evidence.selected"),
+        notSelected = localized("photo_analysis.evidence.not_selected"),
+        dishCandidatesTitle = localized("photo_analysis.evidence.dish_candidates"),
+        visibleComponentsTitle = localized("photo_analysis.evidence.visible_components"),
+        visibleRegionCount = localized("photo_analysis.evidence.visible_region_count"),
+        compositionHintsTitle = localized("photo_analysis.evidence.composition_hints"),
+        compositionHintSource = localized("photo_analysis.evidence.composition_hint_source"),
+        partialDegradation = localized("photo_analysis.evidence.partial_degradation"),
     ),
     recovery = RecoveryCopy(
         scanAgain = localized("photo_analysis.recovery.scan_again"),
@@ -30,8 +69,10 @@ internal fun localizedPhotoAnalysisCopy(): PhotoAnalysisPresenterCopy = PhotoAna
         photoCaptureFailed = localized("photo_analysis.recovery.capture_failed"),
         photoQualityTooLow = localized("photo_analysis.recovery.quality_too_low"),
         noFoodFound = localized("photo_analysis.recovery.no_food_found"),
+        analysisFailed = localized("photo_analysis.recovery.analysis_failed"),
         analysisOffline = localized("photo_analysis.recovery.offline"),
         analysisCancelled = localized("photo_analysis.recovery.cancelled"),
+        reviewRestoreUnavailable = localized("photo_analysis.recovery.review_restore_unavailable"),
     ),
 )
 

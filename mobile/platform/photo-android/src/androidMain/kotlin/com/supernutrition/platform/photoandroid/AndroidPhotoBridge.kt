@@ -13,7 +13,7 @@ import com.supernutrition.core.ui.CameraPermissionState
  * Android-only bridge. Native intents and permission objects stay here; the
  * common feature receives only PhotoRef and bridge outcomes.
  */
-class AndroidPhotoBridge(
+class AndroidPhotoBridge @JvmOverloads constructor(
     private val context: Context,
     permissionRequestInFlight: Boolean = false,
 ) : AndroidPhotoBridgePort {
@@ -63,6 +63,7 @@ class AndroidPhotoBridge(
         type = "image/*"
         addCategory(Intent.CATEGORY_OPENABLE)
         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
     }
 
     override fun settingsIntent(): Intent = Intent(

@@ -11,7 +11,9 @@ import com.supernutrition.platform.photoandroid.AndroidPhotoResultKeys;
 import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /** Verifies the native bridge emits bytes before the common normalization seam. */
 public final class AndroidPhotoBridgeBytesInstrumentationTest {
@@ -27,5 +29,17 @@ public final class AndroidPhotoBridgeBytesInstrumentationTest {
         assertNotNull(bytes);
         assertArrayEquals(new byte[]{(byte) 0xff, (byte) 0xd8}, new byte[]{bytes[0], bytes[1]});
         bitmap.recycle();
+    }
+
+    @Test
+    public void photoPickerRequestsSelectedPersistableReadGrant() {
+        Intent picker = new AndroidPhotoBridge(
+                InstrumentationRegistry.getInstrumentation().getTargetContext()
+        ).photoPickerIntent();
+
+        assertEquals(Intent.ACTION_OPEN_DOCUMENT, picker.getAction());
+        assertEquals("image/*", picker.getType());
+        assertTrue((picker.getFlags() & Intent.FLAG_GRANT_READ_URI_PERMISSION) != 0);
+        assertTrue((picker.getFlags() & Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION) != 0);
     }
 }

@@ -7,7 +7,7 @@ paradigm: ports-and-adapters with unidirectional state
 scope: SuperNutrition monorepo with Kotlin Multiplatform mobile, web landing, and mobile backend
 status: final
 created: 2026-07-26
-updated: 2026-07-26
+updated: 2026-08-01
 binds:
   - FR-1..FR-25
   - NFR-1..NFR-24
@@ -45,7 +45,7 @@ flowchart LR
     IOSApp["iOS app root"] --> Feature
     Feature --> Orchestrator["Inference orchestrator"]
     Feature --> CatalogAPI["Nutrition catalog API"]
-    Orchestrator --> EngineAPI["Photo inference API v1"]
+    Orchestrator --> EngineAPI["Inference APIs v1 and v2 during migration"]
     Local["Local inference adapter"] --> EngineAPI
     Remote["Remote inference adapter"] --> EngineAPI
     Catalog["SQLDelight catalog adapter"] --> CatalogAPI
@@ -513,6 +513,34 @@ flowchart LR
   and on-device identification do not depend on a posture, so fail-closed leaves
   every market usable. Full schema, market states, and evidence requirements are
   in `market-processing-policy.md`.
+
+### AD-42 — Visible-component evidence and bounded mass estimates
+
+- **Binds:** FR-32..FR-36, NFR-28, `contracts/inference/v2`, local Android/iOS
+  inference, `domain/photo-analysis`, `feature/photo-analysis`, and evaluation
+  harness
+- **Prevents:** dish labels being presented as ingredients, pixels being treated
+  as a scale, stale v1/v2 schemas, and model mass becoming nutrition authority
+- **Rule:** `contracts/inference/v1` remains immutable. The sole future major
+  release is modality-neutral `contracts/inference/v2`, which may return
+  `VisibleComponent` evidence for visibly separable regions and an optional
+  `MassEstimate` range. Every mass field carries a status
+  (`estimated`, `not_evaluable`, or `abstained`), model/taxonomy/calibration
+  provenance, assumptions, and a unit; it is never a measured fact, catalog
+  binding, or nutrition result. Text identification returns mass
+  `not_evaluable` absent a separately approved measurement modality.
+
+  Component/mass models have an immutable manifest containing artifact and
+  taxonomy digests, preprocessing/postprocessing, mask/instance contract,
+  calibration version, runtime/EP, compatibility, activation, and rollback
+  target. Android/iOS emit the same v2 fixtures and benchmark only on
+  consented, tared, leakage-resistant ground truth. Nutrition5k can be
+  license-reviewed attributed pretraining/benchmark-design data in a training
+  environment, optionally accessed through a compact metadata index and
+  selected-shard mirror; it is not app data and never replaces the consented
+  phone-photo acceptance corpus. The UI displays a range only as editable
+  evidence and otherwise provides an honest manual path. Model output never
+  bypasses user confirmation or AD-7 catalog grounding.
 
 ## Consistency Conventions
 

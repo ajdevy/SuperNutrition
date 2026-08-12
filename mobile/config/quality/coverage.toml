@@ -4,8 +4,8 @@ product = "mobile"
 lifecycle = "active"
 source_digest = "local-only"
 quality_claim = true
-production_source_count = 10
-denominator_count = 10
+production_source_count = 14
+denominator_count = 14
 minimum_line_percent = 85
 minimum_branch_percent = 85
 changed_line_percent = 100
@@ -13,9 +13,16 @@ changed_branch_percent = 100
 native_equivalent_evidence_required = true
 optional_apple_evidence_allowed = true
 empty_or_zero_denominator = "fail"
+# Branchless production adapters must still have a non-empty line denominator;
+# only their absent branch counter may be excluded from the aggregate branch
+# denominator. All present branch counters remain mandatory.
+branchless_branch_counter_policy = "exclude-absent-branch-counter-only"
 status = "active-local"
-local_aggregate_line_percent = "98.20"
-local_aggregate_branch_percent = "93.66"
+# Authoritative output of qualityCoverageJvm in qualityCheckJvmAndroid.
+# It covers the nine JVM-observable production modules; native-equivalent
+# modules remain bound to the explicit physical-device records below.
+local_aggregate_line_percent = "98.15"
+local_aggregate_branch_percent = "87.22"
 local_aggregate_status = "local-verified"
 
 # Every compiled production unit has exactly one denominator. JVM observations
@@ -60,9 +67,66 @@ line_minimum_percent = 85
 branch_minimum_percent = 85
 changed_line_minimum_percent = 100
 changed_branch_minimum_percent = 100
-observed_line_percent = "96.77"
-observed_branch_percent = "85.00"
+observed_line_percent = "91.7073"
+observed_branch_percent = "85.1301"
 status = "local-verified"
+
+[[denominator]]
+id = "inference-local-android"
+unit_id = "inference-local-android"
+source_path = "mobile/inference/local-android"
+coverage_kind = "jvm"
+test_task = ":inference:local-android:jvmTest"
+line_minimum_percent = 85
+branch_minimum_percent = 85
+changed_line_minimum_percent = 100
+changed_branch_minimum_percent = 100
+observed_line_percent = "99.3151"
+observed_branch_percent = "90.7895"
+status = "local-verified"
+
+[[denominator]]
+id = "inference-local-ios"
+unit_id = "inference-local-ios"
+source_path = "mobile/inference/local-ios"
+coverage_kind = "jvm"
+test_task = ":inference:local-ios:jvmTest"
+line_minimum_percent = 85
+branch_minimum_percent = 85
+changed_line_minimum_percent = 100
+changed_branch_minimum_percent = 100
+observed_line_percent = "98.6111"
+observed_branch_percent = "86.8421"
+status = "local-verified"
+
+[[denominator]]
+id = "inference-local-shared"
+unit_id = "inference-local-shared"
+source_path = "mobile/inference/local-shared"
+coverage_kind = "jvm"
+test_task = ":inference:local-shared:jvmTest"
+line_minimum_percent = 85
+branch_minimum_percent = 85
+changed_line_minimum_percent = 100
+changed_branch_minimum_percent = 100
+observed_line_percent = "96.7647"
+observed_branch_percent = "90.1515"
+status = "local-verified"
+
+[[denominator]]
+id = "inference-local-android-poc"
+unit_id = "inference-local-android-poc"
+source_path = "mobile/inference/local-android-poc"
+coverage_kind = "native-equivalent"
+evidence_ids = ["photo-android-inference-poc"]
+test_task = ":inference:local-android-poc:testDebugUnitTest"
+line_minimum_percent = 85
+branch_minimum_percent = 85
+changed_line_minimum_percent = 100
+changed_branch_minimum_percent = 100
+observed_line_percent = "pending"
+observed_branch_percent = "pending"
+status = "active"
 
 [[denominator]]
 id = "core-ui"

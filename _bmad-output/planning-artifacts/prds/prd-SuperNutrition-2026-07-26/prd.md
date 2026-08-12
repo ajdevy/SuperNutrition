@@ -2,7 +2,7 @@
 title: SuperNutrition Product Requirements Document
 status: final
 created: 2026-07-26
-updated: 2026-07-26
+updated: 2026-08-01
 sources:
   - ../../briefs/brief-SuperNutrition-2026-07-26/brief.md
   - ../../briefs/brief-SuperNutrition-2026-07-26/addendum.md
@@ -371,8 +371,9 @@ calculation.
 
 #### FR-16: Deterministic nutrition grounding
 
-The system calculates calories and supported nutrients from the confirmed
-Nutrition Source record and Serving Assumption.
+The system calculates the supported nutrient, vitamin, and mineral profile plus
+catalog-backed descriptive food properties from the confirmed Nutrition Source
+record and Serving Assumption. The core UI omits a calorie total.
 
 **Consequences:**
 
@@ -399,14 +400,16 @@ Realizes all User Journeys.
 
 #### FR-18: Grounded result display
 
-The user can view confirmed food, Serving Assumption, calories, supported
-macronutrients, source/version, uncertainty, and Inference Route.
+The user can view confirmed food, Serving Assumption, supported nutrients,
+vitamins/minerals, catalog-backed descriptive food properties, source/version,
+uncertainty, and Inference Route on the photo-first review screen. The core UI
+does not show a calorie total.
 
 **Consequences:**
 
 - The result labels estimates and ranges in plain language.
 - The UI never presents the result as medical, allergen, or exact-measurement
-  advice.
+  advice, or as a health-effect claim.
 
 #### FR-19: Scan again
 
@@ -847,4 +850,98 @@ path cannot be release-ready until its corresponding gate closes.
   before public claims.
 - **A-4 (§7 SM-2):** The two-second camera target is a spike hypothesis.
 - **A-5 (§7 SM-3):** The four-second local and ten-second remote targets are spike
-  hypotheses until the physical-device and network matrix is selected.
+hypotheses until the physical-device and network matrix is selected.
+
+## 14. Approved product-direction amendment — visible ingredients and gram estimates
+
+**Approved:** 2026-08-01 by Product owner Anastasia. This amendment supersedes
+only the earlier interpretation that all automatic portion output is outside
+the MVP. It does not change the prohibition on exact automatic mass, hidden
+recipe reconstruction, ungrounded nutrition, medical, or allergen claims.
+
+### Amendment scope
+
+The MVP may return an explicitly labelled, user-confirmable **estimated gram
+range** for a visibly separable component when a versioned component/mass model,
+calibration, and capture evidence support it. It is never described as a
+measured or exact weight. The engine must return `not_evaluable` or abstain when
+visual evidence, geometry, confidence, or model capability is insufficient.
+Hidden ingredients, oil, sauces, recipe composition, allergens, calories, and
+macronutrients remain outside image inference. Numeric nutrition still requires
+explicit identity and serving confirmation plus a versioned Nutrition Source.
+
+### Added functional requirements
+
+- **FR-32: Visible-component evidence.** A photo engine can return a set of
+  visibly separable food-component candidates with calibrated confidence,
+  optional visible-region evidence, ambiguity state, and model/taxonomy
+  provenance. It does not invent hidden recipe ingredients.
+- **FR-33: Bounded mass estimate.** A photo engine can return an optional
+  estimated gram range for a visible component only with model/calibration
+  provenance and `estimated`, `not_evaluable`, or `abstained` status. The UI
+  preserves the range and assumptions as editable evidence, not fact.
+- **FR-34: Component and serving confirmation.** A user can remove, correct,
+  add, merge, or split visible component candidates and edit the proposed gram
+  range/serving before any nutrition result is calculated.
+- **FR-35: Truthful staged local analysis.** A long local analysis reports its
+  actual stage, refreshes progress on bounded state changes, remains cancellable,
+  and never uses a fake countdown or simulated completion progress.
+- **FR-36: Component/mass evaluation.** A versioned evaluation runner reports
+  component-set, region/mask, scale-linked mass, abstention, parity, resource,
+  and device-slice results separately from catalog-grounded nutrition error.
+
+### Added non-functional requirement
+
+- **NFR-28: Component/mass activation safety.** A component or mass model is
+  activated only with an immutable model/taxonomy/preprocessing/calibration
+  manifest, a compatible rollback target, a consented weighed corpus, physical
+  Android/iOS evidence, and approved G-3/G-5 thresholds. Public corpora,
+  including Nutrition5k, may support attributed pretraining and benchmark
+  design after license review, but do not replace the consented phone-photo
+  acceptance corpus and are never shipped as an application asset.
+
+### Revised G-3/G-5 evidence
+
+The current Food-101/Swin result remains a dish-only baseline. The revised G-3
+exit additionally requires a v2 contract and model manifest, visible-component
+quality, scale-linked component and total-mass error, device/runtime/resource
+evidence, staged-and-cancellable UX evidence, and rollback. G-5 approves the
+claim wording, confidence/abstention, and quality thresholds after the corpus
+pilot; provisional targets are not public claims.
+
+## 15. Approved product-direction amendment — local default and nutrient-first result
+
+**Approved:** 2026-08-01 by Product owner Anastasia. This amendment supersedes
+earlier first-release UX assumptions about a default remote offer, a separate
+result screen, and calorie-first output. It does not permit remote transfer
+without valid consent, model-generated nutrition, medical/allergen conclusions,
+or unsupported nutrient/property claims.
+
+### Default and paid routing
+
+The free/default MVP is local/manual only. It must not show Remote consent,
+start a remote request, or present an upgrade/remote choice after local
+unavailability, abstention, or low confidence. Epic E4 remains a later
+paid-only capability: only an entitled paid user who explicitly chooses the
+remote path may reach its consent surface, after G-4 closes. The existing
+consent, region, retention, cost, cancellation, and gateway requirements remain
+mandatory for that future path.
+
+### Nutrient-first, non-medical result
+
+After explicit food identity and serving confirmation plus catalog grounding,
+the photo-first review screen presents the supported nutrient/vitamin/mineral
+profile and any catalog-backed descriptive food properties. The core UI omits a
+calorie total. Every displayed value/property retains source, version, serving,
+and estimate language. It must not state or imply a medical outcome, disease
+prevention/treatment, allergen safety, or that a food will affect a person's
+health. Missing catalog data remains absent/unknown rather than inferred.
+
+### Surface consolidation
+
+Capture, Candidate selection, and the grounded nutrient profile are sequential
+states of one photo-first screen: after shutter/import, the captured photo stays
+in place as the screen moves into review and then profile. The serving editor is
+an optional edit-and-return secondary screen; it becomes required only for an
+unresolved amount or required assumption, then returns to that same photo-first
+screen. No standalone Grounded-result destination is introduced.

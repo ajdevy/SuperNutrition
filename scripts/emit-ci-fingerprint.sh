@@ -81,6 +81,7 @@ release_digests() {
 contract_catalog_digest="$( { release_digests \
   contracts/mobile-api/v1 \
   contracts/inference/v1 \
+  contracts/inference/v2 \
   contracts/interaction-policy/v1 \
   contracts/market-policy/v1
   digest_paths \

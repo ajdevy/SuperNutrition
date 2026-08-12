@@ -1,6 +1,5 @@
 package com.supernutrition.platform.photoios
 
-import com.supernutrition.platform.photoios.captureinterop.SNCreateBoundedImage
 import com.supernutrition.core.config.PhotoNormalizationDefaults
 import com.supernutrition.core.config.withoutJpegApplicationMetadata
 import com.supernutrition.domain.photoanalysis.ImageOrientation
@@ -9,6 +8,7 @@ import com.supernutrition.domain.photoanalysis.PhotoInputNormalizer
 import com.supernutrition.domain.photoanalysis.PhotoPreparationException
 import com.supernutrition.domain.photoanalysis.PhotoRef
 import com.supernutrition.domain.photoanalysis.RawPhoto
+import com.supernutrition.platform.photoios.captureinterop.SNCreateBoundedImage
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
@@ -20,11 +20,11 @@ import platform.CoreGraphics.CGRectMake
 import platform.CoreGraphics.CGSizeMake
 import platform.Foundation.NSData
 import platform.Foundation.NSThread
-import platform.UIKit.UIImage
-import platform.UIKit.UIImageJPEGRepresentation
 import platform.UIKit.UIGraphicsBeginImageContextWithOptions
 import platform.UIKit.UIGraphicsEndImageContext
 import platform.UIKit.UIGraphicsGetImageFromCurrentImageContext
+import platform.UIKit.UIImage
+import platform.UIKit.UIImageJPEGRepresentation
 import platform.darwin.dispatch_get_main_queue
 import platform.darwin.dispatch_sync
 import platform.posix.memcpy
@@ -37,7 +37,11 @@ class IosImageNormalizer(
 ) {
     private val common = PhotoInputNormalizer(maxDimension = maxDimension, digest = digest)
 
-    fun normalize(ref: PhotoRef, sourceData: NSData): NormalizedPhotoInput {
+    @Suppress("ThrowsCount")
+    fun normalize(ref: PhotoRef, sourceData: NSData): NormalizedPhotoInput = normalizeWithPreview(ref, sourceData).input
+
+    @Suppress("ThrowsCount")
+    fun normalizeWithPreview(ref: PhotoRef, sourceData: NSData): IosNormalizedPhoto {
         if (sourceData.length == 0uL) {
             throw PhotoPreparationException("Photo bytes must not be empty")
         }
@@ -67,7 +71,7 @@ class IosImageNormalizer(
         ) ?: throw PhotoPreparationException("iOS could not encode the normalized JPEG")
         val rawBytes = normalizedData.toByteArray()
 
-        return common.normalize(
+        val normalized = common.normalize(
             RawPhoto(
                 ref = ref,
                 bytes = rawBytes.withoutJpegApplicationMetadata(),
@@ -78,6 +82,7 @@ class IosImageNormalizer(
                 metadataKeys = PhotoNormalizationDefaults.METADATA_KEYS,
             ),
         )
+        return IosNormalizedPhoto(input = normalized, preview = normalizedImage)
     }
 
     private fun drawOnMainThread(image: UIImage, width: Double, height: Double, scale: Double): UIImage? {
@@ -101,6 +106,9 @@ class IosImageNormalizer(
         return rendered
     }
 }
+
+/** Normalized domain input plus a display-only native image copy. */
+class IosNormalizedPhoto(val input: NormalizedPhotoInput, val preview: UIImage)
 
 /** Uses the platform crypto implementation instead of maintaining SHA-256 here. */
 @OptIn(ExperimentalForeignApi::class)

@@ -1,0 +1,107 @@
+{
+  "schema": "supernutrition.ingredient-weight-android-candidate-evidence.v1",
+  "date": "2026-08-11",
+  "scope": "Fresh research-only physical Android comparison of YOLOX-Nano and the current locally pinned YOLO-World artifact. This is not a production model selection, G-3 signature, legal clearance, component-quality pass, or mass-quality pass.",
+  "device": {
+    "serial": "AU3N025429006787",
+    "physical": true,
+    "model": "DNY-NX9",
+    "os": "Android 16 / API 36",
+    "abi": "arm64-v8a"
+  },
+  "runtime": {
+    "name": "onnxruntime-android",
+    "version": "1.28.0",
+    "execution_provider": "CPU",
+    "network_or_api_calls": false
+  },
+  "fixtures": {
+    "count": 5,
+    "names": [
+      "steak-side-plate.jpg",
+      "fish-side-plate.jpg",
+      "chopped-salad.jpg",
+      "buddha-bowl.jpg",
+      "salmon-grain-plate.jpg"
+    ],
+    "ground_truth": "Conservative visible-component labels only; these public photos have no tared mass records.",
+    "latency_protocol": "One warm-up inference, then one sequential inference per fixture. With five timings, p95 equals the maximum and is not a latency acceptance measurement."
+  },
+  "candidates": [
+    {
+      "candidate": "YOLOX-Nano COCO",
+      "status": "device-executed-limited-vocabulary",
+      "artifact": {
+        "model": "yolox_nano.onnx",
+        "model_sha256": "c789161ed43c8269fcd4e67c67eeeb4e80c622da2eb296a20bc6007bd18a0b7d",
+        "source": "https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_nano.onnx",
+        "vocabulary": "COCO-80 only; no custom ingredient prompts"
+      },
+      "execution": {
+        "input_contract": "416px BGR letterbox padded with 114; upstream YOLOX decoded output; confidence >= 0.10; class-agnostic NMS IoU 0.45",
+        "fixture_successes": 5,
+        "fixture_failures": 0,
+        "session_init_ms": 265,
+        "inference_p50_ms": 174,
+        "inference_p95_ms": 468,
+        "inference_max_ms": 468,
+        "pss_before_kb": 23684,
+        "pss_after_kb": 133318,
+        "thermal_before": 0,
+        "thermal_after": 0
+      },
+      "ingredient_benchmark": {
+        "status": "limited",
+        "scope": "Exact labels in the COCO food subset only",
+        "macro_f1": 0.15,
+        "fixture_count": 5
+      },
+      "weight_benchmark": {
+        "status": "not-evaluable",
+        "reason": "YOLOX-Nano has no mass output and the fixtures have no scale ground truth."
+      },
+      "decision": "Faster and smaller deployment screen than the current YOLO-World artifact, but lower limited-vocabulary component F1. Reject as the current ingredient or grams runtime."
+    },
+    {
+      "candidate": "YOLO-World v2 current PoC artifact",
+      "status": "device-executed-limited-vocabulary",
+      "artifact": {
+        "model": "yolov8s-worldv2-coco.onnx",
+        "model_sha256": "d27ac81640ca470cc7e42edd638b6626ac6b4f4dcce74aabb6e09cd02a13c84f",
+        "vocabulary": "embedded COCO-80 only; no custom ingredient prompts"
+      },
+      "execution": {
+        "input_contract": "640px RGB resize; confidence >= 0.10; class-aware NMS IoU 0.70",
+        "fixture_successes": 5,
+        "fixture_failures": 0,
+        "session_init_ms": 248,
+        "inference_p50_ms": 652,
+        "inference_p95_ms": 1117,
+        "inference_max_ms": 1117,
+        "pss_before_kb": 52498,
+        "pss_after_kb": 244210,
+        "thermal_before": 0,
+        "thermal_after": 0
+      },
+      "ingredient_benchmark": {
+        "status": "limited",
+        "scope": "Exact labels in the COCO food subset only",
+        "macro_f1": 0.2164,
+        "fixture_count": 5
+      },
+      "weight_benchmark": {
+        "status": "not-evaluable",
+        "reason": "YOLO-World v2 has no mass output and the fixtures have no scale ground truth."
+      },
+      "decision": "Higher limited-vocabulary component F1 than YOLOX-Nano in this screen, but substantially slower and larger. It remains unsuitable as an ingredient or grams claim."
+    }
+  ],
+  "comparability": {
+    "same_device": true,
+    "same_runtime_and_execution_provider": true,
+    "same_public_fixtures_and_visible_component_oracle": true,
+    "not_identical_preprocessing_or_nms": true,
+    "reason": "Each candidate used its upstream inference contract; forcing one preprocessing/postprocessing contract would invalidate at least one model."
+  },
+  "overall_decision": "Neither fresh detector result satisfies the required visible-ingredient contract or calibrated grams. YOLOX-Nano is a deployment benchmark result only. Legal approval of the exact checkpoint and its training-data provenance remains a separate gate."
+}

@@ -79,6 +79,74 @@ class JvmCoverageVerifierTest {
     }
 
     @Test
+    fun `aggregate ignores a branchless module but keeps its line denominator`() {
+        val root = Files.createTempDirectory("jvm-coverage-branchless")
+        try {
+            writeReport(root, ":branchless", lineMissed = 0, lineCovered = 10, branchMissed = 0, branchCovered = 0)
+            writeReport(root, ":branchful", lineMissed = 1, lineCovered = 9, branchMissed = 1, branchCovered = 9)
+
+            val result = JvmCoverageVerifier.verify(root, listOf(":branchless", ":branchful"))
+
+            assertEquals(95.0, result.linePercent)
+            assertEquals(90.0, result.branchPercent)
+            assertEquals(2, result.moduleCount)
+        } finally {
+            root.toFile().deleteRecursively()
+        }
+    }
+
+    @Test
+    fun `per module branch floor cannot be hidden by a passing aggregate`() {
+        val root = Files.createTempDirectory("jvm-coverage-module-branch-floor")
+        try {
+            writeReport(root, ":under", lineMissed = 0, lineCovered = 10, branchMissed = 1, branchCovered = 1)
+            writeReport(root, ":over", lineMissed = 0, lineCovered = 10, branchMissed = 0, branchCovered = 100)
+
+            val failure = assertFailsWith<IllegalArgumentException> {
+                JvmCoverageVerifier.verify(
+                    root,
+                    listOf(":under", ":over"),
+                    targets = mapOf(
+                        ":under" to JvmCoverageTarget(":under", 85, 85),
+                        ":over" to JvmCoverageTarget(":over", 85, 85),
+                    ),
+                )
+            }
+
+            assertTrue(failure.message.orEmpty().contains(":under"))
+            assertTrue(failure.message.orEmpty().contains("branch"))
+            assertTrue(failure.message.orEmpty().contains("85%"))
+        } finally {
+            root.toFile().deleteRecursively()
+        }
+    }
+
+    @Test
+    fun `per module line floor is enforced independently`() {
+        val root = Files.createTempDirectory("jvm-coverage-module-line-floor")
+        try {
+            writeReport(root, ":under", lineMissed = 2, lineCovered = 8, branchMissed = 0, branchCovered = 10)
+            writeReport(root, ":over", lineMissed = 0, lineCovered = 100, branchMissed = 0, branchCovered = 10)
+
+            val failure = assertFailsWith<IllegalArgumentException> {
+                JvmCoverageVerifier.verify(
+                    root,
+                    listOf(":under", ":over"),
+                    targets = mapOf(
+                        ":under" to JvmCoverageTarget(":under", 85, 85),
+                        ":over" to JvmCoverageTarget(":over", 85, 85),
+                    ),
+                )
+            }
+
+            assertTrue(failure.message.orEmpty().contains(":under"))
+            assertTrue(failure.message.orEmpty().contains("line"))
+        } finally {
+            root.toFile().deleteRecursively()
+        }
+    }
+
+    @Test
     fun `missing report fails with its project path`() {
         val root = Files.createTempDirectory("jvm-coverage-missing")
         try {

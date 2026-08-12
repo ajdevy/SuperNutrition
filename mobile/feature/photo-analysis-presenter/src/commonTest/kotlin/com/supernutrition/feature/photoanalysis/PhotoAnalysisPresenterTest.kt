@@ -10,6 +10,7 @@ import com.supernutrition.domain.photoanalysis.RecoveryReason
 import com.supernutrition.domain.photoanalysis.RequestId
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 class PhotoAnalysisPresenterTest {
@@ -32,7 +33,13 @@ class PhotoAnalysisPresenterTest {
             capture = baseCopy.capture.copy(openSettings = "Impostazioni"),
         )
 
-        assertEquals(copy.status.readyToCapture, PhotoAnalysisPresenterModel.from(PhotoAnalysisState.Capture, copy).statusLabel)
+        assertEquals(
+            copy.status.readyToCapture,
+            PhotoAnalysisPresenterModel.from(
+                PhotoAnalysisState.Capture,
+                copy,
+            ).statusLabel,
+        )
         assertEquals(
             copy.recovery.cameraPermissionRequired,
             PhotoAnalysisPresenterModel.from(
@@ -41,7 +48,11 @@ class PhotoAnalysisPresenterTest {
             ).statusLabel,
         )
         assertEquals(
-            listOf(PhotoAnalysisPresenterAction.Cancel),
+            listOf(
+                PhotoAnalysisPresenterAction.ScanAgain,
+                PhotoAnalysisPresenterAction.ImportPhoto,
+                PhotoAnalysisPresenterAction.Cancel,
+            ),
             PhotoAnalysisPresenterModel.from(PhotoAnalysisState.Ready(input), copy).actions,
         )
         assertEquals(
@@ -68,6 +79,7 @@ class PhotoAnalysisPresenterTest {
             RecoveryReason.CAPTURE_FAILED to copy.recovery.photoCaptureFailed,
             RecoveryReason.POOR_IMAGE to copy.recovery.photoQualityTooLow,
             RecoveryReason.NO_FOOD to copy.recovery.noFoodFound,
+            RecoveryReason.ANALYSIS_FAILED to copy.recovery.analysisFailed,
             RecoveryReason.OFFLINE to copy.recovery.analysisOffline,
             RecoveryReason.CANCELLED to copy.recovery.analysisCancelled,
         )
@@ -101,5 +113,13 @@ class PhotoAnalysisPresenterTest {
             setOf(PhotoAnalysisPresenterAction.TakePhoto, PhotoAnalysisPresenterAction.ImportPhoto),
             model.actions.toSet(),
         )
+    }
+
+    @Test
+    fun `grid prompt action validates the nine research cells`() {
+        assertEquals(4, PhotoAnalysisPresenterAction.SelectGridCell(4).index)
+        assertFailsWith<IllegalArgumentException> {
+            PhotoAnalysisPresenterAction.SelectGridCell(9)
+        }
     }
 }

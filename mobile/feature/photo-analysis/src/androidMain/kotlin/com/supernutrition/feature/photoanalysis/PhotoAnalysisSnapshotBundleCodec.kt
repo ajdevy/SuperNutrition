@@ -60,14 +60,10 @@ object PhotoAnalysisSnapshotBundleCodec {
     }
 
     @JvmStatic
-    fun decode(savedState: Bundle?, expectedAttempt: AttemptId): PhotoAnalysisBackgroundSnapshot? {
-        return runCatching { decodeInternal(savedState, expectedAttempt) }.getOrNull()
-    }
+    fun decode(savedState: Bundle?, expectedAttempt: AttemptId): PhotoAnalysisBackgroundSnapshot? =
+        runCatching { decodeInternal(savedState, expectedAttempt) }.getOrNull()
 
-    private fun decodeInternal(
-        savedState: Bundle?,
-        expectedAttempt: AttemptId,
-    ): PhotoAnalysisBackgroundSnapshot? {
+    private fun decodeInternal(savedState: Bundle?, expectedAttempt: AttemptId): PhotoAnalysisBackgroundSnapshot? {
         val state = savedState ?: return null
         if (state.getInt(SNAPSHOT_SCHEMA_VERSION_KEY, -1) != SNAPSHOT_SCHEMA_VERSION) return null
         val kind = state.getString(SNAPSHOT_KIND_KEY) ?: return null
@@ -120,8 +116,10 @@ object PhotoAnalysisSnapshotBundleCodec {
             RecoveryReason.PERMISSION_DENIED -> "permission_denied"
             RecoveryReason.CAMERA_UNAVAILABLE -> "camera_unavailable"
             RecoveryReason.CAPTURE_FAILED -> "capture_failed"
+            RecoveryReason.REVIEW_RESTORE_UNAVAILABLE -> "review_restore_unavailable"
             RecoveryReason.POOR_IMAGE -> "poor_image"
             RecoveryReason.NO_FOOD -> "no_food"
+            RecoveryReason.ANALYSIS_FAILED -> "analysis_failed"
             RecoveryReason.OFFLINE -> "offline"
             RecoveryReason.CANCELLED -> "cancelled"
         }
@@ -130,8 +128,10 @@ object PhotoAnalysisSnapshotBundleCodec {
         "permission_denied" -> RecoveryReason.PERMISSION_DENIED
         "camera_unavailable" -> RecoveryReason.CAMERA_UNAVAILABLE
         "capture_failed" -> RecoveryReason.CAPTURE_FAILED
+        "review_restore_unavailable" -> RecoveryReason.REVIEW_RESTORE_UNAVAILABLE
         "poor_image" -> RecoveryReason.POOR_IMAGE
         "no_food" -> RecoveryReason.NO_FOOD
+        "analysis_failed" -> RecoveryReason.ANALYSIS_FAILED
         "offline" -> RecoveryReason.OFFLINE
         "cancelled" -> RecoveryReason.CANCELLED
         else -> null
