@@ -22,7 +22,11 @@ internal class PhotoAnalysisReducerTransitions(private val context: PhotoAnalysi
             }
         }
 
-        is PhotoAnalysisEvent.PreparationFailed -> unchanged(PhotoAnalysisState.Capture)
+        // P2-2 — the reason was discarded and the user was returned to a plain
+        // capture screen, with nothing to say why the photo they just took did
+        // not take. Recovery is the state that can say so, and it is already
+        // where the same event goes once capture has succeeded.
+        is PhotoAnalysisEvent.PreparationFailed -> unchanged(PhotoAnalysisState.Recovery(event.reason))
 
         PhotoAnalysisEvent.PermissionDenied -> unchanged(PhotoAnalysisState.Recovery(RecoveryReason.PERMISSION_DENIED))
 
@@ -95,6 +99,18 @@ internal class PhotoAnalysisReducerTransitions(private val context: PhotoAnalysi
     ): PhotoAnalysisReduction = when (event) {
         is PhotoAnalysisEvent.ReplacePhoto -> replace(current, current.ref, event.ref)
         PhotoAnalysisEvent.ScanAgain -> current.ref?.let(::clearAndCapture) ?: unchanged(PhotoAnalysisState.Capture)
+
+        // P1-6 — the Android host dispatches PhotoCaptured after an import, from
+        // Recovery as much as from Capture. Recovery accepted only ReplacePhoto
+        // and ScanAgain, so the import fell to `else` and the user sat in
+        // Recovery looking at a photo the app had already taken.
+        is PhotoAnalysisEvent.PhotoCaptured ->
+            if (event.ref.attemptId == context.attemptId && context.leases.isActive(event.ref)) {
+                unchanged(PhotoAnalysisState.Preparing(event.ref))
+            } else {
+                unchanged(current)
+            }
+
         else -> unchanged(current)
     }
 

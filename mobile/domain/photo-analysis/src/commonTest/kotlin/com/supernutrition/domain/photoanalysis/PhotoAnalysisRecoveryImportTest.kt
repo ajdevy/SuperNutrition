@@ -28,7 +28,9 @@ class PhotoAnalysisRecoveryImportTest {
         bytes = byteArrayOf(1),
         width = 1,
         height = 1,
-        format = PhotoFormat(ImageOrientation.UP, "sRGB", emptySet()),
+        orientation = ImageOrientation.UP,
+        colorSpace = "sRGB",
+        metadataKeys = emptySet(),
         contentDigest = "b".repeat(64),
     )
 

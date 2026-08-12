@@ -356,11 +356,19 @@ class PhotoAnalysisDomainTest {
         assertFalse(leases.isActive(analyzingRef))
     }
 
+    // P2-2 — this asserted that the failure was ignored, which is the defect.
+    //
+    // A camera that cannot start reports PreparationFailed while the reducer is
+    // still in Capture, and the reason was dropped on the floor: the user was
+    // returned to a capture screen that said nothing about why the photo they
+    // just took did not take. The very next test shows a failure arriving after
+    // PhotoCaptured already routes to Recovery, so the two paths disagreed about
+    // the same event depending only on timing.
     @Test
-    fun `preparation failure from capture state is ignored`() {
+    fun `preparation failure from capture state offers recovery`() {
         reducer.dispatch(PhotoAnalysisEvent.PreparationFailed(RecoveryReason.CAMERA_UNAVAILABLE))
 
-        assertEquals(PhotoAnalysisState.Capture, reducer.state)
+        assertEquals(PhotoAnalysisState.Recovery(RecoveryReason.CAMERA_UNAVAILABLE), reducer.state)
     }
 
     @Test
