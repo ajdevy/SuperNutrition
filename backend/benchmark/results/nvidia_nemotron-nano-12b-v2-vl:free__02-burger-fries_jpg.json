@@ -1,0 +1,44 @@
+{
+  "model": "nvidia/nemotron-nano-12b-v2-vl:free",
+  "modelVersion": "nvidia/nemotron-nano-12b-v2-vl:free",
+  "provider": "Nvidia",
+  "duration": 455.1728749999893,
+  "durationSec": "0.46",
+  "promptTokens": 1882,
+  "completionTokens": 75,
+  "totalTokens": 1957,
+  "cost": 0,
+  "raw": "```json\n{\n  \"foods\": [\n    {\n      \"label\": \"Paella\",\n      \"rank\": 1,\n      \"confidence\": 0.95,\n      \"assumptions\": [\"The presence of rice, seafood, and saffron-infused broth is characteristic of pa",
+  "rawFull": "```json\n{\n  \"foods\": [\n    {\n      \"label\": \"Paella\",\n      \"rank\": 1,\n      \"confidence\": 0.95,\n      \"assumptions\": [\"The presence of rice, seafood, and saffron-infused broth is characteristic of paella.\"]\n    }\n  ]\n}\n```\n",
+  "reasoningPresent": false,
+  "finishReason": "stop",
+  "maxTokens": 2048,
+  "parsed": {
+    "foods": [
+      {
+        "label": "Paella",
+        "rank": 1,
+        "confidence": 0.95,
+        "assumptions": [
+          "The presence of rice, seafood, and saffron-infused broth is characteristic of paella."
+        ]
+      }
+    ]
+  },
+  "foods": [
+    {
+      "label": "Paella",
+      "rank": 1,
+      "confidence": 0.95,
+      "assumptions": [
+        "The presence of rice, seafood, and saffron-infused broth is characteristic of paella."
+      ]
+    }
+  ],
+  "attempts": [],
+  "image": "02-burger-fries.jpg",
+  "modelLabel": "Nemotron Nano 12B v2 VL (free, candidate)",
+  "pass": 1,
+  "key": "nvidia_nemotron-nano-12b-v2-vl:free__02-burger-fries_jpg",
+  "session": "free-roster"
+}

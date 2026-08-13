@@ -1,0 +1,38 @@
+{
+  "model": "openai/gpt-4o-mini",
+  "modelVersion": "openai/gpt-4o-mini",
+  "provider": "Azure",
+  "duration": 3504.5470380000006,
+  "durationSec": "3.50",
+  "promptTokens": 25586,
+  "completionTokens": 60,
+  "totalTokens": 25646,
+  "cost": 0.0038739,
+  "raw": "{\n  \"foods\": [\n    {\n      \"label\": \"shrimp pasta\",\n      \"rank\": 1,\n      \"confidence\": 0.85,\n      \"assumptions\": [\"Contains shrimp, pasta, and vegetables like green onions and cherry tomatoes.\"]\n  ",
+  "parsed": {
+    "foods": [
+      {
+        "label": "shrimp pasta",
+        "rank": 1,
+        "confidence": 0.85,
+        "assumptions": [
+          "Contains shrimp, pasta, and vegetables like green onions and cherry tomatoes."
+        ]
+      }
+    ]
+  },
+  "foods": [
+    {
+      "label": "shrimp pasta",
+      "rank": 1,
+      "confidence": 0.85,
+      "assumptions": [
+        "Contains shrimp, pasta, and vegetables like green onions and cherry tomatoes."
+      ]
+    }
+  ],
+  "image": "03-pasta-plate.jpg",
+  "modelLabel": "GPT-4o-mini (Pass 1 fallback)",
+  "pass": 1,
+  "key": "openai_gpt-4o-mini__03-pasta-plate_jpg"
+}

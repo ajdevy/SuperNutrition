@@ -1,7 +1,7 @@
 schema = "supernutrition.market-policy-compatibility.v1"
 contract_id = "market-policy"
 release = "v1"
-digest = "pending"
+digest = "740e611fe5a3d21764c22395839951d7678bf29b241c489cd350ba732ee9f1a1"
 
 # The mobile instance is the only declared consumer today. It is protected: a
 # product may read policy state and may not write it.
