@@ -1,0 +1,38 @@
+{
+  "model": "openai/gpt-4o",
+  "modelVersion": "openai/gpt-4o",
+  "provider": "Azure",
+  "duration": 3149.165774999994,
+  "durationSec": "3.15",
+  "promptTokens": 712,
+  "completionTokens": 60,
+  "totalTokens": 772,
+  "cost": 0.00238,
+  "raw": "```json\n{\n  \"foods\": [\n    {\n      \"label\": \"burger\",\n      \"rank\": 1,\n      \"confidence\": 0.95,\n      \"assumptions\": [\"contains lettuce, radish, and a beef patty\"]\n    }\n  ]\n}\n```",
+  "parsed": {
+    "foods": [
+      {
+        "label": "burger",
+        "rank": 1,
+        "confidence": 0.95,
+        "assumptions": [
+          "contains lettuce, radish, and a beef patty"
+        ]
+      }
+    ]
+  },
+  "foods": [
+    {
+      "label": "burger",
+      "rank": 1,
+      "confidence": 0.95,
+      "assumptions": [
+        "contains lettuce, radish, and a beef patty"
+      ]
+    }
+  ],
+  "image": "04-breakfast-pancakes.jpg",
+  "modelLabel": "GPT-4o (Pass 2)",
+  "pass": 2,
+  "key": "openai_gpt-4o__04-breakfast-pancakes_jpg"
+}

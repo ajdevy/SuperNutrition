@@ -1,0 +1,102 @@
+{
+  "model": "anthropic/claude-sonnet-5",
+  "modelVersion": "anthropic/claude-sonnet-5",
+  "provider": "Amazon Bedrock",
+  "duration": 8598.897238000005,
+  "durationSec": "8.60",
+  "promptTokens": 703,
+  "completionTokens": 413,
+  "totalTokens": 1116,
+  "cost": 0.005536,
+  "raw": "```json\n{\n  \"foods\": [\n    {\n      \"label\": \"Buddha Bowl Salad\",\n      \"rank\": 1,\n      \"confidence\": 0.9,\n      \"assumptions\": [\"Contains avocado, cherry tomatoes, chickpeas, roasted sweet potato, re",
+  "parsed": {
+    "foods": [
+      {
+        "label": "Buddha Bowl Salad",
+        "rank": 1,
+        "confidence": 0.9,
+        "assumptions": [
+          "Contains avocado, cherry tomatoes, chickpeas, roasted sweet potato, red cabbage, lettuce, mango, watermelon radish, and microgreens with a creamy dressing (likely tahini or yogurt-based)"
+        ]
+      },
+      {
+        "label": "Avocado",
+        "rank": 2,
+        "confidence": 0.95,
+        "assumptions": [
+          "Sliced and fanned, ripe"
+        ]
+      },
+      {
+        "label": "Roasted Sweet Potato",
+        "rank": 3,
+        "confidence": 0.85,
+        "assumptions": [
+          "Cubed, appears roasted or steamed"
+        ]
+      },
+      {
+        "label": "Chickpeas",
+        "rank": 4,
+        "confidence": 0.85,
+        "assumptions": [
+          "Cooked, whole"
+        ]
+      },
+      {
+        "label": "Cherry Tomatoes",
+        "rank": 5,
+        "confidence": 0.9,
+        "assumptions": [
+          "On the vine, fresh"
+        ]
+      }
+    ]
+  },
+  "foods": [
+    {
+      "label": "Buddha Bowl Salad",
+      "rank": 1,
+      "confidence": 0.9,
+      "assumptions": [
+        "Contains avocado, cherry tomatoes, chickpeas, roasted sweet potato, red cabbage, lettuce, mango, watermelon radish, and microgreens with a creamy dressing (likely tahini or yogurt-based)"
+      ]
+    },
+    {
+      "label": "Avocado",
+      "rank": 2,
+      "confidence": 0.95,
+      "assumptions": [
+        "Sliced and fanned, ripe"
+      ]
+    },
+    {
+      "label": "Roasted Sweet Potato",
+      "rank": 3,
+      "confidence": 0.85,
+      "assumptions": [
+        "Cubed, appears roasted or steamed"
+      ]
+    },
+    {
+      "label": "Chickpeas",
+      "rank": 4,
+      "confidence": 0.85,
+      "assumptions": [
+        "Cooked, whole"
+      ]
+    },
+    {
+      "label": "Cherry Tomatoes",
+      "rank": 5,
+      "confidence": 0.9,
+      "assumptions": [
+        "On the vine, fresh"
+      ]
+    }
+  ],
+  "image": "01-salad-bowl.jpg",
+  "modelLabel": "Claude Sonnet 5 (Pass 2 alt)",
+  "pass": 2,
+  "key": "anthropic_claude-sonnet-5__01-salad-bowl_jpg"
+}

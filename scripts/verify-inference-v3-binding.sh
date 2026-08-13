@@ -20,8 +20,8 @@ import tomllib
 
 contract_root = Path(sys.argv[1]).resolve()
 binding_root = Path(sys.argv[2]).resolve()
-schema = tomllib.loads((contract_root / "schema.toml").read_text())
-text = "\n".join(path.read_text() for path in sorted(binding_root.glob("*.kt")))
+schema = tomllib.loads((contract_root / "schema.toml").read_text(encoding="utf-8"))
+text = "\n".join(path.read_text(encoding="utf-8") for path in sorted(binding_root.glob("*.kt")))
 if 'INFERENCE_CONTRACT_V3: String = "inference-evidence/v3"' not in text:
     raise SystemExit("v3 binding does not pin inference-evidence/v3")
 
