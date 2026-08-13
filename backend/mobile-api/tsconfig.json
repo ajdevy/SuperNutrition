@@ -1,9 +1,0 @@
-{
-  "files": [],
-  "references": [
-    { "path": "./packages/shared" },
-    { "path": "./packages/contracts" },
-    { "path": "./packages/database" },
-    { "path": "./apps/api" }
-  ]
-}

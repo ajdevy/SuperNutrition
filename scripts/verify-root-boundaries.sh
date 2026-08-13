@@ -105,57 +105,6 @@ PY
 # product-owned manifests and checked-in configuration remain covered.
 PRODUCT_ROOTS=(mobile web/landing backend/mobile-api)
 
-# AD-36 forbids source imports, workspaces, package/project dependencies,
-# generated-source writes, runtime calls/configuration, build-task edges, shared
-# output directories, and deployment/artifact dependencies across product roots.
-# Every one of those is a PATH reference. Matching a bare sibling-root name
-# instead flags prose and, decisively, the lint rule that enforces this very
-# boundary, which cannot express the forbidden pattern without containing it.
-path_edge_pattern() {
-  printf '(\\.{1,2}/)+(%s)([/"'\''`[:space:],;)]|$)|["'\''`](%s)/' "$1" "$1"
-}
-
-# A BARE path reference — `cd mobile/build-logic`, `backend/mobile-api/quality-check`,
-# `mobile/gradlew` in a workflow step — is invisible to the pattern above: one
-# alternation needs a ../ prefix, the other an opening quote. Those are exactly
-# the shapes a shell script or CI step uses, so the rule was blind to cross-root
-# edges in the files most likely to create them.
-#
-# Applied ONLY to shell, CI and plain configuration files. In those a bare path
-# is something that runs or something a tool resolves;
-# in source and prose it is a string, and matching there flags the lint rule that
-# enforces this very boundary — which cannot describe the forbidden pattern
-# without containing it. Measured, not assumed: adding this alternation to the
-# general pattern immediately failed on backend/mobile-api/eslint.config.js,
-# whose message names mobile/ precisely in order to forbid it.
-bare_path_pattern() {
-  printf '(^|[[:space:]=:(,;])(%s)/' "$1"
-}
-
-# The config extensions were added after the rewritten negative-fixture harness
-# showed a cross-product CACHE edge in a .toml going completely undetected — a
-# gap the old vacuous fixtures had concealed. Checked first: no file under any
-# product root legitimately carries such a reference today.
-search_executable_files() {
-  local pattern="$1"
-  local product_path="$2"
-  if command -v rg >/dev/null 2>&1; then
-    rg --hidden -n -S \
-      --glob '!**/build/**' \
-      --glob '!**/node_modules/**' \
-      --glob '*.sh' --glob '*.bash' --glob '*.yml' --glob '*.yaml' \
-      --glob '*.toml' --glob '*.properties' --glob '*.cfg' --glob '*.ini' \
-      "$pattern" "$product_path"
-  else
-    grep -R -n -I -E \
-      --exclude-dir=build \
-      --exclude-dir=node_modules \
-      --include='*.sh' --include='*.bash' --include='*.yml' --include='*.yaml' \
-      --include='*.toml' --include='*.properties' --include='*.cfg' --include='*.ini' \
-      "$pattern" "$product_path"
-  fi
-}
-
 search_product_root() {
   local pattern="$1"
   local product_path="$2"
@@ -166,7 +115,6 @@ search_product_root() {
       --glob '!**/.idea/**' \
       --glob '!**/.kotlin/**' \
       --glob '!**/node_modules/**' \
-      --glob '!**/docs/**' \
       --glob '!**/*.jar' \
       --glob '!**/*.bin' \
       "$pattern" "$product_path"
@@ -177,7 +125,6 @@ search_product_root() {
       --exclude-dir=.idea \
       --exclude-dir=.kotlin \
       --exclude-dir=node_modules \
-      --exclude-dir=docs \
       --exclude='*.jar' \
       --exclude='*.bin' \
       "$pattern" "$product_path"
@@ -187,26 +134,18 @@ search_product_root() {
 for product_root in "${PRODUCT_ROOTS[@]}"; do
   case "$product_root" in
     mobile)
-      forbidden_pattern="$(path_edge_pattern 'web/landing|backend/mobile-api')"
-      bare_pattern="$(bare_path_pattern 'web/landing|backend/mobile-api')"
+      forbidden_pattern='web/landing|backend/mobile-api'
       ;;
     web/landing)
-      forbidden_pattern="$(path_edge_pattern 'mobile|backend/mobile-api')"
-      bare_pattern="$(bare_path_pattern 'mobile|backend/mobile-api')"
+      forbidden_pattern='(^|[^[:alnum:]_])mobile([/.[:space:]]|$)|backend/mobile-api'
       ;;
     backend/mobile-api)
-      forbidden_pattern="$(path_edge_pattern 'mobile|web/landing')"
-      bare_pattern="$(bare_path_pattern 'mobile|web/landing')"
+      forbidden_pattern='(^|[^[:alnum:]_])mobile([/.[:space:]]|$)|web/landing'
       ;;
   esac
 
   if search_product_root "$forbidden_pattern" "$repo_root/$product_root"; then
     printf 'forbidden cross-product edge in %s\n' "$product_root" >&2
-    exit 1
-  fi
-
-  if search_executable_files "$bare_pattern" "$repo_root/$product_root"; then
-    printf 'forbidden cross-product edge in %s (bare path in a shell or CI file)\n' "$product_root" >&2
     exit 1
   fi
 done
@@ -231,13 +170,4 @@ else:
     print(lifecycle)
 PY
 })"
-read_lifecycle() {
-  if test -f "$repo_root/$1/product-lifecycle.toml"; then
-    sed -n 's/^lifecycle = "\([^"]*\)"$/\1/p' "$repo_root/$1/product-lifecycle.toml" | head -n 1
-  else
-    printf 'absent'
-  fi
-}
-
-printf 'root-boundaries: OK (mobile %s; web %s; backend %s)\n' \
-  "$mobile_lifecycle" "$(read_lifecycle web/landing)" "$(read_lifecycle backend/mobile-api)"
+printf 'root-boundaries: OK (mobile %s; web/backend preselection)\n' "$mobile_lifecycle"

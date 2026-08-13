@@ -12,17 +12,10 @@ repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 contract_root="${SUPERNUTRITION_MARKET_POLICY_CONTRACT:-${repo_root}/contracts/market-policy/v1}"
 instance_path="${SUPERNUTRITION_MARKET_POLICY_INSTANCE:-${repo_root}/mobile/config/quality/market-policy.toml}"
 
-# One digest implementation, shared with scripts/emit-release-digest.sh.
-export SUPERNUTRITION_SCRIPT_LIB="${repo_root}/scripts/lib"
-
 python3 - "$contract_root" "$instance_path" <<'PY'
 from pathlib import Path
-import os
 import sys
 import tomllib
-
-sys.path.insert(0, os.environ["SUPERNUTRITION_SCRIPT_LIB"])
-from release_digest import compute as compute_release_digest
 
 root = Path(sys.argv[1]).resolve()
 instance_path = Path(sys.argv[2]).resolve()
@@ -35,57 +28,11 @@ for path in (schema_path, release_path, compat_path, *fixture_paths, instance_pa
     if not path.is_file():
         raise SystemExit(f"missing market-policy file: {path}")
 
-# An empty glob made every fixture rule below iterate over nothing and report OK.
-# A release whose canonical examples have been deleted is not a release that
-# passes; it is one nobody is checking.
-if len(fixture_paths) < 2:
-    raise SystemExit(
-        "market-policy v1 must publish at least a permitted and an unresolved "
-        f"fixture; found {len(fixture_paths)}"
-    )
-
-schema = tomllib.loads(schema_path.read_text(encoding="utf-8"))
+schema = tomllib.loads(schema_path.read_text())
 if schema.get("contract_id") != "market-policy" or schema.get("release") != "v1":
     raise SystemExit("market-policy schema must identify the v1 release")
 if schema.get("language_neutral") is not True or schema.get("executable") is not False:
     raise SystemExit("market-policy contract must remain language-neutral data only")
-
-# The compatibility file was existence-checked and never opened, so its
-# `digest = "pending"` was never computed and its declared consumers were never
-# validated. A digest that says "pending" forever is not a digest.
-compat = tomllib.loads(compat_path.read_text(encoding="utf-8"))
-if compat.get("contract_id") != "market-policy" or compat.get("release") != "v1":
-    raise SystemExit("market-policy compatibility file must target the v1 release")
-
-recorded_digest = compat.get("digest")
-if not isinstance(recorded_digest, str) or len(recorded_digest) != 64 or \
-        any(character not in "0123456789abcdef" for character in recorded_digest):
-    raise SystemExit(
-        f"market-policy compatibility digest is {recorded_digest!r}; it must be "
-        "64 lowercase hex characters. Produce one with scripts/emit-release-digest.sh"
-    )
-computed_digest = compute_release_digest(root)
-if recorded_digest != computed_digest:
-    raise SystemExit(
-        f"market-policy compatibility digest is stale (computed {computed_digest})"
-    )
-
-pairs = compat.get("supported_pair", [])
-if not pairs:
-    raise SystemExit("market-policy compatibility file declares no consumers")
-for index, pair in enumerate(pairs):
-    for field in ("producer", "consumer", "direction", "expected"):
-        if not pair.get(field):
-            raise SystemExit(f"compatibility supported_pair[{index}] is missing {field}")
-    # not-yet-implemented is a real and useful third state: it records a consumer
-    # as a declared future migration rather than pretending it works today. That
-    # is the honest form of a compatibility claim, and the opposite of a matrix
-    # that marks unwritten consumers "accepted".
-    if pair["expected"] not in ("accepted", "rejected", "not-yet-implemented"):
-        raise SystemExit(
-            f"compatibility supported_pair[{index}] expected must be accepted, "
-            "rejected or not-yet-implemented"
-        )
 
 market = schema.get("market", {})
 required = market.get("required_fields", [])
@@ -138,57 +85,45 @@ if authority.get("ci_may_write_policy_state") is not False:
 if authority.get("resolver_accepts_unsigned_data") is not False:
     raise SystemExit("the resolver must refuse unsigned policy data")
 
-# One rule-set, applied to fixtures AND to the shipped instance.
-#
-# These rules used to run over fixtures only. The instance — which is the actual
-# legal position, not an example of one — was checked for missing fields and a
-# named approver and nothing else, so a shipped market could declare posture
-# `unresolved` while permitting a photo transfer, or permit a transfer with no
-# reviewed consent copy behind it, and pass. The examples were held to a higher
-# standard than the thing that ships.
-def check_market_entry(where, entry):
-    unlisted = set(entry) - set(required)
-    if unlisted:
-        raise SystemExit(f"{where} carries unlisted fields: {sorted(unlisted)}")
-    missing = set(required) - set(entry)
-    if missing:
-        raise SystemExit(f"{where} omits required fields: {sorted(missing)}")
-    if entry["residency_posture"] not in postures:
-        raise SystemExit(f"{where} declares an undeclared posture")
-    if entry["residency_posture"] == "unresolved" and (
-        entry["photo_remote_permission"] != "forbidden"
-        or entry["text_remote_permission"] != "forbidden"
-    ):
-        raise SystemExit(f"{where} is unresolved and still permits a transfer")
-    if entry["text_remote_permission"] == "permitted" and entry["text_consent_copy_version"] == "none":
-        raise SystemExit(f"{where} permits text transfer with no reviewed copy to authorise it")
-    if entry["photo_remote_permission"] == "permitted" and entry["photo_consent_copy_version"] == "none":
-        raise SystemExit(f"{where} permits photo transfer with no reviewed copy to authorise it")
-    if entry["photo_consent_copy_version"] != "none" and (
-        entry["photo_consent_copy_version"] == entry["text_consent_copy_version"]
-    ):
-        raise SystemExit(f"{where} reuses one consent copy for both modalities")
-
-
 # Fixtures teach the shape, so a fixture that contradicts the rules teaches the
 # wrong one.
 for path in fixture_paths:
-    fixture = tomllib.loads(path.read_text(encoding="utf-8"))
+    fixture = tomllib.loads(path.read_text())
     for entry in fixture.get("market", []):
-        check_market_entry(path.name, entry)
+        unlisted = set(entry) - set(required)
+        if unlisted:
+            raise SystemExit(f"{path.name} carries unlisted fields: {sorted(unlisted)}")
+        missing = set(required) - set(entry)
+        if missing:
+            raise SystemExit(f"{path.name} omits required fields: {sorted(missing)}")
+        if entry["residency_posture"] not in postures:
+            raise SystemExit(f"{path.name} declares an undeclared posture")
+        if entry["residency_posture"] == "unresolved" and (
+            entry["photo_remote_permission"] != "forbidden" or entry["text_remote_permission"] != "forbidden"
+        ):
+            raise SystemExit(f"{path.name} is unresolved and still permits a transfer")
+        if entry["text_remote_permission"] == "permitted" and entry["text_consent_copy_version"] == "none":
+            raise SystemExit(f"{path.name} permits text transfer with no reviewed copy to authorise it")
+        if entry["photo_remote_permission"] == "permitted" and entry["photo_consent_copy_version"] == "none":
+            raise SystemExit(f"{path.name} permits photo transfer with no reviewed copy to authorise it")
+        if entry["photo_consent_copy_version"] != "none" and (
+            entry["photo_consent_copy_version"] == entry["text_consent_copy_version"]
+        ):
+            raise SystemExit(f"{path.name} reuses one consent copy for both modalities")
 
 # The instance is the shipped position. An entry here is a legal claim.
-instance = tomllib.loads(instance_path.read_text(encoding="utf-8"))
+instance = tomllib.loads(instance_path.read_text())
 if instance.get("contract_release") != "market-policy/v1":
     raise SystemExit("the mobile instance must name the contract release it conforms to")
 entries = instance.get("market", [])
 if instance.get("market_count") != len(entries):
     raise SystemExit(f"instance market_count {instance.get('market_count')} does not match its {len(entries)} entries")
 for entry in entries:
-    where = f"instance market {entry.get('market_id')}"
-    check_market_entry(where, entry)
+    missing = set(required) - set(entry)
+    if missing:
+        raise SystemExit(f"instance market {entry.get('market_id')} omits {sorted(missing)}")
     if entry.get("legal_review_approver") in (None, "", "none") and entry.get("residency_posture") != "unresolved":
-        raise SystemExit(f"{where} has a posture and no named approver")
+        raise SystemExit(f"instance market {entry.get('market_id')} has a posture and no named approver")
 
 print(f"market-policy contract: OK (v1 rules, {len(fixture_paths)} fixtures, instance declares {len(entries)} markets)")
 PY

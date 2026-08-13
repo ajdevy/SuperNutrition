@@ -1,35 +1,19 @@
 schema = "supernutrition.backend.product-lifecycle.v1"
 schema_version = 1
 product = "mobile-api"
-lifecycle = "active"
-activated_at = "2026-07-29"
-activation_story = "backend/02-skeleton.md (Stage 2)"
-activation_adr = "docs/adr/0005-lifecycle-activation.md"
-source_digest = "tracked-by-git"
-quality_claim = true
-production_source_count = 159
-dependency_manifest = "package.json"
-lock_state = "package-lock.json"
-runtime = "node >=22.11.0 <25.0.0"
-deployable_artifact = "deploy/Dockerfile"
+lifecycle = "preselection"
+source_digest = "pending"
+quality_claim = false
+production_source_count = 0
+dependency_manifest = "absent"
+lock_state = "absent"
+runtime = "unselected"
+deployable_artifact = "absent"
 quality_entrypoint = "quality-check"
-product_inventory = "product-inventory.toml"
 executable_inventory = ["quality-check"]
 
-[evidence]
-tests_passing = 537
-test_files = 39
-coverage_line_pct = 94.13
-coverage_branch_pct = 90.22
-coverage_tool = "vitest 4.1.10 + @vitest/coverage-v8"
-typecheck = "tsc --build"
-lint = "eslint (read-only)"
-
-# An active product can never return to a non-active state (AD-37).
 [transition]
 requires_reviewed_toolchain = true
 requires_nonempty_inventory = true
 requires_frozen_lock = true
 requires_quality_entrypoint = true
-satisfied = true
-irreversible = true

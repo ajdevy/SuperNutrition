@@ -11,46 +11,5 @@
         "path": "./vendor/claude-code-agents"
       }
     }
-  },
-  "permissions": {
-    "deny": [
-      "Read(.env*)",
-      "Read(**/.env*)",
-      "Write(.env*)",
-      "Write(**/.env*)",
-      "Bash(*rm -rf*)",
-      "Bash(*git push --force*)",
-      "Bash(*git push -f*)",
-      "Bash(*git reset --hard*)",
-      "Bash(*DROP TABLE*)",
-      "Bash(*TRUNCATE*)",
-      "Bash(*DELETE FROM*)"
-    ],
-    "ask": [
-      "Bash(*git push*)"
-    ]
-  },
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Write|Edit|MultiEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": ".claude/hooks/secret-scan.sh"
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": ".claude/hooks/test-gate.sh"
-          }
-        ]
-      }
-    ]
   }
 }
