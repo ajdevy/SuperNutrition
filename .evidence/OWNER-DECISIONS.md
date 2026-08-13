@@ -76,3 +76,63 @@ keeping things is a deliberate reversal rather than an oversight to correct.
 **What settles it:** whether the obligation to evidence consent outweighs the
 cost of holding it, and if so, what the retention period for the receipts
 themselves is.
+
+---
+
+# Owner decisions D1–D3 (2026-08-13, against main 401daec)
+
+Recorded after PR #38 merged. These close the stacked photo-analysis pair.
+
+## D1 — PR #39 is superseded and closed
+
+main advanced twice past #39's base: Epic 3 (local inference) and Epic 7 (#37 —
+typed identification, `contracts/inference/v3` as the **evidence** release,
+market policy). Epic 7 re-implemented most of #39's scope independently.
+
+The only content unique to #39 was `mobile/inference/remote` and its engine
+contract. It has zero consumers, and its contract collides by path with main's
+published v3. It was **not** re-homed to v4: a second engine release with no
+consumer is a contract nobody reads.
+
+Closed with a per-finding record on the PR itself. Every finding is either
+satisfied-on-main or parked in issue #43, and no parked item's code path is
+reachable on main today, so closing carries no shipping delta.
+
+## D2 — PR #38 merged
+
+`401daec`. Carries all of handover-38: H1–H3, M1–M18, every Low group, and the
+three deferred contract decisions above.
+
+Two defects surfaced only when the merge first ran the workflow against a tree
+where Epic 7's rename had landed, and both are recorded in their own commits:
+
+- `ci-required.yml` called three `inference-v2-*` scripts that Epic 7 had
+  renamed to v3. main's own required check was red for this reason before the
+  merge; the merge only surfaced it.
+- the immutability gate rejected M14's own market-policy digest correction. It
+  is acknowledged narrowly, pinned to both digests and expiring 2026-09-30,
+  rather than reverted or waved through.
+
+## D3 — gap audit against main 401daec: no relocations
+
+Every handover-38 finding is on main. Of handover-39, four are satisfied-on-main
+(P1-1, P1-2, P1-3, P1-6, plus two P2s) and the rest are parked.
+
+Three findings are genuinely absent from main and were **not** relocated,
+because none is reachable in a shipped flow:
+
+| finding | why it is not reachable |
+|---|---|
+| P1-5 | `LocalFirstRouter` is on main and complete; the coordinator never consults it. No remote path exists on main, so the policy cannot be violated in a way that reaches a provider. |
+| P1-11 | main's v3 matrix marks `remote-v3` and `evaluation-v3` accepted while `mobile/inference/remote` and `mobile/evaluation/harness` are both absent. |
+| P1-12 | `MealSearchScreen` rows carry no selection callback, and no app module depends on `meal-search-ui`. |
+
+That is the terminal state: nothing left to port.
+
+## Follow-ups
+
+- **#43** — remote inference: the engine module, its contract, and P1-4/5/7/8/9/10/11/12
+  plus three P2s parked with them.
+- **evaluation-v2** — `contracts/inference/v2` marks it accepted with no harness
+  in the tree. Unchanged by decision; same class as P1-11 above.
+
