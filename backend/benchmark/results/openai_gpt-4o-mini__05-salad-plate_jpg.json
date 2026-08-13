@@ -1,0 +1,38 @@
+{
+  "model": "openai/gpt-4o-mini",
+  "modelVersion": "openai/gpt-4o-mini",
+  "provider": "OpenAI",
+  "duration": 1303.7332050000005,
+  "durationSec": "1.30",
+  "promptTokens": 25586,
+  "completionTokens": 62,
+  "totalTokens": 25648,
+  "cost": 0.0038751,
+  "raw": "{\n  \"foods\": [\n    {\n      \"label\": \"salad\",\n      \"rank\": 1,\n      \"confidence\": 0.85,\n      \"assumptions\": [\"Contains various vegetables, protein (possibly grilled chicken or tofu), and hard-boiled ",
+  "parsed": {
+    "foods": [
+      {
+        "label": "salad",
+        "rank": 1,
+        "confidence": 0.85,
+        "assumptions": [
+          "Contains various vegetables, protein (possibly grilled chicken or tofu), and hard-boiled eggs."
+        ]
+      }
+    ]
+  },
+  "foods": [
+    {
+      "label": "salad",
+      "rank": 1,
+      "confidence": 0.85,
+      "assumptions": [
+        "Contains various vegetables, protein (possibly grilled chicken or tofu), and hard-boiled eggs."
+      ]
+    }
+  ],
+  "image": "05-salad-plate.jpg",
+  "modelLabel": "GPT-4o-mini (Pass 1 fallback)",
+  "pass": 1,
+  "key": "openai_gpt-4o-mini__05-salad-plate_jpg"
+}

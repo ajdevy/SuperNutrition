@@ -1,0 +1,8 @@
+node_modules/
+.npm-cache/
+dist/
+coverage/
+packages/database/src/migrations/
+# Stage 1 architecture documents and ADRs are prose, reviewed as written.
+# Reformatting them turns a design review into a diff of table pipes.
+docs/

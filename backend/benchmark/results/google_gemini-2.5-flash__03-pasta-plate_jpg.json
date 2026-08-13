@@ -1,0 +1,78 @@
+{
+  "model": "google/gemini-2.5-flash",
+  "modelVersion": "google/gemini-2.5-flash",
+  "provider": "Google",
+  "duration": 2029.312453999999,
+  "durationSec": "2.03",
+  "promptTokens": 1893,
+  "completionTokens": 307,
+  "totalTokens": 2200,
+  "cost": 0.00046814999999999997,
+  "raw": "```json\n{\n  \"foods\": [\n    {\n      \"label\": \"Shrimp and Noodle Stir-fry\",\n      \"rank\": 1,\n      \"confidence\": 0.95,\n      \"assumptions\": [\n        \"The noodles appear to be thin, like spaghetti or ra",
+  "parsed": {
+    "foods": [
+      {
+        "label": "Shrimp and Noodle Stir-fry",
+        "rank": 1,
+        "confidence": 0.95,
+        "assumptions": [
+          "The noodles appear to be thin, like spaghetti or ramen, and are mixed with other ingredients in a pan, suggesting a stir-fry preparation.",
+          "The shrimp are prominent and appear cooked, likely pan-fried or stir-fried.",
+          "Cherry tomatoes and chopped green onions are visible as garnishes/ingredients."
+        ]
+      },
+      {
+        "label": "Shrimp Scampi with Noodles",
+        "rank": 2,
+        "confidence": 0.8,
+        "assumptions": [
+          "The presence of shrimp and noodles is consistent with scampi, though the sauce's exact nature isn't fully discernible.",
+          "The overall appearance suggests a savory, possibly garlic-butter based dish, common in scampi."
+        ]
+      },
+      {
+        "label": "Spaghetti with Shrimp and Vegetables",
+        "rank": 3,
+        "confidence": 0.7,
+        "assumptions": [
+          "The noodles resemble spaghetti, and shrimp are clearly visible.",
+          "The cherry tomatoes and green onions count as vegetables."
+        ]
+      }
+    ]
+  },
+  "foods": [
+    {
+      "label": "Shrimp and Noodle Stir-fry",
+      "rank": 1,
+      "confidence": 0.95,
+      "assumptions": [
+        "The noodles appear to be thin, like spaghetti or ramen, and are mixed with other ingredients in a pan, suggesting a stir-fry preparation.",
+        "The shrimp are prominent and appear cooked, likely pan-fried or stir-fried.",
+        "Cherry tomatoes and chopped green onions are visible as garnishes/ingredients."
+      ]
+    },
+    {
+      "label": "Shrimp Scampi with Noodles",
+      "rank": 2,
+      "confidence": 0.8,
+      "assumptions": [
+        "The presence of shrimp and noodles is consistent with scampi, though the sauce's exact nature isn't fully discernible.",
+        "The overall appearance suggests a savory, possibly garlic-butter based dish, common in scampi."
+      ]
+    },
+    {
+      "label": "Spaghetti with Shrimp and Vegetables",
+      "rank": 3,
+      "confidence": 0.7,
+      "assumptions": [
+        "The noodles resemble spaghetti, and shrimp are clearly visible.",
+        "The cherry tomatoes and green onions count as vegetables."
+      ]
+    }
+  ],
+  "image": "03-pasta-plate.jpg",
+  "modelLabel": "Gemini 2.5 Flash (Pass 1 main)",
+  "pass": 1,
+  "key": "google_gemini-2.5-flash__03-pasta-plate_jpg"
+}

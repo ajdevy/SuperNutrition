@@ -1,7 +1,35 @@
 schema = "supernutrition.mobile-api-compatibility-matrix.v1"
 contract_id = "mobile-api"
 release = "v1"
-digest = "f42c6e319330cc3d7d79df34b3387a8721b46f99bdcc5f23a516cb57869c2c03"
+digest = "9733a365daf8ad7414de49aea73811d2a81d04701b58cf395644fde087934c06"
+
+# The digest is SHA-256 over every sorted TOML file in this release. Each entry
+# contributes its release-relative path, a zero byte, then its bytes. While
+# hashing this file, the digest value is replaced by the literal
+# `<release-digest>` to avoid a self-reference.
+#
+# Any change to any contract file changes the digest. That is the point: a
+# consumer pins the digest, so a silent edit to a released file is detectable
+# rather than merely discouraged.
+
+[coverage]
+digest_covers = "all-release-toml-files"
+digest_excludes = ["RELEASE.md"]
+schema_file_count = 9
+fixture_file_count = 8
+
+[skew_policy]
+# AD-36: updating both products at HEAD is never sufficient. Every contract
+# change tests new backend behaviour against every supported released mobile
+# contract, new mobile behaviour against current and staged backend contracts,
+# and both products against the previous immutable fixtures.
+both_at_head_is_sufficient = false
+additive_change = "must-prove-backward-and-forward-behaviour"
+incompatible_change = "new-major-release"
+coexistence_window_required = true
+activation_order = "server-before-client"
+minimum_supported_version_policy_required = true
+rollback_plan_required = true
 
 [[supported_pair]]
 producer = "mobile-v1"

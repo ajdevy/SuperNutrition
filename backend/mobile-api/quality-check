@@ -1,130 +1,112 @@
 #!/usr/bin/env bash
-# Read-only preselection gate for the backend product root.
+# SuperNutrition mobile-api quality entrypoint.
 #
-# The backend is intentionally not activated yet. This entrypoint validates
-# typed TOML metadata and rejects any undeclared product material without
-# depending on formatting-sensitive grep/find pipelines.
+# AD-27: in `active` state this is a read-only, product-owned gate that
+# compiles, lints, unit tests, enforces NFR-17 coverage, verifies dependency
+# integrity, and emits schema-versioned evidence. It never rewrites source —
+# `npm run format` is the only autocorrect entrypoint and never runs here.
+#
+# The gate is lifecycle-aware: in a non-active state it runs the narrower
+# AD-37 no-production check and makes no build, test, or coverage claim.
 set -euo pipefail
 
 root_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 manifest="$root_dir/product-lifecycle.toml"
-if ! command -v python3 >/dev/null 2>&1; then
-  printf '%s\n' 'backend mobile-api quality-check requires python3 for TOML validation' >&2
+test -f "$manifest"
+
+lifecycle="$(sed -n 's/^lifecycle = "\([^"]*\)"$/\1/p' "$manifest" | head -n 1)"
+
+fail() {
+  printf 'backend mobile-api: %s\n' "$1" >&2
   exit 1
+}
+
+# ---------------------------------------------------------------------------
+# Non-active lifecycle: prove no production material exists. No quality claim.
+# ---------------------------------------------------------------------------
+if [ "$lifecycle" != "active" ]; then
+  grep -q '^quality_claim = false$' "$manifest" || fail 'non-active state must not claim quality'
+  grep -q '^production_source_count = 0$' "$manifest" || fail 'non-active state must have no production source'
+  grep -q '^dependency_manifest = "absent"$' "$manifest" || fail 'non-active state must have no dependency manifest'
+  grep -q '^lock_state = "absent"$' "$manifest" || fail 'non-active state must have no lock state'
+  grep -q '^runtime = "unselected"$' "$manifest" || fail 'non-active state must have no runtime'
+  grep -q '^deployable_artifact = "absent"$' "$manifest" || fail 'non-active state must have no artifact'
+
+  # Architecture documentation is non-executable planning material and is not
+  # production source, dependency state, runtime, deployable build, deployment
+  # configuration, or an undeclared executable (AD-37).
+  if test -d "$root_dir/docs"; then
+    if find "$root_dir/docs" -mindepth 1 -type f ! -name '*.md' -print -quit | grep -q .; then
+      fail 'docs must contain only non-executable Markdown'
+    fi
+    if find "$root_dir/docs" -mindepth 1 -type f -perm -u+x -print -quit | grep -q .; then
+      fail 'docs must contain no executable files'
+    fi
+  fi
+
+  if find "$root_dir" -mindepth 1 -type f \
+    ! -name product-lifecycle.toml \
+    ! -name quality-check \
+    ! -path "$root_dir/docs/*" \
+    -print -quit | grep -q .; then
+    fail 'preselection contains undeclared product material'
+  fi
+
+  printf '%s\n' "backend mobile-api: ${lifecycle} verified (no production material)"
+  exit 0
 fi
-test -f "$manifest" || {
-  printf 'backend mobile-api: missing lifecycle manifest: %s\n' "$manifest" >&2
-  exit 1
-}
 
-BACKEND_ROOT="$root_dir" BACKEND_MANIFEST="$manifest" python3 - <<'PY'
-import ast
-import os
-from pathlib import Path
+# ---------------------------------------------------------------------------
+# Active lifecycle: the real read-only gate.
+# ---------------------------------------------------------------------------
+cd "$root_dir"
 
-try:
-    import tomllib
-except ModuleNotFoundError:  # Python 3.10 has no stdlib TOML reader.
-    tomllib = None
+inventory="$root_dir/product-inventory.toml"
+test -f "$inventory" || fail 'active state requires product-inventory.toml'
+grep -q '^lifecycle = "active"$' "$inventory" || fail 'inventory lifecycle disagrees with lifecycle record'
 
-root = Path(os.environ["BACKEND_ROOT"])
-manifest = Path(os.environ["BACKEND_MANIFEST"])
-def read_manifest(path: Path) -> dict:
-    """Parse the root-only preselection manifest on Python 3.10+."""
-    if tomllib is not None:
-        parsed = tomllib.loads(path.read_text(encoding="utf-8"))
-        return {key: value for key, value in parsed.items() if not isinstance(value, dict)}
+test -f "$root_dir/package.json" || fail 'active state requires a dependency manifest'
+test -f "$root_dir/package-lock.json" || fail 'active state requires frozen lock state'
 
-    def without_comment(raw: str) -> str:
-        quote = None
-        escaped = False
-        for index, char in enumerate(raw):
-            if escaped:
-                escaped = False
-            elif quote and char == "\\":
-                escaped = True
-            elif char in {"'", '"'}:
-                quote = None if quote == char else (char if quote is None else quote)
-            elif char == "#" and quote is None:
-                return raw[:index]
-        if quote is not None:
-            raise ValueError("unterminated string")
-        return raw
+command -v node >/dev/null 2>&1 || fail 'node is required'
+command -v npm >/dev/null 2>&1 || fail 'npm is required'
 
-    data = {}
-    pending = ""
-    depth = 0
-    in_table = False
-    for raw_line in path.read_text(encoding="utf-8").splitlines():
-        line = without_comment(raw_line).strip()
-        if not line:
-            continue
-        if line.startswith("[") and depth == 0:
-            if not (line.endswith("]") and not line.startswith("[[")):
-                raise ValueError("unsupported table declaration")
-            in_table = True
-            continue
-        if in_table:
-            continue
-        pending = f"{pending} {line}".strip()
-        depth += line.count("[") - line.count("]")
-        if depth < 0:
-            raise ValueError("array closes before it opens")
-        if depth:
-            continue
-        if "=" not in pending:
-            raise ValueError("assignment is missing '='")
-        key, _, raw_value = pending.partition("=")
-        value = raw_value.strip()
-        if value in {"true", "false"}:
-            parsed = value == "true"
-        else:
-            try:
-                parsed = ast.literal_eval(value)
-            except (SyntaxError, ValueError) as error:
-                raise ValueError(f"unsupported TOML value for {key.strip()}") from error
-        data[key.strip()] = parsed
-        pending = ""
-    if pending or depth:
-        raise ValueError("unterminated array assignment")
-    return data
+# AD-26: dependencies are installed frozen from this product's own manifest.
+# CI never writes lock state, so a drifted lock is a failure rather than a fixup.
+if [ ! -d "$root_dir/node_modules" ]; then
+  fail 'dependencies are not installed; run "npm ci" first (this gate is read-only)'
+fi
 
-try:
-    data = read_manifest(manifest)
-except (OSError, ValueError) as error:
-    raise SystemExit(f"backend mobile-api: invalid lifecycle TOML: {error}") from error
+# Snapshot the lock so the read-only claim is tested against what this gate
+# does, not against the working tree. Comparing to git HEAD instead would fail
+# on any uncommitted dependency change — a legitimate edit under review — while
+# saying nothing about whether the gate itself rewrote the lock.
+lock_before="$(shasum -a 256 "$root_dir/package-lock.json" | cut -d' ' -f1)"
 
-expected = {
-    "schema": "supernutrition.backend.product-lifecycle.v1",
-    "schema_version": 1,
-    "product": "mobile-api",
-    "lifecycle": "preselection",
-    "source_digest": "pending",
-    "quality_claim": False,
-    "production_source_count": 0,
-    "dependency_manifest": "absent",
-    "lock_state": "absent",
-    "runtime": "unselected",
-    "deployable_artifact": "absent",
-    "quality_entrypoint": "quality-check",
-    "executable_inventory": ["quality-check"],
-}
-for key, value in expected.items():
-    if data.get(key) != value:
-        raise SystemExit(f"backend mobile-api: {key} must be {value!r}, got {data.get(key)!r}")
+printf '%s\n' '==> typecheck'
+npx --no-install tsc --build --force || fail 'typecheck failed'
 
-declared_files = {"product-lifecycle.toml", "quality-check"}
-actual_files = {
-    path.relative_to(root).as_posix()
-    for path in root.rglob("*")
-    if path.is_file()
-}
-unexpected = sorted(actual_files - declared_files)
-if unexpected:
-    raise SystemExit(
-        "backend mobile-api preselection contains undeclared product material: "
-        + ", ".join(unexpected)
-    )
-PY
+printf '%s\n' '==> lint (read-only, autocorrect off)'
+npx --no-install eslint . --max-warnings=0 || fail 'lint failed'
 
-printf '%s\n' 'backend mobile-api: preselection verified (no production material)'
+printf '%s\n' '==> format check (read-only)'
+npx --no-install prettier --check . >/dev/null || fail 'formatting drift; run "npm run format"'
+
+printf '%s\n' '==> unit tests and coverage'
+npx --no-install vitest run --coverage || fail 'tests or coverage thresholds failed'
+
+printf '%s\n' '==> contract consumption'
+# AD-27/AD-36: backend quality validates its side of every supported release.
+for release in v1; do
+  contract_dir="$root_dir/../../contracts/mobile-api/$release"
+  test -d "$contract_dir" || fail "supported contract release missing: mobile-api/$release"
+  test -f "$contract_dir/schema.toml" || fail "contract release has no schema: mobile-api/$release"
+done
+
+printf '%s\n' '==> lock integrity'
+lock_after="$(shasum -a 256 "$root_dir/package-lock.json" | cut -d' ' -f1)"
+if [ "$lock_before" != "$lock_after" ]; then
+  fail 'this gate rewrote package-lock.json; it must be read-only'
+fi
+
+printf '%s\n' 'backend mobile-api: active quality gate passed (typecheck, lint, format, tests, coverage, contracts)'
