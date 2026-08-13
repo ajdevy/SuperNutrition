@@ -80,8 +80,14 @@ enum class RejectionReason {
     FORBIDDEN_FIELD,
 }
 
-/** Owns market/processing policy resolution; locale never selects provider routing. */
-class MarketPolicyResolver {
+/**
+ * Projects an attempt's snapshot into the context interaction defaults read.
+ *
+ * Renamed from `MarketPolicyResolver`, which it never was: it performs no policy
+ * lookup, consults no approver, and checks no expiry. `MarketPolicyRegistry` in
+ * MarketPolicy.kt is the contract-backed resolver AR-53 names.
+ */
+class PolicyContextResolver {
     fun resolve(snapshot: ConfigurationSnapshot): PolicyContext = PolicyContext(
         catalogCountry = snapshot.catalogCountry,
         marketJurisdiction = snapshot.marketJurisdiction,

@@ -35,6 +35,16 @@ jobs:
         run: scripts/verify-inference-contract.sh
       - name: Run inference contract negative fixtures
         run: scripts/inference-contract-negative-fixtures.sh
+      - name: Run inference v2 negative fixtures
+        run: scripts/inference-v2-negative-fixtures.sh
+      - name: Verify the v2 schema and its Kotlin binding agree
+        run: scripts/verify-inference-v2-binding.sh
+      - name: Run v2 schema-to-binding negative fixtures
+        run: scripts/inference-v2-binding-negative-fixtures.sh
+      - name: Validate market policy contract and instance
+        run: scripts/verify-market-policy-contract.sh
+      - name: Run market policy negative fixtures
+        run: scripts/market-policy-negative-fixtures.sh
       - name: Verify repository root boundaries
         run: scripts/verify-root-boundaries.sh
       - name: Verify the release catalog describes the tree

@@ -1,0 +1,55 @@
+schema = "supernutrition.inference-evidence-compatibility-matrix.v3"
+contract_id = "inference-evidence"
+release = "v3"
+previous_release = "inference-evidence/v2"
+digest = "aeafcceddf4a9d49791113e3512fb9ca1f630bc7b267f11b50b4d33b7e7e37e4"
+
+[[supported_pair]]
+producer = "domain-inference-v3"
+consumer = "local-android-v3"
+direction = "forward"
+expected = "accepted"
+
+[[supported_pair]]
+producer = "domain-inference-v3"
+consumer = "local-ios-v3"
+direction = "forward"
+expected = "accepted"
+
+[[supported_pair]]
+producer = "domain-inference-v3"
+consumer = "text-v3"
+direction = "forward"
+expected = "accepted"
+
+[[supported_pair]]
+producer = "domain-inference-v3"
+consumer = "remote-v3"
+direction = "forward"
+expected = "accepted"
+
+[[supported_pair]]
+producer = "domain-inference-v3"
+consumer = "evaluation-v3"
+direction = "forward"
+expected = "accepted"
+
+[[coexistence_pair]]
+first_release = "inference-evidence/v2"
+second_release = "inference-evidence/v3"
+requirement = "separate-ports-required"
+
+[[coexistence_pair]]
+first_release = "inference-evidence/v3"
+second_release = "inference-evidence/v2"
+requirement = "separate-ports-required"
+
+[[coexistence_pair]]
+first_release = "photo-inference-engine/v1"
+second_release = "inference-evidence/v3"
+requirement = "separate-ports-required"
+
+[[coexistence_pair]]
+first_release = "inference-evidence/v3"
+second_release = "photo-inference-engine/v1"
+requirement = "separate-ports-required"

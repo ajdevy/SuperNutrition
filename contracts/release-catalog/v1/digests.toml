@@ -191,3 +191,15 @@ Published by main at a path that does not match its own contract_id: the schema
 declares `inference-evidence`, and the path says `inference`. Recorded here as
 it actually ships. The mobile slice relocates it to contracts/inference-evidence/v2
 and supersedes this row."""
+
+[[entry]]
+release_id = "inference-evidence/v3"
+path = "contracts/inference/v3"
+digest = "aeafcceddf4a9d49791113e3512fb9ca1f630bc7b267f11b50b4d33b7e7e37e4"
+algorithm = "release-sha256-v2"
+recorded_at_commit = "a9b6ecf"
+status = "current"
+note = """
+Published by main in Epic 7 (#37) and absent from the catalog until now. This
+branch records it; it does not author it."""
+

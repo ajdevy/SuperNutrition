@@ -82,8 +82,10 @@ contract_catalog_digest="$( { release_digests \
   contracts/mobile-api/v1 \
   contracts/inference/v1 \
   contracts/inference/v2 \
+  contracts/inference/v3 \
   contracts/interaction-policy/v1 \
-  contracts/market-policy/v1
+  contracts/market-policy/v1 \
+  contracts/product-identity/v1
   digest_paths \
     contracts/release-catalog/v1/digests.toml \
     contracts/release-catalog/v1/acknowledged-edits.toml \

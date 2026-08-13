@@ -631,16 +631,15 @@ for root_argument in sys.argv[1:]:
         fail(f"unsupported inference contract release: {contract_id}/{version}")
 PY
 
-# E7.1 requires one entrypoint to verify every published inference release, so a
-# checker covering only the older one cannot let a newer release drift unnoticed
-# while still reporting success. The chained call to
-# scripts/verify-inference-v2-contract.sh that satisfies this ships with the
-# mobile slice, alongside contracts/inference/v2 itself — it is absent here
-# because the release it verifies is absent here, not because the rule relaxed.
+# Published inference releases, from one entrypoint. v1 and v2 are validated
+# here, while v3 has its modality-specific checker below. Keeping the checks
+# separate makes each release's evidence rules readable and lets v3 combine
+# mainline photo semantics with Epic 7 text semantics without mutating v2.
 #
-# It is chained rather than inlined because the two releases have genuinely
-# different rules — v1 has no modality, no spans and no capability envelope —
-# and one script branching on release reads worse than two that each verify one
-# thing. It is deliberately not passed the SUPERNUTRITION_INFERENCE_CONTRACT
-# override: that variable names a v1 tree, and the negative-fixture harness
-# points it at mutated copies. v2 is verified where it actually lives.
+# The v3 check lives in its own script because it has both component/mass and
+# ranked text/span result branches.
+#
+# Deliberately not passed the SUPERNUTRITION_INFERENCE_CONTRACT override: that
+# variable names a v1 tree, and the negative-fixture harness points it at mutated
+# copies. v3 is verified where it actually lives.
+"${repo_root}/scripts/verify-inference-v3-contract.sh"

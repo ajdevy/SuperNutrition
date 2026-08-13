@@ -1,5 +1,11 @@
 package com.supernutrition.feature.photoanalysis
 
+import com.supernutrition.domain.nutrition.CatalogSearch
+import com.supernutrition.domain.nutrition.DishExpansion
+import com.supernutrition.domain.nutrition.DishLocalePreference
+import com.supernutrition.domain.nutrition.ManualIngredientParser
+import com.supernutrition.domain.nutrition.SeedCatalog
+import com.supernutrition.domain.nutrition.SeedDishes
 import com.supernutrition.domain.photoanalysis.AttemptId
 import com.supernutrition.domain.photoanalysis.ImageOrientation
 import com.supernutrition.domain.photoanalysis.NormalizedPhotoInput
@@ -80,6 +86,33 @@ class PhotoAnalysisFeatureTest {
         feature.dispatch(PhotoAnalysisEvent.ScanAgain)
 
         assertEquals(PhotoAnalysisState.Capture, feature.stateFlow.value)
+    }
+
+    @Test
+    fun `manual meal input expands dishes and keeps direct ingredients`() {
+        val catalog = CatalogSearch(SeedCatalog.records)
+        val feature = PhotoAnalysisFeature(
+            attemptId = AttemptId("attempt-manual-input"),
+            leases = PhotoLeaseStore(),
+            sessions = PhotoSessionStore(),
+            manualIngredientParser = ManualIngredientParser(
+                mealSearch = com.supernutrition.domain.nutrition.MealSearch(
+                    foods = catalog,
+                    dishes = DishExpansion(SeedDishes.records),
+                    localePreference = DishLocalePreference(SeedDishes.marketAttribution),
+                ),
+                displayNameFor = catalog::displayNameFor,
+            ),
+        )
+
+        feature.updateManualIngredientQuery("chicken and rice")
+        feature.addManualIngredients()
+
+        assertEquals(
+            listOf("food:chicken-breast-raw", "food:rice-white-cooked"),
+            feature.manualIngredientStateFlow.value.ingredients.map { it.canonicalItemId },
+        )
+        assertEquals("", feature.manualIngredientStateFlow.value.query)
     }
 
     private fun feature(attempt: String) = PhotoAnalysisFeature(

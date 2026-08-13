@@ -21,6 +21,8 @@ internal fun localizedPhotoAnalysisCopy(): PhotoAnalysisPresenterCopy = PhotoAna
         gridCellDescription = localized("photo_analysis.capture.grid_cell_description"),
         selectedState = localized("photo_analysis.capture.selected"),
         notSelectedState = localized("photo_analysis.capture.not_selected"),
+        manualIngredientLabel = localized("photo_analysis.capture.manual_ingredient_label"),
+        manualIngredientAdd = localized("photo_analysis.capture.manual_ingredient_add"),
         resultPlaceholder = localized("photo_analysis.capture.result_placeholder"),
         loadingLabel = localized("photo_analysis.capture.loading"),
     ),
@@ -60,6 +62,7 @@ internal fun localizedPhotoAnalysisCopy(): PhotoAnalysisPresenterCopy = PhotoAna
         visibleRegionCount = localized("photo_analysis.evidence.visible_region_count"),
         compositionHintsTitle = localized("photo_analysis.evidence.composition_hints"),
         compositionHintSource = localized("photo_analysis.evidence.composition_hint_source"),
+        manualIngredientSource = localized("photo_analysis.evidence.manual_ingredient_source"),
         partialDegradation = localized("photo_analysis.evidence.partial_degradation"),
     ),
     recovery = RecoveryCopy(
