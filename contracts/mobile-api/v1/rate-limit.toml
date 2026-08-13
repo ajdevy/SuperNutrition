@@ -1,0 +1,136 @@
+schema = "supernutrition.mobile-api-rate-limit.v1"
+schema_version = 1
+release = "v1"
+language_neutral = true
+executable = false
+
+# Rate-limit response shape and the layers that produce it.
+#
+# One code (`rate-limited`) is returned regardless of which layer rejected, so
+# the response does not disclose the internal limiter topology to a caller
+# probing for headroom.
+
+[response]
+httpStatus = 429
+gatewayCode = "rate-limited"
+userMessageKey = "error.rate_limited"
+recoverable = true
+discloses_which_layer_rejected = false
+
+[[body_field]]
+name = "gatewayCode"
+type = "string"
+optional = false
+enum = ["rate-limited"]
+
+[[body_field]]
+name = "userMessageKey"
+type = "string"
+optional = false
+enum = ["error.rate_limited"]
+
+[[body_field]]
+name = "recoverable"
+type = "boolean"
+optional = false
+enum = [true]
+
+[[body_field]]
+name = "retryAfter"
+type = "integer"
+optional = false
+minimum = 1
+description = "Seconds. Always positive: a recoverable throttle with no wait would invite an immediate retry storm."
+
+[[body_field]]
+name = "correlationId"
+type = "string"
+optional = false
+description = "Present on every error response."
+
+[[header]]
+name = "Retry-After"
+type = "integer"
+optional = false
+description = "Seconds. Authoritative; equals the body retryAfter."
+
+[[header]]
+name = "X-RateLimit-Limit"
+type = "integer"
+optional = false
+description = "Requests permitted in the current window for the rejecting layer."
+
+[[header]]
+name = "X-RateLimit-Remaining"
+type = "integer"
+optional = false
+minimum = 0
+description = "Zero on a 429. Present on successful responses too, so a client can back off before being rejected."
+
+[[header]]
+name = "X-RateLimit-Reset"
+type = "integer"
+optional = false
+description = "Unix epoch seconds when the window resets."
+
+# ---------------------------------------------------------------------------
+# layers
+# ---------------------------------------------------------------------------
+
+[[layer]]
+id = "per-installation-gateway"
+principal = "installationId"
+scope = "gateway-inference"
+default_limit = 20
+window_seconds = 3600
+failure_mode = "fail-closed"
+rationale = "Paid, abusable path. If the limiter is unavailable the request is rejected rather than admitted."
+
+[[layer]]
+id = "per-installation-daily-spend"
+principal = "installationId"
+scope = "provider-cost"
+window_seconds = 86400
+failure_mode = "fail-closed"
+exceeded_code = "budget-exceeded"
+rationale = "A hard cost ceiling. Exceeding it returns budget-exceeded, not rate-limited."
+
+[[layer]]
+id = "per-environment-spend"
+principal = "environment"
+scope = "provider-cost"
+window_seconds = 86400
+failure_mode = "fail-closed"
+exceeded_code = "kill-switch"
+rationale = "Environment-wide cap. Exhaustion trips the operator kill switch and alerts."
+
+[[layer]]
+id = "per-ip-flood"
+principal = "ip"
+scope = "all"
+default_limit = 300
+window_seconds = 60
+failure_mode = "fail-closed"
+rationale = "Crude flood protection only. Carrier NAT makes IP both over- and under-inclusive, so it is never the primary principal."
+
+[[layer]]
+id = "auth-endpoint"
+principal = "ip+installationId"
+scope = "session-creation"
+default_limit = 10
+window_seconds = 60
+failure_mode = "fail-closed"
+rationale = "Credential stuffing and attestation abuse."
+
+[principal_policy]
+# AD-14 asks for a privacy-preserving principal. installationId is opaque and
+# not a user identifier, so throttling state carries no person.
+preferred_principal = "installationId"
+user_id_as_principal = false
+raw_ip_as_primary_principal = false
+
+[notes]
+product_surface_differs = """
+The product API (/api/v1) fails OPEN on limiter unavailability: it is unpaid, \
+and a cache outage should not stop a user seeing yesterday's lunch. The gateway \
+fails CLOSED. One global policy gets one of the two wrong (docs/09 §9.3)."""

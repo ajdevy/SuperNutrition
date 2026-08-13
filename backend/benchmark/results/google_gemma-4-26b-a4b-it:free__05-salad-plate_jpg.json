@@ -1,0 +1,160 @@
+{
+  "model": "google/gemma-4-26b-a4b-it:free",
+  "modelVersion": "google/gemma-4-26b-a4b-it:free",
+  "provider": "Darkbloom",
+  "duration": 5347.183218999999,
+  "durationSec": "5.35",
+  "promptTokens": 382,
+  "completionTokens": 444,
+  "totalTokens": 826,
+  "cost": 0,
+  "raw": "{\n  \"foods\": [\n    {\n      \"label\": \"salmon\",\n      \"rank\": 1,\n      \"confidence\": 0.95,\n      \"assumptions\": [\"the orange-colored protein pieces are grilled or pan-seared salmon\"]\n    },\n    {\n      ",
+  "rawFull": "{\n  \"foods\": [\n    {\n      \"label\": \"salmon\",\n      \"rank\": 1,\n      \"confidence\": 0.95,\n      \"assumptions\": [\"the orange-colored protein pieces are grilled or pan-seared salmon\"]\n    },\n    {\n      \"label\": \"boiled egg\",\n      \"rank\": 2,\n      \"confidence\": 0.98,\n      \"assumptions\": [\"the white round objects are peeled hard-boiled eggs\"]\n    },\n    {\n      \"label\": \"corn\",\n      \"rank\": 3,\n      \"confidence\": 0.98,\n      \"assumptions\": []\n    },\n    {\n      \"label\": \"cherry tomatoes\",\n      \"rank\": 4,\n      \"confidence\": 0.95,\n      \"assumptions\": [\"the red sliced pieces are cherry or grape tomatoes\"]\n    },\n    {\n      \"label\": \"red cabbage\",\n      \"rank\": 5,\n      \"confidence\": 0.95,\n      \"assumptions\": []\n    },\n    {\n      \"label\": \"edamame\",\n      \"rank\": 6,\n      \"confidence\": 0.9,\n      \"assumptions\": [\"the green beans are edamame\"]\n    },\n    {\n      \"label\": \"lettuce\",\n      \"rank\": 7,\n      \"confidence\": 0.95,\n      \"assumptions\": []\n    },\n    {\n      \"label\": \"cucumber\",\n      \"rank\": 8,\n      \"confidence\": 0.9,\n      \"assumptions\": [\"the small green cubes are diced cucumber\"]\n    },\n    {\n      \"label\": \"scallions\",\n      \"rank\": 9,\n      \"confidence\": 0.85,\n      \"assumptions\": [\"the small green bits are chopped scallions or chives\"]\n    }\n  ]\n}",
+  "reasoningPresent": false,
+  "finishReason": "stop",
+  "maxTokens": 2048,
+  "parsed": {
+    "foods": [
+      {
+        "label": "salmon",
+        "rank": 1,
+        "confidence": 0.95,
+        "assumptions": [
+          "the orange-colored protein pieces are grilled or pan-seared salmon"
+        ]
+      },
+      {
+        "label": "boiled egg",
+        "rank": 2,
+        "confidence": 0.98,
+        "assumptions": [
+          "the white round objects are peeled hard-boiled eggs"
+        ]
+      },
+      {
+        "label": "corn",
+        "rank": 3,
+        "confidence": 0.98,
+        "assumptions": []
+      },
+      {
+        "label": "cherry tomatoes",
+        "rank": 4,
+        "confidence": 0.95,
+        "assumptions": [
+          "the red sliced pieces are cherry or grape tomatoes"
+        ]
+      },
+      {
+        "label": "red cabbage",
+        "rank": 5,
+        "confidence": 0.95,
+        "assumptions": []
+      },
+      {
+        "label": "edamame",
+        "rank": 6,
+        "confidence": 0.9,
+        "assumptions": [
+          "the green beans are edamame"
+        ]
+      },
+      {
+        "label": "lettuce",
+        "rank": 7,
+        "confidence": 0.95,
+        "assumptions": []
+      },
+      {
+        "label": "cucumber",
+        "rank": 8,
+        "confidence": 0.9,
+        "assumptions": [
+          "the small green cubes are diced cucumber"
+        ]
+      },
+      {
+        "label": "scallions",
+        "rank": 9,
+        "confidence": 0.85,
+        "assumptions": [
+          "the small green bits are chopped scallions or chives"
+        ]
+      }
+    ]
+  },
+  "foods": [
+    {
+      "label": "salmon",
+      "rank": 1,
+      "confidence": 0.95,
+      "assumptions": [
+        "the orange-colored protein pieces are grilled or pan-seared salmon"
+      ]
+    },
+    {
+      "label": "boiled egg",
+      "rank": 2,
+      "confidence": 0.98,
+      "assumptions": [
+        "the white round objects are peeled hard-boiled eggs"
+      ]
+    },
+    {
+      "label": "corn",
+      "rank": 3,
+      "confidence": 0.98,
+      "assumptions": []
+    },
+    {
+      "label": "cherry tomatoes",
+      "rank": 4,
+      "confidence": 0.95,
+      "assumptions": [
+        "the red sliced pieces are cherry or grape tomatoes"
+      ]
+    },
+    {
+      "label": "red cabbage",
+      "rank": 5,
+      "confidence": 0.95,
+      "assumptions": []
+    },
+    {
+      "label": "edamame",
+      "rank": 6,
+      "confidence": 0.9,
+      "assumptions": [
+        "the green beans are edamame"
+      ]
+    },
+    {
+      "label": "lettuce",
+      "rank": 7,
+      "confidence": 0.95,
+      "assumptions": []
+    },
+    {
+      "label": "cucumber",
+      "rank": 8,
+      "confidence": 0.9,
+      "assumptions": [
+        "the small green cubes are diced cucumber"
+      ]
+    },
+    {
+      "label": "scallions",
+      "rank": 9,
+      "confidence": 0.85,
+      "assumptions": [
+        "the small green bits are chopped scallions or chives"
+      ]
+    }
+  ],
+  "attempts": [],
+  "image": "05-salad-plate.jpg",
+  "modelLabel": "Gemma 4 26B (free, prod fast-identify)",
+  "pass": 1,
+  "key": "google_gemma-4-26b-a4b-it:free__05-salad-plate_jpg",
+  "session": "free-roster"
+}

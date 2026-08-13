@@ -1,0 +1,172 @@
+{
+  "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+  "modelVersion": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+  "provider": "Nvidia",
+  "duration": 1538.8428779999958,
+  "durationSec": "1.54",
+  "promptTokens": 725,
+  "completionTokens": 2487,
+  "totalTokens": 3212,
+  "cost": 0,
+  "raw": "{\n  \"foods\": [\n    {\n      \"label\": \"tofu\",\n      \"rank\": 1,\n      \"confidence\": 0.95,\n      \"assumptions\": [\"seasoned tofu cubes\"]\n    },\n    {\n      \"label\": \"egg\",\n      \"rank\": 1,\n      \"confidenc",
+  "rawFull": "{\n  \"foods\": [\n    {\n      \"label\": \"tofu\",\n      \"rank\": 1,\n      \"confidence\": 0.95,\n      \"assumptions\": [\"seasoned tofu cubes\"]\n    },\n    {\n      \"label\": \"egg\",\n      \"rank\": 1,\n      \"confidence\": 0.95,\n      \"assumptions\": [\"hard-boiled eggs\"]\n    },\n    {\n      \"label\": \"tomato\",\n      \"rank\": 1,\n      \"confidence\": 0.95,\n      \"assumptions\": [\"sliced tomatoes\"]\n    },\n    {\n      \"label\": \"corn\",\n      \"rank\": 1,\n      \"confidence\": 0.95,\n      \"assumptions\": [\"yellow corn kernels\"]\n    },\n    {\n      \"label\": \"edamame\",\n      \"rank\": 1,\n      \"confidence\": 0.95,\n      \"assumptions\": [\"green soybeans\"]\n    },\n    {\n      \"label\": \"lettuce\",\n      \"rank\": 1,\n      \"confidence\": 0.95,\n      \"assumptions\": [\"green leafy lettuce\"]\n    },\n    {\n      \"label\": \"cucumber\",\n      \"rank\": 1,\n      \"confidence\": 0.95,\n      \"assumptions\": [\"diced cucumber\"]\n    },\n    {\n      \"label\": \"red cabbage\",\n      \"rank\": 1,\n      \"confidence\": 0.95,\n      \"assumptions\": [\"purple cabbage\"]\n    },\n    {\n      \"label\": \"green onion\",\n      \"rank\": 1,\n      \"confidence\": 0.95,\n      \"assumptions\": [\"chopped green onions\"]\n    }\n  ]\n}",
+  "reasoningPresent": true,
+  "finishReason": "stop",
+  "maxTokens": 2048,
+  "parsed": {
+    "foods": [
+      {
+        "label": "tofu",
+        "rank": 1,
+        "confidence": 0.95,
+        "assumptions": [
+          "seasoned tofu cubes"
+        ]
+      },
+      {
+        "label": "egg",
+        "rank": 1,
+        "confidence": 0.95,
+        "assumptions": [
+          "hard-boiled eggs"
+        ]
+      },
+      {
+        "label": "tomato",
+        "rank": 1,
+        "confidence": 0.95,
+        "assumptions": [
+          "sliced tomatoes"
+        ]
+      },
+      {
+        "label": "corn",
+        "rank": 1,
+        "confidence": 0.95,
+        "assumptions": [
+          "yellow corn kernels"
+        ]
+      },
+      {
+        "label": "edamame",
+        "rank": 1,
+        "confidence": 0.95,
+        "assumptions": [
+          "green soybeans"
+        ]
+      },
+      {
+        "label": "lettuce",
+        "rank": 1,
+        "confidence": 0.95,
+        "assumptions": [
+          "green leafy lettuce"
+        ]
+      },
+      {
+        "label": "cucumber",
+        "rank": 1,
+        "confidence": 0.95,
+        "assumptions": [
+          "diced cucumber"
+        ]
+      },
+      {
+        "label": "red cabbage",
+        "rank": 1,
+        "confidence": 0.95,
+        "assumptions": [
+          "purple cabbage"
+        ]
+      },
+      {
+        "label": "green onion",
+        "rank": 1,
+        "confidence": 0.95,
+        "assumptions": [
+          "chopped green onions"
+        ]
+      }
+    ]
+  },
+  "foods": [
+    {
+      "label": "tofu",
+      "rank": 1,
+      "confidence": 0.95,
+      "assumptions": [
+        "seasoned tofu cubes"
+      ]
+    },
+    {
+      "label": "egg",
+      "rank": 1,
+      "confidence": 0.95,
+      "assumptions": [
+        "hard-boiled eggs"
+      ]
+    },
+    {
+      "label": "tomato",
+      "rank": 1,
+      "confidence": 0.95,
+      "assumptions": [
+        "sliced tomatoes"
+      ]
+    },
+    {
+      "label": "corn",
+      "rank": 1,
+      "confidence": 0.95,
+      "assumptions": [
+        "yellow corn kernels"
+      ]
+    },
+    {
+      "label": "edamame",
+      "rank": 1,
+      "confidence": 0.95,
+      "assumptions": [
+        "green soybeans"
+      ]
+    },
+    {
+      "label": "lettuce",
+      "rank": 1,
+      "confidence": 0.95,
+      "assumptions": [
+        "green leafy lettuce"
+      ]
+    },
+    {
+      "label": "cucumber",
+      "rank": 1,
+      "confidence": 0.95,
+      "assumptions": [
+        "diced cucumber"
+      ]
+    },
+    {
+      "label": "red cabbage",
+      "rank": 1,
+      "confidence": 0.95,
+      "assumptions": [
+        "purple cabbage"
+      ]
+    },
+    {
+      "label": "green onion",
+      "rank": 1,
+      "confidence": 0.95,
+      "assumptions": [
+        "chopped green onions"
+      ]
+    }
+  ],
+  "attempts": [],
+  "image": "05-salad-plate.jpg",
+  "modelLabel": "Nemotron 3 Nano Omni 30B (free, prod fallback/deep)",
+  "pass": 2,
+  "key": "nvidia_nemotron-3-nano-omni-30b-a3b-reasoning:free__05-salad-plate_jpg",
+  "session": "free-roster"
+}

@@ -1,0 +1,82 @@
+# AD-9: model selection is configuration, not code. This is the ONLY file in the
+# product that may contain a model identifier; a test asserts that
+# (apps/api/src/modules/inference/domain/inference.invariants.test.ts).
+#
+# The active configuration is identified by an immutable version reported in
+# provenance and recorded in inference_runs, so any past result traces to the
+# exact roster that produced it.
+schema = "supernutrition.backend.model-profiles.v1"
+schema_version = 1
+profile_version = "2026-08-02.1"
+rollback_target = "2026-07-29.2"
+# Benchmark: backend/benchmark/results/BENCHMARK-REPORT.md
+# 2026-08-02 — TEMPORARY switch to OpenRouter :free models (account has no
+#   credits; paid testing not approved yet). All four profiles now point at
+#   zero-cost vision models verified live with json_object + image input on
+#   2026-08-02: google/gemma-4-26b-a4b-it:free (best result: salad / avocado /
+#   cherry tomatoes / chickpeas), nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free,
+#   nvidia/nemotron-nano-12b-v2-vl:free. google/gemma-4-31b-it:free was
+#   rejected: rate-limited upstream at test time. Roll back to 2026-07-29.2
+#   (paid roster) when credits are topped up.
+# 2026-07-29 — swapped fast-identify/fast-identify-fallback roles and fixed
+#   Claude Sonnet model ID based on live benchmark results.
+#   Key findings: GPT-4o-mini more accurate but 13x more tokens than Gemini.
+#   Gemini 2.5 Flash 8x cheaper with detailed ingredient breakdown.
+#   Claude Sonnet 5 enabled — slow (4.1s avg) but best multi-food detail.
+
+[routing]
+confidence_threshold = 0.75
+accept_band = "high"
+max_passes = 2
+pass_deadline_ms = 30000
+total_deadline_ms = 90000
+
+# Primary Pass 1 — higher accuracy, serves as the main identifier.
+# TEMPORARY free roster: gemma-4-26b is the best zero-cost vision option tested.
+[[profile]]
+id = "fast-identify"
+pass = 1
+provider = "openrouter"
+model = "google/gemma-4-26b-a4b-it:free"
+max_output_tokens = 1024
+temperature = 0.0
+cost_per_1k_input_micros = 0
+cost_per_1k_output_micros = 0
+enabled = true
+
+# Fallback Pass 1 — cheap, detailed ingredient breakdown.
+# Best for detailed multi-food identification when fast-identify is uncertain.
+[[profile]]
+id = "fast-identify-fallback"
+pass = 1
+provider = "openrouter"
+model = "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
+max_output_tokens = 1024
+temperature = 0.0
+cost_per_1k_input_micros = 0
+cost_per_1k_output_micros = 0
+enabled = true
+
+# Pass 2 — high confidence confirmation.
+[[profile]]
+id = "deep-identify"
+pass = 2
+provider = "openrouter"
+model = "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
+max_output_tokens = 2048
+temperature = 0.0
+cost_per_1k_input_micros = 0
+cost_per_1k_output_micros = 0
+enabled = true
+
+# Pass 2 alt — best multi-food ingredient detail.
+[[profile]]
+id = "deep-identify-alt"
+pass = 2
+provider = "openrouter"
+model = "google/gemma-4-26b-a4b-it:free"
+max_output_tokens = 2048
+temperature = 0.0
+cost_per_1k_input_micros = 0
+cost_per_1k_output_micros = 0
+enabled = true

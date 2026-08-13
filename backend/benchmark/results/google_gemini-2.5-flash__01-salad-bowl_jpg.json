@@ -1,0 +1,18 @@
+{
+  "model": "google/gemini-2.5-flash",
+  "modelVersion": "google/gemini-2.5-flash",
+  "provider": "Google",
+  "duration": 1591.800892000001,
+  "durationSec": "1.59",
+  "promptTokens": 1893,
+  "completionTokens": 512,
+  "totalTokens": 2405,
+  "cost": 0.0005911499999999999,
+  "raw": "```json\n{\n  \"foods\": [\n    {\n      \"label\": \"salad\",\n      \"rank\": 1,\n      \"confidence\": 0.95,\n      \"assumptions\": [\"various fresh vegetables and legumes arranged in a bowl\"]\n    },\n    {\n      \"lab",
+  "parsed": null,
+  "foods": [],
+  "image": "01-salad-bowl.jpg",
+  "modelLabel": "Gemini 2.5 Flash (Pass 1 main)",
+  "pass": 1,
+  "key": "google_gemini-2.5-flash__01-salad-bowl_jpg"
+}
