@@ -375,4 +375,4 @@ copy_release v2 v2-symlinked-directory
 ln -s "${repo_root}/contracts/inference/v2/fixtures" "$fixture_root/v2-symlinked-directory/fixture-link"
 expect_rejected "v2 symlinked release directory" "$fixture_root/v2-symlinked-directory"
 
-echo "inference contract negative fixtures: OK (v1 and v2)"
+echo "inference contract negative fixtures: OK (v1, v2, and v3 entrypoint)"

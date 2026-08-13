@@ -11,6 +11,8 @@
 "photo_analysis.capture.grid_cell_description" = "Analyze photo region {index}";
 "photo_analysis.capture.selected" = "Selected";
 "photo_analysis.capture.not_selected" = "Not selected";
+"photo_analysis.capture.manual_ingredient_label" = "Add food or dish";
+"photo_analysis.capture.manual_ingredient_add" = "Add";
 "photo_analysis.capture.result_placeholder" = "Dish suggestions and visible photo evidence will appear after analysis.";
 "photo_analysis.capture.loading" = "Analyzing photo…";
 "photo_analysis.recovery.scan_again" = "Take another photo";
@@ -49,6 +51,7 @@
 "photo_analysis.evidence.visible_region_count" = "Visible regions: {count}";
 "photo_analysis.evidence.composition_hints" = "Possible ingredients from dish";
 "photo_analysis.evidence.composition_hint_source" = "Dish hint, not visual evidence";
+"photo_analysis.evidence.manual_ingredient_source" = "Added from text";
 "photo_analysis.evidence.partial_degradation" = "Dish suggestions unavailable; visible photo evidence is still available.";
 
 "photo_analysis.recovery.permission_required" = "Camera permission is required";

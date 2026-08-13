@@ -1,6 +1,8 @@
 # Inference contract — identification modality
 
-Serves CAP-4. The shipped contract is photo-only and cannot carry a text engine. It is now a **released, immutable, digest-pinned artifact**, so modality arrives as a new major release, not an edit.
+Serves CAP-4. v1 is photo-only and v2 freezes the mainline photo component/mass
+evidence shape. Both are **released, immutable, digest-pinned artifacts**, so
+the ranked text result shape arrives as v3, not as an edit to either release.
 
 ## What v1 fixed, and how hard
 
@@ -14,7 +16,9 @@ Story 3.1 shipped `contracts/inference/v1`. Its own files close the question:
 | `schema.toml` | `incompatible_change = "new-major-release"` |
 | `InferenceContract.kt` | `PhotoInferenceRequest(val photoRef: PhotoRef, …)` — non-nullable |
 
-There is no modality discriminator and no optional-payload path, and a text engine cannot satisfy that shape without claiming a photo it does not have. The digest means any edit to v1 is detectable and invalid; the compatibility rule means the contract itself mandates a new major release. AD-36 says the same at the architecture level: releases under `contracts/` are immutable.
+There is no modality discriminator and no optional-payload path, and a text engine cannot satisfy that shape without claiming a photo it does not have. The compatibility rule means the contract itself mandates a new major release, and AD-36 says the same at the architecture level: releases under `contracts/` are immutable.
+
+An earlier revision of this file added "the digest means any edit to v1 is detectable and invalid." That was false, and commit `83547213` proved it: four published releases were edited in place, every digest was updated in the same commit, and all four validators passed. A digest recorded inside the bytes it describes cannot detect a self-consistent rewrite. Detection now comes from `scripts/verify-release-immutability.sh`, which compares against a base revision from git rather than from the reviewed tree — so the v2 requirement rests on the compatibility rule and on a gate that works, not on a property the digest never had.
 
 ## Migration, not amendment
 
@@ -22,7 +26,11 @@ An earlier draft of this file scoped modality as an amendment landed before stor
 
 Two consequences the amendment framing did not carry:
 
-**The contract id is itself photo-shaped.** `photo-inference-engine` cannot describe a contract that also accepts text, so v2 takes a modality-neutral id, and the Kotlin `PhotoInferenceRequest` and `PhotoInferenceEngine` types gain modality-neutral v2 equivalents. That is a wider break than adding a field.
+**The contract id is itself photo-shaped.** `photo-inference-engine` cannot
+describe a contract that also accepts text, so v2 took a modality-neutral id for
+the mainline photo evidence, and v3 carries the final modality-specific
+photo/text result shapes. The Kotlin bindings gain new release-specific types;
+v1 and v2 are not widened.
 
 **The cost decays monotonically.** Exactly one consumer implements v1 today. Every further Engine story — local Android, local iOS, gateway, evaluation — adds another to migrate. Nothing is blocked on this decision, but it gets more expensive with each one, so it is worth settling whether typed identification is happening rather than letting the answer emerge.
 
@@ -64,18 +72,28 @@ Each group also carries the span of the description it was derived from, so the 
 
 An engine that cannot segment abstains for the whole request rather than returning a confident subset. Partial segmentation presented as complete is the FM-6 failure.
 
-## Delivery — v2 release and migration
+## Delivery — v3 release and migration
 
 Story E7.1, under AR-33, landed before the engine work that consumes it:
 
-1. Author `contracts/inference/v2` as a new release directory with a modality-neutral `contract_id`, its own schema, canonical fixtures for both modalities, and its own digest. **`contracts/inference/v1` is not touched**; its recorded digest must still verify afterwards.
-2. Declare both releases in the compatibility matrix, with the supported producer/consumer pairs for each.
-3. Add modality-neutral v2 types in `mobile/domain/inference` alongside the v1 types, rather than editing them.
-4. Migrate photo producers and consumers to v2 with the `photo` modality, behaviour identical — currently one consumer, more with each Engine story.
-5. Introduce the text engine against v2.
-6. Retire v1 only when no producer or consumer implements it, as a separate change.
+1. Keep `contracts/inference/v1` and `contracts/inference/v2` byte-stable.
+   v2 remains the mainline visible-component/mass photo release.
+2. Author `contracts/inference/v3` with the modality-neutral id, closed
+   photo/text requests, photo component/mass results, ranked text groups with
+   source spans, and its own digest.
+3. Declare v1/v2/v3 coexistence and supported v3 producer/consumer pairs in the
+   v3 compatibility matrix.
+4. Add v3 types in `mobile/domain/inference` alongside the v1 and v2 types,
+   rather than editing either published binding.
+5. Migrate text producers and consumers to v3; photo producers may remain on
+   v2 until their v3 migration is explicitly scheduled.
+6. Retire an older release only when no producer or consumer implements it, as
+   a separate change.
 
-`scripts/verify-inference-contract.sh` must verify both releases, and the v1 fixtures must continue to pass against v1 unchanged. That is the correctness test for the migration: v2 is additive at the release level, and v1's frozen bytes stay frozen.
+`scripts/verify-inference-contract.sh` must verify v1 and v2, and invoke the
+v3 contract verifier; the v3 binding verifier and negative fixtures must also
+pass. That is the correctness test: v1 and v2 remain immutable, while v3
+combines the mainline photo shape with the Epic 7 text shape.
 
 ## Routing and remote text
 

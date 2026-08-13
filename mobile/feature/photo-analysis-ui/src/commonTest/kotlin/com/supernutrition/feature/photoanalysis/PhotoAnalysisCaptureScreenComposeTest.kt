@@ -94,6 +94,45 @@ class PhotoAnalysisCaptureScreenComposeTest {
     }
 
     @Test
+    fun `manual ingredient input follows the nine grid buttons and shares the evidence list`() = runComposeUiTest {
+        val copy = PhotoAnalysisPresenterCopyFixtures.localized()
+        var addClicks = 0
+        setContent {
+            PhotoAnalysisCaptureScreen(
+                model = PhotoAnalysisPresenterModel.from(
+                    com.supernutrition.domain.photoanalysis.PhotoAnalysisState.Capture,
+                    copy,
+                ),
+                onAction = {},
+                surface = PhotoAnalysisCaptureSurface(
+                    presenterCopy = copy,
+                    gridHintsEnabled = true,
+                    manualIngredientInput = "rice",
+                    manualIngredients = listOf(
+                        PhotoAnalysisManualIngredientModel(
+                            canonicalItemId = "food:rice-white-cooked",
+                            label = "Riso",
+                        ),
+                    ),
+                    onManualIngredientAdded = { addClicks++ },
+                ),
+            )
+        }
+
+        onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_MANUAL_INGREDIENT_INPUT.value)
+            .performScrollTo()
+            .assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_MANUAL_INGREDIENT_ADD.value)
+            .performScrollTo()
+            .performClick()
+
+        assertEquals(1, addClicks)
+        onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_COMPONENT_EVIDENCE.value).assertIsDisplayed()
+        onNodeWithTag(photoAnalysisVisibleComponentId("manual:food:rice-white-cooked").value).assertIsDisplayed()
+        onNodeWithText(copy.evidence.manualIngredientSource).assertIsDisplayed()
+    }
+
+    @Test
     fun `screen renders and dispatches every bounded action`() = runComposeUiTest {
         val copy = PhotoAnalysisPresenterCopyFixtures.localized()
         val clicked = mutableListOf<PhotoAnalysisPresenterAction>()

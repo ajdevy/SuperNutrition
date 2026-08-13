@@ -36,7 +36,7 @@ Typing what you ate is also a better interaction than paging a result list, and 
 
 - id: CAP-4
   intent: Inference engines can accept either a photo or a text description through one versioned contract, so identification modality is a contract property rather than a parallel subsystem.
-  success: Photo and text engines both implement a modality-aware `contracts/inference/v2`; v1 stays byte-identical and its recorded digest still verifies; the compatibility matrix declares both releases; a request carrying neither or both modality payloads fails closed.
+  success: Text identification implements the modality-aware `contracts/inference/v3` binding while the mainline photo evidence remains immutable in `contracts/inference/v2`; the compatibility matrices declare v1/v2/v3 coexistence; a request carrying neither or both modality payloads fails closed.
 
 - id: CAP-5
   intent: A text-derived candidate binds to a canonical catalog record only through explicit user confirmation, never automatically.
@@ -56,13 +56,13 @@ Typing what you ate is also a better interaction than paging a result list, and 
 
 - id: CAP-9
   intent: A user can search and describe food in the languages of the supported markets, including where the app's language differs from the food database's language and where the two use different scripts.
-  success: English, Spanish, and Russian each pass a documented query set keyed to the catalog they are searching, covering inflected forms, regional name variants, and cross-script entry; Spanish resolves regional variants of one food to one canonical ID, and Russian resolves inflected noun forms and Latin-script entry of Cyrillic records.
+  success: English and Russian each pass a documented query set keyed to the catalog they are searching; English resolves alternate names of one food to one canonical ID, and Russian resolves inflected noun forms and Latin-script entry of Cyrillic records. Spanish was an earlier target and was dropped, which removes the only case exercising light stemming with diacritics.
 
 ## Constraints
 
 - Engines return identification evidence only. The text path emits no calories, macros, or micronutrients; every displayed number continues to come from the versioned catalog through the AD-7/AD-19 confirmation and calculation chain (FR-17).
 - The deterministic floor (CAP-1) must function with zero models installed, zero network, and the lowest supported device tier. UJ-4 places Noah on a lower-tier device while offline, so the scenario that needs this path most is the one least able to run a model. The floor cannot depend on CAP-3.
-- Modality ships as a new major contract release, never as an edit. Story 3.1 has shipped `contracts/inference/v1` as an immutable, digest-pinned release whose `contract_id` is `photo-inference-engine` and whose own rule is `incompatible_change = "new-major-release"`. Story E7.1 therefore publishes `contracts/inference/v2` with a modality-neutral id and migrates consumers under AR-33; v1's files and digest are untouched.
+- Modality and result-shape changes ship as new major contract releases, never as edits. Story 3.1 shipped immutable `contracts/inference/v1`; the mainline photo component/mass shape is immutable in `contracts/inference/v2`; Story E7.1 publishes `contracts/inference/v3` with a modality-neutral id, ranked text groups, and source spans. v1 and v2 files and digests remain untouched.
 - Food identity is never defaultable and never preselected. AD-40 forbids defaulting food identity, preparation, recipe, and materially uncertain values; a text description does not relax this because the user typed it.
 - Segmentation is a proposal, never a commitment. The engine's split of a description into items is editable before any item is confirmed, and a meal is never silently reduced to fewer items than the user described.
 - On-device model resources are governed by NFR-3 and gated by G-3. Storage, download, memory, thermal, and battery budgets are measured per device tier before activation, and parameter count is not accepted as a resource proxy.
@@ -92,7 +92,7 @@ Noah — offline, on a lower-tier device, with no local vision engine available 
 - **"Multilingual for Tier 1 and Russia" means the markets in the corpus plus Russia.** Tier 1 is currently recorded as the United States, Canada, United Kingdom, Australia, and New Zealand, and the beta is English-first. Adding Russia adds a non-English catalog language, a second script, and a market outside the current high-income Tier 1 framing. The exact launch list is owned by Gate G-1, so this spec names the language and script requirements rather than fixing the country list.
 - **The plain search box must work on every supported phone.** Taken from the Noah journey, which puts the offline fallback on a low-end device — so the fallback cannot require a model that low-end device can't run.
 - **Typed input reuses the screens that already exist.** Candidate review, serving confirmation, and the result screen are shared with the photo path rather than duplicated, because the product deliberately has one workflow and no extra screens.
-- **The engine interface gets renamed.** It is currently called `PhotoInferenceEngine`, which stops making sense once it also accepts text. The rename happens as part of the version-2 migration rather than as separate work.
+- **The engine interface gets renamed.** It is currently called `PhotoInferenceEngine`, which stops making sense once it also accepts text. The modality-neutral v3 binding is added alongside the published v1/v2 bindings rather than widening either release.
 
 ## Open Questions
 

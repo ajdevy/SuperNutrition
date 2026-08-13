@@ -38,6 +38,7 @@
     <string name="capture_evidence_visible_region_count">Visible regions: {count}</string>
     <string name="capture_evidence_composition_hints">Possible ingredients from dish</string>
     <string name="capture_evidence_composition_hint_source">Dish hint, not visual evidence</string>
+    <string name="capture_evidence_manual_ingredient_source">Added from text</string>
     <string name="capture_evidence_partial_degradation">Dish suggestions unavailable; visible photo evidence is still available.</string>
     <string name="capture_recovery_permission">Camera permission is required</string>
     <string name="capture_recovery_unavailable">Camera is unavailable</string>
@@ -56,6 +57,8 @@
     <string name="capture_grid_cell_description">Analyze photo region {index}</string>
     <string name="capture_selected">Selected</string>
     <string name="capture_not_selected">Not selected</string>
+    <string name="capture_manual_ingredient_label">Add food or dish</string>
+    <string name="capture_manual_ingredient_add">Add</string>
     <string name="capture_result_placeholder">Dish suggestions and visible photo evidence will appear after analysis.</string>
     <string name="capture_loading">Analyzing photo…</string>
 </resources>

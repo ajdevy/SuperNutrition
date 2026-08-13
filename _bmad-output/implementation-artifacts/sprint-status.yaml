@@ -31,12 +31,16 @@ tracking_system: file-system
 story_location: _bmad-output/implementation-artifacts
 
 development_status:
-  epic-1: done
+  # Reopened: story 1.6 was added to epics.md after this epic was marked done,
+  # and contracts/market-policy/v1 does not exist yet. An epic cannot be done
+  # while it contains a backlog story.
+  epic-1: in-progress
   1-1-activate-mobile-kmp-scaffold: done
   1-2-enforce-monorepo-boundaries-and-contracts: done
   1-3-establish-product-identity-metadata: done
   1-4-establish-repository-quality-gates: done
   1-5-establish-the-low-friction-interaction-policy: done
+  1-6-establish-the-market-processing-policy: backlog
   epic-1-retrospective: optional
 
   epic-2: done
@@ -58,6 +62,25 @@ development_status:
   3-10-integrate-bounded-dish-ingredient-hints: done
   epic-3-retrospective: optional
 
+  # Discovered 2026-08-03 while scoping E7.6: origin/feat/e43-gateway-impl
+  # (unmerged, commit 24d51378) implements a first-party gateway for 4.3 --
+  # Fastify server, auth, consent verification, an OpenRouter provider
+  # adapter, rate limiting, telemetry -- 537 tests, 94.1%/90.2% coverage. Not
+  # an ancestor of main or this branch. Left as backlog below because this
+  # file has not been reconciled with that branch; do not treat 4-3 as clean
+  # unstarted work without checking it first.
+  #
+  # Adversarially re-verified 2026-08-03 against the actual composition root,
+  # not the commit message: photo-only (the text route is documented and
+  # schema'd but never registered); the composition root wires in-memory
+  # rate-limit/dedup stores instead of the tested Redis-backed ones it also
+  # contains (rate limits and at-most-once dedup are per-process, don't
+  # survive a restart or hold across replicas); and there is currently no
+  # working non-test-mode authentication path at all -- production auth
+  # unconditionally throws. Tests passing on that branch is not evidence its
+  # production wiring is safe. Its own contracts/mobile-api/v1 release ships
+  # text as reserved, not supported, and is frozen after first consumer.
+  # Full findings: G-4's draft-proposals doc, sections 1, 3, and 4.
   epic-4: backlog
   4-1-implement-remote-consent-and-transfer-states: backlog
   4-2-implement-the-remote-mobile-adapter: backlog
@@ -77,3 +100,52 @@ development_status:
   6-3-establish-the-evaluation-corpus-and-route-baselines: backlog
   6-4-maintain-the-quality-and-release-evidence-gates: backlog
   epic-6-retrospective: optional
+
+  # Added to epics.md after this file was generated, so it was untracked while
+  # story 7.2 was already being implemented. 7.2 depends on the catalog rather
+  # than on any Engine, which is why it is in flight ahead of 7.1.
+  # All six stories implemented and awaiting review in PRs #25, #34, and the
+  # v2 binding branch. Both blockers previously recorded here were wrong:
+  # 7.1's binding is a new file that merges beside PR #29's edits rather than
+  # conflicting with them, and 7.4 needed a text engine, not a language model
+  # -- the deterministic one runs on any device and an LLM becomes a swap
+  # behind the same port. An on-device model remains desirable and remains a
+  # G-3 decision; it is an enhancement, not a prerequisite.
+  # Reopened. A nine-angle adversarial review found 3 critical and 25 high
+  # defects, including two independent reasons the SPEC success signal fails
+  # end to end. Marking this done was premature.
+  epic-7: in-progress
+  # All implementable criteria met and verified on feat/e7-meal-search-ui. v1's
+  # digest still prints the literal named in the story; v2 gained the capability
+  # envelope it published a fixture for and could not decode; and
+  # verify-inference-contract.sh now verifies both releases. Retiring v1 is
+  # explicitly a separate change and is not blocked by anything here.
+  7-1-release-inference-contract-v2-with-identification-modality: review
+  # Work complete and verified on PR #25; awaiting human review, not self-declared done.
+  7-2-deliver-the-deterministic-catalog-search-floor: review
+  7-3-add-the-per-market-language-matrix: review
+  # Five of six criteria implemented and verified on branch feat/e7-meal-search-ui
+  # (a30f9f70, d22a1239); no PR is open yet. The sixth -- per-device-tier resource
+  # budgets -- is not implementable here: the measurement is G-3's exit artifact.
+  # The mechanism for it exists and is deliberately inert, and
+  # _bmad-output/specs/spec-gate-readiness/G-3-device-matrix.md says what the
+  # benchmark must supply. Not done: gate-blocked is not the same as complete.
+  7-4-add-on-device-typed-identification: review
+  # All four criteria met on feat/e7-meal-search-ui (69d41156). split was the
+  # missing operation; the review now also holds the description, which is what
+  # "each item shows the words it came from" needs. The allowlist criterion is
+  # satisfied by contracts/interaction-policy/v1, which already declares
+  # preparation, recipe and food identity never-defaultable; this change adds
+  # nothing to that allowlist.
+  7-5-add-segmentation-review-and-correction: review
+  # 2026-08-03: AC-1 (offer eligibility) and AC-4 (unresolved market disables
+  # remote) were already implemented via RemoteTextEligibility.kt. This pass
+  # added the AC-2 mismatch check's missing production path (a registry-based
+  # decide() overload, plus MarketPolicyRegistry.mayTransfer wired in end to
+  # end) and fixed a mislabeled test that wasn't covering what it claimed.
+  # AC-3 (the consent receipt) and the remainder of AC-2 (reviewed copy text)
+  # are gated on G-4's external inputs, not implementable here -- see G-4's
+  # updated satisfaction criteria and its draft-proposals doc. No presenter or
+  # screen exists yet; scope for this pass was deliberately domain-layer only.
+  7-6-add-remote-typed-identification: in-progress
+  epic-7-retrospective: optional
