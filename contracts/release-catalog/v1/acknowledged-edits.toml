@@ -207,3 +207,20 @@ expires = "2026-09-30"
 reason = "Gateway contract surface added to the published v1 release by this slice."
 
 # 14 additions recorded.
+
+[[edit]]
+release_id = "market-policy/v1"
+path = "contracts/market-policy/v1/compatibility.toml"
+base_commit = "a9b6ecf5a62101d212aa8d4ebc98f0eab0dbba2f"
+base_sha256 = "bee094cb00ff8b65c5353440bdffda40f8838b75899ab34559638da2bfd6ca46"
+head_sha256 = "57f76baea4e6b21e2e3fc0fdd8b9adf04c658ff4d92db4f3e3a8b823ec42d8c4"
+expires = "2026-09-30"
+reason = """
+M14 — the release shipped with `digest = "pending"`, a self-reference that was \
+never computed, so its own verifier compared a digest against the literal \
+string "pending" and passed. Computing it is a one-line change to a published \
+release, which is exactly what this gate refuses, so it is recorded here rather \
+than waved through. Whether market-policy/v1 keeps the corrected digest or the \
+correction is published as v2 is the contract owner's call; after `expires` the \
+gate fails until one of the two happens."""
+
