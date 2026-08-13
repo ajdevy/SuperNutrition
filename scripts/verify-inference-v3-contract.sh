@@ -62,7 +62,7 @@ def reject_constant(value):
 def load_json(path):
     try:
         return json.loads(
-            path.read_text(encoding="utf-8"),
+            path.read_text(),
             object_pairs_hook=duplicate_keys,
             parse_constant=reject_constant,
         )
@@ -116,7 +116,7 @@ def scan_forbidden(node, origin):
 
 def verify_digest():
     matrix_path = root / "compatibility-matrix.toml"
-    actual = tomllib.loads(matrix_path.read_text(encoding="utf-8")).get("digest")
+    actual = tomllib.loads(matrix_path.read_text()).get("digest")
     if not isinstance(actual, str) or not re.fullmatch(r"[a-f0-9]{64}", actual):
         fail("v3 compatibility matrix must carry a lowercase 64-character digest")
     normalize = re.compile(rb'(?m)^digest\s*=\s*"(?:[a-f0-9]{64}|pending|<release-digest>)"\s*$')
@@ -153,8 +153,8 @@ expected_fixture_names = {
 if {path.name for path in fixture_paths} != expected_fixture_names:
     fail("v3 fixture set drifted")
 
-schema = tomllib.loads((root / "schema.toml").read_text(encoding="utf-8"))
-matrix = tomllib.loads((root / "compatibility-matrix.toml").read_text(encoding="utf-8"))
+schema = tomllib.loads((root / "schema.toml").read_text())
+matrix = tomllib.loads((root / "compatibility-matrix.toml").read_text())
 if {
     schema.get("schema"), schema.get("schema_version"), schema.get("contract_id"),
     schema.get("release"), schema.get("previous_release"),

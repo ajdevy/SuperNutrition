@@ -20,9 +20,9 @@ for path in (schema_path, compatibility_path, fixture_path, release_path):
     if not path.is_file():
         raise SystemExit(f"missing interaction-policy contract file: {path}")
 
-schema = tomllib.loads(schema_path.read_text(encoding="utf-8"))
-compatibility = tomllib.loads(compatibility_path.read_text(encoding="utf-8"))
-fixture = tomllib.loads(fixture_path.read_text(encoding="utf-8"))
+schema = tomllib.loads(schema_path.read_text())
+compatibility = tomllib.loads(compatibility_path.read_text())
+fixture = tomllib.loads(fixture_path.read_text())
 default_allowlist = schema.get("default_allowlist", {})
 allowlist = default_allowlist.get("fields")
 if allowlist != ["defaultLocale", "measurementSystem", "catalogProposal", "standardServing"]:
@@ -98,7 +98,7 @@ if compatibility.get("digest") != digest.hexdigest():
 mobile_policy_path = root.parents[2] / "mobile/config/quality/interaction-policy.toml"
 if mobile_policy_path.is_file():
     expected_binding = f'contract_digest = "{digest.hexdigest()}"'
-    if expected_binding not in mobile_policy_path.read_text(encoding="utf-8"):
+    if expected_binding not in mobile_policy_path.read_text():
         raise SystemExit("mobile interaction-policy manifest is not bound to this release digest")
 
 allowed_documentation = {"RELEASE.md"}
