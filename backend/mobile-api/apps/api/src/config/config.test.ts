@@ -137,3 +137,29 @@ describe('STUB_INFERENCE is parsed like every other flag', () => {
     expect(assertStubFence(parsed.stubInference, parsed.auth.testMode)).toBe(true);
   });
 });
+
+describe('H-07 — single-instance operation is declared, not assumed', () => {
+  // Replay detection, at-most-once effects, rate limits, idempotency and
+  // transfer state are all per-process: main.ts builds InMemory* stores and
+  // REDIS_URL, though required, is never composed into any of them. A second
+  // replica therefore does not share any of it, and a restart forgets all of
+  // it — silently, because nothing in the configuration says so.
+  //
+  // Until the distributed implementation lands, running more than one instance
+  // is refused at boot rather than discovered from a duplicated provider call.
+  it('accepts the default single-instance deployment', () => {
+    expect(loadConfig(base).deployment.instanceCount).toBe(1);
+  });
+
+  it('refuses to start with more than one instance while state is per-process', () => {
+    // The same fence class that refuses an unsafe test-mode boot: this is the
+    // same kind of refusal, at the same moment, for the same reason.
+    expect(() => loadConfig({ ...base, APP_INSTANCE_COUNT: '2' })).toThrow(TestModeFenceError);
+    expect(() => loadConfig({ ...base, APP_INSTANCE_COUNT: '2' })).toThrow(/per-process/);
+  });
+
+  it('refuses a nonsensical instance count rather than guessing', () => {
+    expect(() => loadConfig({ ...base, APP_INSTANCE_COUNT: '0' })).toThrow(ConfigError);
+    expect(() => loadConfig({ ...base, APP_INSTANCE_COUNT: 'many' })).toThrow(ConfigError);
+  });
+});

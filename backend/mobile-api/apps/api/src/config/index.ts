@@ -1,5 +1,9 @@
 import { EnvSchema, type Env, type Environment } from './env.schema.js';
-import { assertTestModeFence, testModeBanner } from './test-mode-fence.js';
+import {
+  assertSingleInstanceState,
+  assertTestModeFence,
+  testModeBanner,
+} from './test-mode-fence.js';
 
 export interface AppConfig {
   readonly env: Environment;
@@ -12,6 +16,8 @@ export interface AppConfig {
     readonly connectTimeoutSeconds: number;
   };
   readonly redis: { readonly url: string };
+  /** H-07 — declared instance count; >1 is refused while state is per-process. */
+  readonly deployment: { readonly instanceCount: number };
   readonly auth: {
     readonly issuer: string;
     readonly accessTtlSeconds: number;
@@ -54,6 +60,8 @@ export const loadConfig = (source: NodeJS.ProcessEnv): AppConfig => {
 
   const env = parsed.data;
   assertTestModeFence(env);
+  // H-07 — a multi-instance deployment is refused while state is per-process.
+  assertSingleInstanceState(env.APP_INSTANCE_COUNT);
 
   return {
     env: env.APP_ENVIRONMENT,
@@ -66,6 +74,7 @@ export const loadConfig = (source: NodeJS.ProcessEnv): AppConfig => {
       connectTimeoutSeconds: env.DATABASE_CONNECT_TIMEOUT_SECONDS,
     },
     redis: { url: env.REDIS_URL },
+    deployment: { instanceCount: env.APP_INSTANCE_COUNT },
     auth: {
       issuer: env.JWT_ISSUER,
       accessTtlSeconds: env.JWT_ACCESS_TTL_SECONDS,

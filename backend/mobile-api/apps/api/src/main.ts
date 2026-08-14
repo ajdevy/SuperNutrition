@@ -86,6 +86,21 @@ export const buildApplication = async (
   config: AppConfig,
   logger: AppLogger,
 ): Promise<ServerHandle> => {
+  // H-07 — every store below is per-process, and that is a deployment
+  // constraint, not an implementation detail.
+  //
+  // `config.redis.url` is required by the schema and composed into nothing: no
+  // store here reads it. So replay detection (AD-21), at-most-once effects
+  // (AD-18), rate limits, request idempotency and transfer state all live in
+  // this process and nowhere else. A second replica shares none of them — a
+  // request ID spent here is unspent there, and one attempt can reach a provider
+  // twice — and a restart forgets all of them.
+  //
+  // `assertSingleInstanceState` refuses to boot when APP_INSTANCE_COUNT > 1, so
+  // the unsafe deployment fails loudly at startup instead of silently at a
+  // provider bill. Wiring these to Redis is a separate story; note that when it
+  // lands, Redis coordinates identifiers, ownership, expiry and cancellation
+  // only. Image bytes stay in `payloads`, ephemeral and process-local (AD-8).
   const payloads = new InMemoryPayloadSource();
   const transfers = new TransferStateTracker();
   const limiter = new InMemoryRateLimiter(RATE_LIMIT_RULES);

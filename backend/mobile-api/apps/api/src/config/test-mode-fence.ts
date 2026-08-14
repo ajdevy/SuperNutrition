@@ -139,3 +139,32 @@ export const assertPaidRosterInProduction = (
       'endpoint is not contracted to honour. Refusing to start.',
   );
 };
+
+/**
+ * H-07 — refuse to boot a second instance while state is per-process.
+ *
+ * Replay detection, at-most-once effects, rate limits, idempotency and transfer
+ * state all live in memory: `main.ts` composes the InMemory* stores, and
+ * REDIS_URL is required by the schema but wired into none of them. A second
+ * replica shares none of it, so a request id spent on instance A is unspent on
+ * instance B, an effect claimed on one can be claimed again on the other, and a
+ * rate limit is per-process rather than per-installation.
+ *
+ * The failure that produces is a duplicated provider call: a user's photo sent
+ * twice, billed twice, for one attempt they made once. It is silent, it depends
+ * on which instance a request lands on, and AD-18 exists to prevent exactly it.
+ *
+ * So the unsafe deployment is refused at boot rather than discovered in
+ * production. This is not the distributed implementation and does not pretend to
+ * be — it is the honest boundary until that lands.
+ */
+export const assertSingleInstanceState = (instanceCount: number): void => {
+  if (instanceCount > 1) {
+    throw new TestModeFenceError(
+      `APP_INSTANCE_COUNT=${instanceCount}: replay, at-most-once, rate-limit, idempotency and ` +
+        'transfer state are per-process, so a second instance shares none of them and one attempt ' +
+        'can reach a provider twice. Refusing to start. Run a single instance until the ' +
+        'Redis-backed stores are wired.',
+    );
+  }
+};
