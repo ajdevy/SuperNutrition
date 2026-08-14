@@ -22,7 +22,13 @@ import {
  * client unmapped.
  */
 
-const JPEG = Buffer.from([0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10, 0x4a, 0x46]);
+// A readable 16x16 baseline JPEG: the gateway now measures the image, so an
+// 8-byte stub with no start-of-frame is correctly refused (H-04).
+const JPEG = Buffer.from([
+  0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10, 0x4a, 0x46, 0x49, 0x46, 0x00, 0x01, 0x01, 0x00, 0x00, 0x01,
+  0x00, 0x01, 0x00, 0x00, 0xff, 0xc0, 0x00, 0x11, 0x08, 0x00, 0x10, 0x00, 0x10, 0x03, 0x01, 0x22,
+  0x00, 0x02, 0x11, 0x01, 0x03, 0x11, 0x01,
+]);
 const digest = `sha256:${createHash('sha256').update(JPEG).digest('hex')}`;
 const NOW = new Date('2026-07-29T10:20:00Z');
 
@@ -707,7 +713,7 @@ describe('POST /gw/v1/session', () => {
   });
 });
 
-describe('H-01 — cancelling someone else\'s attempt must not touch their payload', () => {
+describe("H-01 — cancelling someone else's attempt must not touch their payload", () => {
   // routes.ts disposed the payload and only then checked whether cancel()
   // had returned null. cancel() returns null for an attempt owned by another
   // installation, so a caller who knew or guessed a live attempt id could make
@@ -789,5 +795,187 @@ describe('H-03 — a malformed nested context is a client error, not a server cr
     const response = await post(context());
 
     expect(response.statusCode).toBe(200);
+  });
+});
+
+describe('H-04 — the payload must really be an image, and within the released bound', () => {
+  const ascii = (s: string) => [...s].map((c) => c.charCodeAt(0));
+  const be16 = (n: number) => [(n >> 8) & 0xff, n & 0xff];
+
+  /** A baseline JPEG of the given size; only the header matters here. */
+  const jpegOf = (w: number, h: number) =>
+    Buffer.from([
+      0xff,
+      0xd8,
+      0xff,
+      0xe0,
+      ...be16(16),
+      ...ascii('JFIF'),
+      0,
+      1,
+      1,
+      0,
+      0,
+      1,
+      0,
+      1,
+      0,
+      0,
+      0xff,
+      0xc0,
+      ...be16(17),
+      8,
+      ...be16(h),
+      ...be16(w),
+      3,
+      1,
+      0x22,
+      0,
+      2,
+      0x11,
+      1,
+      3,
+      0x11,
+      1,
+    ]);
+
+  const postBytes = async (bytes: Buffer, contentType = 'image/jpeg') => {
+    const boundary = '----test-boundary';
+    // The receipt binds consent to these exact bytes, so the digest travels with
+    // them; otherwise the accept case fails on consent rather than on size.
+    const ctx = context();
+    ctx.consentReceipt.digest = `sha256:${createHash('sha256').update(bytes).digest('hex')}`;
+    const head = Buffer.from(
+      `--${boundary}\r\nContent-Disposition: form-data; name="context"\r\n\r\n${JSON.stringify(ctx)}\r\n` +
+        `--${boundary}\r\nContent-Disposition: form-data; name="payload"; filename="a.bin"\r\n` +
+        `Content-Type: ${contentType}\r\n\r\n`,
+    );
+    return server.app.inject({
+      method: 'POST',
+      url: '/gw/v1/inference/photo',
+      payload: Buffer.concat([head, bytes, Buffer.from(`\r\n--${boundary}--\r\n`)]),
+      headers: {
+        'content-type': `multipart/form-data; boundary=${boundary}`,
+        authorization: TOKEN,
+        'x-contract-version': 'mobile-api/v1',
+        'x-request-id': nextRequestId(),
+      },
+    });
+  };
+
+  it('refuses a RIFF/WAVE file declared as WebP', async () => {
+    // `RIFF` alone is WAVE and AVI as well. Matching on it meant an audio file
+    // declared image/webp was forwarded to a provider.
+    const wave = Buffer.from([...ascii('RIFF'), 0, 0, 0, 0, ...ascii('WAVEfmt ')]);
+
+    const response = await postBytes(wave, 'image/webp');
+
+    expect(response.statusCode).toBe(415);
+  });
+
+  it.each([
+    ['a width over the bound', 4097, 100],
+    ['a height over the bound', 100, 4097],
+  ])('refuses %s', async (_label, w, h) => {
+    const response = await postBytes(jpegOf(w, h));
+
+    expect(response.statusCode).toBe(400);
+    expect(response.body).toMatch(/dimension_bounds_exceeded/);
+  });
+
+  it('accepts an image exactly at the bound', async () => {
+    const response = await postBytes(jpegOf(4096, 4096));
+
+    expect(response.statusCode).toBe(200);
+  });
+
+  it('refuses an image whose header cannot be read', async () => {
+    // Not "assume it is fine": a size that cannot be established cannot be
+    // shown to be within the bound.
+    const response = await postBytes(Buffer.from([0xff, 0xd8, 0xff]));
+
+    expect(response.statusCode).toBeGreaterThanOrEqual(400);
+  });
+});
+
+describe('H-05 — every multipart stream is consumed, and duplicates are refused', () => {
+  // @fastify/multipart only finishes once every file stream has been consumed.
+  // The loop read a file named `payload` and ignored any other, so an extra file
+  // part left a stream open and could hold the request — and with it a worker —
+  // until a timeout. Duplicates were worse than refused: the last one silently
+  // won, so which photo was analysed depended on part order.
+  const boundary = '----test-boundary';
+  const filePart = (name: string, bytes: Buffer) =>
+    Buffer.concat([
+      Buffer.from(
+        `--${boundary}\r\nContent-Disposition: form-data; name="${name}"; filename="f.jpg"\r\n` +
+          `Content-Type: image/jpeg\r\n\r\n`,
+      ),
+      bytes,
+      Buffer.from('\r\n'),
+    ]);
+  const fieldPart = (name: string, value: string) =>
+    Buffer.from(
+      `--${boundary}\r\nContent-Disposition: form-data; name="${name}"\r\n\r\n${value}\r\n`,
+    );
+
+  const post = (body: Buffer) =>
+    server.app.inject({
+      method: 'POST',
+      url: '/gw/v1/inference/photo',
+      payload: Buffer.concat([body, Buffer.from(`--${boundary}--\r\n`)]),
+      headers: {
+        'content-type': `multipart/form-data; boundary=${boundary}`,
+        authorization: TOKEN,
+        'x-contract-version': 'mobile-api/v1',
+        'x-request-id': nextRequestId(),
+      },
+    });
+
+  const ctx = () => fieldPart('context', JSON.stringify(context()));
+
+  it('rejects and completes when an unknown file arrives before the payload', async () => {
+    const response = await post(
+      Buffer.concat([
+        filePart('surprise', Buffer.alloc(4096, 7)),
+        ctx(),
+        filePart('payload', JPEG),
+      ]),
+    );
+
+    expect(response.statusCode).toBeGreaterThanOrEqual(400);
+    expect(response.statusCode).toBeLessThan(500);
+  });
+
+  it('rejects and completes when an unknown file arrives after the payload', async () => {
+    const response = await post(
+      Buffer.concat([
+        ctx(),
+        filePart('payload', JPEG),
+        filePart('surprise', Buffer.alloc(4096, 7)),
+      ]),
+    );
+
+    expect(response.statusCode).toBeGreaterThanOrEqual(400);
+    expect(response.statusCode).toBeLessThan(500);
+  });
+
+  it('refuses a duplicate payload rather than letting the last one win', async () => {
+    const response = await post(
+      Buffer.concat([ctx(), filePart('payload', JPEG), filePart('payload', JPEG)]),
+    );
+
+    // 413 rather than 400: the multipart plugin's own one-file limit fires
+    // first, which is the release's `payload_parts_per_request = 1` and an
+    // earlier, cheaper rejection than the duplicate guard behind it. What
+    // matters is that a second payload cannot displace the first.
+    expect(response.statusCode).toBe(413);
+  });
+
+  it('refuses a duplicate context', async () => {
+    const response = await post(Buffer.concat([ctx(), ctx(), filePart('payload', JPEG)]));
+
+    expect(response.statusCode).toBe(400);
+    expect(response.body).toMatch(/duplicate/);
   });
 });

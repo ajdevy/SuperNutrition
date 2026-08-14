@@ -92,14 +92,49 @@ export const registerGatewayRoutes = async (
       let bytes: Uint8Array | null = null;
       let contentType = '';
 
+      // H-05 — @fastify/multipart finishes only once every file stream has been
+      // consumed. This loop read a file named `payload` and ignored any other,
+      // so one extra file part left a stream open and could hold the request,
+      // and the worker with it, until something timed out.
+      //
+      // Duplicates were quietly worse: the last part won, so which photo got
+      // analysed depended on the order the client happened to send them.
+      //
+      // The first problem is recorded rather than thrown, so the remaining parts
+      // are still drained and the request completes before the 4xx.
+      let rejection: { field: string; issue: string } | null = null;
+      const refuse = (field: string, issue: string) => {
+        rejection ??= { field, issue };
+      };
+
       for await (const part of request.parts()) {
-        if (part.type === 'file' && part.fieldname === 'payload') {
+        if (part.type === 'file') {
+          if (part.fieldname !== 'payload') {
+            // Discarded without buffering: an unexpected file is refused, and
+            // reading it into memory to throw it away is the wrong trade.
+            part.file.resume();
+            refuse(part.fieldname, 'unexpected_file_part');
+            continue;
+          }
+          if (bytes !== null) {
+            part.file.resume();
+            refuse('payload', 'duplicate_part');
+            continue;
+          }
           const buffer = await part.toBuffer();
           bytes = new Uint8Array(buffer);
           contentType = part.mimetype;
         } else if (part.type === 'field' && part.fieldname === 'context') {
+          if (contextRaw !== null) {
+            refuse('context', 'duplicate_part');
+            continue;
+          }
           contextRaw = String(part.value);
         }
+      }
+
+      if (rejection !== null) {
+        throw new GatewayError(GATEWAY_CODES.VALIDATION_ERROR, { details: [rejection] });
       }
 
       if (contextRaw === null) {

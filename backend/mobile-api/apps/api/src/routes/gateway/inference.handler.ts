@@ -116,18 +116,13 @@ export const validateGatewayHeaders = (headers: {
   return { requestId: headers.requestId };
 };
 
-/** Magic bytes, so a declared content type that lies is rejected. */
-const MAGIC: Readonly<Record<string, readonly number[][]>> = {
-  'image/jpeg': [[0xff, 0xd8, 0xff]],
-  'image/png': [[0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]],
-  'image/webp': [[0x52, 0x49, 0x46, 0x46]],
-};
-
-export const magicBytesMatch = (contentType: string, bytes: Uint8Array): boolean => {
-  const signatures = MAGIC[contentType];
-  if (!signatures) return false;
-  return signatures.some((sig) => sig.every((byte, index) => bytes[index] === byte));
-};
+/**
+ * H-04 — format sniffing and the released dimension bound live in
+ * ./image-bounds.ts. The matcher here accepted any `RIFF` prefix as WebP, which
+ * is equally WAVE and AVI, and nothing read the image size at all.
+ */
+export { magicBytesMatch } from './image-bounds.js';
+import { magicBytesMatch, withinDimensionBound } from './image-bounds.js';
 
 export interface InferenceRequestInput {
   readonly contractVersion: string;
@@ -189,6 +184,16 @@ export const validateRequest = (
   if (!magicBytesMatch(payload.contentType, payload.bytes)) {
     throw new GatewayError(GATEWAY_CODES.UNSUPPORTED_MEDIA_TYPE, {
       details: [{ field: 'payload', issue: 'magic_bytes_mismatch' }],
+    });
+  }
+  // `dimension-bounds` from the release's validation order, and the reason it
+  // sits here: an oversized image is refused before authentication, before a
+  // replay claim, and long before a provider sees it. An unreadable header is
+  // a rejection too — an image whose size cannot be established cannot be
+  // shown to be within the bound.
+  if (!withinDimensionBound(payload.bytes)) {
+    throw new GatewayError(GATEWAY_CODES.VALIDATION_ERROR, {
+      details: [{ field: 'payload', issue: 'dimension_bounds_exceeded' }],
     });
   }
 };
