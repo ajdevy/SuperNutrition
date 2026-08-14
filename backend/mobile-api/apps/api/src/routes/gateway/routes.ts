@@ -4,6 +4,7 @@ import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 // in server.ts.
 import '@fastify/multipart';
 import type { Modality } from '@supernutrition/shared';
+import { PhotoInferenceRequestSchema } from '../../modules/inference/presentation/inference.schemas.js';
 import {
   GATEWAY_CODES,
   GatewayError,
@@ -137,6 +138,30 @@ export const registerGatewayRoutes = async (
           details: [{ field: 'context', issue: 'not_a_json_object' }],
         });
       }
+      // H-03 — object-ness at the root said nothing about what was inside it.
+      // `consentReceipt: null` survived this far and became a TypeError on the
+      // first property read, which the gateway reported as internal-error: a
+      // 500, and an invitation to retry a request that cannot succeed.
+      //
+      // The release already describes this shape and a schema for it already
+      // exists. Validating here means a malformed request is refused before an
+      // effect is claimed, a request id is burned, bytes are stored, or a
+      // provider is called.
+      //
+      // The validated value is deliberately discarded: the schema covers the
+      // fields the release pins, while the pipeline also reads `modality` and
+      // `claimedMarketJurisdiction`, which zod would strip. This is a gate, not
+      // a transformation.
+      const shape = PhotoInferenceRequestSchema.safeParse(parsedContext);
+      if (!shape.success) {
+        throw new GatewayError(GATEWAY_CODES.VALIDATION_ERROR, {
+          details: shape.error.issues.slice(0, 8).map((issue) => ({
+            field: ['context', ...issue.path.map(String)].join('.'),
+            issue: issue.code,
+          })),
+        });
+      }
+
       const context = parsedContext as InferenceRequestInput;
       attemptId = typeof context?.attemptId === 'string' ? context.attemptId : null;
 
@@ -172,8 +197,13 @@ export const registerGatewayRoutes = async (
         // any attempt id it cared to guess.
         const auth = await deps.authenticate(request);
         const record = deps.transfers.cancel(request.params.attemptId, auth.installationId);
-        deps.payloads.dispose(request.params.attemptId);
 
+        // H-01 — disposal happened BEFORE this check, and cancel() returns null
+        // for an attempt owned by a different installation. A caller who knew a
+        // live attempt id could therefore make its owner lose the buffered
+        // photo: their request would fail, with nothing to connect it to an
+        // action someone else took. Nothing is disposed until the caller is
+        // known to own the attempt.
         if (record === null) {
           // No record the caller may see: never begun, finished longer ago than
           // the retention window, or begun by a different installation. All
@@ -188,6 +218,9 @@ export const registerGatewayRoutes = async (
             details: [{ field: 'attemptId', issue: 'unknown_attempt' }],
           });
         }
+
+        // Authorised: the caller owns this attempt, so its bytes go now.
+        deps.payloads.dispose(request.params.attemptId);
 
         const status = cancellationStatus(record);
         reply.status(status).header('X-Correlation-Id', correlationId);

@@ -107,9 +107,14 @@ const multipartBody = (
 
 let server: ServerHandle;
 let remoteEnabled = true;
+/** Held so a test can seed a live attempt and observe payload disposal. */
+let transfers: TransferStateTracker;
+let disposed: string[] = [];
 
 beforeEach(async () => {
   remoteEnabled = true;
+  transfers = new TransferStateTracker(() => NOW);
+  disposed = [];
   const resolver = new StaticMarketPolicyResolver(FIXTURE_MARKET_POLICY, 'fixture/1');
   const authenticator = new TestModeAuthenticator('development');
 
@@ -160,8 +165,8 @@ beforeEach(async () => {
       ]),
       effects: new InMemoryEffectStore(),
       requestIds: new InMemoryEffectStore(),
-      payloads: { put: () => {}, dispose: () => {} },
-      transfers: new TransferStateTracker(() => NOW),
+      payloads: { put: () => {}, dispose: (id: string) => disposed.push(id) },
+      transfers,
       resolveMarket: (id, modality, now) => resolver.resolve(id, modality, now),
       resolveMarketPolicy: (id, modality, now) => resolver.resolve(id, modality, now),
       policyVersion: 'fixture/1',
@@ -699,5 +704,90 @@ describe('POST /gw/v1/session', () => {
     // the limit only by being refused.
     const response = await server.app.inject({ method: 'POST', url: '/gw/v1/session' });
     expect(response.headers['x-ratelimit-limit']).toBeDefined();
+  });
+});
+
+describe('H-01 — cancelling someone else\'s attempt must not touch their payload', () => {
+  // routes.ts disposed the payload and only then checked whether cancel()
+  // had returned null. cancel() returns null for an attempt owned by another
+  // installation, so a caller who knew or guessed a live attempt id could make
+  // the owner lose their buffered photo — the request would then fail for the
+  // owner with no explanation, from an action they did not take.
+  const ATTEMPT = 'att_1111111111111111';
+  const OWNER = 'Bearer test.installation-owner-aaaa';
+  const STRANGER = 'Bearer test.installation-stranger-b';
+
+  const cancelAs = (token: string) =>
+    server.app.inject({
+      method: 'DELETE',
+      url: `/gw/v1/inference/${ATTEMPT}`,
+      headers: {
+        authorization: token,
+        'x-contract-version': 'mobile-api/v1',
+        'x-request-id': nextRequestId(),
+      },
+    });
+
+  it('leaves the payload alone when a different installation cancels', async () => {
+    transfers.begin(ATTEMPT, 'test.installation-owner-aaaa');
+
+    const response = await cancelAs(STRANGER);
+
+    expect(response.statusCode).toBe(400);
+    expect(disposed).toEqual([]);
+  });
+
+  it('still lets the owner cancel afterwards, and disposes then', async () => {
+    transfers.begin(ATTEMPT, 'test.installation-owner-aaaa');
+    await cancelAs(STRANGER);
+
+    const response = await cancelAs(OWNER);
+
+    // 204 is the contract's pre-transfer answer: nothing was sent.
+    expect(response.statusCode).toBe(204);
+    expect(disposed).toEqual([ATTEMPT]);
+  });
+
+  it('tells the stranger nothing about the attempt', async () => {
+    transfers.begin(ATTEMPT, 'test.installation-owner-aaaa');
+
+    const body = (await cancelAs(STRANGER)).body;
+
+    expect(body).not.toMatch(/pre-transfer|bytesTransferred|transferState/);
+  });
+});
+
+describe('H-03 — a malformed nested context is a client error, not a server crash', () => {
+  // Only the root was checked for object-ness. Everything below it was cast to
+  // InferenceRequestInput and dereferenced later, so `consentReceipt: null`
+  // became a TypeError and the gateway reported its own crash as internal-error
+  // — a 500 telling the client to retry a request that can never succeed.
+  const post = async (ctx: unknown) => {
+    const { payload, headers } = multipartBody(ctx, JPEG);
+    return server.app.inject({ method: 'POST', url: '/gw/v1/inference/photo', payload, headers });
+  };
+
+  it.each([
+    ['a null consent receipt', { consentReceipt: null }],
+    ['a missing consent receipt', { consentReceipt: undefined }],
+    ['a scalar where the receipt belongs', { consentReceipt: 'granted' }],
+    ['a null inference context', { inferenceContext: null }],
+    ['a missing inference context', { inferenceContext: undefined }],
+    ['a receipt whose digest is the wrong type', { consentReceipt: { digest: 42 } }],
+  ])('rejects %s with 4xx and no provider call', async (_label, override) => {
+    const ctx = { ...context(), ...override } as Record<string, unknown>;
+    for (const [k, v] of Object.entries(override)) if (v === undefined) delete ctx[k];
+
+    const response = await post(ctx);
+
+    expect(response.statusCode).toBeGreaterThanOrEqual(400);
+    expect(response.statusCode).toBeLessThan(500);
+    expect(response.body).not.toMatch(/internal-error/);
+  });
+
+  it('still accepts a well-formed request', async () => {
+    const response = await post(context());
+
+    expect(response.statusCode).toBe(200);
   });
 });
