@@ -108,7 +108,7 @@ That closes the silence, not the limitation. This story closes the limitation.
 - **Not in scope:** the transfer state machine itself. `downstreamDeletionRequested`
   was made truthful under H-02 without changing the state machine; the redesign
   — not marking a transfer complete until the provider boundary accepts the
-  payload — is tracked separately and would change this story's shape if it
+  payload — is tracked in issue #48 and would change this story's shape if it
   landed first. Sequence that decision before implementing task 1.
 - **Why not sticky sessions instead.** Pinning an installation to an instance
   would make `payloads` work and leave replay and at-most-once still per-process,
@@ -125,6 +125,8 @@ configuration is operator-facing.
 ## References
 
 - [Source: handover-3 finding H-07, PR #44 review comment]
+- [Tracked: issue #49 — this story]
+- [Blocked on: issue #48 — transfer state-machine redesign]
 - [Source: `_bmad-output/planning-artifacts/architecture/architecture-SuperNutrition-2026-07-26/ARCHITECTURE-SPINE.md`, AD-8, AD-18, AD-21, AD-36]
 - [Source: `backend/mobile-api/apps/api/src/main.ts`, `buildApplication`]
 - [Source: `backend/mobile-api/apps/api/src/config/test-mode-fence.ts`, `assertSingleInstanceState`]
