@@ -74,6 +74,8 @@ export interface NutritionProvider {
   search(
     query: string,
     country: string,
+    /** M-02 — how many results the caller asked for. Dropped before, so a request for 25 silently got 5. */
+    limit?: number,
   ): Promise<Result<readonly CatalogMatch[], NutritionFailure>>;
 }
 

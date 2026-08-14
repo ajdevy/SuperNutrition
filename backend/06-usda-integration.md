@@ -46,10 +46,29 @@ File: `apps/api/src/modules/nutrition/infrastructure/usda.provider.ts`
 
 Replace the stub with a real HTTP client.
 
+### Credential placement
+
+**The key travels in the `X-Api-Key` header, never in the query string.**
+
+This document previously showed `?api_key={apiKey}` on both endpoints, and the
+implementation did not follow it. The implementation was right and this document
+was wrong, so the document is corrected rather than the code.
+
+FoodData Central is fronted by api.data.gov, whose developer manual lists three
+accepted ways to pass a key and puts the header first: the `X-Api-Key` HTTP
+header, the `api_key` GET query parameter, and HTTP basic auth with the key as
+the username. All three are supported; they are not equally safe.
+
+A query parameter is recorded by every proxy, load balancer, gateway access log
+and error report between this service and USDA, and it lands in referrer headers
+and browser history wherever a URL is echoed. A leaked key is not something a log
+rotation undoes. The header is supported by the provider and is not written down
+by default, so it is the one used.
+
 **`lookup(request)`** — look up by existing fdcId:
 
 - Parse `foodRef` ("usda:fdc:171705") → extract fdcId
-- GET `{baseUrl}/food/{fdcId}?api_key={apiKey}`
+- GET `{baseUrl}/food/{fdcId}`, with the key in the `X-Api-Key` header (see **Credential placement** below)
 - Map USDA nutrients to `NutritionFact` fields using nutrientId mapping:
   - 1008 (Energy) → `calories`
   - 1003 (Protein) → `proteinG`
@@ -65,7 +84,7 @@ Replace the stub with a real HTTP client.
 
 **`search(query, country)`** — NEW method required for label → fdcId resolution:
 
-- GET `{baseUrl}/foods/search?query={query}&dataType=Foundation,SR%20Legacy&pageSize=5&api_key={apiKey}`
+- GET `{baseUrl}/foods/search?query={query}&dataType=Foundation,SR%20Legacy&pageSize={limit}`, with the key in the `X-Api-Key` header
 - Map each result to a `CatalogMatch`
 - An empty `foods` array is a **valid empty result**, not an error (the REST catalog route returns an empty `data` array)
 

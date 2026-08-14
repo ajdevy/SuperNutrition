@@ -149,6 +149,7 @@ beforeEach(() => {
     resolveMarket: (marketId, modality, now) => resolver.resolve(marketId, modality, now),
     remoteInferenceEnabled: () => true,
     supportedRetentionVersions: ['retention/2'],
+    supportedConfigurationVersions: ['cfg/1'],
     now: () => NOW,
   };
 });
@@ -570,5 +571,65 @@ describe('the response identifies the request it answers', () => {
 
     expect(first.body.requestId).toBe('req_3333333333333333');
     expect(second.body.requestId).toBe('req_4444444444444444');
+  });
+});
+
+describe('H-06 — the configuration version the user consented to must be the one in force', () => {
+  // verifyConsentAndMarket passed `supportedConfigurationVersions: null`, which
+  // is the documented way to switch the check off, and nothing else compared the
+  // receipt's version with the request's. The release requires
+  // `retention-and-configuration-versions-supported`, so the disclosure a user
+  // agreed to could be from a configuration the gateway no longer runs and the
+  // transfer would proceed anyway.
+  //
+  // The supported list is server-side by construction: taking it from the
+  // request would let a client declare its own stale version supported.
+
+  it('refuses a receipt naming a configuration the gateway does not run', async () => {
+    await expect(
+      run(
+        contextFor(JPEG, {
+          attemptId: 'att_6666666666666666',
+          effectId: 'eff_6666666666666666',
+          consentReceipt: {
+            ...receiptFor(JPEG),
+            attemptId: 'att_6666666666666666',
+            configurationVersion: 'cfg/ancient',
+          },
+        }),
+        JPEG,
+        'req_6666666666666666',
+      ),
+    ).rejects.toThrow(/consent-required|gateway error/);
+  });
+
+  it('refuses when the receipt and the request disagree about the version', async () => {
+    await expect(
+      run(
+        contextFor(JPEG, {
+          attemptId: 'att_7777777777777777',
+          effectId: 'eff_7777777777777777',
+          inferenceContext: {
+            catalogCountry: 'ZZ',
+            mealType: 'lunch',
+            locale: 'en-GB',
+            measurementSystem: 'metric',
+            configurationVersion: 'cfg/other',
+          },
+        }),
+        JPEG,
+        'req_7777777777777777',
+      ),
+    ).rejects.toThrow(/consent-required|gateway error/);
+  });
+
+  it('still accepts a receipt on the current version', async () => {
+    const response = await run(
+      contextFor(JPEG, { attemptId: 'att_8888888888888888', effectId: 'eff_8888888888888888' }),
+      JPEG,
+      'req_8888888888888888',
+    );
+
+    expect(response.status).toBe(200);
   });
 });

@@ -222,7 +222,24 @@ export const verifyConsentAndMarket = (input: {
   readonly now: Date;
   readonly knownConsentCopyVersions: readonly string[];
   readonly supportedRetentionVersions: readonly string[];
+  /**
+   * H-06 — server-side by construction. Taking this from the request would let a
+   * client declare its own stale configuration supported, which is the check
+   * defeating itself.
+   */
+  readonly supportedConfigurationVersions: readonly string[];
+  /** The version the request itself was captured under. */
+  readonly requestConfigurationVersion: string;
 }): void => {
+  // The receipt records what the user was shown. If the request was captured
+  // under a different configuration than the receipt was granted for, the two
+  // describe different disclosures and consent does not carry between them.
+  if (input.receipt.configurationVersion !== input.requestConfigurationVersion) {
+    throw new GatewayError(GATEWAY_CODES.CONSENT_REQUIRED, {
+      details: [{ field: 'consentReceipt.configurationVersion', issue: 'request_mismatch' }],
+    });
+  }
+
   verifyConsent({
     receipt: input.receipt,
     payload: input.payload,
@@ -232,6 +249,6 @@ export const verifyConsentAndMarket = (input: {
     now: input.now,
     knownConsentCopyVersions: input.knownConsentCopyVersions,
     supportedRetentionVersions: input.supportedRetentionVersions,
-    supportedConfigurationVersions: null,
+    supportedConfigurationVersions: input.supportedConfigurationVersions,
   });
 };
