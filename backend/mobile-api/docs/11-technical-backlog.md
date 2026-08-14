@@ -105,6 +105,8 @@ lifecycle rather than the hardcoded string `web/backend preselection`.
 | **B-37** | Incident and breach-notification runbook; AD-21 key-compromise runbook. | |
 | **B-38** | Secret rotation runbook with overlap window; CI secret scanning over the diff. | |
 | **B-39** | Migration rehearsal against a restored production-shaped dataset in staging, with timings recorded. | §5.6. |
+| **B-49** | **Distribute gateway attempt state.** Replay IDs, at-most-once effects, rate limits and transfer state are per-process; `REDIS_URL` is required and composed into nothing. `APP_INSTANCE_COUNT > 1` is refused at boot meanwhile. Image bytes stay process-local and never enter Redis (AD-8). | Story 4.4. Blocks running more than one instance. From handover-3 H-07. |
+| **B-50** ⚠ | **Transfer state-machine redesign.** A transfer is marked complete before the provider boundary has accepted the payload, so `downstreamDeletionRequested` and the terminal states describe an intent rather than an outcome. Needs a contract decision: the states are published in `contracts/mobile-api/v1/transfer-states.toml`. | Owner + contract owner. From handover-3 H-02, which made the flag truthful without touching the machine. Sequence before B-49. |
 
 ## 11.6 P3 — deferred, with triggers
 

@@ -45,6 +45,21 @@ export const EnvSchema = z.object({
 
   REDIS_URL: z.string().url(),
   /**
+   * H-07 — how many instances of this service are being run.
+   *
+   * Replay detection, at-most-once effects, rate limits, idempotency and
+   * transfer state are all per-process today: main.ts composes InMemory* stores
+   * and REDIS_URL, though required, is wired into none of them. A second replica
+   * shares none of that state, so a request id spent on instance A is unspent on
+   * instance B and the provider can be called twice for one effect.
+   *
+   * That is a safe deployment of one instance and an unsafe deployment of two,
+   * and nothing said which one you had. Declaring it makes the boundary explicit
+   * and lets the boot refuse the unsafe case instead of leaving it to be
+   * discovered from a duplicated provider call.
+   */
+  APP_INSTANCE_COUNT: z.coerce.number().int().positive().default(1),
+  /**
    * Read directly from process.env in main.ts, so it never went through this
    * schema: `STUB_INFERENCE=TRUE`, `=1` and `=yes` all silently meant false,
    * and a typo in the variable name was indistinguishable from disabling it.
