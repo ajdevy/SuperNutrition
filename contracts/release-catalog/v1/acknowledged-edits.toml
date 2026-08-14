@@ -223,4 +223,3 @@ release, which is exactly what this gate refuses, so it is recorded here rather 
 than waved through. Whether market-policy/v1 keeps the corrected digest or the \
 correction is published as v2 is the contract owner's call; after `expires` the \
 gate fails until one of the two happens."""
-
