@@ -350,3 +350,49 @@ describe('payload source disposal (AD-8)', () => {
     expect(() => payloads.dispose('att_y')).not.toThrow();
   });
 });
+
+describe('M-01 — malformed provider JSON is malformed, not a provider outage', () => {
+  // The parsed content and each candidate were cast rather than checked, so a
+  // JSON primitive or a null candidate threw a TypeError. That escaped to the
+  // provider, became `provider-unavailable`, and was retried — spending another
+  // request on a response that will be just as malformed next time, and telling
+  // the user the provider is down when it answered perfectly promptly with
+  // something we could not read.
+  const contentBody = (content: string) => ({
+    model: 'test-model',
+    usage: { prompt_tokens: 1, completion_tokens: 1 },
+    choices: [{ message: { content } }],
+  });
+
+  it.each([
+    ['null', 'null'],
+    ['a number', '42'],
+    ['a string', '"banana"'],
+    ['an array', '[]'],
+    ['a boolean', 'true'],
+  ])('classifies %s at the JSON root as malformed', (_label, content) => {
+    const mapped = mapProviderResponse(contentBody(content), profile());
+
+    expect(mapped.ok).toBe(false);
+    if (!mapped.ok) expect(mapped.error).toBe('malformed-response');
+  });
+
+  it.each([
+    ['a null candidate', [null]],
+    ['a scalar candidate', ['banana']],
+    ['an array candidate', [[]]],
+    ['a null among valid ones', [{ label: 'Banana', confidence: 0.9 }, null]],
+  ])('classifies %s as malformed', (_label, candidates) => {
+    const mapped = mapProviderResponse(okBody(candidates), profile());
+
+    expect(mapped.ok).toBe(false);
+    if (!mapped.ok) expect(mapped.error).toBe('malformed-response');
+  });
+
+  it('classifies a null choice entry as malformed', () => {
+    const mapped = mapProviderResponse({ model: 'm', usage: {}, choices: [null] }, profile());
+
+    expect(mapped.ok).toBe(false);
+    if (!mapped.ok) expect(mapped.error).toBe('malformed-response');
+  });
+});

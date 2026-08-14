@@ -104,6 +104,10 @@ const ASSUMPTION_KEYS: Readonly<Record<string, string>> = {
   'ingredient-hidden': 'inference.assumption.ingredient_hidden',
 };
 
+/** A non-null, non-array object — the only shape safe to read properties from. */
+const isPlainObject = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
 export const mapProviderResponse = (
   payload: unknown,
   profile: ModelProfile,
@@ -114,7 +118,9 @@ export const mapProviderResponse = (
   const choices = root['choices'];
   if (!Array.isArray(choices) || choices.length === 0) return err('malformed-response');
 
-  const first = choices[0] as Record<string, unknown> | undefined;
+  // M-01 — a null entry here was cast and dereferenced, throwing a TypeError
+  // that escaped as `provider-unavailable` and was retried.
+  const first = isPlainObject(choices[0]) ? choices[0] : undefined;
   const message = first?.['message'] as Record<string, unknown> | undefined;
   const content = message?.['content'];
   if (typeof content !== 'string') return err('malformed-response');
@@ -130,7 +136,14 @@ export const mapProviderResponse = (
   // the fields would hide the violation; failing surfaces it (AD-7).
   if (containsForbiddenKey(parsed)) return err('malformed-response');
 
-  const body = parsed as Record<string, unknown>;
+  // M-01 — JSON.parse happily returns null, a number, a string or an array,
+  // and every one of those was cast to a record. `null['candidates']` throws a
+  // TypeError, which the provider reported as an outage and retried: another
+  // request spent on a response that will be exactly as unreadable, and a user
+  // told the provider is down when it answered promptly with something we
+  // could not read. Unreadable is not unavailable.
+  if (!isPlainObject(parsed)) return err('malformed-response');
+  const body = parsed;
   const rawCandidates = body['candidates'];
   if (!Array.isArray(rawCandidates)) return err('malformed-response');
 
@@ -141,6 +154,7 @@ export const mapProviderResponse = (
 
   const candidates: Candidate[] = [];
   for (const [index, entry] of rawCandidates.slice(0, 5).entries()) {
+    if (!isPlainObject(entry)) return err('malformed-response');
     const raw = entry as RawCandidate;
     if (typeof raw.label !== 'string' || raw.label.trim().length === 0) {
       return err('malformed-response');

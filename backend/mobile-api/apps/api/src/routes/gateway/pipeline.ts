@@ -55,6 +55,8 @@ export interface PipelineDeps {
   readonly resolveMarket: (marketId: string, modality: Modality, now: Date) => MarketResolution;
   readonly remoteInferenceEnabled: () => boolean;
   readonly supportedRetentionVersions: readonly string[];
+  /** Configuration versions this deployment actually runs (H-06). */
+  readonly supportedConfigurationVersions: readonly string[];
   readonly now: () => Date;
 }
 
@@ -129,6 +131,8 @@ export const runInferencePipeline = async (
     now,
     knownConsentCopyVersions: market.consentCopyVersion ? [market.consentCopyVersion] : [],
     supportedRetentionVersions: deps.supportedRetentionVersions,
+    supportedConfigurationVersions: deps.supportedConfigurationVersions,
+    requestConfigurationVersion: context.inferenceContext.configurationVersion,
   });
 
   // 4b — the test-mode fence is the LAST gate before transfer, not the first.

@@ -178,6 +178,7 @@ beforeEach(async () => {
       policyVersion: 'fixture/1',
       remoteInferenceEnabled: () => remoteEnabled,
       supportedRetentionVersions: ['retention/2'],
+      supportedConfigurationVersions: ['cfg/1'],
       now: () => NOW,
       requestIdFactory: () => 'req_0000000000000000',
       authenticate: async (request) => authenticator.authenticate(request.headers.authorization),

@@ -213,6 +213,11 @@ export const buildApplication = async (
       policyVersion: marketResolver.policyVersion,
       remoteInferenceEnabled: () => config.inference.remoteEnabled,
       supportedRetentionVersions: ['retention/2'],
+      // H-06 — the versions this deployment actually runs, taken from the
+      // immutable model-profile snapshot rather than from the request. A client
+      // that supplied this list could declare its own stale configuration
+      // supported, which is the check defeating itself.
+      supportedConfigurationVersions: [profiles.current().profileVersion],
       now: () => new Date(),
       authenticate: async (request) => {
         if (config.auth.testMode) {

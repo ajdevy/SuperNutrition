@@ -543,3 +543,59 @@ describe('lookup cache', () => {
     expect(http.urls).toHaveLength(2);
   });
 });
+
+describe('H-08 — the key is provider-supported and never written down', () => {
+  // api.data.gov, which fronts FoodData Central, lists three accepted ways to
+  // pass a key and puts the header first: X-Api-Key, the api_key query
+  // parameter, and basic auth. All three work; they are not equally safe. A
+  // query parameter is recorded by every proxy, gateway access log and error
+  // report between here and USDA, and a leaked key is not something a log
+  // rotation undoes. backend/06-usda-integration.md used to document the query
+  // parameter and the code did not follow it; the document was the wrong half.
+  it('sends the key in the documented header, never in the URL', async () => {
+    const t = transport(reply({ foods: [BANANA] }));
+
+    await build(t.fetch).search('banana', 'US');
+
+    expect(t.headers[0]?.['X-Api-Key']).toBe(KEY);
+    expect(t.urls[0]).not.toContain(KEY);
+    expect(t.urls[0]).not.toContain('api_key');
+  });
+
+  it('keeps the key out of the error surfaced when the provider rejects it', async () => {
+    const t = transport(() => new Response('forbidden', { status: 403 }));
+
+    const result = await build(t.fetch).search('banana', 'US');
+
+    expect(JSON.stringify(result)).not.toContain(KEY);
+  });
+
+  it('keeps the key out of a thrown transport failure', async () => {
+    const t = transport(networkError);
+
+    const result = await build(t.fetch, { maxRetries: 0 }).search('banana', 'US');
+
+    expect(JSON.stringify(result)).not.toContain(KEY);
+  });
+});
+
+describe('M-02 — the requested result limit reaches the provider', () => {
+  // The route accepts limit 1..25, SearchFoodHandler dropped it, and the
+  // provider always sent pageSize=5. A caller asking for 25 got 5 and had no
+  // way to tell the difference from a catalog that only held 5.
+  it.each([1, 5, 25])('asks USDA for %i results', async (limit) => {
+    const t = transport(reply({ foods: [BANANA] }));
+
+    await build(t.fetch).search('banana', 'US', limit);
+
+    expect(t.urls[0]).toContain(`pageSize=${limit}`);
+  });
+
+  it('falls back to the documented default when no limit is given', async () => {
+    const t = transport(reply({ foods: [BANANA] }));
+
+    await build(t.fetch).search('banana', 'US');
+
+    expect(t.urls[0]).toContain('pageSize=5');
+  });
+});

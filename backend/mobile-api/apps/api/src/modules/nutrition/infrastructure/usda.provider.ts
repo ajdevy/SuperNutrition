@@ -146,6 +146,20 @@ const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
  * same pattern as OpenRouter).  Cache keys include `datasetVersion` so a
  * package upgrade invalidates by construction (§8.6).
  */
+/**
+ * The page size actually sent to USDA.
+ *
+ * Bounded here as well as at the route because this port has more than one
+ * caller, and an unbounded page size is a request the provider may refuse or
+ * bill for. 5 is the documented default when the caller expresses no preference.
+ */
+const DEFAULT_SEARCH_LIMIT = 5;
+const MAX_SEARCH_LIMIT = 25;
+const boundedLimit = (limit?: number): number => {
+  if (limit === undefined || !Number.isInteger(limit)) return DEFAULT_SEARCH_LIMIT;
+  return Math.min(Math.max(limit, 1), MAX_SEARCH_LIMIT);
+};
+
 export class USDAProvider implements NutritionProvider {
   readonly id = 'usda' as const;
   readonly datasetVersion: string;
@@ -212,6 +226,7 @@ export class USDAProvider implements NutritionProvider {
   async search(
     query: string,
     _country: string,
+    limit?: number,
   ): Promise<Result<readonly CatalogMatch[], NutritionFailure>> {
     const blocked = this.#checkCircuit();
     if (blocked) return blocked;
@@ -222,7 +237,11 @@ export class USDAProvider implements NutritionProvider {
     const params = new URLSearchParams({
       query,
       dataType: 'Foundation,SR Legacy',
-      pageSize: '5',
+      // M-02 — the route validates 1..25 and this was hardcoded to 5, so a
+      // caller asking for 25 got 5 with no way to tell that apart from a
+      // catalog that only held 5. Re-bounded here rather than trusted: this
+      // port is reachable from more than one caller.
+      pageSize: String(boundedLimit(limit)),
     });
     const url = `${this.#config.baseUrl}/foods/search?${params.toString()}`;
 
