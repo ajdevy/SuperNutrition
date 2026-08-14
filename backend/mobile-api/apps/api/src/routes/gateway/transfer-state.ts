@@ -133,6 +133,18 @@ export class TransferStateTracker {
    * Nothing calls this yet: no adapter exposes an erasure operation. It exists
    * so the flag can only ever become true by way of a real invocation, rather
    * than being inferred from the fact that a transfer happened.
+   *
+   * So `downstreamDeletionRequested` is constant `false` in production today,
+   * and that is the correct answer — no deletion is requested of any provider,
+   * because no provider request can carry one. It previously reported `true`
+   * whenever a provider had merely been *called*, which was a privacy claim the
+   * product could not support.
+   *
+   * The capability itself is gated on the provider/DPA decision (handover-3
+   * deferred item 2, G-4): the current OpenRouter request body has no
+   * per-request retention or erasure control. When an adapter gains one, it
+   * calls this; until then a caller that wants the flag true has to add the
+   * real thing first, which is the point.
    */
   markDownstreamDeletionRequested(attemptId: string): void {
     const entry = this.#attempts.get(attemptId);
