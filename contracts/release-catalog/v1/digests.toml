@@ -202,4 +202,3 @@ status = "current"
 note = """
 Published by main in Epic 7 (#37) and absent from the catalog until now. This
 branch records it; it does not author it."""
-

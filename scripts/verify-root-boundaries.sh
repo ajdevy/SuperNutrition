@@ -231,13 +231,39 @@ else:
     print(lifecycle)
 PY
 })"
+# M-03 — this read the lifecycle with sed, which matches text rather than TOML.
+# A duplicated key, different spacing, or a `lifecycle` nested under another
+# table all produced a value the manifest does not actually declare, and the
+# reported state is what a reader trusts. Parsed properly, and a manifest that
+# will not parse is an error rather than an empty string.
 read_lifecycle() {
-  if test -f "$repo_root/$1/product-lifecycle.toml"; then
-    sed -n 's/^lifecycle = "\([^"]*\)"$/\1/p' "$repo_root/$1/product-lifecycle.toml" | head -n 1
-  else
+  local manifest="$repo_root/$1/product-lifecycle.toml"
+  if ! test -f "$manifest"; then
     printf 'absent'
+    return
   fi
+  python3 - "$manifest" <<'PY_LIFECYCLE'
+import sys, tomllib
+
+path = sys.argv[1]
+try:
+    with open(path, "rb") as handle:
+        doc = tomllib.load(handle)
+except tomllib.TOMLDecodeError as error:
+    raise SystemExit(f"root-boundaries: {path} is not valid TOML: {error}")
+
+lifecycle = doc.get("lifecycle")
+if not isinstance(lifecycle, str) or not lifecycle:
+    raise SystemExit(f"root-boundaries: {path} declares no lifecycle")
+print(lifecycle)
+PY_LIFECYCLE
 }
 
+# Captured before printing: a command substitution inside printf's argument list
+# swallows the exit status, so a manifest that fails to parse would have been
+# reported as an empty lifecycle in an OK line.
+web_lifecycle="$(read_lifecycle web/landing)" || exit 1
+backend_lifecycle="$(read_lifecycle backend/mobile-api)" || exit 1
+
 printf 'root-boundaries: OK (mobile %s; web %s; backend %s)\n' \
-  "$mobile_lifecycle" "$(read_lifecycle web/landing)" "$(read_lifecycle backend/mobile-api)"
+  "$mobile_lifecycle" "$web_lifecycle" "$backend_lifecycle"

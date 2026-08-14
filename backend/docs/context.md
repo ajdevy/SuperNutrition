@@ -1,8 +1,19 @@
 # Project Context Digest
 
-> Generated 2026-08-01 from the last local Claude Code sessions (E4.3 gateway work).
-> This file is the handoff memory for new sessions (Telegram bot / server CLI).
-> If the file is missing, ask Claude: "continue the E4.3 gateway state from git and PRs".
+> **Historical. Not the current state of this repository.**
+>
+> Written 2026-08-01 from local sessions during the E4.3 gateway work, when this
+> file was the handoff memory between them. It is kept for the reasoning it
+> records about Stages 1–6, not as a description of where the work now is.
+>
+> M-04 — it used to call itself authoritative while saying the work was
+> uncommitted and unpushed, naming a branch stack that has since been superseded
+> and pointing new sessions at local transcripts they cannot read. Every one of
+> those was wrong by the time it was read.
+>
+> **For current state, in this order:** `backend/AGENTS.md`, the open pull
+> request and its description, `.evidence/OWNER-DECISIONS.md`, and `git log`.
+> Where this file and any of those disagree, they are right and this is stale.
 
 ## How we work (continuity protocol — read first, obey strictly)
 
@@ -15,7 +26,11 @@ This project is worked on by Claude Code as an **uninterrupted continuation of t
 5. **No partial silent work.** If you cannot finish in one run, leave a clear status file (e.g. `backend/docs/wip-<stage>.md`) with what is done and what remains — never just stop.
 6. **Update this digest at the END of every task** (not only when interrupted). Rewrite the "Next stage", "Current focus", and git-state blocks to reflect what was done, gate results, and the exact next step — so any new session from any entry point (bot, code-server, kitty) picks up the latest state. A task is not fully done until this file says so.
 7. **Git discipline:** work on the current branch (`feat/e43-gateway-impl` for E4.3 stack) or a new branch per stage; commit per coherent unit with `feat(backend): ...` style; DO NOT commit the dirty benchmark files or unrelated docs; push rarely and deliberately (paid GitHub Actions quota — see AGENTS.md).
-8. **Deep context:** full old session transcripts are at `~/.claude/projects/-Users-jj-Work-SuperNutrition/` (imported from the local machine). If this digest lacks a detail, search those transcripts for how the local agent decided it.
+8. **Deep context:** this used to point at local session transcripts under
+   `~/.claude/projects/`. Those are one machine's private files and are not
+   evidence a later session can read or verify. Durable decisions live in
+   `.evidence/OWNER-DECISIONS.md`, in the pull request record, and in commit
+   messages; if a detail is not in one of those, it was not written down.
 
 ## Next step (current objective) — Stage 7
 
@@ -103,7 +118,11 @@ Implementation landed in `09d2d05`, the test surface in `ec48c3d`, and the catal
 - Tests: **830 passing (was 753 passing + 2 red), 49 files.** 95.70% lines / 93.44% branches overall; `usda.provider.ts` 100% lines / 95.06% branches. `npm run typecheck`, `npm run lint`, `npm run format:check`, coverage thresholds, and `verify-{mobile-api,inference,interaction-policy}-contract`, `verify-root-boundaries`, `verify-product-identity` all pass.
 - Two non-test changes came with the test commit: `extractNutrients` now reads `NUTRIENT_MAP` instead of duplicating the nutrient ids inline (eslint failed on the dead map; behaviour identical), and prettier was run over the three Stage 6 files that had never been formatted (`domain/index.ts`, `usda.provider.ts`, `routes/product/index.ts`).
 
-## Git / PR state
+## Git / PR state (as of 2026-08-01 — superseded)
+
+> Left as written for the record. The branch stack below no longer exists: the
+> backend work was consolidated, and the state that matters is on the open pull
+> request. Do not act on the commit list or the push instruction here.
 
 - Branch `feat/e43-gateway-impl`. **Six local commits are ahead of origin and unpushed** (oldest first): `bc87798` (Stage 5–8 specs + backend AGENTS.md), `4ac78d4` (meals domain and product API), `09d2d05` (Stage 5/6 implementation, "backup … (auto)"), `ec48c3d` (Stage 6 tests), `e00a2ef` (this digest, Stage 6 completion), `adfbc5b` (catalog auth + these decisions). Push only when the user asks — paid Actions quota. Confirmed 2026-08-01: do not push.
 - `origin/feat/e43-gateway-impl` still points at `24d5137`; the local remote ref was last fetched 2026-07-30, so re-fetch before trusting the count.

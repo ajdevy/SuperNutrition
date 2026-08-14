@@ -14,23 +14,59 @@ root_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 manifest="$root_dir/product-lifecycle.toml"
 test -f "$manifest"
 
-lifecycle="$(sed -n 's/^lifecycle = "\([^"]*\)"$/\1/p' "$manifest" | head -n 1)"
-
 fail() {
   printf 'backend mobile-api: %s\n' "$1" >&2
   exit 1
 }
 
+# M-03 — the lifecycle and the non-active assertions were read with sed and
+# grep. Those match text, not TOML: a duplicated key, a value written with
+# different spacing, or a key nested under some other table all read as
+# something the manifest does not say. One typed parser decides, and a manifest
+# that will not parse is a failure rather than a set of misses.
+manifest_state="$(
+  python3 - "$manifest" <<'PY_MANIFEST' || fail 'product-lifecycle.toml is not valid TOML'
+import sys, tomllib
+
+with open(sys.argv[1], "rb") as handle:
+    # tomllib rejects duplicate keys outright, which is the property the
+    # textual reads could not offer.
+    doc = tomllib.load(handle)
+
+fields = (
+    "lifecycle",
+    "quality_claim",
+    "production_source_count",
+    "dependency_manifest",
+    "lock_state",
+    "runtime",
+    "deployable_artifact",
+)
+for field in fields:
+    value = doc.get(field)
+    if isinstance(value, bool):
+        value = "true" if value else "false"
+    print(f"{field}={'' if value is None else value}")
+PY_MANIFEST
+)"
+
+manifest_value() {
+  printf '%s\n' "$manifest_state" | sed -n "s/^$1=//p"
+}
+
+lifecycle="$(manifest_value lifecycle)"
+test -n "$lifecycle" || fail 'product-lifecycle.toml declares no lifecycle'
+
 # ---------------------------------------------------------------------------
 # Non-active lifecycle: prove no production material exists. No quality claim.
 # ---------------------------------------------------------------------------
 if [ "$lifecycle" != "active" ]; then
-  grep -q '^quality_claim = false$' "$manifest" || fail 'non-active state must not claim quality'
-  grep -q '^production_source_count = 0$' "$manifest" || fail 'non-active state must have no production source'
-  grep -q '^dependency_manifest = "absent"$' "$manifest" || fail 'non-active state must have no dependency manifest'
-  grep -q '^lock_state = "absent"$' "$manifest" || fail 'non-active state must have no lock state'
-  grep -q '^runtime = "unselected"$' "$manifest" || fail 'non-active state must have no runtime'
-  grep -q '^deployable_artifact = "absent"$' "$manifest" || fail 'non-active state must have no artifact'
+  test "$(manifest_value quality_claim)" = 'false' || fail 'non-active state must not claim quality'
+  test "$(manifest_value production_source_count)" = '0' || fail 'non-active state must have no production source'
+  test "$(manifest_value dependency_manifest)" = 'absent' || fail 'non-active state must have no dependency manifest'
+  test "$(manifest_value lock_state)" = 'absent' || fail 'non-active state must have no lock state'
+  test "$(manifest_value runtime)" = 'unselected' || fail 'non-active state must have no runtime'
+  test "$(manifest_value deployable_artifact)" = 'absent' || fail 'non-active state must have no artifact'
 
   # Architecture documentation is non-executable planning material and is not
   # production source, dependency state, runtime, deployable build, deployment

@@ -162,4 +162,17 @@ printf "export default [{ message: 'AD-36: no cross-product source edge to mobil
   >"$root/backend/mobile-api/eslint.config.js"
 expect_accepted "a lint rule whose message names the sibling root in order to forbid it" "$root"
 
+# --- M-03: a manifest that does not parse is not a manifest ------------------
+# The lifecycle used to be read with sed, so a duplicated key silently took
+# whichever line matched first and a malformed file read as the empty string.
+# Both then flowed into the reported state, which is what a reader trusts.
+root="$(fresh_root boundary-duplicate-lifecycle)"
+printf 'lifecycle = "active"\nlifecycle = "preselection"\n' \
+  >"$root/backend/mobile-api/product-lifecycle.toml"
+expect_rejected_because "a manifest declaring lifecycle twice" "TOML" "$root"
+
+root="$(fresh_root boundary-malformed-lifecycle)"
+printf 'lifecycle = active\n' >"$root/backend/mobile-api/product-lifecycle.toml"
+expect_rejected_because "a manifest that is not valid TOML" "TOML" "$root"
+
 printf 'root-boundary negative fixtures: OK (%d rejections, each for its own reason)\n' "$fixture_count"
