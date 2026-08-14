@@ -38,6 +38,14 @@ interface AttemptEntry {
   state: TransferState;
   bytes: number;
   providerCalled: boolean;
+  /**
+   * H-02 — set only by an actual, provider-supported deletion invocation.
+   *
+   * Separate from providerCalled because they answer different questions: one is
+   * "did bytes leave", the other is "did we ask for them back". The response
+   * field is the second, and it used to report the first.
+   */
+  deletionRequested: boolean;
   /** True once a 200 carrying the result was produced for the client. */
   resultDelivered: boolean;
   controller: AbortController;
@@ -94,6 +102,7 @@ export class TransferStateTracker {
       state: 'pre-transfer',
       bytes: 0,
       providerCalled: false,
+      deletionRequested: false,
       resultDelivered: false,
       controller,
       cancellation: null,
@@ -116,6 +125,19 @@ export class TransferStateTracker {
     entry.state = 'transferred';
     entry.bytes = bytes;
     entry.providerCalled = true;
+  }
+
+  /**
+   * Record that a deletion was actually requested of the provider.
+   *
+   * Nothing calls this yet: no adapter exposes an erasure operation. It exists
+   * so the flag can only ever become true by way of a real invocation, rather
+   * than being inferred from the fact that a transfer happened.
+   */
+  markDownstreamDeletionRequested(attemptId: string): void {
+    const entry = this.#attempts.get(attemptId);
+    if (!entry) return;
+    entry.deletionRequested = true;
   }
 
   /** Recorded just before the 200 is produced, so a later cancellation can tell
@@ -168,7 +190,16 @@ export class TransferStateTracker {
       bytesTransferred: entry.state === 'pre-transfer' ? 0 : entry.bytes,
       recallClaimed: false,
       // Only meaningful when a provider actually received the payload.
-      downstreamDeletionRequested: transferred && entry.providerCalled,
+      // H-02 — this was `transferred && providerCalled`: true the moment a
+      // provider had been called. The release says it is true only when a
+      // provider received the payload AND a deletion request was issued, and
+      // the provider port exposes inference only, so there is no deletion to
+      // invoke. The field asserted an erasure nobody had asked for, in the one
+      // response a user reads to learn what became of their photo.
+      //
+      // Until an adapter supports deletion this is false, which is the honest
+      // answer the release's honest-limit wording depends on.
+      downstreamDeletionRequested: transferred && entry.deletionRequested,
       // A result already returned in a 200 is not discarded by a later
       // cancellation. Claiming otherwise is the same false comfort as reporting
       // a completed attempt as pre-transfer.

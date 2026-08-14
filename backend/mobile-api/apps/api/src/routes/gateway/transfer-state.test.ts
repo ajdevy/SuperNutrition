@@ -33,14 +33,16 @@ describe('cancellation per transfer state (AD-6, AD-8)', () => {
     expect(cancellationStatus(record)).toBe(202);
   });
 
-  it('transferred suppresses the result and requests downstream deletion', () => {
+  it('transferred suppresses the result, and claims no deletion nobody asked for', () => {
     const t = tracker();
     t.begin('att_3', 'installation-a');
     t.markTransferred('att_3', 8192);
     const record = t.cancel('att_3', 'installation-a');
 
     expect(record.transferState).toBe('transferred');
-    expect(record.downstreamDeletionRequested).toBe(true);
+    // H-02 — a transfer is not a deletion request. No adapter exposes an
+    // erasure operation, so there is nothing to have asked for.
+    expect(record.downstreamDeletionRequested).toBe(false);
     expect(record.resultSuppressed).toBe(true);
     expect(cancellationStatus(record)).toBe(202);
   });
@@ -148,7 +150,8 @@ describe('H2 — cancellation after the attempt has completed', () => {
     expect(record).not.toBeNull();
     expect(record?.transferState).toBe('transferred');
     expect(record?.bytesTransferred).toBe(8192);
-    expect(record?.downstreamDeletionRequested).toBe(true);
+    // H-02 — bytes reached a provider; nothing asked for them back.
+    expect(record?.downstreamDeletionRequested).toBe(false);
     expect(cancellationStatus(record!)).toBe(202);
   });
 
@@ -292,5 +295,53 @@ describe('M7 — one transfer per attempt id', () => {
     expect(first?.signal.aborted).toBe(false);
     t.cancel('att_contested', 'installation-a');
     expect(first?.signal.aborted).toBe(true);
+  });
+});
+
+describe('H-02 — the deletion flag reports a request that was actually made', () => {
+  // downstreamDeletionRequested was `transferred && providerCalled`: true the
+  // moment a provider had been called. The contract says it is true only when a
+  // provider received the payload AND a deletion request was issued, and the
+  // provider port exposes inference only — there is no deletion operation to
+  // invoke. So the field asserted an erasure nobody had asked for, in the one
+  // response a user reads to find out what happened to their photo.
+  //
+  // This does not change when a transfer is considered complete; the state
+  // machine is untouched. Only the claim is corrected.
+  const tracker = () => new TransferStateTracker(() => new Date('2026-07-29T10:20:00Z'));
+
+  it('is false after a provider call, because nothing was asked to delete', () => {
+    const t = tracker();
+    t.begin('att_0000000000000001', 'inst-1');
+    t.markTransferred('att_0000000000000001', 1024);
+
+    const record = t.cancel('att_0000000000000001', 'inst-1');
+
+    expect(record?.downstreamDeletionRequested).toBe(false);
+  });
+
+  it('is false before any transfer', () => {
+    const t = tracker();
+    t.begin('att_0000000000000002', 'inst-1');
+
+    expect(t.cancel('att_0000000000000002', 'inst-1')?.downstreamDeletionRequested).toBe(false);
+  });
+
+  it('becomes true only once a deletion is actually recorded', () => {
+    const t = tracker();
+    t.begin('att_0000000000000003', 'inst-1');
+    t.markTransferred('att_0000000000000003', 1024);
+    t.markDownstreamDeletionRequested('att_0000000000000003');
+
+    expect(t.cancel('att_0000000000000003', 'inst-1')?.downstreamDeletionRequested).toBe(true);
+  });
+
+  it('never claims recall, whatever else happened', () => {
+    const t = tracker();
+    t.begin('att_0000000000000004', 'inst-1');
+    t.markTransferred('att_0000000000000004', 1024);
+    t.markDownstreamDeletionRequested('att_0000000000000004');
+
+    expect(t.cancel('att_0000000000000004', 'inst-1')?.recallClaimed).toBe(false);
   });
 });

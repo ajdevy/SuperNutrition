@@ -566,7 +566,11 @@ describe('DELETE /gw/v1/inference/:attemptId', () => {
     const record = cancelled.json();
     expect(record.transferState).toBe('transferred');
     expect(record.bytesTransferred).toBe(JPEG.byteLength);
-    expect(record.downstreamDeletionRequested).toBe(true);
+    // H-02 — the payload reached a provider, and nothing asked for it back,
+    // because the provider port has no erasure operation. Reporting true
+    // here asserted a deletion to the one person entitled to a straight
+    // answer about their own photo.
+    expect(record.downstreamDeletionRequested).toBe(false);
     // The client already holds this result; it is not being discarded.
     expect(record.resultSuppressed).toBe(false);
     expect(record.recallClaimed).toBe(false);
