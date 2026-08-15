@@ -188,15 +188,61 @@ in telemetry (AD-14)."""
 # Cheapest rejection first. Every step here must be able to reject the request
 # WITHOUT a provider call, because a provider call is the expensive, externally
 # visible, privacy-relevant act (E4.3 acceptance criteria).
+#
+# Owner decision D-02 (2026-08-15) — the order is split into two phases.
+#
+# The previous single list put `magic-byte-sniff` and `dimension-bounds` ahead of
+# `authentication`. That is not implementable for a streamed multipart upload:
+# sniffing bytes requires reading bytes, and reading up to 8 MiB of body for an
+# unauthenticated caller is a memory-pinning denial of service — one request per
+# 8 MiB held. The gateway therefore authenticates first, deliberately, and the
+# published list described a request whose body is already in hand: exactly the
+# state we refuse to reach for an anonymous caller.
+#
+# Changing the code to match the old list was refused outright: it reinstates the
+# attack. The text was wrong, not the implementation.
+#
+# What the order guarantees is unchanged and holds in both phases: nothing these
+# checks would reject reaches a provider.
+
+# Phase 1 — header-only. Nothing here reads the request body, so each step is
+# safe to run for a caller who has not authenticated yet. `streamed-size-guard`
+# belongs here because it inspects the declared content length, not the payload.
+pre_authentication = [
+  "content-length",
+  "content-type",
+  "streamed-size-guard",
+  "contract-version",
+]
+
+authentication = "authentication"
+
+# Phase 2 — everything that requires reading the body, or an authenticated
+# identity, or both. Ordered cheapest-first within the phase, and every step
+# still precedes any provider call.
+post_authentication = [
+  "request-id-replay",
+  "magic-byte-sniff",
+  "dimension-bounds",
+  "rate-limit",
+  "consent-digest-match",
+  "modality-and-consent-copy-match",
+  "market-posture",
+  "processing-region-permitted",
+  "effect-deduplication",
+]
+
+# Retained as the flat sequence actually executed, so a consumer reading one
+# field still sees the whole order. Derived from the two phases above.
 order = [
   "content-length",
   "content-type",
   "streamed-size-guard",
-  "magic-byte-sniff",
-  "dimension-bounds",
   "contract-version",
   "authentication",
   "request-id-replay",
+  "magic-byte-sniff",
+  "dimension-bounds",
   "rate-limit",
   "consent-digest-match",
   "modality-and-consent-copy-match",
@@ -205,3 +251,6 @@ order = [
   "effect-deduplication",
 ]
 provider_call_allowed_after = "effect-deduplication"
+# No step above may call a provider, in either phase. This is the property the
+# ordering exists to protect, and it is unaffected by where authentication sits.
+body_read_allowed_after = "authentication"

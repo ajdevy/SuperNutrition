@@ -170,8 +170,16 @@ export const runInferencePipeline = async (
   deps.payloads.put(context.attemptId, payload.bytes);
 
   try {
+    // #48(a) — these two used to run back to back, here, before the provider
+    // was called at all. The release declares `provider_called = true` for the
+    // terminal `transferred` state, so an attempt the provider refused, timed
+    // out on, or reset was still recorded as complete — and cancellation,
+    // suppression and the deletion flag all reasoned from that.
+    //
+    // `transferring` is entered here because bytes are about to go on the wire.
+    // `transferred` is entered from the orchestrator's admission callback below,
+    // which is the only place that knows a provider accepted the payload.
     deps.transfers.markTransferring(context.attemptId, payload.bytes.byteLength);
-    deps.transfers.markTransferred(context.attemptId, payload.bytes.byteLength);
 
     // 6 — orchestrate.
     const result = await deps.orchestrator.analyze(
@@ -199,6 +207,9 @@ export const runInferencePipeline = async (
         signal: controller.signal,
         marketJurisdiction: market.marketJurisdiction,
         processingRegion: market.processingRegion,
+        // Fires only when a provider actually admitted the payload.
+        onProviderAdmitted: () =>
+          deps.transfers.markTransferred(context.attemptId, payload.bytes.byteLength),
       },
     );
 

@@ -30,13 +30,16 @@ attemptId = "att_07Q4D0W8R3X5T9V1"
 transferState = "transferred"
 bytesTransferred = 388502
 recallClaimed = false
-downstreamDeletionRequested = true
+# Owner decision D-01 (2026-08-15): false, not true. No provider adapter exposes
+# an erasure operation, so the gateway sends no deletion request and must not
+# report one. See transfer-states.toml, state `transferred`.
+downstreamDeletionRequested = false
 resultSuppressed = true
 cancelledAt = "2026-07-29T14:22:47Z"
 
 [assertions]
 recall_claimed = false
-downstream_deletion_requested = true
+downstream_deletion_requested = false
 result_suppressed = true
 late_provider_emission_discarded = true
 late_emission_returned_to_client = false

@@ -200,6 +200,17 @@ export class TwoPassInferenceOrchestrator implements InferenceOrchestrator {
 
         const durationMs = this.#clock.now() - startedAt;
 
+        // #48(a) — the provider has now returned, which is the first moment the
+        // payload is known to have been admitted rather than merely dialled. A
+        // refusal, timeout, or reset does NOT fire this: the caller must not be
+        // told a transfer completed that did not.
+        //
+        // Fired once per attempt. Pass 2 reuses a payload already admitted, and
+        // re-firing would report a second transfer of one photo.
+        if (response.ok && pass === 1) {
+          options.onProviderAdmitted?.();
+        }
+
         if (response.ok) {
           const best = response.value.candidates[0];
           const confidence = best?.confidence.score ?? null;

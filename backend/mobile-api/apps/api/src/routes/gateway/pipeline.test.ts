@@ -68,8 +68,16 @@ class CountingOrchestrator {
     requiresConfirmation: false,
   });
 
-  async analyze(_request: InferenceRequest): Promise<Result<InferenceResult, InferenceFailure>> {
+  async analyze(
+    _request: InferenceRequest,
+    options?: { onProviderAdmitted?: () => void },
+  ): Promise<Result<InferenceResult, InferenceFailure>> {
     this.calls += 1;
+    // #48(a) — the real orchestrator fires this only once a provider has
+    // admitted the payload. A fake that skips it would leave every caller's
+    // transfer state permanently `transferring`, which is not what the port
+    // promises; a fake that fires it on failure would restore the defect.
+    if (this.result.ok) options?.onProviderAdmitted?.();
     return this.result;
   }
 }
@@ -631,5 +639,84 @@ describe('H-06 — the configuration version the user consented to must be the o
     );
 
     expect(response.status).toBe(200);
+  });
+});
+
+describe('#48(a) — `transferred` requires provider admission', () => {
+  /**
+   * The tracker's own primitives were always correct; the pipeline misused
+   * them. `markTransferring` and `markTransferred` were called back to back
+   * before `orchestrator.analyze()` ran, so the terminal state was reached
+   * before any provider had seen a byte.
+   *
+   * `transfer-states.toml` declares `provider_called = true` for `transferred`.
+   * Moving the transition to provider admission makes the code conform to the
+   * release rather than redefining it — which is why this part of #48 needs no
+   * acknowledgement.
+   */
+  it('is still transferring while the provider has not admitted the payload', async () => {
+    let stateDuringCall: string | null = null;
+    const attemptId = 'att_0000000000000000';
+    deps = {
+      ...deps,
+      orchestrator: {
+        analyze: async () => {
+          // Observed from inside the provider call, before it returns: the
+          // provider has been reached but has admitted nothing yet.
+          stateDuringCall = deps.transfers.stateOf(attemptId);
+          return orchestrator.result;
+        },
+      } as never,
+    };
+
+    await runInferencePipeline(deps, {
+      context: contextFor(JPEG) as never,
+      payload: { bytes: JPEG, contentType: 'image/jpeg' },
+      auth: AUTH,
+      requestId: 'req_0000000000000000',
+      clientIp: '127.0.0.1',
+    });
+
+    expect(stateDuringCall).toBe('transferring');
+  });
+
+  it('reaches transferred once the provider admits it', async () => {
+    const attemptId = 'att_0000000000000000';
+
+    await runInferencePipeline(deps, {
+      context: contextFor(JPEG) as never,
+      payload: { bytes: JPEG, contentType: 'image/jpeg' },
+      auth: AUTH,
+      requestId: 'req_0000000000000000',
+      clientIp: '127.0.0.1',
+    });
+
+    expect(deps.transfers.stateOf(attemptId)).toBe('transferred');
+  });
+
+  it('does not reach transferred when the provider never admits the payload', async () => {
+    // A provider that refuses, times out, or dies mid-call has not received the
+    // photo in full. Recording it as transferred told the user otherwise.
+    const attemptId = 'att_0000000000000000';
+    deps = {
+      ...deps,
+      orchestrator: {
+        analyze: async () => {
+          throw new Error('provider connection reset');
+        },
+      } as never,
+    };
+
+    await expect(
+      runInferencePipeline(deps, {
+        context: contextFor(JPEG) as never,
+        payload: { bytes: JPEG, contentType: 'image/jpeg' },
+        auth: AUTH,
+        requestId: 'req_0000000000000000',
+        clientIp: '127.0.0.1',
+      }),
+    ).rejects.toThrow();
+
+    expect(deps.transfers.stateOf(attemptId)).toBe('transferring');
   });
 });
