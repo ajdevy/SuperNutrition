@@ -5,6 +5,7 @@ import {
   InMemoryIdempotencyStore,
   RedisRateLimiter,
   RedisEffectStore,
+  RedisUnavailableError,
   type RedisLike,
 } from './stores.js';
 
@@ -153,8 +154,12 @@ describe('at-most-once effect claims', () => {
         throw new Error('down');
       },
     });
-    // An unverifiable claim must not authorize a second transfer.
-    expect(await store.claimOnce('att_1', 'eff_1', 60)).toBe(false);
+    // An unverifiable claim must not authorize a second transfer. It used to
+    // return `false`, which achieved that — but `false` here means "already
+    // claimed", so a user making a first, legitimate attempt during an outage
+    // was told they had already made it. Still fail-closed (#49), now as an
+    // outage rather than as a duplicate.
+    await expect(store.claimOnce('att_1', 'eff_1', 60)).rejects.toThrow(RedisUnavailableError);
   });
 
   it('claims through Redis SET NX', async () => {

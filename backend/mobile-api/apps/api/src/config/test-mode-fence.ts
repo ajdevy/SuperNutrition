@@ -171,7 +171,16 @@ export const assertPaidRosterInProduction = (
  * auditable evidence — before any ingress or remote activation. Issue #49 is the
  * real fix; this is the honest boundary until it lands.
  */
-export const assertSingleInstanceState = (instanceCount: number): void => {
+export const assertSingleInstanceState = (
+  instanceCount: number,
+  stateBackend: 'memory' | 'redis' = 'memory',
+): void => {
+  // #49 — with the Redis backend composed, the state above is no longer
+  // per-process, so the reason for this refusal is gone. The lift is tied to the
+  // backend actually in use rather than to a separate "I promise" flag: the only
+  // thing that makes more than one instance safe is shared state, so that is
+  // what the check reads.
+  if (stateBackend === 'redis') return;
   if (instanceCount > 1) {
     throw new TestModeFenceError(
       `APP_INSTANCE_COUNT=${instanceCount}: replay, at-most-once, rate-limit, idempotency and ` +

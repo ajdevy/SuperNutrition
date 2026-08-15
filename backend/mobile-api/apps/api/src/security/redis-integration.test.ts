@@ -1,0 +1,126 @@
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import {
+  RedisAttemptRegistry,
+  RedisEffectStore,
+  RedisRateLimiter,
+  createRedisClient,
+  type RedisLike,
+} from './stores.js';
+
+/**
+ * #49 story 4.4, criterion 3 — the concurrent-claim property against a REAL
+ * Redis, not a fake.
+ *
+ * A fake proves the adapter uses the commands correctly. It cannot prove the
+ * server is atomic under genuine concurrency, which is the property the whole
+ * design rests on: `SET NX` deciding exactly one winner between two processes
+ * racing for the same identifier. Only a real server can answer that.
+ *
+ * ## This lane is SKIPPED unless `REDIS_TEST_URL` is set
+ *
+ * Skipped loudly, never silently — a skipped criterion reported as green is the
+ * same defect as a fence reported as enforcement (P-01). When it skips, story
+ * 4.4 criterion 3 is UNVERIFIED and must be reported that way.
+ *
+ * Run it with a disposable server:
+ *
+ *   docker run --rm -p 6380:6379 redis:7-alpine
+ *   REDIS_TEST_URL=redis://127.0.0.1:6380 npm test -- redis-integration
+ *
+ * The keys it writes are namespaced and short-lived, but point it at a
+ * disposable instance regardless: it is a test, and a test does not get to
+ * assume which database it is talking to.
+ */
+
+const url = process.env['REDIS_TEST_URL'];
+
+/** The same factory the composition root uses, so this exercises real wiring. */
+const connect = async (target: string): Promise<{ client: RedisLike; close: () => void }> => {
+  const client = await createRedisClient(target);
+  return {
+    client,
+    close: () => {
+      void (client as unknown as { quit: () => Promise<unknown> }).quit();
+    },
+  };
+};
+
+describe.skipIf(!url)('against a real Redis server', () => {
+  let a: Awaited<ReturnType<typeof connect>>;
+  let b: Awaited<ReturnType<typeof connect>>;
+  // Every run uses its own identifiers so a re-run cannot pass on a previous
+  // run's keys, and two runs cannot interfere.
+  const run = process.hrtime.bigint().toString(36);
+
+  beforeAll(async () => {
+    // Two connections, standing in for two instances.
+    a = await connect(url!);
+    b = await connect(url!);
+  });
+
+  afterAll(() => {
+    a?.close();
+    b?.close();
+  });
+
+  it('decides exactly one winner when two instances claim concurrently', async () => {
+    const effectsA = new RedisEffectStore(a.client);
+    const effectsB = new RedisEffectStore(b.client);
+    const attemptId = `att_${run}`;
+
+    // Fired together rather than in sequence: sequential calls would pass even
+    // against a non-atomic implementation.
+    const results = await Promise.all([
+      effectsA.claimOnce(attemptId, 'eff_1', 60),
+      effectsB.claimOnce(attemptId, 'eff_1', 60),
+    ]);
+
+    expect(results.filter(Boolean)).toHaveLength(1);
+  });
+
+  it('shares rate-limit decisions across instances', async () => {
+    const rules = [{ layer: 'installation' as const, limit: 2, windowSeconds: 60 }];
+    const limiterA = new RedisRateLimiter(a.client, rules);
+    const limiterB = new RedisRateLimiter(b.client, rules);
+    const key = { layer: 'installation' as const, principal: `inst_${run}` };
+
+    expect((await limiterA.check(key)).allowed).toBe(true);
+    expect((await limiterB.check(key)).allowed).toBe(true);
+    expect((await limiterA.check(key)).allowed).toBe(false);
+  });
+
+  it('makes a cancellation on one instance visible to the other', async () => {
+    const registryA = new RedisAttemptRegistry(a.client, 60);
+    const registryB = new RedisAttemptRegistry(b.client, 60);
+    const attemptId = `att_cancel_${run}`;
+
+    expect(await registryB.isCancelled(attemptId)).toBe(false);
+    await registryA.markCancelled(attemptId);
+    expect(await registryB.isCancelled(attemptId)).toBe(true);
+  });
+
+  it('expires keys rather than holding them past their window', async () => {
+    const effects = new RedisEffectStore(a.client);
+    const attemptId = `att_ttl_${run}`;
+
+    expect(await effects.claimOnce(attemptId, 'eff_1', 1)).toBe(true);
+    await new Promise((resolve) => setTimeout(resolve, 1200));
+    expect(await effects.claimOnce(attemptId, 'eff_1', 1)).toBe(true);
+  });
+
+  it('stores an instance identifier against an attempt, never image bytes', async () => {
+    const registry = new RedisAttemptRegistry(a.client, 60);
+    const attemptId = `att_bytes_${run}`;
+    await registry.claimAttempt(attemptId, 'instance-a');
+
+    expect(await registry.holderOf(attemptId)).toBe('instance-a');
+  });
+});
+
+describe.skipIf(!!url)('real-Redis lane', () => {
+  it('is skipped, and story 4.4 criterion 3 is therefore unverified', () => {
+    // Present so the skip is visible in the report rather than an absence
+    // nobody notices. This test asserts the state of the evidence, not the code.
+    expect(url).toBeUndefined();
+  });
+});
