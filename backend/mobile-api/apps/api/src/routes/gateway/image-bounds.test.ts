@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { imageDimensions, magicBytesMatch } from './image-bounds.js';
+import { imageDimensions, magicBytesMatch, withinDimensionBound } from './image-bounds.js';
 
 /**
  * H-04 — the payload was accepted on a four-byte prefix and never measured.
@@ -78,13 +78,15 @@ const jpeg = (w: number, h: number) =>
 const webp = (w: number, h: number) =>
   Uint8Array.from([
     ...ascii('RIFF'),
-    0,
+    // RIFF size counts everything after this 8-byte header: 22 of 30 bytes.
+    22,
     0,
     0,
     0,
     ...ascii('WEBP'),
     ...ascii('VP8 '),
-    0,
+    // Chunk size: frame tag (3) + start code (3) + width (2) + height (2).
+    10,
     0,
     0,
     0,
@@ -182,5 +184,234 @@ describe('dimensions are read from the bytes, not trusted', () => {
   it('does not loop forever on a jpeg with a zero-length segment', () => {
     const hostile = Uint8Array.from([0xff, 0xd8, 0xff, 0xe1, 0, 0, 0xff, 0xe1, 0, 0]);
     expect(imageDimensions(hostile)).toBeNull();
+  });
+});
+
+/**
+ * P-03 — the first pass read bytes at offsets without checking the structures
+ * that make those offsets meaningful.
+ *
+ * PNG dimensions were read from offsets 16..23 on the strength of the 8-byte
+ * signature alone, so any file starting with that signature had "dimensions".
+ * The JPEG walker accepted an SOF marker without checking its segment was long
+ * enough to contain the size it was about to read, and refused legal marker-fill
+ * bytes (0xFF padding before a marker), which valid encoders emit. The WebP path
+ * trusted the format FourCC without validating the RIFF or chunk lengths, or the
+ * VP8/VP8L start codes.
+ *
+ * The consequence runs both ways: forged headers reached a provider, and
+ * legitimate photographs were rejected.
+ */
+describe('P-03 — headers are parsed as structures, not read at offsets', () => {
+  it('refuses a PNG signature whose first chunk is not IHDR', () => {
+    // sIGnature + a valid-looking chunk that simply is not IHDR. The old reader
+    // returned whatever happened to sit at offsets 16..23.
+    const forged = Uint8Array.from([
+      0x89,
+      0x50,
+      0x4e,
+      0x47,
+      0x0d,
+      0x0a,
+      0x1a,
+      0x0a,
+      ...be32(13),
+      ...ascii('gAMA'),
+      ...be32(64),
+      ...be32(64),
+      8,
+      2,
+      0,
+      0,
+      0,
+    ]);
+    expect(imageDimensions(forged)).toBeNull();
+  });
+
+  it('refuses an IHDR whose declared length is not 13', () => {
+    const forged = Uint8Array.from([
+      0x89,
+      0x50,
+      0x4e,
+      0x47,
+      0x0d,
+      0x0a,
+      0x1a,
+      0x0a,
+      ...be32(9),
+      ...ascii('IHDR'),
+      ...be32(64),
+      ...be32(64),
+      8,
+      2,
+      0,
+      0,
+      0,
+    ]);
+    expect(imageDimensions(forged)).toBeNull();
+  });
+
+  it('refuses a JPEG SOF whose segment is too short to hold the dimensions', () => {
+    // Length 5 cannot contain precision + height + width. The old walker read
+    // past it anyway.
+    const forged = Uint8Array.from([
+      0xff,
+      0xd8,
+      0xff,
+      0xc0,
+      ...be16(5),
+      8,
+      ...be16(64),
+      ...be16(64),
+      3,
+    ]);
+    expect(imageDimensions(forged)).toBeNull();
+  });
+
+  it('reads a JPEG that uses legal marker-fill bytes', () => {
+    // 0xFF may repeat as fill before a marker. Refusing it rejected valid files.
+    const filled = Uint8Array.from([
+      0xff,
+      0xd8,
+      0xff,
+      0xe0,
+      ...be16(4),
+      1,
+      2,
+      0xff,
+      0xff,
+      0xff,
+      0xc0,
+      ...be16(17),
+      8,
+      ...be16(240),
+      ...be16(320),
+      3,
+      1,
+      0x22,
+      0,
+      2,
+      0x11,
+      1,
+      3,
+      0x11,
+      1,
+    ]);
+    expect(imageDimensions(filled)).toEqual({ width: 320, height: 240 });
+  });
+
+  it('refuses a WebP whose RIFF length does not cover the file', () => {
+    const forged = Uint8Array.from([
+      ...ascii('RIFF'),
+      0xff,
+      0xff,
+      0xff,
+      0x7f,
+      ...ascii('WEBP'),
+      ...ascii('VP8 '),
+      10,
+      0,
+      0,
+      0,
+      0x00,
+      0x00,
+      0x00,
+      0x9d,
+      0x01,
+      0x2a,
+      64,
+      0,
+      64,
+      0,
+    ]);
+    expect(imageDimensions(forged)).toBeNull();
+  });
+
+  it('refuses a lossy WebP without the VP8 start code', () => {
+    const forged = Uint8Array.from([
+      ...ascii('RIFF'),
+      24,
+      0,
+      0,
+      0,
+      ...ascii('WEBP'),
+      ...ascii('VP8 '),
+      12,
+      0,
+      0,
+      0,
+      0x00,
+      0x00,
+      0x00,
+      0xde,
+      0xad,
+      0xbe,
+      64,
+      0,
+      64,
+      0,
+    ]);
+    expect(imageDimensions(forged)).toBeNull();
+  });
+
+  it('refuses a lossless WebP without the VP8L signature byte', () => {
+    const forged = Uint8Array.from([
+      ...ascii('RIFF'),
+      24,
+      0,
+      0,
+      0,
+      ...ascii('WEBP'),
+      ...ascii('VP8L'),
+      9,
+      0,
+      0,
+      0,
+      0x00,
+      0x3f,
+      0x00,
+      0xf0,
+      0x3f,
+    ]);
+    expect(imageDimensions(forged)).toBeNull();
+  });
+
+  it('refuses a WebP whose chunk length runs past the buffer', () => {
+    const forged = Uint8Array.from([
+      ...ascii('RIFF'),
+      24,
+      0,
+      0,
+      0,
+      ...ascii('WEBP'),
+      ...ascii('VP8 '),
+      0xff,
+      0xff,
+      0,
+      0,
+      0x00,
+      0x00,
+      0x00,
+      0x9d,
+      0x01,
+      0x2a,
+      64,
+      0,
+      64,
+      0,
+    ]);
+    expect(imageDimensions(forged)).toBeNull();
+  });
+
+  it('still accepts each format at exactly the released bound', () => {
+    expect(withinDimensionBound(jpeg(4096, 4096))).toBe(true);
+    expect(withinDimensionBound(png(4096, 4096))).toBe(true);
+    expect(withinDimensionBound(webp(4096, 4096))).toBe(true);
+  });
+
+  it('still refuses each format one pixel over it', () => {
+    expect(withinDimensionBound(jpeg(4097, 10))).toBe(false);
+    expect(withinDimensionBound(png(10, 4097))).toBe(false);
+    // 4097 does not fit WebP's 14-bit field, so PNG and JPEG carry this case.
   });
 });

@@ -55,16 +55,24 @@ const receiptFromRelease = (): Record<string, unknown> => {
 
 const receipt = receiptFromRelease();
 
+// P-04/P-02 — this fixture was missing `modality` and
+// `inferenceContext.configurationVersion`, both `optional = false` in
+// gateway-request.toml, and the schema did not require them either. Two
+// incomplete things agreeing is not a passing test, so the omission read as
+// green. The receipt is already taken from the release; the request now names
+// every required field too.
 const request = {
   contractVersion: 'mobile-api/v1',
   attemptId: 'att_01J8X4Q2K7R9M3P5',
   effectId: 'eff_01J8X4Q2K7R9M3P5',
+  modality: 'photo',
   consentReceipt: receipt,
   inferenceContext: {
     catalogCountry: 'DE',
     mealType: 'lunch',
     locale: 'de-DE',
     measurementSystem: 'metric',
+    configurationVersion: receipt.configurationVersion,
   },
 };
 

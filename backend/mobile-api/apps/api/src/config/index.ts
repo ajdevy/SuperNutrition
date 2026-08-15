@@ -27,6 +27,7 @@ export interface AppConfig {
   readonly inference: {
     readonly remoteEnabled: boolean;
     readonly modelProfilesPath: string;
+    readonly configurationSnapshotPath: string;
     readonly openRouterBaseUrl: string;
   };
   readonly logging: { readonly level: Env['LOG_LEVEL'] };
@@ -84,6 +85,7 @@ export const loadConfig = (source: NodeJS.ProcessEnv): AppConfig => {
     inference: {
       remoteEnabled: env.REMOTE_INFERENCE_ENABLED,
       modelProfilesPath: env.MODEL_PROFILES_PATH,
+      configurationSnapshotPath: env.CONFIGURATION_SNAPSHOT_PATH,
       openRouterBaseUrl: env.OPENROUTER_BASE_URL,
     },
     logging: { level: env.LOG_LEVEL },

@@ -62,6 +62,14 @@ export interface GatewayResponseBody {
 
 export const SUPPORTED_CONTRACT_VERSIONS = ['mobile-api/v1'] as const;
 export const ALLOWED_CONTENT_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as const;
+/** `context_part_content_type` in contracts/mobile-api/v1/gateway-request.toml. */
+export const CONTEXT_PART_CONTENT_TYPE = 'application/json';
+/**
+ * What busboy reports for a part that declared no Content-Type. Treated as
+ * "did not say", not as a wrong assertion.
+ */
+export const UNDECLARED_PART_CONTENT_TYPE = 'text/plain';
+
 export const MAX_PAYLOAD_BYTES = 8 * 1024 * 1024;
 export const EFFECT_TTL_SECONDS = 86_400;
 

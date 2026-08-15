@@ -9,6 +9,8 @@ export const LIMITS = {
   MAX_PAGE_LIMIT: 100,
   DEFAULT_PAGE_LIMIT: 20,
   MAX_TEXT_DESCRIPTION_CHARS: 500,
+  /** `priorMealSummary` in contracts/mobile-api/v1/gateway-request.toml. */
+  MAX_PRIOR_MEAL_SUMMARY_CHARS: 280,
   MAX_DISPLAY_NAME_CHARS: 120,
   IDEMPOTENCY_TTL_SECONDS: 86_400,
   NONCE_TTL_SECONDS: 300,

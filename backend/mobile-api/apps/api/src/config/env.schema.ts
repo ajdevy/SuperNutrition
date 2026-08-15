@@ -89,6 +89,8 @@ export const EnvSchema = z.object({
   OPENROUTER_BASE_URL: z.string().url().default('https://openrouter.ai/api/v1'),
   USDA_API_KEY: secret(16).optional(),
 
+  /** Signed ConfigurationSnapshot declaration (AD-20), separate from the model roster. */
+  CONFIGURATION_SNAPSHOT_PATH: z.string().min(1).default('./config/configuration-snapshot.toml'),
   MODEL_PROFILES_PATH: z.string().default('./config/model-profiles.toml'),
 
   /** Operator-controlled provider kill switch (AD-24). Effective without deploy. */
