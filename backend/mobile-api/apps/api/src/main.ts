@@ -22,6 +22,9 @@ import {
   InMemoryIdempotencyStore,
   InMemoryRateLimiter,
   PRODUCTION_MARKET_POLICY,
+  RedisEffectStore,
+  RedisRateLimiter,
+  createRedisClient,
   StaticMarketPolicyResolver,
   TestModeAuthenticator,
   TestModeProductAuthenticator,
@@ -87,28 +90,43 @@ export const buildApplication = async (
   config: AppConfig,
   logger: AppLogger,
 ): Promise<ServerHandle> => {
-  // H-07 — every store below is per-process, and that is a deployment
-  // constraint, not an implementation detail.
+  // H-07/#49 — which of these stores is shared depends on the state backend.
   //
-  // `config.redis.url` is required by the schema and composed into nothing: no
-  // store here reads it. So replay detection (AD-21), at-most-once effects
-  // (AD-18), rate limits, request idempotency and transfer state all live in
-  // this process and nowhere else. A second replica shares none of them — a
-  // request ID spent here is unspent there, and one attempt can reach a provider
-  // twice — and a restart forgets all of them.
-  //
-  // `assertSingleInstanceState` refuses to boot when APP_INSTANCE_COUNT > 1, so
-  // the unsafe deployment fails loudly at startup instead of silently at a
-  // provider bill. Wiring these to Redis is a separate story; note that when it
-  // lands, Redis coordinates identifiers, ownership, expiry and cancellation
-  // only. Image bytes stay in `payloads`, ephemeral and process-local (AD-8).
+  // `memory` (the default) keeps replay, at-most-once effects, rate limits and
+  // idempotency per-process, and `assertSingleInstanceState` refuses to boot
+  // more than one instance for exactly that reason. `redis` composes the shared
+  // stores and lifts the refusal, because it removes the reason for it.
+  // Payload bytes are ALWAYS process-local and ephemeral, in every backend.
+  // There is deliberately no Redis counterpart: an instance that does not hold
+  // the bytes fails closed rather than having them shipped to it (AD-8).
   const payloads = new InMemoryPayloadSource();
+  // The state machine and its abort controller are inherently local — the
+  // controller aborts a request THIS process is making. What crosses instances
+  // is ownership and cancellation, which the registry below carries.
   const transfers = new TransferStateTracker();
-  const limiter = new InMemoryRateLimiter(RATE_LIMIT_RULES);
-  const effects = new InMemoryEffectStore();
+
+  const shared = config.deployment.gatewayStateBackend === 'redis';
+  const redis = shared ? await createRedisClient(config.redis.url) : null;
+
+  // #49 — replay, at-most-once effects and rate limits are shared when the Redis
+  // backend is composed, and per-process otherwise. `memory` is the default and
+  // is refused above for more than one instance; `redis` lifts that refusal
+  // because it removes the reason for it.
+  //
+  // An unreachable Redis throws RedisUnavailableError from every operation. It
+  // does NOT fall back to the in-memory stores: that fallback would restore
+  // at-most-once-per-process silently, at the moment the system is least
+  // healthy, which is the hazard this backend exists to remove.
+  const limiter =
+    redis === null
+      ? new InMemoryRateLimiter(RATE_LIMIT_RULES)
+      : new RedisRateLimiter(redis, RATE_LIMIT_RULES);
+  const effects =
+    redis === null ? new InMemoryEffectStore() : new RedisEffectStore(redis, 'effect');
   // Separate keyspace from `effects`: a spent request ID and a spent transfer
   // effect are different identifiers with different answers (AD-21 vs AD-18).
-  const requestIds = new InMemoryEffectStore();
+  const requestIds =
+    redis === null ? new InMemoryEffectStore() : new RedisEffectStore(redis, 'request-id');
 
   const profiles = TomlModelProfileSource.fromFile(
     resolve(process.cwd(), config.inference.modelProfilesPath),

@@ -13,6 +13,22 @@ import type {
  * The interesting behaviour is the failure mode, not the happy path.
  */
 
+/**
+ * #49 — an operation that could not reach Redis, distinct from one that reached
+ * it and got an answer.
+ *
+ * The difference matters at the taxonomy boundary: "your attempt is a duplicate"
+ * and "the service cannot currently tell" are different facts with different
+ * retry advice, and reporting the first for the second sends a user to fix a
+ * problem they do not have.
+ */
+export class RedisUnavailableError extends Error {
+  constructor(operation: string, cause: unknown) {
+    super(`redis unavailable during ${operation}: ${cause}`);
+    this.name = 'RedisUnavailableError';
+  }
+}
+
 export interface RedisLike {
   eval(script: string, numKeys: number, ...args: (string | number)[]): Promise<unknown>;
   set(key: string, value: string, mode: 'EX', ttl: number, nx: 'NX'): Promise<string | null>;
@@ -65,6 +81,15 @@ export class RedisRateLimiter implements RateLimiter {
   async check(key: RateLimitKey): Promise<RateLimitDecision> {
     const rule = this.#rules.get(key.layer);
     if (!rule) {
+      // Permissive, matching InMemoryRateLimiter — whose own test records this
+      // as deliberate ("rather than inventing a limit").
+      //
+      // Noted rather than changed: an unconfigured layer is arguably a fail-open
+      // path created by omission, and main.ts configures all four layers so
+      // neither implementation reaches this today. But making only the Redis one
+      // strict would mean production throws where development silently allows,
+      // which is a worse failure than either consistent answer. If this should
+      // become strict it should become strict in both, as its own decision.
       return {
         allowed: true,
         limit: 0,
@@ -228,24 +253,41 @@ export class InMemoryEffectStore implements EffectStore {
 
 export class RedisEffectStore implements EffectStore {
   readonly #redis: RedisLike;
+  readonly #prefix: string;
 
-  constructor(redis: RedisLike) {
+  /**
+   * The prefix separates keyspaces. The composition root builds two of these on
+   * purpose — a spent request ID (AD-21 replay) and a spent transfer effect
+   * (AD-18 at-most-once) are different identifiers with different answers — and
+   * a shared prefix would merge them, so a request ID could consume an effect's
+   * claim and vice versa. The in-memory pair are separate objects and get this
+   * for free; the Redis pair share one server and must say so.
+   */
+  constructor(redis: RedisLike, prefix = 'effect') {
     this.#redis = redis;
+    this.#prefix = prefix;
   }
 
   async claimOnce(attemptId: string, effectId: string, ttlSeconds: number): Promise<boolean> {
     try {
       const result = await this.#redis.set(
-        `effect:${attemptId}:${effectId}`,
+        `${this.#prefix}:${attemptId}:${effectId}`,
         '1',
         'EX',
         ttlSeconds,
         'NX',
       );
       return result === 'OK';
-    } catch {
-      // Fail closed: an unverifiable claim must not authorize a second transfer.
-      return false;
+    } catch (cause) {
+      // Still fail closed — the caller refuses the attempt either way — but as
+      // an OUTAGE, not as a duplicate.
+      //
+      // Returning `false` here meant a user making a first, legitimate attempt
+      // during a Redis outage was told they had already made it: wrong
+      // diagnosis, wrong retry advice, and an outage hidden inside a taxonomy
+      // code that means something else. An unverifiable claim is unknown, and
+      // `false` is an answer this store does not have.
+      throw new RedisUnavailableError('effect claim', cause);
     }
   }
 }
@@ -301,3 +343,101 @@ export class InMemoryIdempotencyStore implements IdempotencyStore {
     this.#entries.delete(key);
   }
 }
+
+/**
+ * Cross-instance attempt ownership and cancellation (#49).
+ *
+ * This does NOT replace `TransferStateTracker`, which owns the per-attempt state
+ * machine and its abort controller. Both are inherently local: the controller
+ * aborts a request THIS process is making, and no other instance can abort it.
+ *
+ * What crosses instances is the smaller pair of facts that decide correctness —
+ * which instance holds an attempt's bytes, and whether the attempt has been
+ * cancelled. With those shared, an instance asked about an attempt it does not
+ * hold can answer truthfully instead of reporting `unknown_attempt` for an
+ * attempt that plainly exists.
+ *
+ * It still cannot serve the bytes. Those never leave the instance that received
+ * them and are never written here (AD-8): the value stored against an attempt is
+ * an instance identifier, and nothing about the photo. An instance without the
+ * bytes fails closed rather than having them shipped to it.
+ */
+export class RedisAttemptRegistry {
+  readonly #redis: RedisLike;
+  readonly #ttlSeconds: number;
+
+  constructor(redis: RedisLike, ttlSeconds: number) {
+    this.#redis = redis;
+    this.#ttlSeconds = ttlSeconds;
+  }
+
+  /**
+   * Records this instance as holding an attempt's bytes. False when another
+   * instance already claimed it — the at-most-once property of an effect,
+   * applied to the attempt (AD-18, M7).
+   */
+  async claimAttempt(attemptId: string, instanceId: string): Promise<boolean> {
+    try {
+      const result = await this.#redis.set(
+        `attempt:${attemptId}`,
+        instanceId,
+        'EX',
+        this.#ttlSeconds,
+        'NX',
+      );
+      return result === 'OK';
+    } catch (cause) {
+      throw new RedisUnavailableError('attempt claim', cause);
+    }
+  }
+
+  /** Which instance holds this attempt, or null when none does. */
+  async holderOf(attemptId: string): Promise<string | null> {
+    try {
+      return await this.#redis.get(`attempt:${attemptId}`);
+    } catch (cause) {
+      throw new RedisUnavailableError('attempt lookup', cause);
+    }
+  }
+
+  /**
+   * Marks an attempt cancelled for every instance. Idempotent: a repeated
+   * cancellation is the same answer, not an error, which is what the release's
+   * cancellation endpoint already promises.
+   */
+  async markCancelled(attemptId: string): Promise<void> {
+    try {
+      await this.#redis.set(`cancelled:${attemptId}`, '1', 'EX', this.#ttlSeconds, 'NX');
+    } catch (cause) {
+      throw new RedisUnavailableError('cancellation', cause);
+    }
+  }
+
+  /** True when any instance has cancelled this attempt. */
+  async isCancelled(attemptId: string): Promise<boolean> {
+    try {
+      return (await this.#redis.get(`cancelled:${attemptId}`)) !== null;
+    } catch (cause) {
+      throw new RedisUnavailableError('cancellation lookup', cause);
+    }
+  }
+}
+
+/**
+ * Builds the client the Redis stores talk to.
+ *
+ * `maxRetriesPerRequest: 1` and no offline queue, so an unreachable server
+ * surfaces promptly as an error the stores turn into `RedisUnavailableError`
+ * rather than hanging a request while the client retries. Failing closed is only
+ * useful if it fails quickly.
+ *
+ * Imported lazily: the memory backend must not pay for a client it never
+ * constructs.
+ */
+export const createRedisClient = async (url: string): Promise<RedisLike> => {
+  const { Redis } = await import('ioredis');
+  return new Redis(url, {
+    maxRetriesPerRequest: 1,
+    enableOfflineQueue: false,
+  }) as unknown as RedisLike;
+};

@@ -60,6 +60,20 @@ export const EnvSchema = z.object({
    */
   APP_INSTANCE_COUNT: z.coerce.number().int().positive().default(1),
   /**
+   * #49 — where the gateway's shared state lives.
+   *
+   * `memory` (default) is the single-instance composition: every store is
+   * per-process, and `APP_INSTANCE_COUNT > 1` is refused. `redis` composes the
+   * Redis-backed stores so replay, at-most-once effects, rate limits, attempt
+   * ownership and cancellation are shared, and lifts that refusal.
+   *
+   * Explicit rather than inferred from REDIS_URL being set: a URL is present in
+   * every environment, and switching the correctness model of the service on
+   * whether a variable happens to be populated is exactly the kind of silent
+   * decision this work exists to remove.
+   */
+  GATEWAY_STATE_BACKEND: z.enum(['memory', 'redis']).default('memory'),
+  /**
    * Read directly from process.env in main.ts, so it never went through this
    * schema: `STUB_INFERENCE=TRUE`, `=1` and `=yes` all silently meant false,
    * and a typo in the variable name was indistinguishable from disabling it.
