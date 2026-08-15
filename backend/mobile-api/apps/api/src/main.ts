@@ -31,6 +31,7 @@ import {
 import { StubInferenceProvider } from './modules/inference/infrastructure/stub/stub.provider.js';
 import {
   InMemoryPayloadSource,
+  loadConfigurationSnapshot,
   OpenRouterInferenceProvider,
   TomlModelProfileSource,
   TwoPassInferenceOrchestrator,
@@ -111,6 +112,11 @@ export const buildApplication = async (
 
   const profiles = TomlModelProfileSource.fromFile(
     resolve(process.cwd(), config.inference.modelProfilesPath),
+  );
+  // Fails closed: a deployment that cannot say which policy set it is running
+  // must not verify consent against a guess.
+  const configurationSnapshot = loadConfigurationSnapshot(
+    resolve(process.cwd(), config.inference.configurationSnapshotPath),
   );
 
   // M9 — the roster in config/model-profiles.toml is currently OpenRouter
@@ -228,11 +234,18 @@ export const buildApplication = async (
       policyVersion: marketResolver.policyVersion,
       remoteInferenceEnabled: () => config.inference.remoteEnabled,
       supportedRetentionVersions: ['retention/2'],
-      // H-06 — the versions this deployment actually runs, taken from the
-      // immutable model-profile snapshot rather than from the request. A client
-      // that supplied this list could declare its own stale configuration
-      // supported, which is the check defeating itself.
-      supportedConfigurationVersions: [profiles.current().profileVersion],
+      // H-06 — the versions this deployment actually runs, never the request's.
+      // A client that supplied this list could declare its own stale
+      // configuration supported, which is the check defeating itself.
+      //
+      // P-04 — this used to read `profiles.current().profileVersion`, the model
+      // ROSTER version. A roster says which models to call; a
+      // ConfigurationSnapshot is the policy set that produced the disclosure the
+      // user was shown (AD-20, consent-receipt.toml). Binding one to the other
+      // meant rotating a model invalidated every outstanding receipt, and it
+      // made the real composition root refuse the released fixture's
+      // `cfg/2026-07-26.4` while unit tests injected `['cfg/1']` and passed.
+      supportedConfigurationVersions: configurationSnapshot.supported,
       now: () => new Date(),
       authenticate: async (request) => {
         if (config.auth.testMode) {

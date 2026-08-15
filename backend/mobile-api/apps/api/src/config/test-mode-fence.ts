@@ -154,9 +154,22 @@ export const assertPaidRosterInProduction = (
  * twice, billed twice, for one attempt they made once. It is silent, it depends
  * on which instance a request lands on, and AD-18 exists to prevent exactly it.
  *
- * So the unsafe deployment is refused at boot rather than discovered in
- * production. This is not the distributed implementation and does not pretend to
- * be — it is the honest boundary until that lands.
+ * P-01 — be exact about what this is. It is a SELF-REPORT, not a deployment
+ * safety boundary. Each process reads its own environment and refuses only a
+ * value that says "greater than one". Two containers can each declare `1`, or
+ * omit the variable entirely, and both boot happily and both call the provider
+ * for the same request. A restart still forgets every claim.
+ *
+ * So this does not enforce single-instance operation and must not be described
+ * as refusing an unsafe multi-instance deployment. What it does is narrower and
+ * still worth having: it makes the constraint impossible to hold accidentally
+ * while believing otherwise, and it fails an operator who deliberately configures
+ * a replica count here instead of letting them discover the problem from a
+ * duplicated provider bill.
+ *
+ * Enforcement belongs in the deployment control plane — one replica, with
+ * auditable evidence — before any ingress or remote activation. Issue #49 is the
+ * real fix; this is the honest boundary until it lands.
  */
 export const assertSingleInstanceState = (instanceCount: number): void => {
   if (instanceCount > 1) {

@@ -116,11 +116,13 @@ let remoteEnabled = true;
 /** Held so a test can seed a live attempt and observe payload disposal. */
 let transfers: TransferStateTracker;
 let disposed: string[] = [];
+let analyzeCalls = 0;
 
 beforeEach(async () => {
   remoteEnabled = true;
   transfers = new TransferStateTracker(() => NOW);
   disposed = [];
+  analyzeCalls = 0;
   const resolver = new StaticMarketPolicyResolver(FIXTURE_MARKET_POLICY, 'fixture/1');
   const authenticator = new TestModeAuthenticator('development');
 
@@ -129,8 +131,9 @@ beforeEach(async () => {
     logger: createLogger(config),
     gateway: {
       orchestrator: {
-        analyze: async () =>
-          ok({
+        analyze: async () => {
+          analyzeCalls += 1;
+          return ok({
             attemptId: 'att_0000000000000000' as never,
             outcome: 'candidates' as const,
             candidates: [
@@ -159,7 +162,8 @@ beforeEach(async () => {
             durationMs: 5,
             passesRun: 1,
             requiresConfirmation: false,
-          }),
+          });
+        },
       } as never,
       limiter: new InMemoryRateLimiter([
         { layer: 'installation', limit: 20, windowSeconds: 3600 },
@@ -982,5 +986,194 @@ describe('H-05 — every multipart stream is consumed, and duplicates are refuse
 
     expect(response.statusCode).toBe(400);
     expect(response.body).toMatch(/duplicate/);
+  });
+});
+
+describe('P-02 — the context gate validates the whole released envelope', () => {
+  /**
+   * H-03 added `PhotoInferenceRequestSchema.safeParse`, then threw the parsed
+   * value away and cast the raw JSON. The schema also omitted fields the
+   * pipeline goes on to consume, so the gate proved nothing about them:
+   * `modality`, `claimedMarketJurisdiction`, `inferenceContext.configurationVersion`
+   * and `priorMealSummary` were unchecked.
+   *
+   * The last one reaches the provider. `gateway-request.toml` bounds
+   * `priorMealSummary` at 280 characters and types it a string; a 281-character
+   * value, or an object, went to OpenRouter unexamined.
+   */
+  const post = async (ctx: unknown) => {
+    const { payload, headers } = multipartBody(ctx, JPEG);
+    return server.app.inject({ method: 'POST', url: '/gw/v1/inference/photo', payload, headers });
+  };
+
+  const withContext = (override: Record<string, unknown>) => {
+    const ctx = context() as Record<string, unknown>;
+    ctx.inferenceContext = { ...(ctx.inferenceContext as object), ...override };
+    for (const [k, v] of Object.entries(override)) {
+      if (v === undefined) delete (ctx.inferenceContext as Record<string, unknown>)[k];
+    }
+    return ctx;
+  };
+
+  it.each([
+    ['a missing configurationVersion', () => withContext({ configurationVersion: undefined })],
+    ['a non-string configurationVersion', () => withContext({ configurationVersion: 7 })],
+    ['a 281-character priorMealSummary', () => withContext({ priorMealSummary: 'x'.repeat(281) })],
+    ['an object priorMealSummary', () => withContext({ priorMealSummary: { text: 'no' } })],
+    ['a missing modality', () => ({ ...context(), modality: undefined })],
+    ['an unsupported modality', () => ({ ...context(), modality: 'video' })],
+    [
+      'a reserved modality the release does not admit yet',
+      () => ({ ...context(), modality: 'text' }),
+    ],
+    ['a malformed claimed market', () => ({ ...context(), claimedMarketJurisdiction: 'zzz' })],
+    ['a non-string claimed market', () => ({ ...context(), claimedMarketJurisdiction: 12 })],
+  ])('refuses %s with no provider call and no retained state', async (_label, build) => {
+    const ctx = build() as Record<string, unknown>;
+    for (const [k, v] of Object.entries(ctx)) if (v === undefined) delete ctx[k];
+
+    const response = await post(ctx);
+
+    expect(response.statusCode).toBeGreaterThanOrEqual(400);
+    expect(response.statusCode).toBeLessThan(500);
+    expect(response.body).not.toMatch(/internal-error/);
+    // The gate is ahead of the provider, and ahead of anything that would make
+    // a retry of the corrected request fail as a replay.
+    expect(analyzeCalls).toBe(0);
+    expect(transfers.stateOf('att_0000000000000000')).toBeNull();
+  });
+
+  it('refuses a client-supplied processingRegion rather than dropping it', () => {
+    // The release is explicit: the field "is not accepted, is not honoured, and
+    // is not silently ignored either". Users consent to a transfer; they do not
+    // select provider routing (AD-41 MP-7). Dropping it silently would let a
+    // client believe it had chosen one.
+    return post({ ...context(), processingRegion: 'eu-west-1' }).then((response) => {
+      expect(response.statusCode).toBeGreaterThanOrEqual(400);
+      expect(response.statusCode).toBeLessThan(500);
+      expect(response.body).toMatch(/processingRegion/);
+      expect(analyzeCalls).toBe(0);
+    });
+  });
+
+  it('still ignores an ordinary unknown field, as the release requires', async () => {
+    // "Unknown fields are ignored" — gateway-request.toml. Only processingRegion
+    // is special, and only because the release says so.
+    const response = await post({ ...context(), someFutureField: 'ignored' });
+    expect(response.statusCode).toBe(200);
+  });
+
+  it('accepts the released envelope with every optional field present', async () => {
+    const ctx = withContext({ priorMealSummary: 'x'.repeat(280) });
+    const response = await post(ctx);
+    expect(response.statusCode).toBe(200);
+  });
+
+  it('accepts the released envelope with the optional fields absent', async () => {
+    const ctx = context() as Record<string, unknown>;
+    delete ctx.claimedMarketJurisdiction;
+    const response = await post(ctx);
+    expect(response.statusCode).toBe(200);
+  });
+});
+
+describe('P-05 — the multipart envelope is exactly the two released parts', () => {
+  /**
+   * `gateway-request.toml` declares `parts = ["context", "payload"]` and
+   * `context_part_content_type = "application/json"`. The loop refused unexpected
+   * FILE parts but accepted a `context` field of any MIME type and dropped
+   * unexpected text parts without a word, so a request that does not match the
+   * released envelope was served as though it did.
+   */
+  // Parts are assembled as buffers: routing the JPEG through a JS string
+  // corrupts every byte above 0x7F and the magic-byte gate then refuses a
+  // payload the test meant to be valid.
+  const multipartWith = (parts: readonly (string | Buffer)[]) => {
+    const boundary = '----test-boundary';
+    const chunks: Buffer[] = [];
+    for (const part of parts) {
+      chunks.push(Buffer.from(`--${boundary}\r\n`));
+      chunks.push(typeof part === 'string' ? Buffer.from(part) : part);
+      chunks.push(Buffer.from('\r\n'));
+    }
+    chunks.push(Buffer.from(`--${boundary}--\r\n`));
+    return {
+      payload: Buffer.concat(chunks),
+      headers: {
+        'content-type': `multipart/form-data; boundary=${boundary}`,
+        authorization: TOKEN,
+        'x-contract-version': 'mobile-api/v1',
+        'x-request-id': nextRequestId(),
+      },
+    };
+  };
+
+  const contextPart = (contentType?: string) =>
+    `Content-Disposition: form-data; name="context"\r\n` +
+    (contentType ? `Content-Type: ${contentType}\r\n` : '') +
+    `\r\n${JSON.stringify(context())}`;
+
+  const payloadPart = Buffer.concat([
+    Buffer.from(
+      `Content-Disposition: form-data; name="payload"; filename="a.jpg"\r\n` +
+        `Content-Type: image/jpeg\r\n\r\n`,
+    ),
+    JPEG,
+  ]);
+
+  it('refuses a context part declared as something other than JSON', async () => {
+    // Not `text/plain`: busboy routes that to the field branch and defaults an
+    // undeclared field to it too, so the two are indistinguishable at this
+    // layer. A type the client positively asserted is the case worth refusing.
+    const { payload, headers } = multipartWith([contextPart('application/xml'), payloadPart]);
+    const response = await server.app.inject({
+      method: 'POST',
+      url: '/gw/v1/inference/photo',
+      payload,
+      headers,
+    });
+
+    expect(response.statusCode).toBeGreaterThanOrEqual(400);
+    expect(response.statusCode).toBeLessThan(500);
+    expect(analyzeCalls).toBe(0);
+  });
+
+  it('refuses an unexpected text part rather than ignoring it', async () => {
+    const extra = `Content-Disposition: form-data; name="surprise"\r\n\r\nvalue`;
+    const { payload, headers } = multipartWith([contextPart(), extra, payloadPart]);
+    const response = await server.app.inject({
+      method: 'POST',
+      url: '/gw/v1/inference/photo',
+      payload,
+      headers,
+    });
+
+    expect(response.statusCode).toBeGreaterThanOrEqual(400);
+    expect(response.statusCode).toBeLessThan(500);
+    expect(analyzeCalls).toBe(0);
+  });
+
+  it('accepts a context part with no declared MIME type', async () => {
+    // Clients that omit it are not asserting a wrong type, and the release
+    // constrains what the part IS, not that the client must announce it.
+    const { payload, headers } = multipartWith([contextPart(), payloadPart]);
+    const response = await server.app.inject({
+      method: 'POST',
+      url: '/gw/v1/inference/photo',
+      payload,
+      headers,
+    });
+    expect(response.statusCode).toBe(200);
+  });
+
+  it('accepts a context part that declares application/json', async () => {
+    const { payload, headers } = multipartWith([contextPart('application/json'), payloadPart]);
+    const response = await server.app.inject({
+      method: 'POST',
+      url: '/gw/v1/inference/photo',
+      payload,
+      headers,
+    });
+    expect(response.statusCode).toBe(200);
   });
 });

@@ -4,7 +4,10 @@ import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 // in server.ts.
 import '@fastify/multipart';
 import type { Modality } from '@supernutrition/shared';
-import { PhotoInferenceRequestSchema } from '../../modules/inference/presentation/inference.schemas.js';
+import {
+  FORBIDDEN_CONTEXT_FIELDS,
+  PhotoInferenceRequestSchema,
+} from '../../modules/inference/presentation/inference.schemas.js';
 import {
   GATEWAY_CODES,
   GatewayError,
@@ -15,7 +18,9 @@ import { mapError, rateLimitHeaders, resolveCorrelationId } from '../../middlewa
 import { runInferencePipeline, type PipelineDeps } from './pipeline.js';
 import { cancellationStatus } from './transfer-state.js';
 import {
+  CONTEXT_PART_CONTENT_TYPE,
   MAX_PAYLOAD_BYTES,
+  UNDECLARED_PART_CONTENT_TYPE,
   validateGatewayHeaders,
   type InferenceRequestInput,
 } from './inference.handler.js';
@@ -107,7 +112,49 @@ export const registerGatewayRoutes = async (
         rejection ??= { field, issue };
       };
 
+      // P-05 — the release declares `parts = ["context", "payload"]` and
+      // `context_part_content_type = "application/json"`. The previous loop
+      // enforced neither: a `context` part of any type was read, and an
+      // unexpected TEXT part was dropped in silence, so a request that did not
+      // match the released envelope was served as though it did.
+      //
+      // A part without a filename always reaches the field branch, whatever it
+      // declares, and busboy carries the declared type on `mimetype` — defaulting
+      // an undeclared part to `text/plain`. So the check is on the mimetype, and
+      // `text/plain` is treated as "did not say" rather than "said the wrong
+      // thing": the release constrains what the part is, not that a client must
+      // announce it, and refusing silence would break conforming clients.
       for await (const part of request.parts()) {
+        if (part.fieldname === 'context') {
+          if (contextRaw !== null) {
+            if (part.type === 'file') part.file.resume();
+            refuse('context', 'duplicate_part');
+            continue;
+          }
+          const declared = (part as { mimetype?: string }).mimetype;
+          if (
+            declared !== undefined &&
+            declared !== UNDECLARED_PART_CONTENT_TYPE &&
+            declared !== CONTEXT_PART_CONTENT_TYPE
+          ) {
+            if (part.type === 'file') part.file.resume();
+            refuse('context', 'unsupported_context_content_type');
+            continue;
+          }
+          if (part.type === 'file') {
+            contextRaw = (await part.toBuffer()).toString('utf-8');
+            continue;
+          }
+          // @fastify/multipart parses a field that declares `application/json`,
+          // so `value` is already an object there and only a string when the
+          // part declared nothing. `String()` on the former yields
+          // "[object Object]", which then failed JSON.parse and reported an
+          // unparseable body for a request that was perfectly well formed.
+          contextRaw =
+            typeof part.value === 'string' ? part.value : JSON.stringify(part.value ?? null);
+          continue;
+        }
+
         if (part.type === 'file') {
           if (part.fieldname !== 'payload') {
             // Discarded without buffering: an unexpected file is refused, and
@@ -124,13 +171,11 @@ export const registerGatewayRoutes = async (
           const buffer = await part.toBuffer();
           bytes = new Uint8Array(buffer);
           contentType = part.mimetype;
-        } else if (part.type === 'field' && part.fieldname === 'context') {
-          if (contextRaw !== null) {
-            refuse('context', 'duplicate_part');
-            continue;
-          }
-          contextRaw = String(part.value);
+          continue;
         }
+
+        // A text part that is neither of the two the release declares.
+        refuse(part.fieldname, 'unexpected_part');
       }
 
       if (rejection !== null) {
@@ -183,10 +228,29 @@ export const registerGatewayRoutes = async (
       // effect is claimed, a request id is burned, bytes are stored, or a
       // provider is called.
       //
-      // The validated value is deliberately discarded: the schema covers the
-      // fields the release pins, while the pipeline also reads `modality` and
-      // `claimedMarketJurisdiction`, which zod would strip. This is a gate, not
-      // a transformation.
+      // P-02 — the validated value used to be discarded and the raw JSON cast
+      // in its place, on the grounds that the schema omitted `modality` and
+      // `claimedMarketJurisdiction`. That made this a gate over a subset: the
+      // schema also omitted `inferenceContext.configurationVersion` and
+      // `priorMealSummary`, and the latter is forwarded to the provider under a
+      // released 280-character bound that nothing enforced. The schema now
+      // covers the whole envelope and its output is what the pipeline runs on.
+      //
+      // A forbidden field is refused before the schema, because zod strips
+      // unknown keys and cannot tell "ignored" from "rejected" — and the release
+      // draws exactly that distinction for `processingRegion`.
+      const forbidden = FORBIDDEN_CONTEXT_FIELDS.filter(
+        (field) => parsedContext !== null && field in (parsedContext as Record<string, unknown>),
+      );
+      if (forbidden.length > 0) {
+        throw new GatewayError(GATEWAY_CODES.VALIDATION_ERROR, {
+          details: forbidden.map((field) => ({
+            field: `context.${field}`,
+            issue: 'field_not_accepted',
+          })),
+        });
+      }
+
       const shape = PhotoInferenceRequestSchema.safeParse(parsedContext);
       if (!shape.success) {
         throw new GatewayError(GATEWAY_CODES.VALIDATION_ERROR, {
@@ -197,7 +261,17 @@ export const registerGatewayRoutes = async (
         });
       }
 
-      const context = parsedContext as InferenceRequestInput;
+      // The parsed value, not the raw JSON — no `as` over unvalidated data, and
+      // unknown keys are stripped, which is the release's stated behaviour for
+      // everything except the forbidden field refused above.
+      //
+      // Honest about what this line does and does not do: the enforcement lives
+      // in the schema above, and the pipeline additionally hand-picks the fields
+      // it forwards, so swapping this back to the raw object fails no test
+      // today. It is defence in depth against the next field added downstream
+      // without a matching schema entry — the exact way `priorMealSummary`
+      // escaped in the first place.
+      const context = shape.data as InferenceRequestInput;
       attemptId = typeof context?.attemptId === 'string' ? context.attemptId : null;
 
       const result = await runInferencePipeline(deps, {

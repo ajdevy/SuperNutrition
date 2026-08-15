@@ -15,6 +15,12 @@ mutates_repository = false
 test_entrypoint = "scripts/root-boundary-negative-fixtures.sh"
 
 [[executable]]
+path = "scripts/quality-manifest-negative-fixtures.sh"
+purpose = "negative fixtures for typed product-manifest parsing in the backend quality gate"
+mutates_repository = false
+test_entrypoint = "scripts/quality-manifest-negative-fixtures.sh"
+
+[[executable]]
 path = "scripts/verify-ci-policy.sh"
 purpose = "read-only canonical CI trigger and aggregate validation"
 mutates_repository = false

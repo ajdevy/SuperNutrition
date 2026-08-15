@@ -48,8 +48,13 @@ The limitation is now declared and enforced rather than assumed, on the same
 commit that records this story:
 
 - `APP_INSTANCE_COUNT` is a validated configuration value defaulting to `1`.
-- `assertSingleInstanceState` refuses to boot when it exceeds `1`, alongside the
+- `assertSingleInstanceState` fails the boot when it exceeds `1`, alongside the
   existing test-mode fence, with a message naming what is per-process and why.
+  **This is a self-report, not enforcement** (P-01): each process reads its own
+  environment, so two containers each declaring `1` both start and both call the
+  provider. Single-instance operation must be enforced in the deployment control
+  plane with auditable evidence — that is a precondition of this story, not a
+  substitute for it.
 - The composition root and `.env.example` state that `REDIS_URL` is composed
   into nothing and that these stores are process-local.
 
@@ -75,9 +80,12 @@ That closes the silence, not the limitation. This story closes the limitation.
 6. Redis being unreachable fails closed: the gateway refuses the attempt with a
    typed error and does not fall back to per-process state. A degraded shared
    store must not silently become the unsafe deployment this story removes.
-7. `assertSingleInstanceState` is lifted only when 1–6 hold. The lift is a
+7. Single-instance operation is enforced in the deployment control plane, with
+   auditable evidence, until this story lands. A unit test setting
+   `APP_INSTANCE_COUNT=2` is not topology evidence.
+8. `assertSingleInstanceState` is lifted only when 1–7 hold. The lift is a
    deliberate change with the tests above green, not a default that drifts.
-8. `contracts/mobile-api/v1` is unchanged. This is an implementation of the
+9. `contracts/mobile-api/v1` is unchanged. This is an implementation of the
    published behaviour, not a renegotiation of it.
 
 ## Tasks / Subtasks

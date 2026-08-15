@@ -24,29 +24,77 @@ fail() {
 # different spacing, or a key nested under some other table all read as
 # something the manifest does not say. One typed parser decides, and a manifest
 # that will not parse is a failure rather than a set of misses.
+#
+# P-06 — the first version of this parse stringified whatever it found, so a
+# quoted lookalike passed every assertion below: `quality_claim = "false"` is a
+# STRING, not the boolean the manifest is supposed to declare, and it compared
+# equal to 'false' all the same. `production_source_count = "0"` likewise. The
+# inventory was still read with grep, so a duplicated or malformed inventory was
+# interpreted textually while the lifecycle record next to it was parsed.
+#
+# Both files are now parsed once, with the type of every field asserted before
+# any policy decision reads it.
 manifest_state="$(
-  python3 - "$manifest" <<'PY_MANIFEST' || fail 'product-lifecycle.toml is not valid TOML'
+  python3 - "$manifest" "$root_dir/product-inventory.toml" <<'PY_MANIFEST' || fail 'product manifests are not valid, typed TOML'
 import sys, tomllib
 
-with open(sys.argv[1], "rb") as handle:
-    # tomllib rejects duplicate keys outright, which is the property the
-    # textual reads could not offer.
-    doc = tomllib.load(handle)
+def load(path, label):
+    try:
+        with open(path, "rb") as handle:
+            # tomllib rejects duplicate keys outright, which is the property the
+            # textual reads could not offer.
+            return tomllib.load(handle)
+    except FileNotFoundError:
+        return None
+    except (tomllib.TOMLDecodeError, OSError) as error:
+        sys.exit(f"{label}: {error}")
 
-fields = (
-    "lifecycle",
-    "quality_claim",
-    "production_source_count",
-    "dependency_manifest",
-    "lock_state",
-    "runtime",
-    "deployable_artifact",
-)
-for field in fields:
-    value = doc.get(field)
-    if isinstance(value, bool):
-        value = "true" if value else "false"
-    print(f"{field}={'' if value is None else value}")
+lifecycle_doc = load(sys.argv[1], "product-lifecycle.toml")
+if lifecycle_doc is None:
+    sys.exit("product-lifecycle.toml is missing")
+
+# The declared type of each field, asserted rather than coerced. A string that
+# spells a boolean is not a boolean, and accepting it would let a manifest claim
+# in prose what it must state as data.
+FIELDS = {
+    "lifecycle": str,
+    "quality_claim": bool,
+    "production_source_count": int,
+    "dependency_manifest": str,
+    "lock_state": str,
+    "runtime": str,
+    "deployable_artifact": str,
+}
+
+def emit(prefix, doc, required):
+    for field, expected in FIELDS.items():
+        if field not in doc:
+            if field in required:
+                sys.exit(f"{prefix or 'lifecycle'}: {field} is missing")
+            continue
+        value = doc[field]
+        # bool is a subclass of int in Python; check it first or every boolean
+        # would satisfy an int field.
+        if expected is int and isinstance(value, bool):
+            sys.exit(f"{prefix or 'lifecycle'}: {field} must be an integer, not a boolean")
+        if not isinstance(value, expected):
+            sys.exit(
+                f"{prefix or 'lifecycle'}: {field} must be {expected.__name__}, "
+                f"got {type(value).__name__}"
+            )
+        rendered = ("true" if value else "false") if isinstance(value, bool) else value
+        print(f"{prefix}{field}={rendered}")
+
+emit("", lifecycle_doc, required={"lifecycle"})
+
+# The inventory is only required in the active state, which the caller checks;
+# when it exists it is held to the same typing as the record beside it.
+inventory_doc = load(sys.argv[2], "product-inventory.toml")
+if inventory_doc is not None:
+    print("inventory_present=true")
+    emit("inventory_", inventory_doc, required={"lifecycle"})
+else:
+    print("inventory_present=false")
 PY_MANIFEST
 )"
 
@@ -99,7 +147,14 @@ cd "$root_dir"
 
 inventory="$root_dir/product-inventory.toml"
 test -f "$inventory" || fail 'active state requires product-inventory.toml'
-grep -q '^lifecycle = "active"$' "$inventory" || fail 'inventory lifecycle disagrees with lifecycle record'
+# P-06 — this was a grep for one exact line, so an inventory with a duplicated
+# key, different spacing, or the value nested under another table read as
+# whatever the text happened to match. It is parsed and typed with the lifecycle
+# record above; here only the agreement between the two is decided.
+test "$(manifest_value inventory_present)" = 'true' ||
+  fail 'active state requires a parseable product-inventory.toml'
+test "$(manifest_value inventory_lifecycle)" = 'active' ||
+  fail 'inventory lifecycle disagrees with lifecycle record'
 
 test -f "$root_dir/package.json" || fail 'active state requires a dependency manifest'
 test -f "$root_dir/package-lock.json" || fail 'active state requires frozen lock state'
