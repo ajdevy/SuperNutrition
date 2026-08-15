@@ -41,7 +41,8 @@ path = "contracts/mobile-api/v1"
 digest = "9733a365daf8ad7414de49aea73811d2a81d04701b58cf395644fde087934c06"
 algorithm = "release-sha256-v2"
 recorded_at_commit = "pr/slice-ab-backend"
-status = "current"
+status = "superseded"
+superseded_by_commit = "pr/slice-ab-backend-v2"
 note = """
 Recomputed with scripts/emit-release-digest.sh against this slice, which \
 modified schema.toml, compatibility-matrix.toml and RELEASE.md. Those three \
@@ -80,6 +81,27 @@ first release to ship unrecorded. Found by scripts/verify-release-catalog.sh, \
 which requires every directory under contracts/ carrying a contract_id to have \
 exactly one current entry. An unrecorded release is one this catalog cannot \
 detect drift in, which is the failure it exists to prevent."""
+
+[[entry]]
+release_id = "mobile-api/v1"
+path = "contracts/mobile-api/v1"
+digest = "c51581caee9f78ea06640b06fb2084dd1acf242b616048841ab6f96b5de04eb8"
+algorithm = "release-sha256-v2"
+recorded_at_commit = "pr/slice-ab-backend-v2"
+status = "current"
+note = """
+Owner decisions D-01 (#48) and D-02 (#50), 2026-08-15. Four files changed under \
+the existing acknowledgement mechanism rather than a new release: \
+transfer-states.toml (`transferred` entered on provider admission; \
+downstream_deletion_requested false; both honest_claims corrected), \
+fixtures/cancellation-transferred.toml (follows the state change), \
+gateway-request.toml (validation order split into pre- and post-authentication \
+phases), and compatibility-matrix.toml (digest refresh).
+
+Not published as mobile-api/v2 by owner decision: v1 has exactly one consumer, \
+the mobile client in this repository, and no build has reached a user. The \
+acknowledgements expire 2026-09-30 (#47), and a real v2 is required before the \
+first external consumer or any shipped build."""
 
 # --- superseded --------------------------------------------------------------
 #
