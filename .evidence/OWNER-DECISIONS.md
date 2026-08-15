@@ -207,3 +207,117 @@ That is the terminal state: nothing left to port.
   plus three P2s parked with them.
 - **evaluation-v2** — `contracts/inference/v2` marks it accepted with no harness
   in the tree. Unchanged by decision; same class as P1-11 above.
+
+---
+
+# Owner decisions on D-01 and D-02 (2026-08-15)
+
+Source: the owner's `pr44-handover-decisions.md`, which reviews handover-3 and
+handover-4 and adopts a recommendation for each open contract decision. Recorded
+here because an issue comment is not the durable record; both are also posted to
+#48 and #50.
+
+Both decisions bear on `contracts/mobile-api/v1`, a published immutable release.
+Neither is implemented by this branch: PR #44 documents the divergences in code
+and tracks them, and claims neither closed.
+
+## D-01 — transfer state machine (#48)
+
+**Decided: authorize the redefinition under the existing acknowledgement
+mechanism rather than publishing `mobile-api/v2`, with a hard expiry condition.**
+
+The reasoning the owner gives: `mobile-api/v1` has exactly one consumer, the
+mobile client in this repository, and no build has reached a user. Publishing v2
+to protect an audience of zero costs a second live release and a client
+migration. The same reasoning already approved the E4.3 rewrite under three
+pinned acknowledgements expiring 2026-09-30 (#47), and handover-4 explicitly
+permits either path "while no client has shipped".
+
+**The hard condition:** before the first external consumer or a shipped build,
+these changes go into a real `v2`. Tied to the #47 deadline so it cannot lapse
+silently.
+
+### Correction to the framing — this is two divergences, not one
+
+Reading `transfer-states.toml:35-46` and
+`fixtures/cancellation-transferred.toml` against the code, the single decision
+above actually covers two separate problems with different costs. This matters
+because most of #48 does not need a contract decision at all:
+
+**(a) When `transferred` is entered — no contract change required.**
+The release says `provider_called = true` for the `transferred` state. The code
+sets it before `orchestrator.analyze()` runs. Moving the transition to after the
+provider accepts the payload makes the code *conform* to the published contract.
+It is a pure code fix. It needs no acknowledgement, no v2, and no owner
+decision — only the work.
+
+**(b) `downstream_deletion_requested = true` — blocked by G-4, not by the
+contract mechanism.**
+The release requires `downstream_deletion_requested = true` when a `transferred`
+attempt is cancelled, and the canonical fixture asserts it. The code returns
+`false`, truthfully, because no provider adapter exposes an erasure operation —
+which is what H-02 corrected. The release also carries an `honest_claim` for
+this state reading "a deletion request was sent downstream", an assertion the
+product cannot currently make.
+
+This is the only part that needs the contract decision above. And note what
+gates it: making the code satisfy the contract requires a real provider deletion
+capability, which is a provider/DPA/legal decision under **G-4** — an open
+deferral this document elsewhere instructs us not to touch.
+
+**Consequence for sequencing.** (a) can be implemented immediately and
+independently. (b) cannot be closed by an acknowledgement alone: an
+acknowledgement authorizes editing the released file, but what to edit it to
+depends on whether provider deletion will ever exist. Two coherent shapes:
+
+- Record that `downstream_deletion_requested` is `false` until a provider
+  deletion capability exists, and correct the `honest_claim` to match — the
+  AD-8-honest option, available now, and one that stops the contract asserting
+  something untrue.
+- Wait for G-4 and then require `true` with a real adapter invocation behind it.
+
+The first is recommended: leaving a published contract claiming a deletion
+request that is never sent is the same class of defect H-02 fixed in the code.
+
+## D-02 — validation order (#50)
+
+**Decided: option 2 — split the concepts in the published list.**
+`streamed-size-guard` stays pre-authentication, since it reads a length header
+rather than a body; `magic-byte-sniff` and `dimension-bounds` are explicitly
+marked post-authentication and pre-provider.
+
+Option 3 (change the code to match the contract) is refused outright: it
+reinstates the unauthenticated 8 MiB memory pin that the auth-first ordering was
+introduced to remove. The code is right and the published text is wrong.
+
+Nothing that these checks would reject reaches a provider, which is the property
+the order exists to guarantee and states in its own comment. Only the relative
+position of `authentication` diverges.
+
+**Amendment to #50 as filed, adopted:** #50 recommended deferring to the next
+release. The owner overrides that — #48 has to touch the same frozen contract
+anyway, so both go in one round: one decision, one acknowledgement, one pass.
+
+## Sequencing
+
+1. Decisions recorded (this entry, plus comments on #48 and #50).
+2. Merge #44 — **the owner's action.** D-01/D-02 do not block it.
+3. Implement #48 and #50 together against the contract. Note that #48(a) needs
+   no contract change and can start immediately; #48(b) needs the shape above
+   settled first.
+4. #49 (distributed state) strictly after #48, or the current state machine gets
+   spread across instances and redone. Already in #49's acceptance criteria.
+   AD-8 is unbreakable there: Redis carries identifiers, ownership, expiry and
+   cancellation — never image bytes.
+5. #42 then #41, in that order. Verified disjoint: #42 adds
+   `docs/food-image-datasets-research.md` (+140); #41 removes
+   `docs/food-photo-recognition-report.md` (-712) and
+   `food-photo-recognition-research/outline.yaml` (-37). No conflict, and the
+   order avoids a window with no current document.
+6. Branch cleanup, and close #22/#23/#26/#27 as superseded by #44.
+
+## Standing, unaffected
+
+#45 (server-side market binding) and #46 (consent-receipt persistence) remain
+the owner's; #47 expires 2026-09-30. G-4 continues to block production market,
+production authentication, and provider/DPA terms. None of these is touched.
