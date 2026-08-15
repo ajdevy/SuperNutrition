@@ -345,3 +345,96 @@ describe('H-02 — the deletion flag reports a request that was actually made', 
     expect(t.cancel('att_0000000000000004', 'inst-1')?.recallClaimed).toBe(false);
   });
 });
+
+/**
+ * #48(a)/(b) — the four cancellation scenarios handover-4 named.
+ *
+ * The state machine used to reach terminal `transferred` the moment the gateway
+ * handed the payload on, before any provider had admitted it. So an attempt the
+ * provider refused, timed out on, or never saw was recorded as transferred, and
+ * every downstream decision — retry, cancellation, suppression — reasoned from a
+ * completion that had not happened.
+ *
+ * `transferred` now requires provider admission, which is what the release says
+ * (`provider_called = true`). The deletion flag stays false until an adapter can
+ * actually request erasure, and becomes true only after exactly one such call.
+ */
+describe('#48 — cancellation across the real transfer lifecycle', () => {
+  const OWNER = 'inst_1';
+  const ATTEMPT = 'att_0000000000000048';
+
+  const tracker = () => new TransferStateTracker(() => new Date('2026-08-15T10:00:00Z'));
+
+  it('cancelling before any provider POST reports pre-transfer and no deletion', () => {
+    const t = tracker();
+    t.begin(ATTEMPT, OWNER);
+
+    const record = t.cancel(ATTEMPT, OWNER);
+
+    expect(record?.transferState).toBe('pre-transfer');
+    expect(record?.bytesTransferred).toBe(0);
+    expect(record?.downstreamDeletionRequested).toBe(false);
+    expect(record?.resultSuppressed).toBe(false);
+  });
+
+  it('cancelling during an aborting POST reports transferring, not transferred', () => {
+    // The inflight window: bytes are on the wire, the provider has not admitted
+    // them. Reporting `transferred` here claimed an admission that had not
+    // happened; reporting `pre-transfer` would claim no provider saw anything,
+    // which is equally unbackable.
+    const t = tracker();
+    t.begin(ATTEMPT, OWNER);
+    t.markTransferring(ATTEMPT, 2048);
+
+    const record = t.cancel(ATTEMPT, OWNER);
+
+    expect(record?.transferState).toBe('transferring');
+    expect(record?.bytesTransferred).toBe(2048);
+    expect(record?.downstreamDeletionRequested).toBe(false);
+  });
+
+  it('cancelling after provider admission with no delete support reports transferred and false', () => {
+    const t = tracker();
+    t.begin(ATTEMPT, OWNER);
+    t.markTransferring(ATTEMPT, 2048);
+    t.markTransferred(ATTEMPT, 2048);
+
+    const record = t.cancel(ATTEMPT, OWNER);
+
+    expect(record?.transferState).toBe('transferred');
+    expect(record?.bytesTransferred).toBe(2048);
+    expect(record?.resultSuppressed).toBe(true);
+    // No adapter exposes erasure, so nothing was requested of anyone.
+    expect(record?.downstreamDeletionRequested).toBe(false);
+    expect(record?.recallClaimed).toBe(false);
+  });
+
+  it('reports true only after exactly one real deletion invocation', () => {
+    const t = tracker();
+    t.begin(ATTEMPT, OWNER);
+    t.markTransferring(ATTEMPT, 2048);
+    t.markTransferred(ATTEMPT, 2048);
+    t.markDownstreamDeletionRequested(ATTEMPT);
+
+    const record = t.cancel(ATTEMPT, OWNER);
+
+    expect(record?.downstreamDeletionRequested).toBe(true);
+    // Still no recall claim: a deletion REQUEST is not a guarantee the bytes
+    // were destroyed, and the release is explicit that the gateway cannot make
+    // that true (AD-8).
+    expect(record?.recallClaimed).toBe(false);
+  });
+
+  it('does not report deletion for an attempt that never reached the provider', () => {
+    // Guard against the flag being set on a state where it cannot be true.
+    const t = tracker();
+    t.begin(ATTEMPT, OWNER);
+    t.markTransferring(ATTEMPT, 2048);
+    t.markDownstreamDeletionRequested(ATTEMPT);
+
+    const record = t.cancel(ATTEMPT, OWNER);
+
+    expect(record?.transferState).toBe('transferring');
+    expect(record?.downstreamDeletionRequested).toBe(false);
+  });
+});

@@ -131,8 +131,11 @@ beforeEach(async () => {
     logger: createLogger(config),
     gateway: {
       orchestrator: {
-        analyze: async () => {
+        // #48(a) — the real orchestrator signals admission; a stub that skips
+        // it leaves every attempt stuck at `transferring`.
+        analyze: async (_request: unknown, options?: { onProviderAdmitted?: () => void }) => {
           analyzeCalls += 1;
+          options?.onProviderAdmitted?.();
           return ok({
             attemptId: 'att_0000000000000000' as never,
             outcome: 'candidates' as const,

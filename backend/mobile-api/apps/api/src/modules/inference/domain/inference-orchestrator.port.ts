@@ -27,6 +27,22 @@ export interface InferenceAttemptOptions {
   readonly signal: AbortSignal;
   readonly marketJurisdiction: string | null;
   readonly processingRegion: string | null;
+  /**
+   * #48(a) — called once a provider has ADMITTED the payload, not when one has
+   * been dialled.
+   *
+   * `contracts/mobile-api/v1/transfer-states.toml` declares
+   * `provider_called = true` for the terminal `transferred` state, and the
+   * caller cannot know when that becomes true: only the orchestrator sees the
+   * provider accept. Without this the gateway marked the transfer terminal
+   * before `analyze()` was even entered, so a provider that refused, timed out,
+   * or reset the connection still left the attempt recorded as transferred.
+   *
+   * Optional so a caller that does not track transfer state — the two-pass
+   * retry path, tests — need not supply one. Pass 2 reuses a payload already
+   * admitted and does not fire it again.
+   */
+  readonly onProviderAdmitted?: () => void;
 }
 
 /** Telemetry row per pass. No user foreign key (docs/05 §5.4). */

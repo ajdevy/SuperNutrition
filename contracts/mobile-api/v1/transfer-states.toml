@@ -24,26 +24,57 @@ honest_claim = "Nothing was sent. This is a complete guarantee."
 [[state]]
 id = "transferring"
 order = 2
-description = "Bytes in flight. The gateway has a partial or in-progress payload."
+description = """
+Bytes in flight toward a provider. The gateway holds a partial or in-progress \
+payload and no provider has admitted it."""
 bytes_received_by_gateway = "partial"
-provider_called = false
+# "in-flight", not false. A provider has been reached and bytes are on the wire;
+# what has not happened is admission. `false` here would have been the same
+# overstatement in the opposite direction as the old `transferred`, and it is why
+# the honest_claim below could not be backed. Mirrors the existing string form of
+# `bytes_received_by_gateway`.
+provider_called = "in-flight"
 cancellation_effect = "abort-transport-and-discard-partial-bytes"
 cancellation_status = 202
 downstream_deletion_requested = false
-honest_claim = "Transport was aborted and partial bytes were discarded. No provider saw them."
+honest_claim = """
+Transport was aborted and the bytes the gateway still held were discarded. The \
+gateway does NOT claim no provider saw them: bytes were in flight and admission \
+was never confirmed, so what a provider received is unknown."""
 
 [[state]]
 id = "transferred"
 order = 3
-description = "Bytes received in full. Inference may be in progress or complete."
+description = """
+A provider admitted the payload in full. Inference may be in progress or \
+complete. Entered on admission, never on hand-off: an attempt a provider \
+refused, timed out on, or reset never reaches this state."""
 bytes_received_by_gateway = true
 provider_called = true
-cancellation_effect = "suppress-result-and-request-downstream-deletion"
+cancellation_effect = "suppress-result"
 cancellation_status = 202
-downstream_deletion_requested = true
+# false, not true. Owner decision D-01 (2026-08-15).
+#
+# This field previously required `true`, describing a deletion request the
+# product cannot send: no provider adapter exposes an erasure operation, and
+# whether one ever will is a provider/DPA/legal question held under G-4. The
+# gateway reported `true` here by inferring it from the fact that a provider had
+# been called — an erasure claim nobody had made, in the one response a user
+# reads to learn what became of their photo.
+#
+# The code was corrected to report the truth (H-02). This is the contract being
+# corrected to match, rather than a published document continuing to require a
+# claim the implementation is right to refuse.
+#
+# It becomes `true` only when an adapter can actually request erasure and does,
+# exactly once, for this attempt. That is a capability change gated on G-4, not
+# a wording change.
+downstream_deletion_requested = false
 honest_claim = """
-The result is suppressed and a deletion request was sent downstream. The gateway \
-does NOT claim the bytes were recalled, because it cannot make that true."""
+The result is suppressed and will not be returned. NO deletion request was sent \
+downstream: no provider adapter exposes an erasure operation, so there is \
+nothing the gateway can ask. It does NOT claim the bytes were recalled or \
+deleted, because it cannot make either true."""
 
 # ---------------------------------------------------------------------------
 # cancellation endpoint
