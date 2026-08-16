@@ -53,6 +53,28 @@ export interface EffectStore {
   claimOnce(attemptId: string, effectId: string, ttlSeconds: number): Promise<boolean>;
 }
 
+/**
+ * Cross-instance attempt ownership and cancellation (#49).
+ *
+ * Deliberately narrow. `TransferStateTracker` keeps the per-attempt state
+ * machine and its AbortController, both of which are inherently local — the
+ * controller aborts a request THIS process is making, and no other instance can
+ * abort it. What has to be shared is smaller: which instance holds an attempt,
+ * and whether it has been cancelled.
+ *
+ * Image bytes are never written here (AD-8). The value stored against an
+ * attempt is an instance identifier.
+ */
+export interface AttemptRegistry {
+  /** False when another instance already holds this attempt. */
+  claimAttempt(attemptId: string, instanceId: string): Promise<boolean>;
+  /** Which instance holds it, or null. */
+  holderOf(attemptId: string): Promise<string | null>;
+  /** Idempotent; visible to every instance. */
+  markCancelled(attemptId: string): Promise<void>;
+  isCancelled(attemptId: string): Promise<boolean>;
+}
+
 export interface MarketPolicyEntry {
   readonly marketId: string;
   readonly marketJurisdiction: string;
@@ -124,25 +146,18 @@ export interface ConsentVerifier {
   ): Promise<ConsentVerification>;
 }
 
-/**
- * Upload validation, cheapest rejection first: content-length, content-type,
- * streamed size guard, magic bytes, dimensions (docs/09 §9.4).
+/*
+ * `UploadValidator` used to be declared here and was never implemented or
+ * consumed. It was removed rather than left: an interface with no implementor
+ * reads as a missing guard, and an audit of #50 concluded from it that the
+ * released `content-length` and `streamed-size-guard` steps had no
+ * implementation at all.
+ *
+ * They do. Both are enforced by the HTTP layer: `bodyLimit` on the Fastify
+ * instance (server.ts) refuses an over-large declared Content-Length before the
+ * body is read and caps the stream while reading, and @fastify/multipart's
+ * `limits` bound file size, file count and field count.
  */
-export type UploadRejection =
-  | 'too-large'
-  | 'unsupported-media-type'
-  | 'declared-length-mismatch'
-  | 'magic-byte-mismatch'
-  | 'dimensions-exceeded';
-
-export interface UploadValidator {
-  validate(
-    contentLength: number,
-    contentType: string,
-    head: Uint8Array,
-  ): Result<void, UploadRejection>;
-}
-
 /**
  * AD-8 disposal. Runs on success, error, timeout, and cancellation alike —
  * the same code path, not four (docs/09 §9.6).

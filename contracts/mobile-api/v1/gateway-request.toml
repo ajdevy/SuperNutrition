@@ -208,6 +208,13 @@ in telemetry (AD-14)."""
 # Phase 1 — header-only. Nothing here reads the request body, so each step is
 # safe to run for a caller who has not authenticated yet. `streamed-size-guard`
 # belongs here because it inspects the declared content length, not the payload.
+#
+# These two are enforced by the HTTP layer rather than by gateway code:
+# `bodyLimit` on the Fastify instance refuses a declared Content-Length over the
+# maximum before the body is read AND caps the stream while it is read, and
+# @fastify/multipart's `limits` bound file size, file count and field count.
+# Named here because a reader looking for a hand-written validator will not find
+# one and may conclude the guards are absent.
 pre_authentication = [
   "content-length",
   "content-type",
@@ -221,9 +228,9 @@ authentication = "authentication"
 # identity, or both. Ordered cheapest-first within the phase, and every step
 # still precedes any provider call.
 post_authentication = [
-  "request-id-replay",
   "magic-byte-sniff",
   "dimension-bounds",
+  "request-id-replay",
   "rate-limit",
   "consent-digest-match",
   "modality-and-consent-copy-match",
@@ -240,9 +247,13 @@ order = [
   "streamed-size-guard",
   "contract-version",
   "authentication",
-  "request-id-replay",
+  # Byte checks precede the replay claim in execution, and the list now says so.
+  # A malformed payload therefore does not burn a one-time request id on its way
+  # to being refused. Both orders are safe — neither reaches a provider — but the
+  # published sequence has to be the one that runs.
   "magic-byte-sniff",
   "dimension-bounds",
+  "request-id-replay",
   "rate-limit",
   "consent-digest-match",
   "modality-and-consent-copy-match",

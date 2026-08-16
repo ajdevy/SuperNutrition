@@ -28,18 +28,26 @@ Stateless application containers behind a load balancer, scaled horizontally.
 Session state, rate limits, nonces, and idempotency records live in Redis;
 nothing lives in a container.
 
-> **This section describes the target shape, not the current one.** As of
-> 2026-08-14 the gateway is single-instance. `REDIS_URL` is required at boot and
-> composed into nothing: replay detection, at-most-once transfer effects, rate
-> limits, request idempotency and transfer state are all in-memory and therefore
-> per-process. `N` above is 1, and the service refuses to start when
-> `APP_INSTANCE_COUNT` says otherwise — a second replica would share none of
-> that state and one attempt could reach a provider twice. Story 4.4
+> **As of 2026-08-16 this shape is implemented, but it is not the default.**
+>
+> `GATEWAY_STATE_BACKEND=redis` composes the shared stores — replay detection,
+> at-most-once transfer effects, rate limits, and attempt ownership and
+> cancellation — and lifts the single-instance refusal. Story 4.4
 > (`_bmad-output/implementation-artifacts/4-4-distribute-gateway-attempt-state.md`,
-> backlog **B-49**) is the work that makes the paragraph above true. Note that
-> even then, `nothing lives in a container` will remain untrue by design for one
-> thing: photo bytes stay process-local and ephemeral, and never enter Redis
-> (AD-8).
+> backlog **B-49**, issue #49) is that work, and it has landed.
+>
+> The default remains `memory`, where all of that state is per-process. There
+> `N` above is 1 and the service refuses to start when `APP_INSTANCE_COUNT` says
+> otherwise, because a second replica would share none of it and one attempt
+> could reach a provider twice. The refusal lifts only when every protected
+> store has a shared binding — declaring `redis` is not by itself sufficient,
+> and the composition root asserts the difference.
+>
+> One line above stays untrue by design even with the shared backend:
+> `nothing lives in a container` does not hold for photo bytes, which are
+> process-local and ephemeral and never enter Redis (AD-8). An instance that
+> does not hold an attempt's bytes fails closed rather than having them sent to
+> it.
 
 Capacity at this shape is comfortably beyond early product-market fit. The
 binding constraint will not be the database — it will be provider cost per

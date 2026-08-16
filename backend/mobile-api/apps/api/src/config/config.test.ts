@@ -1,6 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { loadConfig, ConfigError } from './index.js';
-import { assertStubFence, TestModeFenceError } from './test-mode-fence.js';
+import {
+  assertSingleInstanceState,
+  assertStubFence,
+  TestModeFenceError,
+} from './test-mode-fence.js';
 
 const base: NodeJS.ProcessEnv = {
   NODE_ENV: 'development',
@@ -161,5 +165,44 @@ describe('H-07 — single-instance operation is declared, not assumed', () => {
   it('refuses a nonsensical instance count rather than guessing', () => {
     expect(() => loadConfig({ ...base, APP_INSTANCE_COUNT: '0' })).toThrow(ConfigError);
     expect(() => loadConfig({ ...base, APP_INSTANCE_COUNT: 'many' })).toThrow(ConfigError);
+  });
+});
+
+describe('#49 review — the fence lifts only when shared state is COMPLETE', () => {
+  /**
+   * The first version lifted on `GATEWAY_STATE_BACKEND=redis` alone, while
+   * transfer ownership and cancellation were still process-local — the registry
+   * existed but was composed nowhere. Declaring `redis` therefore permitted
+   * exactly the multi-instance deployment the fence exists to prevent.
+   *
+   * The appearance of distributed state is worse than none, because it removes
+   * the guard while leaving the hazard.
+   */
+  it('still refuses multi-instance on the memory backend', () => {
+    expect(() => assertSingleInstanceState(2, 'memory', true)).toThrow(TestModeFenceError);
+  });
+
+  it('refuses multi-instance on redis when the shared state is incomplete', () => {
+    expect(() => assertSingleInstanceState(2, 'redis', false)).toThrow(TestModeFenceError);
+    expect(() => assertSingleInstanceState(2, 'redis', false)).toThrow(/process-local/);
+  });
+
+  it('permits multi-instance on redis only when every store is shared', () => {
+    expect(() => assertSingleInstanceState(2, 'redis', true)).not.toThrow();
+  });
+
+  it('defers the redis case when the caller cannot yet know', () => {
+    // loadConfig runs before anything is composed. Answering `false` there would
+    // refuse a legitimate multi-instance boot before the stores it asks about
+    // have been built, so it defers to the composition root.
+    expect(() => assertSingleInstanceState(2, 'redis', undefined)).not.toThrow();
+  });
+
+  it('permits a single instance in every combination', () => {
+    for (const backend of ['memory', 'redis'] as const) {
+      for (const complete of [true, false, undefined]) {
+        expect(() => assertSingleInstanceState(1, backend, complete)).not.toThrow();
+      }
+    }
   });
 });

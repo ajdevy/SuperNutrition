@@ -6,6 +6,7 @@ import {
   DrizzleUserRepository,
 } from '@supernutrition/database';
 import {
+  assertSingleInstanceState,
   loadConfig,
   testModeBanner,
   TestModeFenceError,
@@ -22,6 +23,7 @@ import {
   InMemoryIdempotencyStore,
   InMemoryRateLimiter,
   PRODUCTION_MARKET_POLICY,
+  RedisAttemptRegistry,
   RedisEffectStore,
   RedisRateLimiter,
   createRedisClient,
@@ -69,6 +71,15 @@ const USDA_CONFIG = {
  * asserted BEFORE anything else is constructed, so a misconfigured process
  * exits non-zero rather than starting and serving (docs/09 §9.2).
  */
+
+/**
+ * How long the shared registry remembers an attempt.
+ *
+ * Matched to TERMINAL_RETENTION_SECONDS in transfer-state.ts: for exactly as
+ * long as the gateway can describe an attempt locally, every instance can also
+ * say who holds it and whether it was cancelled.
+ */
+const TRANSFER_REGISTRY_TTL_SECONDS = 86_400;
 
 const RATE_LIMIT_RULES: readonly RateLimitRule[] = [
   { layer: 'installation', limit: 20, windowSeconds: 3600 },
@@ -127,6 +138,34 @@ export const buildApplication = async (
   // effect are different identifiers with different answers (AD-21 vs AD-18).
   const requestIds =
     redis === null ? new InMemoryEffectStore() : new RedisEffectStore(redis, 'request-id');
+
+  // #49 — cross-instance attempt ownership and cancellation.
+  //
+  // Null with the memory backend: one instance, so the local tracker already is
+  // the whole truth. With redis this is what makes transfer ownership and
+  // cancellation actually shared — without it the Redis backend would coordinate
+  // replay, effects and rate limits while transfer state stayed per-process,
+  // which is the appearance of distributed state rather than the fact of it.
+  const attempts =
+    redis === null ? null : new RedisAttemptRegistry(redis, TRANSFER_REGISTRY_TTL_SECONDS);
+  // Identifies this process to the shared registry. Not a secret and not a
+  // network address: it only has to differ between instances.
+  const instanceId = process.env['APP_INSTANCE_ID'] ?? `${process.pid}-${randomUUID().slice(0, 8)}`;
+
+  // #49 — the definitive instance fence, asserted HERE because this is the first
+  // point at which the answer is knowable: `loadConfig` runs before anything is
+  // composed and defers the redis case to this call.
+  //
+  // Complete means every store the fence protects is shared. Derived from the
+  // bindings themselves rather than from a flag, so it cannot drift from what
+  // was actually built: adding a new per-process store that the fence protects
+  // and forgetting it here is the mistake this guards, and the only way to make
+  // this true is to bind the thing.
+  assertSingleInstanceState(
+    config.deployment.instanceCount,
+    config.deployment.gatewayStateBackend,
+    redis !== null && attempts !== null,
+  );
 
   const profiles = TomlModelProfileSource.fromFile(
     resolve(process.cwd(), config.inference.modelProfilesPath),
@@ -246,6 +285,8 @@ export const buildApplication = async (
       requestIds,
       payloads,
       transfers,
+      attempts,
+      instanceId,
       resolveMarket: (marketId, modality, now) => marketResolver.resolve(marketId, modality, now),
       resolveMarketPolicy: (marketId, modality, now) =>
         marketResolver.resolve(marketId, modality, now),

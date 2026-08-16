@@ -155,6 +155,9 @@ beforeEach(() => {
       dispose: (attemptId) => disposed.push(attemptId),
     },
     transfers: new TransferStateTracker(() => NOW),
+    // Memory backend: one instance, so the local tracker is the whole truth.
+    attempts: null,
+    instanceId: 'test-instance',
     resolveMarket: (marketId, modality, now) => resolver.resolve(marketId, modality, now),
     remoteInferenceEnabled: () => true,
     supportedRetentionVersions: ['retention/2'],
@@ -834,5 +837,85 @@ describe('audit findings — transfer state must not overstate OR understate', (
     });
 
     expect(deps.transfers.stateOf(attemptId)).toBe('transferred');
+  });
+});
+
+describe('#49 review — the attempt registry is composed and load-bearing', () => {
+  /**
+   * The registry was written, tested in isolation, and composed nowhere. So the
+   * Redis backend coordinated replay, effects and rate limits while transfer
+   * ownership and cancellation stayed process-local: the appearance of
+   * distributed state, without the fact of it.
+   */
+  const registry = () => {
+    const held = new Map<string, string>();
+    const cancelled = new Set<string>();
+    return {
+      held,
+      cancelled,
+      claimAttempt: async (id: string, instance: string) => {
+        if (held.has(id)) return false;
+        held.set(id, instance);
+        return true;
+      },
+      holderOf: async (id: string) => held.get(id) ?? null,
+      markCancelled: async (id: string) => void cancelled.add(id),
+      isCancelled: async (id: string) => cancelled.has(id),
+    };
+  };
+
+  const run = (over: Record<string, unknown>) =>
+    runInferencePipeline({ ...deps, ...over } as PipelineDeps, {
+      context: contextFor(JPEG) as never,
+      payload: { bytes: JPEG, contentType: 'image/jpeg' },
+      auth: AUTH,
+      requestId: 'req_0000000000000000',
+      clientIp: '127.0.0.1',
+    });
+
+  it('refuses an attempt another instance already holds', async () => {
+    // Two instances each granting the same attempt id is two transfers of one
+    // photo. The local tracker cannot see the other instance's grant.
+    const shared = registry();
+    await shared.claimAttempt('att_0000000000000000', 'instance-b');
+
+    await expect(run({ attempts: shared, instanceId: 'instance-a' })).rejects.toMatchObject({
+      gatewayCode: 'validation-error',
+    });
+    expect(orchestrator.calls).toBe(0);
+  });
+
+  it('records this instance as the holder when it wins the attempt', async () => {
+    const shared = registry();
+    await run({ attempts: shared, instanceId: 'instance-a' });
+    expect(await shared.holderOf('att_0000000000000000')).toBe('instance-a');
+  });
+
+  it('suppresses a result for an attempt cancelled against another instance', async () => {
+    // The gap that made cancellation depend on which replica the DELETE reached.
+    const shared = registry();
+    await expect(
+      run({
+        attempts: shared,
+        instanceId: 'instance-a',
+        orchestrator: {
+          analyze: async (
+            _r: unknown,
+            options: { onTransferStarted?: () => void; onProviderAdmitted?: () => void },
+          ) => {
+            options.onTransferStarted?.();
+            options.onProviderAdmitted?.();
+            // Cancelled on a different instance while this one was working.
+            await shared.markCancelled('att_0000000000000000');
+            return orchestrator.result;
+          },
+        } as never,
+      }),
+    ).rejects.toMatchObject({ gatewayCode: 'client-cancelled' });
+  });
+
+  it('is inert on the memory backend, where one process is the whole truth', async () => {
+    await run({ attempts: null, instanceId: 'only-instance' });
+    expect(orchestrator.calls).toBe(1);
   });
 });

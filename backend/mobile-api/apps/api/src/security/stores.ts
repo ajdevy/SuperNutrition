@@ -1,4 +1,5 @@
 import type {
+  AttemptRegistry,
   EffectStore,
   IdempotencyClaim,
   IdempotencyStore,
@@ -362,7 +363,7 @@ export class InMemoryIdempotencyStore implements IdempotencyStore {
  * an instance identifier, and nothing about the photo. An instance without the
  * bytes fails closed rather than having them shipped to it.
  */
-export class RedisAttemptRegistry {
+export class RedisAttemptRegistry implements AttemptRegistry {
   readonly #redis: RedisLike;
   readonly #ttlSeconds: number;
 
