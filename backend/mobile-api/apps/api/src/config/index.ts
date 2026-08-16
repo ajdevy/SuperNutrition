@@ -99,6 +99,7 @@ export const loadConfig = (source: NodeJS.ProcessEnv): AppConfig => {
   };
 };
 
+export { assertSingleInstanceState } from './test-mode-fence.js';
 export { EnvSchema, assertTestModeFence, testModeBanner };
 export type { Env, Environment };
 export {

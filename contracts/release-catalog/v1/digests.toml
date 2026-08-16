@@ -110,7 +110,8 @@ path = "contracts/mobile-api/v1"
 digest = "748a4b3e21f618025ebcd81f322ebefa3444570f2adc67aa2778fd36f3dea32c"
 algorithm = "release-sha256-v2"
 recorded_at_commit = "pr/slice-ab-backend-v2"
-status = "current"
+status = "superseded"
+superseded_by_commit = "pr/slice-ab-backend-v2"
 note = """
 Adversarial pre-review audit finding F-04. The D-01 amendment flipped \
 downstreamDeletionRequested to false in the fixture BODY and rewrote the state's \
@@ -119,6 +120,29 @@ assertions.honest_claim still saying "Deletion was requested downstream" — the
 exact privacy overclaim D-01 exists to remove, in the field a client derives \
 user-facing copy from. Both corrected to match the body and the state \
 definition."""
+
+[[entry]]
+release_id = "mobile-api/v1"
+path = "contracts/mobile-api/v1"
+digest = "dbce94511419cf1d54fcc9e52c01314f238b808f6d0603032628365dc0046177"
+algorithm = "release-sha256-v2"
+recorded_at_commit = "pr/slice-ab-backend-v2"
+status = "current"
+note = """
+Live-head review of #50. Two corrections to gateway-request.toml, both making \
+the published text match what executes rather than changing behaviour:
+
+The flat `order` and the `post_authentication` phase listed `request-id-replay` \
+before the byte checks; the code runs the byte checks first, so a malformed \
+payload does not burn a one-time request id on its way to being refused. Both \
+orders are safe — neither reaches a provider — but the published sequence must \
+be the one that runs.
+
+The `pre_authentication` comment now names where `content-length` and \
+`streamed-size-guard` are actually enforced: Fastify's `bodyLimit` and \
+@fastify/multipart's `limits`, not gateway code. A reviewer looking for a \
+hand-written validator concluded the guards were absent; the unused \
+`UploadValidator` interface that invited that reading has been removed."""
 
 # --- superseded --------------------------------------------------------------
 #

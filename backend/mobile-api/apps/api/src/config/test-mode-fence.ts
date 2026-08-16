@@ -174,13 +174,45 @@ export const assertPaidRosterInProduction = (
 export const assertSingleInstanceState = (
   instanceCount: number,
   stateBackend: 'memory' | 'redis' = 'memory',
+  /**
+   * True only when EVERY store the fence protects has a shared binding.
+   *
+   * `undefined` means "not known yet". Configuration is validated before
+   * anything is composed, so `loadConfig` genuinely cannot answer this and
+   * defers the redis case to the composition root, which can. Passing `false`
+   * there would refuse a legitimate multi-instance boot before the stores it
+   * asks about have been built.
+   */
+  sharedStateComplete?: boolean,
 ): void => {
-  // #49 — with the Redis backend composed, the state above is no longer
-  // per-process, so the reason for this refusal is gone. The lift is tied to the
-  // backend actually in use rather than to a separate "I promise" flag: the only
-  // thing that makes more than one instance safe is shared state, so that is
-  // what the check reads.
-  if (stateBackend === 'redis') return;
+  // #49 — the refusal lifts only when the state that made it necessary is
+  // actually shared.
+  //
+  // The first version of this lifted on `stateBackend === 'redis'` alone. At
+  // that point the Redis backend shared replay, effects and rate limits while
+  // transfer ownership and cancellation were still per-process — the registry
+  // existed but was composed nowhere — so declaring `redis` permitted exactly
+  // the multi-instance deployment this fence exists to prevent, with an attempt
+  // started on one instance invisible to another. The appearance of distributed
+  // state is more dangerous than none, because it removes the guard.
+  //
+  // `sharedStateComplete` is passed by the composition root and is true only
+  // when every store the fence protects has a shared implementation bound. It is
+  // an argument rather than a flag read from the environment: an operator must
+  // not be able to assert it.
+  if (stateBackend === 'redis') {
+    // Deferred: the caller cannot see the composition yet.
+    if (sharedStateComplete === undefined) return;
+    if (sharedStateComplete) return;
+  }
+  if (stateBackend === 'redis' && instanceCount > 1) {
+    throw new TestModeFenceError(
+      `GATEWAY_STATE_BACKEND=redis with APP_INSTANCE_COUNT=${instanceCount}, but not every ` +
+        'store the fence protects is shared: transfer ownership and cancellation are still ' +
+        'process-local. Refusing to start. A partially shared backend is the hazard this fence ' +
+        'exists to prevent, not an exemption from it.',
+    );
+  }
   if (instanceCount > 1) {
     throw new TestModeFenceError(
       `APP_INSTANCE_COUNT=${instanceCount}: replay, at-most-once, rate-limit, idempotency and ` +

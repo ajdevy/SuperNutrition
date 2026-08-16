@@ -47,16 +47,17 @@ export const EnvSchema = z.object({
   /**
    * H-07 — how many instances of this service are being run.
    *
-   * Replay detection, at-most-once effects, rate limits, idempotency and
-   * transfer state are all per-process today: main.ts composes InMemory* stores
-   * and REDIS_URL, though required, is wired into none of them. A second replica
-   * shares none of that state, so a request id spent on instance A is unspent on
-   * instance B and the provider can be called twice for one effect.
+   * With GATEWAY_STATE_BACKEND=memory, replay detection, at-most-once effects,
+   * rate limits, idempotency and transfer state are per-process: a request id
+   * spent on instance A is unspent on instance B and the provider can be called
+   * twice for one effect. With `redis` all of them are shared.
    *
-   * That is a safe deployment of one instance and an unsafe deployment of two,
-   * and nothing said which one you had. Declaring it makes the boundary explicit
-   * and lets the boot refuse the unsafe case instead of leaving it to be
-   * discovered from a duplicated provider call.
+   * A safe deployment of one instance and an unsafe deployment of two used to
+   * look identical from configuration. Declaring the count makes the boundary
+   * explicit and lets the boot refuse the unsafe case rather than leaving it to
+   * be discovered from a duplicated provider bill. The refusal lifts only when
+   * every protected store has a shared binding, which the composition root
+   * asserts — declaring `redis` is not by itself enough.
    */
   APP_INSTANCE_COUNT: z.coerce.number().int().positive().default(1),
   /**

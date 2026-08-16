@@ -83,10 +83,9 @@ export const registerGatewayRoutes = async (
       //
       // request.parts() buffers the whole photo, up to 8MB, and it used to run
       // first: an unauthenticated caller could pin 8MB of server memory per
-      // request by posting to this route. The release's validation_order puts
-      // contract version and request id ahead of authentication, and both are
-      // header-only, so the order it prescribes is preserved — only the point
-      // at which bytes are accepted has moved.
+      // request by posting to this route. The release's `pre_authentication`
+      // phase is header-only for exactly this reason, and every body-reading
+      // step is published in the `post_authentication` phase (D-02, #50).
       const { requestId } = validateGatewayHeaders({
         contractVersion: request.headers['x-contract-version'] as string | undefined,
         requestId: request.headers['x-request-id'] as string | undefined,
@@ -314,6 +313,36 @@ export const registerGatewayRoutes = async (
         // action someone else took. Nothing is disposed until the caller is
         // known to own the attempt.
         if (record === null) {
+          // #49 — before answering "unknown", ask whether ANOTHER instance holds
+          // this attempt. With the shared registry composed, an attempt started
+          // on instance A and cancelled against instance B used to be reported
+          // as unknown by B — a photo mid-transfer, described as an attempt that
+          // does not exist.
+          //
+          // The cancellation is recorded in the registry regardless of which
+          // instance received it, so the holder sees it and aborts. This
+          // instance still cannot produce the record: it does not hold the state
+          // or the bytes, and inventing transferState and bytesTransferred would
+          // be exactly the fabrication the 204 path was removed for. It fails
+          // closed with a typed error that says so.
+          if (deps.attempts !== null) {
+            const holder = await deps.attempts.holderOf(request.params.attemptId);
+            if (holder !== null && holder !== deps.instanceId) {
+              await deps.attempts.markCancelled(request.params.attemptId);
+              // PROVIDER_UNAVAILABLE is a compromise, and worth naming as one.
+              // The published taxonomy is frozen and has no code for "this
+              // instance cannot serve your attempt"; inventing one is a contract
+              // change. Of the codes that exist, this is the only one whose
+              // SHAPE is right — 503, recoverable, retryAfter 60 — and shape is
+              // what the client acts on. `internal-error` would be 500 with
+              // recoverable:false, telling a user to give up on something that
+              // works on the next request. Tracked for the next release.
+              throw new GatewayError(GATEWAY_CODES.PROVIDER_UNAVAILABLE, {
+                details: [{ field: 'attemptId', issue: 'held_by_another_instance' }],
+              });
+            }
+          }
+
           // No record the caller may see: never begun, finished longer ago than
           // the retention window, or begun by a different installation. All
           // three answer identically, so the response cannot be used to
@@ -326,6 +355,13 @@ export const registerGatewayRoutes = async (
           throw new GatewayError(GATEWAY_CODES.VALIDATION_ERROR, {
             details: [{ field: 'attemptId', issue: 'unknown_attempt' }],
           });
+        }
+
+        // #49 — publish the cancellation so the other instances stop too. This
+        // instance owns the attempt, but a replica may still be holding a late
+        // provider response for it.
+        if (deps.attempts !== null) {
+          await deps.attempts.markCancelled(request.params.attemptId);
         }
 
         // Authorised: the caller owns this attempt, so its bytes go now.

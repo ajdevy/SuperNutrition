@@ -180,6 +180,9 @@ beforeEach(async () => {
       requestIds: new InMemoryEffectStore(),
       payloads: { put: () => {}, dispose: (id: string) => disposed.push(id) },
       transfers,
+      // Memory backend: one instance, so the local tracker is the whole truth.
+      attempts: null,
+      instanceId: 'test-instance',
       resolveMarket: (id, modality, now) => resolver.resolve(id, modality, now),
       resolveMarketPolicy: (id, modality, now) => resolver.resolve(id, modality, now),
       policyVersion: 'fixture/1',

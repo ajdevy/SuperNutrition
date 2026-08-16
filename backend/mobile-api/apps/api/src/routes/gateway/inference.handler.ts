@@ -198,23 +198,14 @@ export const validateRequest = (
   // is a rejection too — an image whose size cannot be established cannot be
   // shown to be within the bound.
   //
-  // NOTE — this does NOT run where the published order says it does.
-  // `contracts/mobile-api/v1/gateway-request.toml` lists `magic-byte-sniff` and
-  // `dimension-bounds` *ahead of* `authentication`. Both actually run after it,
-  // because `routes.ts` authenticates before `request.parts()` — deliberately,
-  // since buffering up to 8MB for an anonymous caller is a memory-pinning DoS.
+  // Runs after authentication, which is where the published order now says it
+  // runs (owner decision D-02, #50). The release splits its validation order
+  // into a header-only pre-authentication phase and a body-reading
+  // post-authentication phase, because sniffing bytes requires reading bytes and
+  // reading up to 8 MiB for an anonymous caller is a memory-pinning DoS.
   //
-  // The two cannot both be satisfied: sniffing bytes requires reading bytes, and
-  // reading bytes before authentication is the attack. The published order is not
-  // implementable as literally written for a streamed multipart upload.
-  //
-  // What the order exists to guarantee still holds — the contract's own stated
-  // purpose is "every step here must be able to reject the request WITHOUT a
-  // provider call", and every one of these gates does. The divergence is in the
-  // relative position of authentication, not in what reaches a provider.
-  //
-  // Not silently reconciled by editing the contract: it is a published release
-  // and the fix is the contract owner's call. Tracked in issue #50.
+  // What the order guarantees is unchanged: every gate here rejects without a
+  // provider call.
   if (!withinDimensionBound(payload.bytes)) {
     throw new GatewayError(GATEWAY_CODES.VALIDATION_ERROR, {
       details: [{ field: 'payload', issue: 'dimension_bounds_exceeded' }],

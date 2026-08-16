@@ -61,6 +61,26 @@ export const toGatewayError = (error: unknown): GatewayError => {
     if (name === 'TestModeFenceError') {
       return new GatewayError(GATEWAY_CODES.TEST_MODE_FORBIDDEN, { cause: error });
     }
+
+    // #49 — the shared coordination store is unreachable.
+    //
+    // The store already fails closed and refuses the attempt, which is right.
+    // What was wrong was the answer the client got: unmapped, this fell through
+    // to `internal-error` — 500, recoverable:false, retryAfter 0 — telling a
+    // user to give up on a request that will work as soon as Redis is back.
+    //
+    // `provider-unavailable` is a compromise and is worth naming as one: the
+    // published taxonomy is frozen and has no code for "a dependency this
+    // service needs is down". Of the codes that exist this is the only one whose
+    // shape is right — 503, recoverable, retryAfter 60 — and the shape is what
+    // a client acts on. The name points at the wrong subsystem; that is a
+    // smaller inaccuracy than telling someone a transient failure is permanent.
+    //
+    // Matched by name, like the two above, so the error handler keeps no
+    // dependency on the storage layer it reports on.
+    if (name === 'RedisUnavailableError') {
+      return new GatewayError(GATEWAY_CODES.PROVIDER_UNAVAILABLE, { cause: error });
+    }
   }
 
   return new GatewayError(GATEWAY_CODES.INTERNAL_ERROR, { cause: error });

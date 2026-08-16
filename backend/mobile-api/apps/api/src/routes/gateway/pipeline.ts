@@ -23,6 +23,7 @@ import {
   type OutcomeOut,
 } from './inference.handler.js';
 import type { TransferStateTracker } from './transfer-state.js';
+import type { AttemptRegistry } from '../../security/index.js';
 
 /**
  * Executes GATEWAY_PIPELINE in order.
@@ -52,6 +53,19 @@ export interface PipelineDeps {
   readonly requestIds: EffectStore;
   readonly payloads: PayloadSink;
   readonly transfers: TransferStateTracker;
+  /**
+   * Cross-instance attempt ownership and cancellation (#49).
+   *
+   * Null with the memory backend, where there is one instance and the local
+   * tracker is the whole truth. Non-null with the redis backend, where it is
+   * what makes the truth shared: without it `transfers` answers only for the
+   * process that happens to receive the request, so an attempt started on one
+   * instance is unknown to another and a cancellation on one is invisible to
+   * the other.
+   */
+  readonly attempts: AttemptRegistry | null;
+  /** Identifies this process in the shared registry. */
+  readonly instanceId: string;
   readonly resolveMarket: (marketId: string, modality: Modality, now: Date) => MarketResolution;
   readonly remoteInferenceEnabled: () => boolean;
   readonly supportedRetentionVersions: readonly string[];
@@ -167,6 +181,19 @@ export const runInferencePipeline = async (
       details: [{ field: 'attemptId', issue: 'attempt_already_used' }],
     });
   }
+  // #49 — at-most-once on the attempt ACROSS instances, not just within this
+  // one. `transfers.begin` above is process-local: two instances would each
+  // grant the same attempt id and each start a transfer of the same photo.
+  if (deps.attempts !== null) {
+    const held = await deps.attempts.claimAttempt(context.attemptId, deps.instanceId);
+    if (!held) {
+      deps.transfers.release(context.attemptId);
+      throw new GatewayError(GATEWAY_CODES.VALIDATION_ERROR, {
+        details: [{ field: 'attemptId', issue: 'attempt_already_used' }],
+      });
+    }
+  }
+
   deps.payloads.put(context.attemptId, payload.bytes);
 
   try {
@@ -217,7 +244,14 @@ export const runInferencePipeline = async (
 
     // A late result after cancellation is discarded, never returned: exactly
     // one terminal outcome per attempt (AD-6).
-    if (deps.transfers.isCancelled(context.attemptId)) {
+    //
+    // #49 — the registry is consulted too, so a cancellation issued against a
+    // DIFFERENT instance still suppresses the result here. Checking only the
+    // local tracker meant a user who cancelled and happened to hit another
+    // replica got the result anyway.
+    const cancelledElsewhere =
+      deps.attempts !== null && (await deps.attempts.isCancelled(context.attemptId));
+    if (deps.transfers.isCancelled(context.attemptId) || cancelledElsewhere) {
       throw new GatewayError(GATEWAY_CODES.CLIENT_CANCELLED);
     }
 

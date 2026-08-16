@@ -49,7 +49,7 @@ release_id = "mobile-api/v1"
 path = "contracts/mobile-api/v1/compatibility-matrix.toml"
 base_commit = "c091a4382725db10a4524309711dd7512c833f28"
 base_sha256 = "84fd5d3b737cb8860ba56211cb0c47575bfa198edf55990d42778cb500233921"
-head_sha256 = "3775fea073f4b6164d0bc7868a2f409ab6fca3551d652dd44b810535d8ee23ff"
+head_sha256 = "7a084d9c5addfb3ccf3ed2bcd1269da9aea3e97e63f674570643c9bbabfb1396"
 expires = "2026-09-30"
 reason = """
 Gateway contract surface added to the published v1 release by this slice.
@@ -170,7 +170,7 @@ release_id = "mobile-api/v1"
 path = "contracts/mobile-api/v1/gateway-request.toml"
 added = true
 base_commit = "c091a4382725db10a4524309711dd7512c833f28"
-head_sha256 = "b89fce944c8af8eaf5262d58e511e1fb3cb4d38ff5976ec76b688eb193217ac4"
+head_sha256 = "35fd43fb867584f88e89418d2606efd896bcfdf8a96b517366edd68ad981d79a"
 expires = "2026-09-30"
 reason = """
 Gateway contract surface added to the published v1 release by this slice.

@@ -1,9 +1,10 @@
 /**
  * Format and dimension checks on the payload bytes themselves.
  *
- * `contracts/mobile-api/v1/gateway-request.toml` lists `magic-byte-sniff` and
- * `dimension-bounds` in its validation order, both ahead of authentication and
- * far ahead of any provider call, and pins `payload_max_dimension_px = 4096`.
+ * `contracts/mobile-api/v1/gateway-request.toml` publishes `magic-byte-sniff`
+ * and `dimension-bounds` in its `post_authentication` phase — after the caller
+ * is known, far ahead of any provider call — and pins
+ * `payload_max_dimension_px = 4096`.
  *
  * H-04 — the previous check read four bytes and stopped. `image/webp` matched on
  * `RIFF`, which is equally the container magic for WAVE and AVI, so an audio
