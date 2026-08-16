@@ -4,7 +4,8 @@ baseline_commit: db802a13b84658e5c4cfc1d1107148b6fe573877
 
 # Story 4.4: Distribute gateway attempt state
 
-Status: implemented (criterion 3 verified against a real Redis 2026-08-16)
+Status: implemented except criterion 4, which is an OPEN OWNER DECISION
+(criterion 3 verified against a real Redis 2026-08-16)
 
 ## Story
 
@@ -55,8 +56,10 @@ commit that records this story:
   provider. Single-instance operation must be enforced in the deployment control
   plane with auditable evidence — that is a precondition of this story, not a
   substitute for it.
-- The composition root and `.env.example` state that `REDIS_URL` is composed
-  into nothing and that these stores are process-local.
+- The composition root and `.env.example` state which stores are process-local.
+  (Superseded 2026-08-16: `REDIS_URL` is now composed when
+  `GATEWAY_STATE_BACKEND=redis`. This section records the interim state as it
+  was, not as it is.)
 
 That closes the silence, not the limitation. This story closes the limitation.
 
@@ -72,8 +75,36 @@ That closes the silence, not the limitation. This story closes the limitation.
 3. Claiming an effect is atomic across instances. Two concurrent claims of one
    identifier from different instances produce exactly one provider call
    (AD-18), demonstrated against a real Redis, not a mock.
-4. Every key carries an expiry no longer than the retention the request's market
-   policy allows, so nothing outlives its own deletion obligation.
+4. **⚠ UNRESOLVED — OWNER DECISION REQUIRED. NOT SATISFIED.** "Every key carries
+   an expiry no longer than the retention the request's market policy allows, so
+   nothing outlives its own deletion obligation."
+
+   TTLs are a fixed 24 hours and are not derived from market policy. Recorded as
+   open rather than resolved, because resolving it means choosing between two
+   real obligations and that choice is not the implementer's.
+
+   Market retention governs the PHOTO. The identifiers these TTLs bound —
+   attempt id, effect id, request id — are coordination values that exist so one
+   attempt cannot execute twice (AD-18) and a spent request id cannot be
+   replayed (AD-21). The fixture markets carry `retentionDays = 0`. Read
+   literally against a zero-day market, this criterion gives those keys a
+   zero-second expiry, deleting the at-most-once guard at the moment it is
+   needed and making a duplicate provider call — a second upload of the user's
+   photo — possible again. **Enforcing the privacy clause literally produces the
+   privacy harm.**
+
+   Two readings, and the owner picks:
+
+   - **(a) Retention governs user content only.** Coordination identifiers keep
+     the at-most-once horizon; this criterion is amended to say so.
+   - **(b) Retention governs everything keyed to a user's action.** The
+     at-most-once window shrinks to the retention period, and where retention is
+     zero the guarantee is accepted as weaker.
+
+   (b) has a legal dimension this code cannot settle. Whichever is chosen,
+   either this criterion or the constants must change: as things stand they
+   contradict each other, and no test asserts the criterion. Do not derive the
+   value without the decision.
 5. A transfer whose bytes live on another instance fails closed with the typed
    taxonomy error rather than being routed to an instance that cannot serve it.
    The bytes are never forwarded between instances to make this work.
@@ -90,22 +121,25 @@ That closes the silence, not the limitation. This story closes the limitation.
 
 ## Tasks / Subtasks
 
-- [ ] Define a shared-store port per concern (effects, rate limits, transfer
+- [x] Define a shared-store port per concern (effects, rate limits, transfer
       state) with the in-memory implementations as the local adapters, so the
       composition root chooses rather than the call sites knowing.
-- [ ] Implement the Redis adapters. Atomic claim via `SET NX` with expiry;
+- [x] Implement the Redis adapters. Atomic claim via `SET NX` with expiry;
       rate limits via a counter with a window expiry; transfer state as a
       record carrying the owning instance and no bytes.
-- [ ] Compose `config.redis.url` in `buildApplication` — the value that is
+- [x] Compose `config.redis.url` in `buildApplication` — the value that is
       currently required and unused.
-- [ ] Fail closed on an unreachable Redis, with a typed taxonomy error.
-- [ ] Route or refuse transfers whose bytes are held elsewhere; never ship bytes
+- [x] Fail closed on an unreachable Redis, with a typed taxonomy error.
+- [x] Route or refuse transfers whose bytes are held elsewhere; never ship bytes
       between instances.
-- [ ] Integration tests against a real Redis: concurrent claim, replay across
+- [x] Integration tests against a real Redis: concurrent claim, replay across
       instances, cancellation across instances, rate limit across instances,
       key expiry, and an assertion that no stored value contains payload bytes.
-- [ ] Lift the instance fence and update `.env.example`, the composition-root
-      comment and this story in the same change.
+- [x] Lift the instance fence and update `.env.example`, the composition-root
+      comment and this story in the same change. The lift requires shared state
+      to be COMPLETE, asserted at the composition root from the bindings
+      themselves — declaring `redis` is not by itself sufficient.
+- [ ] **OPEN:** resolve criterion 4 (TTL vs market retention). Owner decision.
 
 ## Dev Notes
 

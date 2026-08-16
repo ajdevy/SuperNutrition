@@ -71,6 +71,41 @@ export const CONTEXT_PART_CONTENT_TYPE = 'application/json';
 export const UNDECLARED_PART_CONTENT_TYPE = 'text/plain';
 
 export const MAX_PAYLOAD_BYTES = 8 * 1024 * 1024;
+/**
+ * ⚠ UNRESOLVED — OWNER / ACCEPTANCE DECISION REQUIRED (story 4.4, criterion 4).
+ *
+ * Criterion 4 reads: "Every key carries an expiry no longer than the retention
+ * the request's market policy allows, so nothing outlives its own deletion
+ * obligation." These TTLs are a fixed 24 hours and are NOT derived from market
+ * policy. That is a known, deliberate non-compliance, recorded rather than
+ * quietly resolved, because resolving it means choosing between two real
+ * obligations and that choice is not the implementer's.
+ *
+ * The tension. Market policy's retention governs the PHOTO. The identifiers
+ * these TTLs bound — attempt id, effect id, request id — are not the photo; they
+ * are coordination values that exist so one attempt cannot be executed twice
+ * (AD-18) and a spent request id cannot be replayed (AD-21). The fixture markets
+ * carry `retentionDays = 0`. Reading criterion 4 literally against a zero-day
+ * market gives these keys a zero-second expiry, which deletes the at-most-once
+ * guard at the moment it is needed and makes a duplicate provider call — a
+ * second upload of the user's photo — possible again. Enforcing the privacy
+ * clause literally would produce the privacy harm.
+ *
+ * So the two readings are:
+ *
+ *   (a) Retention governs user content only. Coordination identifiers keep the
+ *       at-most-once horizon, and criterion 4 is amended to say so.
+ *   (b) Retention governs everything keyed to a user's action. The at-most-once
+ *       window shrinks to the retention period, and where retention is zero the
+ *       guarantee is accepted as weaker.
+ *
+ * Neither is obviously right and (b) has a legal dimension this code cannot
+ * settle. Whichever is chosen, criterion 4 or these constants must change — as
+ * things stand they contradict each other, and no test asserts the criterion.
+ *
+ * Tracked as an open acceptance item on story 4.4 and issue #49. Do not "fix"
+ * this by deriving the value without that decision.
+ */
 export const EFFECT_TTL_SECONDS = 86_400;
 
 const ATTEMPT_PATTERN = /^att_[A-Za-z0-9]{16,64}$/;

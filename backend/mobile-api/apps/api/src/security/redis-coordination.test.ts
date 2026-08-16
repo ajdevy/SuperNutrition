@@ -18,9 +18,10 @@ import {
  * **What these tests do NOT establish.** Story 4.4 criterion 3 wants the
  * concurrent-claim property demonstrated against a REAL Redis. The fake below
  * implements the command semantics faithfully, but a fake cannot prove the
- * server is atomic under genuine concurrency — that is the whole property. No
- * `redis-server` exists in this environment, so criterion 3 is UNVERIFIED and is
- * reported as such. `redis-integration.test.ts` holds that lane.
+ * server is atomic under genuine concurrency — that is the whole property, and
+ * it is `redis-integration.test.ts` that establishes it. That lane has since
+ * been run against Redis 8.10.0 and criterion 3 is met; it found a connect race
+ * no fake could have, which is the argument for keeping the distinction sharp.
  */
 
 /** A Redis whose commands behave as the real server documents them. */
