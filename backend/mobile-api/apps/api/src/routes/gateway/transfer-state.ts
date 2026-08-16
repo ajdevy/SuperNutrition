@@ -212,10 +212,20 @@ export class TransferStateTracker {
       // Until an adapter supports deletion this is false, which is the honest
       // answer the release's honest-limit wording depends on.
       downstreamDeletionRequested: transferred && entry.deletionRequested,
-      // A result already returned in a 200 is not discarded by a later
-      // cancellation. Claiming otherwise is the same false comfort as reporting
-      // a completed attempt as pre-transfer.
-      resultSuppressed: transferred && !entry.resultDelivered,
+      // True whenever inference had produced, or would produce, a result that
+      // this cancellation discards — which is the release's own definition.
+      //
+      // This read `transferred && !resultDelivered`. Once #48 stopped promoting
+      // the state at hand-off, a cancellation arriving while the provider call
+      // was on the wire saw `transferring` and reported `false` — "no result was
+      // thrown away" — about an attempt whose result the pipeline then threw
+      // away on the very next line it ran. The formula made `true` structurally
+      // impossible for the commonest cancellation there is.
+      //
+      // A result already returned in a 200 is still not discarded by a later
+      // cancellation, which is what `resultDelivered` continues to guard.
+      resultSuppressed:
+        (entry.state === 'transferring' || entry.state === 'transferred') && !entry.resultDelivered,
       cancelledAt: this.#now().toISOString(),
     };
     entry.cancellation = record;

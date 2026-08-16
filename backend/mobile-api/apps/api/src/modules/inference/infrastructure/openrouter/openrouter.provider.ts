@@ -76,6 +76,11 @@ export class OpenRouterInferenceProvider implements InferenceProvider {
     );
 
     try {
+      // #48 — the bytes are about to leave this process. Signalled from here
+      // because only the adapter knows: the pipeline cannot tell a configured
+      // provider from an absent one.
+      request.onTransferStarted?.();
+
       const response = await this.#fetch(`${this.#config.baseUrl}/chat/completions`, {
         method: 'POST',
         signal: controller.signal,
@@ -87,6 +92,13 @@ export class OpenRouterInferenceProvider implements InferenceProvider {
         },
         body: JSON.stringify(this.#buildBody(request, bytes)),
       });
+
+      // #48 — the provider ANSWERED, so it received the payload. Fired before
+      // the status is examined, and deliberately not gated on `response.ok`: a
+      // 400, a 422, or a 200 carrying an unmappable body all mean the image
+      // arrived and was processed. Only a request that never got a response —
+      // refused connection, timeout, abort — leaves this unfired.
+      request.onProviderAdmitted?.();
 
       if (!response.ok) {
         // The body is drained and discarded: provider error prose must never

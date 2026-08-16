@@ -95,7 +95,24 @@ export class TwoPassInferenceOrchestrator implements InferenceOrchestrator {
     const startedAt = this.#clock.now();
     const deadlineAt = startedAt + snapshot.routing.totalDeadlineMs;
 
-    const pass1 = await this.#runPass(1, request, options, deadlineAt, snapshot.profileVersion);
+    // #48 — attempt-scoped once-guards for the two transfer signals, threaded
+    // into every pass and every retry inside a pass.
+    const signals = { transferStarted: false, providerAdmitted: false };
+    const scoped: InferenceAttemptOptions = {
+      ...options,
+      onTransferStarted: () => {
+        if (signals.transferStarted) return;
+        signals.transferStarted = true;
+        options.onTransferStarted?.();
+      },
+      onProviderAdmitted: () => {
+        if (signals.providerAdmitted) return;
+        signals.providerAdmitted = true;
+        options.onProviderAdmitted?.();
+      },
+    };
+
+    const pass1 = await this.#runPass(1, request, scoped, deadlineAt, snapshot.profileVersion);
     if (!pass1.ok) {
       // A terminal failure on pass 1 ends the attempt: there is nothing to
       // escalate, and retrying a rejected payload only burns cost.
@@ -123,7 +140,7 @@ export class TwoPassInferenceOrchestrator implements InferenceOrchestrator {
       return ok(this.#accept(request, pass1.value, startedAt, 1, true));
     }
 
-    const pass2 = await this.#runPass(2, request, options, deadlineAt, snapshot.profileVersion);
+    const pass2 = await this.#runPass(2, request, scoped, deadlineAt, snapshot.profileVersion);
     if (!pass2.ok) {
       // Pass 2 failing does not discard pass 1 — the user still gets the best
       // available evidence, flagged for confirmation.
@@ -174,6 +191,10 @@ export class TwoPassInferenceOrchestrator implements InferenceOrchestrator {
     if (profiles.length === 0) return err('provider-unavailable');
 
     let lastFailure: InferenceFailure = 'provider-unavailable';
+    // Pass-local mirrors of the attempt-scoped guards: the options callbacks are
+    // already once-guarded by analyze(), so these only avoid redundant calls.
+    let transferStarted = false;
+    let providerAdmitted = false;
 
     for (const profile of profiles) {
       const provider = this.#deps.providers.find((p) => p.supports(profile));
@@ -196,20 +217,23 @@ export class TwoPassInferenceOrchestrator implements InferenceOrchestrator {
           profile,
           deadlineMs: passDeadline,
           signal: options.signal,
+          // #48 — both fire at most once per attempt. A retry, a second profile
+          // or pass 2 re-sends a payload already accounted for; reporting a
+          // second transfer of one photo would overstate exposure as badly as
+          // the understatement this replaces.
+          onTransferStarted: () => {
+            if (transferStarted) return;
+            transferStarted = true;
+            options.onTransferStarted?.();
+          },
+          onProviderAdmitted: () => {
+            if (providerAdmitted) return;
+            providerAdmitted = true;
+            options.onProviderAdmitted?.();
+          },
         });
 
         const durationMs = this.#clock.now() - startedAt;
-
-        // #48(a) — the provider has now returned, which is the first moment the
-        // payload is known to have been admitted rather than merely dialled. A
-        // refusal, timeout, or reset does NOT fire this: the caller must not be
-        // told a transfer completed that did not.
-        //
-        // Fired once per attempt. Pass 2 reuses a payload already admitted, and
-        // re-firing would report a second transfer of one photo.
-        if (response.ok && pass === 1) {
-          options.onProviderAdmitted?.();
-        }
 
         if (response.ok) {
           const best = response.value.candidates[0];

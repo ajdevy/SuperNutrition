@@ -170,16 +170,17 @@ export const runInferencePipeline = async (
   deps.payloads.put(context.attemptId, payload.bytes);
 
   try {
-    // #48(a) — these two used to run back to back, here, before the provider
-    // was called at all. The release declares `provider_called = true` for the
-    // terminal `transferred` state, so an attempt the provider refused, timed
-    // out on, or reset was still recorded as complete — and cancellation,
-    // suppression and the deletion flag all reasoned from that.
+    // #48 — neither transition is made here any more.
     //
-    // `transferring` is entered here because bytes are about to go on the wire.
-    // `transferred` is entered from the orchestrator's admission callback below,
-    // which is the only place that knows a provider accepted the payload.
-    deps.transfers.markTransferring(context.attemptId, payload.bytes.byteLength);
+    // Both used to run back to back before the provider was called at all, so an
+    // attempt the provider refused, timed out on, or reset was recorded as
+    // complete. Marking `transferring` here was wrong for the mirror-image
+    // reason: this code cannot tell a configured provider from an absent one, so
+    // a deployment with no provider — supported, and logged as such — reported
+    // bytes in flight when nothing had left the process.
+    //
+    // Both signals now come from the adapter, which is the only layer that knows
+    // when bytes go on the wire and when a provider answers.
 
     // 6 — orchestrate.
     const result = await deps.orchestrator.analyze(
@@ -207,7 +208,8 @@ export const runInferencePipeline = async (
         signal: controller.signal,
         marketJurisdiction: market.marketJurisdiction,
         processingRegion: market.processingRegion,
-        // Fires only when a provider actually admitted the payload.
+        onTransferStarted: () =>
+          deps.transfers.markTransferring(context.attemptId, payload.bytes.byteLength),
         onProviderAdmitted: () =>
           deps.transfers.markTransferred(context.attemptId, payload.bytes.byteLength),
       },

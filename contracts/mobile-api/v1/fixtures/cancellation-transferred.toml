@@ -2,10 +2,11 @@ schema = "supernutrition.mobile-api-fixture.v1"
 fixture_id = "cancellation-transferred"
 expected = "accepted"
 description = """
-Cancellation after the payload reached the provider. The result is suppressed \
-and a downstream deletion request is issued, but recallClaimed stays false: \
-reporting a deletion REQUEST as a deletion GUARANTEE is a claim the gateway \
-cannot keep. A late provider emission after this point is discarded, never \
+Cancellation after a provider admitted the payload. The result is suppressed \
+and NO downstream deletion request is issued — no provider adapter exposes an \
+erasure operation, so there is nothing the gateway can ask (owner decision \
+D-01). recallClaimed stays false for the further reason that reporting a \
+deletion REQUEST as a deletion GUARANTEE is a claim the gateway cannot keep. A late provider emission after this point is discarded, never \
 returned — one terminal outcome per attempt."""
 
 [request]
@@ -45,6 +46,6 @@ late_provider_emission_discarded = true
 late_emission_returned_to_client = false
 payload_disposed = true
 payload_persisted = false
-honest_claim = "Deletion was requested downstream. Sent bytes are not claimed to be recalled."
+honest_claim = "The result is suppressed and will not be returned. No deletion request was sent downstream, because no provider adapter exposes an erasure operation. Sent bytes are not claimed to be recalled or deleted."
 user_facing_copy_may_claim_recall = false
 repeat_cancellation_returns_same_record = true
