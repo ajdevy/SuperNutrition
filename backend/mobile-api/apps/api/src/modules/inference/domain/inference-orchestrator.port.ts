@@ -28,19 +28,22 @@ export interface InferenceAttemptOptions {
   readonly marketJurisdiction: string | null;
   readonly processingRegion: string | null;
   /**
-   * #48(a) — called once a provider has ADMITTED the payload, not when one has
-   * been dialled.
+   * #48 — fired when the payload actually goes on the wire.
    *
-   * `contracts/mobile-api/v1/transfer-states.toml` declares
-   * `provider_called = true` for the terminal `transferred` state, and the
-   * caller cannot know when that becomes true: only the orchestrator sees the
-   * provider accept. Without this the gateway marked the transfer terminal
-   * before `analyze()` was even entered, so a provider that refused, timed out,
-   * or reset the connection still left the attempt recorded as transferred.
+   * The pipeline cannot know this: it cannot tell a configured provider from an
+   * absent one, and marking the transfer before `analyze()` reported bytes in
+   * flight for a deployment with no provider at all. The adapter fires it.
+   */
+  readonly onTransferStarted?: () => void;
+  /**
+   * #48 — fired when a provider ANSWERED, which is when it is known to have
+   * received the payload. Any HTTP status counts; only a request that never got
+   * a response leaves it unfired.
    *
-   * Optional so a caller that does not track transfer state — the two-pass
-   * retry path, tests — need not supply one. Pass 2 reuses a payload already
-   * admitted and does not fire it again.
+   * Not `response.ok`: a provider that received the whole image and replied 400,
+   * 422, or 200-with-an-unusable-body has admitted it just as much as one that
+   * replied usefully. Inferring admission from a USABLE answer understated where
+   * the photo went.
    */
   readonly onProviderAdmitted?: () => void;
 }

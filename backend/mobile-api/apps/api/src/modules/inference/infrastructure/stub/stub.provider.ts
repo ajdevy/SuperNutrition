@@ -27,6 +27,14 @@ export class StubInferenceProvider implements InferenceProvider {
   }
 
   async infer(request: ProviderRequest): Promise<Result<ProviderResponse, InferenceFailure>> {
+    // #48 — the stub stands in for a provider and must report the same two
+    // moments, or an attempt served by it never leaves `pre-transfer` and the
+    // cancellation record describes a transfer that visibly happened as one
+    // that did not. Nothing leaves the process, but the state machine is the
+    // thing under test in STUB_INFERENCE runs.
+    request.onTransferStarted?.();
+    request.onProviderAdmitted?.();
+
     const engineId = 'gateway-stub';
     const calibration = 'stub-uncalibrated';
     const build = (label: string, score: number, rank: number) => {

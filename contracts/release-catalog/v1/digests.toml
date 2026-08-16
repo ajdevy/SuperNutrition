@@ -88,7 +88,8 @@ path = "contracts/mobile-api/v1"
 digest = "c51581caee9f78ea06640b06fb2084dd1acf242b616048841ab6f96b5de04eb8"
 algorithm = "release-sha256-v2"
 recorded_at_commit = "pr/slice-ab-backend-v2"
-status = "current"
+status = "superseded"
+superseded_by_commit = "pr/slice-ab-backend-v2"
 note = """
 Owner decisions D-01 (#48) and D-02 (#50), 2026-08-15. Four files changed under \
 the existing acknowledgement mechanism rather than a new release: \
@@ -102,6 +103,22 @@ Not published as mobile-api/v2 by owner decision: v1 has exactly one consumer, \
 the mobile client in this repository, and no build has reached a user. The \
 acknowledgements expire 2026-09-30 (#47), and a real v2 is required before the \
 first external consumer or any shipped build."""
+
+[[entry]]
+release_id = "mobile-api/v1"
+path = "contracts/mobile-api/v1"
+digest = "748a4b3e21f618025ebcd81f322ebefa3444570f2adc67aa2778fd36f3dea32c"
+algorithm = "release-sha256-v2"
+recorded_at_commit = "pr/slice-ab-backend-v2"
+status = "current"
+note = """
+Adversarial pre-review audit finding F-04. The D-01 amendment flipped \
+downstreamDeletionRequested to false in the fixture BODY and rewrote the state's \
+honest_claim, but left the fixture's own description and its machine-readable \
+assertions.honest_claim still saying "Deletion was requested downstream" — the \
+exact privacy overclaim D-01 exists to remove, in the field a client derives \
+user-facing copy from. Both corrected to match the body and the state \
+definition."""
 
 # --- superseded --------------------------------------------------------------
 #

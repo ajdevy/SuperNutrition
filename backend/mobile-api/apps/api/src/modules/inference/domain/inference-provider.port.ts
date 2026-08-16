@@ -21,6 +21,29 @@ export interface ProviderRequest {
   readonly profile: ModelProfile;
   readonly deadlineMs: number;
   readonly signal: AbortSignal;
+  /**
+   * Fired immediately before the payload goes on the wire (#48, audit F-03).
+   *
+   * Only the adapter knows this. The pipeline used to mark the transfer
+   * `transferring` unconditionally before calling the orchestrator, so a
+   * deployment with no provider configured — a supported configuration —
+   * reported that bytes were in flight when nothing had left the process, and
+   * the published `pre-transfer` guarantee ("Nothing was sent. This is a
+   * complete guarantee.") became unreachable through the API.
+   */
+  readonly onTransferStarted?: () => void;
+  /**
+   * Fired when the provider ANSWERED — any HTTP status — which is the moment it
+   * is known to have received the payload (#48, audit F-02).
+   *
+   * Deliberately not `response.ok`. A provider that received the whole image,
+   * ran inference and replied 200 with a body the mapper cannot use, or replied
+   * 400/422, has admitted the payload just as much as one that replied usefully.
+   * Inferring admission from a usable answer understated where the photo went,
+   * which is the same class of false statement #48 set out to remove, pointing
+   * the other way.
+   */
+  readonly onProviderAdmitted?: () => void;
 }
 
 export interface ProviderResponse {

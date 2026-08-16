@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { createHash } from 'node:crypto';
-import { ok, type Result } from '@supernutrition/shared';
+import { ok, err, type Result } from '@supernutrition/shared';
 import { runInferencePipeline, type PipelineDeps } from './pipeline.js';
 import { TransferStateTracker } from './transfer-state.js';
 import {
@@ -70,14 +70,15 @@ class CountingOrchestrator {
 
   async analyze(
     _request: InferenceRequest,
-    options?: { onProviderAdmitted?: () => void },
+    options?: { onTransferStarted?: () => void; onProviderAdmitted?: () => void },
   ): Promise<Result<InferenceResult, InferenceFailure>> {
     this.calls += 1;
-    // #48(a) — the real orchestrator fires this only once a provider has
-    // admitted the payload. A fake that skips it would leave every caller's
-    // transfer state permanently `transferring`, which is not what the port
-    // promises; a fake that fires it on failure would restore the defect.
-    if (this.result.ok) options?.onProviderAdmitted?.();
+    // #48 — a real provider reports two moments: bytes on the wire, and the
+    // provider answering. A fake that reports neither leaves every attempt at
+    // `pre-transfer`; one that reports only the second describes a transfer
+    // that never started.
+    options?.onTransferStarted?.();
+    options?.onProviderAdmitted?.();
     return this.result;
   }
 }
@@ -660,9 +661,9 @@ describe('#48(a) — `transferred` requires provider admission', () => {
     deps = {
       ...deps,
       orchestrator: {
-        analyze: async () => {
-          // Observed from inside the provider call, before it returns: the
-          // provider has been reached but has admitted nothing yet.
+        analyze: async (_r: unknown, options: { onTransferStarted?: () => void }) => {
+          // Bytes are on the wire; the provider has not answered yet.
+          options.onTransferStarted?.();
           stateDuringCall = deps.transfers.stateOf(attemptId);
           return orchestrator.result;
         },
@@ -701,7 +702,9 @@ describe('#48(a) — `transferred` requires provider admission', () => {
     deps = {
       ...deps,
       orchestrator: {
-        analyze: async () => {
+        analyze: async (_r: unknown, options: { onTransferStarted?: () => void }) => {
+          // Bytes went out, then the connection died before any answer.
+          options.onTransferStarted?.();
           throw new Error('provider connection reset');
         },
       } as never,
@@ -718,5 +721,118 @@ describe('#48(a) — `transferred` requires provider admission', () => {
     ).rejects.toThrow();
 
     expect(deps.transfers.stateOf(attemptId)).toBe('transferring');
+  });
+});
+
+describe('audit findings — transfer state must not overstate OR understate', () => {
+  /**
+   * Four defects an adversarial audit of #48 found in the first fix. All four
+   * are the same mistake in different directions: inferring where the photo went
+   * from a signal that does not carry that information.
+   */
+  const run = (over: Record<string, unknown> = {}) =>
+    runInferencePipeline({ ...deps, ...over } as PipelineDeps, {
+      context: contextFor(JPEG) as never,
+      payload: { bytes: JPEG, contentType: 'image/jpeg' },
+      auth: AUTH,
+      requestId: 'req_0000000000000000',
+      clientIp: '127.0.0.1',
+    });
+
+  it('F-01: reports resultSuppressed when a result is discarded by an in-flight cancel', async () => {
+    // The commonest cancellation there is: the client gives up while the
+    // provider call is on the wire. `transferred && !resultDelivered` made
+    // `true` structurally impossible here, so the 202 said "no result was
+    // thrown away" about an attempt whose result the pipeline threw away.
+    const attemptId = 'att_0000000000000000';
+    let record: ReturnType<TransferStateTracker['cancel']> = null;
+
+    await expect(
+      run({
+        orchestrator: {
+          analyze: async (_r: unknown, options: { onTransferStarted?: () => void }) => {
+            options.onTransferStarted?.();
+            // Client cancels mid-call, then the provider answers anyway.
+            record = deps.transfers.cancel(attemptId, AUTH.installationId);
+            return orchestrator.result;
+          },
+        } as never,
+      }),
+    ).rejects.toThrow();
+
+    expect(record).not.toBeNull();
+    expect(record!.transferState).toBe('transferring');
+    expect(record!.resultSuppressed).toBe(true);
+  });
+
+  it('F-02: reaches transferred when the provider answered but the answer was unusable', async () => {
+    // A provider that received the whole image and replied 400, 422, or 200
+    // with a body the mapper cannot use has admitted the payload. Inferring
+    // admission from `response.ok` left the state at `transferring`, whose
+    // published claim is that what a provider received is unknown. It was not
+    // unknown — the provider answered.
+    const attemptId = 'att_0000000000000000';
+
+    await expect(
+      run({
+        orchestrator: {
+          analyze: async (
+            _r: unknown,
+            options: { onTransferStarted?: () => void; onProviderAdmitted?: () => void },
+          ) => {
+            options.onTransferStarted?.();
+            options.onProviderAdmitted?.();
+            return err('malformed-response');
+          },
+        } as never,
+      }),
+    ).resolves.toBeDefined();
+
+    expect(deps.transfers.stateOf(attemptId)).toBe('transferred');
+  });
+
+  it('F-03: stays pre-transfer when no provider is configured and nothing leaves', async () => {
+    // Zero providers is a supported configuration, logged as such. Marking
+    // `transferring` unconditionally told a cancelling client that bytes were
+    // in flight when none had left the process — and made the published
+    // pre-transfer guarantee unreachable through the API.
+    const attemptId = 'att_0000000000000000';
+
+    await run({
+      orchestrator: {
+        // Fires neither signal: no provider was contacted.
+        analyze: async () => err('provider-unavailable'),
+      } as never,
+    });
+
+    expect(deps.transfers.stateOf(attemptId)).toBe('pre-transfer');
+
+    const record = deps.transfers.cancel(attemptId, AUTH.installationId);
+    expect(record!.transferState).toBe('pre-transfer');
+    expect(record!.bytesTransferred).toBe(0);
+    // Nothing was sent, so nothing was suppressed.
+    expect(record!.resultSuppressed).toBe(false);
+  });
+
+  it('does not report a second transfer when a retry re-sends one payload', async () => {
+    // Both signals are once-per-attempt. Firing again on a retry or on pass 2
+    // would overstate exposure as badly as the understatement above.
+    const attemptId = 'att_0000000000000000';
+    await run({
+      orchestrator: {
+        analyze: async (
+          _r: unknown,
+          options: { onTransferStarted?: () => void; onProviderAdmitted?: () => void },
+        ) => {
+          for (let i = 0; i < 3; i += 1) {
+            options.onTransferStarted?.();
+            options.onProviderAdmitted?.();
+          }
+          return orchestrator.result;
+        },
+      } as never,
+    });
+
+    expect(deps.transfers.stateOf(attemptId)).toBe('transferred');
   });
 });
