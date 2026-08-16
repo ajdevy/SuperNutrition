@@ -436,8 +436,27 @@ export class RedisAttemptRegistry {
  */
 export const createRedisClient = async (url: string): Promise<RedisLike> => {
   const { Redis } = await import('ioredis');
-  return new Redis(url, {
+  const client = new Redis(url, {
     maxRetriesPerRequest: 1,
+    // Commands issued before the socket is writeable fail immediately rather
+    // than queueing. That is the behaviour we want in steady state — a request
+    // must not sit in a queue while Redis is gone — but it makes the CONNECT
+    // step load-bearing, which is the next line.
     enableOfflineQueue: false,
-  }) as unknown as RedisLike;
+    // Connect explicitly instead of letting the constructor race.
+    //
+    // Without this the factory returned a client whose socket was still being
+    // established, and every command issued in that window failed with
+    // "Stream isn't writeable" — surfaced as RedisUnavailableError. So the first
+    // requests after every boot were rejected as an outage that was not
+    // happening: replay claims refused, attempts declined, for as long as the
+    // handshake took.
+    //
+    // The fake could not have caught this. It has no socket, so it has no window
+    // in which there is not one. This is what running the lane against a real
+    // server is for.
+    lazyConnect: true,
+  });
+  await client.connect();
+  return client as unknown as RedisLike;
 };

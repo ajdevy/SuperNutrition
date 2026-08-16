@@ -4,7 +4,7 @@ baseline_commit: db802a13b84658e5c4cfc1d1107148b6fe573877
 
 # Story 4.4: Distribute gateway attempt state
 
-Status: proposed
+Status: implemented (criterion 3 verified against a real Redis 2026-08-16)
 
 ## Story
 
@@ -149,3 +149,37 @@ Claude Opus 5
 ### Completion Notes List
 
 - Interim fence and documentation landed 2026-08-14. Implementation not started.
+
+## Verification against a real Redis (2026-08-16)
+
+Criterion 3 required the concurrent-claim property demonstrated against a real
+server, not a fake. Done: Redis 8.10.0, disposable instance on port 6399,
+`REDIS_TEST_URL=redis://127.0.0.1:6399 npm test`.
+
+**It immediately found a defect the fake could not.** `createRedisClient`
+returned before the socket was writeable while `enableOfflineQueue: false` was
+set, so every command issued during the connect window failed with
+"Stream isn't writeable" — surfaced as `RedisUnavailableError`. The first
+requests after every boot would have been refused as an outage that was not
+happening. The fake has no socket, so it has no window in which there is not one.
+Fixed by connecting explicitly (`lazyConnect` + `await connect()`).
+
+Two further defects found in the same pass:
+
+- The Redis client was never released on shutdown, so a held socket kept the
+  event loop alive and a "stopped" process would not exit. The comment beside
+  the database handle warns against exactly this.
+- The concurrency test raced two claimants, which a broken implementation can
+  win by luck. Now twenty, alternating across two connections, none awaited
+  early.
+
+Added alongside: an explicit test that the `effect` and `request-id` keyspaces
+cannot collide (AD-21 replay IDs vs AD-18 transfer effects sharing one server),
+and that an unreachable Redis is refused at connect time so a misconfigured
+deployment fails to boot rather than serving and refusing every request.
+
+Suite: 1097 passing / 1 skipped with `REDIS_TEST_URL` set; 1092 / 6 without.
+
+`GATEWAY_STATE_BACKEND` still defaults to `memory`. The default is deliberately
+unchanged — flipping it would break every deployment without a Redis — but the
+`redis` path is no longer an unverified one.
