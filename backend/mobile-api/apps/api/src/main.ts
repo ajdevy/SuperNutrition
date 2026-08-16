@@ -308,11 +308,19 @@ export const buildApplication = async (
   // The database handle is owned here, so it is released here. A close that
   // only shuts the HTTP server leaves the pool draining after the process
   // believes it stopped.
+  //
+  // The Redis client is owned here too, and was not being released — the same
+  // defect the comment above exists to prevent, one connection later. A held
+  // socket keeps the event loop alive, so a process that had "stopped" would
+  // not exit.
   return {
     ...server,
     close: async () => {
       await server.close();
       await closeDatabase();
+      if (redis !== null) {
+        await (redis as unknown as { quit: () => Promise<unknown> }).quit();
+      }
     },
   };
 };

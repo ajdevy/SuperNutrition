@@ -63,19 +63,39 @@ describe.skipIf(!url)('against a real Redis server', () => {
     b?.close();
   });
 
-  it('decides exactly one winner when two instances claim concurrently', async () => {
+  it('decides exactly one winner when instances claim concurrently', async () => {
     const effectsA = new RedisEffectStore(a.client);
     const effectsB = new RedisEffectStore(b.client);
     const attemptId = `att_${run}`;
 
-    // Fired together rather than in sequence: sequential calls would pass even
-    // against a non-atomic implementation.
-    const results = await Promise.all([
-      effectsA.claimOnce(attemptId, 'eff_1', 60),
-      effectsB.claimOnce(attemptId, 'eff_1', 60),
-    ]);
+    // Twenty claimants, alternating between two connections, all fired before
+    // any resolves. Two racers is a race a broken implementation can win by
+    // luck; twenty is not. Sequential calls would pass even against a
+    // non-atomic implementation, which is why none of these is awaited early.
+    const claimants = Array.from({ length: 20 }, (_, i) =>
+      (i % 2 === 0 ? effectsA : effectsB).claimOnce(attemptId, 'eff_1', 60),
+    );
+    const results = await Promise.all(claimants);
 
     expect(results.filter(Boolean)).toHaveLength(1);
+  });
+
+  it('keeps the replay and effect keyspaces isolated', async () => {
+    // AD-21 replay IDs and AD-18 transfer effects share one Redis. The
+    // composition root builds two stores with different prefixes for exactly
+    // this reason: without them, spending a request ID would consume the
+    // matching transfer effect's claim, and one identifier would answer for
+    // two different questions.
+    const effects = new RedisEffectStore(a.client, 'effect');
+    const requestIds = new RedisEffectStore(b.client, 'request-id');
+    const shared = `att_ns_${run}`;
+
+    expect(await effects.claimOnce(shared, 'id_1', 60)).toBe(true);
+    // Same attempt, same identifier, other keyspace: must still be claimable.
+    expect(await requestIds.claimOnce(shared, 'id_1', 60)).toBe(true);
+    // And each is now spent within its own keyspace only.
+    expect(await effects.claimOnce(shared, 'id_1', 60)).toBe(false);
+    expect(await requestIds.claimOnce(shared, 'id_1', 60)).toBe(false);
   });
 
   it('shares rate-limit decisions across instances', async () => {
@@ -123,4 +143,19 @@ describe.skipIf(!!url)('real-Redis lane', () => {
     // nobody notices. This test asserts the state of the evidence, not the code.
     expect(url).toBeUndefined();
   });
+});
+
+describe('an unreachable Redis is refused at connect time', () => {
+  it('rejects rather than returning a client that will fail every command', async () => {
+    // #49 fail-closed, at the boundary that matters most: boot.
+    //
+    // `createRedisClient` now awaits the connection, so a deployment configured
+    // for the redis backend against a Redis that is not there fails to build the
+    // application at all — non-zero exit — instead of starting, serving, and
+    // refusing every request as a spurious outage.
+    //
+    // Port 1 is reserved and nothing listens on it.
+    const { createRedisClient: connectTo } = await import('./stores.js');
+    await expect(connectTo('redis://127.0.0.1:1')).rejects.toThrow();
+  }, 20_000);
 });
