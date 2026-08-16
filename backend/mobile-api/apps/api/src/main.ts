@@ -78,6 +78,12 @@ const USDA_CONFIG = {
  * Matched to TERMINAL_RETENTION_SECONDS in transfer-state.ts: for exactly as
  * long as the gateway can describe an attempt locally, every instance can also
  * say who holds it and whether it was cancelled.
+ *
+ * ⚠ Fixed, NOT derived from market policy. Story 4.4 criterion 4 asks for the
+ * latter; doing so against a `retentionDays = 0` market would expire the
+ * at-most-once guard immediately. See the note on EFFECT_TTL_SECONDS in
+ * routes/gateway/inference.handler.ts — this is an open owner decision, not an
+ * oversight.
  */
 const TRANSFER_REGISTRY_TTL_SECONDS = 86_400;
 
