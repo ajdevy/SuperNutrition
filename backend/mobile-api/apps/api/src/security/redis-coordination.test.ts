@@ -162,39 +162,86 @@ describe('rate limits are shared, not multiplied by the replica count', () => {
 });
 
 describe('attempt ownership and cancellation cross instances', () => {
+  const OWNER = 'inst_owner';
+  const STRANGER = 'inst_stranger';
+
   it('lets exactly one instance hold an attempt', async () => {
     const registry = new RedisAttemptRegistry(new FakeRedis(), 3600);
 
-    expect(await registry.claimAttempt('att_1', 'instance-a')).toBe(true);
-    expect(await registry.claimAttempt('att_1', 'instance-b')).toBe(false);
+    expect(await registry.claimAttempt('att_1', 'instance-a', OWNER)).toBe(true);
+    expect(await registry.claimAttempt('att_1', 'instance-b', OWNER)).toBe(false);
   });
 
-  it('makes a cancellation on one instance visible to another', async () => {
-    // The gap that made cancellation answer for the wrong instance, or report
-    // `unknown_attempt` for an attempt that exists.
+  it('makes an owner cancellation on one instance visible to another', async () => {
     const redis = new FakeRedis();
     const a = new RedisAttemptRegistry(redis, 3600);
     const b = new RedisAttemptRegistry(redis, 3600);
 
+    await a.claimAttempt('att_1', 'instance-a', OWNER);
     expect(await b.isCancelled('att_1')).toBe(false);
-    await a.markCancelled('att_1');
+    expect(await a.markCancelled('att_1', OWNER)).toBe(true);
     expect(await b.isCancelled('att_1')).toBe(true);
   });
 
-  it('names the instance holding an attempt, so another can refuse honestly', async () => {
-    // The bytes never travel. An instance that does not hold them fails closed
-    // rather than having them shipped to it (AD-8).
+  it('names the holding instance to the owner', async () => {
     const registry = new RedisAttemptRegistry(new FakeRedis(), 3600);
-    await registry.claimAttempt('att_1', 'instance-a');
-    expect(await registry.holderOf('att_1')).toBe('instance-a');
-    expect(await registry.holderOf('att_unknown')).toBeNull();
+    await registry.claimAttempt('att_1', 'instance-a', OWNER);
+    expect(await registry.holderOf('att_1', OWNER)).toBe('instance-a');
+  });
+
+  it('H-01: refuses to cancel an attempt owned by someone else', async () => {
+    // The security defect. The registry stored attemptId -> instanceId with no
+    // owner binding and markCancelled took only an attempt id, so any
+    // authenticated installation that knew or guessed a live attempt id could
+    // cancel another installation's transfer — provided its DELETE reached a
+    // replica that did not hold the attempt, where the local ownership check
+    // never ran.
+    const redis = new FakeRedis();
+    const registry = new RedisAttemptRegistry(redis, 3600);
+    await registry.claimAttempt('att_victim', 'instance-a', OWNER);
+
+    expect(await registry.markCancelled('att_victim', STRANGER)).toBe(false);
+    // And nothing was published: the owner's attempt runs on untouched.
+    expect(await registry.isCancelled('att_victim')).toBe(false);
+  });
+
+  it('H-01: tells a stranger nothing about whether an attempt exists', async () => {
+    // Unknown and foreign must be indistinguishable, or the endpoint becomes an
+    // oracle for enumerating other people's live transfers.
+    const registry = new RedisAttemptRegistry(new FakeRedis(), 3600);
+    await registry.claimAttempt('att_real', 'instance-a', OWNER);
+
+    const foreign = await registry.holderOf('att_real', STRANGER);
+    const unknown = await registry.holderOf('att_never_existed', STRANGER);
+    expect(foreign).toBe(unknown);
+    expect(foreign).toBeNull();
+  });
+
+  it('H-01: stores an owner token, never the installation id itself', async () => {
+    // The value is readable by anyone with the Redis connection. Ownership only
+    // ever needs comparing, so storing the raw id would be a leak for no gain.
+    const redis = new FakeRedis();
+    const registry = new RedisAttemptRegistry(redis, 3600);
+    await registry.claimAttempt('att_1', 'instance-a', OWNER);
+
+    for (const value of redis.written) {
+      expect(value).not.toContain(OWNER);
+    }
+  });
+
+  it('is idempotent for the owner', async () => {
+    const registry = new RedisAttemptRegistry(new FakeRedis(), 3600);
+    await registry.claimAttempt('att_1', 'instance-a', OWNER);
+    expect(await registry.markCancelled('att_1', OWNER)).toBe(true);
+    expect(await registry.markCancelled('att_1', OWNER)).toBe(true);
   });
 
   it('fails closed when Redis is unreachable', async () => {
     const registry = new RedisAttemptRegistry(unreachable(), 3600);
-    await expect(registry.claimAttempt('att_1', 'a')).rejects.toThrow(RedisUnavailableError);
+    await expect(registry.claimAttempt('att_1', 'a', OWNER)).rejects.toThrow(RedisUnavailableError);
     await expect(registry.isCancelled('att_1')).rejects.toThrow(RedisUnavailableError);
-    await expect(registry.holderOf('att_1')).rejects.toThrow(RedisUnavailableError);
+    await expect(registry.holderOf('att_1', OWNER)).rejects.toThrow(RedisUnavailableError);
+    await expect(registry.markCancelled('att_1', OWNER)).rejects.toThrow(RedisUnavailableError);
   });
 });
 
@@ -210,7 +257,7 @@ describe('AD-8 — no image bytes reach Redis', () => {
     ]);
 
     await effects.claimOnce('att_1', 'eff_1', 60);
-    await registry.claimAttempt('att_1', 'instance-a');
+    await registry.claimAttempt('att_1', 'instance-a', 'inst_owner');
     await registry.markCancelled('att_1');
     await limiter.check({ layer: 'installation', principal: 'inst_1' });
 

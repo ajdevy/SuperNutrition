@@ -35,7 +35,7 @@ separate surface and needs its own release before any client consumes it.
 | `photo-analysis-consent-expired` | 400, expiry evaluated at resolution time |
 | `photo-analysis-rate-limited` | 429 with headers, zero provider calls |
 | `cancellation-pre-transfer` | 204, zero bytes sent |
-| `cancellation-transferred` | 202, deletion requested, `recallClaimed: false` |
+| `cancellation-transferred` | 202, result suppressed, NO deletion requested, `recallClaimed: false` |
 
 ## Properties this release guarantees
 

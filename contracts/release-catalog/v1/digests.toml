@@ -127,7 +127,8 @@ path = "contracts/mobile-api/v1"
 digest = "dbce94511419cf1d54fcc9e52c01314f238b808f6d0603032628365dc0046177"
 algorithm = "release-sha256-v2"
 recorded_at_commit = "pr/slice-ab-backend-v2"
-status = "current"
+status = "superseded"
+superseded_by_commit = "pr/slice-ab-backend-v2"
 note = """
 Live-head review of #50. Two corrections to gateway-request.toml, both making \
 the published text match what executes rather than changing behaviour:
@@ -143,6 +144,21 @@ The `pre_authentication` comment now names where `content-length` and \
 @fastify/multipart's `limits`, not gateway code. A reviewer looking for a \
 hand-written validator concluded the guards were absent; the unused \
 `UploadValidator` interface that invited that reading has been removed."""
+
+[[entry]]
+release_id = "mobile-api/v1"
+path = "contracts/mobile-api/v1"
+digest = "2e2775c939219557ee967c128f384dd149c82e6b6e8c20923c8d347efe59d2f3"
+algorithm = "release-sha256-v2"
+recorded_at_commit = "pr/slice-ab-backend-v2"
+status = "current"
+note = """
+handover-6 M-04. The release notes still summarised the transferred-cancellation \
+fixture as "deletion requested" while the state definition, the fixture body and \
+its assertions all say no deletion request is issued. Corrected, and \
+verify-mobile-api-contract.sh gained a coherence check that fails when the state \
+definition, the fixture body, the fixture assertions, the fixture description and \
+the release notes disagree about it — the drift has now happened twice."""
 
 # --- superseded --------------------------------------------------------------
 #

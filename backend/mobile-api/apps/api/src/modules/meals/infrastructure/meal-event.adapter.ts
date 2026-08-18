@@ -167,6 +167,15 @@ export const toWriteRows = (event: MealEvent): EventWriteRows => ({
     : null,
 });
 
+/**
+ * PostgreSQL reports a unique-constraint breach as SQLSTATE 23505.
+ *
+ * Matched on the code rather than the message: messages are localised and
+ * carry table and value detail that must not reach a domain type or a log line.
+ */
+const isUniqueViolation = (cause: unknown): boolean =>
+  typeof cause === 'object' && cause !== null && (cause as { code?: unknown }).code === '23505';
+
 export class DrizzleMealEventRepositoryAdapter implements MealEventRepository {
   readonly #rows: DrizzleMealEventRepository;
 
@@ -246,7 +255,17 @@ export class DrizzleMealEventRepositoryAdapter implements MealEventRepository {
     try {
       const saved = await this.#rows.supersede(originalId, rows.event, rows.items, rows.snapshot);
       return saved ? ok(toDomainMealEvent(saved)) : err('not-found');
-    } catch {
+    } catch (cause) {
+      // M-01 — the select-then-insert above is not atomic; the unique index on
+      // `supersedes_id` is the real guard. Two concurrent corrections of one
+      // meal can both see no successor, and the loser hits that index.
+      //
+      // Every throw used to become `storage-unavailable`, so the loser of a race
+      // the database resolved correctly was told the server was broken — a 500,
+      // for a request whose honest answer is the one a stale client already
+      // handles. The outcome is identical to the pre-checked case above:
+      // somebody else corrected this meal first.
+      if (isUniqueViolation(cause)) return err('not-found');
       return err('storage-unavailable');
     }
   }

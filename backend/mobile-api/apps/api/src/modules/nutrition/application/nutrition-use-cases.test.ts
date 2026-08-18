@@ -112,7 +112,10 @@ describe('SearchFoodHandler', () => {
     const result = await new SearchFoodHandler(catalog).execute({ query: 'banana', country: 'US' });
 
     expect(result).toEqual(ok([match]));
-    expect(catalog.search).toHaveBeenCalledWith('banana', 'US');
+    // M-02 — the limit is now forwarded, so the provider sees a third argument.
+    // Undefined here because this caller did not ask for a size; the provider
+    // owns the default.
+    expect(catalog.search).toHaveBeenCalledWith('banana', 'US', undefined);
   });
 
   // Matches, not verdicts: auto-selecting a food identity is a forbidden
@@ -153,5 +156,44 @@ describe('SearchFoodHandler', () => {
     expect(
       await new SearchFoodHandler(catalog).execute({ query: 'banana', country: 'US' }),
     ).toEqual(err('provider-unavailable'));
+  });
+});
+
+describe('M-02 — the validated limit reaches the provider', () => {
+  /**
+   * The route validates `limit` to 1..25 and passes it; the port declares it;
+   * the provider bounds it. This handler sat in the middle, narrowed its own
+   * parameter type to drop it, and silently gave every caller the provider's
+   * default of 5. TypeScript's parameter bivariance let that compile against an
+   * interface that does declare it.
+   */
+  const capturing = () => {
+    const seen: (number | undefined)[] = [];
+    return {
+      seen,
+      provider: {
+        search: async (_q: string, _c: string, limit?: number) => {
+          seen.push(limit);
+          return ok([] as never);
+        },
+        lookup: async () => ok(null as never),
+      },
+    };
+  };
+
+  it.each([1, 5, 25])('forwards limit=%i unchanged', async (limit) => {
+    const { seen, provider } = capturing();
+    await new SearchFoodHandler(provider as never).execute({
+      query: 'banana',
+      country: 'DE',
+      limit,
+    });
+    expect(seen).toEqual([limit]);
+  });
+
+  it('forwards undefined when the caller did not ask, leaving the default to the provider', async () => {
+    const { seen, provider } = capturing();
+    await new SearchFoodHandler(provider as never).execute({ query: 'banana', country: 'DE' });
+    expect(seen).toEqual([undefined]);
   });
 });

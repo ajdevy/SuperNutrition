@@ -66,12 +66,24 @@ export interface EffectStore {
  * attempt is an instance identifier.
  */
 export interface AttemptRegistry {
-  /** False when another instance already holds this attempt. */
-  claimAttempt(attemptId: string, instanceId: string): Promise<boolean>;
-  /** Which instance holds it, or null. */
-  holderOf(attemptId: string): Promise<string | null>;
-  /** Idempotent; visible to every instance. */
-  markCancelled(attemptId: string): Promise<void>;
+  /**
+   * Binds the attempt to the holding instance AND the owning installation.
+   * False when another instance already holds it.
+   */
+  claimAttempt(attemptId: string, instanceId: string, owner: string): Promise<boolean>;
+  /**
+   * Which instance holds it, or null when it is unknown OR owned by someone
+   * else. H-01 — those two cases MUST be indistinguishable: answering "held
+   * elsewhere" to a non-owner confirms that another installation's attempt is
+   * live, which is an enumeration oracle.
+   */
+  holderOf(attemptId: string, owner: string): Promise<string | null>;
+  /**
+   * Publishes a cancellation to every instance, only for the owner. False when
+   * unknown or foreign — the same answer for both, for the same reason.
+   * Idempotent for the owner.
+   */
+  markCancelled(attemptId: string, owner: string): Promise<boolean>;
   isCancelled(attemptId: string): Promise<boolean>;
 }
 

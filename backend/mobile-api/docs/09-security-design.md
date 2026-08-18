@@ -175,7 +175,7 @@ Server side:
 | Cache | Payloads are never cached. Redis holds counters, nonces, and idempotency records only |
 | Queues | No queue carries payloads |
 | Backups | Nothing durable exists to back up |
-| Provider | Zero-retention terms required at G-4; `DELETE /gw/v1/inference/{attemptId}` issues a downstream deletion request |
+| Provider | Zero-retention terms required at G-4. `DELETE /gw/v1/inference/{attemptId}` suppresses the result and does NOT issue a downstream deletion request: no provider adapter exposes an erasure operation, so there is nothing to ask. The capability is itself a G-4 provider/DPA decision (owner decision D-01) |
 
 The gateway route group has **no dependency on `packages/database`** (§3.2,
 §4.9). Its inability to persist a photo is a dependency-graph property that a

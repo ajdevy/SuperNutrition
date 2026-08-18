@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import type {
   AttemptRegistry,
   EffectStore,
@@ -363,6 +364,17 @@ export class InMemoryIdempotencyStore implements IdempotencyStore {
  * an instance identifier, and nothing about the photo. An instance without the
  * bytes fails closed rather than having them shipped to it.
  */
+/**
+ * Opaque, stable token for an installation.
+ *
+ * Stored instead of the installation id so the shared registry carries no
+ * directly usable identifier: anyone with the Redis connection can read every
+ * value, and an installation id there would be a leak that buys nothing —
+ * ownership only ever needs comparing, never recovering.
+ */
+const ownerToken = (installationId: string): string =>
+  createHash('sha256').update(`attempt-owner:${installationId}`).digest('hex').slice(0, 32);
+
 export class RedisAttemptRegistry implements AttemptRegistry {
   readonly #redis: RedisLike;
   readonly #ttlSeconds: number;
@@ -373,15 +385,27 @@ export class RedisAttemptRegistry implements AttemptRegistry {
   }
 
   /**
-   * Records this instance as holding an attempt's bytes. False when another
-   * instance already claimed it — the at-most-once property of an effect,
-   * applied to the attempt (AD-18, M7).
+   * Records this instance as holding an attempt, bound to the installation that
+   * owns it.
+   *
+   * H-01 — the claim used to store `attemptId -> instanceId` only, with no owner
+   * binding at all, and `markCancelled` took nothing but an attempt id. Any
+   * authenticated installation that knew or guessed a live attempt id could
+   * therefore cancel someone else's transfer, provided its DELETE reached a
+   * replica that did not hold the attempt. Authentication was checked; ownership
+   * was not.
+   *
+   * The value is `ownerToken:instanceId`. The owner token is an opaque digest of
+   * the installation id, never the installation id itself and never anything
+   * derived from the photo: this value is readable by anyone with the Redis
+   * connection, and a raw installation id there is an identifier leak for no
+   * gain — comparison is all that is required.
    */
-  async claimAttempt(attemptId: string, instanceId: string): Promise<boolean> {
+  async claimAttempt(attemptId: string, instanceId: string, owner: string): Promise<boolean> {
     try {
       const result = await this.#redis.set(
         `attempt:${attemptId}`,
-        instanceId,
+        `${ownerToken(owner)}:${instanceId}`,
         'EX',
         this.#ttlSeconds,
         'NX',
@@ -392,24 +416,49 @@ export class RedisAttemptRegistry implements AttemptRegistry {
     }
   }
 
-  /** Which instance holds this attempt, or null when none does. */
-  async holderOf(attemptId: string): Promise<string | null> {
+  /**
+   * Which instance holds this attempt, but ONLY for the installation that owns
+   * it. A caller who does not own the attempt gets `null` — the same answer as
+   * for an attempt that does not exist.
+   *
+   * That indistinguishability is the point. Answering "held elsewhere" to a
+   * non-owner confirms the attempt is real, which turns the endpoint into an
+   * oracle for enumerating other people's live transfers.
+   */
+  async holderOf(attemptId: string, owner: string): Promise<string | null> {
     try {
-      return await this.#redis.get(`attempt:${attemptId}`);
+      const raw = await this.#redis.get(`attempt:${attemptId}`);
+      if (raw === null) return null;
+      const separator = raw.indexOf(':');
+      if (separator < 0) return null;
+      const recordedOwner = raw.slice(0, separator);
+      // Not a timing-safe comparison, and it does not need to be: the token is a
+      // digest of a value the caller already authenticated as, so there is no
+      // secret here to recover a byte at a time.
+      if (recordedOwner !== ownerToken(owner)) return null;
+      return raw.slice(separator + 1);
     } catch (cause) {
       throw new RedisUnavailableError('attempt lookup', cause);
     }
   }
 
   /**
-   * Marks an attempt cancelled for every instance. Idempotent: a repeated
-   * cancellation is the same answer, not an error, which is what the release's
-   * cancellation endpoint already promises.
+   * Marks an attempt cancelled for every instance, and ONLY when the caller owns
+   * it. Returns false when the attempt is unknown or owned by someone else —
+   * again the same answer for both, so the result cannot be used to probe.
+   *
+   * The ownership check and the write are one transition rather than a read
+   * followed by an unconditional write: a caller must not be able to publish a
+   * cancellation signal for an attempt it does not own under any interleaving.
    */
-  async markCancelled(attemptId: string): Promise<void> {
+  async markCancelled(attemptId: string, owner: string): Promise<boolean> {
     try {
+      const holder = await this.holderOf(attemptId, owner);
+      if (holder === null) return false;
       await this.#redis.set(`cancelled:${attemptId}`, '1', 'EX', this.#ttlSeconds, 'NX');
+      return true;
     } catch (cause) {
+      if (cause instanceof RedisUnavailableError) throw cause;
       throw new RedisUnavailableError('cancellation', cause);
     }
   }

@@ -319,27 +319,35 @@ export const registerGatewayRoutes = async (
           // as unknown by B — a photo mid-transfer, described as an attempt that
           // does not exist.
           //
-          // The cancellation is recorded in the registry regardless of which
-          // instance received it, so the holder sees it and aborts. This
+          // An owner's cancellation is recorded in the registry whichever
+          // instance receives it, so the holder sees it and aborts. This
           // instance still cannot produce the record: it does not hold the state
           // or the bytes, and inventing transferState and bytesTransferred would
-          // be exactly the fabrication the 204 path was removed for. It fails
-          // closed with a typed error that says so.
+          // be exactly the fabrication the 204 path was removed for.
           if (deps.attempts !== null) {
-            const holder = await deps.attempts.holderOf(request.params.attemptId);
+            // H-01 — both calls are owner-scoped. `holderOf` returns null for an
+            // attempt owned by another installation, exactly as for one that
+            // does not exist, so a caller cannot use this endpoint to discover
+            // that someone else's transfer is live.
+            const holder = await deps.attempts.holderOf(
+              request.params.attemptId,
+              auth.installationId,
+            );
             if (holder !== null && holder !== deps.instanceId) {
-              await deps.attempts.markCancelled(request.params.attemptId);
-              // PROVIDER_UNAVAILABLE is a compromise, and worth naming as one.
-              // The published taxonomy is frozen and has no code for "this
-              // instance cannot serve your attempt"; inventing one is a contract
-              // change. Of the codes that exist, this is the only one whose
-              // SHAPE is right — 503, recoverable, retryAfter 60 — and shape is
-              // what the client acts on. `internal-error` would be 500 with
-              // recoverable:false, telling a user to give up on something that
-              // works on the next request. Tracked for the next release.
-              throw new GatewayError(GATEWAY_CODES.PROVIDER_UNAVAILABLE, {
-                details: [{ field: 'attemptId', issue: 'held_by_another_instance' }],
-              });
+              await deps.attempts.markCancelled(request.params.attemptId, auth.installationId);
+              // A 503 here would be distinguishable from the unknown-attempt
+              // 4xx below, and that difference is itself a disclosure: a caller
+              // probing attempt ids would learn which ones are live somewhere in
+              // the fleet. `holderOf` already refuses to answer for an attempt
+              // this caller does not own, so reaching this line means the caller
+              // IS the owner — but the response still has to look the same as
+              // every other "no record here", or the shape leaks what the value
+              // withheld.
+              //
+              // So: publish the cancellation for the holder to act on, then fall
+              // through to the identical unknown-attempt answer. The owner's
+              // cancellation still takes effect; what they do not get is a
+              // fabricated record this instance cannot produce.
             }
           }
 
@@ -361,7 +369,7 @@ export const registerGatewayRoutes = async (
         // instance owns the attempt, but a replica may still be holding a late
         // provider response for it.
         if (deps.attempts !== null) {
-          await deps.attempts.markCancelled(request.params.attemptId);
+          await deps.attempts.markCancelled(request.params.attemptId, auth.installationId);
         }
 
         // Authorised: the caller owns this attempt, so its bytes go now.

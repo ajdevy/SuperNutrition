@@ -20,7 +20,6 @@ export default defineConfig({
         '**/*.test.ts',
         '**/dist/**',
         'packages/database/src/migrations/**',
-        'apps/api/src/main.ts',
       ],
       thresholds: {
         lines: 85,

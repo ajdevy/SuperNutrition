@@ -167,10 +167,27 @@ export const buildApplication = async (
   // was actually built: adding a new per-process store that the fence protects
   // and forgetting it here is the mistake this guards, and the only way to make
   // this true is to bind the thing.
+  //
+  // H-04 — `sharedStateComplete` is FALSE while Product idempotency is
+  // process-local, even in redis mode.
+  //
+  // `buildServer` below receives `new InMemoryIdempotencyStore()` unconditionally.
+  // With two replicas that means the same authenticated create request carrying
+  // the same Idempotency-Key can claim independently on each and produce two
+  // durable meal events — the exact double-write the key exists to prevent.
+  //
+  // The gateway's own state is shared and correct. That is not enough: the fence
+  // protects the deployment, not one surface of it, and declaring completeness
+  // while any protected store is per-process is how the previous lift went wrong.
+  // A shared idempotency binding is real work with its own contract semantics
+  // (scoped key, request digest, replayed body, conflict, failure-release, TTL),
+  // and asserting it here before it exists would repeat the mistake rather than
+  // fix it.
+  const productIdempotencyShared = false;
   assertSingleInstanceState(
     config.deployment.instanceCount,
     config.deployment.gatewayStateBackend,
-    redis !== null && attempts !== null,
+    redis !== null && attempts !== null && productIdempotencyShared,
   );
 
   const profiles = TomlModelProfileSource.fromFile(
