@@ -18,7 +18,9 @@ import type { MealEvent } from '../domain/index.js';
 const aggregate = (over: Partial<MealEventAggregateRow['event']> = {}): MealEventAggregateRow =>
   ({
     event: {
-      id: 'meal-1',
+      // A real row's id is a uuid column, and the page cursor is compared
+      // against it — so the fixture has to be one (M-03).
+      id: '11111111-1111-4111-8111-111111111111',
       userId: 'user-1',
       source: 'manual',
       status: 'confirmed',
@@ -39,7 +41,7 @@ const aggregate = (over: Partial<MealEventAggregateRow['event']> = {}): MealEven
     items: [
       {
         id: 'item-1',
-        mealEventId: 'meal-1',
+        mealEventId: '11111111-1111-4111-8111-111111111111',
         position: 0,
         foodRef: 'usda:fdc:171705',
         displayName: 'Banana, raw',
@@ -53,7 +55,7 @@ const aggregate = (over: Partial<MealEventAggregateRow['event']> = {}): MealEven
     ],
     snapshot: {
       id: 'snap-1',
-      mealEventId: 'meal-1',
+      mealEventId: '11111111-1111-4111-8111-111111111111',
       catalogSource: 'usda',
       datasetVersion: 'usda-2026.1',
       servingBasis: { unit: 'g', amount: '118', gramWeight: '118' },
@@ -196,7 +198,10 @@ describe('domain to rows', () => {
 describe('reading through the port', () => {
   it('reports absence as not-found rather than as an empty meal', async () => {
     const adapter = new DrizzleMealEventRepositoryAdapter(rows());
-    const found = await adapter.findById('meal-1' as never, 'user-1' as never);
+    const found = await adapter.findById(
+      '11111111-1111-4111-8111-111111111111' as never,
+      'user-1' as never,
+    );
     expect(found).toEqual({ ok: false, error: 'not-found' });
   });
 
@@ -208,7 +213,10 @@ describe('reading through the port', () => {
         }) as never,
       }),
     );
-    const found = await adapter.findById('meal-1' as never, 'user-1' as never);
+    const found = await adapter.findById(
+      '11111111-1111-4111-8111-111111111111' as never,
+      'user-1' as never,
+    );
     expect(found).toEqual({ ok: false, error: 'storage-unavailable' });
   });
 });
@@ -226,7 +234,10 @@ describe('paging through the port', () => {
     const cursor = decodePageCursor(page.value.page.nextCursor ?? '');
     expect(cursor.ok).toBe(true);
     if (cursor.ok) {
-      expect(cursor.value).toEqual({ sortKey: '2026-07-29T12:30:00.000Z', id: 'meal-1' });
+      expect(cursor.value).toEqual({
+        sortKey: '2026-07-29T12:30:00.000Z',
+        id: '11111111-1111-4111-8111-111111111111',
+      });
     }
   });
 
@@ -266,7 +277,10 @@ describe('paging through the port', () => {
       'user-1' as never,
       {
         limit: 20,
-        cursor: encodePageCursor({ sortKey: '2026-07-29T12:30:00.000Z', id: 'meal-9' }),
+        cursor: encodePageCursor({
+          sortKey: '2026-07-29T12:30:00.000Z',
+          id: '99999999-9999-4999-8999-999999999999',
+        }),
       },
       {
         from: '2026-07-01' as never,
@@ -279,7 +293,7 @@ describe('paging through the port', () => {
     expect(findPage).toHaveBeenCalledWith({
       userId: 'user-1',
       limit: 20,
-      cursor: { sortKey: '2026-07-29T12:30:00.000Z', id: 'meal-9' },
+      cursor: { sortKey: '2026-07-29T12:30:00.000Z', id: '99999999-9999-4999-8999-999999999999' },
       from: '2026-07-01',
       to: '2026-07-31',
       mealType: 'lunch',
@@ -306,7 +320,7 @@ describe('writing through the port', () => {
   it('returns the aggregate as stored', async () => {
     const adapter = new DrizzleMealEventRepositoryAdapter(rows());
     const saved = await adapter.save(event);
-    expect(saved.ok && saved.value.id).toBe('meal-1');
+    expect(saved.ok && saved.value.id).toBe('11111111-1111-4111-8111-111111111111');
   });
 
   it('reports a failed write as storage-unavailable, never as success', async () => {
@@ -334,7 +348,10 @@ describe('writing through the port', () => {
     const adapter = new DrizzleMealEventRepositoryAdapter(
       rows({ supersede: vi.fn(async () => aggregate({ id: 'meal-2', revision: 2 })) as never }),
     );
-    const corrected = await adapter.supersede('meal-1' as never, event);
+    const corrected = await adapter.supersede(
+      '11111111-1111-4111-8111-111111111111' as never,
+      event,
+    );
     expect(corrected.ok && corrected.value.revision).toBe(2);
   });
 
@@ -342,7 +359,9 @@ describe('writing through the port', () => {
     const adapter = new DrizzleMealEventRepositoryAdapter(
       rows({ softDelete: vi.fn(async () => false) as never }),
     );
-    expect(await adapter.softDelete('meal-1' as never, 'user-1' as never)).toEqual({
+    expect(
+      await adapter.softDelete('11111111-1111-4111-8111-111111111111' as never, 'user-1' as never),
+    ).toEqual({
       ok: false,
       error: 'not-found',
     });
@@ -350,7 +369,9 @@ describe('writing through the port', () => {
 
   it('reports a successful delete without a value', async () => {
     const adapter = new DrizzleMealEventRepositoryAdapter(rows());
-    expect(await adapter.softDelete('meal-1' as never, 'user-1' as never)).toEqual({
+    expect(
+      await adapter.softDelete('11111111-1111-4111-8111-111111111111' as never, 'user-1' as never),
+    ).toEqual({
       ok: true,
       value: undefined,
     });
@@ -364,7 +385,9 @@ describe('writing through the port', () => {
         }) as never,
       }),
     );
-    expect(await adapter.softDelete('meal-1' as never, 'user-1' as never)).toEqual({
+    expect(
+      await adapter.softDelete('11111111-1111-4111-8111-111111111111' as never, 'user-1' as never),
+    ).toEqual({
       ok: false,
       error: 'storage-unavailable',
     });
@@ -378,10 +401,12 @@ describe('writing through the port', () => {
         }) as never,
       }),
     );
-    expect(await adapter.supersede('meal-1' as never, event)).toEqual({
-      ok: false,
-      error: 'storage-unavailable',
-    });
+    expect(await adapter.supersede('11111111-1111-4111-8111-111111111111' as never, event)).toEqual(
+      {
+        ok: false,
+        error: 'storage-unavailable',
+      },
+    );
   });
 });
 
@@ -390,8 +415,11 @@ describe('defensive mapping of partly written rows', () => {
     const adapter = new DrizzleMealEventRepositoryAdapter(
       rows({ findById: vi.fn(async () => aggregate()) as never }),
     );
-    const found = await adapter.findById('meal-1' as never, 'user-1' as never);
-    expect(found.ok && found.value.id).toBe('meal-1');
+    const found = await adapter.findById(
+      '11111111-1111-4111-8111-111111111111' as never,
+      'user-1' as never,
+    );
+    expect(found.ok && found.value.id).toBe('11111111-1111-4111-8111-111111111111');
     expect(found.ok && found.value.items).toHaveLength(1);
   });
 
@@ -417,5 +445,67 @@ describe('defensive mapping of partly written rows', () => {
   it('writes no confirmation timestamp for a meal that has none', () => {
     const event = toDomainMealEvent(aggregate({ confirmedAt: null }));
     expect(toWriteRows(event).event.confirmedAt).toBeNull();
+  });
+});
+
+describe('M-01 — a lost correction race is stale, not a server outage', () => {
+  /**
+   * `supersede` selects then inserts; the unique index on `supersedes_id` is the
+   * real concurrency guard. Two corrections of one meal can both observe no
+   * successor, and the loser hits the index.
+   *
+   * Every throw used to become `storage-unavailable` — a 500 blaming the server
+   * for a race the database resolved correctly. The honest answer is the same
+   * one the pre-check already gives: somebody corrected this meal first.
+   *
+   * These assert the MAPPING. The race itself needs two real concurrent
+   * PostgreSQL transactions; an in-memory repository cannot produce a
+   * unique-index violation, so it cannot demonstrate the race.
+   */
+  const replacement = toDomainMealEvent(aggregate());
+  const throwing = (cause: unknown) =>
+    new DrizzleMealEventRepositoryAdapter(
+      rows({
+        supersede: vi.fn(async () => {
+          throw cause;
+        }) as never,
+      }),
+    );
+
+  it('reports a unique violation as not-found', async () => {
+    const violation = Object.assign(new Error('duplicate key value'), { code: '23505' });
+    expect(
+      await throwing(violation).supersede(
+        '11111111-1111-4111-8111-111111111111' as never,
+        replacement,
+      ),
+    ).toEqual({
+      ok: false,
+      error: 'not-found',
+    });
+  });
+
+  it('still reports a genuine outage as storage-unavailable', async () => {
+    // The mapping must not swallow real failures: a connection reset is not a
+    // stale client.
+    const reset = Object.assign(new Error('connection terminated'), { code: '08006' });
+    expect(
+      await throwing(reset).supersede('11111111-1111-4111-8111-111111111111' as never, replacement),
+    ).toEqual({
+      ok: false,
+      error: 'storage-unavailable',
+    });
+  });
+
+  it('reports an error with no code as storage-unavailable', async () => {
+    expect(
+      await throwing(new Error('something else')).supersede(
+        '11111111-1111-4111-8111-111111111111' as never,
+        replacement,
+      ),
+    ).toEqual({
+      ok: false,
+      error: 'storage-unavailable',
+    });
   });
 });

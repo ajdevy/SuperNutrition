@@ -919,3 +919,141 @@ describe('#49 review — the attempt registry is composed and load-bearing', () 
     expect(orchestrator.calls).toBe(1);
   });
 });
+
+describe('handover-6 — distributed cancellation is owner-bound and prompt', () => {
+  const OWNER = AUTH.installationId;
+  const STRANGER = 'inst_stranger';
+
+  /** Owner-bound registry standing in for the Redis one. */
+  const registry = () => {
+    const held = new Map<string, { owner: string; instance: string }>();
+    const cancelled = new Set<string>();
+    return {
+      cancelled,
+      claimAttempt: async (id: string, instance: string, owner: string) => {
+        if (held.has(id)) return false;
+        held.set(id, { owner, instance });
+        return true;
+      },
+      holderOf: async (id: string, owner: string) => {
+        const e = held.get(id);
+        return e && e.owner === owner ? e.instance : null;
+      },
+      markCancelled: async (id: string, owner: string) => {
+        const e = held.get(id);
+        if (!e || e.owner !== owner) return false;
+        cancelled.add(id);
+        return true;
+      },
+      isCancelled: async (id: string) => cancelled.has(id),
+    };
+  };
+
+  const run = (over: Record<string, unknown>) =>
+    runInferencePipeline({ ...deps, ...over } as PipelineDeps, {
+      context: contextFor(JPEG) as never,
+      payload: { bytes: JPEG, contentType: 'image/jpeg' },
+      auth: AUTH,
+      requestId: 'req_0000000000000000',
+      clientIp: '127.0.0.1',
+    });
+
+  it('H-01: a stranger cannot publish a cancellation for an owner attempt', async () => {
+    const shared = registry();
+    await shared.claimAttempt('att_victim', 'instance-a', OWNER);
+
+    expect(await shared.markCancelled('att_victim', STRANGER)).toBe(false);
+    expect(await shared.isCancelled('att_victim')).toBe(false);
+    // And a stranger cannot even learn it exists.
+    expect(await shared.holderOf('att_victim', STRANGER)).toBeNull();
+  });
+
+  it('H-02: aborts the in-flight provider call, not just the result', async () => {
+    // The provider fetch used to keep running until it finished on its own,
+    // because the registry was read only after analyze() resolved. `transferring`
+    // promises the transport is ABORTED, so suppressing a completed result is
+    // not the contract's claim.
+    const shared = registry();
+    let sawAbort = false;
+
+    await expect(
+      run({
+        attempts: shared,
+        instanceId: 'instance-a',
+        orchestrator: {
+          analyze: async (
+            _r: unknown,
+            options: { signal: AbortSignal; onTransferStarted?: () => void },
+          ) => {
+            options.onTransferStarted?.();
+            // Owner cancels via ANOTHER replica while this call is on the wire.
+            shared.cancelled.add('att_0000000000000000');
+            // Wait for the watcher to notice and abort this process's signal.
+            await new Promise<void>((resolve) => {
+              if (options.signal.aborted) {
+                sawAbort = true;
+                resolve();
+                return;
+              }
+              options.signal.addEventListener('abort', () => {
+                sawAbort = true;
+                resolve();
+              });
+              setTimeout(resolve, 3000);
+            });
+            return orchestrator.result;
+          },
+        } as never,
+      }),
+    ).rejects.toMatchObject({ gatewayCode: 'client-cancelled' });
+
+    expect(sawAbort, 'the provider signal was never aborted').toBe(true);
+  }, 10_000);
+
+  it('H-02: aborts when the marker was written before the request arrived', async () => {
+    // The interleaving a late-starting subscriber would miss.
+    const shared = registry();
+    shared.cancelled.add('att_0000000000000000');
+    let abortedAtEntry = false;
+
+    await expect(
+      run({
+        attempts: shared,
+        instanceId: 'instance-a',
+        orchestrator: {
+          analyze: async (_r: unknown, options: { signal: AbortSignal }) => {
+            abortedAtEntry = options.signal.aborted;
+            return orchestrator.result;
+          },
+        } as never,
+      }),
+    ).rejects.toMatchObject({ gatewayCode: 'client-cancelled' });
+
+    expect(abortedAtEntry, 'a pre-existing cancellation was not seen').toBe(true);
+  });
+
+  it('H-03: releases the local attempt when the remote claim throws', async () => {
+    // The remote claim used to sit outside the try, so a Redis throw left the
+    // local entry active for the life of the process with its AbortController
+    // orphaned, and the spent request-id/effect claims made every retry look
+    // like a duplicate.
+    const attemptId = 'att_0000000000000000';
+    await expect(
+      run({
+        attempts: {
+          claimAttempt: async () => {
+            throw new Error('ECONNREFUSED');
+          },
+          holderOf: async () => null,
+          markCancelled: async () => false,
+          isCancelled: async () => false,
+        },
+        instanceId: 'instance-a',
+      }),
+    ).rejects.toThrow();
+
+    expect(deps.transfers.activeCount, 'the local attempt leaked').toBe(0);
+    expect(disposed, 'the payload was not disposed').toContain(attemptId);
+    expect(orchestrator.calls, 'a provider was called despite the failure').toBe(0);
+  });
+});

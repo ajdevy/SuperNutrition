@@ -227,6 +227,65 @@ for entry in transfer.get("response_field", []):
     if entry.get("name") == "recallClaimed" and entry.get("enum") != [False]:
         fail("recallClaimed must be constrained to false")
 
+# --- deletion-claim coherence (M-04) -----------------------------------------
+#
+# The state definition, the fixture body, the fixture's own assertions, and the
+# release notes each state whether a downstream deletion request is issued. They
+# drifted twice: the D-01 amendment corrected the state and the fixture body but
+# left the fixture's assertions and the release table saying the opposite, so the
+# field a client derives user-facing copy from still promised an erasure nobody
+# had requested.
+#
+# One source decides, and everything else must agree with it.
+
+transferred = next(
+    (st for st in transfer.get("state", []) if st.get("id") == "transferred"), None
+)
+if transferred is None:
+    fail("transfer-states.toml has no `transferred` state")
+
+deletion_claimed = transferred.get("downstream_deletion_requested")
+if not isinstance(deletion_claimed, bool):
+    fail("transferred.downstream_deletion_requested must be a boolean")
+
+claim_words = ("deletion was requested", "deletion requested", "a downstream deletion request is issued")
+
+def asserts_deletion(text):
+    lowered = text.lower()
+    if "no deletion" in lowered or "not issue" in lowered or "no downstream deletion" in lowered:
+        return False
+    return any(word in lowered for word in claim_words)
+
+# The state's own honest_claim.
+if asserts_deletion(str(transferred.get("honest_claim", ""))) != deletion_claimed:
+    fail(
+        "transferred.honest_claim and downstream_deletion_requested disagree about "
+        "whether a deletion request is issued"
+    )
+
+# The fixture body, its assertions, and its description.
+fixture = documents["fixtures/cancellation-transferred.toml"]
+body_value = fixture.get("response", {}).get("body", {}).get("downstreamDeletionRequested")
+if body_value != deletion_claimed:
+    fail(
+        f"cancellation-transferred body says downstreamDeletionRequested={body_value!r} "
+        f"but transfer-states.toml says {deletion_claimed!r}"
+    )
+assertion_value = fixture.get("assertions", {}).get("downstream_deletion_requested")
+if assertion_value != deletion_claimed:
+    fail("cancellation-transferred assertions disagree with the state definition")
+for field in ("description",):
+    if asserts_deletion(str(fixture.get(field, ""))) != deletion_claimed:
+        fail(f"cancellation-transferred {field} disagrees with the state definition")
+if asserts_deletion(str(fixture.get("assertions", {}).get("honest_claim", ""))) != deletion_claimed:
+    fail("cancellation-transferred assertions.honest_claim disagrees with the state definition")
+
+# The release notes.
+release_notes = (root / "RELEASE.md").read_text(encoding="utf-8")
+for line in release_notes.splitlines():
+    if "cancellation-transferred" in line and asserts_deletion(line) != deletion_claimed:
+        fail("RELEASE.md disagrees with the state definition about the deletion request")
+
 # --- verification 5: fixtures are structurally valid --------------------------
 
 known_codes = set(codes)

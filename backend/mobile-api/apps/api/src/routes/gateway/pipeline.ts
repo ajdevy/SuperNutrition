@@ -83,6 +83,15 @@ export interface PipelineInput {
   readonly requestId: string;
 }
 
+/**
+ * How often a holder re-reads the shared cancellation marker while a provider
+ * call is in flight (H-02).
+ *
+ * Short enough that an abort lands well inside a provider deadline, long enough
+ * that it is a negligible number of Redis reads per attempt.
+ */
+const CANCELLATION_POLL_MS = 250;
+
 export const runInferencePipeline = async (
   deps: PipelineDeps,
   input: PipelineInput,
@@ -181,22 +190,34 @@ export const runInferencePipeline = async (
       details: [{ field: 'attemptId', issue: 'attempt_already_used' }],
     });
   }
-  // #49 — at-most-once on the attempt ACROSS instances, not just within this
-  // one. `transfers.begin` above is process-local: two instances would each
-  // grant the same attempt id and each start a transfer of the same photo.
-  if (deps.attempts !== null) {
-    const held = await deps.attempts.claimAttempt(context.attemptId, deps.instanceId);
-    if (!held) {
-      deps.transfers.release(context.attemptId);
-      throw new GatewayError(GATEWAY_CODES.VALIDATION_ERROR, {
-        details: [{ field: 'attemptId', issue: 'attempt_already_used' }],
-      });
-    }
-  }
-
-  deps.payloads.put(context.attemptId, payload.bytes);
-
+  // H-03 — everything from here on is inside the cleanup boundary.
+  //
+  // The remote claim and the payload put used to sit BETWEEN `begin()` and the
+  // try, so a Redis throw during the claim escaped the finally entirely: the
+  // local entry stayed active for the life of the process, its AbortController
+  // was orphaned, and the already-spent request-id and effect claims made every
+  // honest retry look like a duplicate. One transient Redis error poisoned that
+  // attempt id until the TTL expired.
+  let cancellationWatch: NodeJS.Timeout | null = null;
   try {
+    // #49 — at-most-once on the attempt ACROSS instances, not just within this
+    // one. `transfers.begin` above is process-local: two instances would each
+    // grant the same attempt id and each start a transfer of the same photo.
+    if (deps.attempts !== null) {
+      const held = await deps.attempts.claimAttempt(
+        context.attemptId,
+        deps.instanceId,
+        auth.installationId,
+      );
+      if (!held) {
+        throw new GatewayError(GATEWAY_CODES.VALIDATION_ERROR, {
+          details: [{ field: 'attemptId', issue: 'attempt_already_used' }],
+        });
+      }
+    }
+
+    deps.payloads.put(context.attemptId, payload.bytes);
+
     // #48 — neither transition is made here any more.
     //
     // Both used to run back to back before the provider was called at all, so an
@@ -208,6 +229,39 @@ export const runInferencePipeline = async (
     //
     // Both signals now come from the adapter, which is the only layer that knows
     // when bytes go on the wire and when a provider answers.
+
+    // H-02 — watch the shared registry WHILE the provider call is in flight.
+    //
+    // The registry was only read after `analyze()` resolved, so an owner's
+    // cancellation issued against another replica did nothing until the provider
+    // finished on its own. Suppressing a completed result is not what the
+    // contract calls for: `transferring` promises the transport is ABORTED, and
+    // the bytes kept flowing to the provider for as long as it took.
+    //
+    // Polling rather than pub/sub, deliberately: the abort has to happen even if
+    // the marker was written before this request reached here, and a subscriber
+    // that starts late misses the message it needed. A poll answers the question
+    // "is it cancelled now" identically whichever order the two happened in,
+    // which is the interleaving that matters.
+    if (deps.attempts !== null) {
+      const registry = deps.attempts;
+      const poll = async () => {
+        try {
+          if (await registry.isCancelled(context.attemptId)) {
+            // Aborts the provider fetch this process is making. Local, because
+            // only this process holds the socket.
+            controller.abort();
+          }
+        } catch {
+          // A registry read failing must not abort a healthy transfer. The
+          // post-call check below still runs, and Redis being unreachable is
+          // surfaced by the claims that guard the request, not by this watcher.
+        }
+      };
+      cancellationWatch = setInterval(() => void poll(), CANCELLATION_POLL_MS);
+      // Once immediately: the marker may predate this request entirely.
+      await poll();
+    }
 
     // 6 — orchestrate.
     const result = await deps.orchestrator.analyze(
@@ -241,6 +295,11 @@ export const runInferencePipeline = async (
           deps.transfers.markTransferred(context.attemptId, payload.bytes.byteLength),
       },
     );
+
+    if (cancellationWatch !== null) {
+      clearInterval(cancellationWatch);
+      cancellationWatch = null;
+    }
 
     // A late result after cancellation is discarded, never returned: exactly
     // one terminal outcome per attempt (AD-6).
@@ -294,6 +353,10 @@ export const runInferencePipeline = async (
       },
     };
   } finally {
+    // The watcher is cleared here too: an early throw between starting it and
+    // the clear above would otherwise leave a timer polling Redis forever for an
+    // attempt nobody is running.
+    if (cancellationWatch !== null) clearInterval(cancellationWatch);
     // 8 — disposal, on EVERY terminal path: success, error, timeout, and
     // cancellation are the same code path, not four (AD-8, docs/09 §9.6).
     deps.payloads.dispose(context.attemptId);

@@ -38,10 +38,18 @@ export class SearchFoodHandler implements SearchFood {
     this.#provider = provider;
   }
 
+  /**
+   * M-02 — the parameter type used to omit `limit` and the body dropped it, so
+   * a validated request for 25 results silently became the provider's default
+   * of 5. The port declares it and the route passes it; only this link lost it,
+   * and TypeScript's parameter bivariance meant narrowing the object type here
+   * compiled without complaint.
+   */
   execute(request: {
     query: string;
     country: string;
+    limit?: number;
   }): Promise<Result<readonly CatalogMatch[], NutritionFailure>> {
-    return this.#provider.search(request.query, request.country);
+    return this.#provider.search(request.query, request.country, request.limit);
   }
 }

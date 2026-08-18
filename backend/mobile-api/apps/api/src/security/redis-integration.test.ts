@@ -109,14 +109,35 @@ describe.skipIf(!url)('against a real Redis server', () => {
     expect((await limiterA.check(key)).allowed).toBe(false);
   });
 
-  it('makes a cancellation on one instance visible to the other', async () => {
+  it('makes an owner cancellation on one instance visible to the other', async () => {
     const registryA = new RedisAttemptRegistry(a.client, 60);
     const registryB = new RedisAttemptRegistry(b.client, 60);
     const attemptId = `att_cancel_${run}`;
+    const owner = `inst_owner_${run}`;
 
+    await registryA.claimAttempt(attemptId, 'instance-a', owner);
     expect(await registryB.isCancelled(attemptId)).toBe(false);
-    await registryA.markCancelled(attemptId);
+    expect(await registryA.markCancelled(attemptId, owner)).toBe(true);
     expect(await registryB.isCancelled(attemptId)).toBe(true);
+  });
+
+  it('H-01: refuses a foreign cancellation against a real server', async () => {
+    // The security defect, against Redis rather than a fake: a registry with no
+    // owner binding let any authenticated installation cancel any attempt id it
+    // could reach through a non-holding replica.
+    const registryA = new RedisAttemptRegistry(a.client, 60);
+    const registryB = new RedisAttemptRegistry(b.client, 60);
+    const attemptId = `att_foreign_${run}`;
+    const owner = `inst_owner_${run}`;
+    const stranger = `inst_stranger_${run}`;
+
+    await registryA.claimAttempt(attemptId, 'instance-a', owner);
+
+    expect(await registryB.markCancelled(attemptId, stranger)).toBe(false);
+    expect(await registryA.isCancelled(attemptId)).toBe(false);
+    // And the stranger cannot tell it apart from an id that was never used.
+    expect(await registryB.holderOf(attemptId, stranger)).toBeNull();
+    expect(await registryB.holderOf(`att_never_${run}`, stranger)).toBeNull();
   });
 
   it('expires keys rather than holding them past their window', async () => {
@@ -131,9 +152,9 @@ describe.skipIf(!url)('against a real Redis server', () => {
   it('stores an instance identifier against an attempt, never image bytes', async () => {
     const registry = new RedisAttemptRegistry(a.client, 60);
     const attemptId = `att_bytes_${run}`;
-    await registry.claimAttempt(attemptId, 'instance-a');
+    await registry.claimAttempt(attemptId, 'instance-a', `inst_owner_${run}`);
 
-    expect(await registry.holderOf(attemptId)).toBe('instance-a');
+    expect(await registry.holderOf(attemptId, `inst_owner_${run}`)).toBe('instance-a');
   });
 });
 
