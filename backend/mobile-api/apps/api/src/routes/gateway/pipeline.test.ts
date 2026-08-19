@@ -1057,3 +1057,101 @@ describe('handover-6 — distributed cancellation is owner-bound and prompt', ()
     expect(orchestrator.calls, 'a provider was called despite the failure').toBe(0);
   });
 });
+
+describe('H-03 — recovery policy after a Redis failure mid-attempt', () => {
+  /**
+   * handover-6 asks that the recovery semantics be DEFINED and tested, not just
+   * that the local tracker is released. This is that definition, written down as
+   * assertions so it cannot drift.
+   *
+   * When `claimAttempt` throws, the request-id and effect claims have already
+   * succeeded and are NOT rolled back — they live in Redis, which is the thing
+   * that just failed, so unwinding them is not available. What is released is
+   * the local attempt.
+   *
+   * So the policy is: the ATTEMPT id becomes reusable, but the request id and
+   * the effect id are spent. A retry must carry fresh ones — which is what the
+   * release already says, since "retaking a photo is a new effect".
+   */
+  const failing = {
+    claimAttempt: async () => {
+      throw new Error('ECONNREFUSED');
+    },
+    holderOf: async () => null,
+    markCancelled: async () => false,
+    isCancelled: async () => false,
+  };
+
+  const attempt = (over: Record<string, unknown>, requestId: string, effectId: string) =>
+    runInferencePipeline({ ...deps, ...over } as PipelineDeps, {
+      context: contextFor(JPEG, { effectId }) as never,
+      payload: { bytes: JPEG, contentType: 'image/jpeg' },
+      auth: AUTH,
+      requestId,
+      clientIp: '127.0.0.1',
+    });
+
+  it('leaves the attempt id reusable once Redis recovers', async () => {
+    // The phantom-active-attempt failure: without the H-03 cleanup the local
+    // tracker still held this id and every retry died as `attempt_already_used`
+    // until the retention window expired.
+    await expect(
+      attempt(
+        { attempts: failing, instanceId: 'a' },
+        'req_0000000000000001',
+        'eff_0000000000000001',
+      ),
+    ).rejects.toThrow();
+
+    // Redis is back; fresh request id and fresh effect id, SAME attempt id.
+    const recovered = await attempt(
+      { attempts: null, instanceId: 'a' },
+      'req_0000000000000002',
+      'eff_0000000000000002',
+    );
+    expect(recovered.status).toBe(200);
+  });
+
+  it('still refuses a retry that reuses the spent request id', async () => {
+    // Spent identifiers are not rolled back — they live in the store that
+    // failed. `token-replayed` is the honest answer and the release marks it
+    // unrecoverable precisely so a client mints a fresh one.
+    await expect(
+      attempt(
+        { attempts: failing, instanceId: 'a' },
+        'req_0000000000000003',
+        'eff_0000000000000003',
+      ),
+    ).rejects.toThrow();
+
+    await expect(
+      attempt({ attempts: null, instanceId: 'a' }, 'req_0000000000000003', 'eff_0000000000000004'),
+    ).rejects.toMatchObject({ gatewayCode: 'token-replayed' });
+  });
+
+  it('still refuses a retry that reuses the spent effect id', async () => {
+    await expect(
+      attempt(
+        { attempts: failing, instanceId: 'a' },
+        'req_0000000000000005',
+        'eff_0000000000000005',
+      ),
+    ).rejects.toThrow();
+
+    await expect(
+      attempt({ attempts: null, instanceId: 'a' }, 'req_0000000000000006', 'eff_0000000000000005'),
+    ).rejects.toMatchObject({ gatewayCode: 'validation-error' });
+  });
+
+  it('calls no provider on the pre-claim failure path', async () => {
+    const before = orchestrator.calls;
+    await expect(
+      attempt(
+        { attempts: failing, instanceId: 'a' },
+        'req_0000000000000007',
+        'eff_0000000000000007',
+      ),
+    ).rejects.toThrow();
+    expect(orchestrator.calls).toBe(before);
+  });
+});
