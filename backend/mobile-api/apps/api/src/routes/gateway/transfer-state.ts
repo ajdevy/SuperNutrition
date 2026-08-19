@@ -62,6 +62,33 @@ interface AttemptEntry {
   owner: string;
 }
 
+/**
+ * H-03 — a finished attempt that never left `pre-transfer` does not block a
+ * retry of the same id.
+ *
+ * `begin()` refuses an id it already holds, which is M7's at-most-once on the
+ * attempt: the same photo must not be sent twice. A retained record that never
+ * reached `transferring` describes an attempt where NOTHING was sent, so that
+ * concern does not apply to it — and refusing anyway turned one transient Redis
+ * failure during the claim into a 24-hour block on that attempt id, answering a
+ * client's honest retry with `attempt_already_used` about an attempt that never
+ * happened.
+ *
+ * The record itself is kept, so a cancellation can still make the true and
+ * useful `pre-transfer` statement ("Nothing was sent. This is a complete
+ * guarantee."). Only the claim on the id is released.
+ *
+ * Three conditions, all required: the request must be finished (a live attempt
+ * is still a live attempt), it must never have left pre-transfer, and it must
+ * not already carry a terminal cancellation record — that record is an answer
+ * the gateway has committed to and a new attempt would contradict it.
+ */
+const isRetryableRemnant = (entry: AttemptEntry): boolean =>
+  entry.releasedAt !== null &&
+  entry.state === 'pre-transfer' &&
+  !entry.providerCalled &&
+  entry.cancellation === null;
+
 export class TransferStateTracker {
   readonly #attempts = new Map<string, AttemptEntry>();
   readonly #now: () => Date;
@@ -95,7 +122,8 @@ export class TransferStateTracker {
    */
   begin(attemptId: string, owner: string): AbortController | null {
     this.#sweep();
-    if (this.#attempts.has(attemptId)) return null;
+    const existing = this.#attempts.get(attemptId);
+    if (existing !== undefined && !isRetryableRemnant(existing)) return null;
 
     const controller = new AbortController();
     this.#attempts.set(attemptId, {
@@ -243,6 +271,7 @@ export class TransferStateTracker {
   release(attemptId: string): void {
     const entry = this.#attempts.get(attemptId);
     if (!entry) return;
+
     entry.releasedAt = this.#now().getTime();
     this.#sweep();
   }

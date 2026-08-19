@@ -33,10 +33,6 @@ const JPEG = Buffer.from([
 ]);
 const digest = `sha256:${createHash('sha256').update(JPEG).digest('hex')}`;
 
-/** Two distinct installations: the token's first 32 chars become the id. */
-const OWNER_TOKEN = 'Bearer owner-installation-aaaaaaaaaaaaaaaa';
-const STRANGER_TOKEN = 'Bearer stranger-installation-bbbbbbbbbbbb';
-
 /**
  * Identifiers unique to THIS run, not just this process.
  *
@@ -50,6 +46,17 @@ const RUN = process.hrtime.bigint().toString(36).slice(-8);
 let seq = 0;
 const nextId = (prefix: string) =>
   `${prefix}_${RUN}${String(seq++).padStart(4, '0')}${'0'.repeat(20 - RUN.length)}`;
+/**
+ * Two distinct installations, unique to THIS run: the token's first 32 chars
+ * become the installation id.
+ *
+ * Per-run rather than fixed, for the same reason the ids are. A fixed principal
+ * shares the installation rate limit across every run against the same Redis —
+ * 20 per hour — so the lane passed once and then failed on its own history.
+ * Found the same way as the id collision: by re-running it.
+ */
+const OWNER_TOKEN = `Bearer owner-${RUN}-aaaaaaaaaaaaaaaaaaaaaaaa`;
+const STRANGER_TOKEN = `Bearer stranger-${RUN}-bbbbbbbbbbbbbbbbbbbb`;
 
 interface HeldCall {
   release: () => void;
@@ -178,6 +185,50 @@ const multipart = (ctx: unknown, token: string) => {
   };
 };
 
+/** Reads the shared state directly, so assertions do not infer it from behaviour. */
+const redisGet = async (key: string): Promise<string | null> => {
+  const { Redis } = await import('ioredis');
+  const client = new Redis(url!, { maxRetriesPerRequest: 1 });
+  try {
+    return await client.get(key);
+  } finally {
+    void client.quit();
+  }
+};
+
+const redisKeys = async (): Promise<string[]> => {
+  const { Redis } = await import('ioredis');
+  const client = new Redis(url!, { maxRetriesPerRequest: 1 });
+  try {
+    return await client.keys('*');
+  } finally {
+    void client.quit();
+  }
+};
+
+/**
+ * Every value under a key, whatever its type.
+ *
+ * The rate limiter uses a sorted set, so a blanket GET fails with WRONGTYPE —
+ * and a byte-leak assertion that silently skipped the keys it could not read
+ * would be worse than none.
+ */
+const redisValues = async (key: string): Promise<string[]> => {
+  const { Redis } = await import('ioredis');
+  const client = new Redis(url!, { maxRetriesPerRequest: 1 });
+  try {
+    const type = await client.type(key);
+    if (type === 'string') return [(await client.get(key)) ?? ''];
+    if (type === 'zset') return await client.zrange(key, 0, -1);
+    if (type === 'list') return await client.lrange(key, 0, -1);
+    if (type === 'set') return await client.smembers(key);
+    if (type === 'hash') return Object.values(await client.hgetall(key));
+    throw new Error(`unhandled redis type ${type} for ${key}`);
+  } finally {
+    void client.quit();
+  }
+};
+
 describe.skipIf(!url)('two application instances sharing one Redis', () => {
   let provider: ControllableProvider;
   let a: ServerHandle;
@@ -242,6 +293,57 @@ describe.skipIf(!url)('two application instances sharing one Redis', () => {
       headers: { authorization: OWNER_TOKEN },
     });
     expect(byOwner.statusCode).toBe(202);
+  }, 30_000);
+
+  it('H-01: writes no shared cancellation marker for a foreign DELETE', async () => {
+    // The response being indistinguishable is necessary but not sufficient: the
+    // finding is that a stranger could publish a marker the holder would act on.
+    // This reads the shared state directly rather than inferring it.
+    const attemptId = nextId('att');
+    const body = multipart(contextFor(attemptId, nextId('eff')), OWNER_TOKEN);
+    provider.hold = false;
+    await a.app.inject({
+      method: 'POST',
+      url: '/gw/v1/inference/photo',
+      payload: body.payload,
+      headers: body.headers,
+    });
+
+    await b.app.inject({
+      method: 'DELETE',
+      url: `/gw/v1/inference/${attemptId}`,
+      headers: { authorization: STRANGER_TOKEN },
+    });
+
+    const marker = await redisGet(`cancelled:${attemptId}`);
+    expect(marker, 'a stranger published a cancellation marker').toBeNull();
+  }, 30_000);
+
+  it('H-01: no key written by a real request carries payload bytes', async () => {
+    // Asserted against the REAL server and the REAL request flow, not a fake.
+    // The fake-based test proves the adapters do not write bytes; this proves
+    // nothing else in the request path does either.
+    const attemptId = nextId('att');
+    const body = multipart(contextFor(attemptId, nextId('eff')), OWNER_TOKEN);
+    provider.hold = false;
+    await a.app.inject({
+      method: 'POST',
+      url: '/gw/v1/inference/photo',
+      payload: body.payload,
+      headers: body.headers,
+    });
+
+    const jpegHead = JPEG.subarray(0, 8).toString('base64');
+    const keys = await redisKeys();
+    expect(keys.length, 'the request wrote nothing to Redis at all').toBeGreaterThan(0);
+    for (const key of keys) {
+      for (const value of await redisValues(key)) {
+        // No raw bytes, no base64 of them, and no payload digest.
+        expect(value).not.toContain(jpegHead);
+        expect(value).not.toContain(digest);
+        expect(value.length, `key ${key} holds a suspiciously large value`).toBeLessThan(128);
+      }
+    }
   }, 30_000);
 
   it('H-02: an owner cancellation through the other replica aborts the held provider call', async () => {
