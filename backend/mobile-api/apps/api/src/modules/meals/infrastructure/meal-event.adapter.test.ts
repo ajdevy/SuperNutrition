@@ -485,6 +485,39 @@ describe('M-01 — a lost correction race is stale, not a server outage', () => 
     });
   });
 
+  it('reports a WRAPPED unique violation as not-found', async () => {
+    // The shape a real database produces. Drizzle wraps the driver error, so the
+    // thrown value is a plain Error whose `code` is undefined and whose `cause`
+    // carries 23505. Checking only the top level passed the test above and would
+    // have failed in production; verified against PostgreSQL 16.
+    const wrapped = new Error('Failed query: insert into meal_events', {
+      cause: Object.assign(new Error('duplicate key value violates unique constraint'), {
+        code: '23505',
+        name: 'PostgresError',
+      }),
+    });
+    expect(
+      await throwing(wrapped).supersede(
+        '11111111-1111-4111-8111-111111111111' as never,
+        replacement,
+      ),
+    ).toEqual({
+      ok: false,
+      error: 'not-found',
+    });
+  });
+
+  it('does not loop forever on a self-referential cause chain', async () => {
+    const loop: { cause?: unknown } = {};
+    loop.cause = loop;
+    expect(
+      await throwing(loop).supersede('11111111-1111-4111-8111-111111111111' as never, replacement),
+    ).toEqual({
+      ok: false,
+      error: 'storage-unavailable',
+    });
+  });
+
   it('still reports a genuine outage as storage-unavailable', async () => {
     // The mapping must not swallow real failures: a connection reset is not a
     // stale client.

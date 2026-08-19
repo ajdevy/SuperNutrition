@@ -173,8 +173,27 @@ export const toWriteRows = (event: MealEvent): EventWriteRows => ({
  * Matched on the code rather than the message: messages are localised and
  * carry table and value detail that must not reach a domain type or a log line.
  */
-const isUniqueViolation = (cause: unknown): boolean =>
-  typeof cause === 'object' && cause !== null && (cause as { code?: unknown }).code === '23505';
+const isUniqueViolation = (cause: unknown): boolean => {
+  // Walk the cause chain: the code is NOT on the error that reaches here.
+  // Drizzle wraps the driver failure, so the thrown value is a plain `Error`
+  // whose `code` is undefined and whose `cause` is the PostgresError carrying
+  // 23505.
+  //
+  // The first version checked only the top level. It passed its unit tests —
+  // which hand-threw an error with `code` set directly — and would never have
+  // fired against a real database. Found by running the correction race on a
+  // real PostgreSQL, which is exactly why that lane exists.
+  //
+  // Bounded rather than unbounded: a self-referential cause would hang, and
+  // nothing legitimate nests this deep.
+  let current: unknown = cause;
+  for (let depth = 0; depth < 5 && current !== null && current !== undefined; depth += 1) {
+    if (typeof current !== 'object') return false;
+    if ((current as { code?: unknown }).code === '23505') return true;
+    current = (current as { cause?: unknown }).cause;
+  }
+  return false;
+};
 
 export class DrizzleMealEventRepositoryAdapter implements MealEventRepository {
   readonly #rows: DrizzleMealEventRepository;
