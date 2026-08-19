@@ -353,6 +353,37 @@ describe.skipIf(!url)('two application instances sharing one Redis', () => {
   }, 30_000);
 });
 
+describe.skipIf(!url)('the fence, asserted through the real composition root', () => {
+  /**
+   * H-04's acceptance test: "verify the fence refuses two replicas whenever the
+   * shared idempotency binding is absent."
+   *
+   * The unit tests cover `assertSingleInstanceState` directly. This covers the
+   * thing that actually protects the deployment — that `buildApplication`
+   * derives completeness from what it really composed. A unit test passes if
+   * someone flips the flag to true without binding the store; this does not.
+   *
+   * It lives in the Redis lane because the redis backend connects at boot, so
+   * the fence is only reachable with a real server behind it.
+   */
+  it('refuses two replicas on redis while Product idempotency is process-local', async () => {
+    const config = {
+      ...(configFor('fence-probe', 'http://127.0.0.1:1') as unknown as Record<string, unknown>),
+      deployment: { instanceCount: 2, gatewayStateBackend: 'redis' },
+    } as unknown as AppConfig;
+
+    await expect(buildApplication(config, createLogger(config))).rejects.toThrow(
+      /not every store the fence protects is shared/,
+    );
+  }, 30_000);
+
+  it('permits a single replica on redis, which is the supported deployment', async () => {
+    const config = configFor('fence-probe-single', 'http://127.0.0.1:1');
+    const handle = await buildApplication(config, createLogger(config));
+    await handle.close();
+  }, 30_000);
+});
+
 describe.skipIf(!!url)('two-instance lane', () => {
   it('is skipped: set REDIS_TEST_URL to exercise the distributed findings', () => {
     expect(url).toBeUndefined();
