@@ -229,3 +229,37 @@ Suite: 1097 passing / 1 skipped with `REDIS_TEST_URL` set; 1092 / 6 without.
 `GATEWAY_STATE_BACKEND` still defaults to `memory`. The default is deliberately
 unchanged — flipping it would break every deployment without a Redis — but the
 `redis` path is no longer an unverified one.
+
+## Idempotency release path — defect found by route-level retry test (2026-08-20)
+
+Criterion 7's "a failed creation can retry" was covered only against
+`InMemoryIdempotencyStore`. Adding the same assertion at route level against the
+shared store found a defect in `createRedisClient` that no unit test could:
+
+```ts
+const raw = client as unknown as { …; del(key: string): Promise<number> };
+return Object.assign(client as unknown as RedisLike, {
+  del: (key: string): Promise<number> => raw.del(key),   // raw IS client
+});
+```
+
+`Object.assign` wrote the wrapper onto the object it wrapped, so `del` called
+itself until the stack gave out. Every `RedisIdempotencyStore.fail()` therefore
+threw, and `withIdempotency`'s catch path replaced the caller's `AppError` with
+a 500 — a client sending an invalid meal with an Idempotency-Key got "internal
+error" and the key stayed claimed for 24 hours. The in-memory adapter has no
+such wrapper, so the whole existing suite was green.
+
+Fixed by not re-adding `del`; ioredis's own method already matches the port.
+Mutation-checked: restoring the self-reference fails exactly the new test and
+nothing else.
+
+Coverage added, both stores now asserted at route level:
+- a failed creation releases its key and a later request may reuse it
+- two different users may hold the same unscoped client key concurrently
+
+Suite: 1175 passing / 3 skipped with `REDIS_TEST_URL` and `DATABASE_TEST_URL`
+set; 1154 / 24 without. `./quality-check` green.
+
+Criterion 4 (TTL vs market retention) remains an OPEN OWNER DECISION and is
+deliberately not resolved here.

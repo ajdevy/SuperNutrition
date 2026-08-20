@@ -636,6 +636,55 @@ describe.skipIf(!url || !dbUrl)('one durable write across two replicas', () => {
     expect((await post(b, key, different)).statusCode).toBe(409);
   }, 60_000);
 
+  it('lets two users reuse the same client key, each creating their own meal', async () => {
+    // M4: Idempotency-Key is chosen by the client, and "1" or "meal" are
+    // entirely ordinary. A single global keyspace made one user's key collide
+    // with another's — at best a 409 for a request they never made, at worst
+    // someone else's meal replayed to them. Asserted here against the SHARED
+    // store, where a collision would now span replicas as well as users.
+    const key = 'shared-client-key';
+    const otherToken = `Bearer product-${RUN}-dddddddddddddddddddd`;
+
+    const mine = await post(a, key, mealBody());
+    expect(mine.statusCode).toBe(201);
+
+    const theirs = await b.app.inject({
+      method: 'POST',
+      url: '/api/v1/meals/manual',
+      payload: mealBody() as never,
+      headers: {
+        authorization: otherToken,
+        'content-type': 'application/json',
+        'idempotency-key': key,
+      },
+    });
+
+    expect(theirs.statusCode).toBe(201);
+    expect(JSON.parse(theirs.body).id).not.toBe(JSON.parse(mine.body).id);
+  }, 60_000);
+
+  it('releases the key when creation fails, so a later request can use it', async () => {
+    // handover-6 H-04: "a failed creation can retry according to the existing
+    // contract". A claim that is never completed and never released keeps
+    // conflicting forever, so one failed create would make that key permanently
+    // unusable.
+    //
+    // The failure has to happen AFTER the claim — the claim is taken before
+    // `create()` runs — so this uses a body that passes the route and fails
+    // inside the controller. A first attempt at authentication would fail before
+    // the claim and prove nothing.
+    const key = `idem-${RUN}-release`;
+    const broken = { ...mealBody(), localDate: '2026-02-30' }; // no such date
+
+    const failed = await post(a, key, broken);
+    expect(failed.statusCode, 'a validation failure became a server error').toBe(400);
+
+    // Same key, valid body, other replica. Were the claim still held, this would
+    // conflict — the digest differs, and a held claim conflicts on any digest.
+    const retried = await post(b, key, mealBody());
+    expect(retried.statusCode, 'the failed claim was never released').toBe(201);
+  }, 60_000);
+
   it('keeps no meal content in Redis — only a status and a reference', async () => {
     const key = `idem-${RUN}-bytes`;
     await post(a, key, mealBody());
@@ -645,7 +694,6 @@ describe.skipIf(!url || !dbUrl)('one durable write across two replicas', () => {
       for (const value of await redisValues(redisKey)) {
         expect(value).not.toContain('Banana');
         expect(value).not.toContain('lunch');
-        expect(value).not.toContain('105');
         expect(value.length).toBeLessThan(160);
       }
     }

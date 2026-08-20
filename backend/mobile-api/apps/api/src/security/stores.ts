@@ -518,18 +518,19 @@ export const createRedisClient = async (url: string): Promise<RedisLike> => {
     lazyConnect: true,
   });
   await client.connect();
-  // Adapted rather than cast wholesale: `setKeepTtl` has no direct ioredis
-  // method of that name, and a blind cast would compile and then fail at the
-  // first call.
-  const raw = client as unknown as {
-    set(...args: unknown[]): Promise<unknown>;
-    del(key: string): Promise<number>;
-  };
+  // Only `setKeepTtl` is added: ioredis has no method of that name, and a blind
+  // cast would compile and then fail at the first call.
+  //
+  // `del` is NOT re-added. An earlier version defined it as `(key) => raw.del(key)`
+  // where `raw` was the same object being assigned onto — so the new `del`
+  // called itself, recursed until the stack gave out, and turned a client
+  // validation error into a 500. Assigning a wrapper onto the object it wraps is
+  // the trap; ioredis's own `del` already matches the port.
+  const raw = client as unknown as { set(...args: unknown[]): Promise<unknown> };
   return Object.assign(client as unknown as RedisLike, {
     setKeepTtl: async (key: string, value: string): Promise<void> => {
       await raw.set(key, value, 'KEEPTTL');
     },
-    del: (key: string): Promise<number> => raw.del(key),
   });
 };
 
