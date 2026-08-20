@@ -25,6 +25,7 @@ import type { ServerHandle } from './server.js';
  */
 
 const url = process.env['REDIS_TEST_URL'];
+const dbUrl = process.env['DATABASE_TEST_URL'];
 
 const JPEG = Buffer.from([
   0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10, 0x4a, 0x46, 0x49, 0x46, 0x00, 0x01, 0x01, 0x00, 0x00, 0x01,
@@ -132,7 +133,7 @@ const configFor = (instanceId: string, providerBaseUrl: string): AppConfig =>
       openRouterBaseUrl: providerBaseUrl,
     },
     stubInference: false,
-    logging: { level: 'silent' },
+    logging: { level: 'error' },
     __instanceId: instanceId,
   }) as unknown as AppConfig;
 
@@ -468,15 +469,27 @@ describe.skipIf(!url)('the fence, asserted through the real composition root', (
    * It lives in the Redis lane because the redis backend connects at boot, so
    * the fence is only reachable with a real server behind it.
    */
-  it('refuses two replicas on redis while Product idempotency is process-local', async () => {
+  it('now PERMITS two replicas on redis, because every store is shared', async () => {
+    // The fence stayed closed while Product idempotency was process-local. It is
+    // now bound to Redis alongside the rest, so the reason for the refusal is
+    // gone — and this is the assertion that would fail if a future change added
+    // a protected store and forgot to share it.
     const config = {
       ...(configFor('fence-probe', 'http://127.0.0.1:1') as unknown as Record<string, unknown>),
       deployment: { instanceCount: 2, gatewayStateBackend: 'redis' },
     } as unknown as AppConfig;
 
-    await expect(buildApplication(config, createLogger(config))).rejects.toThrow(
-      /not every store the fence protects is shared/,
-    );
+    const handle = await buildApplication(config, createLogger(config));
+    await handle.close();
+  }, 30_000);
+
+  it('still refuses two replicas on the memory backend', async () => {
+    const config = {
+      ...(configFor('fence-memory', 'http://127.0.0.1:1') as unknown as Record<string, unknown>),
+      deployment: { instanceCount: 2, gatewayStateBackend: 'memory' },
+    } as unknown as AppConfig;
+
+    await expect(buildApplication(config, createLogger(config))).rejects.toThrow(/per-process/);
   }, 30_000);
 
   it('permits a single replica on redis, which is the supported deployment', async () => {
@@ -490,4 +503,151 @@ describe.skipIf(!!url)('two-instance lane', () => {
   it('is skipped: set REDIS_TEST_URL to exercise the distributed findings', () => {
     expect(url).toBeUndefined();
   });
+});
+
+/**
+ * Story 4.4 criterion 3 — multi-instance Product idempotency, ONE durable write.
+ *
+ * Needs both a real Redis and a real database: the whole finding is that two
+ * replicas each accept one Idempotency-Key and each write a row. A fake store
+ * cannot produce that, and neither can a fake database.
+ */
+describe.skipIf(!url || !dbUrl)('one durable write across two replicas', () => {
+  let a: ServerHandle;
+  let b: ServerHandle;
+  const token = `Bearer product-${RUN}-cccccccccccccccccccc`;
+
+  const withDb = (instanceId: string): AppConfig =>
+    ({
+      ...(configFor(instanceId, 'http://127.0.0.1:1') as unknown as Record<string, unknown>),
+      database: {
+        url: dbUrl!,
+        maxConnections: 5,
+        idleTimeoutSeconds: 5,
+        connectTimeoutSeconds: 5,
+      },
+    }) as unknown as AppConfig;
+
+  const mealBody = () => ({
+    occurredAt: '2026-08-19T12:30:00Z',
+    localDate: '2026-08-19',
+    timezone: 'UTC',
+    mealType: 'lunch',
+    items: [
+      {
+        foodRef: 'usda:fdc:171705',
+        displayName: 'Banana',
+        servingUnit: 'g',
+        servingAmount: '118',
+        confirmedByUser: true,
+      },
+    ],
+    nutrition: {
+      origin: 'client-grounded',
+      catalogSource: 'usda',
+      datasetVersion: 'test-1',
+      servingBasis: { unit: 'g', amount: '118', gramWeight: '118' },
+      calories: '105',
+      proteinG: '1.3',
+      fatG: '0.4',
+      carbG: '27',
+      fiberG: '3.1',
+      sugarG: '14.4',
+      sodiumMg: '1',
+      perItem: [],
+    },
+  });
+
+  const post = (server: ServerHandle, key: string, body: unknown) =>
+    server.app.inject({
+      method: 'POST',
+      url: '/api/v1/meals/manual',
+      payload: body as never,
+      headers: {
+        authorization: token,
+        'content-type': 'application/json',
+        'idempotency-key': key,
+      },
+    });
+
+  beforeAll(async () => {
+    process.env['APP_INSTANCE_ID'] = 'db-instance-a';
+    const ca = withDb('db-instance-a');
+    a = await buildApplication(ca, createLogger(ca));
+    process.env['APP_INSTANCE_ID'] = 'db-instance-b';
+    const cb = withDb('db-instance-b');
+    b = await buildApplication(cb, createLogger(cb));
+  }, 60_000);
+
+  afterAll(async () => {
+    await a?.close();
+    await b?.close();
+    delete process.env['APP_INSTANCE_ID'];
+  });
+
+  it('creates exactly one meal when the same key reaches both replicas', async () => {
+    const key = `idem-${RUN}-concurrent`;
+    const body = mealBody();
+
+    // Fired together, before either resolves. Sequential calls would pass even
+    // with per-process stores, which is how this went unnoticed.
+    const [first, second] = await Promise.all([post(a, key, body), post(b, key, body)]);
+
+    const codes = [first.statusCode, second.statusCode].sort();
+    // One creates. The other either replays that same 201 or conflicts because
+    // the winner was still in flight — both are correct, and both mean it did
+    // NOT create a second meal.
+    expect(codes.filter((c) => c === 201)).toHaveLength(1);
+    expect(codes.some((c) => c === 201 || c === 409)).toBe(true);
+
+    const created = [first, second].find((r) => r.statusCode === 201)!;
+    const mealId = JSON.parse(created.body).id as string;
+
+    // The decisive assertion: one row, whatever the two replicas answered.
+    const listed = await a.app.inject({
+      method: 'GET',
+      url: '/api/v1/meals?limit=50',
+      headers: { authorization: token },
+    });
+    const rows = JSON.parse(listed.body).data as { id: string }[];
+    expect(rows.filter((r) => r.id === mealId)).toHaveLength(1);
+  }, 60_000);
+
+  it('replays the first response to a later retry on the other replica', async () => {
+    const key = `idem-${RUN}-sequential`;
+    const body = mealBody();
+
+    const created = await post(a, key, body);
+    expect(created.statusCode).toBe(201);
+    const mealId = JSON.parse(created.body).id as string;
+
+    // Same key, other replica, after the first completed: the body is re-read
+    // from Postgres, because Redis holds only the status and the reference.
+    const replayed = await post(b, key, body);
+    expect(replayed.statusCode).toBe(201);
+    expect(JSON.parse(replayed.body).id).toBe(mealId);
+  }, 60_000);
+
+  it('conflicts when the same key carries a different body', async () => {
+    const key = `idem-${RUN}-conflict`;
+    expect((await post(a, key, mealBody())).statusCode).toBe(201);
+
+    const different = { ...mealBody(), mealType: 'dinner' };
+    expect((await post(b, key, different)).statusCode).toBe(409);
+  }, 60_000);
+
+  it('keeps no meal content in Redis — only a status and a reference', async () => {
+    const key = `idem-${RUN}-bytes`;
+    await post(a, key, mealBody());
+
+    for (const redisKey of await redisKeys()) {
+      if (!redisKey.startsWith('idem:')) continue;
+      for (const value of await redisValues(redisKey)) {
+        expect(value).not.toContain('Banana');
+        expect(value).not.toContain('lunch');
+        expect(value).not.toContain('105');
+        expect(value.length).toBeLessThan(160);
+      }
+    }
+  }, 60_000);
 });
