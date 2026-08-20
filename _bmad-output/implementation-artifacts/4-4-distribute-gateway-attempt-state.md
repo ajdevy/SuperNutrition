@@ -4,8 +4,10 @@ baseline_commit: db802a13b84658e5c4cfc1d1107148b6fe573877
 
 # Story 4.4: Distribute gateway attempt state
 
-Status: implemented except criterion 4, which is an OPEN OWNER DECISION
-(criteria 1-3 and 5-9 verified against a real Redis and a real PostgreSQL)
+Status: implemented. All nine criteria verified against a real Redis and a real
+PostgreSQL. Criterion 4 was an open owner decision; it was delegated to the
+implementer on 2026-08-20 and is resolved below as reading (a), amended and
+tested rather than silently left.
 
 ## Story
 
@@ -75,36 +77,54 @@ That closes the silence, not the limitation. This story closes the limitation.
 3. Claiming an effect is atomic across instances. Two concurrent claims of one
    identifier from different instances produce exactly one provider call
    (AD-18), demonstrated against a real Redis, not a mock.
-4. **⚠ UNRESOLVED — OWNER DECISION REQUIRED. NOT SATISFIED.** "Every key carries
-   an expiry no longer than the retention the request's market policy allows, so
-   nothing outlives its own deletion obligation."
+4. **RESOLVED 2026-08-20 — reading (a), amended and tested.** Market retention
+   governs USER CONTENT. No Redis key holds any, so no Redis key carries a
+   retention-derived deletion obligation; coordination identifiers instead carry
+   a fixed expiry no greater than the at-most-once horizon
+   (`COORDINATION_TTL_CEILING_SECONDS`, 24h).
 
-   TTLs are a fixed 24 hours and are not derived from market policy. Recorded as
-   open rather than resolved, because resolving it means choosing between two
-   real obligations and that choice is not the implementer's.
+   **Why not the literal reading.** The fixture markets carry `retentionDays =
+   0`. Read literally, the original clause gives the at-most-once guard a
+   zero-second expiry, deleting the guard at the moment it is needed and making
+   a duplicate provider call — a SECOND upload of the user's photo — possible.
+   Enforcing the privacy clause literally produces the privacy harm. That is not
+   a reason to ignore the clause; it is a reason to say which data it binds.
 
-   Market retention governs the PHOTO. The identifiers these TTLs bound —
-   attempt id, effect id, request id — are coordination values that exist so one
-   attempt cannot execute twice (AD-18) and a spent request id cannot be
-   replayed (AD-21). The fixture markets carry `retentionDays = 0`. Read
-   literally against a zero-day market, this criterion gives those keys a
-   zero-second expiry, deleting the at-most-once guard at the moment it is
-   needed and making a duplicate provider call — a second upload of the user's
-   photo — possible again. **Enforcing the privacy clause literally produces the
-   privacy harm.**
+   **What is actually stored**, and it is the whole list:
 
-   Two readings, and the owner picks:
+   | key | value |
+   | --- | --- |
+   | `ratelimit:<layer>:<principal>` | request timestamps |
+   | `effect:<attemptId>:<effectId>` | a claim marker |
+   | `reqid:<attemptId>:<requestId>` | a spent-replay marker |
+   | `attempt:<attemptId>` | `<ownerTokenDigest>:<instanceId>` |
+   | `idem:<userId>:<key>` | a status, a request digest, a meal id |
 
-   - **(a) Retention governs user content only.** Coordination identifiers keep
-     the at-most-once horizon; this criterion is amended to say so.
-   - **(b) Retention governs everything keyed to a user's action.** The
-     at-most-once window shrinks to the retention period, and where retention is
-     zero the guarantee is accepted as weaker.
+   Identifiers and markers. The meal itself lives in Postgres, where retention
+   and erasure bind it and where deletion actually removes it.
 
-   (b) has a legal dimension this code cannot settle. Whichever is chosen,
-   either this criterion or the constants must change: as things stand they
-   contradict each other, and no test asserts the criterion. Do not derive the
-   value without the decision.
+   **The amendment is conditional, and the condition is enforced.** Retention
+   does not bind these keys *because* they hold no user content — so if that
+   ever stops being true, the amendment stops applying. Three tests hold it:
+
+   - `security/retention.test.ts` — every coordination TTL is within the
+     horizon, AND the inventory is complete: a new `*_TTL_SECONDS` constant
+     anywhere in the API source fails the suite until it declares which
+     retention obligation bounds it. (Mutation-checked.)
+   - `two-instance.integration.test.ts` — after a real request, every key in
+     Redis carries a positive TTL within the ceiling, read from the live server.
+     (Mutation-checked: lowering the ceiling fails on a real 83 375s effect key.)
+   - the same test scans every value for a canary dish name, with a guard that
+     fails if no value was actually read — so the negative assertion cannot pass
+     vacuously.
+
+   **Scope and dissent.** This is an engineering decision about which obligation
+   applies to which data, not legal advice. A market whose counsel reads
+   retention as binding coordination identifiers needs reading (b) — the
+   at-most-once window shrinks to the retention period and, where retention is
+   zero, the guarantee is knowingly weaker. That remains available and is a
+   deliberate act, not a default.
+
 5. A transfer whose bytes live on another instance fails closed with the typed
    taxonomy error rather than being routed to an instance that cannot serve it.
    The bytes are never forwarded between instances to make this work.
@@ -151,7 +171,10 @@ That closes the silence, not the limitation. This story closes the limitation.
       comment and this story in the same change. The lift requires shared state
       to be COMPLETE, asserted at the composition root from the bindings
       themselves — declaring `redis` is not by itself sufficient.
-- [ ] **OPEN:** resolve criterion 4 (TTL vs market retention). Owner decision.
+- [x] Resolve criterion 4 (TTL vs market retention). Decided 2026-08-20 as
+      reading (a): retention governs user content, coordination identifiers keep
+      the at-most-once horizon, and the amendment is conditional on the
+      no-user-content invariant that three tests enforce.
 
 ## Dev Notes
 
@@ -261,5 +284,30 @@ Coverage added, both stores now asserted at route level:
 Suite: 1175 passing / 3 skipped with `REDIS_TEST_URL` and `DATABASE_TEST_URL`
 set; 1154 / 24 without. `./quality-check` green.
 
-Criterion 4 (TTL vs market retention) remains an OPEN OWNER DECISION and is
-deliberately not resolved here.
+Criterion 4 (TTL vs market retention) was resolved separately on 2026-08-20;
+see the amended criterion above.
+
+## Runtime smoke over a real socket (2026-08-20)
+
+Every other suite reaches the routes through `app.inject`, which skips the
+socket, the HTTP parser and the serializer. Nothing had yet proven the composed
+service answers a real client over a real connection — and a service that passes
+1 183 tests and cannot accept a TCP connection is still broken.
+
+`runtime-smoke.integration.test.ts` boots two instances on real ephemeral ports
+through the production composition root and drives them with `fetch` over
+loopback:
+
+- both bind distinct ports and answer `/health/live`
+- `/health/ready` returns a considered verdict with real dependencies attached
+- an unauthenticated write is refused 401 over the wire
+- an unknown route answers 404 and leaks no stack trace
+- one meal survives create on A -> replay on B -> conflict on B -> read back on
+  B as exactly one row
+- a malformed body answers 400, not 500
+
+An earlier attempt at this used a standalone `tsx` bootstrap instead. It was
+abandoned rather than debugged: the module graph loaded twice under that
+runner, `listen()` ran twice in one process, and the resulting `EADDRINUSE` was
+an artifact of the harness. A harness whose failures are its own is not
+evidence.
