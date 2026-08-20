@@ -5,7 +5,7 @@ baseline_commit: db802a13b84658e5c4cfc1d1107148b6fe573877
 # Story 4.4: Distribute gateway attempt state
 
 Status: implemented except criterion 4, which is an OPEN OWNER DECISION
-(criterion 3 verified against a real Redis 2026-08-16)
+(criteria 1-3 and 5-9 verified against a real Redis and a real PostgreSQL)
 
 ## Story
 
@@ -114,6 +114,18 @@ That closes the silence, not the limitation. This story closes the limitation.
 7. Single-instance operation is enforced in the deployment control plane, with
    auditable evidence, until this story lands. A unit test setting
    `APP_INSTANCE_COUNT=2` is not topology evidence.
+
+   **Product idempotency is now shared (2026-08-19).** It was the last protected
+   store living in one process: two replicas each accepted the same
+   Idempotency-Key and each created a durable meal event. `RedisIdempotencyStore`
+   shares the claim; the fence lifts because the reason for it is gone.
+
+   Owner decision on placement: Redis stores the STATUS, the request digest and
+   the meal's ID — never the response body. The body is a diary entry carrying
+   `userId`, dish names, times and nutrition, and Redis is a coordination store
+   whose retention rules were written for identifiers. A replay re-reads the meal
+   from Postgres through the controller, so the owner check runs again on that
+   path and a reference alone is never authority.
 8. `assertSingleInstanceState` is lifted only when 1–7 hold. The lift is a
    deliberate change with the tests above green, not a default that drifts.
 9. `contracts/mobile-api/v1` is unchanged. This is an implementation of the

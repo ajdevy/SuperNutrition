@@ -25,6 +25,7 @@ import {
   PRODUCTION_MARKET_POLICY,
   RedisAttemptRegistry,
   RedisEffectStore,
+  RedisIdempotencyStore,
   RedisRateLimiter,
   createRedisClient,
   StaticMarketPolicyResolver,
@@ -158,6 +159,44 @@ export const buildApplication = async (
   // network address: it only has to differ between instances.
   const instanceId = process.env['APP_INSTANCE_ID'] ?? `${process.pid}-${randomUUID().slice(0, 8)}`;
 
+  // Multi-instance Product idempotency (story 4.4 criterion 3).
+  //
+  // Only the status and the meal's id go to Redis. The body is a diary entry —
+  // userId, dish names, times, nutrition — and Redis is a coordination store
+  // whose retention rules were written for identifiers, not Product API user
+  // content. Owner decision: keep the body in Postgres and re-read it on replay.
+  const idempotency =
+    redis === null
+      ? new InMemoryIdempotencyStore()
+      : new RedisIdempotencyStore(redis, {
+          describe: (response: unknown) => {
+            const envelope = response as { status?: unknown; body?: { id?: unknown } };
+            const { status } = envelope;
+            const id = envelope.body?.id;
+            if (typeof status !== 'number' || typeof id !== 'string') return null;
+            return { status, ref: id };
+          },
+          // The scoped key is `<userId>:<clientKey>` (routes/product), and a
+          // userId is a uuid, so the first colon separates them. Re-reading
+          // through the controller means the owner check runs again on the
+          // replay path: a reference alone is not authority.
+          rehydrate: async (ref: string, scopedKey: string) => {
+            const separator = scopedKey.indexOf(':');
+            if (separator <= 0) return null;
+            const ownerId = scopedKey.slice(0, separator);
+            try {
+              const body = await mealController.getMeal(ref, ownerId);
+              return { status: 201, body };
+            } catch {
+              // Deleted, or not this user's. Nothing to replay, and the store
+              // turns that into a conflict rather than inventing a response.
+              return null;
+            }
+          },
+        });
+
+  const idempotencyShared = redis !== null;
+
   // #49 — the definitive instance fence, asserted HERE because this is the first
   // point at which the answer is knowable: `loadConfig` runs before anything is
   // composed and defers the redis case to this call.
@@ -168,26 +207,22 @@ export const buildApplication = async (
   // and forgetting it here is the mistake this guards, and the only way to make
   // this true is to bind the thing.
   //
-  // H-04 — `sharedStateComplete` is FALSE while Product idempotency is
-  // process-local, even in redis mode.
+  // H-04 — the fence lifts only when EVERY protected store is shared.
   //
-  // `buildServer` below receives `new InMemoryIdempotencyStore()` unconditionally.
-  // With two replicas that means the same authenticated create request carrying
-  // the same Idempotency-Key can claim independently on each and produce two
-  // durable meal events — the exact double-write the key exists to prevent.
+  // Product idempotency was the last one that was not: `buildServer` received a
+  // process-local store unconditionally, so two replicas could each accept the
+  // same Idempotency-Key and each create a durable meal event. The gateway's own
+  // state being shared was never enough — the fence protects the deployment, not
+  // one surface of it.
   //
-  // The gateway's own state is shared and correct. That is not enough: the fence
-  // protects the deployment, not one surface of it, and declaring completeness
-  // while any protected store is per-process is how the previous lift went wrong.
-  // A shared idempotency binding is real work with its own contract semantics
-  // (scoped key, request digest, replayed body, conflict, failure-release, TTL),
-  // and asserting it here before it exists would repeat the mistake rather than
-  // fix it.
-  const productIdempotencyShared = false;
+  // It is now bound to Redis alongside the rest, so the reason for the refusal is
+  // gone. Derived from the bindings rather than declared: `idempotencyShared` is
+  // true because a shared store was actually constructed, and the only way to
+  // make it true is to construct one.
   assertSingleInstanceState(
     config.deployment.instanceCount,
     config.deployment.gatewayStateBackend,
-    redis !== null && attempts !== null && productIdempotencyShared,
+    redis !== null && attempts !== null && idempotencyShared,
   );
 
   const profiles = TomlModelProfileSource.fromFile(
@@ -356,7 +391,7 @@ export const buildApplication = async (
     product: {
       meals: mealController,
       searchFood,
-      idempotency: new InMemoryIdempotencyStore(),
+      idempotency,
       limiter,
       authenticate: async (request) => {
         if (config.auth.testMode) {

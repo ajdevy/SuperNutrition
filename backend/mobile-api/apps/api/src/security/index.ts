@@ -214,7 +214,8 @@ export {
   InMemoryEffectStore,
   InMemoryIdempotencyStore,
   RedisAttemptRegistry,
+  RedisIdempotencyStore,
   RedisUnavailableError,
   createRedisClient,
 } from './stores.js';
-export type { RedisLike, RateLimitRule } from './stores.js';
+export type { RedisLike, RateLimitRule, IdempotencyReference } from './stores.js';

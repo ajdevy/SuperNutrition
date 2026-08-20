@@ -35,6 +35,16 @@ export interface RedisLike {
   eval(script: string, numKeys: number, ...args: (string | number)[]): Promise<unknown>;
   set(key: string, value: string, mode: 'EX', ttl: number, nx: 'NX'): Promise<string | null>;
   get(key: string): Promise<string | null>;
+  /**
+   * Overwrite a value while keeping the expiry the key already has.
+   *
+   * Needed because completing an idempotency claim replaces its value without
+   * extending its window — re-setting a TTL would slide the 24-hour horizon
+   * forward on every completion, and reading the remaining TTL to re-apply it is
+   * a race.
+   */
+  setKeepTtl(key: string, value: string): Promise<void>;
+  del(key: string): Promise<number>;
 }
 
 export interface RateLimitRule {
@@ -508,5 +518,178 @@ export const createRedisClient = async (url: string): Promise<RedisLike> => {
     lazyConnect: true,
   });
   await client.connect();
-  return client as unknown as RedisLike;
+  // Adapted rather than cast wholesale: `setKeepTtl` has no direct ioredis
+  // method of that name, and a blind cast would compile and then fail at the
+  // first call.
+  const raw = client as unknown as {
+    set(...args: unknown[]): Promise<unknown>;
+    del(key: string): Promise<number>;
+  };
+  return Object.assign(client as unknown as RedisLike, {
+    setKeepTtl: async (key: string, value: string): Promise<void> => {
+      await raw.set(key, value, 'KEEPTTL');
+    },
+    del: (key: string): Promise<number> => raw.del(key),
+  });
 };
+
+/**
+ * How a stored idempotency record is written to and read from Redis.
+ *
+ * The composition root supplies both halves, so this file keeps no knowledge of
+ * the Product API's response shapes: `security/` must not learn what a meal is.
+ */
+export interface IdempotencyReference {
+  /**
+   * Turns a completed response into the two things worth storing: the status it
+   * returned, and a reference by which the body can be found again. Null when
+   * the response carries no reference — see `RedisIdempotencyStore` for why that
+   * becomes a conflict rather than a guess.
+   */
+  describe(response: unknown): { status: number; ref: string } | null;
+  /**
+   * Re-reads the body from its durable home. Null when it is no longer there.
+   *
+   * Receives the scoped key as well as the reference, because reading a meal
+   * requires the owner and the owner is what the key is scoped by. The store
+   * itself does not parse the key — it passes it through, and the composition
+   * root, which knows how the key was built, does the reading.
+   */
+  rehydrate(ref: string, scopedKey: string): Promise<unknown | null>;
+}
+
+/** Record format. Versioned so a later shape change is detectable, not ambiguous. */
+const IDEM_PREFIX = 'v1';
+const IDEM_INFLIGHT = 'inflight';
+const IDEM_DONE = 'done';
+
+/**
+ * Idempotency shared across instances, storing NO user content.
+ *
+ * Two replicas could each accept one Idempotency-Key and each create a durable
+ * meal event — the double write the key exists to prevent. The gateway's state
+ * was already shared; this was the last protected store living in one process,
+ * and the instance fence stayed closed while it did.
+ *
+ * ## What is stored
+ *
+ * `v1|<digest>|inflight` while the request runs, then
+ * `v1|<digest>|done|<status>|<ref>` once it completes. Roughly 120 bytes of
+ * hex and a uuid.
+ *
+ * ## What is NOT stored, and why
+ *
+ * The response body. It is a meal diary entry — `userId`, dish names, times,
+ * nutrition — and Redis is a coordination store whose retention rules were
+ * written for identifiers, not for Product API user content. Owner decision:
+ * keep the body in Postgres, where it already lives under rules that already
+ * exist, and re-read it on replay. That costs one read on the rare path and
+ * leaves the privacy posture unchanged.
+ *
+ * The claim itself is decided by `SET NX`, which is atomic at the server: of any
+ * number of replicas racing for one key, exactly one is told `fresh`.
+ */
+export class RedisIdempotencyStore implements IdempotencyStore {
+  readonly #redis: RedisLike;
+  readonly #ref: IdempotencyReference;
+
+  constructor(redis: RedisLike, reference: IdempotencyReference) {
+    this.#redis = redis;
+    this.#ref = reference;
+  }
+
+  async claim(key: string, requestDigest: string, ttlSeconds = 86_400): Promise<IdempotencyClaim> {
+    const namespaced = `idem:${key}`;
+    let existing: string | null;
+    try {
+      const won = await this.#redis.set(
+        namespaced,
+        `${IDEM_PREFIX}|${requestDigest}|${IDEM_INFLIGHT}`,
+        'EX',
+        ttlSeconds,
+        'NX',
+      );
+      if (won === 'OK') return { state: 'fresh' };
+      // Lost the race, or the key was already there. Read what the winner wrote
+      // — the SET above is what decided the race, so this read cannot change the
+      // outcome, only report it.
+      existing = await this.#redis.get(namespaced);
+    } catch (cause) {
+      throw new RedisUnavailableError('idempotency claim', cause);
+    }
+
+    // The key expired between the failed SET and this GET. Treating it as a
+    // conflict rather than retrying keeps the answer conservative: a caller that
+    // genuinely holds a fresh key can retry and win outright.
+    if (existing === null) return { state: 'conflict' };
+
+    const parts = existing.split('|');
+    // An unreadable record is not a licence to create a second meal.
+    if (parts[0] !== IDEM_PREFIX || parts.length < 3) return { state: 'conflict' };
+    const [, storedDigest, state] = parts;
+
+    // Same key, different request. The client reused a key it had promised was
+    // one request.
+    if (storedDigest !== requestDigest) return { state: 'conflict' };
+    // Still running somewhere. Two concurrent retries must not both create,
+    // which is exactly what the in-memory store does here too.
+    if (state === IDEM_INFLIGHT) return { state: 'conflict' };
+    if (state !== IDEM_DONE || parts.length < 5) return { state: 'conflict' };
+
+    const ref = parts.slice(4).join('|');
+    // Completed, but with no reference to read back — see `complete`. Nothing
+    // can be replayed and nothing may be created: the key already made a meal.
+    if (ref.length === 0) return { state: 'conflict' };
+
+    const body = await this.#ref.rehydrate(ref, key);
+    // The row is gone: the user deleted the meal this key created. Refusing is
+    // not ideal, but replaying an invented body, or creating a second meal under
+    // a key that already made one, are both worse.
+    if (body === null) return { state: 'conflict' };
+
+    return { state: 'replay', response: body };
+  }
+
+  async complete(key: string, response: unknown): Promise<void> {
+    const described = this.#ref.describe(response);
+    // A response this adapter cannot describe leaves the record marked done with
+    // an empty reference, so the key stays spent and every later claim on it
+    // conflicts. Releasing it instead would let a retry create a second meal;
+    // storing the body would put user content in Redis, which is the thing this
+    // design exists to avoid. Fail closed, and stay boring about it.
+    try {
+      // Inside the try: reading back the digest is itself a Redis call, and an
+      // outage during it must surface as an outage rather than as a bare driver
+      // error the boundary maps to `internal-error`.
+      const value =
+        described === null
+          ? `${IDEM_PREFIX}|unknown|${IDEM_DONE}||`
+          : `${IDEM_PREFIX}|${await this.#digestOf(key)}|${IDEM_DONE}|${described.status}|${described.ref}`;
+      await this.#redis.setKeepTtl(`idem:${key}`, value);
+    } catch (cause) {
+      if (cause instanceof RedisUnavailableError) throw cause;
+      throw new RedisUnavailableError('idempotency completion', cause);
+    }
+  }
+
+  /**
+   * The digest the claim recorded, read back so `complete` preserves it.
+   *
+   * Kept rather than recomputed because `complete` never sees the request body —
+   * and a record whose digest changed on completion would stop recognising the
+   * very request that created it.
+   */
+  async #digestOf(key: string): Promise<string> {
+    const existing = await this.#redis.get(`idem:${key}`);
+    const parts = existing?.split('|') ?? [];
+    return parts.length >= 2 && parts[1] !== undefined ? parts[1] : 'unknown';
+  }
+
+  async fail(key: string): Promise<void> {
+    try {
+      await this.#redis.del(`idem:${key}`);
+    } catch (cause) {
+      throw new RedisUnavailableError('idempotency release', cause);
+    }
+  }
+}
