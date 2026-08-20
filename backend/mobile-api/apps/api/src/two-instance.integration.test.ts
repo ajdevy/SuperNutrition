@@ -5,6 +5,7 @@ import { buildApplication } from './main.js';
 import { createLogger } from './logging/index.js';
 import type { AppConfig } from './config/index.js';
 import type { ServerHandle } from './server.js';
+import { COORDINATION_TTL_CEILING_SECONDS } from './security/retention.js';
 
 /**
  * handover-6 — TWO REAL APPLICATION INSTANCES against ONE REAL REDIS.
@@ -192,6 +193,17 @@ const redisGet = async (key: string): Promise<string | null> => {
   const client = new Redis(url!, { maxRetriesPerRequest: 1 });
   try {
     return await client.get(key);
+  } finally {
+    void client.quit();
+  }
+};
+
+/** TTL in seconds for a key: -1 means "no expiry", -2 means "gone". */
+const redisTtl = async (key: string): Promise<number> => {
+  const { Redis } = await import('ioredis');
+  const client = new Redis(url!, { maxRetriesPerRequest: 1 });
+  try {
+    return await client.ttl(key);
   } finally {
     void client.quit();
   }
@@ -685,17 +697,42 @@ describe.skipIf(!url || !dbUrl)('one durable write across two replicas', () => {
     expect(retried.statusCode, 'the failed claim was never released').toBe(201);
   }, 60_000);
 
-  it('keeps no meal content in Redis — only a status and a reference', async () => {
-    const key = `idem-${RUN}-bytes`;
-    await post(a, key, mealBody());
+  it('keeps no meal content in Redis, and expires every key it writes', async () => {
+    // A canary rather than a word from the fixture. 'Banana' and 'lunch' are
+    // short enough to collide with hex by luck, and an assertion that can pass
+    // by coincidence can also fail by coincidence — this string appears in
+    // Redis only if the body was written there.
+    const canary = `CANARY-${RUN}-DISHNAME`;
+    const body = mealBody();
+    body.items[0]!.displayName = canary;
 
-    for (const redisKey of await redisKeys()) {
-      if (!redisKey.startsWith('idem:')) continue;
-      for (const value of await redisValues(redisKey)) {
-        expect(value).not.toContain('Banana');
-        expect(value).not.toContain('lunch');
-        expect(value.length).toBeLessThan(160);
+    const created = await post(a, `idem-${RUN}-canary`, body);
+    expect(created.statusCode, 'the canary meal was never created').toBe(201);
+
+    const keys = await redisKeys();
+    expect(keys.length, 'the request wrote nothing to Redis at all').toBeGreaterThan(0);
+
+    let scanned = 0;
+    for (const key of keys) {
+      // Story 4.4 criterion 4: nothing outlives the at-most-once horizon. A key
+      // with no expiry is the failure this criterion is about — it would sit in
+      // Redis until an operator noticed.
+      const ttl = await redisTtl(key);
+      expect(ttl, `key ${key} has no expiry at all`).toBeGreaterThan(0);
+      expect(ttl, `key ${key} outlives the coordination horizon`).toBeLessThanOrEqual(
+        COORDINATION_TTL_CEILING_SECONDS,
+      );
+
+      for (const value of await redisValues(key)) {
+        scanned += 1;
+        expect(value, `key ${key} holds the meal body`).not.toContain(canary);
       }
     }
+
+    // Without this the loop above passes by reading nothing, which is exactly
+    // how a "no user content" assertion quietly stops asserting anything.
+    expect(scanned, 'no value was actually read, so the canary check was vacuous').toBeGreaterThan(
+      0,
+    );
   }, 60_000);
 });
