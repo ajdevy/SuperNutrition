@@ -415,6 +415,28 @@ describe('idempotency (docs/06 §6.7)', () => {
   // collided: at best the second got a 409 for a request they never made, at
   // worst the replay branch handed them the stored response to someone else's
   // meal.
+  it('releases the key when creation fails, so a later request can use it', async () => {
+    // A claim is taken BEFORE create() runs, so a create that throws must
+    // release it — otherwise one failed request makes that key permanently
+    // unusable, and the failure is reported as a server fault rather than the
+    // client error it is.
+    const broken = await server.app.inject({
+      method: 'POST',
+      url: '/api/v1/meals/manual',
+      payload: meal({ localDate: '2026-02-30' }) as never,
+      headers: { authorization: TOKEN, 'idempotency-key': 'release-me' },
+    });
+    expect(broken.statusCode, 'a validation failure became a server error').toBe(400);
+
+    const retried = await server.app.inject({
+      method: 'POST',
+      url: '/api/v1/meals/manual',
+      payload: meal() as never,
+      headers: { authorization: TOKEN, 'idempotency-key': 'release-me' },
+    });
+    expect(retried.statusCode, 'the failed claim was never released').toBe(201);
+  });
+
   it('keeps one user out of another user’s idempotency keyspace', async () => {
     const mine = await postWithKey('/api/v1/meals/manual', meal(), 'shared-key', TOKEN);
     expect(mine.statusCode).toBe(201);
