@@ -383,6 +383,14 @@ provenance="$work/base-provenance"
 mkdir -p "$provenance"
 seed_repository "$provenance"
 provenance_base=$(git -C "$provenance" rev-parse HEAD)
+# A commit AFTER the base is taken, so the base is a real ancestor rather than
+# HEAD itself. It used to be HEAD: the gate was asked to report its provenance
+# for a comparison that was empty by construction — the exact vacuity TL-H3 is
+# about — so the fixture proved the message was printed but never that it
+# described a comparison that happened. The added file is outside contracts/,
+# which keeps this fixture about provenance and not about the verdict.
+printf 'unrelated\n' >"$provenance/README.md"
+commit_all "$provenance" 'a commit after the base'
 
 output=$(SUPERNUTRITION_IMMUTABILITY_BASE="$provenance_base" \
     "$repo_root/scripts/verify-release-immutability.sh" "$provenance" 2>&1)
@@ -397,5 +405,50 @@ if ! printf '%s' "$output" | grep -q 'passed explicitly'; then
     printf '%s\n' "$output" >&2
     exit 1
 fi
+
+# --- TL-H3: HEAD compared against itself is never a pass ---------------------
+# On a push event there is no pull-request base, so the gate's local fallback
+# resolved to `merge-base origin/main HEAD` = HEAD, the diff was empty by
+# construction, and it printed its affirmative OK. A direct push to main that
+# rewrote a published release sailed through the one automated check built for
+# that incident.
+#
+# Both halves are fixed here: the caller must be refused, and the derived case
+# must not claim to have verified anything.
+selfbase="$work/self-base"
+mkdir -p "$selfbase"
+seed_repository "$selfbase"
+
+# The mutation is COMMITTED, and only then is the base taken. That ordering is
+# the whole scenario: on a push to main the rewrite is already in the base, so
+# the diff finds nothing. An uncommitted edit would be caught by the
+# working-tree comparison and would prove nothing about this hole — a first
+# draft of this fixture made exactly that mistake and passed for the wrong
+# reason, which the mutation check surfaced.
+printf '{"outcome":"rewritten"}\n' >"$selfbase/contracts/demo/v1/fixtures/result.json"
+commit_all "$selfbase" 'rewrite a published release, as a direct push to main would'
+head_sha="$(git -C "$selfbase" rev-parse HEAD)"
+
+output="$(SUPERNUTRITION_IMMUTABILITY_BASE="$head_sha" "$gate" "$selfbase" 2>&1 || true)"
+if SUPERNUTRITION_IMMUTABILITY_BASE="$head_sha" "$gate" "$selfbase" >/dev/null 2>&1; then
+    echo "FAIL: the gate accepted a base equal to HEAD, certifying an empty comparison" >&2
+    exit 1
+fi
+case "$output" in
+    *"equals HEAD"*) : ;;
+    *)
+        echo "FAIL: the base-equals-HEAD refusal was not the reason given" >&2
+        printf '  actual: %s\n' "$output" >&2
+        exit 1
+        ;;
+esac
+
+# And no path may print the affirmative word while the comparison was empty.
+case "$output" in
+    *"release immutability: OK"*)
+        echo "FAIL: the gate printed OK for a comparison of HEAD against itself" >&2
+        exit 1
+        ;;
+esac
 
 echo "release immutability negative fixtures: OK"

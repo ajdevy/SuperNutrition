@@ -64,6 +64,35 @@ if test "$(git rev-parse --is-shallow-repository 2>/dev/null)" = "true"; then
     exit 1
 fi
 
+# TL-H3 — never certify a comparison of HEAD against itself.
+#
+# On a push event `github.event.pull_request.base.sha` is empty, so the fallback
+# below derived the base from `merge-base origin/main HEAD` — and on a push to
+# main that is HEAD. The diff was then empty by construction and the gate
+# printed its affirmative OK having compared nothing. origin/main shows most
+# recent commits arriving as direct pushes, one of them editing contracts/
+# directly, so this was the live path for exactly the incident the gate exists
+# to catch.
+#
+# The workflow now passes `github.event.before` on push events. This is the
+# backstop for when it does not:
+#
+#   - base passed EXPLICITLY and equal to HEAD is a misconfigured caller. In CI a
+#     real base always exists, so this is refused rather than excused — a
+#     force-push whose `before` is unreachable must not read as compliance.
+#   - base DERIVED and equal to HEAD means a branch with no commits of its own.
+#     There is genuinely nothing to compare, so it exits clean — but it says
+#     "not applicable", never "OK". A reader must not be able to mistake an
+#     absent comparison for a passed one.
+if test "$(git rev-parse "$base")" = "$(git rev-parse HEAD)"; then
+    if test "$base_origin" = "passed explicitly"; then
+        printf 'refusing to certify: the immutability base equals HEAD, so the comparison is empty by construction. On a push event pass github.event.before; on a pull request pass the base SHA.\n' >&2
+        exit 1
+    fi
+    printf 'release immutability: NOT APPLICABLE (base %s equals HEAD; this revision has no commits to compare, so nothing was verified)\n' "$(git rev-parse --short HEAD)"
+    exit 0
+fi
+
 # The base has to be an ANCESTOR of what is being reviewed. A stale origin/main —
 # or a hand-passed revision from another line of development — produces a diff
 # against a tree that was never this branch's starting point, which reports
