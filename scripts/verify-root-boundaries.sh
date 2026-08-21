@@ -148,6 +148,13 @@ bare_path_pattern() {
 # showed a cross-product CACHE edge in a .toml going completely undetected — a
 # gap the old vacuous fixtures had concealed. Checked first: no file under any
 # product root legitimately carries such a reference today.
+#
+# Build and container files were missing from that list, and they are the file
+# types where a bare cross-root path is most likely and most consequential:
+# `Makefile` and `Dockerfile` carry `COPY ../other-product`-shaped edges,
+# `*.gradle.kts` is how a Gradle build reaches a sibling root, and `*.mjs` is
+# ordinary tooling here. The scan named the shapes it was looking for and then
+# did not look in the files that have them.
 search_executable_files() {
   local pattern="$1"
   local product_path="$2"
@@ -157,6 +164,9 @@ search_executable_files() {
       --glob '!**/node_modules/**' \
       --glob '*.sh' --glob '*.bash' --glob '*.yml' --glob '*.yaml' \
       --glob '*.toml' --glob '*.properties' --glob '*.cfg' --glob '*.ini' \
+      --glob '*.gradle' --glob '*.gradle.kts' --glob '*.mjs' --glob '*.cjs' \
+      --glob 'Makefile' --glob 'makefile' --glob 'GNUmakefile' \
+      --glob 'Dockerfile' --glob 'Dockerfile.*' --glob '*.dockerfile' \
       "$pattern" "$product_path"
   else
     grep -R -n -I -E \
@@ -164,6 +174,9 @@ search_executable_files() {
       --exclude-dir=node_modules \
       --include='*.sh' --include='*.bash' --include='*.yml' --include='*.yaml' \
       --include='*.toml' --include='*.properties' --include='*.cfg' --include='*.ini' \
+      --include='*.gradle' --include='*.gradle.kts' --include='*.mjs' --include='*.cjs' \
+      --include='Makefile' --include='makefile' --include='GNUmakefile' \
+      --include='Dockerfile' --include='Dockerfile.*' --include='*.dockerfile' \
       "$pattern" "$product_path"
   fi
 }

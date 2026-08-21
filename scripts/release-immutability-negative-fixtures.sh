@@ -140,6 +140,12 @@ write_acknowledgement() {
         printf 'path = "%s"\n' "$2"
         printf 'head_sha256 = "%s"\n' "$3"
         printf 'expires = "%s"\n' "$4"
+        # base_commit is written because the gate now READS it. It was recorded
+        # on every real entry and read by nothing, so it could name a typo or a
+        # revision from another line of development and the acknowledgement
+        # applied anyway. The fixture repository's own HEAD is the honest value:
+        # an ancestor of whatever the gate ends up comparing against.
+        printf 'base_commit = "%s"\n' "$(git -C "$dir" rev-parse HEAD)"
         printf 'reason = "fixture"\n'
         test -z "${5:-}" || printf '%s\n' "$5"
     } >"$dir/contracts/release-catalog/v1/acknowledged-edits.toml"

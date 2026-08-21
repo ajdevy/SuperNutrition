@@ -200,4 +200,22 @@ rm -f "$root/contracts/root-policy/v1/boundaries.toml"
 rm -f "$root/mobile/gradlew"
 expect_rejected_because "a deleted inventory hiding a removed entrypoint" "boundary inventory" "$root"
 
+# --- the file types a bare cross-root path actually appears in ---------------
+# The bare-path scan named the shapes it looked for and then did not look in the
+# files that have them: Makefile, Dockerfile, *.gradle(.kts) and *.mjs were all
+# outside its include list, while being exactly where a `COPY ../other-product`
+# or a sibling-root Gradle reference lives.
+for probe in Dockerfile Makefile build.gradle.kts tool.mjs; do
+  root="$(fresh_root "boundary-bare-path-$probe")"
+  case "$probe" in
+    Dockerfile) printf 'FROM node:22\nCOPY mobile/gradlew /app/\n' >"$root/backend/mobile-api/$probe" ;;
+    Makefile)   printf 'build:\n\tcd mobile/build-logic && ./gradlew\n' >"$root/backend/mobile-api/$probe" ;;
+    # UNQUOTED, so the bare-path scan is what catches it. A quoted form is
+    # caught by the general pattern instead, and the fixture would then pass
+    # while proving nothing about the include list this test is about.
+    *)          printf 'val tool = mobile/gradlew\n' >"$root/backend/mobile-api/$probe" ;;
+  esac
+  expect_rejected_because "a bare cross-product path in $probe" "bare path" "$root"
+done
+
 printf 'root-boundary negative fixtures: OK (%d rejections, each for its own reason)\n' "$fixture_count"

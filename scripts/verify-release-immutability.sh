@@ -232,6 +232,28 @@ def acknowledged(path, kind):
     if edit is None:
         return False, "no acknowledgement recorded"
 
+    # `base_commit` is CHECKED. It was recorded on every entry and read by
+    # nothing, so it could name a typo, a fabricated revision, or a commit from
+    # another line of development and the acknowledgement applied regardless —
+    # a field that looks like provenance and carries none.
+    #
+    # Ancestry rather than equality: the gate's base advances as main moves, so
+    # an acknowledgement written against an earlier revision is still the same
+    # acknowledgement. What it must not be is a revision this history has never
+    # contained.
+    recorded_base = str(edit.get("base_commit", "")).strip()
+    if not recorded_base:
+        return False, "acknowledgement records no base_commit"
+    if subprocess.run(
+        ["git", "merge-base", "--is-ancestor", recorded_base, "HEAD"],
+        capture_output=True,
+        check=False,
+    ).returncode != 0:
+        return False, (
+            f"acknowledgement base_commit {recorded_base[:12]} is not an ancestor of HEAD; "
+            "it names a revision this history does not contain"
+        )
+
     try:
         expires = date.fromisoformat(str(edit["expires"]))
     except ValueError:

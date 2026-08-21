@@ -78,14 +78,31 @@ release_digests() {
     done
 }
 
+# The release list is DERIVED from the catalog, not retyped here.
+#
+# It was seven hand-maintained lines, so publishing a release and forgetting to
+# add one left the fingerprint silently covering less than it claimed — and a
+# fingerprint that omits a release is exactly as green as one that includes it.
+# The catalog already has to list every current release
+# (verify-release-catalog.sh enforces that), so the catalog IS the list.
+catalog_release_paths() {
+    SUPERNUTRITION_CATALOG_ROOT="$repo_root" python3 -c '
+import os
+import pathlib
+import sys
+import tomllib
+
+catalog = pathlib.Path(os.environ["SUPERNUTRITION_CATALOG_ROOT"]) / "contracts/release-catalog/v1/digests.toml"
+document = tomllib.loads(catalog.read_text(encoding="utf-8"))
+paths = sorted({e["path"] for e in document.get("entry", []) if e.get("status") == "current"})
+if not paths:
+    sys.exit("release catalog lists no current entries; refusing to fingerprint nothing")
+print("\n".join(paths))
+'
+}
+
 contract_catalog_digest="$( { release_digests \
-  contracts/mobile-api/v1 \
-  contracts/inference/v1 \
-  contracts/inference/v2 \
-  contracts/inference/v3 \
-  contracts/interaction-policy/v1 \
-  contracts/market-policy/v1 \
-  contracts/product-identity/v1
+  $(catalog_release_paths)
   digest_paths \
     contracts/release-catalog/v1/digests.toml \
     contracts/release-catalog/v1/acknowledged-edits.toml \
