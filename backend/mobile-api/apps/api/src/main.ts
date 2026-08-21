@@ -193,34 +193,33 @@ export const buildApplication = async (
           },
         });
 
-  const idempotencyShared = redis !== null;
+  /**
+   * Every store the fence protects, asked whether it is actually shared.
+   *
+   * This was `redis !== null` for the idempotency store, with a comment saying
+   * "derived from the bindings rather than declared: the only way to make it
+   * true is to construct one". It was not — it re-tested the same condition the
+   * ternaries above branch on, so changing one of those to build a per-process
+   * store would have left the flag true and lifted the fence over a deployment
+   * that no longer qualified. A mirror of the condition is not a derivation from
+   * the result.
+   *
+   * `instanceof` asks the object. A new per-process store cannot satisfy it, and
+   * a new PROTECTED store that nobody adds here still fails the fence via its
+   * own entry — which is why the list is written out rather than reduced to one
+   * flag.
+   */
+  const sharedStateComplete =
+    limiter instanceof RedisRateLimiter &&
+    effects instanceof RedisEffectStore &&
+    requestIds instanceof RedisEffectStore &&
+    attempts instanceof RedisAttemptRegistry &&
+    idempotency instanceof RedisIdempotencyStore;
 
-  // #49 — the definitive instance fence, asserted HERE because this is the first
-  // point at which the answer is knowable: `loadConfig` runs before anything is
-  // composed and defers the redis case to this call.
-  //
-  // Complete means every store the fence protects is shared. Derived from the
-  // bindings themselves rather than from a flag, so it cannot drift from what
-  // was actually built: adding a new per-process store that the fence protects
-  // and forgetting it here is the mistake this guards, and the only way to make
-  // this true is to bind the thing.
-  //
-  // H-04 — the fence lifts only when EVERY protected store is shared.
-  //
-  // Product idempotency was the last one that was not: `buildServer` received a
-  // process-local store unconditionally, so two replicas could each accept the
-  // same Idempotency-Key and each create a durable meal event. The gateway's own
-  // state being shared was never enough — the fence protects the deployment, not
-  // one surface of it.
-  //
-  // It is now bound to Redis alongside the rest, so the reason for the refusal is
-  // gone. Derived from the bindings rather than declared: `idempotencyShared` is
-  // true because a shared store was actually constructed, and the only way to
-  // make it true is to construct one.
   assertSingleInstanceState(
     config.deployment.instanceCount,
     config.deployment.gatewayStateBackend,
-    redis !== null && attempts !== null && idempotencyShared,
+    sharedStateComplete,
   );
 
   const profiles = TomlModelProfileSource.fromFile(
@@ -422,13 +421,26 @@ export const buildApplication = async (
   };
 };
 
+/** How long a shutdown may take before the process stops waiting for it. */
+const SHUTDOWN_GRACE_MS = 10_000;
+
+/**
+ * A refusal to start is a message and an exit code, not a stack trace.
+ *
+ * `TestModeFenceError` and `ConfigError` are deliberate boot refusals — the
+ * operator has misconfigured something and the fix is in the message. Printing
+ * a stack above it buries the one line that matters.
+ */
+const isBootRefusal = (error: unknown): boolean =>
+  error instanceof TestModeFenceError || error instanceof ConfigError;
+
 const main = async (): Promise<void> => {
   let config: AppConfig;
   try {
     config = loadConfig(process.env);
   } catch (error) {
-    if (error instanceof TestModeFenceError || error instanceof ConfigError) {
-      process.stderr.write(`${error.name}: ${error.message}\n`);
+    if (isBootRefusal(error)) {
+      process.stderr.write(`${(error as Error).name}: ${(error as Error).message}\n`);
       process.exit(1);
     }
     throw error;
@@ -456,17 +468,75 @@ const main = async (): Promise<void> => {
     'mobile-api starting',
   );
 
-  const server = await buildApplication(config, logger);
+  // The instance fence and the shared-state assertions live inside
+  // `buildApplication`, and they were OUTSIDE this guard: a refusal there
+  // rejected the promise `void main()` discarded, so Node printed an unhandled
+  // rejection warning and — depending on the runtime's setting — either exited
+  // with a stack where a message belonged, or kept running. A deployment refused
+  // for a reason it never showed is the failure mode this fence exists to make
+  // impossible.
+  let server: ServerHandle;
+  try {
+    server = await buildApplication(config, logger);
+  } catch (error) {
+    if (isBootRefusal(error)) {
+      process.stderr.write(`${(error as Error).name}: ${(error as Error).message}\n`);
+      process.exit(1);
+    }
+    throw error;
+  }
+
   const address = await server.listen();
   logger.info({ telemetry: { route: address } }, 'mobile-api listening');
 
   for (const signal of ['SIGINT', 'SIGTERM'] as const) {
     process.once(signal, () => {
-      void server.close().then(() => process.exit(0));
+      // A close that hangs — an open socket, a pool that will not drain — used
+      // to leave the process alive after it had been asked to stop, waiting for
+      // a promise that never settled. The orchestrator's own kill eventually
+      // arrives; this makes the process answer for its own shutdown first, and
+      // with a nonzero code so the difference is visible.
+      const forced = setTimeout(() => {
+        process.stderr.write(`shutdown did not complete within ${SHUTDOWN_GRACE_MS}ms; exiting\n`);
+        process.exit(1);
+      }, SHUTDOWN_GRACE_MS);
+      forced.unref();
+
+      void server
+        .close()
+        .then(() => process.exit(0))
+        .catch((error: unknown) => {
+          logger.error({ err: error }, 'shutdown failed');
+          process.exit(1);
+        });
     });
   }
 };
 
 if (process.env['NODE_ENV'] !== 'test') {
-  void main();
+  // A rejection nobody handles is a process in an unknown state. Node's default
+  // for `unhandledRejection` has changed across major versions, so relying on it
+  // means relying on which runtime happens to be installed — these say what this
+  // service does, and it is the same thing in both cases: report, then stop.
+  //
+  // Written to stderr rather than through the logger because the logger may be
+  // the thing that failed, and a handler whose first act can throw is not a
+  // handler.
+  process.on('unhandledRejection', (reason: unknown) => {
+    process.stderr.write(`unhandledRejection: ${String(reason)}\n`);
+    process.exit(1);
+  });
+  process.on('uncaughtException', (error: Error) => {
+    process.stderr.write(`uncaughtException: ${error.stack ?? error.message}\n`);
+    process.exit(1);
+  });
+
+  // `void main()` discarded the promise, so anything main rethrew — a provider
+  // adapter that could not read its profiles, a database handle that could not
+  // be created — vanished into the same unhandled rejection. The exit code is
+  // what an orchestrator restarts on.
+  main().catch((error: unknown) => {
+    process.stderr.write(`mobile-api failed to start: ${String(error)}\n`);
+    process.exit(1);
+  });
 }
