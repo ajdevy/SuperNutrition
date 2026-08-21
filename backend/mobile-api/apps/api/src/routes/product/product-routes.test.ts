@@ -236,7 +236,16 @@ let idempotencyStore: InMemoryIdempotencyStore;
 /** Swappable per test, so throttling can be provoked without rebuilding. */
 let productLimiter: RateLimiter;
 
-beforeEach(async () => {
+/**
+ * The whole composition the tests run against, with one seam.
+ *
+ * Extracted from `beforeEach` so a test can substitute a single collaborator —
+ * an idempotency store whose completion write fails, say — without rebuilding
+ * the wiring by hand and drifting from what the suite actually exercises.
+ */
+const buildTestServer = async (
+  overrides: { idempotency?: typeof idempotencyStore } = {},
+): Promise<ServerHandle> => {
   repository = new InMemoryMealRepository();
   usdaCalls = [];
   usdaReply = () => usdaJson({ foods: [usdaFood(171705, 'Bananas, raw')] });
@@ -263,7 +272,7 @@ beforeEach(async () => {
     },
   });
 
-  server = await buildServer({
+  return await buildServer({
     config,
     logger: createLogger(config),
     gateway: {
@@ -272,7 +281,7 @@ beforeEach(async () => {
     } as never,
     product: {
       meals: controller,
-      idempotency: idempotencyStore,
+      idempotency: overrides.idempotency ?? idempotencyStore,
       limiter: {
         check: (key) => productLimiter.check(key),
         failureMode: (layer) => productLimiter.failureMode(layer),
@@ -297,6 +306,10 @@ beforeEach(async () => {
       authenticate: (request) => authenticator.authenticate(request.headers.authorization),
     },
   });
+};
+
+beforeEach(async () => {
+  server = await buildTestServer();
 });
 
 afterEach(async () => {
@@ -435,6 +448,52 @@ describe('idempotency (docs/06 §6.7)', () => {
       headers: { authorization: TOKEN, 'idempotency-key': 'release-me' },
     });
     expect(retried.statusCode, 'the failed claim was never released').toBe(201);
+  });
+
+  it('does not create a second meal when the completion write fails (DS-F1)', async () => {
+    // The claim was released on ANY throw, including a Redis fault raised by
+    // `complete()` AFTER the Postgres row had already been written. The client
+    // sees a 500, retries the same Idempotency-Key, the claim reads fresh — and
+    // a second durable meal exists for one request the user made once. That is
+    // the guarantee this store exists to provide, inverted by its own error
+    // path.
+    //
+    // The in-memory store cannot raise from `complete`, which is why nothing
+    // caught this: the fault has to be injected.
+    let completions = 0;
+    const failingCompletion = {
+      claim: (key: string, digest: string, ttl: number) => idempotencyStore.claim(key, digest, ttl),
+      complete: async () => {
+        completions += 1;
+        throw new Error('redis went away after the row was written');
+      },
+      fail: (key: string) => idempotencyStore.fail(key),
+    };
+    await server.close();
+    server = await buildTestServer({ idempotency: failingCompletion as never });
+
+    const key = 'completion-fails';
+    const first = await server.app.inject({
+      method: 'POST',
+      url: '/api/v1/meals/manual',
+      payload: meal() as never,
+      headers: { authorization: TOKEN, 'idempotency-key': key },
+    });
+    expect(completions, 'the completion write was never attempted').toBe(1);
+    expect(first.statusCode, 'a completion fault should surface as a server error').toBe(500);
+
+    // Exactly the client behaviour the contract invites: same key, same body.
+    const retry = await server.app.inject({
+      method: 'POST',
+      url: '/api/v1/meals/manual',
+      payload: meal() as never,
+      headers: { authorization: TOKEN, 'idempotency-key': key },
+    });
+    expect(
+      retry.statusCode,
+      'the retry created a second meal: the claim was released even though the row was written',
+    ).toBe(409);
+    expect(repository.events.size, 'one request produced two durable meals').toBe(1);
   });
 
   it('keeps one user out of another user’s idempotency keyspace', async () => {

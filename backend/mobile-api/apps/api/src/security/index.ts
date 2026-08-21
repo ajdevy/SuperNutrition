@@ -31,9 +31,34 @@ export interface RateLimiter {
 }
 
 /** Key + request digest, 24h. Same key + different digest is 409 (docs/06 §6.7). */
+/**
+ * How long a claim holds its key, in each of the two states it can be in.
+ *
+ * One number used to serve both, and it was the 24-hour replay window. So a
+ * process that died between claiming and completing — or whose SET applied but
+ * whose reply was lost — locked that key fleet-wide for 24 hours with nothing
+ * created (DS-F2). An honest retry got a conflict about a meal that does not
+ * exist, and no operator action short of reaching into Redis could clear it.
+ *
+ * The two states answer different questions, so they get different bounds:
+ * `inFlightSeconds` is "how long may one request be in progress", which is a
+ * request-timeout question, and `completedSeconds` is "how long is a replay
+ * honoured", which is the contract's replay window.
+ */
+export interface IdempotencyTtl {
+  readonly inFlightSeconds: number;
+  readonly completedSeconds: number;
+}
+
 export interface IdempotencyStore {
-  claim(key: string, requestDigest: string, ttlSeconds: number): Promise<IdempotencyClaim>;
-  complete(key: string, response: unknown): Promise<void>;
+  claim(key: string, requestDigest: string, ttl: IdempotencyTtl): Promise<IdempotencyClaim>;
+  /**
+   * Records the response and extends the key to the replay window.
+   *
+   * Extends rather than preserves: the claim was written with the short
+   * in-flight bound, and only a completed record earns the full window.
+   */
+  complete(key: string, response: unknown, ttl: IdempotencyTtl): Promise<void>;
   /**
    * Releases a claim whose request failed, so a retry with the same key may run
    * again. Distinct from `complete` because "failed" and "returned this

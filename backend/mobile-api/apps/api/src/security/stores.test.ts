@@ -9,6 +9,11 @@ import {
   type RedisLike,
 } from './stores.js';
 
+/** The two bounds every claim now carries; the default the suite reasons about. */
+const TTL = { inFlightSeconds: 60, completedSeconds: 86_400 } as const;
+/** One explicit window, when a test is about expiry rather than the split. */
+const ttl = (seconds: number) => ({ inFlightSeconds: seconds, completedSeconds: seconds });
+
 const rules = [
   { layer: 'installation' as const, limit: 2, windowSeconds: 60 },
   { layer: 'user' as const, limit: 2, windowSeconds: 60 },
@@ -184,35 +189,38 @@ describe('at-most-once effect claims', () => {
 describe('idempotency', () => {
   it('replays a completed response for the same digest', async () => {
     const store = new InMemoryIdempotencyStore();
-    expect(await store.claim('k', 'digest-1')).toEqual({ state: 'fresh' });
-    await store.complete('k', { ok: true });
-    expect(await store.claim('k', 'digest-1')).toEqual({ state: 'replay', response: { ok: true } });
+    expect(await store.claim('k', 'digest-1', TTL)).toEqual({ state: 'fresh' });
+    await store.complete('k', { ok: true }, TTL);
+    expect(await store.claim('k', 'digest-1', TTL)).toEqual({
+      state: 'replay',
+      response: { ok: true },
+    });
   });
 
   it('conflicts when the same key carries a different request', async () => {
     const store = new InMemoryIdempotencyStore();
-    await store.claim('k', 'digest-1');
-    expect(await store.claim('k', 'digest-2')).toEqual({ state: 'conflict' });
+    await store.claim('k', 'digest-1', TTL);
+    expect(await store.claim('k', 'digest-2', TTL)).toEqual({ state: 'conflict' });
   });
 
   it('conflicts while the first request is still in flight', async () => {
     const store = new InMemoryIdempotencyStore();
-    await store.claim('k', 'digest-1');
-    expect(await store.claim('k', 'digest-1')).toEqual({ state: 'conflict' });
+    await store.claim('k', 'digest-1', TTL);
+    expect(await store.claim('k', 'digest-1', TTL)).toEqual({ state: 'conflict' });
   });
 
   it('allows a retry after a failed attempt released its claim', async () => {
     const store = new InMemoryIdempotencyStore();
-    await store.claim('k', 'digest-1');
+    await store.claim('k', 'digest-1', TTL);
     await store.fail('k');
-    expect(await store.claim('k', 'digest-1')).toEqual({ state: 'fresh' });
+    expect(await store.claim('k', 'digest-1', TTL)).toEqual({ state: 'fresh' });
   });
 
   it('replays a completed response for the same digest', async () => {
     const store = new InMemoryIdempotencyStore();
-    await store.claim('k', 'digest-1');
-    await store.complete('k', { status: 201, body: { id: 'meal-1' } });
-    expect(await store.claim('k', 'digest-1')).toEqual({
+    await store.claim('k', 'digest-1', TTL);
+    await store.complete('k', { status: 201, body: { id: 'meal-1' } }, TTL);
+    expect(await store.claim('k', 'digest-1', TTL)).toEqual({
       state: 'replay',
       response: { status: 201, body: { id: 'meal-1' } },
     });
@@ -220,9 +228,9 @@ describe('idempotency', () => {
 
   it('conflicts when the same key carries a different request', async () => {
     const store = new InMemoryIdempotencyStore();
-    await store.claim('k', 'digest-1');
-    await store.complete('k', { status: 201, body: { id: 'meal-1' } });
-    expect(await store.claim('k', 'digest-2')).toEqual({ state: 'conflict' });
+    await store.claim('k', 'digest-1', TTL);
+    await store.complete('k', { status: 201, body: { id: 'meal-1' } }, TTL);
+    expect(await store.claim('k', 'digest-2', TTL)).toEqual({ state: 'conflict' });
   });
 
   // A response body that happens to look like an internal marker must still
@@ -230,9 +238,9 @@ describe('idempotency', () => {
   // stored value.
   it('stores a response whose body contains a failed key', async () => {
     const store = new InMemoryIdempotencyStore();
-    await store.claim('k', 'digest-1');
-    await store.complete('k', { status: 201, body: { failed: true } });
-    expect(await store.claim('k', 'digest-1')).toEqual({
+    await store.claim('k', 'digest-1', TTL);
+    await store.complete('k', { status: 201, body: { failed: true } }, TTL);
+    expect(await store.claim('k', 'digest-1', TTL)).toEqual({
       state: 'replay',
       response: { status: 201, body: { failed: true } },
     });
@@ -241,16 +249,59 @@ describe('idempotency', () => {
   it('treats an expired record as absent, so a replay is not honoured forever', async () => {
     let clock = 1_000;
     const store = new InMemoryIdempotencyStore(() => clock);
-    await store.claim('k', 'digest-1', 60);
-    await store.complete('k', { status: 201, body: { id: 'meal-1' } });
+    await store.claim('k', 'digest-1', ttl(60));
+    // The COMPLETED window is what bounds a replay, so it is the one this test
+    // advances past. Completing with the default 24h window would leave the
+    // record alive and the assertion would be about nothing.
+    await store.complete('k', { status: 201, body: { id: 'meal-1' } }, ttl(60));
 
     clock += 61_000;
-    expect(await store.claim('k', 'digest-1', 60)).toEqual({ state: 'fresh' });
+    expect(await store.claim('k', 'digest-1', ttl(60))).toEqual({ state: 'fresh' });
+  });
+
+  it('frees an unfinished claim on the short bound, not the replay window (DS-F2)', async () => {
+    // A process that died between claim and complete used to hold the key for
+    // the whole 24h replay window, because one number served both states. An
+    // honest retry then got a conflict about a meal nobody had made, and only
+    // reaching into Redis could clear it.
+    let clock = 1_000;
+    const store = new InMemoryIdempotencyStore(() => clock);
+    await store.claim('k', 'digest-1', { inFlightSeconds: 60, completedSeconds: 86_400 });
+
+    clock += 30_000;
+    expect(
+      await store.claim('k', 'digest-1', { inFlightSeconds: 60, completedSeconds: 86_400 }),
+      'a live request must still exclude a second one',
+    ).toEqual({ state: 'conflict' });
+
+    // Past the in-flight bound but far inside the replay window: nothing was
+    // ever completed, so there is nothing to replay and the key is free.
+    clock += 31_000;
+    expect(
+      await store.claim('k', 'digest-1', { inFlightSeconds: 60, completedSeconds: 86_400 }),
+      'the key stayed locked for the replay window although nothing was created',
+    ).toEqual({ state: 'fresh' });
+  });
+
+  it('keeps a COMPLETED record for the replay window, not the short bound', async () => {
+    let clock = 1_000;
+    const store = new InMemoryIdempotencyStore(() => clock);
+    const ttls = { inFlightSeconds: 60, completedSeconds: 86_400 };
+    await store.claim('k', 'digest-1', ttls);
+    await store.complete('k', { status: 201, body: { id: 'meal-1' } }, ttls);
+
+    // Well past the in-flight bound. A completed record must NOT expire with it,
+    // or a retry would create a second meal for a row that exists.
+    clock += 120_000;
+    expect(await store.claim('k', 'digest-1', ttls)).toEqual({
+      state: 'replay',
+      response: { status: 201, body: { id: 'meal-1' } },
+    });
   });
 
   it('ignores completion for an unknown key', async () => {
     const store = new InMemoryIdempotencyStore();
-    await expect(store.complete('missing', {})).resolves.toBeUndefined();
+    await expect(store.complete('missing', {}, TTL)).resolves.toBeUndefined();
   });
 });
 
@@ -314,12 +365,12 @@ describe('M1 — in-memory stores stay bounded', () => {
     const store = new InMemoryIdempotencyStore(() => now);
 
     for (let i = 0; i < 20; i += 1) {
-      await store.claim(`user:${i}`, 'digest', 60);
+      await store.claim(`user:${i}`, 'digest', ttl(60));
     }
     expect(store.trackedEntries).toBe(20);
 
     now += 61_000;
-    await store.claim('user:fresh', 'digest', 60);
+    await store.claim('user:fresh', 'digest', ttl(60));
     expect(store.trackedEntries).toBe(1);
   });
 });
