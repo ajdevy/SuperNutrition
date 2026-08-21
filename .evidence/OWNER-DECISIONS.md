@@ -221,6 +221,23 @@ Both decisions bear on `contracts/mobile-api/v1`, a published immutable release.
 Neither is implemented by this branch: PR #44 documents the divergences in code
 and tracks them, and claims neither closed.
 
+> **Addendum, 2026-08-21 — the sentence above is no longer accurate for D-01.**
+>
+> Recorded as an addendum rather than an edit, because this file is the durable
+> record and rewriting what it said is exactly the failure it exists to prevent.
+>
+> D-01's admission-entry half — #48(a), "a transfer is entered on admission,
+> never on hand-off" — IS implemented on this branch. It is in
+> `contracts/mobile-api/v1/transfer-states.toml` ("Entered on admission, never
+> on hand-off: an attempt a provider never accepted has not transferred"), and
+> the gateway follows it: `resultSuppressed` in
+> `routes/gateway/transfer-state.ts` was rewritten because #48 stopped promoting
+> the state at hand-off, which changed what a cancellation arriving mid-flight
+> must report.
+>
+> The rest of D-01, and all of D-02, remain unimplemented and untracked as
+> closed. Found by the PR #44 review (handover-10 item 20).
+
 ## D-01 — transfer state machine (#48)
 
 **Decided: authorize the redefinition under the existing acknowledgement

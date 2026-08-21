@@ -24,6 +24,17 @@ run_jvm() {
   "$script_dir/inference-contract-negative-fixtures.sh"
   "$script_dir/verify-root-boundaries.sh"
   "$script_dir/verify-ci-policy.sh"
+  "$script_dir/root-boundary-negative-fixtures.sh"
+  # The immutability and catalog gates ran only in GitHub Actions, on
+  # pull-request events. That is the one adapter this repository treats as
+  # optional, so the sole automated enforcement of "published releases are
+  # immutable" was reachable only through the path a direct push to main skips
+  # entirely — the combination that made TL-H3 exploitable. They are local gates
+  # now, where the policy says authority lives.
+  "$script_dir/verify-release-immutability.sh"
+  "$script_dir/release-immutability-negative-fixtures.sh"
+  "$script_dir/verify-release-catalog.sh"
+  "$script_dir/secret-scan-fixtures.sh"
   python3 -m unittest discover -s "$script_dir/tests" -p 'test_*.py'
 
   local site_dir
