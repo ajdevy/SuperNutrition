@@ -51,3 +51,37 @@ describe('AD-14 telemetry allowlist', () => {
     }
   });
 });
+
+describe('an allowlisted name does not license a structured value', () => {
+  it('drops an object hiding under an allowed key', () => {
+    // The filter decided on the KEY and passed the value through whatever it
+    // was, so an allowlisted name carrying an object emitted every field inside
+    // it. `outcome` is on the list; a transcript is not, and this is how one
+    // would have travelled.
+    const out = applyTelemetryAllowlist({
+      attemptId: 'att_abc',
+      outcome: { transcript: 'a banana and two eggs' },
+    });
+
+    expect(out, 'user content survived inside an allowlisted field').toEqual({
+      attemptId: 'att_abc',
+    });
+  });
+
+  it('drops an array of objects for the same reason', () => {
+    expect(applyTelemetryAllowlist({ outcome: [{ prompt: 'secret' }] })).toEqual({});
+  });
+
+  it('keeps an array of scalars, because a list of codes is still codes', () => {
+    expect(applyTelemetryAllowlist({ failureCode: ['a', 'b'] })).toEqual({
+      failureCode: ['a', 'b'],
+    });
+  });
+
+  it('keeps ordinary scalar fields untouched', () => {
+    expect(applyTelemetryAllowlist({ route: '/gw/v1/inference/photo', statusCode: 200 })).toEqual({
+      route: '/gw/v1/inference/photo',
+      statusCode: 200,
+    });
+  });
+});

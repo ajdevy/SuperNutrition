@@ -3,7 +3,9 @@ import { join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
+import { TRANSFER_REGISTRY_TTL_SECONDS } from '../main.js';
 import { EFFECT_TTL_SECONDS, REQUEST_ID_TTL_SECONDS } from '../routes/gateway/inference.handler.js';
+import { IDEMPOTENCY_TTL } from '../routes/product/index.js';
 import { TERMINAL_RETENTION_SECONDS } from '../routes/gateway/transfer-state.js';
 
 import { COORDINATION_TTL_CEILING_SECONDS } from './retention.js';
@@ -18,7 +20,15 @@ import { COORDINATION_TTL_CEILING_SECONDS } from './retention.js';
  * would hold for the constants someone remembered.
  */
 
-/** Every TTL constant in the API source, and where its expiry obligation comes from. */
+/**
+ * Every TTL constant in the API source, and where its expiry obligation comes
+ * from.
+ *
+ * The values are IMPORTED, not transcribed. Two of them were hand-copied
+ * `86_400` literals because the constants were module-private, so the inventory
+ * asserted its own copy against its own ceiling and would have kept passing had
+ * either real constant changed. Both are exported now for this reason.
+ */
 const INVENTORY: ReadonlyArray<{ name: string; seconds: number | 'exempt'; why: string }> = [
   { name: 'EFFECT_TTL_SECONDS', seconds: EFFECT_TTL_SECONDS, why: 'AD-18 at-most-once claim' },
   { name: 'REQUEST_ID_TTL_SECONDS', seconds: REQUEST_ID_TTL_SECONDS, why: 'AD-21 replay guard' },
@@ -29,13 +39,13 @@ const INVENTORY: ReadonlyArray<{ name: string; seconds: number | 'exempt'; why: 
   },
   {
     name: 'TRANSFER_REGISTRY_TTL_SECONDS',
-    seconds: 86_400,
-    why: 'attempt ownership; module-private in main.ts',
+    seconds: TRANSFER_REGISTRY_TTL_SECONDS,
+    why: 'attempt ownership, and the cancellation marker bounded by it',
   },
   {
     name: 'IDEMPOTENCY_TTL',
-    seconds: 86_400,
-    why: "Product idempotency; module-private in routes/product. The pair's LONGER half — the completed replay window — is what this bound applies to; the in-flight half is 60s and is bounded by the request, not by retention (DS-F2)",
+    seconds: IDEMPOTENCY_TTL.completedSeconds,
+    why: "Product idempotency. The pair's LONGER half — the completed replay window — is what this bound applies to; the in-flight half is bounded by the request, not by retention (DS-F2)",
   },
   {
     name: 'CACHE_TTL_MS',
