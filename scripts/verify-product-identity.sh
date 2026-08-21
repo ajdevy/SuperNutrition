@@ -5,6 +5,7 @@ script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="$(cd "$script_dir/.." && pwd)"
 mobile_identity="${SUPERNUTRITION_MOBILE_IDENTITY:-$repo_root/mobile/config/product-identity.toml}"
 identity_contract="${SUPERNUTRITION_IDENTITY_CONTRACT:-$repo_root/contracts/product-identity/v1/metadata.toml}"
+RELEASE_DIGEST_LIB="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib" \
 MOBILE_IDENTITY="$mobile_identity" \
 IDENTITY_CONTRACT="$identity_contract" \
 python3 - <<'PY'
@@ -12,8 +13,10 @@ import os
 import re
 import sys
 import tomllib
-from hashlib import sha256
 from pathlib import Path
+
+sys.path.insert(0, str(Path(os.environ["RELEASE_DIGEST_LIB"])))
+import release_digest as release_digest_module  # noqa: E402
 
 mobile_path = Path(os.environ["MOBILE_IDENTITY"])
 contract_path = Path(os.environ["IDENTITY_CONTRACT"])
@@ -89,25 +92,17 @@ required_fixture_ids = {
 if {case.get("id") for case in fixtures.get("case", [])} != required_fixture_ids:
     fail("product-identity fixture inventory drifted")
 
-compatibility_bytes = re.sub(
-    rb'(?m)^digest\s*=\s*"(?:[a-f0-9]{64}|<release-digest>)"\s*$',
-    b'digest = "<release-digest>"',
-    compatibility_path.read_bytes(),
-)
-release_digest = sha256()
-for relative, content in sorted(
-    (
-        ("compatibility.toml", compatibility_bytes),
-        ("fixtures/identities.toml", fixture_path.read_bytes()),
-        ("metadata.toml", contract_path.read_bytes()),
-        ("RELEASE.md", release_path.read_bytes()),
-        ("schema.toml", schema_path.read_bytes()),
-    )
-):
-    release_digest.update(relative.encode("utf-8"))
-    release_digest.update(b"\0")
-    release_digest.update(content)
-if compatibility.get("digest") != release_digest.hexdigest():
+# Computed by scripts/lib/release_digest.py, not re-derived here.
+#
+# This file carried its own copy of the algorithm: the same sort, the same
+# `path + NUL + content` loop, and its own hardcoded member list. That is the
+# duplication release_digest.py was written to end — two implementations of one
+# number drift, and the one that drifts is the one nobody is looking at. It also
+# meant this check could not follow the release onto a newer algorithm, and its
+# hardcoded five-member list would have silently ignored a sixth file.
+computed_digest = release_digest_module.compute(contract_root)
+if compatibility.get("digest") != computed_digest:
+
     fail("product-identity compatibility digest is stale")
 
 expected_visible_values = {

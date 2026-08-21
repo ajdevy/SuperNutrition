@@ -1,4 +1,4 @@
-"""The one implementation of release-sha256-v2.
+"""The one implementation of every release digest algorithm.
 
 WHY THIS FILE EXISTS
 Two tools computed a release digest and they disagreed. scripts/emit-release-
@@ -96,14 +96,115 @@ def release_files(root: Path) -> list[tuple[str, bytes]]:
     return members
 
 
-def compute(root: Path) -> str:
-    """release-sha256-v2 over `root`, as 64 lowercase hex characters."""
+def _compute_v2(members: list[tuple[str, bytes]]) -> str:
+    """release-sha256-v2 — RETAINED FOR RECOMPUTATION ONLY, do not use for new releases.
+
+    NOT INJECTIVE. `path + NUL + content` is concatenated with no length framing,
+    so the boundary between one member's content and the next member's path can
+    be moved without changing the stream. Demonstrated:
+
+        one file   a.toml = b"xb.toml\0y"
+        two files  a.toml = b"x", b.toml = b"y"
+
+    Both hash the byte stream `a.toml\0xb.toml\0y` and produce
+    f36220658bdbdf4bf3b204e996af5d3f264a5f02964a1aaf77ae6552f36f0839. Two
+    genuinely different release layouts, one digest — so a digest match under v2
+    is not proof the release is the release that was published.
+
+    Kept because the catalog's 18 recorded entries were computed with it and the
+    releases themselves are immutable: rewriting their bytes to migrate is the
+    in-place mutation this whole gate exists to prevent. They stay verifiable
+    under the algorithm they were published with, exactly as the v1 entries did
+    when v2 arrived, and the git-diff gate remains the primary protection for
+    them. New releases use v3.
+    """
     digest = sha256()
-    for relative, content in sorted(release_files(root)):
+    for relative, content in members:
         digest.update(relative.encode("utf-8"))
         digest.update(b"\0")
         digest.update(content)
     return digest.hexdigest()
+
+
+def _compute_v3(members: list[tuple[str, bytes]]) -> str:
+    """release-sha256-v3 — length-framed, and therefore injective.
+
+    Every field is preceded by its own byte length, so no member's content can
+    absorb the next member's path: the parse of the stream is unique, and one
+    digest corresponds to exactly one set of (path, content) pairs. The member
+    count is framed first for the same reason.
+    """
+    digest = sha256()
+    digest.update(b"release-sha256-v3\0")
+    digest.update(str(len(members)).encode("ascii"))
+    digest.update(b"\0")
+    for relative, content in members:
+        encoded = relative.encode("utf-8")
+        digest.update(str(len(encoded)).encode("ascii"))
+        digest.update(b"\0")
+        digest.update(encoded)
+        digest.update(str(len(content)).encode("ascii"))
+        digest.update(b"\0")
+        digest.update(content)
+    return digest.hexdigest()
+
+
+#: Every algorithm this tree can recompute, newest last.
+#:
+#: A registry rather than a rename, because a release is immutable once
+#: published: retiring an algorithm must not make already-published releases
+#: unverifiable, and adding one must not require rewriting their bytes. An entry
+#: is removed only when no catalog entry claims it.
+ALGORITHMS = {
+    "release-sha256-v2": _compute_v2,
+    "release-sha256-v3": _compute_v3,
+}
+
+#: What a NEW release is published under.
+CURRENT_ALGORITHM = "release-sha256-v3"
+
+
+#: What a release published before the algorithm was declarable was computed with.
+LEGACY_ALGORITHM = "release-sha256-v2"
+
+DECLARED_ALGORITHM = re.compile(rb'(?m)^digest_algorithm\s*=\s*"([a-z0-9-]+)"\s*$')
+
+
+def declared_algorithm(root: Path) -> str:
+    """Which algorithm this release says its own digest uses.
+
+    A release is immutable once published, so migrating the 18 already-published
+    releases to v3 would mean rewriting their bytes — the in-place mutation the
+    immutability gate exists to prevent. They therefore stay on the algorithm
+    they were published under, and a release opts into a newer one by declaring
+    it. Absence means v2, which is what every release predating this field was
+    computed with.
+
+    The declaration is a hashed input like any other line: changing it changes
+    the digest, so it cannot be flipped after publication without detection.
+    """
+    try:
+        matrix = matrix_path(root)
+    except FileNotFoundError:
+        return LEGACY_ALGORITHM
+    found = DECLARED_ALGORITHM.search(matrix.read_bytes())
+    return found.group(1).decode("ascii") if found else LEGACY_ALGORITHM
+
+
+def compute(root: Path, algorithm: str | None = None) -> str:
+    """The release digest of `root`, as 64 lowercase hex characters.
+
+    `algorithm` defaults to whatever the release declares, so a caller verifying
+    an existing release gets the number that release was published with rather
+    than one computed under a newer scheme it never used.
+    """
+    if algorithm is None:
+        algorithm = declared_algorithm(root)
+    implementation = ALGORITHMS.get(algorithm)
+    if implementation is None:
+        known = ", ".join(sorted(ALGORITHMS))
+        raise ValueError(f"unknown release digest algorithm: {algorithm!r} (known: {known})")
+    return implementation(sorted(release_files(root)))
 
 
 def declared_members(schema: dict) -> list[str]:
