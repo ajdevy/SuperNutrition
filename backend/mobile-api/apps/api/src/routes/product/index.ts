@@ -2,7 +2,12 @@ import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { createHash } from 'node:crypto';
 import { AppError, ERROR_CODES } from '@supernutrition/shared';
 import { rateLimitHeaders, toProductError } from '../../middleware/index.js';
-import type { IdempotencyStore, RateLimitDecision, RateLimiter } from '../../security/index.js';
+import type {
+  ConflictReason,
+  IdempotencyStore,
+  RateLimitDecision,
+  RateLimiter,
+} from '../../security/index.js';
 import type { MealController } from '../../modules/meals/index.js';
 import type { SearchFood } from '../../modules/nutrition/index.js';
 
@@ -119,6 +124,14 @@ export const IDEMPOTENCY_TTL = {
 } as const;
 
 /** Canonical body digest: key order must not decide idempotency collisions. */
+/** What each refusal actually means, in words a client can act on. */
+const CONFLICT_MESSAGES: Record<ConflictReason, string> = {
+  'different-request': 'Idempotency-Key was already used with a different request body.',
+  'in-flight': 'A request with this Idempotency-Key is still in progress. Retry shortly.',
+  unreplayable:
+    'Idempotency-Key was already used and its response can no longer be reproduced. Use a new key.',
+};
+
 const canonicalDigest = (body: unknown): string => {
   const normalized = (value: unknown): unknown => {
     if (Array.isArray(value)) return value.map(normalized);
@@ -190,7 +203,11 @@ const withIdempotency = async <T extends StoredOutcome>(
     userId,
   );
   if (claim.state === 'conflict') {
-    throw AppError.conflict('Idempotency-Key was already used with a different request body.');
+    // One message used to answer three different situations, and it was true of
+    // only one: a client whose first request was merely still running was told
+    // it had changed a body it had sent exactly once, which sends it looking for
+    // a bug it does not have.
+    throw AppError.conflict(CONFLICT_MESSAGES[claim.reason]);
   }
   // The stored status is replayed too, not assumed: a replay must reproduce the
   // original response, and hardcoding 201 would invent one.

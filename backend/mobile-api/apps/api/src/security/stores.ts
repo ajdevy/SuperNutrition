@@ -444,9 +444,10 @@ export class InMemoryIdempotencyStore implements IdempotencyStore {
       });
       return { state: 'fresh' };
     }
-    if (existing.digest !== requestDigest) return { state: 'conflict' };
+    if (existing.digest !== requestDigest)
+      return { state: 'conflict', reason: 'different-request' };
     if ('response' in existing) return { state: 'replay', response: existing.response };
-    return { state: 'conflict' };
+    return { state: 'conflict', reason: 'in-flight' };
   }
 
   async complete(key: string, response: unknown, ttl: IdempotencyTtl): Promise<void> {
@@ -770,20 +771,22 @@ export class RedisIdempotencyStore implements IdempotencyStore {
     // The key expired between the failed SET and this GET. Treating it as a
     // conflict rather than retrying keeps the answer conservative: a caller that
     // genuinely holds a fresh key can retry and win outright.
-    if (existing === null) return { state: 'conflict' };
+    if (existing === null) return { state: 'conflict', reason: 'unreplayable' };
 
     const parts = existing.split('|');
     // An unreadable record is not a licence to create a second meal.
-    if (parts[0] !== IDEM_PREFIX || parts.length < 3) return { state: 'conflict' };
+    if (parts[0] !== IDEM_PREFIX || parts.length < 3)
+      return { state: 'conflict', reason: 'unreplayable' };
     const [, storedDigest, state] = parts;
 
     // Same key, different request. The client reused a key it had promised was
     // one request.
-    if (storedDigest !== requestDigest) return { state: 'conflict' };
+    if (storedDigest !== requestDigest) return { state: 'conflict', reason: 'different-request' };
     // Still running somewhere. Two concurrent retries must not both create,
     // which is exactly what the in-memory store does here too.
-    if (state === IDEM_INFLIGHT) return { state: 'conflict' };
-    if (state !== IDEM_DONE || parts.length < 5) return { state: 'conflict' };
+    if (state === IDEM_INFLIGHT) return { state: 'conflict', reason: 'in-flight' };
+    if (state !== IDEM_DONE || parts.length < 5)
+      return { state: 'conflict', reason: 'unreplayable' };
 
     // The stored status, PARSED rather than assumed.
     //
@@ -793,19 +796,19 @@ export class RedisIdempotencyStore implements IdempotencyStore {
     // the whole reason the status is stored at all.
     const storedStatus = Number(parts[3]);
     if (!Number.isInteger(storedStatus) || storedStatus < 100 || storedStatus > 599) {
-      return { state: 'conflict' };
+      return { state: 'conflict', reason: 'unreplayable' };
     }
 
     const ref = parts.slice(4).join('|');
     // Completed, but with no reference to read back — see `complete`. Nothing
     // can be replayed and nothing may be created: the key already made a meal.
-    if (ref.length === 0) return { state: 'conflict' };
+    if (ref.length === 0) return { state: 'conflict', reason: 'unreplayable' };
 
     const body = await this.#ref.rehydrate(ref, owner);
     // The row is gone: the user deleted the meal this key created. Refusing is
     // not ideal, but replaying an invented body, or creating a second meal under
     // a key that already made one, are both worse.
-    if (body === null) return { state: 'conflict' };
+    if (body === null) return { state: 'conflict', reason: 'unreplayable' };
 
     return { state: 'replay', response: { status: storedStatus, body } };
   }

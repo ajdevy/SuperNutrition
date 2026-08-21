@@ -317,23 +317,42 @@ blind="$work/git-unavailable"
 mkdir -p "$blind"
 seed_repository "$blind"
 base=$(git -C "$blind" rev-parse HEAD)
+# A commit after the base, so the gate is not short-circuited by the
+# base-equals-HEAD refusal before it ever reaches the diff this fixture is about.
+printf 'unrelated\n' >"$blind/README.md"
+commit_all "$blind" 'a commit after the base'
 
 fake_bin="$work/fake-bin"
 mkdir -p "$fake_bin"
-cat >"$fake_bin/git" <<'FAKE'
+real_git="$(command -v git)"
+# rev-parse and the other preflight reads are DELEGATED to the real git, so the
+# gate reaches the diff and fails there. An earlier version answered `rev-parse`
+# with a bare `exit 0` and no output: every revision read as the empty string,
+# so the preflight compared "" with "" and the gate refused for base-equals-HEAD
+# instead. The fixture still went green — for a reason that had nothing to do
+# with git being unable to run — which is what the assertion below now prevents.
+cat >"$fake_bin/git" <<FAKE
 #!/usr/bin/env bash
-# Answer the gate's preflight so it gets as far as the diff, then fail there.
-case "$1" in
-  rev-parse) exit 0 ;;
+case "\$1" in
+  rev-parse|merge-base) exec "$real_git" "\$@" ;;
   *) echo "fatal: simulated git failure" >&2; exit 128 ;;
 esac
 FAKE
 chmod +x "$fake_bin/git"
 
+output="$(PATH="$fake_bin:$PATH" SUPERNUTRITION_IMMUTABILITY_BASE="$base" "$gate" "$blind" 2>&1 || true)"
 if PATH="$fake_bin:$PATH" SUPERNUTRITION_IMMUTABILITY_BASE="$base" "$gate" "$blind" >/dev/null 2>&1; then
     echo "negative fixture unexpectedly passed: gate reported OK when git could not run" >&2
     exit 1
 fi
+case "$output" in
+    *"could not"*|*"failed"*|*"simulated git failure"*) : ;;
+    *)
+        echo "FAIL: fixture 11 was rejected, but not for git being unable to run" >&2
+        printf '  actual: %s\n' "$output" >&2
+        exit 1
+        ;;
+esac
 
 # --- Fixture 12: a base that is not an ancestor -----------------------------
 # A stale origin/main, or a revision from another line of development, diffs

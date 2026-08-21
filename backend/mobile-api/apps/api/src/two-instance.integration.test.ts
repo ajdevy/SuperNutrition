@@ -628,7 +628,12 @@ describe.skipIf(!url || !dbUrl)('one durable write across two replicas', () => {
     // the winner was still in flight — both are correct, and both mean it did
     // NOT create a second meal.
     expect(codes.filter((c) => c === 201)).toHaveLength(1);
-    expect(codes.some((c) => c === 201 || c === 409)).toBe(true);
+    // The OTHER code, named. This read `codes.some(c => c === 201 || c === 409)`,
+    // which the line above already guarantees: once exactly one code is 201,
+    // `some` is true whatever the second replica answered — a 500 included. The
+    // assertion tested nothing.
+    const other = codes.find((code) => code !== 201) ?? codes[1];
+    expect([201, 409], `the second replica answered ${other}`).toContain(other);
 
     const created = [first, second].find((r) => r.statusCode === 201)!;
     const mealId = JSON.parse(created.body).id as string;

@@ -202,13 +202,13 @@ describe('idempotency', () => {
   it('conflicts when the same key carries a different request', async () => {
     const store = new InMemoryIdempotencyStore();
     await store.claim('k', 'digest-1', TTL);
-    expect(await store.claim('k', 'digest-2', TTL)).toEqual({ state: 'conflict' });
+    expect(await store.claim('k', 'digest-2', TTL)).toMatchObject({ state: 'conflict' });
   });
 
   it('conflicts while the first request is still in flight', async () => {
     const store = new InMemoryIdempotencyStore();
     await store.claim('k', 'digest-1', TTL);
-    expect(await store.claim('k', 'digest-1', TTL)).toEqual({ state: 'conflict' });
+    expect(await store.claim('k', 'digest-1', TTL)).toMatchObject({ state: 'conflict' });
   });
 
   it('allows a retry after a failed attempt released its claim', async () => {
@@ -232,7 +232,7 @@ describe('idempotency', () => {
     const store = new InMemoryIdempotencyStore();
     await store.claim('k', 'digest-1', TTL);
     await store.complete('k', { status: 201, body: { id: 'meal-1' } }, TTL);
-    expect(await store.claim('k', 'digest-2', TTL)).toEqual({ state: 'conflict' });
+    expect(await store.claim('k', 'digest-2', TTL)).toMatchObject({ state: 'conflict' });
   });
 
   // A response body that happens to look like an internal marker must still
@@ -274,7 +274,7 @@ describe('idempotency', () => {
     expect(
       await store.claim('k', 'digest-1', { inFlightSeconds: 60, completedSeconds: 86_400 }),
       'a live request must still exclude a second one',
-    ).toEqual({ state: 'conflict' });
+    ).toMatchObject({ state: 'conflict' });
 
     // Past the in-flight bound but far inside the replay window: nothing was
     // ever completed, so there is nothing to replay and the key is free.
@@ -421,5 +421,23 @@ describe('GW-F3 — in-memory stores are bounded, and refuse rather than evict',
     // One claim past the TTL triggers the amortised sweep; the dead entries go.
     await store.claimOnce('att', 'eff_after', 60);
     expect(store.trackedClaims, 'expired claims were never reclaimed').toBeLessThan(5_000);
+  });
+});
+
+describe('a conflict says which of the three things went wrong', () => {
+  it('names a genuinely different request', async () => {
+    const store = new InMemoryIdempotencyStore();
+    await store.claim('k', 'digest-1', TTL, 'owner');
+    const conflict = await store.claim('k', 'digest-2', TTL, 'owner');
+    expect(conflict).toEqual({ state: 'conflict', reason: 'different-request' });
+  });
+
+  it('names a request that is merely still running', async () => {
+    // The old single message told this client it had changed a body it had sent
+    // exactly once, sending it to look for a bug it does not have.
+    const store = new InMemoryIdempotencyStore();
+    await store.claim('k', 'digest-1', TTL, 'owner');
+    const conflict = await store.claim('k', 'digest-1', TTL, 'owner');
+    expect(conflict).toEqual({ state: 'conflict', reason: 'in-flight' });
   });
 });
