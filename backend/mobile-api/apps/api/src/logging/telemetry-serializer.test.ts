@@ -47,3 +47,27 @@ describe('telemetry serializer (AD-14)', () => {
     });
   });
 });
+
+describe('route never carries a query string', () => {
+  it('prefers the matched route pattern', () => {
+    expect(
+      requestSerializer({
+        method: 'GET',
+        url: '/api/v1/catalog/search?q=banana&country=US',
+        routeOptions: { url: '/api/v1/catalog/search' },
+      })['route'],
+    ).toBe('/api/v1/catalog/search');
+  });
+
+  it('strips the query when no route matched, as on a 404', () => {
+    // A free-text food search is user input. Logged verbatim under a field
+    // named `route`, it read as structural and was neither.
+    const route = requestSerializer({
+      method: 'GET',
+      url: '/api/v1/catalog/search?q=what%20the%20user%20typed',
+    })['route'];
+
+    expect(route, 'the query string reached the log').not.toContain('what');
+    expect(route).toBe('/api/v1/catalog/search');
+  });
+});

@@ -113,7 +113,7 @@ const authenticateAndThrottle = async (
  * one insert — while keeping a crash-window lockout to something a user will
  * simply retry through.
  */
-const IDEMPOTENCY_TTL = {
+export const IDEMPOTENCY_TTL = {
   inFlightSeconds: 60,
   completedSeconds: 24 * 60 * 60,
 } as const;

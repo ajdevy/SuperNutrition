@@ -85,7 +85,7 @@ const USDA_CONFIG = {
  * would expire the at-most-once guard immediately. See `security/retention.ts`
  * for the decision and the tests that bound it.
  */
-const TRANSFER_REGISTRY_TTL_SECONDS = 86_400;
+export const TRANSFER_REGISTRY_TTL_SECONDS = 86_400;
 
 const RATE_LIMIT_RULES: readonly RateLimitRule[] = [
   { layer: 'installation', limit: 20, windowSeconds: 3600 },

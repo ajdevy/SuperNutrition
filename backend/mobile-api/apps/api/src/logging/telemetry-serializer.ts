@@ -20,9 +20,22 @@ export const requestSerializer = (req: {
   method?: string;
   url?: string;
   id?: unknown;
+  routeOptions?: { url?: string };
 }): Record<string, unknown> => ({
   method: req.method,
-  route: req.url,
+  // The route PATTERN, never the resolved URL.
+  //
+  // `req.url` carries the query string, and a query string is user input:
+  // `/api/v1/catalog/search?q=<whatever the user typed>` put a food search — a
+  // free-text field — into every request log line, under a field named `route`
+  // that reads as structural. The pattern (`/api/v1/catalog/search`) is what a
+  // reader of telemetry actually wants, and it is bounded by the routes this
+  // service declares rather than by what a caller sends.
+  //
+  // Falls back to the path portion when the route is unknown — a 404 has no
+  // matched pattern, and logging nothing there would hide the requests most
+  // worth seeing.
+  route: req.routeOptions?.url ?? req.url?.split('?')[0],
   requestId: typeof req.id === 'string' ? req.id : undefined,
 });
 

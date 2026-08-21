@@ -15,11 +15,19 @@
  * whole gateway design already maintains (AD-8), and it is what makes the
  * amendment sound rather than merely convenient:
  *
- *   ratelimit:<layer>:<principal>   timestamps in a sorted set
- *   effect:<attemptId>:<effectId>   a claim marker
- *   reqid:<attemptId>:<requestId>   a spent-replay marker
- *   attempt:<attemptId>             <ownerTokenDigest>:<instanceId>
- *   idem:<userId>:<key>             a status, a request digest, a meal id
+ *   ratelimit:<layer>:<principal>        timestamps in a sorted set
+ *   effect:<attemptId>:<effectId>        a claim marker
+ *   request-id:request-id:<requestId>    a spent-replay marker
+ *   attempt:<attemptId>                  <ownerTokenDigest>:<instanceId>
+ *   cancelled:<attemptId>                a cancellation marker
+ *   idem:<sha256(userId, key)>           a status, a request digest, a meal id
+ *
+ * The request-id keyspace really does repeat itself: it is a second
+ * `RedisEffectStore` composed with the prefix `request-id`, and the pipeline
+ * passes `'request-id'` as the attempt id. An earlier version of this list said
+ * `reqid:<attemptId>:<requestId>`, which is a keyspace that has never existed —
+ * a documentation error in the one file that claims to be the inventory of what
+ * Redis holds.
  *
  * Identifiers and markers. No photo, no bytes, no dish, no nutrition. A meal's
  * content stays in Postgres, where the market's retention and deletion
