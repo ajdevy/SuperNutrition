@@ -220,6 +220,23 @@ const redisKeys = async (): Promise<string[]> => {
 };
 
 /**
+ * The keys a single action writes, and only those.
+ *
+ * Three tests here scan Redis to prove what is and is not stored, and all three
+ * originally swept the whole keyspace. That store is shared with every other
+ * suite and outlives the run: the scans picked up an installation rate-limit
+ * key an earlier run had left behind, and keys another test file had just
+ * written. Both failures were real keys with nothing to do with the assertion
+ * being made.
+ */
+const keysWrittenBy = async <T>(action: () => Promise<T>): Promise<[T, string[]]> => {
+  const before = new Set(await redisKeys());
+  const result = await action();
+  const written = (await redisKeys()).filter((key) => !before.has(key));
+  return [result, written];
+};
+
+/**
  * Every value under a key, whatever its type.
  *
  * The rate limiter uses a sorted set, so a blanket GET fails with WRONGTYPE —
@@ -339,15 +356,16 @@ describe.skipIf(!url)('two application instances sharing one Redis', () => {
     const attemptId = nextId('att');
     const body = multipart(contextFor(attemptId, nextId('eff')), OWNER_TOKEN);
     provider.hold = false;
-    await a.app.inject({
-      method: 'POST',
-      url: '/gw/v1/inference/photo',
-      payload: body.payload,
-      headers: body.headers,
-    });
+    const [, keys] = await keysWrittenBy(() =>
+      a.app.inject({
+        method: 'POST',
+        url: '/gw/v1/inference/photo',
+        payload: body.payload,
+        headers: body.headers,
+      }),
+    );
 
     const jpegHead = JPEG.subarray(0, 8).toString('base64');
-    const keys = await redisKeys();
     expect(keys.length, 'the request wrote nothing to Redis at all').toBeGreaterThan(0);
     for (const key of keys) {
       for (const value of await redisValues(key)) {
@@ -709,11 +727,8 @@ describe.skipIf(!url || !dbUrl)('one durable write across two replicas', () => {
     // Only the keys THIS request writes. The store is shared and long-lived, so
     // scanning everything means asserting about keys other runs left behind —
     // which is how this test first "failed" against a fix that was working.
-    const before = new Set(await redisKeys());
-    const created = await post(a, clientKey, mealBody());
+    const [created, keys] = await keysWrittenBy(() => post(a, clientKey, mealBody()));
     expect(created.statusCode, 'the canary meal was never created').toBe(201);
-
-    const keys = (await redisKeys()).filter((key) => !before.has(key));
     expect(keys.length, 'the request wrote nothing to Redis at all').toBeGreaterThan(0);
 
     const idempotencyKeys = keys.filter((key) => key.startsWith('idem:'));
@@ -739,10 +754,8 @@ describe.skipIf(!url || !dbUrl)('one durable write across two replicas', () => {
     const body = mealBody();
     body.items[0]!.displayName = canary;
 
-    const created = await post(a, `idem-${RUN}-canary`, body);
+    const [created, keys] = await keysWrittenBy(() => post(a, `idem-${RUN}-canary`, body));
     expect(created.statusCode, 'the canary meal was never created').toBe(201);
-
-    const keys = await redisKeys();
     expect(keys.length, 'the request wrote nothing to Redis at all').toBeGreaterThan(0);
 
     let scanned = 0;

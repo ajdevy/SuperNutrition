@@ -96,13 +96,19 @@ const database = () => {
       rows.set(body.id, response);
       return { status, ref: body.id };
     },
-    rehydrate: async (ref: string, _key: string) => rows.get(ref) ?? null,
+    // The BODY only: the status comes from the stored record, which is what
+    // makes a completed 200 replay as a 200 rather than as an invented 201.
+    rehydrate: async (ref: string, _owner: string) => {
+      const stored = rows.get(ref) as { body?: unknown } | undefined;
+      return stored?.body ?? null;
+    },
   };
 };
 
 const build = (redis: RedisLike, db = database()) =>
   new RedisIdempotencyStore(redis, { describe: db.describe, rehydrate: db.rehydrate });
 
+const OWNER = 'owner-1';
 const DIGEST = 'a'.repeat(64);
 const OTHER = 'b'.repeat(64);
 
@@ -116,36 +122,36 @@ describe('the shared store matches the in-memory contract', () => {
     [
       'a first claim is fresh',
       async (s: InMemoryIdempotencyStore | RedisIdempotencyStore) =>
-        (await s.claim('k', DIGEST, ttl(60))).state,
+        (await s.claim('k', DIGEST, ttl(60), OWNER)).state,
     ],
     [
       'the same key while in flight conflicts',
       async (s: InMemoryIdempotencyStore | RedisIdempotencyStore) => {
-        await s.claim('k', DIGEST, ttl(60));
-        return (await s.claim('k', DIGEST, ttl(60))).state;
+        await s.claim('k', DIGEST, ttl(60), OWNER);
+        return (await s.claim('k', DIGEST, ttl(60), OWNER)).state;
       },
     ],
     [
       'a different body on the same key conflicts',
       async (s: InMemoryIdempotencyStore | RedisIdempotencyStore) => {
-        await s.claim('k', DIGEST, ttl(60));
-        return (await s.claim('k', OTHER, ttl(60))).state;
+        await s.claim('k', DIGEST, ttl(60), OWNER);
+        return (await s.claim('k', OTHER, ttl(60), OWNER)).state;
       },
     ],
     [
       'a completed key replays',
       async (s: InMemoryIdempotencyStore | RedisIdempotencyStore) => {
-        await s.claim('k', DIGEST, ttl(60));
+        await s.claim('k', DIGEST, ttl(60), OWNER);
         await s.complete('k', meal('11111111-1111-4111-8111-111111111111'), ttl(60));
-        return (await s.claim('k', DIGEST, ttl(60))).state;
+        return (await s.claim('k', DIGEST, ttl(60), OWNER)).state;
       },
     ],
     [
       'a released key is fresh again',
       async (s: InMemoryIdempotencyStore | RedisIdempotencyStore) => {
-        await s.claim('k', DIGEST, ttl(60));
+        await s.claim('k', DIGEST, ttl(60), OWNER);
         await s.fail('k');
-        return (await s.claim('k', DIGEST, ttl(60))).state;
+        return (await s.claim('k', DIGEST, ttl(60), OWNER)).state;
       },
     ],
   ] as const;
@@ -166,8 +172,8 @@ describe('exactly one durable write across instances', () => {
     const b = build(redis);
 
     const claims = await Promise.all([
-      a.claim('u:k', DIGEST, ttl(60)),
-      b.claim('u:k', DIGEST, ttl(60)),
+      a.claim('u:k', DIGEST, ttl(60), OWNER),
+      b.claim('u:k', DIGEST, ttl(60), OWNER),
     ]);
     expect(claims.filter((c) => c.state === 'fresh')).toHaveLength(1);
     expect(claims.filter((c) => c.state === 'conflict')).toHaveLength(1);
@@ -180,10 +186,10 @@ describe('exactly one durable write across instances', () => {
     const b = build(redis, db);
     const created = meal('22222222-2222-4222-8222-222222222222');
 
-    await a.claim('u:k', DIGEST, ttl(60));
+    await a.claim('u:k', DIGEST, ttl(60), OWNER);
     await a.complete('u:k', created, ttl(60));
 
-    const replay = await b.claim('u:k', DIGEST, ttl(60));
+    const replay = await b.claim('u:k', DIGEST, ttl(60), OWNER);
     expect(replay.state).toBe('replay');
     expect(replay.state === 'replay' && replay.response).toEqual(created);
   });
@@ -195,7 +201,7 @@ describe('no user content reaches Redis', () => {
     const store = build(redis);
     const created = meal('33333333-3333-4333-8333-333333333333');
 
-    await store.claim('user-1:k', DIGEST, ttl(60));
+    await store.claim('user-1:k', DIGEST, ttl(60), OWNER);
     await store.complete('user-1:k', created, TTL);
 
     for (const value of redis.written) {
@@ -219,27 +225,27 @@ describe('honest answers when the body cannot be reproduced', () => {
     const store = build(redis, db);
     const created = meal('44444444-4444-4444-8444-444444444444');
 
-    await store.claim('u:k', DIGEST, ttl(60));
+    await store.claim('u:k', DIGEST, ttl(60), OWNER);
     await store.complete('u:k', created, TTL);
     db.rows.clear(); // the meal was deleted
 
-    expect((await store.claim('u:k', DIGEST, ttl(60))).state).toBe('conflict');
+    expect((await store.claim('u:k', DIGEST, ttl(60), OWNER)).state).toBe('conflict');
   });
 
   it('conflicts when the response carries no reference to re-read', async () => {
     const redis = new FakeRedis();
     const store = build(redis, database());
 
-    await store.claim('u:k', DIGEST, ttl(60));
+    await store.claim('u:k', DIGEST, ttl(60), OWNER);
     await store.complete('u:k', { status: 202, body: { noIdHere: true } }, TTL);
 
-    expect((await store.claim('u:k', DIGEST, ttl(60))).state).toBe('conflict');
+    expect((await store.claim('u:k', DIGEST, ttl(60), OWNER)).state).toBe('conflict');
   });
 });
 
 describe('an unreachable Redis fails closed', () => {
   it('raises rather than guessing on claim', async () => {
-    await expect(build(unreachable()).claim('k', DIGEST, ttl(60))).rejects.toThrow(
+    await expect(build(unreachable()).claim('k', DIGEST, ttl(60), OWNER)).rejects.toThrow(
       /redis unavailable/i,
     );
   });
@@ -255,8 +261,8 @@ describe('the claim expires with its window', () => {
   it('is fresh again once the TTL passes', async () => {
     const redis = new FakeRedis();
     const store = build(redis);
-    await store.claim('k', DIGEST, ttl(60));
+    await store.claim('k', DIGEST, ttl(60), OWNER);
     redis.now += 61_000;
-    expect((await store.claim('k', DIGEST, ttl(60))).state).toBe('fresh');
+    expect((await store.claim('k', DIGEST, ttl(60), OWNER)).state).toBe('fresh');
   });
 });
