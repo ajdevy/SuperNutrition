@@ -101,8 +101,22 @@ const authenticateAndThrottle = async (
   return principal;
 };
 
-/** 24h retention, matching docs/06 §6.7. */
-const IDEMPOTENCY_TTL_SECONDS = 24 * 60 * 60;
+/**
+ * The two bounds a claim lives under (DS-F2).
+ *
+ * `completedSeconds` is the contract's 24h replay retention (docs/06 §6.7).
+ * `inFlightSeconds` is how long ONE request may hold the key without finishing,
+ * and it is deliberately much shorter: a process that dies between claiming and
+ * completing used to lock that key fleet-wide for the full 24 hours with
+ * nothing created, answering honest retries with a conflict about a meal that
+ * does not exist. Sixty seconds comfortably exceeds this route's own work —
+ * one insert — while keeping a crash-window lockout to something a user will
+ * simply retry through.
+ */
+const IDEMPOTENCY_TTL = {
+  inFlightSeconds: 60,
+  completedSeconds: 24 * 60 * 60,
+} as const;
 
 /** Canonical body digest: key order must not decide idempotency collisions. */
 const canonicalDigest = (body: unknown): string => {
@@ -164,7 +178,7 @@ const withIdempotency = async <T extends StoredOutcome>(
   const claim = await deps.idempotency.claim(
     scopedKey,
     canonicalDigest(request.body),
-    IDEMPOTENCY_TTL_SECONDS,
+    IDEMPOTENCY_TTL,
   );
   if (claim.state === 'conflict') {
     throw AppError.conflict('Idempotency-Key was already used with a different request body.');
@@ -173,17 +187,49 @@ const withIdempotency = async <T extends StoredOutcome>(
   // original response, and hardcoding 201 would invent one.
   if (claim.state === 'replay') return claim.response as StoredOutcome;
 
+  // DS-F1 — the two failures are NOT the same failure, and one release path for
+  // both created the duplicate this store exists to prevent.
+  //
+  // It read `try { create(); complete(); } catch { fail(); }`. So a Redis fault
+  // raised by `complete()` — AFTER the Postgres row had been written — released
+  // the claim. The client saw a 500, retried the same Idempotency-Key, the claim
+  // read fresh, and a second durable meal existed for one request the user made
+  // once. Nothing caught it because the in-memory store cannot raise from
+  // `complete`.
+  let result: StoredOutcome;
   try {
-    const result = await create();
-    await deps.idempotency.complete(scopedKey, { status: result.status, body: result.body });
-    return result;
+    result = await create();
   } catch (error) {
-    // Release the claim so a retry with the same key may run. A claim that is
-    // still held (never completed, never failed) keeps conflicting, which is
-    // what stops two concurrent retries from both creating.
+    // Nothing was written. The claim must not outlive the request, or an honest
+    // retry conflicts with a meal that does not exist.
     await deps.idempotency.fail(scopedKey);
     throw error;
   }
+
+  try {
+    await deps.idempotency.complete(
+      scopedKey,
+      { status: result.status, body: result.body },
+      IDEMPOTENCY_TTL,
+    );
+  } catch (error) {
+    // The row EXISTS. Releasing here is what produced the duplicate, so the
+    // claim is HELD: it stays in-flight, and a retry conflicts rather than
+    // creating a second meal.
+    //
+    // The honest limit: the in-flight bound above still expires. A retry that
+    // arrives after it, following a completion fault, can still create a second
+    // meal. Closing that needs the claim written in the same transaction as the
+    // row — a schema change, tracked separately — and until then this trades a
+    // 24-hour lockout for a 60-second window in which the guarantee holds,
+    // rather than pretending either problem is absent.
+    request.log.error(
+      { err: error, scopedKey },
+      'idempotency completion failed after the meal was written; holding the claim',
+    );
+    throw error;
+  }
+  return result;
 };
 
 type MealIdParams = { Params: { id: string } };

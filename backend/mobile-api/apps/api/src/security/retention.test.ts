@@ -33,9 +33,9 @@ const INVENTORY: ReadonlyArray<{ name: string; seconds: number | 'exempt'; why: 
     why: 'attempt ownership; module-private in main.ts',
   },
   {
-    name: 'IDEMPOTENCY_TTL_SECONDS',
+    name: 'IDEMPOTENCY_TTL',
     seconds: 86_400,
-    why: 'Product idempotency claim; module-private in routes/product',
+    why: "Product idempotency; module-private in routes/product. The pair's LONGER half — the completed replay window — is what this bound applies to; the in-flight half is 60s and is bounded by the request, not by retention (DS-F2)",
   },
   {
     name: 'CACHE_TTL_MS',

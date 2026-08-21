@@ -7,6 +7,7 @@ import type {
   RateLimitDecision,
   RateLimitKey,
   RateLimiter,
+  IdempotencyTtl,
 } from './index.js';
 
 /**
@@ -34,16 +35,8 @@ export class RedisUnavailableError extends Error {
 export interface RedisLike {
   eval(script: string, numKeys: number, ...args: (string | number)[]): Promise<unknown>;
   set(key: string, value: string, mode: 'EX', ttl: number, nx: 'NX'): Promise<string | null>;
+  set(key: string, value: string, mode: 'EX', ttl: number): Promise<string | null>;
   get(key: string): Promise<string | null>;
-  /**
-   * Overwrite a value while keeping the expiry the key already has.
-   *
-   * Needed because completing an idempotency claim replaces its value without
-   * extending its window — re-setting a TTL would slide the 24-hour horizon
-   * forward on every completion, and reading the remaining TTL to re-apply it is
-   * a race.
-   */
-  setKeepTtl(key: string, value: string): Promise<void>;
   del(key: string): Promise<number>;
 }
 
@@ -325,7 +318,7 @@ export class InMemoryIdempotencyStore implements IdempotencyStore {
     return this.#entries.size;
   }
 
-  async claim(key: string, requestDigest: string, ttlSeconds = 86_400): Promise<IdempotencyClaim> {
+  async claim(key: string, requestDigest: string, ttl: IdempotencyTtl): Promise<IdempotencyClaim> {
     const now = this.#now();
 
     // Expired entries are already treated as absent just below, so keeping them
@@ -338,7 +331,11 @@ export class InMemoryIdempotencyStore implements IdempotencyStore {
     // An expired record is indistinguishable from an absent one: the 24h
     // window is what bounds how long a replay is honoured.
     if (!existing || existing.expiresAt <= now) {
-      this.#entries.set(key, { digest: requestDigest, expiresAt: now + ttlSeconds * 1000 });
+      // The short bound, not the replay window: nothing has been created yet.
+      this.#entries.set(key, {
+        digest: requestDigest,
+        expiresAt: now + ttl.inFlightSeconds * 1000,
+      });
       return { state: 'fresh' };
     }
     if (existing.digest !== requestDigest) return { state: 'conflict' };
@@ -346,9 +343,16 @@ export class InMemoryIdempotencyStore implements IdempotencyStore {
     return { state: 'conflict' };
   }
 
-  async complete(key: string, response: unknown): Promise<void> {
+  async complete(key: string, response: unknown, ttl: IdempotencyTtl): Promise<void> {
     const existing = this.#entries.get(key);
-    if (existing) this.#entries.set(key, { ...existing, response });
+    // Only now does the record earn the replay window.
+    if (existing) {
+      this.#entries.set(key, {
+        ...existing,
+        response,
+        expiresAt: this.#now() + ttl.completedSeconds * 1000,
+      });
+    }
   }
 
   async fail(key: string): Promise<void> {
@@ -518,20 +522,10 @@ export const createRedisClient = async (url: string): Promise<RedisLike> => {
     lazyConnect: true,
   });
   await client.connect();
-  // Only `setKeepTtl` is added: ioredis has no method of that name, and a blind
-  // cast would compile and then fail at the first call.
-  //
-  // `del` is NOT re-added. An earlier version defined it as `(key) => raw.del(key)`
-  // where `raw` was the same object being assigned onto — so the new `del`
-  // called itself, recursed until the stack gave out, and turned a client
-  // validation error into a 500. Assigning a wrapper onto the object it wraps is
-  // the trap; ioredis's own `del` already matches the port.
-  const raw = client as unknown as { set(...args: unknown[]): Promise<unknown> };
-  return Object.assign(client as unknown as RedisLike, {
-    setKeepTtl: async (key: string, value: string): Promise<void> => {
-      await raw.set(key, value, 'KEEPTTL');
-    },
-  });
+  // Returned as-is. `setKeepTtl` was grafted on here; it is gone with its last
+  // caller, and with it the `Object.assign` trap that once made a `del` wrapper
+  // call itself.
+  return client as unknown as RedisLike;
 };
 
 /**
@@ -599,7 +593,7 @@ export class RedisIdempotencyStore implements IdempotencyStore {
     this.#ref = reference;
   }
 
-  async claim(key: string, requestDigest: string, ttlSeconds = 86_400): Promise<IdempotencyClaim> {
+  async claim(key: string, requestDigest: string, ttl: IdempotencyTtl): Promise<IdempotencyClaim> {
     const namespaced = `idem:${key}`;
     let existing: string | null;
     try {
@@ -607,7 +601,9 @@ export class RedisIdempotencyStore implements IdempotencyStore {
         namespaced,
         `${IDEM_PREFIX}|${requestDigest}|${IDEM_INFLIGHT}`,
         'EX',
-        ttlSeconds,
+        // The in-flight bound. A process that dies here frees the key in
+        // seconds rather than holding it for the whole replay window.
+        ttl.inFlightSeconds,
         'NX',
       );
       if (won === 'OK') return { state: 'fresh' };
@@ -651,7 +647,7 @@ export class RedisIdempotencyStore implements IdempotencyStore {
     return { state: 'replay', response: body };
   }
 
-  async complete(key: string, response: unknown): Promise<void> {
+  async complete(key: string, response: unknown, ttl: IdempotencyTtl): Promise<void> {
     const described = this.#ref.describe(response);
     // A response this adapter cannot describe leaves the record marked done with
     // an empty reference, so the key stays spent and every later claim on it
@@ -666,7 +662,19 @@ export class RedisIdempotencyStore implements IdempotencyStore {
         described === null
           ? `${IDEM_PREFIX}|unknown|${IDEM_DONE}||`
           : `${IDEM_PREFIX}|${await this.#digestOf(key)}|${IDEM_DONE}|${described.status}|${described.ref}`;
-      await this.#redis.setKeepTtl(`idem:${key}`, value);
+      // An explicit expiry, not KEEPTTL.
+      //
+      // KEEPTTL preserves whatever the key already had — and on a key that had
+      // expired in the meantime it creates one with NO expiry at all, immortal
+      // in a store whose entire retention story is that nothing outlives the
+      // horizon. The fake no-opped, so no test could see it.
+      //
+      // Writing the completed window explicitly says what this record is worth
+      // and for how long, and it is what promotes the claim off the short
+      // in-flight bound. It is deliberately unconditional: if the in-flight
+      // marker has already expired, restoring the record is what stops a later
+      // retry creating a second meal for a row that exists.
+      await this.#redis.set(`idem:${key}`, value, 'EX', ttl.completedSeconds);
     } catch (cause) {
       if (cause instanceof RedisUnavailableError) throw cause;
       throw new RedisUnavailableError('idempotency completion', cause);
