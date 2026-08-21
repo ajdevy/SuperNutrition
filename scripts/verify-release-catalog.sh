@@ -27,6 +27,7 @@ REPO_ROOT="$repo_root" CATALOG="$catalog" python3 - <<'PY'
 from collections import defaultdict
 import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 import tomllib
@@ -79,6 +80,28 @@ for index, entry in enumerate(entries):
     if not (isinstance(digest, str) and len(digest) == 64 and all(c in "0123456789abcdef" for c in digest)):
         fail(f"{where} digest is not 64 lowercase hex characters: {digest!r}")
         continue
+
+    # Provenance must be a revision, not a branch name.
+    #
+    # Three entries recorded `pr/slice-ab-backend` and pointed
+    # `superseded_by_commit` at their own branch. A branch name is a moving
+    # target that stops resolving the moment the branch is squashed or deleted,
+    # so the catalog's account of WHEN a digest was recorded — its only
+    # human-readable provenance — evaporates exactly when someone would need it
+    # to audit a change.
+    #
+    # `pending` is permitted for `superseded_by_commit` and nothing else: a
+    # superseding commit genuinely does not exist until the merge, and a declared
+    # unknown is honest where an invented value is not.
+    for field in ("recorded_at_commit", "superseded_by_commit"):
+        value = entry.get(field)
+        if value is None:
+            continue
+        if field == "superseded_by_commit" and value == "pending":
+            continue
+        if not re.fullmatch(r"[0-9a-f]{7,40}", str(value)):
+            fail(f"{where} {field} is not a commit revision: {value!r}")
+            continue
 
     if status == "superseded":
         # A superseded row is a historical record, not a claim about the tree.
