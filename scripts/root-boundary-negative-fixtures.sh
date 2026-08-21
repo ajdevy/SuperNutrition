@@ -175,4 +175,29 @@ root="$(fresh_root boundary-malformed-lifecycle)"
 printf 'lifecycle = active\n' >"$root/backend/mobile-api/product-lifecycle.toml"
 expect_rejected_because "a manifest that is not valid TOML" "TOML" "$root"
 
+# --- TL-H1: the inventory's own absence must not be an acceptance -------------
+# The executable-enumeration gate and the required-entrypoint checks were both
+# wrapped in `if test -f "$boundary_inventory"; then … fi` with no else, so
+# deleting the inventory printed OK. That file is EXEMPT from the immutability
+# freeze and has no catalog entry, so nothing downstream caught the deletion
+# either: removing it disabled the only check that every executable under
+# scripts/ is declared, and the only check that the product entrypoints exist.
+#
+# Three fixtures, because "OK" was returned for three different absences.
+root="$(fresh_root boundary-inventory-deleted)"
+rm -f "$root/contracts/root-policy/v1/boundaries.toml"
+expect_rejected_because "a deleted boundary inventory" "boundary inventory" "$root"
+
+# The deletion is what a real bypass would pair with something to hide.
+root="$(fresh_root boundary-inventory-deleted-with-stowaway)"
+rm -f "$root/contracts/root-policy/v1/boundaries.toml"
+printf '#!/usr/bin/env bash\nexit 0\n' >"$root/scripts/undeclared-executable.sh"
+chmod +x "$root/scripts/undeclared-executable.sh"
+expect_rejected_because "a deleted inventory hiding an undeclared executable" "boundary inventory" "$root"
+
+root="$(fresh_root boundary-inventory-deleted-missing-entrypoint)"
+rm -f "$root/contracts/root-policy/v1/boundaries.toml"
+rm -f "$root/mobile/gradlew"
+expect_rejected_because "a deleted inventory hiding a removed entrypoint" "boundary inventory" "$root"
+
 printf 'root-boundary negative fixtures: OK (%d rejections, each for its own reason)\n' "$fixture_count"

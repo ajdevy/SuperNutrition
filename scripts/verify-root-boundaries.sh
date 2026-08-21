@@ -46,26 +46,38 @@ fi
 # Every executable under the repository-owned scripts root must be explicitly
 # enumerated by the protected root-policy inventory.
 boundary_inventory="$repo_root/contracts/root-policy/v1/boundaries.toml"
-if test -f "$boundary_inventory"; then
-  while IFS= read -r -d '' executable; do
-    relative="${executable#"$repo_root/"}"
-    if ! grep -Fq "path = \"$relative\"" "$boundary_inventory"; then
-      printf 'executable is missing from root-policy inventory: %s\n' "$relative" >&2
-      exit 1
-    fi
-  done < <(find "$repo_root/scripts" -type f -perm -111 -print0)
+# TL-H1 — the absence of the inventory is a failure, not a skip.
+#
+# This was `if test -f …; then … fi` with no else, so deleting the file printed
+# "root-boundaries: OK": the executable-enumeration gate and the
+# required-entrypoint checks both vanished with it. The path is exempt from the
+# immutability freeze and has no catalog entry, so nothing downstream noticed
+# either — deleting one file disabled the check and kept the green light.
+#
+# Mirrors the ownership.toml check below, which was always written this way.
+test -f "$boundary_inventory" || {
+  printf 'missing protected boundary inventory: %s\n' \
+    "${boundary_inventory#"$repo_root/"}" >&2
+  exit 1
+}
+while IFS= read -r -d '' executable; do
+  relative="${executable#"$repo_root/"}"
+  if ! grep -Fq "path = \"$relative\"" "$boundary_inventory"; then
+    printf 'executable is missing from root-policy inventory: %s\n' "$relative" >&2
+    exit 1
+  fi
+done < <(find "$repo_root/scripts" -type f -perm -111 -print0)
 
-  for executable in mobile/gradlew web/landing/quality-check backend/mobile-api/quality-check; do
-    test -x "$repo_root/$executable" || {
-      printf 'required product entrypoint is not executable: %s\n' "$executable" >&2
-      exit 1
-    }
-    if ! grep -Fq "path = \"$executable\"" "$boundary_inventory"; then
-      printf 'product entrypoint is missing from root-policy inventory: %s\n' "$executable" >&2
-      exit 1
-    fi
-  done
-fi
+for executable in mobile/gradlew web/landing/quality-check backend/mobile-api/quality-check; do
+  test -x "$repo_root/$executable" || {
+    printf 'required product entrypoint is not executable: %s\n' "$executable" >&2
+    exit 1
+  }
+  if ! grep -Fq "path = \"$executable\"" "$boundary_inventory"; then
+    printf 'product entrypoint is missing from root-policy inventory: %s\n' "$executable" >&2
+    exit 1
+  fi
+done
 
 ownership_inventory="$repo_root/contracts/root-policy/v1/ownership.toml"
 codeowners_file="$repo_root/.github/CODEOWNERS"

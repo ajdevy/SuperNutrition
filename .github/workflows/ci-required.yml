@@ -55,7 +55,11 @@ jobs:
         # push there is no PR base, so the gate falls back to merge-base against
         # origin/main.
         env:
-          SUPERNUTRITION_IMMUTABILITY_BASE: ${{ github.event.pull_request.base.sha }}
+          # On a pull request this is the merge base. On a push there is no PR
+          # base, and the script's local fallback resolves to HEAD there — an
+          # empty diff reported as a pass (TL-H3). `github.event.before` is the
+          # branch tip before the push, which is the comparison that was meant.
+          SUPERNUTRITION_IMMUTABILITY_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
         run: scripts/verify-release-immutability.sh
       - name: Run release immutability negative fixtures
         run: scripts/release-immutability-negative-fixtures.sh
