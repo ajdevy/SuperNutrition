@@ -697,6 +697,39 @@ describe.skipIf(!url || !dbUrl)('one durable write across two replicas', () => {
     expect(retried.statusCode, 'the failed claim was never released').toBe(201);
   }, 60_000);
 
+  it('keeps the user and the client key out of Redis KEY NAMES (DS-F7)', async () => {
+    // The canary scan checked VALUES only, so "no user content in Redis" was
+    // asserted about half the keyspace. The names were
+    // `idem:<raw user uuid>:<verbatim client key>` — a client-chosen free-text
+    // string and a raw account identifier, both readable by anyone with the
+    // connection. The gateway hashes installation ids into opaque tokens for
+    // exactly this reason; this path did not.
+    const clientKey = `CANARYKEY-${RUN}-CHOSENBYCLIENT`;
+
+    // Only the keys THIS request writes. The store is shared and long-lived, so
+    // scanning everything means asserting about keys other runs left behind —
+    // which is how this test first "failed" against a fix that was working.
+    const before = new Set(await redisKeys());
+    const created = await post(a, clientKey, mealBody());
+    expect(created.statusCode, 'the canary meal was never created').toBe(201);
+
+    const keys = (await redisKeys()).filter((key) => !before.has(key));
+    expect(keys.length, 'the request wrote nothing to Redis at all').toBeGreaterThan(0);
+
+    const idempotencyKeys = keys.filter((key) => key.startsWith('idem:'));
+    expect(
+      idempotencyKeys.length,
+      'no idempotency key was written, so this proves nothing',
+    ).toBeGreaterThan(0);
+
+    for (const key of idempotencyKeys) {
+      expect(key, 'the client-chosen key is readable in the keyspace').not.toContain(clientKey);
+      expect(key, 'a raw account identifier is readable in the keyspace').not.toMatch(
+        /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i,
+      );
+    }
+  }, 60_000);
+
   it('keeps no meal content in Redis, and expires every key it writes', async () => {
     // A canary rather than a word from the fixture. 'Banana' and 'lunch' are
     // short enough to collide with hex by luck, and an assertion that can pass
