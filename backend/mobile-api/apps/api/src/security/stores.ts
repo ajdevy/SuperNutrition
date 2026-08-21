@@ -224,9 +224,94 @@ export class InMemoryRateLimiter implements RateLimiter {
  * A restored app or a retried request must not start a second transfer, so the
  * claim is the gate — not a check-then-act, which races.
  */
+/**
+ * GW-F3 — what an in-memory store is allowed to hold, and what it does at the
+ * limit.
+ *
+ * The replay claim runs before the rate limiter (contract
+ * `gateway-request.toml [validation_order]`, owner decision D-02: cheapest
+ * rejection first, and a spent request id is cheaper to reject than a rate
+ * lookup). That ordering is correct and is NOT changed here — but it means one
+ * authenticated caller sending unique, valid `X-Request-Id`s adds an entry per
+ * request, bounded only by the 24-hour TTL and not by any advertised limit. At
+ * a modest sustained rate that is millions of entries, and every operation
+ * swept the entire map, so the cost per request grew with the damage.
+ *
+ * Two changes. The sweep is amortised: it runs when the map has grown past a
+ * threshold since the last one, rather than on every call. And there is a cap,
+ * which is REFUSED rather than evicted at.
+ *
+ * Refusing matters. These maps hold at-most-once claims and spent replay ids;
+ * evicting a live entry to make room means the identifier it protected can be
+ * used a second time — a duplicate provider call, which is a second upload of a
+ * user's photo. An LRU here would trade a memory bound for the exact harm the
+ * store exists to prevent, so the store fails closed and says so.
+ *
+ * The Redis backend is immune to all of this: `SET NX EX` keeps no map in the
+ * process, and the server evicts on its own terms.
+ */
+export const IN_MEMORY_STORE_CAPACITY = 250_000;
+
+/** How many insertions may pass before the next sweep. */
+const SWEEP_INTERVAL = 1_000;
+
+export class StoreCapacityError extends Error {
+  constructor(store: string) {
+    super(
+      `${store} reached its in-memory capacity of ${IN_MEMORY_STORE_CAPACITY} live entries. ` +
+        'This process cannot accept the request without discarding an at-most-once guarantee. ' +
+        'Use GATEWAY_STATE_BACKEND=redis for a deployment at this volume.',
+    );
+    this.name = 'StoreCapacityError';
+  }
+}
+
+/**
+ * Sweeps at most once per `SWEEP_INTERVAL` insertions, then enforces the cap.
+ *
+ * Returns nothing and throws on refusal, so a caller cannot mistake a capacity
+ * failure for "already claimed" — which would answer a replay error for a
+ * request that was never made.
+ */
+class AmortisedCapacity {
+  #sinceSweep = 0;
+  #lastSweepAt: number | null = null;
+  readonly #name: string;
+
+  constructor(name: string) {
+    this.#name = name;
+  }
+
+  /**
+   * Sweeps when it is worth sweeping, and not on every call.
+   *
+   * Three triggers, because one is not enough. `SWEEP_INTERVAL` bounds the dead
+   * weight under steady traffic. The elapsed-TTL trigger keeps the property the
+   * eager scan gave — entries past their window ARE reclaimed, and a quiet
+   * process does not hold a day of them because it stopped receiving requests
+   * before the interval was reached. The capacity trigger is the last chance to
+   * find room before refusing.
+   */
+  admit(size: number, now: number, ttlMs: number, sweep: () => void): void {
+    this.#sinceSweep += 1;
+    this.#lastSweepAt ??= now;
+    const windowElapsed = now - this.#lastSweepAt >= ttlMs;
+    if (this.#sinceSweep >= SWEEP_INTERVAL || windowElapsed || size >= IN_MEMORY_STORE_CAPACITY) {
+      this.#sinceSweep = 0;
+      this.#lastSweepAt = now;
+      sweep();
+    }
+  }
+
+  assertRoom(size: number): void {
+    if (size >= IN_MEMORY_STORE_CAPACITY) throw new StoreCapacityError(this.#name);
+  }
+}
+
 export class InMemoryEffectStore implements EffectStore {
   readonly #claimed = new Map<string, number>();
   readonly #now: () => number;
+  readonly #capacity = new AmortisedCapacity('the in-memory effect store');
 
   constructor(now: () => number = Date.now) {
     this.#now = now;
@@ -245,12 +330,21 @@ export class InMemoryEffectStore implements EffectStore {
     // nothing removed them, so the map grew by one entry per request — and this
     // same store also backs one-time request IDs, which are unique by
     // construction. Over a long-lived process that is unbounded.
-    for (const [claimedKey, expiresAt] of this.#claimed) {
-      if (expiresAt <= now) this.#claimed.delete(claimedKey);
-    }
+    //
+    // GW-F3 — swept on an interval rather than on every call, because the full
+    // scan made the cost per request grow with the number of entries the abuse
+    // had already created.
+    this.#capacity.admit(this.#claimed.size, now, ttlSeconds * 1000, () => {
+      for (const [claimedKey, expiresAt] of this.#claimed) {
+        if (expiresAt <= now) this.#claimed.delete(claimedKey);
+      }
+    });
 
     const existing = this.#claimed.get(key);
     if (existing !== undefined && existing > now) return false;
+    // Checked AFTER the existing-claim answer: an id already held must still be
+    // reported as held at capacity, or a full store would let it run twice.
+    this.#capacity.assertRoom(this.#claimed.size);
     this.#claimed.set(key, now + ttlSeconds * 1000);
     return true;
   }
@@ -308,6 +402,7 @@ export class RedisEffectStore implements EffectStore {
 export class InMemoryIdempotencyStore implements IdempotencyStore {
   readonly #entries = new Map<string, { digest: string; expiresAt: number; response?: unknown }>();
   readonly #now: () => number;
+  readonly #capacity = new AmortisedCapacity('the in-memory idempotency store');
 
   constructor(now: () => number = Date.now) {
     this.#now = now;
@@ -328,14 +423,20 @@ export class InMemoryIdempotencyStore implements IdempotencyStore {
 
     // Expired entries are already treated as absent just below, so keeping them
     // buys nothing and costs one entry per idempotent request, forever.
-    for (const [entryKey, entry] of this.#entries) {
-      if (entry.expiresAt <= now) this.#entries.delete(entryKey);
-    }
+    // Swept on an interval (GW-F3): the full scan ran on every claim.
+    this.#capacity.admit(this.#entries.size, now, ttl.inFlightSeconds * 1000, () => {
+      for (const [entryKey, entry] of this.#entries) {
+        if (entry.expiresAt <= now) this.#entries.delete(entryKey);
+      }
+    });
 
     const existing = this.#entries.get(key);
     // An expired record is indistinguishable from an absent one: the 24h
     // window is what bounds how long a replay is honoured.
     if (!existing || existing.expiresAt <= now) {
+      // Refused rather than evicted at: dropping a live record here would let a
+      // retry create a second meal for a row that exists.
+      this.#capacity.assertRoom(this.#entries.size);
       // The short bound, not the replay window: nothing has been created yet.
       this.#entries.set(key, {
         digest: requestDigest,

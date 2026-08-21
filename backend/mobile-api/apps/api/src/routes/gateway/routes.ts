@@ -61,6 +61,16 @@ const correlationOf = (request: FastifyRequest): string =>
 
 const fail = (reply: FastifyReply, error: unknown, correlationId: string): FastifyReply => {
   const mapped = mapError(error, correlationId);
+  // GW-F2 — routes that catch their own errors never reached the server-level
+  // handler, so these 5xx responses were the least observable of all: caught,
+  // mapped, answered, and gone. Logged here for the same reason and in the same
+  // shape.
+  if (mapped.status >= 500) {
+    reply.log.error(
+      { err: mapped.cause, telemetry: { failureCode: 'internal' } },
+      'gateway request failed',
+    );
+  }
   return reply.status(mapped.status).headers(mapped.headers).send(mapped.body);
 };
 

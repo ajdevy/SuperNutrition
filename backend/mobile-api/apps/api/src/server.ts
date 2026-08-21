@@ -47,6 +47,11 @@ export const buildServer = async (deps: ServerDeps): Promise<ServerHandle> => {
     // structurally incompatible with a plain FastifyInstance parameter.
     loggerInstance: deps.logger as unknown as FastifyBaseLogger,
     bodyLimit: MAX_PAYLOAD_BYTES,
+    // GW-F1 — how far `X-Forwarded-For` is believed when deriving `request.ip`,
+    // which is what the IP rate-limit layer and the session endpoint key on.
+    // Configuration decides; there is no default that is right for both a
+    // single container and a replicated deployment behind a balancer.
+    trustProxy: deps.config.server.trustProxy,
     genReqId: (request) =>
       resolveCorrelationId(request.headers['x-correlation-id'] as string | undefined),
   });
@@ -69,7 +74,19 @@ export const buildServer = async (deps: ServerDeps): Promise<ServerHandle> => {
   app.setErrorHandler((error, request, reply) => {
     const mapped = mapError(error, String(request.id));
     if (mapped.status >= 500) {
-      request.log.error({ telemetry: { failureCode: 'internal' } }, 'gateway request failed');
+      // GW-F2 — the cause is LOGGED, which is what the response body's comment
+      // has always claimed. `mapError` returns it and nothing consumed it, so
+      // every 5xx recorded that one had happened and nothing about what it was:
+      // a pipeline fault left no stack, no message, no error name anywhere. Not
+      // a leak — bodies stayed clean — but forensically silent, which is the
+      // opposite of the intent the code documented.
+      //
+      // Through the allowlisted logger, so it reaches operators and not
+      // clients.
+      request.log.error(
+        { err: mapped.cause, telemetry: { failureCode: 'internal' } },
+        'gateway request failed',
+      );
     }
     return reply.status(mapped.status).headers(mapped.headers).send(mapped.body);
   });

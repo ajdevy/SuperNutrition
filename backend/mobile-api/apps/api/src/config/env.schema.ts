@@ -74,6 +74,32 @@ export const EnvSchema = z.object({
    * decision this work exists to remove.
    */
   GATEWAY_STATE_BACKEND: z.enum(['memory', 'redis']).default('memory'),
+
+  /**
+   * How far to trust `X-Forwarded-For` when deciding a request's client IP
+   * (GW-F1).
+   *
+   * Fastify defaults to NOT trusting it, so `request.ip` is the socket peer.
+   * Behind the load balancer that a replicated deployment implies, that peer is
+   * the balancer for every caller: the 300/60s IP rate-limit layer collapses to
+   * one global bucket, so one noisy source produces fleet-wide 429s and nothing
+   * is isolated per client. The unauthenticated session endpoint — the one
+   * throttled by IP precisely because it mints credentials — is throttled
+   * globally instead.
+   *
+   *   none                       not behind a proxy; `request.ip` is the peer
+   *   <integer>                  trust that many hops from the right
+   *   <ip>[,<ip>|<cidr>]…        trust exactly these addresses
+   *
+   * Never `true`. Blanket trust makes `X-Forwarded-For` attacker-chosen, which
+   * turns a shared limit into a per-forged-header limit — strictly worse than
+   * the bucket it was meant to fix.
+   *
+   * Required when GATEWAY_STATE_BACKEND=redis: that posture is the replicated
+   * one, and omission there is the silent wrong answer. `none` is available and
+   * is a deliberate statement rather than an absence.
+   */
+  TRUSTED_PROXY: z.string().min(1).optional(),
   /**
    * Read directly from process.env in main.ts, so it never went through this
    * schema: `STUB_INFERENCE=TRUE`, `=1` and `=yes` all silently meant false,
