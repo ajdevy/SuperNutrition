@@ -42,8 +42,10 @@ class FakeRedis implements RedisLike {
     return entry;
   }
 
-  async set(key: string, value: string, _mode: 'EX', ttl: number, _nx: 'NX') {
-    if (this.#live(key)) return null;
+  async set(key: string, value: string, _mode: 'EX', ttl: number, nx?: 'NX') {
+    // NX honoured, not assumed: refusing every write to a live key makes the
+    // fake stricter than the server and hides unconditional writes entirely.
+    if (nx === 'NX' && this.#live(key)) return null;
     this.store.set(key, { value, expiresAt: this.now + ttl * 1000 });
     this.written.push(value);
     return 'OK';
@@ -53,8 +55,29 @@ class FakeRedis implements RedisLike {
     return this.#live(key)?.value ?? null;
   }
 
-  /** Enough of the sliding-window script's behaviour to decide the same way. */
-  async eval(_script: string, _numKeys: number, ...args: (string | number)[]) {
+  /**
+   * Dispatches on the script, because there is now more than one.
+   *
+   * A fake that ignored the script and always ran the rate-limit branch answered
+   * the cancellation script with a rate-limit verdict — `[1, n]`, never the `1`
+   * the caller compares against — so an owner cancellation silently reported
+   * "not owned".
+   */
+  async eval(script: string, _numKeys: number, ...args: (string | number)[]) {
+    if (script.includes("redis.call('TTL', KEYS[1])")) {
+      const [attemptKey, cancelledKey, token, fallback] = args as [string, string, string, number];
+      const holder = this.#live(attemptKey);
+      if (!holder) return 0;
+      const separator = holder.value.indexOf(':');
+      if (separator < 0 || holder.value.slice(0, separator) !== token) return 0;
+      // The attempt key's REMAINING window, so the marker cannot outlive it.
+      const remaining = Math.max(0, holder.expiresAt - this.now);
+      const expiresAt = this.now + (remaining > 0 ? remaining : fallback * 1000);
+      this.store.set(cancelledKey, { value: '1', expiresAt });
+      this.written.push('1');
+      return 1;
+    }
+
     const [key, now, window, limit, member] = args as [string, number, number, number, string];
     const entries = (this.zsets.get(key) ?? []).filter((e) => e.score > now - window);
     if (entries.length < limit) {

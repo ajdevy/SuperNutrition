@@ -181,8 +181,10 @@ export const buildApplication = async (
             // ownership check itself is unchanged and still runs on this path:
             // a reference alone is never authority.
             try {
-              const body = await mealController.getMeal(ref, owner);
-              return { status: 201, body };
+              // The BODY only. The status comes from the record the store
+              // parsed, so a completed 200 replays as a 200 rather than as the
+              // 201 this used to invent.
+              return await mealController.getMeal(ref, owner);
             } catch {
               // Deleted, or not this user's. Nothing to replay, and the store
               // turns that into a conflict rather than inventing a response.

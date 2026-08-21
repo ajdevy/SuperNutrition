@@ -495,6 +495,34 @@ export class InMemoryIdempotencyStore implements IdempotencyStore {
 const ownerToken = (installationId: string): string =>
   createHash('sha256').update(`attempt-owner:${installationId}`).digest('hex').slice(0, 32);
 
+/**
+ * Check ownership and publish the cancellation as ONE transition.
+ *
+ * This was `holderOf()` then `SET`, which is a read followed by an
+ * unconditional write — while the comment above it claimed the opposite. Under
+ * an interleaving where the attempt key expires or is re-claimed between the two
+ * calls, the write still lands, publishing a cancellation signal for an attempt
+ * the caller no longer owns.
+ *
+ * The marker's expiry is the ATTEMPT key's remaining TTL rather than a fresh
+ * 24 hours. A cancellation that outlives the attempt it describes answers
+ * "cancelled" for an attempt id the registry no longer knows — and attempt ids
+ * are client-chosen, so a later honest reuse would be refused on the strength of
+ * a record about a different request. The fixed window is the fallback for a key
+ * with no expiry, which should not occur and is not trusted to.
+ */
+const CANCEL_IF_OWNED = `
+local holder = redis.call('GET', KEYS[1])
+if not holder then return 0 end
+local separator = string.find(holder, ':', 1, true)
+if not separator then return 0 end
+if string.sub(holder, 1, separator - 1) ~= ARGV[1] then return 0 end
+local remaining = redis.call('TTL', KEYS[1])
+if remaining <= 0 then remaining = tonumber(ARGV[2]) end
+redis.call('SET', KEYS[2], '1', 'EX', remaining)
+return 1
+`;
+
 export class RedisAttemptRegistry implements AttemptRegistry {
   readonly #redis: RedisLike;
   readonly #ttlSeconds: number;
@@ -573,10 +601,15 @@ export class RedisAttemptRegistry implements AttemptRegistry {
    */
   async markCancelled(attemptId: string, owner: string): Promise<boolean> {
     try {
-      const holder = await this.holderOf(attemptId, owner);
-      if (holder === null) return false;
-      await this.#redis.set(`cancelled:${attemptId}`, '1', 'EX', this.#ttlSeconds, 'NX');
-      return true;
+      const marked = await this.#redis.eval(
+        CANCEL_IF_OWNED,
+        2,
+        `attempt:${attemptId}`,
+        `cancelled:${attemptId}`,
+        ownerToken(owner),
+        this.#ttlSeconds,
+      );
+      return marked === 1;
     } catch (cause) {
       if (cause instanceof RedisUnavailableError) throw cause;
       throw new RedisUnavailableError('cancellation', cause);
@@ -752,6 +785,17 @@ export class RedisIdempotencyStore implements IdempotencyStore {
     if (state === IDEM_INFLIGHT) return { state: 'conflict' };
     if (state !== IDEM_DONE || parts.length < 5) return { state: 'conflict' };
 
+    // The stored status, PARSED rather than assumed.
+    //
+    // It was written on completion and then thrown away: `rehydrate` returned a
+    // hardcoded 201, so a completed 200 replayed as a 201 and the recorded field
+    // was decorative. A replay has to reproduce the original response, which is
+    // the whole reason the status is stored at all.
+    const storedStatus = Number(parts[3]);
+    if (!Number.isInteger(storedStatus) || storedStatus < 100 || storedStatus > 599) {
+      return { state: 'conflict' };
+    }
+
     const ref = parts.slice(4).join('|');
     // Completed, but with no reference to read back — see `complete`. Nothing
     // can be replayed and nothing may be created: the key already made a meal.
@@ -763,7 +807,7 @@ export class RedisIdempotencyStore implements IdempotencyStore {
     // a key that already made one, are both worse.
     if (body === null) return { state: 'conflict' };
 
-    return { state: 'replay', response: body };
+    return { state: 'replay', response: { status: storedStatus, body } };
   }
 
   async complete(key: string, response: unknown, ttl: IdempotencyTtl): Promise<void> {
