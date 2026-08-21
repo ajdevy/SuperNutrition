@@ -1,0 +1,6 @@
+[
+  { "id": "openai/gpt-4o-mini", "label": "GPT-4o-mini (Pass 1 fallback)", "pass": 1 },
+  { "id": "google/gemini-2.5-flash", "label": "Gemini 2.5 Flash (Pass 1 main)", "pass": 1 },
+  { "id": "openai/gpt-4o", "label": "GPT-4o (Pass 2)", "pass": 2 },
+  { "id": "anthropic/claude-sonnet-5", "label": "Claude Sonnet 5 (Pass 2 alt)", "pass": 2 }
+]

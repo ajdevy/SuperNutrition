@@ -1,5 +1,18 @@
 # 8. USDA Integration Design
 
+> **Design document. Describes the shape of the integration, not its current
+> deployment state.**
+>
+> The provider, its dataset-version provenance and the catalog search path are
+> implemented and wired in `apps/api/src/main.ts`. What this document does NOT
+> establish: that a USDA key is provisioned anywhere, or that any nutrition
+> figure here has been reviewed for a market that has not been enabled.
+>
+> **For current state, in this order:** `backend/AGENTS.md`, the open pull
+> request, `.evidence/OWNER-DECISIONS.md`, and `git log`. Where this file and
+> any of those disagree, they are right and this is stale.
+
+
 ## 8.1 What this integration is for
 
 Principle 5: AI identifies food, nutrition comes from catalog providers. MVP

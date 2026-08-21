@@ -15,12 +15,29 @@ const REQUEST_TIMEOUT_MS = Number(process.env.BENCHMARK_REQUEST_TIMEOUT_MS ?? 12
 const IMG_DIR = resolve(process.env.BENCHMARK_IMAGE_DIR ?? join(import.meta.dirname, 'images'));
 const OUT_DIR = resolve(process.env.BENCHMARK_OUT_DIR ?? join(import.meta.dirname, 'results'));
 
-const MODELS = [
-  { id: 'openai/gpt-4o-mini',       label: 'GPT-4o-mini (Pass 1 fallback)', pass: 1 },
-  { id: 'google/gemini-2.5-flash',  label: 'Gemini 2.5 Flash (Pass 1 main)', pass: 1 },
-  { id: 'openai/gpt-4o',            label: 'GPT-4o (Pass 2)', pass: 2 },
-  { id: 'anthropic/claude-sonnet-5', label: 'Claude Sonnet 5 (Pass 2 alt)', pass: 2 },
-];
+/**
+ * The roster is DATA, not a literal in this file.
+ *
+ * `results/` carries two committed benchmark sessions — a paid roster and a
+ * `:free` one — and this script hardcoded the paid list, so the free results
+ * could not be reproduced by the tool that supposedly produced them. Committed
+ * numbers nobody can regenerate are numbers nobody can check.
+ *
+ * Both rosters live in `rosters/`. The default is the paid one, so an ordinary
+ * invocation is unchanged.
+ */
+const ROSTER_PATH = resolve(
+  process.env.BENCHMARK_ROSTER ?? join(import.meta.dirname, 'rosters', 'paid.json'),
+);
+const MODELS = JSON.parse(readFileSync(ROSTER_PATH, 'utf8'));
+if (!Array.isArray(MODELS) || MODELS.length === 0) {
+  throw new Error(`benchmark roster is empty or not an array: ${ROSTER_PATH}`);
+}
+for (const model of MODELS) {
+  if (typeof model?.id !== 'string' || typeof model?.pass !== 'number') {
+    throw new Error(`benchmark roster entry needs id and pass: ${JSON.stringify(model)}`);
+  }
+}
 
 const PROMPT = `Identify the food in this photo. Return ONLY valid JSON with no markdown or extra text:
 {
