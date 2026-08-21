@@ -85,7 +85,26 @@ export interface IdempotencyStore {
 export type IdempotencyClaim =
   | { readonly state: 'fresh' }
   | { readonly state: 'replay'; readonly response: unknown }
-  | { readonly state: 'conflict' };
+  | { readonly state: 'conflict'; readonly reason: ConflictReason };
+
+/**
+ * Why a claim was refused. Three genuinely different situations answered one
+ * message — "Idempotency-Key was already used with a different request body" —
+ * which was true for one of them and misleading for the other two: a client
+ * whose first request was merely still running was told it had changed a body
+ * it had sent once.
+ */
+export type ConflictReason =
+  /** Same key, different request. The client reused a key it promised was one request. */
+  | 'different-request'
+  /** The first request with this key has not finished yet. */
+  | 'in-flight'
+  /**
+   * Completed, but the response cannot be reproduced — the record is unreadable,
+   * carries no reference, or the row it points at is gone. Creating again is
+   * refused because the key already made one.
+   */
+  | 'unreplayable';
 
 /** At-most-once execution for transfer-start effects (AD-18). */
 export interface EffectStore {
