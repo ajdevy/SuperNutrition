@@ -51,7 +51,21 @@ export interface IdempotencyTtl {
 }
 
 export interface IdempotencyStore {
-  claim(key: string, requestDigest: string, ttl: IdempotencyTtl): Promise<IdempotencyClaim>;
+  /**
+   * `key` is expected to be OPAQUE — a digest, not a readable composite.
+   *
+   * `owner` is passed so a replay can be re-authorised against the record it
+   * re-reads, and is deliberately NOT stored: it exists only for the duration of
+   * the call. The key used to be `<userId>:<client key>`, which put a raw
+   * account identifier and a client-chosen free-text string into the keyspace of
+   * a store anyone with the connection can list.
+   */
+  claim(
+    key: string,
+    requestDigest: string,
+    ttl: IdempotencyTtl,
+    owner: string,
+  ): Promise<IdempotencyClaim>;
   /**
    * Records the response and extends the key to the replay window.
    *

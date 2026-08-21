@@ -318,7 +318,12 @@ export class InMemoryIdempotencyStore implements IdempotencyStore {
     return this.#entries.size;
   }
 
-  async claim(key: string, requestDigest: string, ttl: IdempotencyTtl): Promise<IdempotencyClaim> {
+  async claim(
+    key: string,
+    requestDigest: string,
+    ttl: IdempotencyTtl,
+    _owner: string,
+  ): Promise<IdempotencyClaim> {
     const now = this.#now();
 
     // Expired entries are already treated as absent just below, so keeping them
@@ -550,7 +555,15 @@ export interface IdempotencyReference {
    * itself does not parse the key — it passes it through, and the composition
    * root, which knows how the key was built, does the reading.
    */
-  rehydrate(ref: string, scopedKey: string): Promise<unknown | null>;
+  /**
+   * Re-reads the stored response, re-authorised against `owner`.
+   *
+   * `owner` used to be parsed back out of the scoped key, which is why the key
+   * had to carry a raw account identifier in the first place. It is now handed
+   * in by the caller that already knows it, so nothing identifying has to live
+   * in the keyspace for the replay to stay owner-checked.
+   */
+  rehydrate(ref: string, owner: string): Promise<unknown | null>;
 }
 
 /** Record format. Versioned so a later shape change is detectable, not ambiguous. */
@@ -593,7 +606,12 @@ export class RedisIdempotencyStore implements IdempotencyStore {
     this.#ref = reference;
   }
 
-  async claim(key: string, requestDigest: string, ttl: IdempotencyTtl): Promise<IdempotencyClaim> {
+  async claim(
+    key: string,
+    requestDigest: string,
+    ttl: IdempotencyTtl,
+    owner: string,
+  ): Promise<IdempotencyClaim> {
     const namespaced = `idem:${key}`;
     let existing: string | null;
     try {
@@ -638,7 +656,7 @@ export class RedisIdempotencyStore implements IdempotencyStore {
     // can be replayed and nothing may be created: the key already made a meal.
     if (ref.length === 0) return { state: 'conflict' };
 
-    const body = await this.#ref.rehydrate(ref, key);
+    const body = await this.#ref.rehydrate(ref, owner);
     // The row is gone: the user deleted the meal this key created. Refusing is
     // not ideal, but replaying an invented body, or creating a second meal under
     // a key that already made one, are both worse.

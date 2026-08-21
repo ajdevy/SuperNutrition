@@ -120,6 +120,23 @@ export const toProductError = (error: unknown): AppError => {
         { field: 'body', issue: 'unparseable' },
       ]);
     }
+    // DS-F6 — the same outage the gateway mapper answers 503 for.
+    //
+    // This branch did not exist, so a transient Redis fault on a keyed POST fell
+    // through to `internal`: a non-retryable 500 for a condition that clears on
+    // its own, while the gateway told a client the opposite about the identical
+    // error. `PROVIDER_UNAVAILABLE` (502) is the product taxonomy's recoverable
+    // upstream failure and already existed — the mapping was simply missing.
+    //
+    // Matched by name, like the gateway's, so this handler keeps no dependency
+    // on the storage layer it reports on.
+    if ((error as { name?: unknown }).name === 'RedisUnavailableError') {
+      return new AppError(
+        ERROR_CODES.PROVIDER_UNAVAILABLE,
+        'A dependency is temporarily unavailable.',
+        { cause: error },
+      );
+    }
     if ((error as { name?: unknown }).name === 'AbortError') {
       return new AppError(ERROR_CODES.CLIENT_CANCELLED, 'Client cancelled the request.', {
         cause: error,

@@ -165,20 +165,29 @@ const withIdempotency = async <T extends StoredOutcome>(
   const key = request.headers['idempotency-key'];
   if (typeof key !== 'string' || key.length === 0) return create();
 
-  // M4 — the key is namespaced by user. Idempotency-Key is chosen by the client
-  // and short values like "1" or "meal" are entirely ordinary, so a single
-  // global keyspace made one user's key collide with another's: the second user
-  // got a 409 for a request they had never made, or — worse, and the reason this
-  // is not merely an annoyance — the stored response of someone else's meal.
-  // Derived once. claim/complete/fail must all name the same entry — namespacing
-  // only the claim leaves every request holding a claim it can never complete,
-  // so the next one with that key conflicts forever.
-  const scopedKey = `${userId}:${key}`;
+  // M4 — the key is namespaced by user, and DS-F7 — the namespace is a digest.
+  //
+  // Idempotency-Key is chosen by the client, and short values like "1" or "meal"
+  // are entirely ordinary, so a single global keyspace made one user's key
+  // collide with another's: the second user got a 409 for a request they had
+  // never made, or — worse — the stored response of someone else's meal.
+  //
+  // The composite used to BE the key name: `idem:<raw user uuid>:<verbatim
+  // client key>`. That put an account identifier and a client-chosen free-text
+  // string into a keyspace anyone with the Redis connection can list, while the
+  // gateway hashed installation ids into opaque tokens for precisely that
+  // reason. Hashing keeps the per-user separation — the userId is still an
+  // input, so two users' identical keys still differ — and leaks neither half.
+  //
+  // The owner travels as its own argument rather than being recovered from the
+  // key, so the replay is still re-authorised against the meal it re-reads.
+  const scopedKey = createHash('sha256').update(userId).update('\0').update(key).digest('hex');
 
   const claim = await deps.idempotency.claim(
     scopedKey,
     canonicalDigest(request.body),
     IDEMPOTENCY_TTL,
+    userId,
   );
   if (claim.state === 'conflict') {
     throw AppError.conflict('Idempotency-Key was already used with a different request body.');

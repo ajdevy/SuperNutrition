@@ -175,16 +175,13 @@ export const buildApplication = async (
             if (typeof status !== 'number' || typeof id !== 'string') return null;
             return { status, ref: id };
           },
-          // The scoped key is `<userId>:<clientKey>` (routes/product), and a
-          // userId is a uuid, so the first colon separates them. Re-reading
-          // through the controller means the owner check runs again on the
-          // replay path: a reference alone is not authority.
-          rehydrate: async (ref: string, scopedKey: string) => {
-            const separator = scopedKey.indexOf(':');
-            if (separator <= 0) return null;
-            const ownerId = scopedKey.slice(0, separator);
+          rehydrate: async (ref: string, owner: string) => {
+            // The owner arrives from the caller rather than being sliced out of
+            // the key, so the key can be an opaque digest (DS-F7). The
+            // ownership check itself is unchanged and still runs on this path:
+            // a reference alone is never authority.
             try {
-              const body = await mealController.getMeal(ref, ownerId);
+              const body = await mealController.getMeal(ref, owner);
               return { status: 201, body };
             } catch {
               // Deleted, or not this user's. Nothing to replay, and the store

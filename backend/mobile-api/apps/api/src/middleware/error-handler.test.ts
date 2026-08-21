@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { AppError } from '@supernutrition/shared';
+import { AppError, ERROR_STATUS } from '@supernutrition/shared';
 import { mapError, toGatewayError, toProductError } from './error-handler.js';
 import { GatewayError, GATEWAY_CODES, GATEWAY_ERRORS } from '../security/gateway-errors.js';
 
@@ -130,6 +130,26 @@ describe('mapping to the Product API taxonomy', () => {
   it('passes an AppError through unchanged', () => {
     const error = AppError.unauthenticated();
     expect(toProductError(error)).toBe(error);
+  });
+
+  it('maps a Redis outage to a recoverable failure on the product path too (DS-F6)', () => {
+    // The gateway mapper has answered 503 for this since the shared stores
+    // landed; the product mapper had no branch at all, so the SAME transient
+    // outage on a keyed POST fell through to `internal` — a non-retryable 500
+    // for a condition that clears on its own. One error, two subsystems, two
+    // contradictory instructions to the client.
+    const outage = Object.assign(new Error("Stream isn't writeable"), {
+      name: 'RedisUnavailableError',
+    });
+
+    const mapped = toProductError(outage);
+
+    expect(mapped.code, 'a transient outage was reported as permanent').toBe(
+      'PROVIDER_UNAVAILABLE',
+    );
+    expect(ERROR_STATUS[mapped.code], 'the client is told not to retry').toBeLessThan(503);
+    expect(ERROR_STATUS[mapped.code]).toBeGreaterThanOrEqual(500);
+    expect(mapped.cause, 'the original fault was dropped instead of logged').toBe(outage);
   });
 
   it.each([
