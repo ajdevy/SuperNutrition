@@ -22,8 +22,28 @@ print(json.dumps({"tool_input": {"file_path": sys.argv[1], "content": sys.argv[2
 ' "$1" "$2"
 }
 
+# MultiEdit carries its text in .tool_input.edits[].new_string. The matcher
+# names MultiEdit, but the extractor never read that array.
+multiedit_payload() {
+    python3 -c '
+import json, sys
+print(json.dumps({"tool_input": {"file_path": sys.argv[1], "edits": [
+    {"old_string": "", "new_string": sys.argv[2]},
+]}}))
+' "$1" "$2"
+}
+
 blocked=0
 allowed=0
+
+expect_multiedit_blocked() {
+    local label="$1" path="$2" content="$3"
+    if multiedit_payload "$path" "$content" | "$hook" >/dev/null 2>&1; then
+        printf 'fixture unexpectedly ALLOWED: %s (%s)\n' "$label" "$path" >&2
+        exit 1
+    fi
+    blocked=$((blocked + 1))
+}
 
 expect_blocked() {
     local label="$1" path="$2" content="$3"
@@ -95,5 +115,43 @@ expect_allowed "an obvious placeholder" "src/config.ts" \
     'apiKey = "your-key-here-replace-me"'
 expect_allowed "an env lookup" "src/config.ts" \
     'const key = process.env.OPENROUTER_API_KEY ?? ""'
+
+# --- TL-H4: the placeholder filter judged the whole LINE ----------------------
+# `grep -ivE "(test|dummy|…)"` ran over the matched line, so any line carrying
+# one of those words anywhere suppressed a real credential on it. A trailing
+# comment was enough. The filter now judges the VALUE that matched, so a
+# genuine key is blocked whatever else the line says.
+expect_blocked "a real key excused by a trailing comment" "src/config.ts" \
+    'apiKey = "sk-proj-abcdefghij0123456789ABCDEFghij" // tested in staging'
+expect_blocked "a real key excused by the word latest" "src/config.ts" \
+    'apiKey = "sk-proj-abcdefghij0123456789ABCDEFghij" # latest rotation'
+expect_blocked "a real key excused by an html-ish tag" "src/config.ts" \
+    'apiKey = "sk-proj-abcdefghij0123456789ABCDEFghij" <!-- see runbook -->'
+expect_blocked "a real key excused by a nearby example" "src/config.ts" \
+    'client_secret = "abcdefghij0123456789ABCDEFghij" ; example follows below'
+
+# The point of the filter still has to hold: a placeholder VALUE stays allowed.
+expect_allowed "a placeholder value on a line with no excuse" "src/config.ts" \
+    'apiKey = "test-key-placeholder-value-here"'
+expect_allowed "an angle-bracket template value" "src/config.ts" \
+    'apiKey = "<YOUR_OPENROUTER_KEY_HERE>"'
+
+# --- TL-H4: MultiEdit was named by the matcher but never extracted -----------
+expect_multiedit_blocked "a credential inside a MultiEdit edit" "src/config.ts" \
+    'const key = "sk-proj-abcdefghij0123456789ABCDEFghijklmnop"'
+
+# --- TL-H4: an unusable jq must fail closed ----------------------------------
+# `|| true` turned every jq failure into empty content, which matches nothing
+# and exits 0. A hook that cannot read its input must not report "clean".
+jq_probe="$(mktemp -d "${TMPDIR:-/tmp}/secret-scan-nojq.XXXXXX")"
+trap 'rm -rf "$jq_probe"' EXIT
+printf '#!/usr/bin/env bash\nexit 127\n' >"$jq_probe/jq"
+chmod +x "$jq_probe/jq"
+if payload "src/config.ts" 'const key = "sk-proj-abcdefghij0123456789ABCDEFghij"' \
+    | PATH="$jq_probe:$PATH" "$hook" >/dev/null 2>&1; then
+    printf 'fixture unexpectedly ALLOWED: the hook passed while jq was unusable\n' >&2
+    exit 1
+fi
+blocked=$((blocked + 1))
 
 printf 'secret-scan fixtures: OK (%d blocked, %d allowed)\n' "$blocked" "$allowed"

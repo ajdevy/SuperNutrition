@@ -55,6 +55,9 @@ if not isinstance(entries, list) or not entries:
     print("release catalog declares no entries", file=sys.stderr)
     raise SystemExit(1)
 
+sys.path.insert(0, str(repo_root / "scripts" / "lib"))
+from release_digest import ALGORITHMS as KNOWN_ALGORITHMS, declared_algorithm  # noqa: E402
+
 REQUIRED = ("release_id", "path", "digest", "algorithm", "recorded_at_commit", "status")
 KNOWN_STATUS = {"current", "superseded"}
 
@@ -91,12 +94,27 @@ for index, entry in enumerate(entries):
         fail(f"{where} points at a missing release directory: {entry['path']}")
         continue
 
-    if entry["algorithm"] != "release-sha256-v2":
-        # Only the algorithm the emitter implements can be recomputed. Anything
+    if entry["algorithm"] not in KNOWN_ALGORITHMS:
+        # Only an algorithm this tree implements can be recomputed. Anything
         # else must be marked superseded and carry `reproducible = false`.
+        #
+        # Read from the registry rather than hardcoded, so publishing a release
+        # under a newer algorithm does not require editing this gate — and so
+        # retiring one cannot silently strand entries that still claim it.
         fail(
             f"{where} claims current status under {entry['algorithm']!r}, "
             "which no tool in this tree can recompute"
+        )
+        continue
+
+    if entry["algorithm"] != declared_algorithm(repo_root / entry["path"]):
+        # The catalog and the release must name the same algorithm. If they
+        # drift, the digest is recomputed one way and recorded another, and the
+        # mismatch reads as tampering when it is bookkeeping — or hides
+        # tampering behind it.
+        fail(
+            f"{where} records {entry['algorithm']!r} but the release declares "
+            f"{declared_algorithm(repo_root / entry['path'])!r}"
         )
         continue
 
