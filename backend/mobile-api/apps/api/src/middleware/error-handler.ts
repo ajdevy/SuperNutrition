@@ -78,7 +78,12 @@ export const toGatewayError = (error: unknown): GatewayError => {
     //
     // Matched by name, like the two above, so the error handler keeps no
     // dependency on the storage layer it reports on.
-    if (name === 'RedisUnavailableError') {
+    // GW-F3 — a process that has filled its in-memory stores cannot accept the
+    // request without discarding an at-most-once guarantee. Recoverable, like an
+    // outage: another instance, or this one after its TTLs turn over, can serve
+    // it. Distinct from "already claimed", which is what returning false here
+    // would have said about a request nobody had made.
+    if (name === 'RedisUnavailableError' || name === 'StoreCapacityError') {
       return new GatewayError(GATEWAY_CODES.PROVIDER_UNAVAILABLE, { cause: error });
     }
   }
@@ -130,7 +135,10 @@ export const toProductError = (error: unknown): AppError => {
     //
     // Matched by name, like the gateway's, so this handler keeps no dependency
     // on the storage layer it reports on.
-    if ((error as { name?: unknown }).name === 'RedisUnavailableError') {
+    if (
+      (error as { name?: unknown }).name === 'RedisUnavailableError' ||
+      (error as { name?: unknown }).name === 'StoreCapacityError'
+    ) {
       return new AppError(
         ERROR_CODES.PROVIDER_UNAVAILABLE,
         'A dependency is temporarily unavailable.',

@@ -206,3 +206,46 @@ describe('#49 review — the fence lifts only when shared state is COMPLETE', ()
     }
   });
 });
+
+describe('GW-F1 — the replicated posture must state what it trusts for a client IP', () => {
+  const replicated = { ...base, GATEWAY_STATE_BACKEND: 'redis' };
+
+  it('refuses the redis backend with no TRUSTED_PROXY', () => {
+    // Not a default, because both defaults are wrong. Trusting nothing makes
+    // `request.ip` the balancer for every caller, collapsing the 300/60s IP
+    // layer into one global bucket; trusting everything makes the header
+    // attacker-chosen.
+    expect(() => loadConfig(replicated)).toThrow(ConfigError);
+    expect(() => loadConfig(replicated)).toThrow(/TRUSTED_PROXY/);
+  });
+
+  it('accepts "none" as a deliberate statement that there is no proxy', () => {
+    expect(loadConfig({ ...replicated, TRUSTED_PROXY: 'none' }).server.trustProxy).toBe(false);
+  });
+
+  it('reads a hop count as a number, so Fastify counts from the right', () => {
+    expect(loadConfig({ ...replicated, TRUSTED_PROXY: '2' }).server.trustProxy).toBe(2);
+  });
+
+  it('passes an address or subnet list through unchanged', () => {
+    expect(
+      loadConfig({ ...replicated, TRUSTED_PROXY: '10.0.0.0/8,192.168.1.1' }).server.trustProxy,
+    ).toBe('10.0.0.0/8,192.168.1.1');
+  });
+
+  it('never resolves to blanket trust, whatever is configured', () => {
+    // `true` would make X-Forwarded-For attacker-chosen: a caller sets any
+    // address per request, so the shared bucket becomes a per-forged-header
+    // limit. Strictly worse than the problem being fixed, so it is unreachable.
+    for (const value of ['true', 'yes', '1', 'all', '*', '0', '-1']) {
+      const resolved = loadConfig({ ...replicated, TRUSTED_PROXY: value }).server.trustProxy;
+      expect(resolved, `TRUSTED_PROXY=${value} produced blanket trust`).not.toBe(true);
+    }
+  });
+
+  it('leaves the single-instance backend free to omit it', () => {
+    // The memory backend refuses APP_INSTANCE_COUNT > 1 already, so there is no
+    // balancer to reason about and no silent wrong answer to prevent.
+    expect(loadConfig(base).server.trustProxy).toBe(false);
+  });
+});

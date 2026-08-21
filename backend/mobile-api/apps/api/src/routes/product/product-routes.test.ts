@@ -244,7 +244,7 @@ let productLimiter: RateLimiter;
  * the wiring by hand and drifting from what the suite actually exercises.
  */
 const buildTestServer = async (
-  overrides: { idempotency?: typeof idempotencyStore } = {},
+  overrides: { idempotency?: typeof idempotencyStore; logger?: unknown } = {},
 ): Promise<ServerHandle> => {
   repository = new InMemoryMealRepository();
   usdaCalls = [];
@@ -274,7 +274,7 @@ const buildTestServer = async (
 
   return await buildServer({
     config,
-    logger: createLogger(config),
+    logger: (overrides.logger ?? createLogger(config)) as never,
     gateway: {
       payloads: { put: () => {}, dispose: () => {} },
       now: () => new Date('2026-07-29T12:30:04Z'),
@@ -448,6 +448,58 @@ describe('idempotency (docs/06 §6.7)', () => {
       headers: { authorization: TOKEN, 'idempotency-key': 'release-me' },
     });
     expect(retried.statusCode, 'the failed claim was never released').toBe(201);
+  });
+
+  it('logs the cause of a 5xx without putting it in the body (GW-F2)', async () => {
+    // `mapError`/`toProductError` return `cause` and the comment beside them
+    // says it is "logged and never sent". Nothing consumed it: the handlers
+    // logged a bare `failureCode: 'internal'`, so every 5xx recorded that one
+    // had happened and nothing about what it was. Bodies were clean, which is
+    // why this never showed up as a leak — it showed up as nothing at all.
+    const secret = `DIAGNOSTIC-${Date.now()}`;
+    const logged: unknown[] = [];
+    const failing = {
+      claim: async () => {
+        throw new Error(secret);
+      },
+      complete: async () => {},
+      fail: async () => {},
+    };
+    // Captured at the ROOT logger, because the handlers log through
+    // `request.log` — a child. Replacing `app.log.error` after the fact leaves
+    // every child still pointing at the original, which is how a first draft of
+    // this test reported a failure against a working fix.
+    const capturing = {
+      level: 'error',
+      error: (...args: unknown[]) => void logged.push(args[0]),
+      warn: () => {},
+      info: () => {},
+      debug: () => {},
+      trace: () => {},
+      fatal: () => {},
+      silent: () => {},
+      child() {
+        return this;
+      },
+    };
+    await server.close();
+    server = await buildTestServer({ idempotency: failing as never, logger: capturing });
+
+    const response = await server.app.inject({
+      method: 'POST',
+      url: '/api/v1/meals/manual',
+      payload: meal() as never,
+      headers: { authorization: TOKEN, 'idempotency-key': 'diagnostics' },
+    });
+
+    expect(response.statusCode).toBe(500);
+    expect(response.body, 'the diagnostic reached the client').not.toContain(secret);
+    // Inspected as objects, not JSON: `JSON.stringify(new Error('x'))` is `{}`,
+    // because a message is not an enumerable own property. Serialising the
+    // capture would have reported "nothing logged" about a log line that was
+    // there.
+    const causes = logged.map((entry) => (entry as { err?: { message?: string } }).err?.message);
+    expect(causes, 'the 5xx was answered without recording what caused it').toContain(secret);
   });
 
   it('does not create a second meal when the completion write fails (DS-F1)', async () => {

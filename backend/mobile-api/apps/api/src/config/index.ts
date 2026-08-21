@@ -8,7 +8,18 @@ import {
 export interface AppConfig {
   readonly env: Environment;
   readonly nodeEnv: Env['NODE_ENV'];
-  readonly server: { readonly host: string; readonly port: number };
+  readonly server: {
+    readonly host: string;
+    readonly port: number;
+    /**
+     * What Fastify is told to trust for `request.ip` (GW-F1).
+     *
+     * `false` = trust nothing, the socket peer is the client. A number is a hop
+     * count from the right of `X-Forwarded-For`; a string is an explicit
+     * address or subnet list. Never `true`.
+     */
+    readonly trustProxy: false | number | string;
+  };
   readonly database: {
     readonly url: string;
     readonly maxConnections: number;
@@ -53,6 +64,20 @@ export class ConfigError extends Error {
  * OpenRouter key is read once into the adapter's closure and is not reachable
  * from a config object other modules hold (docs/09 §9.8).
  */
+/**
+ * `TRUSTED_PROXY` as Fastify's `trustProxy`.
+ *
+ * `true` is deliberately unreachable: it trusts any `X-Forwarded-For` a caller
+ * sends, so the IP rate limit becomes a per-forged-header limit — worse than
+ * the single shared bucket it was meant to fix.
+ */
+const resolveTrustProxy = (raw: string | undefined): false | number | string => {
+  if (raw === undefined || raw === 'none') return false;
+  const hops = Number(raw);
+  if (Number.isInteger(hops) && hops > 0) return hops;
+  return raw;
+};
+
 export const loadConfig = (source: NodeJS.ProcessEnv): AppConfig => {
   const parsed = EnvSchema.safeParse(source);
   if (!parsed.success) {
@@ -67,10 +92,34 @@ export const loadConfig = (source: NodeJS.ProcessEnv): AppConfig => {
   // H-07 — a multi-instance deployment is refused while state is per-process.
   assertSingleInstanceState(env.APP_INSTANCE_COUNT, env.GATEWAY_STATE_BACKEND);
 
+  // GW-F1 — the replicated posture must state what it trusts for a client IP.
+  //
+  // `redis` is the backend a multi-instance deployment uses, and a multi-instance
+  // deployment sits behind a balancer. Left unset there, `request.ip` is the
+  // balancer for every caller: the IP rate limit becomes one global bucket, so a
+  // single noisy source produces fleet-wide 429s and the unauthenticated session
+  // endpoint is throttled globally rather than per client.
+  //
+  // Refused rather than defaulted, because both defaults are wrong: trusting
+  // nothing gives the shared bucket, and trusting everything makes the header
+  // attacker-chosen. `TRUSTED_PROXY=none` says "no balancer" deliberately.
+  if (env.GATEWAY_STATE_BACKEND === 'redis' && env.TRUSTED_PROXY === undefined) {
+    throw new ConfigError(
+      'TRUSTED_PROXY must be set when GATEWAY_STATE_BACKEND=redis. ' +
+        'Behind a load balancer, request.ip is the balancer for every caller and the ' +
+        'IP rate limit collapses into one shared bucket. Set a hop count, an explicit ' +
+        'address or subnet list, or "none" if this deployment has no proxy in front of it.',
+    );
+  }
+
   return {
     env: env.APP_ENVIRONMENT,
     nodeEnv: env.NODE_ENV,
-    server: { host: env.HOST, port: env.PORT },
+    server: {
+      host: env.HOST,
+      port: env.PORT,
+      trustProxy: resolveTrustProxy(env.TRUSTED_PROXY),
+    },
     database: {
       url: env.DATABASE_URL,
       maxConnections: env.DATABASE_MAX_CONNECTIONS,

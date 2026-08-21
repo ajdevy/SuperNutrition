@@ -6,6 +6,8 @@ import {
   RedisRateLimiter,
   RedisEffectStore,
   RedisUnavailableError,
+  StoreCapacityError,
+  IN_MEMORY_STORE_CAPACITY,
   type RedisLike,
 } from './stores.js';
 
@@ -372,5 +374,52 @@ describe('M1 — in-memory stores stay bounded', () => {
     now += 61_000;
     await store.claim('user:fresh', 'digest', ttl(60));
     expect(store.trackedEntries).toBe(1);
+  });
+});
+
+describe('GW-F3 — in-memory stores are bounded, and refuse rather than evict', () => {
+  it('refuses a new claim at capacity instead of dropping a live one', async () => {
+    // The replay claim runs before the rate limiter (contract validation_order,
+    // owner decision D-02), so unique valid request ids were admitted with no
+    // advertised bound at all — 24h of them, at whatever rate a caller managed.
+    //
+    // The cap is a refusal, not an eviction. These entries ARE the at-most-once
+    // guarantee: evicting a live one lets its identifier run a second time,
+    // which is a duplicate provider call and a second upload of a user's photo.
+    const store = new InMemoryEffectStore(() => 1_000);
+    for (let index = 0; index < IN_MEMORY_STORE_CAPACITY; index += 1) {
+      await store.claimOnce('att', `eff_${index}`, 3_600);
+    }
+
+    await expect(store.claimOnce('att', 'eff_one_too_many', 3_600)).rejects.toThrow(
+      StoreCapacityError,
+    );
+  });
+
+  it('still reports an already-held claim as held when full', async () => {
+    // Order matters: were capacity checked first, a full store would answer
+    // "capacity" for an id it is already holding — and a client retrying past
+    // that would eventually be allowed to run it twice.
+    const store = new InMemoryEffectStore(() => 1_000);
+    await store.claimOnce('att', 'eff_first', 3_600);
+    for (let index = 0; index < IN_MEMORY_STORE_CAPACITY; index += 1) {
+      await store.claimOnce('att', `eff_${index}`, 3_600).catch(() => undefined);
+    }
+
+    await expect(store.claimOnce('att', 'eff_first', 3_600)).resolves.toBe(false);
+  });
+
+  it('reclaims expired entries, so ordinary traffic never reaches the cap', async () => {
+    let clock = 1_000;
+    const store = new InMemoryEffectStore(() => clock);
+    for (let index = 0; index < 5_000; index += 1) {
+      await store.claimOnce('att', `eff_${index}`, 60);
+    }
+    expect(store.trackedClaims).toBeGreaterThan(0);
+
+    clock += 61_000;
+    // One claim past the TTL triggers the amortised sweep; the dead entries go.
+    await store.claimOnce('att', 'eff_after', 60);
+    expect(store.trackedClaims, 'expired claims were never reclaimed').toBeLessThan(5_000);
   });
 });

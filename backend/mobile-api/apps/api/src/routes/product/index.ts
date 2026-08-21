@@ -260,7 +260,13 @@ export const registerProductRoutes = async (
     scope.setErrorHandler((error, request, reply) => {
       const mapped = toProductError(error);
       if (mapped.status >= 500) {
-        request.log.error({ telemetry: { failureCode: 'internal' } }, 'product request failed');
+        // GW-F2 — same silence on the product surface. `cause` carries the
+        // detail deliberately kept off the wire; dropping it meant nobody saw
+        // it at all.
+        request.log.error(
+          { err: mapped.cause, telemetry: { failureCode: 'internal' } },
+          'product request failed',
+        );
       }
       return reply.status(mapped.status).send(mapped.toResponse(String(request.id)));
     });
