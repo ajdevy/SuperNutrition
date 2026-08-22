@@ -325,9 +325,9 @@ anyway, so both go in one round: one decision, one acknowledgement, one pass.
 
 ## D-03 — where Product idempotency state lives (#49)
 
-Decided on: PENDING
-Decided by: PENDING
-Channel: PENDING
+Decided on: 2026-08-22
+Decided by: iggdrassilon (RMD, https://github.com/iggdrassilon) — owner of PR #44
+Channel: direct instruction to the implementing agent, working session 2026-08-22
 
 **Decided: Redis holds the status, the request digest and the meal's id. Never
 the response body.**
@@ -361,9 +361,9 @@ review found it had been implemented without a record (EV-1).
 
 ## D-04 — what market retention binds (#49, story 4.4 criterion 4)
 
-Decided on: PENDING
-Decided by: PENDING
-Channel: PENDING
+Decided on: 2026-08-22
+Decided by: iggdrassilon (RMD, https://github.com/iggdrassilon) — owner of PR #44
+Channel: direct instruction to the implementing agent, working session 2026-08-22
 
 **Decided: reading (a) — market retention governs user content. Coordination
 identifiers keep the at-most-once horizon.**
