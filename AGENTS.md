@@ -94,6 +94,23 @@ Gradle reports are the most common source of confident wrong conclusions here. E
 - Local policy and quality checks are authoritative. GitHub Actions is an optional adapter: a zero-step, immediate failure is runner/billing evidence, not Gradle/test evidence. Never call hosted CI green when it is queued, failed, or billing-blocked.
 - Before push/merge, refresh the PR head, base, review state, and checks. Push or merge only when explicitly requested. If an admin merge overrides infrastructure failure, state that clearly and verify `origin/main` plus post-merge runs afterward.
 
+## Owner decisions
+
+- A decision that binds a published contract, a privacy posture, or a
+  correctness guarantee is the owner's, not the implementer's. Record it in
+  `.evidence/OWNER-DECISIONS.md` **before** implementing it, as a `## D-NN`
+  section carrying `Decided on`, `Decided by` and `Channel`.
+- `scripts/verify-owner-decisions.sh` refuses an entry missing any of the three,
+  or one whose date does not parse or has not happened yet. It cannot force an
+  entry to be written on time — that is this rule, not the script. `--strict`
+  additionally refuses `PENDING` and is the check to run before treating a
+  decision as settled authority.
+- Two decisions were implemented on 2026-08-20 with no entry at all. The
+  authority was real and given in conversation, and the repository had no way to
+  show it; read from the outside, that is an implementer settling a privacy
+  question and approving their own answer (PR #44 review, EV-1). A chat
+  transcript is not the durable record.
+
 ## Completion handoff
 
 - Run `git diff --check`; run `graphify update .` after code changes. Generated `build/` output is never staged; expected dirty graph files are not a reason to skip graphify.

@@ -3,6 +3,18 @@ release = "v1"
 validator = "scripts/verify-root-boundaries.sh"
 
 [[executable]]
+path = "scripts/verify-owner-decisions.sh"
+purpose = "read-only check that every recorded owner decision is dated, attributed and sourced"
+mutates_repository = false
+test_entrypoint = "scripts/owner-decisions-negative-fixtures.sh"
+
+[[executable]]
+path = "scripts/owner-decisions-negative-fixtures.sh"
+purpose = "negative fixtures for undated, unattributed or unsourced owner decisions"
+mutates_repository = false
+test_entrypoint = "scripts/owner-decisions-negative-fixtures.sh"
+
+[[executable]]
 path = "scripts/verify-root-boundaries.sh"
 purpose = "read-only root and contract boundary validation"
 mutates_repository = false

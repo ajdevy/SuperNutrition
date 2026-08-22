@@ -31,6 +31,8 @@ run_jvm() {
   # immutable" was reachable only through the path a direct push to main skips
   # entirely — the combination that made TL-H3 exploitable. They are local gates
   # now, where the policy says authority lives.
+  "$script_dir/verify-owner-decisions.sh"
+  "$script_dir/owner-decisions-negative-fixtures.sh"
   "$script_dir/verify-release-immutability.sh"
   "$script_dir/release-immutability-negative-fixtures.sh"
   "$script_dir/verify-release-catalog.sh"
