@@ -327,7 +327,7 @@ anyway, so both go in one round: one decision, one acknowledgement, one pass.
 
 Decided on: 2026-08-22
 Decided by: iggdrassilon (RMD, https://github.com/iggdrassilon) — owner of PR #44
-Channel: direct instruction to the implementing agent, working session 2026-08-22
+Channel: https://github.com/flexsent-labs/SuperNutrition/pull/44#issuecomment-5382807819
 
 **Decided: Redis holds the status, the request digest and the meal's id. Never
 the response body.**
@@ -363,7 +363,7 @@ review found it had been implemented without a record (EV-1).
 
 Decided on: 2026-08-22
 Decided by: iggdrassilon (RMD, https://github.com/iggdrassilon) — owner of PR #44
-Channel: direct instruction to the implementing agent, working session 2026-08-22
+Channel: https://github.com/flexsent-labs/SuperNutrition/pull/44#issuecomment-5382807819
 
 **Decided: reading (a) — market retention governs user content. Coordination
 identifiers keep the at-most-once horizon.**
