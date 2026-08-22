@@ -240,6 +240,10 @@ and tracks them, and claims neither closed.
 
 ## D-01 — transfer state machine (#48)
 
+Decided on: 2026-08-15
+Decided by: repository owner
+Channel: pr44-handover-decisions.md, posted to #48
+
 **Decided: authorize the redefinition under the existing acknowledgement
 mechanism rather than publishing `mobile-api/v2`, with a hard expiry condition.**
 
@@ -298,6 +302,10 @@ request that is never sent is the same class of defect H-02 fixed in the code.
 
 ## D-02 — validation order (#50)
 
+Decided on: 2026-08-15
+Decided by: repository owner
+Channel: pr44-handover-decisions.md, posted to #50
+
 **Decided: option 2 — split the concepts in the published list.**
 `streamed-size-guard` stays pre-authentication, since it reads a length header
 rather than a body; `magic-byte-sniff` and `dimension-bounds` are explicitly
@@ -314,6 +322,83 @@ position of `authentication` diverges.
 **Amendment to #50 as filed, adopted:** #50 recommended deferring to the next
 release. The owner overrides that — #48 has to touch the same frozen contract
 anyway, so both go in one round: one decision, one acknowledgement, one pass.
+
+## D-03 — where Product idempotency state lives (#49)
+
+Decided on: PENDING
+Decided by: PENDING
+Channel: PENDING
+
+**Decided: Redis holds the status, the request digest and the meal's id. Never
+the response body.**
+
+Two replicas each accepted the same `Idempotency-Key` and each created a durable
+meal, because the idempotency claim was the last protected store still living in
+one process. Sharing it is what lifts the single-instance fence. The question
+this decision answers is not *whether* to share it but *what* to put in the
+shared store.
+
+A meal is a diary entry: it carries `userId`, dish names, times of day and
+nutrition figures. Redis is a coordination store here — its retention rules were
+written for identifiers, and it is readable by anyone holding the connection. So
+the body stays in Postgres, where deletion actually deletes, and a replay
+re-reads it through the controller. The owner check therefore runs again on the
+replay path: a stored reference is never authority by itself.
+
+**Consequence, since accepted.** A replay costs one Postgres read rather than a
+Redis read. If the meal was deleted between the original request and the retry,
+there is nothing to replay and the key conflicts rather than inventing a
+response — refusing is worse for the client than a cached body would have been,
+and better than both the alternatives (replaying a body for a row that no longer
+exists, or creating a second meal under a key that already made one).
+
+**Related, decided later and separately (handover-10, DS-F7):** the key itself
+is `sha256(userId, client key)` rather than the readable composite. That is an
+implementation correction to this decision, not a change to it.
+
+Implemented in commit 2c8d55b7. Recorded here 2026-08-21, after the PR #44
+review found it had been implemented without a record (EV-1).
+
+## D-04 — what market retention binds (#49, story 4.4 criterion 4)
+
+Decided on: PENDING
+Decided by: PENDING
+Channel: PENDING
+
+**Decided: reading (a) — market retention governs user content. Coordination
+identifiers keep the at-most-once horizon.**
+
+Criterion 4 as written said every Redis key must expire within the retention the
+request's market policy allows. The fixture markets carry `retentionDays = 0`.
+Read literally against one of those, the at-most-once guard gets a zero-second
+expiry — it is deleted at the moment it is needed, a duplicate provider call
+becomes possible, and the user's photo is uploaded a second time. The privacy
+clause, enforced literally, produces the privacy harm.
+
+So the clause is read as binding user CONTENT, and the keys in question hold
+none: rate-limit timestamps, claim markers, an owner-token digest, and a status
+with a meal id. The meal itself is in Postgres, where retention and erasure do
+bind it.
+
+**The condition this rests on, and it is tested.** Retention does not bind these
+keys *because* they hold no user content — so if that ever stops being true, this
+decision stops applying. Three tests hold the line: the TTL inventory
+(`security/retention.test.ts`) fails on any coordination TTL above the horizon
+and on any new TTL constant that does not declare which obligation bounds it;
+the two-instance suite reads every key's expiry from the live server; and the
+same suite scans every value and every key name for user content.
+
+**The dissenting reading, still available.** Reading (b) — retention binds
+everything keyed to a user's action — shrinks the at-most-once window to the
+retention period and, where retention is zero, accepts the guarantee as weaker.
+A market whose counsel requires that reading needs (b) and a shorter horizon.
+That is a deliberate weakening, to be taken knowingly, not a default.
+
+This is an engineering decision about which obligation applies to which data. It
+is not legal advice.
+
+Implemented in commit 39d30c86. Recorded here 2026-08-21, after the PR #44
+review found it had been implemented without a record (EV-1).
 
 ## Sequencing
 
