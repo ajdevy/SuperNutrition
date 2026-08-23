@@ -262,6 +262,12 @@ owner = "contract"
 content = "immutable-language-neutral-data-only"
 
 [[executable]]
+path = "scripts/release-catalog-negative-fixtures.sh"
+purpose = "negative fixtures for catalog provenance and algorithm agreement"
+mutates_repository = false
+test_entrypoint = "scripts/release-catalog-negative-fixtures.sh"
+
+[[executable]]
 path = "scripts/verify-release-catalog.sh"
 purpose = "read-only recomputation of every current release digest recorded in the catalog"
 mutates_repository = false

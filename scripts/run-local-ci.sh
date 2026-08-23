@@ -36,6 +36,8 @@ run_jvm() {
   "$script_dir/verify-release-immutability.sh"
   "$script_dir/release-immutability-negative-fixtures.sh"
   "$script_dir/verify-release-catalog.sh"
+  "$script_dir/release-catalog-negative-fixtures.sh"
+  "$script_dir/ci-fingerprint-negative-fixtures.sh"
   "$script_dir/secret-scan-fixtures.sh"
   python3 -m unittest discover -s "$script_dir/tests" -p 'test_*.py'
 
