@@ -122,7 +122,7 @@ const contextFor = (bytes: Uint8Array, over: Record<string, unknown> = {}) => ({
   // consent — which is the binding working, not a test inconvenience.
   consentReceipt: {
     ...receiptFor(bytes),
-    ...(typeof over.attemptId === 'string' ? { attemptId: over.attemptId } : {}),
+    ...(typeof over['attemptId'] === 'string' ? { attemptId: over['attemptId'] } : {}),
   },
   inferenceContext: {
     catalogCountry: 'ZZ',
@@ -340,6 +340,11 @@ describe('every gate rejects with zero provider calls', () => {
         payload: { bytes: JPEG, contentType: 'image/jpeg' },
         auth: { ...AUTH, scope: 'product' },
         clientIp: '203.0.113.5',
+        // Required by `PipelineInput` and simply absent here, so this test ran
+        // the pipeline with `requestId: undefined` — the replay claim took
+        // `undefined` as an identifier. It asserted the scope refusal, which is
+        // raised earlier, so nothing ever noticed.
+        requestId: `req_00000000000000${(requestSeq += 1).toString().padStart(2, '0')}`,
       }),
     ).rejects.toMatchObject({ gatewayCode: 'insufficient-scope' });
     expect(orchestrator.calls).toBe(0);

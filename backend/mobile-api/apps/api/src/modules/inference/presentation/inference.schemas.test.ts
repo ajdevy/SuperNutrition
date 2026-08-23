@@ -72,7 +72,7 @@ const request = {
     mealType: 'lunch',
     locale: 'de-DE',
     measurementSystem: 'metric',
-    configurationVersion: receipt.configurationVersion,
+    configurationVersion: receipt['configurationVersion'],
   },
 };
 

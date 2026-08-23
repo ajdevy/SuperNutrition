@@ -190,7 +190,6 @@ beforeEach(async () => {
       supportedRetentionVersions: ['retention/2'],
       supportedConfigurationVersions: ['cfg/1'],
       now: () => NOW,
-      requestIdFactory: () => 'req_0000000000000000',
       authenticate: async (request) => authenticator.authenticate(request.headers.authorization),
       issueTestSession: async () => ({
         accessToken: 'test.token',
@@ -212,6 +211,10 @@ beforeEach(async () => {
         fail: async () => {},
       } as never,
       limiter: new InMemoryRateLimiter([{ layer: 'user', limit: 120, windowSeconds: 60 }]),
+      // Required by the port and absent until the suite was typechecked. This
+      // file only asserts that the routes register, so a double is enough — but
+      // a double that does not satisfy the port is not a double.
+      searchFood: { execute: async () => ({ items: [] }) } as never,
       authenticate: async () => ({ userId: 'user-1' }),
     },
   });
@@ -477,7 +480,7 @@ describe('DELETE /gw/v1/inference/:attemptId', () => {
     // is parsed first the answer is 400 "context missing", and if the caller is
     // checked first it is 401. The status is the evidence about the ordering.
     const { headers } = multipartBody(context(), JPEG);
-    delete headers.authorization;
+    delete headers['authorization'];
     const boundary = '----test-boundary';
     const bodyWithoutContext = Buffer.concat([
       Buffer.from(
@@ -1014,9 +1017,9 @@ describe('P-02 — the context gate validates the whole released envelope', () =
 
   const withContext = (override: Record<string, unknown>) => {
     const ctx = context() as Record<string, unknown>;
-    ctx.inferenceContext = { ...(ctx.inferenceContext as object), ...override };
+    ctx['inferenceContext'] = { ...(ctx['inferenceContext'] as object), ...override };
     for (const [k, v] of Object.entries(override)) {
-      if (v === undefined) delete (ctx.inferenceContext as Record<string, unknown>)[k];
+      if (v === undefined) delete (ctx['inferenceContext'] as Record<string, unknown>)[k];
     }
     return ctx;
   };
@@ -1077,7 +1080,7 @@ describe('P-02 — the context gate validates the whole released envelope', () =
 
   it('accepts the released envelope with the optional fields absent', async () => {
     const ctx = context() as Record<string, unknown>;
-    delete ctx.claimedMarketJurisdiction;
+    delete ctx['claimedMarketJurisdiction'];
     const response = await post(ctx);
     expect(response.statusCode).toBe(200);
   });

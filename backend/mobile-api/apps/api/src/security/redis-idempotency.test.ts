@@ -304,7 +304,7 @@ describe('an unreachable Redis fails closed', () => {
   });
 
   it('raises rather than silently losing the completion', async () => {
-    await expect(build(unreachable()).complete('k', meal('x'), ttl(60))).rejects.toThrow(
+    await expect(build(unreachable()).complete('k', meal('x'), ttl(60), 'token')).rejects.toThrow(
       /redis unavailable/i,
     );
   });

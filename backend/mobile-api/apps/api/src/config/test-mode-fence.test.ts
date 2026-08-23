@@ -89,10 +89,26 @@ describe('startup banner', () => {
 describe('M9 — the zero-cost roster cannot reach production', () => {
   const roster = ['google/gemma-4-26b-a4b-it:free', 'nvidia/nemotron-nano-12b-v2-vl:free'];
 
-  it.each([
-    ['NODE_ENV', { NODE_ENV: 'production' as const, APP_ENVIRONMENT: 'staging' as const }],
-    ['APP_ENVIRONMENT', { NODE_ENV: 'staging' as const, APP_ENVIRONMENT: 'production' as const }],
-  ])('refuses to start when %s is production', (_label, environment) => {
+  // Typed explicitly: `it.each` widens the rows to a union of the two literal
+  // shapes, which is not assignable to the parameter even though each row is.
+  const productionCases: ReadonlyArray<
+    [
+      string,
+      {
+        NODE_ENV: 'development' | 'production' | 'test';
+        APP_ENVIRONMENT: 'development' | 'staging' | 'production';
+      },
+    ]
+  > = [
+    ['NODE_ENV', { NODE_ENV: 'production', APP_ENVIRONMENT: 'staging' }],
+    // `NODE_ENV: 'staging'` was here, which the type does not permit — NODE_ENV
+    // is development/production/test. The row still passed because the suite was
+    // never typechecked. `development` keeps the case intact: only
+    // APP_ENVIRONMENT is production, which is what this row is about.
+    ['APP_ENVIRONMENT', { NODE_ENV: 'development', APP_ENVIRONMENT: 'production' }],
+  ];
+
+  it.each(productionCases)('refuses to start when %s is production', (_label, environment) => {
     expect(() => assertPaidRosterInProduction(roster, environment)).toThrowError(
       TestModeFenceError,
     );

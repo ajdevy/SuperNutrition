@@ -181,7 +181,7 @@ describe('creating a meal over HTTP', () => {
       'user-1',
     );
 
-    const command = vi.mocked(deps.createMeal.execute).mock.calls[0]?.[0] as {
+    const command = vi.mocked(deps.createMeal.execute).mock.calls[0]?.[0] as unknown as {
       evidence?: unknown[];
     };
     expect(command.evidence).toEqual([]);
@@ -367,7 +367,7 @@ describe('optional fields and remaining failure paths', () => {
       'user-1',
     );
 
-    const command = vi.mocked(deps.createMeal.execute).mock.calls[0]?.[0] as {
+    const command = vi.mocked(deps.createMeal.execute).mock.calls[0]?.[0] as unknown as {
       items: { gramWeight?: string; confidence?: string }[];
     };
     expect(command.items[0]).toMatchObject({ gramWeight: '118', confidence: '0.93' });

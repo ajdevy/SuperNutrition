@@ -3,16 +3,34 @@ import {
   TransferStateTracker,
   cancellationStatus,
   TERMINAL_RETENTION_SECONDS,
+  type CancellationRecord,
 } from './transfer-state.js';
 
 const NOW = new Date('2026-07-29T14:00:00Z');
 const tracker = () => new TransferStateTracker(() => NOW);
 
+/**
+ * `cancel()` returns null for an attempt the tracker does not hold, and the
+ * tests that use the record all begin by claiming one. Asserted rather than
+ * silenced with `!`: if a claim ever stops taking, the failure names that
+ * instead of a property access on null.
+ */
+/** `begin()` returns null when the id is already held; these tests claim a fresh one. */
+const claimed = (controller: AbortController | null): AbortController => {
+  if (controller === null) throw new Error('expected a fresh attempt claim, got null');
+  return controller;
+};
+
+const cancelled = (record: CancellationRecord | null): CancellationRecord => {
+  if (record === null) throw new Error('expected a cancellation record, got null');
+  return record;
+};
+
 describe('cancellation per transfer state (AD-6, AD-8)', () => {
   it('pre-transfer sends zero bytes and makes a complete guarantee', () => {
     const t = tracker();
     t.begin('att_1', 'installation-a');
-    const record = t.cancel('att_1', 'installation-a');
+    const record = cancelled(t.cancel('att_1', 'installation-a'));
 
     expect(record.transferState).toBe('pre-transfer');
     expect(record.bytesTransferred).toBe(0);
@@ -25,7 +43,7 @@ describe('cancellation per transfer state (AD-6, AD-8)', () => {
     const t = tracker();
     t.begin('att_2', 'installation-a');
     t.markTransferring('att_2', 4096);
-    const record = t.cancel('att_2', 'installation-a');
+    const record = cancelled(t.cancel('att_2', 'installation-a'));
 
     expect(record.transferState).toBe('transferring');
     expect(record.bytesTransferred).toBe(4096);
@@ -37,7 +55,7 @@ describe('cancellation per transfer state (AD-6, AD-8)', () => {
     const t = tracker();
     t.begin('att_3', 'installation-a');
     t.markTransferred('att_3', 8192);
-    const record = t.cancel('att_3', 'installation-a');
+    const record = cancelled(t.cancel('att_3', 'installation-a'));
 
     expect(record.transferState).toBe('transferred');
     // H-02 — a transfer is not a deletion request. No adapter exposes an
@@ -68,7 +86,7 @@ describe('cancellation per transfer state (AD-6, AD-8)', () => {
 
   it('aborts the attempt signal so downstream work stops', () => {
     const t = tracker();
-    const controller = t.begin('att_4', 'installation-a');
+    const controller = claimed(t.begin('att_4', 'installation-a'));
     expect(controller.signal.aborted).toBe(false);
     t.cancel('att_4', 'installation-a');
     expect(controller.signal.aborted).toBe(true);
@@ -145,7 +163,7 @@ describe('H2 — cancellation after the attempt has completed', () => {
     t.markTransferred('att_done', 8192);
     t.release('att_done');
 
-    const record = t.cancel('att_done', 'installation-a');
+    const record = cancelled(t.cancel('att_done', 'installation-a'));
 
     expect(record).not.toBeNull();
     expect(record?.transferState).toBe('transferred');
@@ -315,7 +333,7 @@ describe('H-02 — the deletion flag reports a request that was actually made', 
     t.begin('att_0000000000000001', 'inst-1');
     t.markTransferred('att_0000000000000001', 1024);
 
-    const record = t.cancel('att_0000000000000001', 'inst-1');
+    const record = cancelled(t.cancel('att_0000000000000001', 'inst-1'));
 
     expect(record?.downstreamDeletionRequested).toBe(false);
   });
@@ -369,7 +387,7 @@ describe('#48 — cancellation across the real transfer lifecycle', () => {
     const t = tracker();
     t.begin(ATTEMPT, OWNER);
 
-    const record = t.cancel(ATTEMPT, OWNER);
+    const record = cancelled(t.cancel(ATTEMPT, OWNER));
 
     expect(record?.transferState).toBe('pre-transfer');
     expect(record?.bytesTransferred).toBe(0);
@@ -386,7 +404,7 @@ describe('#48 — cancellation across the real transfer lifecycle', () => {
     t.begin(ATTEMPT, OWNER);
     t.markTransferring(ATTEMPT, 2048);
 
-    const record = t.cancel(ATTEMPT, OWNER);
+    const record = cancelled(t.cancel(ATTEMPT, OWNER));
 
     expect(record?.transferState).toBe('transferring');
     expect(record?.bytesTransferred).toBe(2048);
@@ -399,7 +417,7 @@ describe('#48 — cancellation across the real transfer lifecycle', () => {
     t.markTransferring(ATTEMPT, 2048);
     t.markTransferred(ATTEMPT, 2048);
 
-    const record = t.cancel(ATTEMPT, OWNER);
+    const record = cancelled(t.cancel(ATTEMPT, OWNER));
 
     expect(record?.transferState).toBe('transferred');
     expect(record?.bytesTransferred).toBe(2048);
@@ -416,7 +434,7 @@ describe('#48 — cancellation across the real transfer lifecycle', () => {
     t.markTransferred(ATTEMPT, 2048);
     t.markDownstreamDeletionRequested(ATTEMPT);
 
-    const record = t.cancel(ATTEMPT, OWNER);
+    const record = cancelled(t.cancel(ATTEMPT, OWNER));
 
     expect(record?.downstreamDeletionRequested).toBe(true);
     // Still no recall claim: a deletion REQUEST is not a guarantee the bytes
@@ -432,7 +450,7 @@ describe('#48 — cancellation across the real transfer lifecycle', () => {
     t.markTransferring(ATTEMPT, 2048);
     t.markDownstreamDeletionRequested(ATTEMPT);
 
-    const record = t.cancel(ATTEMPT, OWNER);
+    const record = cancelled(t.cancel(ATTEMPT, OWNER));
 
     expect(record?.transferState).toBe('transferring');
     expect(record?.downstreamDeletionRequested).toBe(false);
