@@ -16,6 +16,24 @@ const TTL = { inFlightSeconds: 60, completedSeconds: 86_400 } as const;
 /** One explicit window, when a test is about expiry rather than the split. */
 const ttl = (seconds: number) => ({ inFlightSeconds: seconds, completedSeconds: seconds });
 
+/**
+ * Claim, and hand back the token the claim minted.
+ *
+ * `complete`/`fail` refuse to touch a record that is not theirs (DS-F19), so a
+ * test that discards the token is testing the refusal rather than the behaviour
+ * it means to.
+ */
+const claimToken = async (
+  store: { claim: (...args: never[]) => Promise<{ state: string; token?: string }> },
+  ...args: unknown[]
+): Promise<string> => {
+  const claim = await store.claim(...(args as never[]));
+  if (claim.state !== 'fresh' || claim.token === undefined) {
+    throw new Error(`expected a fresh claim, got ${claim.state}`);
+  }
+  return claim.token;
+};
+
 const rules = [
   { layer: 'installation' as const, limit: 2, windowSeconds: 60 },
   { layer: 'user' as const, limit: 2, windowSeconds: 60 },
@@ -191,9 +209,9 @@ describe('at-most-once effect claims', () => {
 describe('idempotency', () => {
   it('replays a completed response for the same digest', async () => {
     const store = new InMemoryIdempotencyStore();
-    expect(await store.claim('k', 'digest-1', TTL)).toEqual({ state: 'fresh' });
-    await store.complete('k', { ok: true }, TTL);
-    expect(await store.claim('k', 'digest-1', TTL)).toEqual({
+    const token = await claimToken(store, 'k', 'digest-1', TTL, 'owner');
+    await store.complete('k', { ok: true }, TTL, token);
+    expect(await store.claim('k', 'digest-1', TTL, 'owner')).toEqual({
       state: 'replay',
       response: { ok: true },
     });
@@ -213,15 +231,15 @@ describe('idempotency', () => {
 
   it('allows a retry after a failed attempt released its claim', async () => {
     const store = new InMemoryIdempotencyStore();
-    await store.claim('k', 'digest-1', TTL);
-    await store.fail('k');
-    expect(await store.claim('k', 'digest-1', TTL)).toEqual({ state: 'fresh' });
+    const token_fail = await claimToken(store, 'k', 'digest-1', TTL);
+    await store.fail('k', token_fail);
+    expect(await store.claim('k', 'digest-1', TTL)).toMatchObject({ state: 'fresh' });
   });
 
   it('replays a completed response for the same digest', async () => {
     const store = new InMemoryIdempotencyStore();
-    await store.claim('k', 'digest-1', TTL);
-    await store.complete('k', { status: 201, body: { id: 'meal-1' } }, TTL);
+    const token_complete = await claimToken(store, 'k', 'digest-1', TTL);
+    await store.complete('k', { status: 201, body: { id: 'meal-1' } }, TTL, token_complete);
     expect(await store.claim('k', 'digest-1', TTL)).toEqual({
       state: 'replay',
       response: { status: 201, body: { id: 'meal-1' } },
@@ -230,8 +248,8 @@ describe('idempotency', () => {
 
   it('conflicts when the same key carries a different request', async () => {
     const store = new InMemoryIdempotencyStore();
-    await store.claim('k', 'digest-1', TTL);
-    await store.complete('k', { status: 201, body: { id: 'meal-1' } }, TTL);
+    const token_complete = await claimToken(store, 'k', 'digest-1', TTL);
+    await store.complete('k', { status: 201, body: { id: 'meal-1' } }, TTL, token_complete);
     expect(await store.claim('k', 'digest-2', TTL)).toMatchObject({ state: 'conflict' });
   });
 
@@ -240,8 +258,8 @@ describe('idempotency', () => {
   // stored value.
   it('stores a response whose body contains a failed key', async () => {
     const store = new InMemoryIdempotencyStore();
-    await store.claim('k', 'digest-1', TTL);
-    await store.complete('k', { status: 201, body: { failed: true } }, TTL);
+    const token_complete = await claimToken(store, 'k', 'digest-1', TTL);
+    await store.complete('k', { status: 201, body: { failed: true } }, TTL, token_complete);
     expect(await store.claim('k', 'digest-1', TTL)).toEqual({
       state: 'replay',
       response: { status: 201, body: { failed: true } },
@@ -258,7 +276,7 @@ describe('idempotency', () => {
     await store.complete('k', { status: 201, body: { id: 'meal-1' } }, ttl(60));
 
     clock += 61_000;
-    expect(await store.claim('k', 'digest-1', ttl(60))).toEqual({ state: 'fresh' });
+    expect(await store.claim('k', 'digest-1', ttl(60))).toMatchObject({ state: 'fresh' });
   });
 
   it('frees an unfinished claim on the short bound, not the replay window (DS-F2)', async () => {
@@ -282,15 +300,15 @@ describe('idempotency', () => {
     expect(
       await store.claim('k', 'digest-1', { inFlightSeconds: 60, completedSeconds: 86_400 }),
       'the key stayed locked for the replay window although nothing was created',
-    ).toEqual({ state: 'fresh' });
+    ).toMatchObject({ state: 'fresh' });
   });
 
   it('keeps a COMPLETED record for the replay window, not the short bound', async () => {
     let clock = 1_000;
     const store = new InMemoryIdempotencyStore(() => clock);
     const ttls = { inFlightSeconds: 60, completedSeconds: 86_400 };
-    await store.claim('k', 'digest-1', ttls);
-    await store.complete('k', { status: 201, body: { id: 'meal-1' } }, ttls);
+    const token_complete = await claimToken(store, 'k', 'digest-1', ttls);
+    await store.complete('k', { status: 201, body: { id: 'meal-1' } }, ttls, token_complete);
 
     // Well past the in-flight bound. A completed record must NOT expire with it,
     // or a retry would create a second meal for a row that exists.

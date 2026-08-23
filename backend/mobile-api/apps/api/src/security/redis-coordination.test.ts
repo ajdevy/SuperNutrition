@@ -195,6 +195,33 @@ describe('attempt ownership and cancellation cross instances', () => {
     expect(await registry.claimAttempt('att_1', 'instance-b', OWNER)).toBe(false);
   });
 
+  it('lets the SAME owner on the SAME instance re-claim its own attempt (DS-F12)', async () => {
+    // A bare `SET NX` answers "taken" without ever looking at who took it, so a
+    // reply lost after the SET applied — or a retry after a crash on the same
+    // process — was refused as `attempt_already_used` for 24 hours, about an
+    // attempt that had sent nothing and belonged to the caller asking.
+    //
+    // The existing test pins only the different-instance refusal, which is why
+    // this went unnoticed: the two cases look identical from outside and are
+    // opposite in meaning.
+    const registry = new RedisAttemptRegistry(new FakeRedis(), 3600);
+
+    expect(await registry.claimAttempt('att_1', 'instance-a', OWNER)).toBe(true);
+    expect(
+      await registry.claimAttempt('att_1', 'instance-a', OWNER),
+      'the holder was refused its own attempt',
+    ).toBe(true);
+  });
+
+  it('still refuses a different owner on the same instance', async () => {
+    // Re-entrancy must not become "anyone on this instance". The instance is
+    // shared infrastructure; the owner is the authorisation.
+    const registry = new RedisAttemptRegistry(new FakeRedis(), 3600);
+
+    expect(await registry.claimAttempt('att_1', 'instance-a', OWNER)).toBe(true);
+    expect(await registry.claimAttempt('att_1', 'instance-a', STRANGER)).toBe(false);
+  });
+
   it('makes an owner cancellation on one instance visible to another', async () => {
     const redis = new FakeRedis();
     const a = new RedisAttemptRegistry(redis, 3600);
