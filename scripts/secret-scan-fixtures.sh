@@ -143,12 +143,38 @@ expect_multiedit_blocked "a credential inside a MultiEdit edit" "src/config.ts" 
 # --- TL-H4: an unusable jq must fail closed ----------------------------------
 # `|| true` turned every jq failure into empty content, which matches nothing
 # and exits 0. A hook that cannot read its input must not report "clean".
+#
+# Two things this fixture got wrong before, and both made it pass without ever
+# reaching the branch:
+#
+#   1. the hook itself does `export PATH="/usr/bin:/usr/local/bin:$PATH"`, and
+#      both macOS and ubuntu ship /usr/bin/jq — so prepending a shim to PATH
+#      from outside was overridden by the hook's own first line. The override
+#      now happens INSIDE a copy of the hook.
+#   2. it fed the copy a real credential, so the ordinary matcher blocked it and
+#      the fixture recorded a rejection that had nothing to do with jq.
+#      The payload is now benign: with a working jq it must be ALLOWED, and the
+#      only thing that can block it is jq being unusable.
 jq_probe="$(mktemp -d "${TMPDIR:-/tmp}/secret-scan-nojq.XXXXXX")"
 trap 'rm -rf "$jq_probe"' EXIT
 printf '#!/usr/bin/env bash\nexit 127\n' >"$jq_probe/jq"
 chmod +x "$jq_probe/jq"
-if payload "src/config.ts" 'const key = "sk-proj-abcdefghij0123456789ABCDEFghij"' \
-    | PATH="$jq_probe:$PATH" "$hook" >/dev/null 2>&1; then
+
+# A copy whose PATH puts the broken jq first, ahead of the hook's own prepend.
+sed "s|^export PATH=.*|export PATH=\"$jq_probe:/usr/bin:/usr/local/bin:\$PATH\"|" \
+    "$hook" >"$jq_probe/secret-scan.sh"
+chmod +x "$jq_probe/secret-scan.sh"
+
+benign='const greeting = "hello"'
+
+# Control: the same copy with a working jq must ALLOW this payload. If it does
+# not, the rejection below says nothing about jq.
+if ! payload "src/config.ts" "$benign" | "$hook" >/dev/null 2>&1; then
+    printf 'positive control failed: the hook blocked a payload with no credential in it\n' >&2
+    exit 1
+fi
+
+if payload "src/config.ts" "$benign" | "$jq_probe/secret-scan.sh" >/dev/null 2>&1; then
     printf 'fixture unexpectedly ALLOWED: the hook passed while jq was unusable\n' >&2
     exit 1
 fi

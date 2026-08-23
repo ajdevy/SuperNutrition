@@ -101,8 +101,19 @@ print("\n".join(paths))
 '
 }
 
+# Captured BEFORE use, so the failure is a failure.
+#
+# This read `release_digests $(catalog_release_paths)`, with the substitution in
+# argument position — where its exit status is discarded. An empty catalog
+# printed "refusing to fingerprint nothing", ran the loop over zero releases,
+# wrote the file and exited 0: a fingerprint silently covering nothing, which is
+# the defect class deriving the list was meant to remove.
+if ! release_paths="$(catalog_release_paths)"; then
+    exit 1
+fi
+
 contract_catalog_digest="$( { release_digests \
-  $(catalog_release_paths)
+  $release_paths
   digest_paths \
     contracts/release-catalog/v1/digests.toml \
     contracts/release-catalog/v1/acknowledged-edits.toml \

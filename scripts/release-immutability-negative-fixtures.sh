@@ -476,4 +476,47 @@ case "$output" in
         ;;
 esac
 
+# --- an acknowledgement base_commit this history never contained -------------
+# The field was recorded on every entry and read by nothing, so it could name a
+# typo, a fabricated revision, or a commit from another line of development and
+# the acknowledgement applied regardless. Probe-verified when the check landed
+# and committed with no fixture; this is that fixture.
+fabricated="$work/fabricated-base"
+mkdir -p "$fabricated"
+seed_repository "$fabricated"
+base=$(git -C "$fabricated" rev-parse HEAD)
+target="contracts/demo/v1/fixtures/result.json"
+printf '{"outcome":"edited"}\n' >"$fabricated/$target"
+write_acknowledgement "$fabricated" "$target" "$(sha_of "$fabricated/$target")" "2099-01-01" \
+    "base_sha256 = \"$(sha_at_base "$fabricated" "$base" "$target")\""
+commit_all "$fabricated" 'edit under an acknowledgement'
+
+# Rewrite the honest base_commit the helper wrote with one no history contains.
+python3 - "$fabricated/contracts/release-catalog/v1/acknowledged-edits.toml" <<'PY_BASE'
+import pathlib
+import re
+import sys
+
+path = pathlib.Path(sys.argv[1])
+path.write_text(
+    re.sub(r'base_commit = "[0-9a-f]+"', 'base_commit = "' + "0" * 40 + '"',
+           path.read_text(encoding="utf-8")),
+    encoding="utf-8",
+)
+PY_BASE
+
+output="$(SUPERNUTRITION_IMMUTABILITY_BASE="$base" "$gate" "$fabricated" 2>&1 || true)"
+if SUPERNUTRITION_IMMUTABILITY_BASE="$base" "$gate" "$fabricated" >/dev/null 2>&1; then
+    echo "negative fixture unexpectedly passed: a fabricated base_commit authorised an edit" >&2
+    exit 1
+fi
+case "$output" in
+    *"not an ancestor of HEAD"*) : ;;
+    *)
+        echo "FAIL: the fabricated base_commit was rejected, but not for its own reason" >&2
+        printf '  actual: %s\n' "$output" >&2
+        exit 1
+        ;;
+esac
+
 echo "release immutability negative fixtures: OK"

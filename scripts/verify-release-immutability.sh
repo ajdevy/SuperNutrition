@@ -41,8 +41,10 @@ if test -z "$base"; then
     # but it produces failures naming files this branch never touched, which
     # reads as a broken gate rather than a stale ref.
     #
-    # So the derivation is stated. CI passes the pull request base SHA and never
-    # takes this path.
+    # So the derivation is stated. CI never takes this path: a pull request run
+    # passes the PR base SHA and a push run passes `github.event.before` (TL-H3
+    # — the fallback resolving to HEAD on a push is what made an empty diff read
+    # as a pass).
     base=$(git merge-base origin/main HEAD 2>/dev/null || true)
     base_origin="derived from local origin/main ($(git rev-parse --short origin/main 2>/dev/null || echo 'unknown')); run 'git fetch origin main' if this reports files you did not touch"
 fi
@@ -324,8 +326,14 @@ for state, path in changes:
 
     if code in VERBS:
         ok, why = acknowledged(path, "edit")
-        if ok:
+        # Recorded whether or not it authorised. The stale-entry sweep below asks
+        # "is this acknowledgement still needed", and a REJECTED one is still
+        # needed — its file did change. Adding the path only on success made the
+        # sweep announce that a file it had just reported as modified was
+        # unchanged, in the same run.
+        if path in acknowledgements:
             used_acknowledgements.add(path)
+        if ok:
             continue
         fail(
             f"published release file {path} was {VERBS[code]} since {base[:12]}; "
