@@ -3,7 +3,6 @@ import { createHash } from 'node:crypto';
 import { ok } from '@supernutrition/shared';
 import { buildServer, describeServer, type ServerHandle } from './server.js';
 import { MIDDLEWARE_ORDER } from './middleware/index.js';
-import { createLogger } from './logging/index.js';
 import type { AppConfig } from './config/index.js';
 import { TransferStateTracker } from './routes/gateway/index.js';
 import {
@@ -117,9 +116,15 @@ let remoteEnabled = true;
 let transfers: TransferStateTracker;
 let disposed: string[] = [];
 let analyzeCalls = 0;
+/** Set by a test that needs the orchestrator to fail; cleared before each. */
+let analyzeFault: Error | null = null;
+/** Every record the root logger was asked to write at error level. */
+let loggedErrors: unknown[] = [];
 
 beforeEach(async () => {
   remoteEnabled = true;
+  analyzeFault = null;
+  loggedErrors = [];
   transfers = new TransferStateTracker(() => NOW);
   disposed = [];
   analyzeCalls = 0;
@@ -128,12 +133,28 @@ beforeEach(async () => {
 
   server = await buildServer({
     config,
-    logger: createLogger(config),
+    // Captured at the ROOT logger: the route handlers log through `request.log`,
+    // a child, so replacing a method after the fact leaves every child pointing
+    // at the original.
+    logger: {
+      level: 'error',
+      error: (...args: unknown[]) => void loggedErrors.push(args[0]),
+      warn: () => {},
+      info: () => {},
+      debug: () => {},
+      trace: () => {},
+      fatal: () => {},
+      silent: () => {},
+      child() {
+        return this;
+      },
+    } as never,
     gateway: {
       orchestrator: {
         // #48(a) — the real orchestrator signals admission; a stub that skips
         // it leaves every attempt stuck at `transferring`.
         analyze: async (_request: unknown, options?: { onProviderAdmitted?: () => void }) => {
+          if (analyzeFault) throw analyzeFault;
           analyzeCalls += 1;
           options?.onProviderAdmitted?.();
           return ok({
@@ -1184,5 +1205,35 @@ describe('P-05 — the multipart envelope is exactly the two released parts', ()
       headers,
     });
     expect(response.statusCode).toBe(200);
+  });
+});
+
+describe('GW-F2 — a gateway 5xx leaves diagnostics behind', () => {
+  /**
+   * Two handlers answer a gateway 5xx and only the product one was pinned:
+   * `server.ts`'s `setErrorHandler`, and the gateway routes' own `fail()`.
+   * Routes that catch their own errors never reach the server handler, so those
+   * responses were the least observable of the three — mapped, answered, and
+   * gone, with `cause` returned by `mapError` and consumed nowhere.
+   */
+  it('records the cause without putting it in the body', async () => {
+    const secret = `GW-FAIL-${Date.now()}`;
+    analyzeFault = new Error(secret);
+
+    const { payload, headers } = multipartBody(context(), JPEG);
+    const response = await server.app.inject({
+      method: 'POST',
+      url: '/gw/v1/inference/photo',
+      payload,
+      headers,
+    });
+
+    expect(response.statusCode, 'the fault did not produce a 5xx').toBeGreaterThanOrEqual(500);
+    expect(response.body, 'the diagnostic reached the client').not.toContain(secret);
+
+    const causes = loggedErrors.map(
+      (entry) => (entry as { err?: { message?: string } })?.err?.message,
+    );
+    expect(causes, 'the 5xx was answered without recording its cause').toContain(secret);
   });
 });
