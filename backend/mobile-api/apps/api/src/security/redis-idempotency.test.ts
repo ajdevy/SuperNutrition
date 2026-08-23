@@ -7,6 +7,24 @@ const TTL = { inFlightSeconds: 60, completedSeconds: 86_400 } as const;
 const ttl = (seconds: number) => ({ inFlightSeconds: seconds, completedSeconds: seconds });
 
 /**
+ * Claim, and hand back the token the claim minted.
+ *
+ * `complete`/`fail` refuse to touch a record that is not theirs (DS-F19), so a
+ * test that discards the token is testing the refusal rather than the behaviour
+ * it means to.
+ */
+const claimToken = async (
+  store: { claim: (...args: never[]) => Promise<{ state: string; token?: string }> },
+  ...args: unknown[]
+): Promise<string> => {
+  const claim = await store.claim(...(args as never[]));
+  if (claim.state !== 'fresh' || claim.token === undefined) {
+    throw new Error(`expected a fresh claim, got ${claim.state}`);
+  }
+  return claim.token;
+};
+
+/**
  * Multi-instance Product idempotency — story 4.4 criterion 3.
  *
  * Two replicas could each accept the same Idempotency-Key and create two
@@ -58,8 +76,38 @@ class FakeRedis implements RedisLike {
   async del(key: string) {
     return this.store.delete(key) ? 1 : 0;
   }
-  async eval() {
-    return null;
+  /**
+   * The two claim-token scripts, implemented rather than stubbed.
+   *
+   * This returned `null` for every script, so `complete` and `fail` did nothing
+   * at all and the suite read a completed key as never completed. A fake that
+   * silently no-ops the operation under test is the third time in this file's
+   * history that a stand-in hid the behaviour it stood in for — the NX bug and
+   * the ignored-script bug were the first two.
+   */
+  async eval(script: string, _numKeys: number, ...args: (string | number)[]) {
+    const tokenOf = (value: string): string | undefined => value.split('|')[3];
+
+    if (script.includes("redis.call('DEL', KEYS[1])")) {
+      const [key, token] = args as [string, string];
+      const entry = this.#live(key);
+      if (!entry || tokenOf(entry.value) !== token) return 0;
+      this.store.delete(key);
+      return 1;
+    }
+
+    if (script.includes("redis.call('SET', KEYS[1], ARGV[1]")) {
+      const [key, value, token, ttl] = args as [string, string, string, number];
+      const entry = this.#live(key);
+      // Absent: restore. Present and ours: promote. Present and someone else's:
+      // leave it alone.
+      if (entry && tokenOf(entry.value) !== token) return 0;
+      this.store.set(key, { value, expiresAt: this.now + Number(ttl) * 1000 });
+      this.written.push(value);
+      return 1;
+    }
+
+    throw new Error(`FakeRedis has no implementation for this script: ${script.slice(0, 60)}`);
   }
 }
 
@@ -141,16 +189,21 @@ describe('the shared store matches the in-memory contract', () => {
     [
       'a completed key replays',
       async (s: InMemoryIdempotencyStore | RedisIdempotencyStore) => {
-        await s.claim('k', DIGEST, ttl(60), OWNER);
-        await s.complete('k', meal('11111111-1111-4111-8111-111111111111'), ttl(60));
+        const token_complete = await claimToken(s, 'k', DIGEST, ttl(60), OWNER);
+        await s.complete(
+          'k',
+          meal('11111111-1111-4111-8111-111111111111'),
+          ttl(60),
+          token_complete,
+        );
         return (await s.claim('k', DIGEST, ttl(60), OWNER)).state;
       },
     ],
     [
       'a released key is fresh again',
       async (s: InMemoryIdempotencyStore | RedisIdempotencyStore) => {
-        await s.claim('k', DIGEST, ttl(60), OWNER);
-        await s.fail('k');
+        const token_fail = await claimToken(s, 'k', DIGEST, ttl(60), OWNER);
+        await s.fail('k', token_fail);
         return (await s.claim('k', DIGEST, ttl(60), OWNER)).state;
       },
     ],
@@ -186,8 +239,8 @@ describe('exactly one durable write across instances', () => {
     const b = build(redis, db);
     const created = meal('22222222-2222-4222-8222-222222222222');
 
-    await a.claim('u:k', DIGEST, ttl(60), OWNER);
-    await a.complete('u:k', created, ttl(60));
+    const token_complete = await claimToken(a, 'u:k', DIGEST, ttl(60), OWNER);
+    await a.complete('u:k', created, ttl(60), token_complete);
 
     const replay = await b.claim('u:k', DIGEST, ttl(60), OWNER);
     expect(replay.state).toBe('replay');
@@ -201,8 +254,8 @@ describe('no user content reaches Redis', () => {
     const store = build(redis);
     const created = meal('33333333-3333-4333-8333-333333333333');
 
-    await store.claim('user-1:k', DIGEST, ttl(60), OWNER);
-    await store.complete('user-1:k', created, TTL);
+    const token_complete = await claimToken(store, 'user-1:k', DIGEST, ttl(60), OWNER);
+    await store.complete('user-1:k', created, TTL, token_complete);
 
     for (const value of redis.written) {
       expect(value).not.toContain('Банан');
@@ -225,8 +278,8 @@ describe('honest answers when the body cannot be reproduced', () => {
     const store = build(redis, db);
     const created = meal('44444444-4444-4444-8444-444444444444');
 
-    await store.claim('u:k', DIGEST, ttl(60), OWNER);
-    await store.complete('u:k', created, TTL);
+    const token_complete = await claimToken(store, 'u:k', DIGEST, ttl(60), OWNER);
+    await store.complete('u:k', created, TTL, token_complete);
     db.rows.clear(); // the meal was deleted
 
     expect((await store.claim('u:k', DIGEST, ttl(60), OWNER)).state).toBe('conflict');
@@ -236,8 +289,8 @@ describe('honest answers when the body cannot be reproduced', () => {
     const redis = new FakeRedis();
     const store = build(redis, database());
 
-    await store.claim('u:k', DIGEST, ttl(60), OWNER);
-    await store.complete('u:k', { status: 202, body: { noIdHere: true } }, TTL);
+    const token_complete = await claimToken(store, 'u:k', DIGEST, ttl(60), OWNER);
+    await store.complete('u:k', { status: 202, body: { noIdHere: true } }, TTL, token_complete);
 
     expect((await store.claim('u:k', DIGEST, ttl(60), OWNER)).state).toBe('conflict');
   });
@@ -264,5 +317,63 @@ describe('the claim expires with its window', () => {
     await store.claim('k', DIGEST, ttl(60), OWNER);
     redis.now += 61_000;
     expect((await store.claim('k', DIGEST, ttl(60), OWNER)).state).toBe('fresh');
+  });
+});
+
+describe('DS-F19 — a finished request must not clobber its successor', () => {
+  it('does not release a claim that is no longer its own', async () => {
+    // Introduced by the DS-F2 TTL split. With a 60s in-flight bound, a create()
+    // still running past it lets a same-key retry claim fresh — and the original
+    // request's fail() then DELETEs the SUCCESSOR's live marker, because the
+    // delete was unconditional. The next retry claims fresh again and a second
+    // meal becomes possible: the duplicate window DS-F1 closed, reopened by the
+    // fix for DS-F2.
+    const redis = new FakeRedis();
+    const store = build(redis);
+
+    const first = await store.claim('k', DIGEST, ttl(60), OWNER);
+    expect(first.state).toBe('fresh');
+
+    // The first request is still running when its in-flight bound lapses.
+    redis.now += 61_000;
+
+    const successor = await store.claim('k', DIGEST, ttl(60), OWNER);
+    expect(successor.state, 'the successor could not claim the freed key').toBe('fresh');
+
+    // The first request finally fails and releases — but the claim it is
+    // releasing belongs to somebody else now.
+    await store.fail('k', first.state === 'fresh' ? first.token : '');
+
+    expect(
+      (await store.claim('k', DIGEST, ttl(60), OWNER)).state,
+      'the successor lost its claim to a predecessor that had already lost the race',
+    ).toBe('conflict');
+  });
+
+  it('does not overwrite a successor claim when completing late', async () => {
+    // The same crossing through complete(): its SET is unconditional, so a
+    // predecessor finishing after its bound lapsed stamps a `done` record over
+    // the successor's in-flight marker — mid-create, for a row the successor is
+    // still writing.
+    const redis = new FakeRedis();
+    const db = database();
+    const store = build(redis, db);
+
+    const first = await store.claim('k', DIGEST, ttl(60), OWNER);
+    redis.now += 61_000;
+    const successor = await store.claim('k', DIGEST, ttl(60), OWNER);
+    expect(successor.state).toBe('fresh');
+
+    await store.complete(
+      'k',
+      meal('44444444-4444-4444-8444-444444444444'),
+      ttl(60),
+      first.state === 'fresh' ? first.token : '',
+    );
+
+    expect(
+      (await store.claim('k', DIGEST, ttl(60), OWNER)).state,
+      'a predecessor stamped its result over the successor still creating',
+    ).toBe('conflict');
   });
 });

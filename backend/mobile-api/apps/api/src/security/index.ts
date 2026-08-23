@@ -72,18 +72,24 @@ export interface IdempotencyStore {
    * Extends rather than preserves: the claim was written with the short
    * in-flight bound, and only a completed record earns the full window.
    */
-  complete(key: string, response: unknown, ttl: IdempotencyTtl): Promise<void>;
+  complete(key: string, response: unknown, ttl: IdempotencyTtl, token: string): Promise<void>;
   /**
    * Releases a claim whose request failed, so a retry with the same key may run
    * again. Distinct from `complete` because "failed" and "returned this
    * response" are different outcomes: sniffing a sentinel out of the response
    * value would make any body containing that shape unstorable.
    */
-  fail(key: string): Promise<void>;
+  fail(key: string, token: string): Promise<void>;
 }
 
 export type IdempotencyClaim =
-  | { readonly state: 'fresh' }
+  /**
+   * `token` identifies THIS claim, and must be handed back to `complete` or
+   * `fail`. Without it both wrote unconditionally: a request whose in-flight
+   * bound lapsed while it was still running would release, or stamp its result
+   * over, the claim a retry had meanwhile taken (DS-F19).
+   */
+  | { readonly state: 'fresh'; readonly token: string }
   | { readonly state: 'replay'; readonly response: unknown }
   | { readonly state: 'conflict'; readonly reason: ConflictReason };
 

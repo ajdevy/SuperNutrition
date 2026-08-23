@@ -222,13 +222,17 @@ const withIdempotency = async <T extends StoredOutcome>(
   // read fresh, and a second durable meal existed for one request the user made
   // once. Nothing caught it because the in-memory store cannot raise from
   // `complete`.
+  // The token this claim holds, handed back on the way out so neither release
+  // nor completion can touch a claim a retry has taken since (DS-F19).
+  const token = claim.token;
+
   let result: StoredOutcome;
   try {
     result = await create();
   } catch (error) {
     // Nothing was written. The claim must not outlive the request, or an honest
     // retry conflicts with a meal that does not exist.
-    await deps.idempotency.fail(scopedKey);
+    await deps.idempotency.fail(scopedKey, token);
     throw error;
   }
 
@@ -237,6 +241,7 @@ const withIdempotency = async <T extends StoredOutcome>(
       scopedKey,
       { status: result.status, body: result.body },
       IDEMPOTENCY_TTL,
+      token,
     );
   } catch (error) {
     // The row EXISTS. Releasing here is what produced the duplicate, so the

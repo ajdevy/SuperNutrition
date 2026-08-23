@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import type {
   AttemptRegistry,
   EffectStore,
@@ -400,7 +400,10 @@ export class RedisEffectStore implements EffectStore {
  * refused (docs/06 §6.7).
  */
 export class InMemoryIdempotencyStore implements IdempotencyStore {
-  readonly #entries = new Map<string, { digest: string; expiresAt: number; response?: unknown }>();
+  readonly #entries = new Map<
+    string,
+    { digest: string; expiresAt: number; token: string; response?: unknown }
+  >();
   readonly #now: () => number;
   readonly #capacity = new AmortisedCapacity('the in-memory idempotency store');
 
@@ -438,11 +441,17 @@ export class InMemoryIdempotencyStore implements IdempotencyStore {
       // retry create a second meal for a row that exists.
       this.#capacity.assertRoom(this.#entries.size);
       // The short bound, not the replay window: nothing has been created yet.
+      // The token identifies THIS claim, so a predecessor whose bound lapsed
+      // cannot release or overwrite it (DS-F19). Held here too, and not only in
+      // the Redis store, because a divergence between the two is how the
+      // in-memory lane stops testing the behaviour that ships.
+      const token = randomUUID();
       this.#entries.set(key, {
         digest: requestDigest,
         expiresAt: now + ttl.inFlightSeconds * 1000,
+        token,
       });
-      return { state: 'fresh' };
+      return { state: 'fresh', token };
     }
     if (existing.digest !== requestDigest)
       return { state: 'conflict', reason: 'different-request' };
@@ -450,19 +459,28 @@ export class InMemoryIdempotencyStore implements IdempotencyStore {
     return { state: 'conflict', reason: 'in-flight' };
   }
 
-  async complete(key: string, response: unknown, ttl: IdempotencyTtl): Promise<void> {
+  async complete(
+    key: string,
+    response: unknown,
+    ttl: IdempotencyTtl,
+    token: string,
+  ): Promise<void> {
     const existing = this.#entries.get(key);
-    // Only now does the record earn the replay window.
-    if (existing) {
-      this.#entries.set(key, {
-        ...existing,
-        response,
-        expiresAt: this.#now() + ttl.completedSeconds * 1000,
-      });
-    }
+    // Absent: restore, which is what stops a later retry creating a second meal
+    // for a row that exists. Present but somebody else's: leave it alone.
+    if (existing && existing.token !== token) return;
+    this.#entries.set(key, {
+      digest: existing?.digest ?? 'unknown',
+      token,
+      response,
+      expiresAt: this.#now() + ttl.completedSeconds * 1000,
+    });
   }
 
-  async fail(key: string): Promise<void> {
+  async fail(key: string, token: string): Promise<void> {
+    // Only our own claim. Releasing a successor's marker reopens the duplicate
+    // window this store exists to close.
+    if (this.#entries.get(key)?.token !== token) return;
     this.#entries.delete(key);
   }
 }
@@ -551,15 +569,38 @@ export class RedisAttemptRegistry implements AttemptRegistry {
    * gain — comparison is all that is required.
    */
   async claimAttempt(attemptId: string, instanceId: string, owner: string): Promise<boolean> {
+    const key = `attempt:${attemptId}`;
+    const mine = `${ownerToken(owner)}:${instanceId}`;
     try {
-      const result = await this.#redis.set(
-        `attempt:${attemptId}`,
-        `${ownerToken(owner)}:${instanceId}`,
-        'EX',
-        this.#ttlSeconds,
-        'NX',
-      );
-      return result === 'OK';
+      const result = await this.#redis.set(key, mine, 'EX', this.#ttlSeconds, 'NX');
+      if (result === 'OK') return true;
+
+      // DS-F12 — losing the NX is not the same as the attempt belonging to
+      // someone else, and answering as if it were locked the id for 24 hours.
+      //
+      // This returned `false` on any NX failure without ever reading what was
+      // stored. So a reply lost after the SET had applied, or a retry after this
+      // process crashed, was refused as `attempt_already_used` — about an
+      // attempt that had sent nothing and belonged to the caller asking. The
+      // client's only remedy was a new attempt id it had no reason to think it
+      // needed.
+      //
+      // Re-entrant only for the IDENTICAL holder: same owner token AND same
+      // instance. A different owner is refused as before — the instance is
+      // shared infrastructure and the owner is the authorisation, so "anyone on
+      // this box" would be a far worse rule than the one being fixed. A
+      // different instance is also refused: that is the genuine
+      // at-most-once-across-replicas case this registry exists for.
+      //
+      // NOT covered, deliberately: this process crashing AFTER the claim and
+      // before the transfer leaves a record whose owner matches but whose
+      // instance is gone, and the id stays held for the full window. Releasing
+      // on the owner alone would let a second replica start the same transfer,
+      // which is the duplicate upload the registry prevents. Closing it needs a
+      // pre-transfer release marker and is an owner decision, not an
+      // implementer's — raised rather than guessed at.
+      const held = await this.#redis.get(key);
+      return held === mine;
     } catch (cause) {
       throw new RedisUnavailableError('attempt claim', cause);
     }
@@ -702,9 +743,65 @@ export interface IdempotencyReference {
 }
 
 /** Record format. Versioned so a later shape change is detectable, not ambiguous. */
-const IDEM_PREFIX = 'v1';
+/**
+ * Bumped from v1 with the claim token (DS-F19).
+ *
+ * Records written by the previous version carry no token, so they parse as
+ * unreadable here and answer `conflict` rather than being reinterpreted under a
+ * layout they were not written in. That is the fail-closed direction: across a
+ * rolling deploy, a retry landing on a record from the old version is refused
+ * instead of replaying a body read under the wrong offsets or creating a second
+ * meal. In-flight records clear within the 60s bound; completed ones within the
+ * replay window.
+ *
+ * Layout:
+ *   v2|<digest>|inflight|<token>
+ *   v2|<digest>|done|<token>|<status>|<ref>
+ */
+const IDEM_PREFIX = 'v2';
 const IDEM_INFLIGHT = 'inflight';
 const IDEM_DONE = 'done';
+
+/** Field 4 of the stored value, in either layout. */
+const TOKEN_FIELD = '^[^|]*|[^|]*|[^|]*|([^|]*)';
+
+/**
+ * Promote a claim to `done` — but only if it is still OUR claim.
+ *
+ * The SET here was unconditional, which was deliberate for one reason and wrong
+ * for another. The reason: if the in-flight marker has expired and NOBODY took
+ * it, restoring the record is what stops a later retry creating a second meal
+ * for a row that already exists. That case is preserved — absent key still
+ * writes.
+ *
+ * What was wrong: when a SUCCESSOR has claimed the freed key, the same
+ * unconditional write stamped this request's result over the successor's live
+ * in-flight marker, mid-create. Now the token decides between the two.
+ */
+const COMPLETE_IF_MINE = `
+local current = redis.call('GET', KEYS[1])
+if current then
+  local token = string.match(current, '${TOKEN_FIELD}')
+  if token ~= ARGV[2] then return 0 end
+end
+redis.call('SET', KEYS[1], ARGV[1], 'EX', tonumber(ARGV[3]))
+return 1
+`;
+
+/**
+ * Release a claim — but only if it is still OUR claim.
+ *
+ * An unconditional DEL let a request whose bound had lapsed delete the marker a
+ * retry had meanwhile taken, reopening the duplicate window DS-F1 closed.
+ */
+const RELEASE_IF_MINE = `
+local current = redis.call('GET', KEYS[1])
+if not current then return 0 end
+local token = string.match(current, '${TOKEN_FIELD}')
+if token ~= ARGV[1] then return 0 end
+redis.call('DEL', KEYS[1])
+return 1
+`;
 
 /**
  * Idempotency shared across instances, storing NO user content.
@@ -748,18 +845,21 @@ export class RedisIdempotencyStore implements IdempotencyStore {
     owner: string,
   ): Promise<IdempotencyClaim> {
     const namespaced = `idem:${key}`;
+    // Unique to THIS claim, so `complete` and `fail` can tell their own record
+    // from a successor's (DS-F19).
+    const token = randomUUID();
     let existing: string | null;
     try {
       const won = await this.#redis.set(
         namespaced,
-        `${IDEM_PREFIX}|${requestDigest}|${IDEM_INFLIGHT}`,
+        `${IDEM_PREFIX}|${requestDigest}|${IDEM_INFLIGHT}|${token}`,
         'EX',
         // The in-flight bound. A process that dies here frees the key in
         // seconds rather than holding it for the whole replay window.
         ttl.inFlightSeconds,
         'NX',
       );
-      if (won === 'OK') return { state: 'fresh' };
+      if (won === 'OK') return { state: 'fresh', token };
       // Lost the race, or the key was already there. Read what the winner wrote
       // — the SET above is what decided the race, so this read cannot change the
       // outcome, only report it.
@@ -775,7 +875,7 @@ export class RedisIdempotencyStore implements IdempotencyStore {
 
     const parts = existing.split('|');
     // An unreadable record is not a licence to create a second meal.
-    if (parts[0] !== IDEM_PREFIX || parts.length < 3)
+    if (parts[0] !== IDEM_PREFIX || parts.length < 4)
       return { state: 'conflict', reason: 'unreplayable' };
     const [, storedDigest, state] = parts;
 
@@ -785,7 +885,7 @@ export class RedisIdempotencyStore implements IdempotencyStore {
     // Still running somewhere. Two concurrent retries must not both create,
     // which is exactly what the in-memory store does here too.
     if (state === IDEM_INFLIGHT) return { state: 'conflict', reason: 'in-flight' };
-    if (state !== IDEM_DONE || parts.length < 5)
+    if (state !== IDEM_DONE || parts.length < 6)
       return { state: 'conflict', reason: 'unreplayable' };
 
     // The stored status, PARSED rather than assumed.
@@ -794,12 +894,12 @@ export class RedisIdempotencyStore implements IdempotencyStore {
     // hardcoded 201, so a completed 200 replayed as a 201 and the recorded field
     // was decorative. A replay has to reproduce the original response, which is
     // the whole reason the status is stored at all.
-    const storedStatus = Number(parts[3]);
+    const storedStatus = Number(parts[4]);
     if (!Number.isInteger(storedStatus) || storedStatus < 100 || storedStatus > 599) {
       return { state: 'conflict', reason: 'unreplayable' };
     }
 
-    const ref = parts.slice(4).join('|');
+    const ref = parts.slice(5).join('|');
     // Completed, but with no reference to read back — see `complete`. Nothing
     // can be replayed and nothing may be created: the key already made a meal.
     if (ref.length === 0) return { state: 'conflict', reason: 'unreplayable' };
@@ -813,7 +913,12 @@ export class RedisIdempotencyStore implements IdempotencyStore {
     return { state: 'replay', response: { status: storedStatus, body } };
   }
 
-  async complete(key: string, response: unknown, ttl: IdempotencyTtl): Promise<void> {
+  async complete(
+    key: string,
+    response: unknown,
+    ttl: IdempotencyTtl,
+    token: string,
+  ): Promise<void> {
     const described = this.#ref.describe(response);
     // A response this adapter cannot describe leaves the record marked done with
     // an empty reference, so the key stays spent and every later claim on it
@@ -826,8 +931,8 @@ export class RedisIdempotencyStore implements IdempotencyStore {
       // error the boundary maps to `internal-error`.
       const value =
         described === null
-          ? `${IDEM_PREFIX}|unknown|${IDEM_DONE}||`
-          : `${IDEM_PREFIX}|${await this.#digestOf(key)}|${IDEM_DONE}|${described.status}|${described.ref}`;
+          ? `${IDEM_PREFIX}|unknown|${IDEM_DONE}|${token}||`
+          : `${IDEM_PREFIX}|${await this.#digestOf(key)}|${IDEM_DONE}|${token}|${described.status}|${described.ref}`;
       // An explicit expiry, not KEEPTTL.
       //
       // KEEPTTL preserves whatever the key already had — and on a key that had
@@ -840,7 +945,14 @@ export class RedisIdempotencyStore implements IdempotencyStore {
       // in-flight bound. It is deliberately unconditional: if the in-flight
       // marker has already expired, restoring the record is what stops a later
       // retry creating a second meal for a row that exists.
-      await this.#redis.set(`idem:${key}`, value, 'EX', ttl.completedSeconds);
+      await this.#redis.eval(
+        COMPLETE_IF_MINE,
+        1,
+        `idem:${key}`,
+        value,
+        token,
+        ttl.completedSeconds,
+      );
     } catch (cause) {
       if (cause instanceof RedisUnavailableError) throw cause;
       throw new RedisUnavailableError('idempotency completion', cause);
@@ -860,9 +972,9 @@ export class RedisIdempotencyStore implements IdempotencyStore {
     return parts.length >= 2 && parts[1] !== undefined ? parts[1] : 'unknown';
   }
 
-  async fail(key: string): Promise<void> {
+  async fail(key: string, token: string): Promise<void> {
     try {
-      await this.#redis.del(`idem:${key}`);
+      await this.#redis.eval(RELEASE_IF_MINE, 1, `idem:${key}`, token);
     } catch (cause) {
       throw new RedisUnavailableError('idempotency release', cause);
     }

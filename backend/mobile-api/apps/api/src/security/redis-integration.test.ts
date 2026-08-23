@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import {
   RedisAttemptRegistry,
+  RedisIdempotencyStore,
   RedisEffectStore,
   RedisRateLimiter,
   createRedisClient,
@@ -119,6 +120,127 @@ describe.skipIf(!url)('against a real Redis server', () => {
     expect(await registryB.isCancelled(attemptId)).toBe(false);
     expect(await registryA.markCancelled(attemptId, owner)).toBe(true);
     expect(await registryB.isCancelled(attemptId)).toBe(true);
+  });
+
+  it("DS-F19: a lapsed predecessor cannot release its successor's claim", async () => {
+    // Against the real server, because the guard IS the Lua. The fake in
+    // redis-idempotency.test.ts reimplements these semantics in TypeScript, so
+    // a test there passes whatever the script says — it exercises the stand-in,
+    // not the thing that ships. Only this lane can fail when the Lua is wrong.
+    const rows = new Map<string, unknown>();
+    const store = new RedisIdempotencyStore(a.client, {
+      describe: (response: unknown) => {
+        const body = (response as { body?: { id?: string } })?.body;
+        const status = (response as { status?: number })?.status;
+        if (typeof body?.id !== 'string' || typeof status !== 'number') return null;
+        rows.set(body.id, response);
+        return { status, ref: body.id };
+      },
+      rehydrate: async (ref: string) =>
+        (rows.get(ref) as { body?: unknown } | undefined)?.body ?? null,
+    });
+    const key = `f19-release-${run}`;
+    const digest = 'a'.repeat(64);
+    // One second in flight: long enough to claim against, short enough to lapse
+    // inside a test.
+    const bounds = { inFlightSeconds: 1, completedSeconds: 60 };
+
+    const first = await store.claim(key, digest, bounds, 'owner');
+    expect(first.state).toBe('fresh');
+
+    // The first request is still running when its bound lapses on the server.
+    await new Promise((resolve) => setTimeout(resolve, 1_400));
+
+    const successor = await store.claim(key, digest, bounds, 'owner');
+    expect(successor.state, 'the successor could not claim the lapsed key').toBe('fresh');
+
+    // The predecessor finally gives up and releases — a claim that is no longer
+    // its own.
+    await store.fail(key, first.state === 'fresh' ? first.token : '');
+
+    expect(
+      (await store.claim(key, digest, bounds, 'owner')).state,
+      "the predecessor deleted its successor's live claim",
+    ).toBe('conflict');
+  }, 20_000);
+
+  it('DS-F19: a lapsed predecessor cannot stamp its result over a successor', async () => {
+    const rows = new Map<string, unknown>();
+    const store = new RedisIdempotencyStore(a.client, {
+      describe: (response: unknown) => {
+        const body = (response as { body?: { id?: string } })?.body;
+        const status = (response as { status?: number })?.status;
+        if (typeof body?.id !== 'string' || typeof status !== 'number') return null;
+        rows.set(body.id, response);
+        return { status, ref: body.id };
+      },
+      rehydrate: async (ref: string) =>
+        (rows.get(ref) as { body?: unknown } | undefined)?.body ?? null,
+    });
+    const key = `f19-complete-${run}`;
+    const digest = 'b'.repeat(64);
+    const bounds = { inFlightSeconds: 1, completedSeconds: 60 };
+
+    const first = await store.claim(key, digest, bounds, 'owner');
+    await new Promise((resolve) => setTimeout(resolve, 1_400));
+    const successor = await store.claim(key, digest, bounds, 'owner');
+    expect(successor.state).toBe('fresh');
+
+    await store.complete(
+      key,
+      { status: 201, body: { id: '55555555-5555-4555-8555-555555555555' } },
+      bounds,
+      first.state === 'fresh' ? first.token : '',
+    );
+
+    expect(
+      (await store.claim(key, digest, bounds, 'owner')).state,
+      'the predecessor stamped a done record over a successor still creating',
+    ).toBe('conflict');
+  }, 20_000);
+
+  it('DS-F12: a lost reply does not lock the attempt id for a day', async () => {
+    // The scenario the fake cannot stage: the SET applies on the server and the
+    // client never learns it did — a dropped reply, a socket reset, a timeout
+    // that fires after the write landed. The caller retries the identical claim.
+    //
+    // That used to answer `attempt_already_used` for 24 hours about an attempt
+    // that had sent nothing, and the client had no way to distinguish it from a
+    // genuine collision.
+    const registry = new RedisAttemptRegistry(a.client, 60);
+    const attemptId = `att_reentrant_${run}`;
+    const owner = `inst_owner_${run}`;
+
+    expect(await registry.claimAttempt(attemptId, 'instance-a', owner)).toBe(true);
+    // The retry, byte-identical, as a client re-sending after no answer.
+    expect(
+      await registry.claimAttempt(attemptId, 'instance-a', owner),
+      'the holder was refused its own attempt against a real server',
+    ).toBe(true);
+
+    // Still exactly one holder, and still the right one.
+    expect(await registry.holderOf(attemptId, owner)).toBe('instance-a');
+  });
+
+  it('DS-F12: re-entrancy does not extend to another replica or another owner', async () => {
+    // The half that must NOT move. A second replica claiming the same id is the
+    // duplicate provider call this registry exists to stop, and a different
+    // installation on the same box is someone else's transfer.
+    const registryA = new RedisAttemptRegistry(a.client, 60);
+    const registryB = new RedisAttemptRegistry(b.client, 60);
+    const attemptId = `att_reentrant_guard_${run}`;
+    const owner = `inst_owner_${run}`;
+    const stranger = `inst_stranger_${run}`;
+
+    expect(await registryA.claimAttempt(attemptId, 'instance-a', owner)).toBe(true);
+    expect(
+      await registryB.claimAttempt(attemptId, 'instance-b', owner),
+      'a second replica was allowed to claim a held attempt',
+    ).toBe(false);
+    expect(
+      await registryA.claimAttempt(attemptId, 'instance-a', stranger),
+      'a different installation was allowed to claim a held attempt',
+    ).toBe(false);
   });
 
   it('H-01: refuses a foreign cancellation against a real server', async () => {
