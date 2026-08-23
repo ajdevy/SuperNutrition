@@ -199,6 +199,102 @@ describe.skipIf(!url)('against a real Redis server', () => {
     ).toBe('conflict');
   }, 20_000);
 
+  const idempotencyStore = (client: (typeof a)['client']) => {
+    const rows = new Map<string, unknown>();
+    return new RedisIdempotencyStore(client, {
+      describe: (response: unknown) => {
+        const body = (response as { body?: { id?: string } })?.body;
+        const status = (response as { status?: number })?.status;
+        if (typeof body?.id !== 'string' || typeof status !== 'number') return null;
+        rows.set(body.id, response);
+        return { status, ref: body.id };
+      },
+      rehydrate: async (ref: string) =>
+        (rows.get(ref) as { body?: unknown } | undefined)?.body ?? null,
+    });
+  };
+
+  it('replays the status that was stored, not 201', async () => {
+    // Nothing completed with a non-201 anywhere, so re-hardcoding 201 in
+    // `claim` passed every lane. A replay's whole job is reproducing the
+    // original response, and the status is half of it.
+    const store = idempotencyStore(a.client);
+    const key = `status-${run}`;
+    const bounds = { inFlightSeconds: 60, completedSeconds: 60 };
+    const digest = 'c'.repeat(64);
+
+    const claim = await store.claim(key, digest, bounds, 'owner');
+    await store.complete(
+      key,
+      { status: 202, body: { id: '66666666-6666-4666-8666-666666666666' } },
+      bounds,
+      claim.state === 'fresh' ? claim.token : '',
+    );
+
+    const replay = await store.claim(key, digest, bounds, 'owner');
+    expect(replay.state).toBe('replay');
+    expect(
+      replay.state === 'replay' ? (replay.response as { status: number }).status : 0,
+      'a completed 202 replayed as something else',
+    ).toBe(202);
+  }, 20_000);
+
+  it('gives an in-flight claim the short bound and a completed one the replay window', async () => {
+    // The 60/86400 split was pinned on the in-memory store only, so a
+    // Redis-only regression to a single uniform TTL passed everything.
+    const store = idempotencyStore(a.client);
+    const key = `split-${run}`;
+    const bounds = { inFlightSeconds: 30, completedSeconds: 600 };
+    const digest = 'd'.repeat(64);
+    const ttlOf = (k: string) =>
+      (a.client as unknown as { ttl: (key: string) => Promise<number> }).ttl(`idem:${k}`);
+
+    const claim = await store.claim(key, digest, bounds, 'owner');
+    const inFlight = await ttlOf(key);
+    expect(inFlight, 'an unfinished claim took more than the in-flight bound').toBeLessThanOrEqual(
+      30,
+    );
+    expect(inFlight).toBeGreaterThan(0);
+
+    await store.complete(
+      key,
+      { status: 201, body: { id: '77777777-7777-4777-8777-777777777777' } },
+      bounds,
+      claim.state === 'fresh' ? claim.token : '',
+    );
+
+    const completed = await ttlOf(key);
+    expect(completed, 'a completed record was left on the short bound').toBeGreaterThan(30);
+    expect(completed).toBeLessThanOrEqual(600);
+  }, 20_000);
+
+  it('bounds the cancellation marker to the attempt it describes', async () => {
+    // The Lua copies the attempt key's REMAINING TTL onto the marker, and no
+    // lane asserted it — the bound could have been removed and every suite
+    // stayed green. Attempt ids are client-chosen, so a marker outliving its
+    // attempt answers "cancelled" about a later, unrelated request under a
+    // reused id.
+    const registry = new RedisAttemptRegistry(a.client, 3_600);
+    const attemptId = `att_marker_ttl_${run}`;
+    const owner = `inst_owner_${run}`;
+
+    await registry.claimAttempt(attemptId, 'instance-a', owner);
+    // Shrink the attempt's own window, so a marker taking the registry's 3600s
+    // default instead of the remaining TTL is visibly wrong.
+    await (a.client as unknown as { expire: (k: string, s: number) => Promise<number> }).expire(
+      `attempt:${attemptId}`,
+      5,
+    );
+    expect(await registry.markCancelled(attemptId, owner)).toBe(true);
+
+    const markerTtl = await (a.client as unknown as { ttl: (k: string) => Promise<number> }).ttl(
+      `cancelled:${attemptId}`,
+    );
+
+    expect(markerTtl, 'the marker has no expiry at all').toBeGreaterThan(0);
+    expect(markerTtl, 'the marker outlives the attempt it describes').toBeLessThanOrEqual(5);
+  }, 20_000);
+
   it('DS-F12: a lost reply does not lock the attempt id for a day', async () => {
     // The scenario the fake cannot stage: the SET applies on the server and the
     // client never learns it did — a dropped reply, a socket reset, a timeout

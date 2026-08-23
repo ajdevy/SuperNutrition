@@ -16,6 +16,7 @@ import { createLogger } from '../../logging/index.js';
 import type { AppConfig } from '../../config/index.js';
 import {
   InMemoryIdempotencyStore,
+  StoreCapacityError,
   InMemoryRateLimiter,
   TestModeAuthenticator,
   TestModeProductAuthenticator,
@@ -561,6 +562,93 @@ describe('idempotency (docs/06 §6.7)', () => {
       'the retry created a second meal: the claim was released even though the row was written',
     ).toBe(409);
     expect(repository.events.size, 'one request produced two durable meals').toBe(1);
+  });
+
+  it('says which of the three conflicts happened, through the response', async () => {
+    // The reason→text mapping had zero test hits at the response level, so all
+    // three strings could have collapsed back into one and every lane stayed
+    // green. The point of splitting them was that a client whose first request
+    // is merely still running should not be told it changed a body it sent once.
+    const key = 'conflict-texts';
+
+    // Still running: the claim is held and nothing has completed.
+    const held = {
+      claim: async () => ({ state: 'conflict' as const, reason: 'in-flight' as const }),
+      complete: async () => {},
+      fail: async () => {},
+    };
+    await server.close();
+    server = await buildTestServer({ idempotency: held as never });
+    const inFlight = await server.app.inject({
+      method: 'POST',
+      url: '/api/v1/meals/manual',
+      payload: meal() as never,
+      headers: { authorization: TOKEN, 'idempotency-key': key },
+    });
+    expect(inFlight.statusCode).toBe(409);
+    expect(inFlight.json().error.message, 'an in-flight conflict blamed the body').toMatch(
+      /still in progress/i,
+    );
+
+    // Completed, but the response cannot be reproduced.
+    const gone = {
+      claim: async () => ({ state: 'conflict' as const, reason: 'unreplayable' as const }),
+      complete: async () => {},
+      fail: async () => {},
+    };
+    await server.close();
+    server = await buildTestServer({ idempotency: gone as never });
+    const unreplayable = await server.app.inject({
+      method: 'POST',
+      url: '/api/v1/meals/manual',
+      payload: meal() as never,
+      headers: { authorization: TOKEN, 'idempotency-key': key },
+    });
+    expect(unreplayable.statusCode).toBe(409);
+    expect(unreplayable.json().error.message).toMatch(/no longer be reproduced/i);
+
+    // Genuinely a different request under a reused key.
+    const changed = {
+      claim: async () => ({ state: 'conflict' as const, reason: 'different-request' as const }),
+      complete: async () => {},
+      fail: async () => {},
+    };
+    await server.close();
+    server = await buildTestServer({ idempotency: changed as never });
+    const different = await server.app.inject({
+      method: 'POST',
+      url: '/api/v1/meals/manual',
+      payload: meal() as never,
+      headers: { authorization: TOKEN, 'idempotency-key': key },
+    });
+    expect(different.statusCode).toBe(409);
+    expect(different.json().error.message).toMatch(/different request body/i);
+  });
+
+  it('maps a full in-memory store to a recoverable failure, like an outage', async () => {
+    // `StoreCapacityError` shares the product mapping with
+    // `RedisUnavailableError`, and only the latter had a test. A regression
+    // dropping the capacity branch would answer 500 — non-retryable — for a
+    // condition another instance can serve.
+    const full = {
+      claim: async () => {
+        throw new StoreCapacityError('the in-memory idempotency store');
+      },
+      complete: async () => {},
+      fail: async () => {},
+    };
+    await server.close();
+    server = await buildTestServer({ idempotency: full as never });
+
+    const response = await server.app.inject({
+      method: 'POST',
+      url: '/api/v1/meals/manual',
+      payload: meal() as never,
+      headers: { authorization: TOKEN, 'idempotency-key': 'at-capacity' },
+    });
+
+    expect(response.statusCode, 'a full store was reported as a permanent failure').toBe(502);
+    expect(response.json().error.code).toBe('PROVIDER_UNAVAILABLE');
   });
 
   it('keeps one user out of another user’s idempotency keyspace', async () => {

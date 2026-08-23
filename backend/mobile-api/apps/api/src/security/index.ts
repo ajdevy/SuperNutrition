@@ -280,6 +280,8 @@ export {
   RedisAttemptRegistry,
   RedisIdempotencyStore,
   RedisUnavailableError,
+  StoreCapacityError,
+  IN_MEMORY_STORE_CAPACITY,
   createRedisClient,
 } from './stores.js';
 export type { RedisLike, RateLimitRule, IdempotencyReference } from './stores.js';

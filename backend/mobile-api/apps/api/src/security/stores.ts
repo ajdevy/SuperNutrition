@@ -537,7 +537,15 @@ local separator = string.find(holder, ':', 1, true)
 if not separator then return 0 end
 if string.sub(holder, 1, separator - 1) ~= ARGV[1] then return 0 end
 local remaining = redis.call('TTL', KEYS[1])
-if remaining <= 0 then remaining = tonumber(ARGV[2]) end
+-- Clamped, not defaulted. At the expiry edge TTL answers 0 (expires this
+-- second), and -1 for a key with no expiry at all; both used to take the full
+-- 24h fallback, giving the marker a lifetime far beyond the attempt it
+-- describes — the exact staleness this bound exists to prevent. A second is
+-- enough for a marker whose subject is about to vanish, and -1 should not occur
+-- because claimAttempt always sets an expiry.
+if remaining <= 0 then remaining = 1 end
+local ceiling = tonumber(ARGV[2])
+if remaining > ceiling then remaining = ceiling end
 redis.call('SET', KEYS[2], '1', 'EX', remaining)
 return 1
 `;
