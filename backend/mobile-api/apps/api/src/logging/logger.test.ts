@@ -17,7 +17,7 @@ const config = {
   auth: { issuer: 'i', accessTtlSeconds: 900, refreshTtlSeconds: 1000, testMode: false },
   inference: { remoteEnabled: true, modelProfilesPath: 'p', openRouterBaseUrl: 'https://x' },
   logging: { level: 'info', allowlistPath: 'a' },
-} as AppConfig;
+} as unknown as AppConfig;
 
 describe('logger', () => {
   it('creates a logger at the configured level', () => {

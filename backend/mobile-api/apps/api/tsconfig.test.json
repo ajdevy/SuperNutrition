@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "noEmit": true,
+    "types": ["node"]
+  },
+  "references": [
+    { "path": "../../packages/shared" },
+    { "path": "../../packages/contracts" },
+    { "path": "../../packages/database" }
+  ],
+  "include": ["src/**/*.ts"]
+}

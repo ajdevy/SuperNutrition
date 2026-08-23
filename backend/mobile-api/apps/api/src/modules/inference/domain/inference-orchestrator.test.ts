@@ -24,6 +24,11 @@ const profile = (id: string, pass: 1 | 2): ModelProfile => ({
 
 const snapshot: ModelProfileSnapshot = {
   profileVersion: 'test/1',
+  // A real field of the type, absent from the fixture until the suite was
+  // typechecked. Null is the honest value here: these tests do not exercise a
+  // rollback, and inventing a target would make them assert against a snapshot
+  // no deployment produces.
+  rollbackTarget: null,
   routing: {
     confidenceThreshold: 0.75,
     acceptBand: 'high',
@@ -266,7 +271,7 @@ describe('telemetry (AD-14)', () => {
     const recorder = new RecordingRecorder();
     await build(new ScriptedProvider([response(0.9)]), recorder).analyze(request, options());
 
-    const row = recorder.rows[0] as Record<string, unknown>;
+    const row = recorder.rows[0] as unknown as Record<string, unknown>;
     for (const forbidden of ['userId', 'user_id', 'prompt', 'responseBody', 'label', 'payload']) {
       expect(row, `leaked ${forbidden}`).not.toHaveProperty(forbidden);
     }

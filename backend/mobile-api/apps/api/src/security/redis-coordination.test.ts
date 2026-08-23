@@ -55,6 +55,13 @@ class FakeRedis implements RedisLike {
     return this.#live(key)?.value ?? null;
   }
 
+  // Required by `RedisLike`, and absent until the suite was typechecked. A fake
+  // that does not implement the port cannot stand in for it — the compiler was
+  // simply never asked.
+  async del(key: string) {
+    return this.store.delete(key) ? 1 : 0;
+  }
+
   /**
    * Dispatches on the script, because there is now more than one.
    *
@@ -94,6 +101,9 @@ class FakeRedis implements RedisLike {
 /** A Redis that is down. Every command rejects. */
 const unreachable = (): RedisLike => ({
   eval: async () => {
+    throw new Error('ECONNREFUSED');
+  },
+  del: async () => {
     throw new Error('ECONNREFUSED');
   },
   set: async () => {
@@ -308,9 +318,23 @@ describe('AD-8 — no image bytes reach Redis', () => {
 
     await effects.claimOnce('att_1', 'eff_1', 60);
     await registry.claimAttempt('att_1', 'instance-a', 'inst_owner');
-    await registry.markCancelled('att_1');
+    // The owner was omitted here, and the suite was not typechecked so nothing
+    // objected. At runtime `owner` was `undefined`, its token hashed the string
+    // "undefined", the ownership check never matched — and no cancellation
+    // marker was written at all. This loop then inspected every keyspace EXCEPT
+    // the one the line was added to cover.
+    expect(
+      await registry.markCancelled('att_1', 'inst_owner'),
+      'the cancellation was refused, so its keyspace is not covered below',
+    ).toBe(true);
     await limiter.check({ layer: 'installation', principal: 'inst_1' });
 
+    // Four stores wrote; a scan over an empty list would pass by inspecting
+    // nothing, which is how the missing marker went unnoticed.
+    expect(
+      redis.written.length,
+      'nothing was written, so this asserts nothing',
+    ).toBeGreaterThanOrEqual(4);
     for (const value of redis.written) {
       expect(value.length).toBeLessThan(64);
     }

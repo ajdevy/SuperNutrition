@@ -20,6 +20,7 @@ import {
   TestModeAuthenticator,
   TestModeProductAuthenticator,
   type RateLimiter,
+  type IdempotencyTtl,
 } from '../../security/index.js';
 import {
   CreateMealEventHandler,
@@ -316,11 +317,19 @@ afterEach(async () => {
   await server.close();
 });
 
-const post = (url: string, payload: unknown, authorization = TOKEN) =>
-  server.app.inject({ method: 'POST', url, payload, headers: { authorization } });
+// `inject()` returns a value that is BOTH a promise and a fluent chain, and
+// TypeScript picks the chain — so every `.statusCode` on an awaited result was a
+// type error the suite never saw. Awaiting inside pins the response type.
+const post = async (url: string, payload: unknown, authorization = TOKEN) =>
+  await server.app.inject({
+    method: 'POST',
+    url,
+    payload: payload as never,
+    headers: { authorization },
+  });
 
-const get = (url: string, authorization = TOKEN) =>
-  server.app.inject({ method: 'GET', url, headers: { authorization } });
+const get = async (url: string, authorization = TOKEN) =>
+  await server.app.inject({ method: 'GET', url, headers: { authorization } });
 
 describe('creating meals', () => {
   it.each([
@@ -391,11 +400,16 @@ describe('creating meals', () => {
 describe('idempotency (docs/06 §6.7)', () => {
   const key = 'idem-test-1';
 
-  const postWithKey = (url: string, payload: unknown, idemKey: string, authorization = TOKEN) =>
-    server.app.inject({
+  const postWithKey = async (
+    url: string,
+    payload: unknown,
+    idemKey: string,
+    authorization = TOKEN,
+  ) =>
+    await server.app.inject({
       method: 'POST',
       url,
-      payload,
+      payload: payload as never,
       headers: { authorization, 'idempotency-key': idemKey },
     });
 
@@ -514,12 +528,13 @@ describe('idempotency (docs/06 §6.7)', () => {
     // caught this: the fault has to be injected.
     let completions = 0;
     const failingCompletion = {
-      claim: (key: string, digest: string, ttl: number) => idempotencyStore.claim(key, digest, ttl),
+      claim: (key: string, digest: string, ttl: IdempotencyTtl, owner: string) =>
+        idempotencyStore.claim(key, digest, ttl, owner),
       complete: async () => {
         completions += 1;
         throw new Error('redis went away after the row was written');
       },
-      fail: (key: string) => idempotencyStore.fail(key),
+      fail: (key: string, token: string) => idempotencyStore.fail(key, token),
     };
     await server.close();
     server = await buildTestServer({ idempotency: failingCompletion as never });
@@ -719,11 +734,11 @@ describe('reading meals', () => {
 });
 
 describe('correcting a meal', () => {
-  const patch = (id: string, payload: unknown, authorization = TOKEN) =>
-    server.app.inject({
+  const patch = async (id: string, payload: unknown, authorization = TOKEN) =>
+    await server.app.inject({
       method: 'PATCH',
       url: `/api/v1/meals/${id}`,
-      payload,
+      payload: payload as never,
       headers: { authorization },
     });
 

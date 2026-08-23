@@ -101,6 +101,7 @@ describe('failure modes differ by layer', () => {
     get: async () => {
       throw new Error('redis down');
     },
+    del: async () => 0,
   };
 
   it('declares fail-closed for gateway layers and fail-open for product reads', () => {
@@ -125,6 +126,7 @@ describe('failure modes differ by layer', () => {
       eval: async () => [1, 7],
       set: async () => 'OK',
       get: async () => null,
+      del: async () => 0,
     };
     const decision = await new RedisRateLimiter(redis, rules).check({
       layer: 'installation',
@@ -138,6 +140,7 @@ describe('failure modes differ by layer', () => {
       eval: async () => [0, 0],
       set: async () => 'OK',
       get: async () => null,
+      del: async () => 0,
     };
     const decision = await new RedisRateLimiter(redis, rules).check({
       layer: 'installation',
@@ -178,6 +181,7 @@ describe('at-most-once effect claims', () => {
       set: async () => {
         throw new Error('down');
       },
+      del: async () => 0,
     });
     // An unverifiable claim must not authorize a second transfer. It used to
     // return `false`, which achieved that — but `false` here means "already
@@ -192,6 +196,7 @@ describe('at-most-once effect claims', () => {
       eval: async () => null,
       get: async () => null,
       set: async () => 'OK',
+      del: async () => 0,
     });
     expect(await store.claimOnce('att_1', 'eff_1', 60)).toBe(true);
   });
@@ -201,6 +206,7 @@ describe('at-most-once effect claims', () => {
       eval: async () => null,
       get: async () => null,
       set: async () => null,
+      del: async () => 0,
     });
     expect(await store.claimOnce('att_1', 'eff_1', 60)).toBe(false);
   });
@@ -219,28 +225,28 @@ describe('idempotency', () => {
 
   it('conflicts when the same key carries a different request', async () => {
     const store = new InMemoryIdempotencyStore();
-    await store.claim('k', 'digest-1', TTL);
-    expect(await store.claim('k', 'digest-2', TTL)).toMatchObject({ state: 'conflict' });
+    await store.claim('k', 'digest-1', TTL, 'owner');
+    expect(await store.claim('k', 'digest-2', TTL, 'owner')).toMatchObject({ state: 'conflict' });
   });
 
   it('conflicts while the first request is still in flight', async () => {
     const store = new InMemoryIdempotencyStore();
-    await store.claim('k', 'digest-1', TTL);
-    expect(await store.claim('k', 'digest-1', TTL)).toMatchObject({ state: 'conflict' });
+    await store.claim('k', 'digest-1', TTL, 'owner');
+    expect(await store.claim('k', 'digest-1', TTL, 'owner')).toMatchObject({ state: 'conflict' });
   });
 
   it('allows a retry after a failed attempt released its claim', async () => {
     const store = new InMemoryIdempotencyStore();
     const token_fail = await claimToken(store, 'k', 'digest-1', TTL);
     await store.fail('k', token_fail);
-    expect(await store.claim('k', 'digest-1', TTL)).toMatchObject({ state: 'fresh' });
+    expect(await store.claim('k', 'digest-1', TTL, 'owner')).toMatchObject({ state: 'fresh' });
   });
 
   it('replays a completed response for the same digest', async () => {
     const store = new InMemoryIdempotencyStore();
     const token_complete = await claimToken(store, 'k', 'digest-1', TTL);
     await store.complete('k', { status: 201, body: { id: 'meal-1' } }, TTL, token_complete);
-    expect(await store.claim('k', 'digest-1', TTL)).toEqual({
+    expect(await store.claim('k', 'digest-1', TTL, 'owner')).toEqual({
       state: 'replay',
       response: { status: 201, body: { id: 'meal-1' } },
     });
@@ -250,7 +256,7 @@ describe('idempotency', () => {
     const store = new InMemoryIdempotencyStore();
     const token_complete = await claimToken(store, 'k', 'digest-1', TTL);
     await store.complete('k', { status: 201, body: { id: 'meal-1' } }, TTL, token_complete);
-    expect(await store.claim('k', 'digest-2', TTL)).toMatchObject({ state: 'conflict' });
+    expect(await store.claim('k', 'digest-2', TTL, 'owner')).toMatchObject({ state: 'conflict' });
   });
 
   // A response body that happens to look like an internal marker must still
@@ -260,7 +266,7 @@ describe('idempotency', () => {
     const store = new InMemoryIdempotencyStore();
     const token_complete = await claimToken(store, 'k', 'digest-1', TTL);
     await store.complete('k', { status: 201, body: { failed: true } }, TTL, token_complete);
-    expect(await store.claim('k', 'digest-1', TTL)).toEqual({
+    expect(await store.claim('k', 'digest-1', TTL, 'owner')).toEqual({
       state: 'replay',
       response: { status: 201, body: { failed: true } },
     });
@@ -269,14 +275,14 @@ describe('idempotency', () => {
   it('treats an expired record as absent, so a replay is not honoured forever', async () => {
     let clock = 1_000;
     const store = new InMemoryIdempotencyStore(() => clock);
-    await store.claim('k', 'digest-1', ttl(60));
+    const token = await claimToken(store, 'k', 'digest-1', ttl(60), 'owner');
     // The COMPLETED window is what bounds a replay, so it is the one this test
     // advances past. Completing with the default 24h window would leave the
     // record alive and the assertion would be about nothing.
-    await store.complete('k', { status: 201, body: { id: 'meal-1' } }, ttl(60));
+    await store.complete('k', { status: 201, body: { id: 'meal-1' } }, ttl(60), token);
 
     clock += 61_000;
-    expect(await store.claim('k', 'digest-1', ttl(60))).toMatchObject({ state: 'fresh' });
+    expect(await store.claim('k', 'digest-1', ttl(60), 'owner')).toMatchObject({ state: 'fresh' });
   });
 
   it('frees an unfinished claim on the short bound, not the replay window (DS-F2)', async () => {
@@ -286,11 +292,16 @@ describe('idempotency', () => {
     // reaching into Redis could clear it.
     let clock = 1_000;
     const store = new InMemoryIdempotencyStore(() => clock);
-    await store.claim('k', 'digest-1', { inFlightSeconds: 60, completedSeconds: 86_400 });
+    await store.claim('k', 'digest-1', { inFlightSeconds: 60, completedSeconds: 86_400 }, 'owner');
 
     clock += 30_000;
     expect(
-      await store.claim('k', 'digest-1', { inFlightSeconds: 60, completedSeconds: 86_400 }),
+      await store.claim(
+        'k',
+        'digest-1',
+        { inFlightSeconds: 60, completedSeconds: 86_400 },
+        'owner',
+      ),
       'a live request must still exclude a second one',
     ).toMatchObject({ state: 'conflict' });
 
@@ -298,7 +309,12 @@ describe('idempotency', () => {
     // ever completed, so there is nothing to replay and the key is free.
     clock += 31_000;
     expect(
-      await store.claim('k', 'digest-1', { inFlightSeconds: 60, completedSeconds: 86_400 }),
+      await store.claim(
+        'k',
+        'digest-1',
+        { inFlightSeconds: 60, completedSeconds: 86_400 },
+        'owner',
+      ),
       'the key stayed locked for the replay window although nothing was created',
     ).toMatchObject({ state: 'fresh' });
   });
@@ -313,7 +329,7 @@ describe('idempotency', () => {
     // Well past the in-flight bound. A completed record must NOT expire with it,
     // or a retry would create a second meal for a row that exists.
     clock += 120_000;
-    expect(await store.claim('k', 'digest-1', ttls)).toEqual({
+    expect(await store.claim('k', 'digest-1', ttls, 'owner')).toEqual({
       state: 'replay',
       response: { status: 201, body: { id: 'meal-1' } },
     });
@@ -321,7 +337,7 @@ describe('idempotency', () => {
 
   it('ignores completion for an unknown key', async () => {
     const store = new InMemoryIdempotencyStore();
-    await expect(store.complete('missing', {}, TTL)).resolves.toBeUndefined();
+    await expect(store.complete('missing', {}, TTL, 'token')).resolves.toBeUndefined();
   });
 });
 
@@ -385,12 +401,12 @@ describe('M1 — in-memory stores stay bounded', () => {
     const store = new InMemoryIdempotencyStore(() => now);
 
     for (let i = 0; i < 20; i += 1) {
-      await store.claim(`user:${i}`, 'digest', ttl(60));
+      await store.claim(`user:${i}`, 'digest', ttl(60), 'owner');
     }
     expect(store.trackedEntries).toBe(20);
 
     now += 61_000;
-    await store.claim('user:fresh', 'digest', ttl(60));
+    await store.claim('user:fresh', 'digest', ttl(60), 'owner');
     expect(store.trackedEntries).toBe(1);
   });
 });
