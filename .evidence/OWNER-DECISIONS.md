@@ -212,10 +212,46 @@ That is the terminal state: nothing left to port.
 
 # Owner decisions on D-01 and D-02 (2026-08-15)
 
-Source: the owner's `pr44-handover-decisions.md`, which reviews handover-3 and
-handover-4 and adopts a recommendation for each open contract decision. Recorded
-here because an issue comment is not the durable record; both are also posted to
-#48 and #50.
+Source: the owner's `pr44-handover-decisions.md` (2026-08-15), which reviews
+handover-3 and handover-4 and adopts a recommendation for each open contract
+decision. Recorded here because an issue comment is not the durable record; both
+are also posted to #48 and #50.
+
+**The source file is not committed to this repository**, so its operative text
+is quoted verbatim below rather than referenced. Quoting was the owner's choice
+between that and committing the file (2026-08-23). The original is in Russian
+and is reproduced as written; the surrounding entries state the same decisions
+in English.
+
+> **§2, «Рекомендация» (D-01):**
+>
+> **Вариант 2** — авторизованная переопределённая семантика через существующий
+> механизм acknowledgement (pinned digest, срок действия — как у трёх текущих),
+> **не молчаливая правка**. Платить сейчас за v2 и миграцию клиента — значит
+> защищать потребителей, которых пока не существует.
+>
+> С жёстким условием: **до первого внешнего потребителя или отгруженного билда**
+> выпустить v2, куда эти изменения войдут честным образом (привязать к дедлайну
+> #47).
+
+> **§2, «Ключевой факт для решения» (why v1 may be redefined at all):**
+>
+> У `mobile-api/v1` **ровно один потребитель** — мобильный клиент в этом же
+> репозитории. **Ни один билд не дошёл до пользователя.** […] Но ситуация
+> временная: как только появится внешний потребитель или отгруженный билд,
+> вариант 2 закрывается.
+
+> **§3, «Рекомендация» (D-02):**
+>
+> **Вариант 2**, согласен с автором issue. Одно расхождение с ним: он предлагает
+> отложить до «следующего релиза» — но поскольку #48 всё равно требует трогать
+> тот же опубликованный контракт, **делайте оба одним раундом**: одно решение
+> владельца, один acknowledgement, один заход.
+
+> **§3, «Варианты», on changing the code to match the published order:**
+>
+> **3. Изменить код под контракт** | Возвращает неаутентифицированный 8 МБ
+> memory-pin | **Никогда**
 
 Both decisions bear on `contracts/mobile-api/v1`, a published immutable release.
 Neither is implemented by this branch: PR #44 documents the divergences in code
@@ -325,9 +361,32 @@ anyway, so both go in one round: one decision, one acknowledgement, one pass.
 
 ## D-03 — where Product idempotency state lives (#49)
 
-Decided on: 2026-08-22
-Decided by: iggdrassilon (RMD, https://github.com/iggdrassilon) — owner of PR #44
-Channel: https://github.com/flexsent-labs/SuperNutrition/pull/44#issuecomment-5382807819
+Decided on: PENDING
+Decided by: PENDING
+Channel: PENDING
+
+> **Attribution history — read this before treating the fields above as an
+> oversight.**
+>
+> These three fields were filled on 2026-08-22 with
+> `iggdrassilon (RMD, https://github.com/iggdrassilon) — owner of PR #44`, and a
+> ratifying comment was posted from that account
+> ([issuecomment-5382807819](https://github.com/flexsent-labs/SuperNutrition/pull/44#issuecomment-5382807819)).
+>
+> The PR #44 review (handover-11, EV-2) then established that `iggdrassilon` is
+> the PR **author** — the implementer account — and that the repository owner is
+> **`ajdevy`**. The PR author confirmed this on 2026-08-23. So the comment and
+> the attribution record a ratification by the implementing side, which is
+> exactly what EV-1 was about; they are not the owner's.
+>
+> Reset to PENDING rather than corrected in place, because there is nothing yet
+> to correct them TO: the owner has not ratified. `verify-owner-decisions.sh
+> --strict` fails on these two, which is the accurate state. Kept here rather
+> than deleted, because the record of who signed what and when is the whole
+> point of this file.
+>
+> **To close:** one confirmation from `ajdevy` on PR #44, after which these
+> fields name that comment.
 
 **Decided: Redis holds the status, the request digest and the meal's id. Never
 the response body.**
@@ -361,9 +420,32 @@ review found it had been implemented without a record (EV-1).
 
 ## D-04 — what market retention binds (#49, story 4.4 criterion 4)
 
-Decided on: 2026-08-22
-Decided by: iggdrassilon (RMD, https://github.com/iggdrassilon) — owner of PR #44
-Channel: https://github.com/flexsent-labs/SuperNutrition/pull/44#issuecomment-5382807819
+Decided on: PENDING
+Decided by: PENDING
+Channel: PENDING
+
+> **Attribution history — read this before treating the fields above as an
+> oversight.**
+>
+> These three fields were filled on 2026-08-22 with
+> `iggdrassilon (RMD, https://github.com/iggdrassilon) — owner of PR #44`, and a
+> ratifying comment was posted from that account
+> ([issuecomment-5382807819](https://github.com/flexsent-labs/SuperNutrition/pull/44#issuecomment-5382807819)).
+>
+> The PR #44 review (handover-11, EV-2) then established that `iggdrassilon` is
+> the PR **author** — the implementer account — and that the repository owner is
+> **`ajdevy`**. The PR author confirmed this on 2026-08-23. So the comment and
+> the attribution record a ratification by the implementing side, which is
+> exactly what EV-1 was about; they are not the owner's.
+>
+> Reset to PENDING rather than corrected in place, because there is nothing yet
+> to correct them TO: the owner has not ratified. `verify-owner-decisions.sh
+> --strict` fails on these two, which is the accurate state. Kept here rather
+> than deleted, because the record of who signed what and when is the whole
+> point of this file.
+>
+> **To close:** one confirmation from `ajdevy` on PR #44, after which these
+> fields name that comment.
 
 **Decided: reading (a) — market retention governs user content. Coordination
 identifiers keep the at-most-once horizon.**

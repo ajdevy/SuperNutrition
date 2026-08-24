@@ -96,6 +96,11 @@ Gradle reports are the most common source of confident wrong conclusions here. E
 
 ## Owner decisions
 
+- **The repository owner is `ajdevy`.** `iggdrassilon` is the PR author and the
+  implementer account; the two are different people and only the first can
+  ratify. Written down because it was got wrong: D-03/D-04 were filled with the
+  implementer's identity and a ratifying comment was posted from that account,
+  which is the same self-approval EV-1 exists to prevent (PR #44 review, EV-2).
 - A decision that binds a published contract, a privacy posture, or a
   correctness guarantee is the owner's, not the implementer's. Record it in
   `.evidence/OWNER-DECISIONS.md` **before** implementing it, as a `## D-NN`
