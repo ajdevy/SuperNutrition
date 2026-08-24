@@ -315,8 +315,14 @@ for state, path in changes:
         release_prefix = "/".join(path.split("/")[:3]) + "/"
         if released_at_base(release_prefix):
             ok, why = acknowledged(path, "addition")
-            if ok:
+            # Recorded whether or not it authorised — the same reason as the edit
+            # branch below. Only that branch was fixed, so a REJECTED addition
+            # acknowledgement still drew the stale-entry sweep's "which is
+            # unchanged since <base>" about a file that did not exist at base at
+            # all. Two messages, contradicting each other, about one file.
+            if path in acknowledgements:
                 used_acknowledgements.add(path)
+            if ok:
                 continue
             fail(
                 f"{path} was added to {release_prefix}, which was already published "

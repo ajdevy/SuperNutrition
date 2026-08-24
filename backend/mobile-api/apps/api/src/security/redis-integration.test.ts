@@ -295,6 +295,36 @@ describe.skipIf(!url)('against a real Redis server', () => {
     expect(markerTtl, 'the marker outlives the attempt it describes').toBeLessThanOrEqual(5);
   }, 20_000);
 
+  it('clamps the cancellation marker when the attempt key reports no expiry', async () => {
+    // The 0/-1 edge of the TTL bound, which no lane touched: reverting the
+    // clamp changed nothing in the suite. `TTL` answers -1 for a key with no
+    // expiry, and the old code read that as "use the full window" — handing the
+    // marker a lifetime far past the attempt, which is the staleness the bound
+    // exists to prevent.
+    //
+    // PERSIST rather than a race against a sub-second expiry: `TTL` rounds up,
+    // so 0 cannot be produced reliably, while -1 is exact.
+    const registry = new RedisAttemptRegistry(a.client, 3_600);
+    const attemptId = `att_persist_${run}`;
+    const owner = `inst_owner_${run}`;
+    const raw = a.client as unknown as {
+      persist: (key: string) => Promise<number>;
+      ttl: (key: string) => Promise<number>;
+    };
+
+    await registry.claimAttempt(attemptId, 'instance-a', owner);
+    await raw.persist(`attempt:${attemptId}`);
+    expect(await raw.ttl(`attempt:${attemptId}`), 'the attempt key still has an expiry').toBe(-1);
+
+    expect(await registry.markCancelled(attemptId, owner)).toBe(true);
+
+    const markerTtl = await raw.ttl(`cancelled:${attemptId}`);
+    expect(markerTtl, 'the marker was left without an expiry').toBeGreaterThan(0);
+    expect(markerTtl, 'the marker took the full window from an unbounded attempt').toBeLessThan(
+      3_600,
+    );
+  }, 20_000);
+
   it('DS-F12: a lost reply does not lock the attempt id for a day', async () => {
     // The scenario the fake cannot stage: the SET applies on the server and the
     // client never learns it did — a dropped reply, a socket reset, a timeout

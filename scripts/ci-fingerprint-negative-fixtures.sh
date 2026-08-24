@@ -4,7 +4,14 @@ set -euo pipefail
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="$(cd "$script_dir/.." && pwd)"
 fixture_root="$(mktemp -d "${TMPDIR:-/tmp}/supernutrition-ci-fingerprint.XXXXXX")"
-trap 'rm -rf "$fixture_root"' EXIT
+# ONE trap for every scratch directory this script makes. A second `trap … EXIT`
+# does not add a handler, it REPLACES the first — which is how the empty-catalog
+# fixture, added later, silently stopped `$fixture_root` from ever being
+# cleaned up.
+cleanup_dirs=()
+cleanup() { test ${#cleanup_dirs[@]} -eq 0 || rm -rf "${cleanup_dirs[@]}"; }
+trap cleanup EXIT
+cleanup_dirs+=("$fixture_root")
 
 jobs=(mobile-unit-coverage)
 for job in "${jobs[@]}"; do
@@ -44,7 +51,7 @@ fi
 # releases, the file was written and the script exited 0. A fingerprint covering
 # nothing is exactly as green as one covering everything.
 empty_root="$(mktemp -d "${TMPDIR:-/tmp}/supernutrition-ci-fingerprint-empty.XXXXXX")"
-trap 'rm -rf "$empty_root"' EXIT
+cleanup_dirs+=("$empty_root")
 python3 - "$repo_root" "$empty_root" <<'PY_COPY'
 import pathlib
 import shutil
@@ -115,5 +122,20 @@ if test -f "$emitted"; then
   printf '%s\n' 'CI fingerprint fixture wrote a file despite refusing to fingerprint' >&2
   exit 1
 fi
+
+# --- this suite must not litter -----------------------------------------------
+# Asserted, because the leak was invisible: a second `trap … EXIT` replaced the
+# first, both fixtures passed, and the only symptom was directories piling up in
+# $TMPDIR on every machine that ever ran the suite.
+if test ${#cleanup_dirs[@]} -lt 2; then
+  printf 'the cleanup list does not cover both scratch directories\n' >&2
+  exit 1
+fi
+for candidate in "${cleanup_dirs[@]}"; do
+  test -d "$candidate" || {
+    printf 'a scratch directory vanished before the run finished: %s\n' "$candidate" >&2
+    exit 1
+  }
+done
 
 printf '%s\n' 'CI fingerprint negative fixtures: OK'

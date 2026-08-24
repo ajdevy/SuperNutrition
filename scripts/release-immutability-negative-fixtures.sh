@@ -173,6 +173,49 @@ if run_gate "$grow" "$base"; then
     exit 1
 fi
 
+# --- Fixture 4b: a REJECTED addition acknowledgement must not also be called stale
+# The addition branch recorded the path as used only on success, so a rejected
+# acknowledgement drew the stale-entry sweep as well: the gate said the file was
+# added to a published release AND that it was "unchanged since <base>; remove
+# the stale entry" — about a file that did not exist at base at all.
+rejected_addition="$work/rejected-addition"
+mkdir -p "$rejected_addition"
+seed_repository "$rejected_addition"
+base=$(git -C "$rejected_addition" rev-parse HEAD)
+newfile="contracts/demo/v1/fixtures/appended.json"
+printf '{"outcome":"appended"}\n' >"$rejected_addition/$newfile"
+# Well-formed and REFUSED, which is the combination that matters: it has to
+# parse, so it lands in the acknowledgement map and the stale sweep can see it,
+# and it has to be rejected, so the contradiction can appear. A first draft used
+# `kind = "addition"` — a field the gate does not read — so it failed structural
+# validation instead, never entered the map, and proved nothing. `added` is the
+# real marker.
+write_acknowledgement "$rejected_addition" "$newfile" \
+    "1111111111111111111111111111111111111111111111111111111111111111" "2099-01-01" \
+    "$(printf 'added = true\nbase_sha256 = "%s"' "$(printf '0%.0s' $(seq 64))")"
+commit_all "$rejected_addition" 'append under a mispinned acknowledgement'
+
+addition_output="$(SUPERNUTRITION_IMMUTABILITY_BASE="$base" "$gate" "$rejected_addition" 2>&1 || true)"
+if SUPERNUTRITION_IMMUTABILITY_BASE="$base" "$gate" "$rejected_addition" >/dev/null 2>&1; then
+    echo "negative fixture unexpectedly passed: a mispinned addition acknowledgement" >&2
+    exit 1
+fi
+case "$addition_output" in
+    *"which is unchanged since"*)
+        echo "FAIL: a rejected addition was also reported as an unchanged, stale entry" >&2
+        printf '  actual: %s\n' "$addition_output" >&2
+        exit 1
+        ;;
+esac
+case "$addition_output" in
+    *"was added to"*) : ;;
+    *)
+        echo "FAIL: the mispinned addition was rejected, but not for its own reason" >&2
+        printf '  actual: %s\n' "$addition_output" >&2
+        exit 1
+        ;;
+esac
+
 # --- Fixture 5: modification present only in the worktree -------------------
 # The gate compared base against HEAD, so an uncommitted edit to a published
 # release was invisible to it while being perfectly visible to every validator

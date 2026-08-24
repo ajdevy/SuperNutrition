@@ -335,9 +335,20 @@ describe('idempotency', () => {
     });
   });
 
-  it('ignores completion for an unknown key', async () => {
+  it('RESTORES a record whose claim has vanished, rather than ignoring it', async () => {
+    // The name said "ignores", and it did until DS-F19: `complete` on an absent
+    // key now WRITES, because a record that expired while its request was still
+    // running is exactly the case where a later retry would otherwise create a
+    // second meal for a row that exists. The old assertion — that the promise
+    // resolves — passed either way and said nothing about which happened.
     const store = new InMemoryIdempotencyStore();
-    await expect(store.complete('missing', {}, TTL, 'token')).resolves.toBeUndefined();
+    await store.complete('missing', { status: 201, body: { id: 'meal-1' } }, TTL, 'token');
+
+    // Restored, and fail-closed: the digest of the original request is gone with
+    // the claim, so nothing can match it and the key refuses every later caller
+    // rather than replaying a body under a request nobody can verify.
+    const later = await store.claim('missing', 'digest-1', TTL, 'owner');
+    expect(later.state, 'the record was not restored at all').toBe('conflict');
   });
 });
 
@@ -430,7 +441,11 @@ describe('GW-F3 — in-memory stores are bounded, and refuse rather than evict',
     );
   });
 
-  it('still reports an already-held claim as held when full', async () => {
+  // Fills the store to capacity, which is ~250k inserts: comfortably under
+  // vitest's 5s default in isolation, and not under parallel load on a slower
+  // machine, where it flaked once. The work is the point of the test, so the
+  // timeout moves rather than the fill.
+  it('still reports an already-held claim as held when full', { timeout: 30_000 }, async () => {
     // Order matters: were capacity checked first, a full store would answer
     // "capacity" for an id it is already holding — and a client retrying past
     // that would eventually be allowed to run it twice.

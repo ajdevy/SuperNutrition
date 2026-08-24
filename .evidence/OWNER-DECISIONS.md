@@ -494,6 +494,62 @@ is not legal advice.
 Implemented in commit 39d30c86. Recorded here 2026-08-21, after the PR #44
 review found it had been implemented without a record (EV-1).
 
+## D-05 — the crash-before-transfer window on a claimed attempt (#49)
+
+Decided on: PENDING
+Decided by: PENDING
+Channel: PENDING
+
+**Proposed: accept it as inherent for now, and revisit if it is ever observed.**
+
+**What the window is.** `claimAttempt` is re-entrant for the identical holder
+(DS-F12): the same owner token on the same instance may re-claim its own attempt,
+which is what stops a lost reply locking an id for 24 hours. What it cannot do is
+tell "the holder is retrying" from "the holder is gone". If the instance that
+claimed an attempt dies after the claim and before the transfer, the record
+survives with a matching owner and a dead instance, and that attempt id stays
+held fleet-wide for `TRANSFER_REGISTRY_TTL_SECONDS` (24h) with nothing sent.
+
+The user-visible effect: a client that retries the same attempt id after a
+replica died gets `attempt_already_used` about a photo no provider ever saw. The
+remedy available to it — a new attempt id — is one it has no reason to know it
+needs.
+
+**Why it is not just fixed.** Releasing on the owner token alone would let a
+SECOND replica claim an attempt the first is still transferring, which is the
+duplicate provider call — a second upload of the user's photo — that this
+registry exists to prevent. Trading a 24-hour stall for a duplicate upload is
+the wrong direction, and this is precisely the kind of trade an implementer
+should not make alone.
+
+**The two options.**
+
+- **(a) Accept as inherent.** The window needs a process death inside a specific
+  short interval, and its cost is a stalled attempt id, not lost data or a
+  duplicate call. The gateway is single-instance today (`GATEWAY_STATE_BACKEND`
+  defaults to `memory`), so the case cannot arise in the shipping configuration
+  at all. Costs nothing; leaves a rough edge for whoever meets it.
+- **(b) Pre-transfer release marker.** The holder writes a short-lived liveness
+  marker beside the claim and refreshes it while the attempt is pre-transfer; a
+  claim whose marker has lapsed and which never reached `transferring` may be
+  taken over. Closes the window, and adds a second key, a refresh path, and a new
+  way to be wrong — a marker that lapses under load while the transfer is
+  genuinely running would hand the attempt to a second replica, which is the
+  harm being avoided.
+
+**Why (a) is proposed.** (b) buys a rare recovery by adding a mechanism whose own
+failure mode is the exact outcome the registry exists to prevent. That is a bad
+trade until the window is actually observed. If it is, (b) is the shape to
+build, and it should be built against the transfer state machine's own
+`pre-transfer` state rather than a timer.
+
+**Recorded because the code says so.** The comment at
+`security/stores.ts` calls this "an owner decision, not an implementer's —
+raised rather than guessed at". AGENTS.md's rule is that a decision binding a
+correctness guarantee belongs here, not only in a comment. Drafted 2026-08-24
+after the PR #44 review (handover-12) pointed out that the comment was the only
+record.
+
 ## Sequencing
 
 1. Decisions recorded (this entry, plus comments on #48 and #50).
