@@ -385,6 +385,12 @@ Channel: PENDING
 > than deleted, because the record of who signed what and when is the whole
 > point of this file.
 >
+> The same correction is public on the PR
+> ([issuecomment-5390241666](https://github.com/flexsent-labs/SuperNutrition/pull/44#issuecomment-5390241666)),
+> posted alongside the original rather than replacing it — a reviewer reading
+> #44 top to bottom sees the claim and its withdrawal, which deleting the first
+> comment would have hidden.
+>
 > **To close:** one confirmation from `ajdevy` on PR #44, after which these
 > fields name that comment.
 
@@ -443,6 +449,12 @@ Channel: PENDING
 > --strict` fails on these two, which is the accurate state. Kept here rather
 > than deleted, because the record of who signed what and when is the whole
 > point of this file.
+>
+> The same correction is public on the PR
+> ([issuecomment-5390241666](https://github.com/flexsent-labs/SuperNutrition/pull/44#issuecomment-5390241666)),
+> posted alongside the original rather than replacing it — a reviewer reading
+> #44 top to bottom sees the claim and its withdrawal, which deleting the first
+> comment would have hidden.
 >
 > **To close:** one confirmation from `ajdevy` on PR #44, after which these
 > fields name that comment.
