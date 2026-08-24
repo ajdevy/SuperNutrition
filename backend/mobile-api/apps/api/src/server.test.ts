@@ -118,12 +118,19 @@ let disposed: string[] = [];
 let analyzeCalls = 0;
 /** Set by a test that needs the orchestrator to fail; cleared before each. */
 let analyzeFault: Error | null = null;
+/**
+ * Set by a test that needs the failure to happen AFTER the route handler has
+ * returned — the only way to reach the server-level error handler, since the
+ * gateway routes catch their own errors and answer through `fail()`.
+ */
+let unserializableLabel: string | null = null;
 /** Every record the root logger was asked to write at error level. */
 let loggedErrors: unknown[] = [];
 
 beforeEach(async () => {
   remoteEnabled = true;
   analyzeFault = null;
+  unserializableLabel = null;
   loggedErrors = [];
   transfers = new TransferStateTracker(() => NOW);
   disposed = [];
@@ -163,7 +170,10 @@ beforeEach(async () => {
             candidates: [
               {
                 candidateId: 'cand_01',
-                label: 'Banana',
+                // A BigInt is unserializable by JSON, so the throw happens in
+                // Fastify's serializer, after the route handler has returned
+                // and outside its try/catch.
+                label: (unserializableLabel === null ? 'Banana' : BigInt(1)) as unknown as string,
                 rank: 1,
                 confidence: {
                   score: 0.93,
@@ -1216,6 +1226,36 @@ describe('GW-F2 — a gateway 5xx leaves diagnostics behind', () => {
    * responses were the least observable of the three — mapped, answered, and
    * gone, with `cause` returned by `mapError` and consumed nowhere.
    */
+  it('records the cause when the failure reaches the server-level handler', async () => {
+    // The other of the two handlers. `fail()` covers errors the routes catch;
+    // this covers everything else — a serializer or hook throw, which happens
+    // after the handler has returned and never touches its try/catch. Only that
+    // path had no logging assertion at all.
+    unserializableLabel = 'BigInt';
+
+    const { payload, headers } = multipartBody(context(), JPEG);
+    const response = await server.app.inject({
+      method: 'POST',
+      url: '/gw/v1/inference/photo',
+      payload,
+      headers,
+    });
+
+    expect(
+      response.statusCode,
+      'the serializer fault did not produce a 5xx',
+    ).toBeGreaterThanOrEqual(500);
+    expect(response.body, 'the diagnostic reached the client').not.toMatch(/BigInt|serialize/i);
+
+    const causes = loggedErrors.map(
+      (entry) => (entry as { err?: { message?: string } })?.err?.message,
+    );
+    expect(
+      causes.filter((message) => typeof message === 'string' && message.length > 0),
+      'the server-level 5xx was answered without recording its cause',
+    ).not.toHaveLength(0);
+  });
+
   it('records the cause without putting it in the body', async () => {
     const secret = `GW-FAIL-${Date.now()}`;
     analyzeFault = new Error(secret);

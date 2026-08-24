@@ -176,6 +176,12 @@ lock_before="$(shasum -a 256 "$root_dir/package-lock.json" | cut -d' ' -f1)"
 
 printf '%s\n' '==> typecheck'
 npx --no-install tsc --build --force || fail 'typecheck failed'
+# The test suite too. `tsconfig.json` excludes `src/**/*.test.ts`, so the build
+# above verifies none of the code that guards the code — which is how a
+# signature change left stale call sites that only failed at runtime. Gated
+# here, not merely available through `npm run typecheck`, because a check
+# nothing invokes is a check that stops being true.
+npx --no-install tsc -p apps/api/tsconfig.test.json --noEmit || fail 'test typecheck failed'
 
 printf '%s\n' '==> lint (read-only, autocorrect off)'
 npx --no-install eslint . --max-warnings=0 || fail 'lint failed'

@@ -77,9 +77,14 @@ class FakeRedis implements RedisLike {
       if (!holder) return 0;
       const separator = holder.value.indexOf(':');
       if (separator < 0 || holder.value.slice(0, separator) !== token) return 0;
-      // The attempt key's REMAINING window, so the marker cannot outlive it.
-      const remaining = Math.max(0, holder.expiresAt - this.now);
-      const expiresAt = this.now + (remaining > 0 ? remaining : fallback * 1000);
+      // The attempt key's REMAINING window, clamped exactly as the Lua clamps
+      // it. This modelled the OLD semantics — falling back to the full window
+      // when nothing remained — in a branch `#live()` makes unreachable anyway,
+      // since an expired key is deleted before it is returned. A fake that
+      // disagrees with the script is a fake that cannot fail when the script
+      // changes.
+      const remaining = Math.max(1, Math.min(holder.expiresAt - this.now, fallback * 1000));
+      const expiresAt = this.now + remaining;
       this.store.set(cancelledKey, { value: '1', expiresAt });
       this.written.push('1');
       return 1;

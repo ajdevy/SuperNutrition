@@ -180,4 +180,56 @@ if payload "src/config.ts" "$benign" | "$jq_probe/secret-scan.sh" >/dev/null 2>&
 fi
 blocked=$((blocked + 1))
 
+# --- and the OTHER jq branch: not present at all -----------------------------
+# The shim above exits 127 when RUN, so `command -v jq` still finds it and the
+# hook reaches the parse-failure branch. The `jq is not available` branch —
+# reached when nothing named jq is on PATH — had no fixture. Two different
+# refusals, one of them untested.
+#
+# The copy's own `export PATH=` line is replaced with an empty directory, so it
+# cannot re-add /usr/bin and find the system jq.
+jq_absent="$(mktemp -d "${TMPDIR:-/tmp}/secret-scan-jq-absent.XXXXXX")"
+mkdir -p "$jq_absent/bin"
+# Everything the hook needs BEFORE the jq check, and nothing named jq. A bare
+# empty PATH would have removed `cat` too, so the hook would have failed to read
+# its input at all — reaching the right branch for the wrong reason, and
+# printing a broken pipe on the way.
+for tool in cat python3; do
+    resolved="$(command -v "$tool")"
+    ln -s "$resolved" "$jq_absent/bin/$tool"
+done
+sed "s|^export PATH=.*|export PATH=\"$jq_absent/bin\"|" "$hook" >"$jq_absent/secret-scan.sh"
+chmod +x "$jq_absent/secret-scan.sh"
+
+# Control: with jq restored on that same PATH the copy must ALLOW the benign
+# payload, so the refusal below is about jq and not about the trimmed PATH.
+ln -s "$(command -v jq)" "$jq_absent/bin/jq"
+if ! payload "src/config.ts" "$benign" | "$jq_absent/secret-scan.sh" >/dev/null 2>&1; then
+    printf 'positive control failed: the trimmed PATH broke the hook independently of jq\n' >&2
+    exit 1
+fi
+rm -f "$jq_absent/bin/jq"
+
+set +e
+absent_output="$(payload "src/config.ts" "$benign" | "$jq_absent/secret-scan.sh" 2>&1)"
+absent_status=$?
+set -e
+rm -rf "$jq_absent"
+
+# The exit CODE, not merely non-zero: 2 is what a PreToolUse hook must return to
+# block, and any other non-zero would let the edit through.
+if test "$absent_status" -ne 2; then
+    printf 'fixture: an absent jq did not block with exit 2 (got %s)\n' "$absent_status" >&2
+    exit 1
+fi
+case "$absent_output" in
+    *"jq is not available"*) : ;;
+    *)
+        printf 'fixture: the hook refused, but not for jq being absent\n' >&2
+        printf '  actual: %s\n' "$absent_output" >&2
+        exit 1
+        ;;
+esac
+blocked=$((blocked + 1))
+
 printf 'secret-scan fixtures: OK (%d blocked, %d allowed)\n' "$blocked" "$allowed"

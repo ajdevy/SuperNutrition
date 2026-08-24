@@ -15,7 +15,12 @@ const tracker = () => new TransferStateTracker(() => NOW);
  * silenced with `!`: if a claim ever stops taking, the failure names that
  * instead of a property access on null.
  */
-/** `begin()` returns null when the id is already held; these tests claim a fresh one. */
+/**
+ * `begin()` returns null when the id is already held, and `cancel()` returns
+ * null for an attempt the tracker does not hold. The tests below claim a fresh
+ * one first, so null means the setup broke — asserted rather than silenced with
+ * `!`, so the failure names that instead of a property access on null.
+ */
 const claimed = (controller: AbortController | null): AbortController => {
   if (controller === null) throw new Error('expected a fresh attempt claim, got null');
   return controller;
