@@ -17,6 +17,7 @@ import type { AppConfig } from '../../config/index.js';
 import {
   InMemoryIdempotencyStore,
   StoreCapacityError,
+  IN_MEMORY_STORE_CAPACITY,
   InMemoryRateLimiter,
   TestModeAuthenticator,
   TestModeProductAuthenticator,
@@ -632,7 +633,7 @@ describe('idempotency (docs/06 §6.7)', () => {
     // condition another instance can serve.
     const full = {
       claim: async () => {
-        throw new StoreCapacityError('the in-memory idempotency store');
+        throw new StoreCapacityError('the in-memory idempotency store', IN_MEMORY_STORE_CAPACITY);
       },
       complete: async () => {},
       fail: async () => {},

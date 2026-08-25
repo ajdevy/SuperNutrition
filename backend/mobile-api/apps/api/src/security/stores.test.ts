@@ -431,8 +431,12 @@ describe('GW-F3 — in-memory stores are bounded, and refuse rather than evict',
     // The cap is a refusal, not an eviction. These entries ARE the at-most-once
     // guarantee: evicting a live one lets its identifier run a second time,
     // which is a duplicate provider call and a second upload of a user's photo.
-    const store = new InMemoryEffectStore(() => 1_000);
-    for (let index = 0; index < IN_MEMORY_STORE_CAPACITY; index += 1) {
+    // Three, not a quarter of a million: the refusal is the same logic at any
+    // limit, and filling the real cap cost six to seven seconds per test —
+    // deterministically past vitest's default on ordinary hardware. The
+    // production value is pinned separately, below.
+    const store = new InMemoryEffectStore(() => 1_000, 3);
+    for (let index = 0; index < 3; index += 1) {
       await store.claimOnce('att', `eff_${index}`, 3_600);
     }
 
@@ -441,21 +445,25 @@ describe('GW-F3 — in-memory stores are bounded, and refuse rather than evict',
     );
   });
 
-  // Fills the store to capacity, which is ~250k inserts: comfortably under
-  // vitest's 5s default in isolation, and not under parallel load on a slower
-  // machine, where it flaked once. The work is the point of the test, so the
-  // timeout moves rather than the fill.
-  it('still reports an already-held claim as held when full', { timeout: 30_000 }, async () => {
+  it('still reports an already-held claim as held when full', async () => {
     // Order matters: were capacity checked first, a full store would answer
     // "capacity" for an id it is already holding — and a client retrying past
     // that would eventually be allowed to run it twice.
-    const store = new InMemoryEffectStore(() => 1_000);
+    const store = new InMemoryEffectStore(() => 1_000, 3);
     await store.claimOnce('att', 'eff_first', 3_600);
-    for (let index = 0; index < IN_MEMORY_STORE_CAPACITY; index += 1) {
+    for (let index = 0; index < 3; index += 1) {
       await store.claimOnce('att', `eff_${index}`, 3_600).catch(() => undefined);
     }
 
     await expect(store.claimOnce('att', 'eff_first', 3_600)).resolves.toBe(false);
+  });
+
+  it('defaults to the published capacity when none is injected', () => {
+    // The half the injectable limit would otherwise stop covering: the tests
+    // above prove the refusal, this proves production refuses at the documented
+    // number rather than at whatever a test happened to pass.
+    expect(new InMemoryEffectStore().capacityLimit).toBe(IN_MEMORY_STORE_CAPACITY);
+    expect(new InMemoryIdempotencyStore().capacityLimit).toBe(IN_MEMORY_STORE_CAPACITY);
   });
 
   it('reclaims expired entries, so ordinary traffic never reaches the cap', async () => {
