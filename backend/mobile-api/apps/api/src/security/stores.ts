@@ -256,9 +256,9 @@ export const IN_MEMORY_STORE_CAPACITY = 250_000;
 const SWEEP_INTERVAL = 1_000;
 
 export class StoreCapacityError extends Error {
-  constructor(store: string) {
+  constructor(store: string, limit: number) {
     super(
-      `${store} reached its in-memory capacity of ${IN_MEMORY_STORE_CAPACITY} live entries. ` +
+      `${store} reached its in-memory capacity of ${limit} live entries. ` +
         'This process cannot accept the request without discarding an at-most-once guarantee. ' +
         'Use GATEWAY_STATE_BACKEND=redis for a deployment at this volume.',
     );
@@ -277,9 +277,22 @@ class AmortisedCapacity {
   #sinceSweep = 0;
   #lastSweepAt: number | null = null;
   readonly #name: string;
+  readonly #limit: number;
 
-  constructor(name: string) {
+  /**
+   * `limit` is injectable so the refusal can be tested at three entries instead
+   * of a quarter of a million.
+   *
+   * Both capacity tests used to fill to the real cap — six to seven seconds of
+   * insertions each on ordinary hardware, past vitest's default timeout under
+   * load. Raising the timeout treats the clock; this removes it. What the tests
+   * assert is the REFUSAL, and that logic is identical at any limit, so a
+   * separate test pins the production default rather than every case paying for
+   * it.
+   */
+  constructor(name: string, limit: number = IN_MEMORY_STORE_CAPACITY) {
     this.#name = name;
+    this.#limit = limit;
   }
 
   /**
@@ -296,25 +309,36 @@ class AmortisedCapacity {
     this.#sinceSweep += 1;
     this.#lastSweepAt ??= now;
     const windowElapsed = now - this.#lastSweepAt >= ttlMs;
-    if (this.#sinceSweep >= SWEEP_INTERVAL || windowElapsed || size >= IN_MEMORY_STORE_CAPACITY) {
+    if (this.#sinceSweep >= SWEEP_INTERVAL || windowElapsed || size >= this.#limit) {
       this.#sinceSweep = 0;
       this.#lastSweepAt = now;
       sweep();
     }
   }
 
+  /** The limit this instance enforces, so a test can assert the default. */
+  get limit(): number {
+    return this.#limit;
+  }
+
   assertRoom(size: number): void {
-    if (size >= IN_MEMORY_STORE_CAPACITY) throw new StoreCapacityError(this.#name);
+    if (size >= this.#limit) throw new StoreCapacityError(this.#name, this.#limit);
   }
 }
 
 export class InMemoryEffectStore implements EffectStore {
   readonly #claimed = new Map<string, number>();
   readonly #now: () => number;
-  readonly #capacity = new AmortisedCapacity('the in-memory effect store');
+  readonly #capacity: AmortisedCapacity;
 
-  constructor(now: () => number = Date.now) {
+  constructor(now: () => number = Date.now, capacity?: number) {
     this.#now = now;
+    this.#capacity = new AmortisedCapacity('the in-memory effect store', capacity);
+  }
+
+  /** The bound this instance refuses at. Exposed so a test can pin the default. */
+  get capacityLimit(): number {
+    return this.#capacity.limit;
   }
 
   /** Claims currently held, expired ones included until the next sweep. */
@@ -405,10 +429,16 @@ export class InMemoryIdempotencyStore implements IdempotencyStore {
     { digest: string; expiresAt: number; token: string; response?: unknown }
   >();
   readonly #now: () => number;
-  readonly #capacity = new AmortisedCapacity('the in-memory idempotency store');
+  readonly #capacity: AmortisedCapacity;
 
-  constructor(now: () => number = Date.now) {
+  constructor(now: () => number = Date.now, capacity?: number) {
     this.#now = now;
+    this.#capacity = new AmortisedCapacity('the in-memory idempotency store', capacity);
+  }
+
+  /** The bound this instance refuses at. Exposed so a test can pin the default. */
+  get capacityLimit(): number {
+    return this.#capacity.limit;
   }
 
   /** Entries currently held, expired ones included until the next sweep. */
