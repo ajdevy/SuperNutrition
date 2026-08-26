@@ -1,0 +1,78 @@
+{
+  "model": "anthropic/claude-sonnet-5",
+  "modelVersion": "anthropic/claude-sonnet-5",
+  "provider": "Amazon Bedrock",
+  "duration": 1734.294247999991,
+  "durationSec": "1.73",
+  "promptTokens": 674,
+  "completionTokens": 283,
+  "totalTokens": 957,
+  "cost": 0.004178,
+  "raw": "```json\n{\n  \"foods\": [\n    {\n      \"label\": \"Paella\",\n      \"rank\": 1,\n      \"confidence\": 0.85,\n      \"assumptions\": [\"Contains shrimp and rice with vegetables\", \"Garnished with cilantro and lemon we",
+  "parsed": {
+    "foods": [
+      {
+        "label": "Paella",
+        "rank": 1,
+        "confidence": 0.85,
+        "assumptions": [
+          "Contains shrimp and rice with vegetables",
+          "Garnished with cilantro and lemon wedges",
+          "Cooked in a black skillet/pan"
+        ]
+      },
+      {
+        "label": "Shrimp Fried Rice",
+        "rank": 2,
+        "confidence": 0.55,
+        "assumptions": [
+          "Rice-based dish with visible shrimp",
+          "Mixed vegetables including peas and carrots"
+        ]
+      },
+      {
+        "label": "Seafood Rice",
+        "rank": 3,
+        "confidence": 0.4,
+        "assumptions": [
+          "General seafood and rice combination",
+          "Herbs and citrus garnish visible"
+        ]
+      }
+    ]
+  },
+  "foods": [
+    {
+      "label": "Paella",
+      "rank": 1,
+      "confidence": 0.85,
+      "assumptions": [
+        "Contains shrimp and rice with vegetables",
+        "Garnished with cilantro and lemon wedges",
+        "Cooked in a black skillet/pan"
+      ]
+    },
+    {
+      "label": "Shrimp Fried Rice",
+      "rank": 2,
+      "confidence": 0.55,
+      "assumptions": [
+        "Rice-based dish with visible shrimp",
+        "Mixed vegetables including peas and carrots"
+      ]
+    },
+    {
+      "label": "Seafood Rice",
+      "rank": 3,
+      "confidence": 0.4,
+      "assumptions": [
+        "General seafood and rice combination",
+        "Herbs and citrus garnish visible"
+      ]
+    }
+  ],
+  "image": "02-burger-fries.jpg",
+  "modelLabel": "Claude Sonnet 5 (Pass 2 alt)",
+  "pass": 2,
+  "key": "anthropic_claude-sonnet-5__02-burger-fries_jpg"
+}

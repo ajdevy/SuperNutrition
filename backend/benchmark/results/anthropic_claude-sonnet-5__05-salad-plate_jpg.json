@@ -1,0 +1,88 @@
+{
+  "model": "anthropic/claude-sonnet-5",
+  "modelVersion": "anthropic/claude-sonnet-5",
+  "provider": "Amazon Bedrock",
+  "duration": 6698.695600999999,
+  "durationSec": "6.70",
+  "promptTokens": 964,
+  "completionTokens": 381,
+  "totalTokens": 1345,
+  "cost": 0.005738,
+  "raw": "```json\n{\n  \"foods\": [\n    {\n      \"label\": \"Grilled Tofu Salad Bowl\",\n      \"rank\": 1,\n      \"confidence\": 0.85,\n      \"assumptions\": [\"Bowl contains grilled seasoned tofu, quail eggs, edamame, corn,",
+  "parsed": {
+    "foods": [
+      {
+        "label": "Grilled Tofu Salad Bowl",
+        "rank": 1,
+        "confidence": 0.85,
+        "assumptions": [
+          "Bowl contains grilled seasoned tofu, quail eggs, edamame, corn, cherry tomatoes, purple cabbage, cucumber, and lettuce",
+          "Dish appears to be a healthy vegetarian grain/salad bowl"
+        ]
+      },
+      {
+        "label": "Quail Eggs",
+        "rank": 2,
+        "confidence": 0.75,
+        "assumptions": [
+          "Small white boiled eggs identified as quail eggs based on size and shape"
+        ]
+      },
+      {
+        "label": "Sweet Corn",
+        "rank": 3,
+        "confidence": 0.9,
+        "assumptions": [
+          "Yellow kernels appear to be steamed or raw sweet corn"
+        ]
+      },
+      {
+        "label": "Edamame",
+        "rank": 4,
+        "confidence": 0.8,
+        "assumptions": [
+          "Green beans identified as edamame based on color and texture"
+        ]
+      }
+    ]
+  },
+  "foods": [
+    {
+      "label": "Grilled Tofu Salad Bowl",
+      "rank": 1,
+      "confidence": 0.85,
+      "assumptions": [
+        "Bowl contains grilled seasoned tofu, quail eggs, edamame, corn, cherry tomatoes, purple cabbage, cucumber, and lettuce",
+        "Dish appears to be a healthy vegetarian grain/salad bowl"
+      ]
+    },
+    {
+      "label": "Quail Eggs",
+      "rank": 2,
+      "confidence": 0.75,
+      "assumptions": [
+        "Small white boiled eggs identified as quail eggs based on size and shape"
+      ]
+    },
+    {
+      "label": "Sweet Corn",
+      "rank": 3,
+      "confidence": 0.9,
+      "assumptions": [
+        "Yellow kernels appear to be steamed or raw sweet corn"
+      ]
+    },
+    {
+      "label": "Edamame",
+      "rank": 4,
+      "confidence": 0.8,
+      "assumptions": [
+        "Green beans identified as edamame based on color and texture"
+      ]
+    }
+  ],
+  "image": "05-salad-plate.jpg",
+  "modelLabel": "Claude Sonnet 5 (Pass 2 alt)",
+  "pass": 2,
+  "key": "anthropic_claude-sonnet-5__05-salad-plate_jpg"
+}

@@ -1,0 +1,51 @@
+schema = "supernutrition.mobile-api-fixture.v1"
+fixture_id = "cancellation-transferred"
+expected = "accepted"
+description = """
+Cancellation after a provider admitted the payload. The result is suppressed \
+and NO downstream deletion request is issued — no provider adapter exposes an \
+erasure operation, so there is nothing the gateway can ask (owner decision \
+D-01). recallClaimed stays false for the further reason that reporting a \
+deletion REQUEST as a deletion GUARANTEE is a claim the gateway cannot keep. A late provider emission after this point is discarded, never \
+returned — one terminal outcome per attempt."""
+
+[request]
+method = "DELETE"
+path = "/gw/v1/inference/att_07Q4D0W8R3X5T9V1"
+
+[request.headers]
+"X-Request-Id" = "req_07Q4D0W8R3X5T9V1Z2B4"
+"X-Contract-Version" = "mobile-api/v1"
+
+[request.state_at_cancellation]
+transferState = "transferred"
+bytes_received_by_gateway = 388502
+provider_called = true
+inference_in_progress = true
+
+[response]
+status = 202
+
+[response.body]
+attemptId = "att_07Q4D0W8R3X5T9V1"
+transferState = "transferred"
+bytesTransferred = 388502
+recallClaimed = false
+# Owner decision D-01 (2026-08-15): false, not true. No provider adapter exposes
+# an erasure operation, so the gateway sends no deletion request and must not
+# report one. See transfer-states.toml, state `transferred`.
+downstreamDeletionRequested = false
+resultSuppressed = true
+cancelledAt = "2026-07-29T14:22:47Z"
+
+[assertions]
+recall_claimed = false
+downstream_deletion_requested = false
+result_suppressed = true
+late_provider_emission_discarded = true
+late_emission_returned_to_client = false
+payload_disposed = true
+payload_persisted = false
+honest_claim = "The result is suppressed and will not be returned. No deletion request was sent downstream, because no provider adapter exposes an erasure operation. Sent bytes are not claimed to be recalled or deleted."
+user_facing_copy_may_claim_recall = false
+repeat_cancellation_returns_same_record = true

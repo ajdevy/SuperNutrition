@@ -32,15 +32,24 @@ path = "contracts/inference/v1"
 digest = "b63de2850e1213815c8949fdfec82acb54903ca1b149b8bd6bdc748718b64179"
 algorithm = "release-sha256-v2"
 recorded_at_commit = "83547213"
-status = "current"
+status = "superseded"
+superseded_by_commit = "35a4693"
 
 [[entry]]
 release_id = "mobile-api/v1"
 path = "contracts/mobile-api/v1"
-digest = "f42c6e319330cc3d7d79df34b3387a8721b46f99bdcc5f23a516cb57869c2c03"
+digest = "9733a365daf8ad7414de49aea73811d2a81d04701b58cf395644fde087934c06"
 algorithm = "release-sha256-v2"
-recorded_at_commit = "83547213"
-status = "current"
+recorded_at_commit = "daa51abceb20b98dee9e9d692b7cadb5e2ad08e9"
+status = "superseded"
+superseded_by_commit = "pending"
+note = """
+Recomputed with scripts/emit-release-digest.sh against this slice, which \
+modified schema.toml, compatibility-matrix.toml and RELEASE.md. Those three \
+edits are pinned in acknowledged-edits.toml. Whether they should have been a \
+mobile-api/v2 release instead is the contract owner's decision and is not made \
+here. The f42c6e31 row below is kept, not overwritten: it is the only evidence \
+of what this release was before the edits."""
 
 [[entry]]
 release_id = "interaction-policy/v1"
@@ -56,7 +65,100 @@ path = "contracts/product-identity/v1"
 digest = "94fe1c32c33dfc0859bb0f3dfe657948320d659844d82111449a4bef1646b94b"
 algorithm = "release-sha256-v2"
 recorded_at_commit = "83547213"
+status = "superseded"
+superseded_by_commit = "35a4693"
+
+[[entry]]
+release_id = "market-policy/v1"
+path = "contracts/market-policy/v1"
+digest = "740e611fe5a3d21764c22395839951d7678bf29b241c489cd350ba732ee9f1a1"
+algorithm = "release-sha256-v2"
+recorded_at_commit = "daa51abceb20b98dee9e9d692b7cadb5e2ad08e9"
 status = "current"
+note = """
+Published by this slice and, until now, absent from the catalog entirely — the \
+first release to ship unrecorded. Found by scripts/verify-release-catalog.sh, \
+which requires every directory under contracts/ carrying a contract_id to have \
+exactly one current entry. An unrecorded release is one this catalog cannot \
+detect drift in, which is the failure it exists to prevent."""
+
+[[entry]]
+release_id = "mobile-api/v1"
+path = "contracts/mobile-api/v1"
+digest = "c51581caee9f78ea06640b06fb2084dd1acf242b616048841ab6f96b5de04eb8"
+algorithm = "release-sha256-v2"
+recorded_at_commit = "daa51abceb20b98dee9e9d692b7cadb5e2ad08e9"
+status = "superseded"
+superseded_by_commit = "pending"
+note = """
+Owner decisions D-01 (#48) and D-02 (#50), 2026-08-15. Four files changed under \
+the existing acknowledgement mechanism rather than a new release: \
+transfer-states.toml (`transferred` entered on provider admission; \
+downstream_deletion_requested false; both honest_claims corrected), \
+fixtures/cancellation-transferred.toml (follows the state change), \
+gateway-request.toml (validation order split into pre- and post-authentication \
+phases), and compatibility-matrix.toml (digest refresh).
+
+Not published as mobile-api/v2 by owner decision: v1 has exactly one consumer, \
+the mobile client in this repository, and no build has reached a user. The \
+acknowledgements expire 2026-09-30 (#47), and a real v2 is required before the \
+first external consumer or any shipped build."""
+
+[[entry]]
+release_id = "mobile-api/v1"
+path = "contracts/mobile-api/v1"
+digest = "748a4b3e21f618025ebcd81f322ebefa3444570f2adc67aa2778fd36f3dea32c"
+algorithm = "release-sha256-v2"
+recorded_at_commit = "daa51abceb20b98dee9e9d692b7cadb5e2ad08e9"
+status = "superseded"
+superseded_by_commit = "pending"
+note = """
+Adversarial pre-review audit finding F-04. The D-01 amendment flipped \
+downstreamDeletionRequested to false in the fixture BODY and rewrote the state's \
+honest_claim, but left the fixture's own description and its machine-readable \
+assertions.honest_claim still saying "Deletion was requested downstream" — the \
+exact privacy overclaim D-01 exists to remove, in the field a client derives \
+user-facing copy from. Both corrected to match the body and the state \
+definition."""
+
+[[entry]]
+release_id = "mobile-api/v1"
+path = "contracts/mobile-api/v1"
+digest = "dbce94511419cf1d54fcc9e52c01314f238b808f6d0603032628365dc0046177"
+algorithm = "release-sha256-v2"
+recorded_at_commit = "daa51abceb20b98dee9e9d692b7cadb5e2ad08e9"
+status = "superseded"
+superseded_by_commit = "pending"
+note = """
+Live-head review of #50. Two corrections to gateway-request.toml, both making \
+the published text match what executes rather than changing behaviour:
+
+The flat `order` and the `post_authentication` phase listed `request-id-replay` \
+before the byte checks; the code runs the byte checks first, so a malformed \
+payload does not burn a one-time request id on its way to being refused. Both \
+orders are safe — neither reaches a provider — but the published sequence must \
+be the one that runs.
+
+The `pre_authentication` comment now names where `content-length` and \
+`streamed-size-guard` are actually enforced: Fastify's `bodyLimit` and \
+@fastify/multipart's `limits`, not gateway code. A reviewer looking for a \
+hand-written validator concluded the guards were absent; the unused \
+`UploadValidator` interface that invited that reading has been removed."""
+
+[[entry]]
+release_id = "mobile-api/v1"
+path = "contracts/mobile-api/v1"
+digest = "2e2775c939219557ee967c128f384dd149c82e6b6e8c20923c8d347efe59d2f3"
+algorithm = "release-sha256-v2"
+recorded_at_commit = "daa51abceb20b98dee9e9d692b7cadb5e2ad08e9"
+status = "current"
+note = """
+handover-6 M-04. The release notes still summarised the transferred-cancellation \
+fixture as "deletion requested" while the state definition, the fixture body and \
+its assertions all say no deletion request is issued. Corrected, and \
+verify-mobile-api-contract.sh gained a coherence check that fails when the state \
+definition, the fixture body, the fixture assertions, the fixture description and \
+the release notes disagree about it — the drift has now happened twice."""
 
 # --- superseded --------------------------------------------------------------
 #
@@ -114,3 +216,68 @@ status = "superseded"
 superseded_by_commit = "83547213"
 reproducible = true
 note = "the only one of the four that is checkable: its hashed set was unchanged by 83547213, so the recorded value recomputes exactly from the 7e17932c bytes. Its digest moved purely because schema.toml gained ten normative [fields.*] blocks — a pure content change to a published release"
+
+[[entry]]
+release_id = "mobile-api/v1"
+path = "contracts/mobile-api/v1"
+digest = "f42c6e319330cc3d7d79df34b3387a8721b46f99bdcc5f23a516cb57869c2c03"
+algorithm = "release-sha256-v2"
+recorded_at_commit = "83547213"
+status = "superseded"
+superseded_by_commit = "pending"
+reproducible = true
+note = """
+The digest this release carried when the catalog was written. It recomputes \
+exactly from the bytes at c091a4382725 — the value was right; the tree moved \
+under it. This slice modified schema.toml, compatibility-matrix.toml and \
+RELEASE.md, taking the release to 9733a365. The catalog recorded neither the \
+new value nor this supersession, and no script parsed the catalog, so the drift \
+was invisible on both sides: the file said "current" about bytes that no longer \
+existed. scripts/verify-release-catalog.sh now recomputes every current entry."""
+
+# --- arrived with origin/main 35a4693 ----------------------------------------
+#
+# Three rows this branch did not cause. main moved on while the slice was open:
+# it edited contracts/inference/v1 and contracts/product-identity/v1, and
+# published contracts/inference/v2. Their predecessors above are marked
+# superseded rather than rewritten, which is the whole point of the file.
+
+[[entry]]
+release_id = "photo-inference-engine/v1"
+path = "contracts/inference/v1"
+digest = "b92b8dc119d39315e5e439f35d0f26b1371cde99e106c088699691d6d53cb7c5"
+algorithm = "release-sha256-v2"
+recorded_at_commit = "35a4693"
+status = "current"
+
+[[entry]]
+release_id = "product-identity/v1"
+path = "contracts/product-identity/v1"
+digest = "c1e90150c971712735eb3dee95d80d86d813530fdd32400452513304a71d2c66"
+algorithm = "release-sha256-v2"
+recorded_at_commit = "35a4693"
+status = "current"
+
+[[entry]]
+release_id = "inference-evidence/v2"
+path = "contracts/inference/v2"
+digest = "e2d3ec9fdad8d8e292fdb413647509e6ba813809f02ef31d11ea0c3f583e4c59"
+algorithm = "release-sha256-v2"
+recorded_at_commit = "35a4693"
+status = "current"
+note = """
+Published by main at a path that does not match its own contract_id: the schema
+declares `inference-evidence`, and the path says `inference`. Recorded here as
+it actually ships. The mobile slice relocates it to contracts/inference-evidence/v2
+and supersedes this row."""
+
+[[entry]]
+release_id = "inference-evidence/v3"
+path = "contracts/inference/v3"
+digest = "aeafcceddf4a9d49791113e3512fb9ca1f630bc7b267f11b50b4d33b7e7e37e4"
+algorithm = "release-sha256-v2"
+recorded_at_commit = "a9b6ecf"
+status = "current"
+note = """
+Published by main in Epic 7 (#37) and absent from the catalog until now. This
+branch records it; it does not author it."""

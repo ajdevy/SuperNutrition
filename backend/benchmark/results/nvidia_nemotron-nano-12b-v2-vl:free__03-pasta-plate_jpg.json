@@ -1,0 +1,108 @@
+{
+  "model": "nvidia/nemotron-nano-12b-v2-vl:free",
+  "modelVersion": "nvidia/nemotron-nano-12b-v2-vl:free",
+  "provider": "Nvidia",
+  "duration": 503.3878879999975,
+  "durationSec": "0.50",
+  "promptTokens": 1882,
+  "completionTokens": 273,
+  "totalTokens": 2155,
+  "cost": 0,
+  "raw": "```json\n{\n  \"foods\": [\n    {\n      \"label\": \"Shrimp\",\n      \"rank\": 1,\n      \"confidence\": 0.95,\n      \"assumptions\": [\"The shrimp are cooked and seasoned, likely sautéed or grilled.\"]\n    },\n    {\n  ",
+  "rawFull": "```json\n{\n  \"foods\": [\n    {\n      \"label\": \"Shrimp\",\n      \"rank\": 1,\n      \"confidence\": 0.95,\n      \"assumptions\": [\"The shrimp are cooked and seasoned, likely sautéed or grilled.\"]\n    },\n    {\n      \"label\": \"Spaghetti\",\n      \"rank\": 2,\n      \"confidence\": 0.9,\n      \"assumptions\": [\"The spaghetti is cooked and mixed with other ingredients.\"]\n    },\n    {\n      \"label\": \"Cherry Tomatoes\",\n      \"rank\": 3,\n      \"confidence\": 0.85,\n      \"assumptions\": [\"The cherry tomatoes are halved and appear to be cooked.\"]\n    },\n    {\n      \"label\": \"Green Onions\",\n      \"rank\": 4,\n      \"confidence\": 0.8,\n      \"assumptions\": [\"The green onions are finely chopped and used as a garnish.\"]\n    },\n    {\n      \"label\": \"Garlic\",\n      \"rank\": 5,\n      \"confidence\": 0.75,\n      \"assumptions\": [\"The garlic is minced and likely sautéed with the shrimp.\"]\n    }\n  ]\n}\n```\n",
+  "reasoningPresent": false,
+  "finishReason": "stop",
+  "maxTokens": 2048,
+  "parsed": {
+    "foods": [
+      {
+        "label": "Shrimp",
+        "rank": 1,
+        "confidence": 0.95,
+        "assumptions": [
+          "The shrimp are cooked and seasoned, likely sautéed or grilled."
+        ]
+      },
+      {
+        "label": "Spaghetti",
+        "rank": 2,
+        "confidence": 0.9,
+        "assumptions": [
+          "The spaghetti is cooked and mixed with other ingredients."
+        ]
+      },
+      {
+        "label": "Cherry Tomatoes",
+        "rank": 3,
+        "confidence": 0.85,
+        "assumptions": [
+          "The cherry tomatoes are halved and appear to be cooked."
+        ]
+      },
+      {
+        "label": "Green Onions",
+        "rank": 4,
+        "confidence": 0.8,
+        "assumptions": [
+          "The green onions are finely chopped and used as a garnish."
+        ]
+      },
+      {
+        "label": "Garlic",
+        "rank": 5,
+        "confidence": 0.75,
+        "assumptions": [
+          "The garlic is minced and likely sautéed with the shrimp."
+        ]
+      }
+    ]
+  },
+  "foods": [
+    {
+      "label": "Shrimp",
+      "rank": 1,
+      "confidence": 0.95,
+      "assumptions": [
+        "The shrimp are cooked and seasoned, likely sautéed or grilled."
+      ]
+    },
+    {
+      "label": "Spaghetti",
+      "rank": 2,
+      "confidence": 0.9,
+      "assumptions": [
+        "The spaghetti is cooked and mixed with other ingredients."
+      ]
+    },
+    {
+      "label": "Cherry Tomatoes",
+      "rank": 3,
+      "confidence": 0.85,
+      "assumptions": [
+        "The cherry tomatoes are halved and appear to be cooked."
+      ]
+    },
+    {
+      "label": "Green Onions",
+      "rank": 4,
+      "confidence": 0.8,
+      "assumptions": [
+        "The green onions are finely chopped and used as a garnish."
+      ]
+    },
+    {
+      "label": "Garlic",
+      "rank": 5,
+      "confidence": 0.75,
+      "assumptions": [
+        "The garlic is minced and likely sautéed with the shrimp."
+      ]
+    }
+  ],
+  "attempts": [],
+  "image": "03-pasta-plate.jpg",
+  "modelLabel": "Nemotron Nano 12B v2 VL (free, candidate)",
+  "pass": 1,
+  "key": "nvidia_nemotron-nano-12b-v2-vl:free__03-pasta-plate_jpg",
+  "session": "free-roster"
+}

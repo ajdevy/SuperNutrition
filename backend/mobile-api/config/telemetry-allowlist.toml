@@ -1,0 +1,35 @@
+# AD-14: telemetry fields are versioned and allowlisted. The logger's serializer
+# is built from this list and drops everything else, because an allowlist
+# implemented as a review convention is not an allowlist.
+#
+# The canonical list lives in packages/shared/src/constants/telemetry-fields.ts
+# and is asserted by a negative test that feeds every forbidden field and proves
+# none is emitted.
+schema = "supernutrition.backend.telemetry-allowlist.v1"
+schema_version = 1
+allowlist_version = "2026-07-29.1"
+
+allowed = [
+  "correlationId", "requestId", "attemptId", "effectId",
+  "route", "method", "statusCode",
+  "capabilityTier", "durationBucket", "resourceBucket",
+  "outcome", "actionCode", "sourceCoverageCode",
+  "modelId", "modelProfileVersion", "catalogDatasetVersion",
+  "configurationVersion", "contractVersion",
+  "environment", "authMode",
+  "marketJurisdiction", "processingRegion",
+  "failureCode", "passNumber",
+]
+
+# Never emitted. Present so the negative test has an explicit denominator.
+forbidden = [
+  "payload", "photo", "imageBytes", "photoDigest",
+  "filename", "path", "label", "foodLabel", "transcript",
+  "prompt", "promptText", "responseBody", "requestBody",
+  "headers", "authorization", "token", "refreshToken", "apiKey",
+  "userId", "email",
+]
+
+# G-6 gates server-side correction telemetry. It stays off until that closes.
+[features]
+correction_telemetry_enabled = false

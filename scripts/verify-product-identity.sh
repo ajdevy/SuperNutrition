@@ -5,6 +5,7 @@ script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="$(cd "$script_dir/.." && pwd)"
 mobile_identity="${SUPERNUTRITION_MOBILE_IDENTITY:-$repo_root/mobile/config/product-identity.toml}"
 identity_contract="${SUPERNUTRITION_IDENTITY_CONTRACT:-$repo_root/contracts/product-identity/v1/metadata.toml}"
+RELEASE_DIGEST_LIB="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib" \
 MOBILE_IDENTITY="$mobile_identity" \
 IDENTITY_CONTRACT="$identity_contract" \
 python3 - <<'PY'
@@ -12,8 +13,10 @@ import os
 import re
 import sys
 import tomllib
-from hashlib import sha256
 from pathlib import Path
+
+sys.path.insert(0, str(Path(os.environ["RELEASE_DIGEST_LIB"])))
+import release_digest as release_digest_module  # noqa: E402
 
 mobile_path = Path(os.environ["MOBILE_IDENTITY"])
 contract_path = Path(os.environ["IDENTITY_CONTRACT"])
@@ -89,25 +92,17 @@ required_fixture_ids = {
 if {case.get("id") for case in fixtures.get("case", [])} != required_fixture_ids:
     fail("product-identity fixture inventory drifted")
 
-compatibility_bytes = re.sub(
-    rb'(?m)^digest\s*=\s*"(?:[a-f0-9]{64}|<release-digest>)"\s*$',
-    b'digest = "<release-digest>"',
-    compatibility_path.read_bytes(),
-)
-release_digest = sha256()
-for relative, content in sorted(
-    (
-        ("compatibility.toml", compatibility_bytes),
-        ("fixtures/identities.toml", fixture_path.read_bytes()),
-        ("metadata.toml", contract_path.read_bytes()),
-        ("RELEASE.md", release_path.read_bytes()),
-        ("schema.toml", schema_path.read_bytes()),
-    )
-):
-    release_digest.update(relative.encode("utf-8"))
-    release_digest.update(b"\0")
-    release_digest.update(content)
-if compatibility.get("digest") != release_digest.hexdigest():
+# Computed by scripts/lib/release_digest.py, not re-derived here.
+#
+# This file carried its own copy of the algorithm: the same sort, the same
+# `path + NUL + content` loop, and its own hardcoded member list. That is the
+# duplication release_digest.py was written to end — two implementations of one
+# number drift, and the one that drifts is the one nobody is looking at. It also
+# meant this check could not follow the release onto a newer algorithm, and its
+# hardcoded five-member list would have silently ignored a sixth file.
+computed_digest = release_digest_module.compute(contract_root)
+if compatibility.get("digest") != computed_digest:
+
     fail("product-identity compatibility digest is stale")
 
 expected_visible_values = {
@@ -230,10 +225,42 @@ if f'BlueprintIdentifier = "{production_target_id}"' not in production_scheme or
         'BuildableName = "SuperNutrition.app"' not in production_scheme:
     fail("iOS production scheme does not build the production product")
 
+# AD-37: web and backend begin in `preselection` and change atomically to
+# `active` in their own reviewed toolchain stories. Freezing them at
+# `preselection` would make that transition impossible, so this asserts the
+# record is INTERNALLY CONSISTENT for whichever state it declares, and that an
+# active product actually carries its activation evidence.
 for relative in ("web/landing/product-lifecycle.toml", "backend/mobile-api/product-lifecycle.toml"):
     lifecycle = tomllib.loads((repo_root / relative).read_text(encoding="utf-8"))
-    if lifecycle.get("lifecycle") != "preselection" or lifecycle.get("quality_claim") is not False:
-        fail(f"{relative} must remain a non-claiming preselection root")
+    state = lifecycle.get("lifecycle")
+
+    if state == "preselection":
+        if lifecycle.get("quality_claim") is not False:
+            fail(f"{relative} preselection must not claim quality")
+        if lifecycle.get("production_source_count") != 0:
+            fail(f"{relative} preselection must have no production source")
+        if lifecycle.get("runtime") != "unselected":
+            fail(f"{relative} preselection must not select a runtime")
+    elif state == "active":
+        if lifecycle.get("quality_claim") is not True:
+            fail(f"{relative} active must claim quality")
+        for required in ("dependency_manifest", "lock_state", "runtime",
+                         "deployable_artifact", "quality_entrypoint", "product_inventory"):
+            value = lifecycle.get(required)
+            if not value or value == "absent" or value == "unselected":
+                fail(f"{relative} active is missing activation evidence: {required}")
+        if lifecycle.get("production_source_count", 0) <= 0:
+            fail(f"{relative} active must declare production source")
+        inventory_path = repo_root / relative.replace("product-lifecycle.toml", "product-inventory.toml")
+        if not inventory_path.is_file():
+            fail(f"{relative} active requires a product inventory")
+        inventory = tomllib.loads(inventory_path.read_text(encoding="utf-8"))
+        if inventory.get("lifecycle") != "active":
+            fail(f"{relative} inventory disagrees with the lifecycle record")
+        if not inventory.get("unit"):
+            fail(f"{relative} active inventory must be nonempty")
+    else:
+        fail(f"{relative} declares an unknown lifecycle state: {state!r}")
 
 print("product-identity: OK (mobile, web landing, store, and technical identifiers agree)")
 PY
