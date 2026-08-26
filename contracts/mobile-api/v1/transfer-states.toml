@@ -1,0 +1,148 @@
+schema = "supernutrition.mobile-api-transfer-states.v1"
+schema_version = 1
+release = "v1"
+language_neutral = true
+executable = false
+
+# Transfer states and cancellation.
+#
+# AD-6 models remote transfer as PreTransfer -> Transferring -> Transferred.
+# Cancellation behaviour differs per state, and the difference is the whole
+# point: what the gateway can honestly promise changes once bytes have left.
+
+[[state]]
+id = "pre-transfer"
+order = 1
+description = "Consent decided, transfer not started. No bytes have left the device."
+bytes_received_by_gateway = false
+provider_called = false
+cancellation_effect = "no-bytes-sent"
+cancellation_status = 204
+downstream_deletion_requested = false
+honest_claim = "Nothing was sent. This is a complete guarantee."
+
+[[state]]
+id = "transferring"
+order = 2
+description = """
+Bytes in flight toward a provider. The gateway holds a partial or in-progress \
+payload and no provider has admitted it."""
+bytes_received_by_gateway = "partial"
+# "in-flight", not false. A provider has been reached and bytes are on the wire;
+# what has not happened is admission. `false` here would have been the same
+# overstatement in the opposite direction as the old `transferred`, and it is why
+# the honest_claim below could not be backed. Mirrors the existing string form of
+# `bytes_received_by_gateway`.
+provider_called = "in-flight"
+cancellation_effect = "abort-transport-and-discard-partial-bytes"
+cancellation_status = 202
+downstream_deletion_requested = false
+honest_claim = """
+Transport was aborted and the bytes the gateway still held were discarded. The \
+gateway does NOT claim no provider saw them: bytes were in flight and admission \
+was never confirmed, so what a provider received is unknown."""
+
+[[state]]
+id = "transferred"
+order = 3
+description = """
+A provider admitted the payload in full. Inference may be in progress or \
+complete. Entered on admission, never on hand-off: an attempt a provider \
+refused, timed out on, or reset never reaches this state."""
+bytes_received_by_gateway = true
+provider_called = true
+cancellation_effect = "suppress-result"
+cancellation_status = 202
+# false, not true. Owner decision D-01 (2026-08-15).
+#
+# This field previously required `true`, describing a deletion request the
+# product cannot send: no provider adapter exposes an erasure operation, and
+# whether one ever will is a provider/DPA/legal question held under G-4. The
+# gateway reported `true` here by inferring it from the fact that a provider had
+# been called — an erasure claim nobody had made, in the one response a user
+# reads to learn what became of their photo.
+#
+# The code was corrected to report the truth (H-02). This is the contract being
+# corrected to match, rather than a published document continuing to require a
+# claim the implementation is right to refuse.
+#
+# It becomes `true` only when an adapter can actually request erasure and does,
+# exactly once, for this attempt. That is a capability change gated on G-4, not
+# a wording change.
+downstream_deletion_requested = false
+honest_claim = """
+The result is suppressed and will not be returned. NO deletion request was sent \
+downstream: no provider adapter exposes an erasure operation, so there is \
+nothing the gateway can ask. It does NOT claim the bytes were recalled or \
+deleted, because it cannot make either true."""
+
+# ---------------------------------------------------------------------------
+# cancellation endpoint
+# ---------------------------------------------------------------------------
+
+[endpoint]
+method = "DELETE"
+path = "/gw/v1/inference/{attemptId}"
+idempotent = true
+repeat_cancellation = "returns-the-same-terminal-record"
+
+[[response_field]]
+name = "attemptId"
+type = "string"
+optional = false
+pattern = "^att_[A-Za-z0-9]{16,64}$"
+description = "Echoed from the path. Binds the cancellation record to exactly one attempt."
+
+[[response_field]]
+name = "transferState"
+type = "string"
+optional = false
+enum = ["pre-transfer", "transferring", "transferred"]
+description = "The state at the moment cancellation was processed, not when it was requested."
+
+[[response_field]]
+name = "bytesTransferred"
+type = "integer"
+optional = false
+minimum = 0
+description = "Bytes the gateway actually received. Zero for pre-transfer."
+
+[[response_field]]
+name = "recallClaimed"
+type = "boolean"
+optional = false
+enum = [false]
+description = """
+ALWAYS false, in every state, by contract. Reporting a deletion request as a \
+deletion guarantee is a claim the gateway cannot keep. No user-facing copy \
+derived from this response may say bytes were recalled (AD-8 honest limits)."""
+
+[[response_field]]
+name = "downstreamDeletionRequested"
+type = "boolean"
+optional = false
+description = "True only when a provider actually received the payload and a deletion request was issued."
+
+[[response_field]]
+name = "resultSuppressed"
+type = "boolean"
+optional = false
+description = "True when inference had produced or would produce a result that is now discarded."
+
+[[response_field]]
+name = "cancelledAt"
+type = "string"
+optional = false
+format = "RFC 3339 UTC instant"
+description = "When cancellation was processed by the gateway."
+
+[invariants]
+# A late provider emission after cancellation is discarded, never returned:
+# each attempt has exactly one terminal outcome (AD-6).
+late_emission_after_cancellation = "discarded"
+one_terminal_outcome_per_attempt = true
+recall_never_claimed = true
+payload_disposed_on_every_terminal_path = true
+disposal_paths = ["success", "error", "timeout", "cancellation"]
+duplicate_effect_rejected = true
+duplicate_effect_makes_provider_call = false

@@ -1,0 +1,38 @@
+{
+  "model": "openai/gpt-4o-mini",
+  "modelVersion": "openai/gpt-4o-mini",
+  "provider": "OpenAI",
+  "duration": 1683.3961809999998,
+  "durationSec": "1.68",
+  "promptTokens": 25586,
+  "completionTokens": 63,
+  "totalTokens": 25649,
+  "cost": 0.0038757,
+  "raw": "{\n  \"foods\": [\n    {\n      \"label\": \"salad\",\n      \"rank\": 1,\n      \"confidence\": 0.9,\n      \"assumptions\": [\"Contains various vegetables and fruits, likely a mixed salad with avocado, tomatoes, and s",
+  "parsed": {
+    "foods": [
+      {
+        "label": "salad",
+        "rank": 1,
+        "confidence": 0.9,
+        "assumptions": [
+          "Contains various vegetables and fruits, likely a mixed salad with avocado, tomatoes, and sweet potatoes."
+        ]
+      }
+    ]
+  },
+  "foods": [
+    {
+      "label": "salad",
+      "rank": 1,
+      "confidence": 0.9,
+      "assumptions": [
+        "Contains various vegetables and fruits, likely a mixed salad with avocado, tomatoes, and sweet potatoes."
+      ]
+    }
+  ],
+  "image": "01-salad-bowl.jpg",
+  "modelLabel": "GPT-4o-mini (Pass 1 fallback)",
+  "pass": 1,
+  "key": "openai_gpt-4o-mini__01-salad-bowl_jpg"
+}

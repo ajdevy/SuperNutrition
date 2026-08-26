@@ -1,0 +1,10 @@
+node_modules/
+.npm-cache/
+dist/
+coverage/
+*.tsbuildinfo
+.env
+.env.local
+
+# Local dev-only secrets (throwaway keypair). Never committed.
+.local/

@@ -58,44 +58,69 @@ lifecycle_digest="$(digest_paths \
   mobile/product-lifecycle.toml \
   web/landing/product-lifecycle.toml \
   backend/mobile-api/product-lifecycle.toml)"
-contract_catalog_digest="$(digest_paths \
-  contracts/mobile-api/v1/schema.toml \
-  contracts/mobile-api/v1/compatibility-matrix.toml \
-  contracts/mobile-api/v1/fixtures/empty-analysis-request.toml \
-  contracts/inference/v1/schema.toml \
-  contracts/inference/v1/compatibility-matrix.toml \
-  contracts/inference/v1/RELEASE.md \
-  contracts/inference/v1/fixtures/capability-ready.json \
-  contracts/inference/v1/fixtures/abstention-result.json \
-  contracts/inference/v1/fixtures/candidate-result.json \
-  contracts/inference/v1/fixtures/failure-result.json \
-  contracts/inference/v1/fixtures/telemetry-event.json \
-  contracts/inference/v2/schema.toml \
-  contracts/inference/v2/compatibility-matrix.toml \
-  contracts/inference/v2/RELEASE.md \
-  contracts/inference/v2/fixtures/capability-ready.json \
-  contracts/inference/v2/fixtures/photo-component-estimated-result.json \
-  contracts/inference/v2/fixtures/photo-component-not-evaluable-result.json \
-  contracts/inference/v2/fixtures/text-component-not-evaluable-result.json \
-  contracts/inference/v2/fixtures/abstention-result.json \
-  contracts/inference/v2/fixtures/failure-result.json \
-  contracts/inference/v2/fixtures/telemetry-event.json \
-  contracts/inference/v3/schema.toml \
-  contracts/inference/v3/compatibility-matrix.toml \
-  contracts/inference/v3/RELEASE.md \
-  contracts/inference/v3/fixtures/request-photo.json \
-  contracts/inference/v3/fixtures/request-text.json \
-  contracts/inference/v3/fixtures/capability-ready-photo.json \
-  contracts/inference/v3/fixtures/capability-ready-text.json \
-  contracts/inference/v3/fixtures/photo-component-estimated-result.json \
-  contracts/inference/v3/fixtures/photo-component-not-evaluable-result.json \
-  contracts/inference/v3/fixtures/text-candidate-result.json \
-  contracts/inference/v3/fixtures/abstention-result.json \
-  contracts/inference/v3/fixtures/failure-result.json \
-  contracts/inference/v3/fixtures/telemetry-event.json \
-  contracts/interaction-policy/v1/schema.toml \
-  contracts/interaction-policy/v1/compatibility.toml \
-  contracts/interaction-policy/v1/fixtures/defaults.toml)"
+# Per-release digests rather than a hand-listed subset of files.
+#
+# This block used to name four of contracts/mobile-api/v1's eighteen declared
+# files, so an edit to gateway-response.toml, the error taxonomy, transfer
+# states, consent receipts or any fixture left the fingerprint unchanged — a
+# same-SHA evidence record that could not see most of the contract it claimed to
+# cover. Deriving from each release's own digest fixes that permanently: a
+# release digest covers every file the release declares, so nothing can be added
+# to a release and stay outside the fingerprint.
+#
+# The catalog and the scripts that define and enforce release identity are
+# included for the same reason: a fingerprint that cannot see the rules is not
+# evidence about them.
+release_digests() {
+    local release
+    for release in "$@"; do
+        printf '%s\0%s\0' "$release" "$("${repo_root}/scripts/emit-release-digest.sh" "${repo_root}/${release}")"
+    done
+}
+
+# The release list is DERIVED from the catalog, not retyped here.
+#
+# It was seven hand-maintained lines, so publishing a release and forgetting to
+# add one left the fingerprint silently covering less than it claimed — and a
+# fingerprint that omits a release is exactly as green as one that includes it.
+# The catalog already has to list every current release
+# (verify-release-catalog.sh enforces that), so the catalog IS the list.
+catalog_release_paths() {
+    SUPERNUTRITION_CATALOG_ROOT="$repo_root" python3 -c '
+import os
+import pathlib
+import sys
+import tomllib
+
+catalog = pathlib.Path(os.environ["SUPERNUTRITION_CATALOG_ROOT"]) / "contracts/release-catalog/v1/digests.toml"
+document = tomllib.loads(catalog.read_text(encoding="utf-8"))
+paths = sorted({e["path"] for e in document.get("entry", []) if e.get("status") == "current"})
+if not paths:
+    sys.exit("release catalog lists no current entries; refusing to fingerprint nothing")
+print("\n".join(paths))
+'
+}
+
+# Captured BEFORE use, so the failure is a failure.
+#
+# This read `release_digests $(catalog_release_paths)`, with the substitution in
+# argument position — where its exit status is discarded. An empty catalog
+# printed "refusing to fingerprint nothing", ran the loop over zero releases,
+# wrote the file and exited 0: a fingerprint silently covering nothing, which is
+# the defect class deriving the list was meant to remove.
+if ! release_paths="$(catalog_release_paths)"; then
+    exit 1
+fi
+
+contract_catalog_digest="$( { release_digests \
+  $release_paths
+  digest_paths \
+    contracts/release-catalog/v1/digests.toml \
+    contracts/release-catalog/v1/acknowledged-edits.toml \
+    scripts/lib/release_digest.py \
+    scripts/emit-release-digest.sh \
+    scripts/verify-release-catalog.sh \
+    scripts/verify-release-immutability.sh; } | hash_stream)"
 product_identity_digest="$(digest_paths \
 	contracts/product-identity/v1/schema.toml \
 	contracts/product-identity/v1/compatibility.toml \

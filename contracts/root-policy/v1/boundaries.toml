@@ -3,6 +3,18 @@ release = "v1"
 validator = "scripts/verify-root-boundaries.sh"
 
 [[executable]]
+path = "scripts/verify-owner-decisions.sh"
+purpose = "read-only check that every recorded owner decision is dated, attributed and sourced"
+mutates_repository = false
+test_entrypoint = "scripts/owner-decisions-negative-fixtures.sh"
+
+[[executable]]
+path = "scripts/owner-decisions-negative-fixtures.sh"
+purpose = "negative fixtures for undated, unattributed or unsourced owner decisions"
+mutates_repository = false
+test_entrypoint = "scripts/owner-decisions-negative-fixtures.sh"
+
+[[executable]]
 path = "scripts/verify-root-boundaries.sh"
 purpose = "read-only root and contract boundary validation"
 mutates_repository = false
@@ -13,6 +25,18 @@ path = "scripts/root-boundary-negative-fixtures.sh"
 purpose = "negative fixtures for forbidden root and contract edges"
 mutates_repository = false
 test_entrypoint = "scripts/root-boundary-negative-fixtures.sh"
+
+[[executable]]
+path = "scripts/dev-test-backends.sh"
+purpose = "starts the disposable Redis and PostgreSQL the integration lanes need"
+mutates_repository = false
+test_entrypoint = "scripts/dev-test-backends.sh"
+
+[[executable]]
+path = "scripts/quality-manifest-negative-fixtures.sh"
+purpose = "negative fixtures for typed product-manifest parsing in the backend quality gate"
+mutates_repository = false
+test_entrypoint = "scripts/quality-manifest-negative-fixtures.sh"
 
 [[executable]]
 path = "scripts/verify-ci-policy.sh"
@@ -236,3 +260,27 @@ initial_lifecycle = "preselection"
 path = "contracts"
 owner = "contract"
 content = "immutable-language-neutral-data-only"
+
+[[executable]]
+path = "scripts/release-catalog-negative-fixtures.sh"
+purpose = "negative fixtures for catalog provenance and algorithm agreement"
+mutates_repository = false
+test_entrypoint = "scripts/release-catalog-negative-fixtures.sh"
+
+[[executable]]
+path = "scripts/verify-release-catalog.sh"
+purpose = "read-only recomputation of every current release digest recorded in the catalog"
+mutates_repository = false
+test_entrypoint = "scripts/verify-release-catalog.sh"
+
+[[executable]]
+path = "scripts/secret-scan-fixtures.sh"
+purpose = "negative fixtures for the secret-scan hook: blocked key shapes and allowed placeholders"
+mutates_repository = false
+test_entrypoint = "scripts/secret-scan-fixtures.sh"
+
+[[executable]]
+path = "scripts/benchmark-negative-fixtures.sh"
+purpose = "negative fixtures for the model benchmark: failure exit code, request timeout, success-only averages"
+mutates_repository = false
+test_entrypoint = "scripts/benchmark-negative-fixtures.sh"

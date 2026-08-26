@@ -1,0 +1,24 @@
+# Signed ConfigurationSnapshot versions this deployment honours (AD-20).
+#
+# This is the policy set that produced the consent disclosure the user was
+# shown — NOT the model roster in model-profiles.toml. Rotating a model is an
+# operational change with no user-facing disclosure and must not invalidate
+# outstanding consent receipts, so the two versions are separate documents.
+#
+# `contracts/mobile-api/v1/consent-receipt.toml` requires the receipt's
+# `configurationVersion` to name the snapshot in force. The released fixtures
+# carry `cfg/2026-07-26.4`, so a deployment serving the v1 contract must accept
+# it or refuse contract-valid traffic.
+#
+# Adding a version here is a statement that the disclosure it produced is one
+# this deployment still honours. Removing one invalidates every receipt issued
+# under it, which is correct when a disclosure is withdrawn and wrong when a
+# model changes.
+
+schema_version = 1
+
+current_version = "cfg/2026-07-26.4"
+
+# Receipts issued under a previous snapshot remain valid through their own
+# expiry: the user was shown that disclosure and it was true when they agreed.
+supported_versions = ["cfg/2026-07-26.4"]

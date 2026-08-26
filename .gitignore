@@ -26,3 +26,8 @@ mobile/apps/iosApp/Pods/
 # the repository's documented command entrypoints.
 **/.idea/
 **/xcuserdata/
+
+# npm caches and their debug logs are machine-local build residue, never review
+# evidence. `backend/mobile-api/.npmrc` points npm at a product-local cache, but
+# an npm invocation from any other directory still writes one where it runs.
+**/.npm-cache/

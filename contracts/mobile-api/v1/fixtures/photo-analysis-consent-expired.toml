@@ -1,0 +1,76 @@
+schema = "supernutrition.mobile-api-fixture.v1"
+fixture_id = "photo-analysis-consent-expired"
+expected = "rejected"
+reason = "consent-expired"
+description = """
+The receipt's expiresAt is in the past at RESOLUTION time. Expiry is evaluated \
+when the request is handled, not when the receipt was issued, so a receipt that \
+expires in flight is rejected. Zero provider calls."""
+
+[request]
+method = "POST"
+path = "/gw/v1/inference/photo"
+content_type = "multipart/form-data"
+
+[request.headers]
+"X-Request-Id" = "req_04M1A7T5N0U2Q6S8W9Y1"
+"X-Contract-Version" = "mobile-api/v1"
+
+[request.payload_part]
+content_type = "image/jpeg"
+byte_length = 355019
+digest = "sha256:3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f8091a2b"
+exif_stripped = true
+gps_stripped = true
+
+[request.context]
+contractVersion = "mobile-api/v1"
+attemptId = "att_04M1A7T5N0U2Q6S8"
+effectId = "eff_04M1A7T5N0U2Q6S8"
+modality = "photo"
+claimedMarketJurisdiction = "DE"
+
+[request.context.consentReceipt]
+version = "1"
+attemptId = "att_04M1A7T5N0U2Q6S8"
+digest = "sha256:3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f8091a2b"
+modality = "photo"
+purpose = "food-identification"
+decision = "granted"
+marketJurisdiction = "DE"
+processingRegion = "eu-central"
+consentCopyVersion = "photo-consent/3"
+retentionVersion = "retention/2"
+retentionDays = 0
+configurationVersion = "cfg/2026-07-26.4"
+recordedAt = "2026-07-29T09:00:00Z"
+expiresAt = "2026-07-29T09:15:00Z"
+
+[request.context.inferenceContext]
+catalogCountry = "DE"
+mealType = "breakfast"
+locale = "de-DE"
+measurementSystem = "metric"
+configurationVersion = "cfg/2026-07-26.4"
+
+[request.evaluation]
+resolved_at = "2026-07-29T09:41:12Z"
+receipt_age_seconds = 2472
+max_validity_seconds = 900
+
+[response]
+status = 400
+
+[response.body.error]
+gatewayCode = "consent-expired"
+userMessageKey = "error.consent_expired"
+recoverable = false
+retryAfter = 0
+correlationId = "01J8X4Q2K7R9M3P5T6V8W0Y2A1"
+
+[assertions]
+provider_called = false
+payload_disposed = true
+payload_persisted = false
+consent_receipt_recorded = true
+client_action = "re-present-consent-sheet"
