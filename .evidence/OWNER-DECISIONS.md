@@ -361,9 +361,9 @@ anyway, so both go in one round: one decision, one acknowledgement, one pass.
 
 ## D-03 — where Product idempotency state lives (#49)
 
-Decided on: PENDING
-Decided by: PENDING
-Channel: PENDING
+Decided on: 2026-08-26
+Decided by: ajdevy (repository owner)
+Channel: https://github.com/flexsent-labs/SuperNutrition/pull/44#issuecomment-5424935408
 
 > **Attribution history — read this before treating the fields above as an
 > oversight.**
@@ -426,9 +426,9 @@ review found it had been implemented without a record (EV-1).
 
 ## D-04 — what market retention binds (#49, story 4.4 criterion 4)
 
-Decided on: PENDING
-Decided by: PENDING
-Channel: PENDING
+Decided on: 2026-08-26
+Decided by: ajdevy (repository owner)
+Channel: https://github.com/flexsent-labs/SuperNutrition/pull/44#issuecomment-5424935408
 
 > **Attribution history — read this before treating the fields above as an
 > oversight.**
@@ -496,11 +496,14 @@ review found it had been implemented without a record (EV-1).
 
 ## D-05 — the crash-before-transfer window on a claimed attempt (#49)
 
-Decided on: PENDING
-Decided by: PENDING
-Channel: PENDING
+Decided on: 2026-08-26
+Decided by: ajdevy (repository owner)
+Channel: https://github.com/flexsent-labs/SuperNutrition/pull/44#issuecomment-5424935408
 
-**Proposed: accept it as inherent for now, and revisit if it is ever observed.**
+**Decided: option (a) — accept it as inherent for now, and revisit if it is ever
+observed.** The recommendation below was adopted as written; option (b), the
+pre-transfer release marker, is not built. It requires no code change, which is
+why this entry closes without one.
 
 **What the window is.** `claimAttempt` is re-entrant for the identical holder
 (DS-F12): the same owner token on the same instance may re-claim its own attempt,
