@@ -1,0 +1,657 @@
+{
+  "target_segment": {
+    "primary_launch_hypothesis": "[uncertain] Privacy-aware, health-curious adults who want to understand meals and build healthier habits without a meticulous calorie-counting routine, and who prefer a no-account local path for everyday use. A rough 18-35 smartphone-native lens remains plausible from the broader SuperNutrition research, but age is not the privacy segment definition.",
+    "highest_potential_local_mode_segments": [
+      {
+        "segment": "Privacy-conscious and account-averse smartphone users",
+        "why_local_mode_may_matter": "They are more likely to object to opaque data collection, persistent identifiers, secondary use, or a mandatory sign-in, and may treat local processing as a concrete way to reduce exposure.",
+        "evidence_status": "[uncertain] Inferred from privacy behavior and health-app evidence; direct willingness-to-use or willingness-to-pay data for a fully local nutrition app was not found."
+      },
+      {
+        "segment": "People who consider food, body, medication, allergy, or health-related information especially sensitive",
+        "why_local_mode_may_matter": "Meal photos, dietary patterns, restrictions, body metrics, and inferred conditions can reveal more than a user expects. A local path can reduce the need to disclose this information to an app operator or AI provider.",
+        "evidence_status": "[uncertain] The sensitivity of health data is well supported, but this specific nutrition-app segment has not been quantified."
+      },
+      {
+        "segment": "Users in low-connectivity, travel, managed-device, or offline contexts",
+        "why_local_mode_may_matter": "Local analysis preserves the basic capture-and-understand loop when a connection is absent or when a user cannot or does not want to use cloud services.",
+        "evidence_status": "Product-fit hypothesis; the sources support offline and no-account precedent, not the size of this segment."
+      },
+      {
+        "segment": "Health-curious, calorie-averse habit builders",
+        "why_local_mode_may_matter": "Privacy can reinforce the desired emotional experience: a calm private tool for understanding food rather than a surveillance-like diet dashboard. This is likely a trust and conversion aid, not necessarily the first reason they install.",
+        "evidence_status": "[uncertain] Based on synthesis with the existing SuperNutrition audience studies rather than a direct local-mode experiment."
+      }
+    ],
+    "secondary_segments": [
+      "General healthy-habit builders who will accept optional cloud analysis when the data flow, purpose, retention, and deletion limits are clear.",
+      "Busy students, early-career workers, shift workers, and caregivers who need a low-effort meal record and may value local use when it removes sign-up or connectivity friction.",
+      "Users already relying on Apple Health, Android Health Connect, Foodnoms, or other privacy-conscious tools and who expect granular permissions and export/delete controls."
+    ],
+    "positioning_conclusion": "Local-only should be positioned as a complete, useful mode and a user-control choice. It should not be positioned as proof that all users prefer privacy over convenience or as a universal market-size claim."
+  },
+  "demographic_and_life_stage": {
+    "assessment": "[uncertain] The evidence supports a broad adult audience, not a sharply bounded privacy demographic. A young-adult launch lens is reasonable for smartphone-native, low-friction behavior, but privacy concern appears across age groups.",
+    "supported_signals": [
+      "KFF's September 2025 nationally representative U.S. poll found that a majority of adults across age groups were concerned about privacy when a health app was managed by government, a private technology company, or an insurer.",
+      "Pew's 2023 survey of 5,101 U.S. adults found that adults under 50 reported some privacy-protective behaviors more often than adults 50 and older, including using privacy-oriented browsers or search engines and encrypted messaging. This supports testing younger smartphone-native users, but it does not establish that they are more willing to use local nutrition processing.",
+      "KFF found health-app and website use across age, education, income, race, and ethnicity groups. Older adults with Medicare also use digital health tools, so a local-first product should not assume privacy is only a younger-user concern.",
+      "The most defensible initial population is adults 18 and older. Children and adolescents require separate consent, safeguarding, product, and safety decisions."
+    ],
+    "geography_and_market_limits": [
+      "The strongest quantitative evidence is U.S.-based, with additional evidence from global Google Play reviews and UK/EU regulatory guidance. It cannot establish demand in Russia, the EU, or another launch market without local validation.",
+      "Privacy expectations, health-data law, account norms, cloud-region expectations, and available local models vary by market jurisdiction. Country, language, and processing region should be tested separately."
+    ],
+    "life_stage_hypotheses": [
+      "Students and early-career adults may value no sign-up, low effort, and offline use, but privacy importance is unverified.",
+      "Adults managing sensitive dietary restrictions, family health concerns, or a desire to avoid weight-focused tracking may value private, non-judgmental history, but the product must not imply medical suitability.",
+      "Older adults and caregivers may value clear controls and secure local storage, while needing simpler explanations and stronger recovery/export support."
+    ]
+  },
+  "psychographics_and_values": {
+    "assessment": "[uncertain] The strongest psychographic fit is people who value health understanding, autonomy, and a calmer relationship with food while distrusting opaque or judgmental tracking. Direct evidence does not show that local-only is their dominant purchase criterion.",
+    "likely_values": [
+      "Autonomy: the user chooses whether a photo, text entry, voice note, health integration, or history leaves the device.",
+      "Data minimization: the app asks for only the camera, photos, microphone, or health data needed for a selected action and does not request location for the core meal-understanding loop.",
+      "Predictability: the user can understand what is stored, where it is stored, who can access it, how long it remains, and what changes when cloud analysis is selected.",
+      "Non-judgment: the product supports healthier habits without moralizing foods, shaming missed logs, or making weight and calorie targets the only definition of success.",
+      "Epistemic honesty: AI suggestions are provisional, assumptions are visible, and users can correct or reject results before a meal record becomes authoritative.",
+      "Practicality: privacy controls must not turn everyday logging into a legal or technical task. A short just-in-time explanation is preferable to relying on a long policy alone."
+    ],
+    "emotional_context": [
+      "Some users may experience food and body tracking as surveillance, pressure, or a source of anxiety; private local history can reduce perceived exposure but does not remove the risk of unhealthy self-monitoring.",
+      "Users may be privacy-concerned in principle but still accept cloud services when convenience and perceived benefit are high. The product should test behavior at the moment of a real photo upload rather than rely only on stated attitudes.",
+      "Health data can create concerns about discrimination, unwanted advertising, or access by employers, insurers, platforms, or other third parties."
+    ]
+  },
+  "jobs_to_be_done": [
+    {
+      "job_type": "Functional",
+      "job_statement": "When I want to understand a meal, help me identify plausible foods, ingredients, and nutrition information quickly without requiring a long manual search or a mandatory account.",
+      "privacy_dimension": "Let me complete the basic job with local processing, local catalog search, or manual text entry so I do not have to upload a food photo just to get started."
+    },
+    {
+      "job_type": "Functional",
+      "job_statement": "When I take a meal photo, tell me clearly whether it stays on my device or is sent elsewhere, what purpose the processing serves, and how long any copy may remain.",
+      "privacy_dimension": "Prevent silent upload and make a remote route a separate, explicit action."
+    },
+    {
+      "job_type": "Functional",
+      "job_statement": "When the AI is uncertain, let me inspect assumptions, correct ingredients and portions, use a manual alternative, and decide whether to save the result.",
+      "privacy_dimension": "Do not require sending the image to a remote provider as the only way to correct or finish the entry."
+    },
+    {
+      "job_type": "Functional",
+      "job_statement": "When I build a personal food history, keep it available on my device without making cloud synchronization or an account a condition of ordinary use.",
+      "privacy_dimension": "Provide local encryption, clear device-retention behavior, export, delete, and reset controls, with an honest explanation of backups and device loss."
+    },
+    {
+      "job_type": "Emotional",
+      "job_statement": "Help me pay attention to my eating without feeling judged, exposed, watched, or forced into a weight-loss identity.",
+      "privacy_dimension": "Use private progress and non-competitive feedback rather than social comparison, public sharing, or surveillance-style reminders."
+    },
+    {
+      "job_type": "Social",
+      "job_statement": "Let me use a food-understanding tool discreetly at home, work, school, while traveling, or around other people without explaining my health information to a service provider.",
+      "privacy_dimension": "Keep the basic interaction device-local and avoid exposing sensitive content in notifications, analytics, crash reports, or shared screens."
+    }
+  ],
+  "current_behaviors_and_alternatives": {
+    "assessment": "[uncertain] Users are likely to combine manual food databases, barcode scanning, notes or photographs, Apple Health or Health Connect, cloud-based AI food scanners, and no tracking at all. The evidence does not provide a reliable market-wide split between these behaviors.",
+    "observed_alternatives": [
+      "Manual food search, barcode databases, saved meals, recipes, and spreadsheets remain familiar alternatives when users want a durable record.",
+      "Camera rolls, notes, messaging themselves, paper journals, and memory are low-setup alternatives when users reject accounts or detailed tracking.",
+      "Cloud AI nutrition apps such as MyFitnessPal, YAZIO, Foodvisor, and Cal AI trade convenience, history, synchronization, and personalization for some degree of account, identifier, photo, health, analytics, or provider processing.",
+      "Foodnoms provides a visible adjacent precedent: it says the app can be used entirely offline and without an account, while offering optional iCloud or Foodnoms Cloud synchronization.",
+      "Apple Health and Android Health Connect establish platform-level expectations for permissioned access and device-based health-data storage, but they are not substitutes for meal interpretation and do not make a third-party app local-only."
+    ],
+    "switching_behavior": [
+      "Users may switch when manual logging is too slow, AI results are inaccurate, an app demands an account before the first useful result, or a privacy policy makes sharing and retention unclear.",
+      "Users may stay with cloud products because cross-device history, account recovery, integrations, social features, and better remote model coverage outweigh privacy concerns.",
+      "Privacy concern can be latent until a camera permission, health integration, sign-in, remote fallback, advertising, or deletion event makes the data flow salient.",
+      "Pew found that many adults use privacy-protective behaviors, yet privacy policies are commonly treated as something to get past. This suggests that a local mode must be concrete and visible rather than communicated only through policy text."
+    ],
+    "behavior_to_validate": [
+      "Whether users select local-only when it is presented alongside a faster cloud option.",
+      "Whether users understand and accept that local mode may have lower model coverage, higher device storage or battery use, and no automatic cross-device recovery.",
+      "Whether users will use manual or text fallback after declining remote photo analysis.",
+      "Whether a no-account local first result improves activation and retention enough to compensate for reduced synchronization."
+    ]
+  },
+  "pain_points_and_barriers": [
+    {
+      "barrier": "Silent or ambiguous cloud transfer",
+      "detail": "Users may reasonably treat a meal photo, dietary pattern, body metric, restriction, or inferred health condition as sensitive. A remote fallback that happens without a distinct consent action undermines trust.",
+      "design_response": "Show a pre-transfer summary of data, purpose, destination or provider class, processing region where relevant, retention/deletion limits, and the local/manual alternative."
+    },
+    {
+      "barrier": "Account and synchronization pressure",
+      "detail": "Sign-up can feel disproportionate before the user receives value and creates a durable identity trail. Cloud history may also expose a user to account compromise or unwanted access.",
+      "design_response": "Make local use complete for the core path. Offer an account only for an explicitly chosen service such as synchronization, recovery, or a permitted remote feature."
+    },
+    {
+      "barrier": "Unclear retention and deletion",
+      "detail": "Users often cannot tell whether photos are retained by the app, AI provider, logs, backups, analytics, or support systems, and whether deleting a record removes all copies.",
+      "design_response": "Use separate retention statements for raw photos, normalized payloads, inference results, meal history, diagnostics, and backups; state limits instead of promising instant universal erasure."
+    },
+    {
+      "barrier": "Secondary use and third-party access",
+      "detail": "FTC enforcement involving Flo and GoodRx shows that health data can be shared with analytics or advertising companies contrary to consumer expectations or prior promises.",
+      "design_response": "Exclude food content and health-related events from advertising and unnecessary analytics, maintain an allowlisted telemetry schema, and make any permitted secondary use explicit and separately optional."
+    },
+    {
+      "barrier": "Privacy claims that are broader than the implementation",
+      "detail": "On-device processing does not by itself protect an unlocked or compromised device, operating-system backups, optional sync, support screenshots, or data deliberately sent to a remote service. App-store privacy labels are developer-reported and may vary by feature.",
+      "design_response": "Use scoped claims such as 'in local mode, this meal photo is processed on your device' only after network, SDK, backup, and storage behavior are verified."
+    },
+    {
+      "barrier": "Local-mode capability trade-offs",
+      "detail": "Local models may be larger, less current, slower on older devices, limited for complex mixed dishes, or unavailable on some hardware. No cloud sync also means device loss can mean history loss.",
+      "design_response": "Disclose capability and recovery trade-offs, keep manual/text/catalog alternatives usable, and let the user choose an explicit export or encrypted backup path."
+    },
+    {
+      "barrier": "Privacy literacy and explanation fatigue",
+      "detail": "Long policies are poor at communicating real behavior, and users can misunderstand labels or assume an app marketplace verified them. Too much legal copy at capture time can also increase friction.",
+      "design_response": "Provide a short layered explanation at the decision point, a readable data map for detail, and a complete policy for legal context."
+    },
+    {
+      "barrier": "Health and eating-related harm",
+      "detail": "Private storage can make a tool feel safer but cannot make compulsive tracking, medical self-management, allergy inference, or eating-disorder use safe. Judgmental streaks and numeric pressure may worsen harm for some people.",
+      "design_response": "Keep the product non-medical and non-moralizing, avoid unsupported allergy or diagnosis claims, and add safety boundaries and off-ramps."
+    }
+  ],
+  "triggers_and_usage_contexts": {
+    "high_value_local_contexts": [
+      "First use, before the first meal photo, when a user is deciding whether to trust the product.",
+      "A meal containing sensitive dietary, medical, religious, or body-related information.",
+      "A shared, work, school, travel, or low-connectivity context where the user wants discreet continuity.",
+      "A local model abstention or low-confidence result when the app is about to suggest a remote fallback.",
+      "An account, Apple Health, Android Health Connect, analytics, or notification permission request.",
+      "A request to export, delete, reset, uninstall, restore, or move data to a new device."
+    ],
+    "ordinary_meal_logging_triggers": [
+      "Immediately before or after eating, when the food is visible and the user wants a fast understanding of the meal.",
+      "When cooking or shopping, to inspect ingredients, packaged-food context, or a planned meal.",
+      "After a meal that is difficult to describe manually, such as a restaurant dish or mixed home-cooked plate.",
+      "During a restart of healthier habits, when a user wants a low-pressure record rather than a strict diet plan."
+    ],
+    "just_in_time_moments": [
+      "At camera or photo-library permission: explain that the permission enables only the selected capture path.",
+      "At local analysis: show that the result is being computed on-device and what is or is not saved.",
+      "Before remote transfer: require a distinct action and explain the transfer in plain language.",
+      "At save: distinguish local meal history from any optional sync or server history.",
+      "At deletion: say what local deletion covers and what remote or backup deletion can and cannot guarantee."
+    ]
+  },
+  "privacy_and_data_expectations": {
+    "assessment": "[uncertain] Evidence strongly supports demand for privacy, transparency, consent, deletion, and control in digital health, but it does not prove that most nutrition-app users will choose a fully local mode over a more capable cloud mode.",
+    "baseline_expectations": [
+      "No silent upload of a food photo or voice/text content. The user should know before transfer whether data leaves the device.",
+      "Purpose limitation: the data used to identify a meal should not silently become advertising, unrelated profiling, model-training, or public content.",
+      "Explicit, understandable consent for optional remote processing, with an easy way to decline and continue locally or manually.",
+      "Access, correction, export, delete, and reset controls that cover both local records and any server-side account or remote-analysis data.",
+      "Clear retention periods or retention rules for raw photos, normalized images, analysis payloads, results, meal history, diagnostics, and backups.",
+      "Granular permissions for camera, photos, microphone, Apple Health, and Android Health Connect, requested in context rather than all at launch.",
+      "No mandatory account for the first useful local experience. Account creation should be tied to a user-selected need such as sync or recovery.",
+      "No need for location access in the basic meal-understanding loop, and no sensitive meal content in analytics or crash reports."
+    ],
+    "evidence": [
+      "KFF's 2025 poll of 1,334 U.S. adults found concern about health-app privacy for apps managed by a private technology company at 75%, government at 78%, and insurers at 64%; concern remained a majority across age groups.",
+      "A JAMA Network Open conjoint study of 3,539 U.S. adults found that consent, data deletion, regulatory oversight, and transparency each increased willingness to share digital health information; together the protections were the most important factor in the experiment at 51.5% relative importance.",
+      "Google researchers analyzed more than 164,000 privacy-related reviews for 2,832 Health & Fitness apps across more than 150 countries and 25 languages. Data sharing/exposure, permission requests, location tracking, and data collection appeared as recurring themes across more than 70 countries.",
+      "Pew's 2023 survey of 5,101 U.S. adults found 61% viewed privacy policies as ineffective at communicating data use, 69% saw them as something to get past, and 49% had stopped using a device, website, or app because of privacy concerns.",
+      "The FTC states that its Health Breach Notification Rule, as amended in 2024, applies to many health apps and similar technologies not covered by HIPAA. FTC cases involving Flo and GoodRx demonstrate why consumers may distrust broad privacy promises.",
+      "Apple's health privacy materials use the same trust vocabulary relevant to SuperNutrition: data minimization, on-device processing, transparency, control, and security. Apple's developer guidance also distinguishes data processed only on-device from data transmitted off-device and requires disclosure for data collected by the app.",
+      "Foodnoms demonstrates that a nutrition app can present entirely offline, no-account use alongside optional cloud synchronization, but one product's positioning is not proof of category-wide demand."
+    ],
+    "local_mode_definition_for_users": [
+      "In local-only mode, specify which photo bytes, normalized copies, inference data, confirmed meal records, corrections, portions, and progress remain on the device.",
+      "State whether the app sends any network requests for updates, crash reporting, analytics, licensing, or catalog refresh, and keep the core path functional without those requests where promised.",
+      "Explain that local storage is protected by the app and operating system but still depends on device lock security, device integrity, backups, and the user's export choices.",
+      "State which capabilities are unavailable or reduced locally, such as remote AI coverage, cross-device synchronization, or account recovery."
+    ],
+    "claim_boundaries": [
+      "Safe only when verified: 'In local-only mode, your meal photo is processed on your device and is not sent to our servers for the local analysis path.'",
+      "Safe only when verified: 'You can use the core meal-understanding flow without creating an account.'",
+      "Avoid: 'Your data is completely private,' '100% private,' 'we never collect anything,' 'no one can ever access your data,' or 'HIPAA protected' unless each claim is narrowly defined, technically proven, and legally reviewed.",
+      "Avoid implying that local processing protects against device theft, unlocked-device access, operating-system backups, user-selected sync, or a deliberate remote transfer.",
+      "Avoid describing remote deletion as recalling bytes already transferred. Explain the deletion request and known retention or backup limits instead."
+    ],
+    "account_and_retention_expectation": "Users should be able to begin locally without an account. Local records should remain until the user deletes them, uninstalls or clears storage, or uses a documented reset path. Any remote data must have separate retention and deletion rules, including backup and legal exceptions."
+  },
+  "motivation_and_reward_preferences": {
+    "assessment": "[uncertain] This item did not directly measure reward preferences. The privacy evidence supports private progress, user control, and no secondary exposure; existing SuperNutrition research supports non-judgmental feedback, but local-only reward demand needs prototype testing.",
+    "privacy-compatible_mechanics": [
+      "Keep progress, streak alternatives, achievements, and habit summaries local by default; do not require an account or public profile.",
+      "Use private, descriptive feedback such as meal variety, regular reflection, or ingredient awareness rather than a moral score or public ranking.",
+      "Let users pause, hide, reset, or delete progress and reminders without losing access to the core app.",
+      "Avoid notification text that reveals sensitive meal, body, condition, or dietary content on a lock screen.",
+      "If social sharing or sync is ever added, make it a separate opt-in action with a preview of exactly what leaves the device."
+    ],
+    "trade_off": "A local-only progress model may reduce cross-device continuity and social reinforcement. For the initial audience, private ownership and low pressure may be a stronger trust fit than competitive retention mechanics, but this is a hypothesis rather than a measured result.",
+    "validation_questions": [
+      "Do users understand that private local progress can be lost with device loss unless they export or back it up?",
+      "Do users prefer a local streak or no streak to an account-linked cloud streak?",
+      "Does removing public comparison reduce pressure without reducing useful return behavior?"
+    ]
+  },
+  "ai_trust_and_correction_behavior": {
+    "assessment": "[uncertain] Consumers appear open to convenience but cautious about AI, especially when it handles health information. Direct evidence for local versus remote food-recognition trust is limited.",
+    "evidence": [
+      "KFF's 2025 poll found that fewer than half of U.S. adults trusted a health app using an AI chatbot to manage care (41%), and only 32% trusted an online health tool using AI to access medical records and provide personalized information. These are healthcare scenarios, so they are directional rather than nutrition-app estimates.",
+      "Current AI nutrition products publicly acknowledge that photo estimates can be incomplete or inaccurate, especially for blurry images, hidden ingredients, unclear portions, or mixed recipes. YAZIO's terms also warn that AI-generated content can be incomplete or factually incorrect.",
+      "A local result may increase perceived control because the photo need not leave the device, but local processing is not evidence that the food estimate is accurate or medically safe."
+    ],
+    "expected_trust_behavior": [
+      "Accept a fast AI proposal when recognized items, assumptions, confidence or uncertainty, source, and serving basis are visible.",
+      "Correct ingredients, portions, and candidates through a short, reversible path before saving.",
+      "Reject or bypass AI when the image is ambiguous, the user has a safety-critical restriction, or the user does not want cloud processing.",
+      "Treat catalog-grounded numeric nutrition as an estimate tied to a confirmed item and serving basis, not as a fact generated from a photo.",
+      "Expect local and remote results to be labeled with processing route, model or provider version, and different limitations."
+    ],
+    "product_boundary": "Never make local AI, remote AI, or a photo result a diagnosis, allergy determination, treatment recommendation, or guarantee of exact grams, calories, or nutrients."
+  },
+  "competitor_and_positioning_context": [
+    {
+      "competitor_or_pattern": "MyFitnessPal",
+      "audience_and_promise": "Large mainstream calorie, macro, fitness, meal-planning, and connected-device ecosystem; its App Store listing emphasizes calorie and nutrition goals, saved meals, social motivation, and premium Meal Scan and Voice Logging.",
+      "privacy_and_account_observation": "The current U.S. App Store disclosure says data may be used to track users and may link health and fitness, contact, user content, identifiers, usage, and diagnostics. This is a developer-provided label, not an independent audit.",
+      "positioning_implication": "SuperNutrition can differentiate from calorie-goal and ecosystem-first tracking with a complete no-account local path, calm health understanding, explicit uncertainty, and user-controlled remote escalation."
+    },
+    {
+      "competitor_or_pattern": "YAZIO",
+      "audience_and_promise": "Calorie tracking, fasting, healthy nutrition, weight loss, muscle building, meal planning, and AI food recognition; the current App Store listing markets an AI calorie tracker and says the app can be used without sign-up for some access.",
+      "privacy_and_account_observation": "YAZIO's terms say the app can operate with or without a personalized account, while its App Store disclosure lists data linked to the user such as health and fitness, contact, user content, identifiers, purchases, and personalization-related data. Features vary by account and service.",
+      "positioning_implication": "No-account access alone is not enough to differentiate. SuperNutrition needs a demonstrably local processing boundary and plain-language data-flow controls."
+    },
+    {
+      "competitor_or_pattern": "Foodvisor",
+      "audience_and_promise": "AI-assisted calorie, macro, vitamin, mineral, hydration, fasting, activity, and habit tracking with a personalized program.",
+      "privacy_and_account_observation": "Foodvisor's November 2025 policy describes account management, health data, lifestyle data, logs, technical providers, advertising consent, EU hosting, and health-data retention for the service duration or until account deletion/inactivity. The App Store disclosure lists identifiers used for tracking and linked health, photos/videos, contact, purchases, and usage data.",
+      "positioning_implication": "A local-first alternative can make the photo and food history boundary more legible, but should not claim that cloud competitors are inherently unsafe."
+    },
+    {
+      "competitor_or_pattern": "Cal AI",
+      "audience_and_promise": "Fast photo-based calorie and macro tracking for weight loss, muscle gain, or general health, with optional Google sign-in and history features.",
+      "privacy_and_account_observation": "Its June 2026 privacy policy says selected food photos are sent to its API or service providers, scan history may be stored when server sync is enabled, and some features work without Google sign-in. It also describes diagnostics, analytics, service providers, international processing, and backup or legal exceptions to deletion.",
+      "positioning_implication": "This is a clear contrast for a local basic path, but Cal AI's policy is a self-reported company statement and should not be treated as an independently verified technical audit."
+    },
+    {
+      "competitor_or_pattern": "Cronometer",
+      "audience_and_promise": "Detailed nutrition tracking, health integrations, diary entries, targets, and professional or coaching use.",
+      "privacy_and_account_observation": "Its June 2025 privacy notice describes account-linked services, health integrations with consent, analytics and advertising-related website behavior, account deletion requests, and retention while reasonably necessary. Its security page emphasizes cloud security, export, deletion, and a no-sale pledge, not fully local operation.",
+      "positioning_implication": "Security and rights-based cloud trust is an alternative positioning model. SuperNutrition can complement it with local ownership and lower data exposure, while acknowledging reduced sync and recovery."
+    },
+    {
+      "competitor_or_pattern": "Foodnoms",
+      "audience_and_promise": "Privacy-oriented nutrition tracking and Apple Health integration.",
+      "privacy_and_account_observation": "Foodnoms publicly says the app can be used entirely offline and without an account, while its 2025 update introduced optional Foodnoms Cloud and retained iCloud synchronization. Its policy describes optional account, Health data, cloud choices, and automatically collected device and usage information.",
+      "positioning_implication": "This is the closest public precedent for local/offline nutrition use. SuperNutrition's opportunity is to offer a similarly explicit local mode across Android and iOS, with photo-first recognition, manual fallback, and transparent remote consent."
+    },
+    {
+      "competitor_or_pattern": "Platform privacy controls",
+      "audience_and_promise": "Apple HealthKit and Android Health Connect provide permission and storage primitives rather than a complete food-understanding product.",
+      "privacy_and_account_observation": "Apple documents fine-grained HealthKit permissions and on-device encrypted storage; Android documents Health Connect as an on-device store with declared, permissioned access. These platform controls raise user expectations but do not prove that a third-party app's own meal photos or servers are local-only.",
+      "positioning_implication": "Integrate only when necessary, ask in context, and align the product's controls with platform permission language instead of borrowing a platform's privacy reputation."
+    },
+    {
+      "competitor_or_pattern": "Privacy-label ecosystem",
+      "audience_and_promise": "Apple App Privacy labels and Google Play Data Safety disclosures offer pre-install snapshots of app data practices.",
+      "privacy_and_account_observation": "Apple says labels are based on developer-provided information and can vary by feature, age, region, or opt-in choice. Apple also distinguishes data processed only on-device from data sent off-device.",
+      "positioning_implication": "SuperNutrition should make its store declarations match implementation and use a plain-language product data map; an app-store label alone is not sufficient trust proof."
+    }
+  ],
+  "acquisition_channels_and_message_hypotheses": {
+    "assessment": "[uncertain] These are testable hypotheses, not validated channel performance or market-size findings.",
+    "channels_to_test": [
+      "App Store and Google Play search for 'healthy eating without calorie counting', 'private food journal', 'offline nutrition app', 'no account meal tracker', 'photo food diary', and 'understand ingredients'.",
+      "Short-form demonstrations showing a meal photo, local processing indicator, candidate confirmation, and local save in under a minute.",
+      "Privacy, digital-minimalism, security, and offline-first communities where the value proposition is user control rather than a legal promise.",
+      "Health, food-literacy, dietitian, mindful-eating, and creator channels that can demonstrate non-judgmental meal understanding without medical claims.",
+      "Campus, workplace, travel, and low-connectivity communities for testing no-account and offline continuity.",
+      "A public data-flow page linked from the app and store listing, with a short explanation of local mode, remote opt-in, retention, and deletion limits."
+    ],
+    "message_hypotheses": [
+      {
+        "message": "Understand your meals without creating an account.",
+        "reason": "Combines low-friction entry with a concrete autonomy benefit.",
+        "risk": "Must specify which features work without an account and must not imply no data is processed anywhere."
+      },
+      {
+        "message": "In local-only mode, your meal photo is processed on your device.",
+        "reason": "States a bounded technical behavior rather than an absolute privacy promise.",
+        "risk": "Requires verification of network calls, SDKs, backups, storage, and all local-mode code paths."
+      },
+      {
+        "message": "You choose what leaves your phone. Cloud analysis is optional.",
+        "reason": "Makes control and remote consent the central differentiator.",
+        "risk": "Must be true at every remote path, including retries, fallback, telemetry, support, and future integrations."
+      },
+      {
+        "message": "See the assumptions, correct the result, and keep a private local record.",
+        "reason": "Connects privacy to honest AI and healthy-habit value instead of selling privacy as fear.",
+        "risk": "The local record's storage, deletion, backup, and recovery behavior must be visible."
+      },
+      {
+        "message": "Food understanding for healthier habits, without judgment or a mandatory calorie goal.",
+        "reason": "Fits the broader primary audience and prevents local-only from becoming an overly technical security pitch.",
+        "risk": "Health-first and non-judgmental claims need to remain consistent with feedback, rewards, and safety boundaries."
+      }
+    ],
+    "message_testing_design": [
+      "Compare health-first, low-friction, and local-control messages while holding the functional demo constant.",
+      "After exposure, ask users to explain what happens to the photo, result, history, and optional cloud route; treat comprehension as more important than stated liking.",
+      "Measure local-mode selection, first-value completion, remote-consent acceptance, remote-consent refusal with successful continuation, and retention after device or connectivity friction.",
+      "Recruit both privacy-motivated and convenience-motivated participants so local mode is not tested only with advocates."
+    ]
+  },
+  "exclusions_and_safety_boundaries": {
+    "not_initially_suitable_as_self_serve": [
+      "People with an active or recent eating disorder, severe food anxiety, compulsive calorie or weight tracking, or a history of tracking tools worsening symptoms, unless use is clinician-supported and the product has an appropriate safety design.",
+      "People seeking medical nutrition therapy for diabetes, kidney disease, metabolic disease, pregnancy complications, medication interactions, or another diagnosed condition.",
+      "People who need guaranteed allergen, cross-contamination, ingredient, or portion accuracy. A photograph cannot verify hidden ingredients, recipe substitutions, manufacturing traces, or safe preparation.",
+      "Children and adolescents under 18 for the first broad consumer launch unless separate consent, safeguarding, age-appropriate UX, and safety review are completed.",
+      "Users who require professional monitoring, emergency advice, diagnosis, treatment, or a legally regulated health record."
+    ],
+    "privacy_safety_boundaries": [
+      "Do not market local-only as a guarantee against device theft, unlocked-device access, malware, operating-system backups, screenshots, user-selected exports, or a deliberate remote transfer.",
+      "Do not claim HIPAA coverage merely because the product handles health-related information. Consumer apps may fall outside HIPAA depending on their role and integrations; legal applicability needs jurisdiction-specific review.",
+      "Do not use food photos, meal labels, health data, or inferred restrictions for targeted advertising, public leaderboards, or unrelated profiling without a separate, specific, lawful, and user-understood decision.",
+      "Do not put sensitive meal content, free-form text, image bytes, identifiers, or provider payloads into analytics, logs, crash reports, or notifications.",
+      "Do not treat privacy-preserving processing as a substitute for secure device storage, short-lived image handling, access control, encryption, dependency review, or incident response."
+    ],
+    "copy_boundary": "Describe the product's actual data flows and limits. Use 'local-only mode', 'processed on your device', 'no account required for the core path', and 'remote analysis is optional' only when each statement is tested against the shipped implementation."
+  },
+  "product_implications": [
+    {
+      "priority": "P0",
+      "implication": "Make local-only a complete first-run path: no mandatory account, no mandatory server, local inference where supported, local catalog/manual fallback, and local meal history.",
+      "evidence_or_rationale": "Privacy concern is widespread, no-account/offline use has an adjacent nutrition precedent, and account-free value reduces the trust cost before first use.",
+      "acceptance_signal": "A new user can capture or describe a meal, review/correct it, and save a local record with network unavailable and without creating an account."
+    },
+    {
+      "priority": "P0",
+      "implication": "Put the processing route and storage boundary in the interface, not only in the privacy policy.",
+      "evidence_or_rationale": "Pew found privacy policies are widely viewed as ineffective, while Google privacy reviews show requests for finer-grained control.",
+      "acceptance_signal": "Users can correctly answer whether the current photo, result, and history are on-device, remote, or optional after a short onboarding explanation."
+    },
+    {
+      "priority": "P0",
+      "implication": "Require a distinct pre-transfer consent receipt before any remote image or relevant meal content leaves the device.",
+      "evidence_or_rationale": "JAMA evidence favors consent, transparency, deletion, and oversight; FTC enforcement shows that unexpected health-data sharing damages trust.",
+      "acceptance_signal": "Declining remote analysis produces no photo upload and still allows local, text, manual, or catalog continuation."
+    },
+    {
+      "priority": "P0",
+      "implication": "Use ephemeral image handling and data minimization: normalize and strip unnecessary metadata, avoid raw-photo logging, delete temporary bytes on success/error/cancel/expiry, and keep telemetry allowlisted.",
+      "evidence_or_rationale": "Health-app privacy concerns include data collection, permissions, location, and exposure; photos can reveal more than the user intends.",
+      "acceptance_signal": "Instrumentation and storage tests show no forbidden photo, free-form food content, GPS/EXIF, provider payload, or sensitive result in logs and analytics."
+    },
+    {
+      "priority": "P0",
+      "implication": "Provide separate delete, export, reset, and optional encrypted-backup controls for local records, with explicit warnings about device loss and backup scope.",
+      "evidence_or_rationale": "Deletion and access are important privacy protections, while local mode shifts recovery responsibility toward the device and user.",
+      "acceptance_signal": "A user can identify what local deletion removes, export a readable record, reset the history, and see any remote or backup limitation."
+    },
+    {
+      "priority": "P1",
+      "implication": "Request camera, photo-library, microphone, Apple Health, and Android Health Connect permissions only when the selected feature needs them; do not request location for the core flow.",
+      "evidence_or_rationale": "Platform guidance and large-scale privacy-review evidence support contextual, granular permission requests.",
+      "acceptance_signal": "Permission denial does not create a dead end; the app offers an appropriate alternate input and explains the consequence."
+    },
+    {
+      "priority": "P1",
+      "implication": "Make capability trade-offs visible: local model availability, device requirements, storage/battery cost, recognition limits, no-sync behavior, and manual/text fallback.",
+      "evidence_or_rationale": "Users may trade privacy for convenience, and local mode can have lower coverage or weaker recovery.",
+      "acceptance_signal": "In a comprehension test, users understand why a local result may differ from a remote result and what they give up by staying local."
+    },
+    {
+      "priority": "P1",
+      "implication": "Label AI outputs as proposals with assumptions, calibrated uncertainty, provenance, and correction controls; map confirmed items to a versioned nutrition catalog.",
+      "evidence_or_rationale": "Health AI trust is limited, and photo nutrition estimates are uncertain for mixed dishes, hidden ingredients, and portions.",
+      "acceptance_signal": "Users can correct or reject every candidate before numeric nutrition is treated as a confirmed meal result."
+    },
+    {
+      "priority": "P1",
+      "implication": "Publish a plain-language data map and a complete privacy policy that name data categories, purposes, routes, providers, processing regions, retention, deletion, backups, and account requirements.",
+      "evidence_or_rationale": "The ICO, Apple, FTC, and consumer survey evidence all emphasize clear, accessible information and control.",
+      "acceptance_signal": "The public data map matches app-store disclosures, network behavior, SDKs, backend retention, and the local-mode implementation."
+    },
+    {
+      "priority": "P2",
+      "implication": "Test local-control messages against health-first and low-friction messages across privacy-motivated and convenience-motivated segments.",
+      "evidence_or_rationale": "The evidence supports privacy as a trust lever but not as a proven category-wide purchase driver.",
+      "acceptance_signal": "Choose the message based on comprehension, local-mode activation, consent behavior, completion, and retention rather than click-through alone."
+    },
+    {
+      "priority": "P2",
+      "implication": "Keep motivation private, non-judgmental, reversible, and independent of cloud accounts; do not use health or meal content in social ranking or targeted retention.",
+      "evidence_or_rationale": "Privacy value and eating-safety boundaries are undermined when progress becomes public, moralizing, or surveillance-like.",
+      "acceptance_signal": "Users can pause, hide, reset, and delete motivation data, and notifications do not reveal sensitive content on a locked device."
+    }
+  ],
+  "research_summary": "Consumer evidence supports treating food and health-related data as sensitive and designing around control rather than reassurance alone. In current U.S. polling, most adults are concerned about privacy on health apps managed by technology companies, and a large conjoint study found that consent, transparency, oversight, and deletion together materially increase willingness to share digital health data. Global health-app reviews repeatedly mention data sharing, permissions, location, and collection. Local/on-device processing is therefore a credible trust and differentiation lever for privacy-conscious, account-averse, sensitive-data, and offline users, but direct evidence that a fully local mode is the primary purchase driver or a large standalone segment is missing. SuperNutrition should communicate bounded facts: what stays on the device, what leaves it, when, why, how long, and how to delete it. It should offer a useful local path, make remote analysis separately opt-in, preserve manual continuation, and avoid absolute claims such as 'completely private' or 'no data is ever collected.'",
+  "evidence_quality_and_limits": {
+    "high_confidence": [
+      "KFF's 2025 survey is a recent, nationally representative U.S. poll of 1,334 adults with a stated plus-or-minus 3 percentage point margin for the full sample; it directly measures health-app privacy concern and AI trust, but not nutrition-app local-mode choice.",
+      "The JAMA Network Open study is a peer-reviewed survey/conjoint experiment with 3,539 U.S. adults recruited from a nationally representative panel and oversampling of Black and Hispanic participants. It directly supports the value of consent, transparency, oversight, and deletion, but scenarios were hypothetical and fielded in 2020.",
+      "The Google Research study provides unusually broad behavioral text evidence from more than 164,000 privacy-related app reviews across 150-plus countries and 25 languages, but automated thematic analysis of reviews is not a representative prevalence survey.",
+      "FTC, Apple, Android, and ICO materials are authoritative for their own regulatory or platform guidance and for safe claim boundaries. They do not establish consumer demand by themselves."
+    ],
+    "moderate_confidence": [
+      "Pew's 2023 national survey supports general privacy concern, perceived lack of control, and skepticism toward privacy policies; it is not health-app-specific and may not reflect 2026 behavior.",
+      "Foodnoms is a useful adjacent product precedent for offline and no-account nutrition use, but one product's choice to offer local and optional cloud modes cannot establish category demand or willingness to pay.",
+      "Competitor policies and App Store privacy labels document public claims and disclosures. Apple states that developer privacy details are not verified by Apple, and practices can vary by feature, age, region, or opt-in state. These sources should be treated as claims and positioning evidence, not as independent technical audits."
+    ],
+    "key_uncertainties": [
+      "No source found a representative willingness-to-use or willingness-to-pay estimate for a fully local nutrition app, nor a robust ranking of local mode against accuracy, speed, price, sync, or convenience.",
+      "The suggested 18-35 launch lens is a product hypothesis from broader SuperNutrition research, not an established privacy segment. KFF indicates privacy concern across age groups.",
+      "The likely high-value segments are inferred by combining general health privacy evidence with product needs. They require interviews, message comprehension tests, and a real local-versus-cloud choice experiment.",
+      "The evidence is concentrated in the U.S. and English-language sources. Market-jurisdiction differences in law, cloud expectations, and health-app norms need local research.",
+      "Statements about implementation, model capability, network behavior, retention, deletion, backups, and provider access are product requirements, not evidence that SuperNutrition currently satisfies them."
+    ],
+    "legal_and_claim_limit": "This is product and audience research, not legal advice. HIPAA, FTC, GDPR/UK GDPR, state privacy law, app-store disclosure duties, and health-data classifications depend on the actual data flow, role, jurisdiction, integrations, and future feature set."
+  },
+  "sources": [
+    {
+      "title": "KFF Health Tracking Poll: Public Use and Trust in Health Care Apps and Websites",
+      "url": "https://www.kff.org/public-opinion/kff-health-tracking-poll-public-use-and-trust-in-health-care-apps-and-websites/",
+      "accessed": "2026-08-27",
+      "source_type": "Nationally representative U.S. public-opinion survey",
+      "key_relevance": "September 2025 poll of 1,334 adults; privacy concerns were 75% for apps managed by private technology companies, 78% for government, and 64% for insurers; concern was a majority across age groups; AI trust was low."
+    },
+    {
+      "title": "Consumer Views on Privacy Protections and Sharing of Personal Digital Health Information",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9982693/",
+      "accessed": "2026-08-27",
+      "source_type": "Peer-reviewed JAMA Network Open survey and conjoint experiment",
+      "key_relevance": "Study of 3,539 U.S. adults; consent, deletion, oversight, and transparency increased willingness to share digital health information, with the four protections jointly the most important factor."
+    },
+    {
+      "title": "Unveiling Privacy Perspectives about Mobile Health Apps on a Large Scale",
+      "url": "https://research.google/pubs/unveiling-privacy-perspectives-about-mobile-health-apps-on-a-large-scale-2/",
+      "accessed": "2026-08-27",
+      "source_type": "Google Research/PETS 2024 app-review analysis",
+      "key_relevance": "Analyzes more than 164,000 privacy-related reviews for 2,832 Health & Fitness apps from more than 150 countries and 25 languages; recurring themes include sharing/exposure, permissions, location, and collection."
+    },
+    {
+      "title": "How Americans View Data Privacy: Tech Companies, AI, Regulation, Passwords and Policies",
+      "url": "https://www.pewresearch.org/internet/2023/10/18/how-americans-view-data-privacy/",
+      "accessed": "2026-08-27",
+      "source_type": "Pew Research Center survey",
+      "key_relevance": "Survey of 5,101 U.S. adults; most felt they had little control over company data use and many were uneasy about companies and AI handling data."
+    },
+    {
+      "title": "How Americans Protect Their Online Data and Privacy",
+      "url": "https://www.pewresearch.org/internet/2023/10/18/how-americans-protect-their-online-data/",
+      "accessed": "2026-08-27",
+      "source_type": "Pew Research Center survey",
+      "key_relevance": "Reports that 61% viewed privacy policies as ineffective, 69% treated them as something to get past, and 49% had stopped using a product because of privacy concerns; younger adults used some privacy-protective tools more often."
+    },
+    {
+      "title": "Health Breach Notification Rule: The Basics for Business",
+      "url": "https://www.ftc.gov/business-guidance/resources/health-breach-notification-rule-basics-business",
+      "accessed": "2026-08-27",
+      "source_type": "Federal Trade Commission guidance",
+      "key_relevance": "Explains that 2024 amendments underscored the Rule's application to most health apps and similar technologies and distinguishes the Rule from HIPAA coverage."
+    },
+    {
+      "title": "Complying with FTC's Health Breach Notification Rule",
+      "url": "https://www.ftc.gov/business-guidance/resources/complying-ftcs-health-breach-notification-rule-0",
+      "accessed": "2026-08-27",
+      "source_type": "Federal Trade Commission guidance",
+      "key_relevance": "Defines personal health record vendors and explains that unauthorized sharing can trigger breach-notification obligations; relevant to conservative data-flow and claim design."
+    },
+    {
+      "title": "GoodRx's not-so-good privacy practices come to light",
+      "url": "https://consumer.ftc.gov/consumer-alerts/2023/02/goodrxs-not-so-good-privacy-practices-come-light",
+      "accessed": "2026-08-27",
+      "source_type": "Federal Trade Commission consumer alert",
+      "key_relevance": "Describes FTC allegations that sensitive health information was shared with digital advertisers contrary to privacy promises and recommends checking permissions, deletion rights, and targeted-ad settings."
+    },
+    {
+      "title": "Flo Health, Inc. case summary",
+      "url": "https://www.ftc.gov/legal-library/browse/cases-proceedings/192-3133-flo-health-inc",
+      "accessed": "2026-08-27",
+      "source_type": "Federal Trade Commission enforcement record",
+      "key_relevance": "Records the FTC settlement concerning a fertility app's sharing of health information with outside analytics providers after promises of privacy."
+    },
+    {
+      "title": "Patients want privacy, accountability for how their health data is used",
+      "url": "https://www.ama-assn.org/practice-management/hipaa/patients-want-privacy-accountability-how-their-health-data-used",
+      "accessed": "2026-08-27",
+      "source_type": "American Medical Association survey summary",
+      "key_relevance": "Reports a 1,000-patient survey in which respondents wanted control, transparency, opt-out/opt-in choices, and accountability for health-data use; advocacy-source limitations apply."
+    },
+    {
+      "title": "Acceptability of Active and Passive Data Collection Methods for Mobile Health Research",
+      "url": "https://formative.jmir.org/2025/1/e64082/",
+      "accessed": "2026-08-27",
+      "source_type": "Peer-reviewed JMIR survey study",
+      "key_relevance": "In an online U.S. adult sample, 70% selected deletion of all contributed research data as a desired control and 65% selected deletion of specific data streams; useful for control expectations, not nutrition-app demand."
+    },
+    {
+      "title": "User Privacy Concerns and Preferences in mHealth Applications: Balancing Privacy and Usability",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/40775853/",
+      "accessed": "2026-08-27",
+      "source_type": "Peer-reviewed mHealth privacy study",
+      "key_relevance": "Supports themes of control, transparent policy, granular consent, customizable settings, security, and the privacy-usability trade-off; sample and method details should be reviewed before quantitative use."
+    },
+    {
+      "title": "Patients' Perspectives on the Data Confidentiality, Privacy, and Security of mHealth Apps: Systematic Review",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11179037/",
+      "accessed": "2026-08-27",
+      "source_type": "Peer-reviewed systematic review",
+      "key_relevance": "Provides broader evidence on patient expectations and concerns around confidentiality, privacy, and security in mHealth apps."
+    },
+    {
+      "title": "Consumer Health Personal Data Privacy Policy",
+      "url": "https://www.apple.com/legal/privacy/consumer-health-personal-data/en-ww/",
+      "accessed": "2026-08-27",
+      "source_type": "Apple official health privacy policy",
+      "key_relevance": "Uses data minimization, on-device processing, transparency/control, and security as health privacy principles; a useful precedent for bounded communication."
+    },
+    {
+      "title": "App Privacy Details",
+      "url": "https://developer.apple.com/app-store/app-privacy-details/",
+      "accessed": "2026-08-27",
+      "source_type": "Apple Developer official guidance",
+      "key_relevance": "Explains App Privacy labels, developer-provided disclosure, data processed only on-device, data transmitted and discarded after servicing, and privacy-choice links."
+    },
+    {
+      "title": "Protecting User Privacy in HealthKit",
+      "url": "https://developer.apple.com/documentation/healthkit/protecting-user-privacy",
+      "accessed": "2026-08-27",
+      "source_type": "Apple Developer official guidance",
+      "key_relevance": "Documents fine-grained HealthKit permission, local encrypted storage, privacy-policy requirements, and restrictions on health-data use."
+    },
+    {
+      "title": "Check Health Connect availability",
+      "url": "https://developer.android.com/health-and-fitness/health-connect/availability",
+      "accessed": "2026-08-27",
+      "source_type": "Android Developers official guidance",
+      "key_relevance": "Describes Health Connect as an on-device store with declared and permissioned access to approved data types."
+    },
+    {
+      "title": "Privacy Policy - Foodnoms",
+      "url": "https://foodnoms.com/privacy",
+      "accessed": "2026-08-27",
+      "source_type": "Competitor first-party privacy policy",
+      "key_relevance": "Documents optional account, Apple Health data, iCloud or Foodnoms Cloud storage options, and automatically collected device/usage data."
+    },
+    {
+      "title": "Introducing Foodnoms Cloud: A New Account System and Syncing Option",
+      "url": "https://foodnoms.com/news/foodnoms-cloud",
+      "accessed": "2026-08-27",
+      "source_type": "Competitor first-party product announcement",
+      "key_relevance": "Explicitly says Foodnoms can still be used entirely offline and without an account while offering optional cloud sync; closest public adjacent precedent."
+    },
+    {
+      "title": "Cal AI Privacy Policy",
+      "url": "https://calai.me/privacy",
+      "accessed": "2026-08-27",
+      "source_type": "Competitor first-party privacy policy",
+      "key_relevance": "Updated June 15, 2026; states that selected food photos are sent to the API or service providers, describes optional Google sign-in, sync, diagnostics, providers, retention, backups, and deletion limits."
+    },
+    {
+      "title": "Foodvisor Privacy Policy",
+      "url": "https://www.foodvisor.io/en/privacy-policy/raw/",
+      "accessed": "2026-08-27",
+      "source_type": "Competitor first-party privacy policy",
+      "key_relevance": "Updated November 18, 2025; describes account, health/lifestyle data, retention, providers, advertising consent, EU hosting, and data rights."
+    },
+    {
+      "title": "Terms of Use & Privacy Policy - YAZIO",
+      "url": "https://help.yazio.com/hc/en-us/articles/203444951-Terms-of-Use-Privacy-Policy",
+      "accessed": "2026-08-27",
+      "source_type": "Competitor first-party terms and privacy policy",
+      "key_relevance": "States that YAZIO can be operated with or without a personalized account and includes AI and health-related limitations."
+    },
+    {
+      "title": "MyFitnessPal: Calorie Counter App - App Store",
+      "url": "https://apps.apple.com/us/app/myfitnesspal-calorie-counter/id341232718",
+      "accessed": "2026-08-27",
+      "source_type": "Apple App Store competitor listing and developer disclosure",
+      "key_relevance": "Shows the current calorie/macro/ecosystem positioning and developer-reported data categories including tracking, health/fitness, user content, identifiers, usage, and diagnostics."
+    },
+    {
+      "title": "Foodvisor - AI Calorie Counter App - App Store",
+      "url": "https://apps.apple.com/us/app/foodvisor-ai-calorie-counter/id1064020872",
+      "accessed": "2026-08-27",
+      "source_type": "Apple App Store competitor listing and developer disclosure",
+      "key_relevance": "Shows Foodvisor's nutrition and health positioning and developer-reported tracking/linked data categories."
+    },
+    {
+      "title": "Cal AI - Calorie Tracker App - App Store",
+      "url": "https://apps.apple.com/us/app/cal-ai-calorie-tracker/id6480417616",
+      "accessed": "2026-08-27",
+      "source_type": "Apple App Store competitor listing and developer disclosure",
+      "key_relevance": "Shows photo-first calorie positioning and developer-reported tracking, purchase, content, sensitive-info, usage, and diagnostic categories."
+    },
+    {
+      "title": "Privacy - Cronometer",
+      "url": "https://cronometer.com/privacy/",
+      "accessed": "2026-08-27",
+      "source_type": "Competitor first-party privacy policy",
+      "key_relevance": "Updated June 23, 2025; describes account services, consent-based health integrations, analytics, retention, deletion requests, and data handling."
+    },
+    {
+      "title": "Understanding iOS Privacy Nutrition Labels: An Exploratory Large-Scale Analysis of App Store Data",
+      "url": "https://doi.org/10.1145/3491101.3519739",
+      "accessed": "2026-08-27",
+      "source_type": "Peer-reviewed CHI extended abstract",
+      "key_relevance": "Provides independent context on the adoption and interpretation limits of self-reported app privacy labels."
+    }
+  ],
+  "popularity_signal": "[uncertain] Public app-store visibility and competitor scale show that nutrition tracking is an active category, but available sources do not isolate demand for fully local processing, no-account use, or local-first trust. Do not use competitor ratings, downloads, or privacy claims as a market-size estimate.",
+  "uncertain": [
+    "demographic_and_life_stage",
+    "psychographics_and_values",
+    "popularity_signal",
+    "current_behaviors_and_alternatives",
+    "privacy_and_data_expectations",
+    "motivation_and_reward_preferences",
+    "ai_trust_and_correction_behavior",
+    "acquisition_channels_and_message_hypotheses"
+  ]
+}

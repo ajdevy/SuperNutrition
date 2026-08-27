@@ -1,0 +1,545 @@
+{
+  "target_segment": {
+    "primary_segment": {
+      "label": "Health-curious, calorie-averse habit builders",
+      "description": "Adults who want to notice and improve everyday eating patterns but do not want a rigid calorie diary, weight-centered program, or public competition. The strongest launch lens is approximately ages 18-35 because much of the direct qualitative evidence comes from students and emerging adults, but age should remain a recruitment lens rather than the segment definition.",
+      "why_fit": "This group has a recurring awareness and self-regulation job, is likely to use a smartphone around meals, and can benefit from small self-chosen goals, quick pattern feedback, and recovery after an imperfect day. The product can support healthier choices without making adherence itself the moral objective.",
+      "evidence": "A 2024 survey of 308 people found goals and progress bars were the most favored nutrition-app game elements, while a 2025 qualitative study of emerging adults and multiple app-user studies show that calorie goals, red feedback, and pressure can also produce guilt or shame. This combination favors autonomy-supportive progress over rigid compliance."
+    },
+    "secondary_segments": [
+      "Busy students and early-career adults who need a low-effort way to remember meals and make one next-meal improvement.",
+      "Ingredient-conscious or health-oriented adults who want variety, food-group, preparation, or ingredient awareness rather than a calorie score.",
+      "Adults who prefer private, self-directed wellness tools and may value local-only history, flexible reminders, and no-account use; the size and willingness to trade coverage for privacy are [uncertain]."
+    ],
+    "adjacent_but_not_initially_targeted": [
+      "People managing diabetes, pregnancy, allergies, eating disorders, or medically prescribed diets may need clinician-supervised or specialized tools rather than a general habit app.",
+      "Children and younger adolescents require different consent, safeguarding, and reward design; evidence from child gamification studies should not be transferred directly to the adult launch audience.",
+      "People who explicitly want competitive weight loss, strict calorie budgeting, or exact clinical nutrient tracking are not the core positioning fit."
+    ],
+    "decision": "Use a health-and-habit attitude definition in product research and acquisition. Test 18-35 as an early reach hypothesis, while recruiting beyond that range to detect whether autonomy, low burden, and non-judgment are stronger predictors of fit than age."
+  },
+  "demographic_and_life_stage": {
+    "observed_signals": [
+      "Direct evidence is concentrated in adults, often women, students, emerging adults, and people with overweight or obesity. The 2026 scoping review of 59 adult nutrition-app studies reports predominantly female samples and frequent targeting of overweight or obesity.",
+      "The 2024 nutrition-gamification preference study surveyed 308 people and identified three preference clusters. Its clusters included male users in their late thirties, female users in their mid-thirties, and users characterized by higher self-perception and preference for anonymity; these are sample clusters, not population prevalence estimates.",
+      "The 2021 qualitative eating-disorder study used 24 university women, and the MyFitnessPal qualitative study used 20 undergraduate women. These samples make young women an important safety-research cohort, but they do not define the whole market.",
+      "Habit formation itself is not age-specific: Lally et al. studied 96 volunteers choosing daily eating, drinking, or activity behaviors, with wide person-level variation in automaticity."
+    ],
+    "launch_implication": "Recruit a deliberately mixed adult sample across students, early-career workers, parents or caregivers, and adults over 35. Analyze outcomes by dieting history, gender, age, and health context rather than assuming a universal response to streaks or rewards.",
+    "assessment": "[uncertain] There is no reliable population estimate for the size of a calorie-averse, non-judgmental nutrition-app segment, and the existing studies are not representative of SuperNutrition's intended geographies, income levels, cultures, or device mix."
+  },
+  "psychographics_and_values": {
+    "likely_values": [
+      "Autonomy: the person chooses the goal, timing, visibility, and level of detail.",
+      "Competence: the person can understand what the app observed, correct it, and see that small actions accumulate.",
+      "Self-acceptance: an imperfect meal or missed log is information, not evidence of personal failure.",
+      "Practicality: the tool must fit work, study, commuting, family meals, restaurants, and changing schedules.",
+      "Privacy and authorship: food photos, health information, and progress should not be exposed or used for social pressure without an explicit choice.",
+      "Health orientation: users may care about energy, variety, ingredients, digestion, or long-term wellbeing more than weight or calorie minimization."
+    ],
+    "evidence": "Self-determination theory meta-analyses find small positive effects of interventions that support autonomous motivation and perceived competence on health behavior. Qualitative nutrition-app studies report that self-awareness, useful knowledge, personalization, and user-friendly design are valued, while some participants stop using the app after feeling guilt or regret about recorded food.",
+    "design_readout": "Frame progress as learning and capability: understanding a meal, adding variety, planning a useful next step, or returning after a gap. Avoid identity labels such as 'good user,' 'bad eater,' or 'failed day.'",
+    "assessment": "[uncertain] The relative importance of autonomy, privacy, intrinsic motivation, external rewards, and calorie avoidance is likely heterogeneous and has not been measured for a SuperNutrition audience."
+  },
+  "jobs_to_be_done": [
+    {
+      "job_type": "Functional",
+      "job_statement": "When I eat or plan a meal, help me capture enough information quickly to understand the meal without weighing every ingredient or searching a large database.",
+      "evidence": "Nutrition-app reviews consistently identify self-monitoring, feedback, goal setting, and low-friction input as common intervention components; direct user studies describe ease of use and automatic assistance as important."
+    },
+    {
+      "job_type": "Functional",
+      "job_statement": "When I choose a healthier habit, let me set a small goal that reflects my own priorities and show progress in a way that tolerates variation.",
+      "evidence": "Goal and progress monitoring are associated with behavior change, and goals and progress bars were the most favored game elements in the 2024 nutrition-app preference study."
+    },
+    {
+      "job_type": "Emotional",
+      "job_statement": "When I am unsure how I am doing, give me calm, understandable feedback and one feasible next step rather than a verdict on the meal or on me.",
+      "evidence": "Users report valuing awareness and actionable information, while qualitative studies document guilt, shame, anxiety, and self-criticism when apps present calorie overruns or moralized visual feedback."
+    },
+    {
+      "job_type": "Emotional",
+      "job_statement": "When I miss a meal log or have an unplanned meal, help me resume without losing my history or being reminded that I failed.",
+      "evidence": "Lally et al. found that missing one opportunity did not materially disrupt habit formation, while recent user reporting describes scolding reminders and streak pressure as demotivating."
+    },
+    {
+      "job_type": "Reflective",
+      "job_statement": "After several meals, help me notice patterns in variety, ingredients, routines, and context so that the benefit is not reduced to a daily number.",
+      "evidence": "Reviews find feedback and monitoring useful but measure them inconsistently; the 2026 nutrition-app scoping review notes that retention and app use dominate evaluation while qualitative and long-term engagement dimensions are rarely measured."
+    },
+    {
+      "job_type": "Trust and control",
+      "job_statement": "When the app proposes food or portion information, show me what is uncertain and give me a short, reversible way to correct it before it affects progress feedback.",
+      "evidence": "Nutrition image and logging studies identify recognition, portion, and coding errors. A trustworthy correction path prevents an uncertain AI estimate from becoming an authoritative reward or penalty."
+    },
+    {
+      "job_type": "Social and privacy",
+      "job_statement": "When I use the app around other people, let me keep the interaction discreet and private without exposing a personal goal or inviting competition.",
+      "evidence": "The nutrition-gamification preference study found social interaction and leaderboards less favored overall than goals and progress bars, and qualitative users describe social and contextual friction around food tracking."
+    }
+  ],
+  "current_behaviors_and_alternatives": {
+    "observed_behaviors": [
+      "People use manual food search, favorites, saved meals, templates, barcode scanning, notes, memory, photos, paper diaries, recipes, labels, and professional guidance. Manual logs offer control but create repeated search and portion-estimation work.",
+      "Nutrition-app interventions commonly combine self-monitoring with feedback, information, goals, reminders, social support, or rewards. The 2026 scoping review found self-monitoring or tracking in 44 of 59 studies, personalized feedback in 22, goals in 15, and progress summaries in 13.",
+      "A person may use different modes in different contexts: a photo when the plate is visible, text when privacy or social context makes photography awkward, and a later memory-based entry when the moment was busy.",
+      "Many users treat an app as a temporary reset or awareness tool rather than a permanent diary. Continuing to use it after a missed day is therefore a more meaningful behavior than maintaining perfect daily logging."
+    ],
+    "switching_behavior": [
+      "Switching away from a rigid tracker is likely when the search, measurement, or correction burden exceeds the perceived value, when feedback feels judgmental, or when the user cannot log a normal shared or restaurant meal.",
+      "The most credible switching promise is a fast, editable starting point plus a pattern view, not total automation or a precise score. Users still need manual and text fallbacks.",
+      "The 2024 preference study suggests that users favor goals and progress visualization, but its preference task does not prove that these elements create durable dietary behavior change."
+    ],
+    "assessment": "[uncertain] Population-level prevalence, retention, and switching rates are not established. Research participants are often more motivated, more health-conscious, or more supported than ordinary app users, and commercial usage data are rarely public."
+  },
+  "pain_points_and_barriers": [
+    {
+      "barrier": "Logging effort and cognitive load",
+      "detail": "Repeated searching, portion selection, and ingredient entry can turn a healthy-habit tool into a second job, especially during work, commuting, caregiving, hunger, or fatigue.",
+      "evidence_strength": "High for usability burden across nutrition-app studies; the size of the burden for the target market is [uncertain]."
+    },
+    {
+      "barrier": "All-or-nothing streaks",
+      "detail": "A fragile streak makes one missed day erase visible progress and can convert a flexible habit into a compliance test. This is particularly risky when the behavior itself is meal logging rather than a health action.",
+      "evidence_strength": "Moderate. The habit-formation study supports tolerance of occasional misses, and recent qualitative/user reporting describes streak pressure, but direct long-term nutrition-streak experiments are limited."
+    },
+    {
+      "barrier": "Calorie fixation and moralized feedback",
+      "detail": "Red or green food displays, calorie budgets, and daily pass/fail messages can produce guilt, shame, anxiety, restriction, or obsessive checking. They can also cause people to avoid logging meals that do not fit the target.",
+      "evidence_strength": "High for documented risk in eating-disorder and young-adult qualitative samples; not every user experiences harm."
+    },
+    {
+      "barrier": "Poorly timed reminders",
+      "detail": "A reminder can be useful when it is expected and user-configured, but a message about an absent meal can feel like surveillance or scolding. Excessive notifications create fatigue and disengagement.",
+      "evidence_strength": "Moderate to high. Engagement reviews support reminders in some settings, while user-feedback studies and recent reporting show negative responses to intrusive prompts."
+    },
+    {
+      "barrier": "Rewards that promote the wrong behavior",
+      "detail": "If points or badges reward logging every bite, staying below a calorie threshold, or never taking a break, the app may optimize compliance rather than health, internal cues, or sustainable eating.",
+      "evidence_strength": "Moderate. The causal evidence for specific reward mechanics is weak, but the risk is consistent with qualitative reports and self-determination theory."
+    },
+    {
+      "barrier": "Competition and social exposure",
+      "detail": "Leaderboards, public goals, and social comparison can be unwanted for users who prefer anonymity or who experience food and body concerns as private. Shared meals and cultural practices can also make logging publicly awkward.",
+      "evidence_strength": "Moderate. The 2024 preference study ranked social interaction and leaderboards below goals and progress bars; preferences differ by cluster."
+    },
+    {
+      "barrier": "Mascot or avatar mismatch",
+      "detail": "A mascot can feel warm and memorable, but an avatar tied to a thin ideal, body transformation, or childish tone can alienate users or intensify body comparison.",
+      "evidence_strength": "Low to moderate. Avatar reviews find possible effects but few no-avatar controls; nutrition-app preference data rank avatar last overall."
+    },
+    {
+      "barrier": "False precision",
+      "detail": "An uncertain image or portion estimate can appear authoritative when it feeds a score, streak, or reward. Mixed dishes, sauces, brand differences, and actual consumed amounts remain difficult to infer.",
+      "evidence_strength": "High from nutrition image-assessment and dietary-logging validation research."
+    },
+    {
+      "barrier": "Commercial and privacy pressure",
+      "detail": "Account requirements, premium gates, targeted notifications, and unclear use of health or food data can make a user feel that the app is optimizing retention or monetization rather than helping with a personal goal.",
+      "evidence_strength": "Moderate. Privacy and commercial practices vary by product, and direct willingness to pay for a local-only mode is [uncertain]."
+    }
+  ],
+  "triggers_and_usage_contexts": {
+    "capture_triggers": [
+      "Immediately before eating, when the plate or packaged product is already visible and the user wants a fast explanation.",
+      "During shopping or meal preparation, when the user is deciding among options and a small suggestion can affect the next meal.",
+      "After eating or later in the day, when the user has time to backfill a photo, text description, or memory without interrupting a social moment.",
+      "When repeating a meal or using leftovers, where a saved meal or prior correction can remove repeated work.",
+      "At a weekly or occasional review, when the user wants to notice patterns rather than maintain a perfect daily chain."
+    ],
+    "feedback_triggers": [
+      "Immediately after capture for high-value corrections while the meal is visible.",
+      "At a user-selected review window for a short pattern summary and one optional next step.",
+      "Before a planned shopping or meal decision for contextual guidance, not a retrospective reprimand.",
+      "After a gap, with a neutral invitation to resume and an option to explain, skip, or backfill."
+    ],
+    "reminder_design": "Reminders should be opt-in or clearly configurable, tied to user-selected meal windows or review routines, pausible, and phrased as invitations. Preserve a backfill path and never use 'you failed,' 'you broke your streak,' or equivalent language. The 2026 scoping review found push notifications in 29 of 59 studies but also notes that poorly timed or excessive notifications can cause fatigue.",
+    "habit_design": "Use a stable cue plus a very small action, such as 'after my evening meal, review one thing I noticed.' Lally et al. found automaticity varied from 18 to 254 days and that missing one opportunity did not materially impair formation; the UI should therefore show continuity and recovery rather than reset a user to zero."
+  },
+  "privacy_and_data_expectations": {
+    "likely_expectations": [
+      "Users may treat meal photos, eating patterns, weight-related goals, and health conditions as sensitive even when they do not describe themselves as patients.",
+      "A private-by-default experience is more compatible with non-judgmental motivation: progress should not be public, and social comparison should require a separate choice.",
+      "Users should know whether a reward or summary is computed locally, whether raw photos are retained, whether an account is required, and whether a reminder is based on stored meal history.",
+      "Data controls should include local export, delete, reset, pause, and separate controls for raw photos, confirmed meal records, progress history, analytics, and any optional sync.",
+      "No health or food data should be shared with peers, advertisers, or providers as a condition of receiving basic supportive feedback."
+    ],
+    "product_fit": "SuperNutrition's local-only path can make supportive history and rewards feel safer, especially for users who avoid accounts or cloud upload. If remote analysis is offered, the product should ask for explicit per-action consent and explain destination, purpose, retention, and deletion limits before transfer.",
+    "assessment": "[uncertain] Evidence supports demand for transparency and control, but it does not establish that local-only processing is the primary acquisition driver or that users will accept lower recognition coverage for it. Privacy expectations and willingness to pay likely vary by market, age, health context, and prior experience with apps."
+  },
+  "motivation_and_reward_preferences": {
+    "evidence_backed_mechanics": [
+      {
+        "mechanic": "Self-selected, behavior-based goals",
+        "recommended_use": "Let users choose a small, positive goal such as adding variety, including a food group, trying a home-prepared meal, or reviewing one meal. Keep goals editable, pauseable, and separate from weight or calorie ceilings.",
+        "evidence": "Goal setting and monitoring are common components of effective nutrition interventions, and goals were the most favored element in a 308-person nutrition-gamification preference study."
+      },
+      {
+        "mechanic": "Progress views",
+        "recommended_use": "Use a rolling pattern view, weekly reflection, or cumulative history that shows prior success and recovery. A missed day should not erase previous progress.",
+        "evidence": "A meta-analysis of 138 randomized studies found progress monitoring increased monitoring and goal attainment. The 2024 nutrition study ranked progress bars second, but did not test long-term dietary outcomes."
+      },
+      {
+        "mechanic": "Immediate positive feedback",
+        "recommended_use": "Acknowledge useful actions such as noticing an ingredient, correcting an estimate, trying a chosen habit, or returning after a gap. Explain why the action matters and offer one optional next step.",
+        "evidence": "Reviews associate feedback and monitoring with behavior-change interventions, while user studies value awareness and knowledge when the feedback is understandable and actionable."
+      },
+      {
+        "mechanic": "Gentle consistency instead of a fragile streak",
+        "recommended_use": "If a streak is offered, make it optional, private, and non-destructive: show active days, recovery, or a flexible range; include pause days and never display a loss message. Prefer tracking the chosen health action over tracking app opens.",
+        "evidence": "Habit research supports repeated behavior in context but finds wide time variation and tolerance for a missed opportunity. Direct long-term evidence for nutrition streaks is limited, so the safer design is a testable hypothesis rather than a default.",
+        "risk_control": "Do not let the streak become the product's primary success metric or make users log every bite to preserve it."
+      },
+      {
+        "mechanic": "Meaningful, optional rewards",
+        "recommended_use": "Use small acknowledgments, a reflective milestone, an optional recipe or learning item, or a user-chosen reward. If commercial coupons are explored, the user chooses whether to receive them and they must not promote restrictive or unhealthy behavior.",
+        "evidence": "The 2024 study found coupons, points, and levels were preferred more than badges, leaderboards, social interaction, virtual goods, and avatars. This is a preference result, not proof of durable health benefit or a mandate to add external incentives."
+      },
+      {
+        "mechanic": "Mascot or friendly guide",
+        "recommended_use": "Treat a mascot as optional tone and orientation, not as a judge, coach who nags, body model, or progress owner. Allow users to hide it and do not tie its mood or appearance to weight, calories, or missed logs.",
+        "evidence": "Avatar reviews found some positive health-behavior effects but insufficient no-avatar controls for a firm causal conclusion. The nutrition preference study ranked avatar last overall, so evidence does not support making a mascot central."
+      },
+      {
+        "mechanic": "Private or opt-in social support",
+        "recommended_use": "Offer a private reflection, optional trusted-person share, or anonymous support only after consent. Avoid public leaderboards, food ranking, and comparison of calorie or body outcomes.",
+        "evidence": "The nutrition preference study found lower overall preference for social interaction and leaderboards than for goals and progress bars, although clusters differed. Broader engagement meta-analysis found social support associated with use, which suggests supportive connection may help without requiring competition."
+      },
+      {
+        "mechanic": "User-controlled reminders",
+        "recommended_use": "Let users choose timing, frequency, content, quiet hours, and pause duration. Use neutral copy such as 'Would you like to review this meal?' and offer 'not now' and 'I am done for today.'",
+        "evidence": "Reminders are common in nutrition interventions and can support engagement, but recent reviews warn about fatigue and qualitative/user reports distinguish encouragement from scolding."
+      }
+    ],
+    "avoid": [
+      "Red/green moral labels, 'good' and 'bad' food classifications, and a single daily score that implies moral worth.",
+      "Calorie-only goals, automatic calorie budgets, weight-loss targets, or rewards for eating less when the product is positioned around healthy awareness.",
+      "Loss aversion, paid penalties, reset-to-zero streaks, countdowns, threats, guilt-inducing notifications, and paywalls that exploit fear of losing progress.",
+      "Leaderboards or public comparison by logging frequency, calories, weight, or body change.",
+      "Rewards that require exhaustive logging or override hunger, satiety, cultural food practice, clinician advice, or the user's decision to pause.",
+      "A mascot that becomes disappointed, ashamed, sad, or visibly changed because a user missed a log or ate a particular food."
+    ],
+    "recommended_default": "Start with self-chosen goals, a calm progress/pattern view, positive process feedback, configurable reminders, easy recovery, and no competitive or weight-centered mechanics. Make streaks, rewards, social features, and mascot presentation opt-in and independently testable.",
+    "measurement": [
+      "Return after a missed day or week, not only consecutive-day streak length.",
+      "Completion of the chosen health action and user-reported usefulness, autonomy, competence, and satisfaction.",
+      "Healthy-eating or awareness outcomes appropriate to the selected goal, rather than calorie reduction by default.",
+      "Correction rate, uncertainty acknowledgement, and proportion of sessions that end in a useful user-confirmed result.",
+      "Adverse signals: guilt, shame, anxiety, compulsive checking, meal avoidance, unwanted weight focus, and requests to pause or hide metrics.",
+      "Longer-term retention and voluntary re-engagement, separated from notification-driven opens and raw screen time."
+    ],
+    "assessment": "[uncertain] Evidence is strongest for monitoring, goals, feedback, and autonomy-supportive design; optimal reward type, cadence, streak implementation, mascot value, and long-term effects on healthy eating remain uncertain and may differ by dieting history and health context."
+  },
+  "ai_trust_and_correction_behavior": {
+    "user_expectations": [
+      "Users can accept a fast proposal when it is clearly provisional, exposes assumptions, and offers accept, correct, replace, skip, and manual fallback actions.",
+      "The app should distinguish visible observations from inferred ingredients, preparation, portion, and catalog nutrition. Uncertainty must be visible before it affects progress or rewards.",
+      "Correction should be short and high-value: ask only about uncertain ingredients or serving size, preserve the original input, and keep edits reversible.",
+      "For allergies, medical diets, or clinically important decisions, the app should not turn an image estimate into a safety conclusion."
+    ],
+    "evidence": [
+      "Nutrition image-assessment studies document coding and missing-nutrient errors, and the 2025 Cambodian image-and-voice study used human review of food matches and portions despite high acceptability.",
+      "A small base2Diet pilot found that participants valued automatic nutrition population and editability, but no participant edited a log during the study. This suggests that visible editability does not guarantee correction behavior when the cost or salience is low.",
+      "A qualitative study of personalized dietary advice found interest in lower-burden photo logging alongside concerns about slow loading, mixed meals, and reliability."
+    ],
+    "motivation_implication": "Never reward or penalize an unconfirmed AI result. A user should receive credit for reviewing, correcting, or choosing a manual path, not for accepting the model quickly.",
+    "assessment": "[uncertain] Willingness to correct is not yet measured for a general SuperNutrition audience. Existing evidence supports visible editability and human review, but actual correction behavior may be low when correction is costly or the output appears authoritative."
+  },
+  "competitor_and_positioning_context": [
+    {
+      "competitor_or_pattern": "Calorie-centered trackers such as MyFitnessPal, YAZIO, and similar products",
+      "observed_pattern": "Use calorie or macro targets, food diaries, reminders, progress indicators, premium features, and in some cases badges, streaks, or AI/photo logging. These tools provide familiar self-monitoring infrastructure but can make a calorie budget the central success criterion.",
+      "public_feedback_signal": "The 2021 qualitative study of diet and fitness app users reports guilt, shame, and obsession related to calorie budgets and red visualizations. A 2026 AP report quotes a user who enjoyed a streak badge but experienced a missed-meal notification as scolding.",
+      "whitespace_for_SuperNutrition": "Make understanding, user confirmation, healthy patterns, and recovery the primary loop. Treat calories as optional contextual information, not the reward economy or moral scoreboard."
+    },
+    {
+      "competitor_or_pattern": "Gamified nutrition apps and research prototypes",
+      "observed_pattern": "Common elements include self-monitoring, goals, feedback, progress bars, points, coupons, badges, levels, social interaction, leaderboards, and avatars. A structured review of 25 nutrition-gamification studies identified these elements, while a 2026 scoping review found game-like features in only 8 of 59 adult nutrition-app studies.",
+      "public_feedback_signal": "A 308-person best-worst-scaling study favored goals, progress bars, and coupons and ranked avatars, virtual goods, social interaction, and leaderboards lower overall. Preferences differed by user cluster.",
+      "whitespace_for_SuperNutrition": "Offer a deliberately small, personalized, non-competitive reward layer and test whether it helps healthy action rather than merely increasing app opens."
+    },
+    {
+      "competitor_or_pattern": "Friendly mascot or avatar wellness products",
+      "observed_pattern": "Use a virtual self, character, or coach to add warmth, identity, reminders, and vicarious reinforcement.",
+      "public_feedback_signal": "Avatar evidence is mixed and difficult to isolate from the rest of the intervention. In nutrition-app preference research, avatar was the least favored of ten elements overall.",
+      "whitespace_for_SuperNutrition": "If used, make the character optional, non-anthropometric, non-judgmental, and subordinate to the user's goals and privacy."
+    }
+  ],
+  "acquisition_channels_and_message_hypotheses": {
+    "channels_to_test": [
+      "App-store search and landing pages around 'healthy habits,' 'mindful eating,' 'food photo journal,' 'ingredient awareness,' and 'non-calorie nutrition app.'",
+      "Non-diet dietitians, health educators, cooking and meal-planning communities, and creators who discuss sustainable eating rather than restrictive dieting.",
+      "Student and early-career communities for low-effort meal awareness, with safety-screened research recruitment rather than weight-loss messaging.",
+      "Privacy-conscious, local-first, and offline/mobile communities for the no-account and local-processing value proposition.",
+      "Partnerships with clinicians or dietitians only for appropriate education and referrals; do not market a general app as a treatment or medical tool."
+    ],
+    "message_hypotheses": [
+      "Notice patterns, not perfect streaks.",
+      "Understand what is in your meal without weighing everything.",
+      "Small, chosen habits with a calm way to start again.",
+      "AI suggestions you can see, correct, or ignore.",
+      "Your meal history can stay on your device; cloud analysis is an explicit choice.",
+      "No good-food/bad-food labels and no punishment for an imperfect day."
+    ],
+    "validation_tests": [
+      "Run message tests against calorie-centric control copy and measure qualified sign-up intent, perceived pressure, trust, and understanding of the product promise.",
+      "In interviews, ask participants to describe the last time a health app helped or shamed them, what they would want to see after a missed day, and which progress view feels supportive.",
+      "Prototype three neutral variants: rolling patterns, optional gentle consistency, and no gamification. Measure chosen-goal completion, re-entry after a gap, perceived autonomy, and adverse emotional response.",
+      "Test the local-first claim with an explicit trade-off question about recognition coverage, account creation, cloud upload, and subscription price."
+    ],
+    "assessment": "[uncertain] These channels and messages are evidence-informed hypotheses, not measured acquisition winners. Direct data on search volume, conversion, willingness to pay, and the incremental value of local-only processing are not available in the reviewed sources."
+  },
+  "exclusions_and_safety_boundaries": {
+    "do_not_target_initially": [
+      "People with active or recently treated eating disorders, compulsive exercise, severe food anxiety, or a history of tracking-triggered relapse; the product should not be positioned as an eating-disorder recovery tool.",
+      "Children and younger adolescents until age-appropriate consent, safeguarding, and reward research is complete.",
+      "People seeking diagnosis, treatment, allergy detection, exact medical nutrition, or clinician-prescribed calorie and macro management.",
+      "People who explicitly want coercive accountability, competitive weight loss, or strict restriction as the core product experience."
+    ],
+    "safety_requirements": [
+      "Do not default to calorie or weight goals, and do not use food morality, red/green verdicts, or punishment mechanics.",
+      "Provide a prominent pause, hide-metrics, delete, and reset path. Support a no-goal mode and a non-numeric progress mode.",
+      "If a user reports distress, compulsive use, eating-disorder history, or that tracking is worsening eating behavior, reduce or disable gamification and encourage appropriate professional support without diagnosing.",
+      "Do not infer allergy safety, medical suitability, or treatment recommendations from a photo or generic reward.",
+      "Evaluate emotional harms and avoidance behavior alongside engagement; a retention increase is not a product success if it comes from pressure or compulsive checking."
+    ],
+    "boundary_rationale": "The qualitative eating-disorder evidence and recent reporting show that the same calorie, streak, and visual feedback mechanics can motivate some users while worsening shame, restriction, or obsession for others. The product should support general awareness and habits, not exploit vulnerability or replace professional care."
+  },
+  "product_implications": {
+    "mvp_priorities": [
+      "Make the core reward a trustworthy moment of understanding: quick input, visible uncertainty, user correction, catalog-grounded result, and one optional next step.",
+      "Add self-selected, positively framed, non-numeric goals with edit, pause, skip, and delete controls.",
+      "Use a rolling pattern and recovery view that preserves past progress; do not reset the user after a missed day.",
+      "Use supportive acknowledgments for process behaviors such as reviewing, correcting, noticing variety, and returning after a gap.",
+      "Make reminders configurable, quietable, and neutral; always support backfill and 'not now.'",
+      "Keep progress, history, and reward state private and compatible with local-only use."
+    ],
+    "defer_or_exclude": [
+      "Public leaderboards, friend comparison, calorie competitions, weight-based levels, loss aversion, paid penalties, and streak-loss notifications.",
+      "A mascot or avatar as a required part of onboarding or progress; if tested, make it hideable and separate from body or food judgments.",
+      "External coupon or reward partnerships until the product can show that the incentive supports the user's chosen health action and does not create commercial pressure.",
+      "Any default feature that requires exhaustive meal logging to preserve status."
+    ],
+    "copy_guidance": {
+      "use": [
+        "You noticed a pattern.",
+        "Want to review this meal?",
+        "One day does not erase your progress.",
+        "This is an estimate. You can correct it or continue manually.",
+        "Choose what would make the next meal easier."
+      ],
+      "avoid": [
+        "You broke your streak.",
+        "You failed today.",
+        "Good food/bad food.",
+        "Stay under your limit to win.",
+        "Do not miss your meal log."
+      ]
+    },
+    "evaluation_plan": [
+      "Compare no-gamification, supportive progress, and optional gentle-consistency variants in a short randomized prototype study, with safety screening and a non-numeric path.",
+      "Predefine success as useful confirmed meal records, chosen-habit progress, return after a gap, autonomy, and low guilt or anxiety; do not use daily opens or streak length alone.",
+      "Segment results by dieting history, age, gender, health context, and initial motivation. Stop or redesign a mechanic if it increases compulsive checking, meal avoidance, shame, or unwanted calorie focus.",
+      "Measure weekly and monthly behavior, because short-term engagement evidence is not proof of durable habit formation."
+    ],
+    "data_and_architecture": "Store reward state as reversible, user-controlled events tied to confirmed or explicitly chosen actions. Do not let uncertain AI outputs, raw photos, or remote processing become implicit reward evidence. Keep local-only progress functional without an account or server."
+  },
+  "research_summary": "The strongest evidence supports low-friction self-monitoring, self-selected goals, understandable feedback, and visible progress as behavior-change supports. Habit formation is variable and resilient to an occasional missed opportunity, so a nutrition app should help users resume rather than reset or shame them. Gamification can increase interest or engagement, but evidence for any specific streak, badge, mascot, or reward producing durable healthier eating is limited. Nutrition-app users prefer goals and progress displays over competition and avatars in one 308-person study, while qualitative and recent user reports show that calorie budgets, red visualizations, scolding reminders, and fragile streaks can produce guilt, anxiety, obsession, or avoidance. For SuperNutrition, the best-supported direction is an optional, private, autonomy-supportive layer that rewards understanding, chosen healthy actions, correction, and recovery without making calorie restriction or perfect logging the goal.",
+  "evidence_quality_and_limits": {
+    "high_confidence": [
+      "Progress monitoring and self-regulation are plausible and broadly supported behavior-change mechanisms, although effects vary by context.",
+      "Nutrition-app interventions can produce small improvements in diet-related behaviors, especially when they combine monitoring, feedback, goals, information, and support.",
+      "Rigid calorie-centered feedback and food moralization can cause distress or disordered-eating risk in some users, particularly in eating-disorder, young-women, and vulnerable-user samples.",
+      "Habit formation takes variable time and should not be represented as a fixed 21-day or 30-day promise."
+    ],
+    "moderate_or_low_confidence": [
+      "Gamification may help engagement, but causal evidence separating goals, progress, feedback, rewards, streaks, avatars, and social features is weak and heterogeneous.",
+      "Goals and progress bars are preferred in one nutrition-app preference study, but preference is not the same as sustained behavior change and the sample may not represent all markets.",
+      "Mascots and avatars may support identification or warmth for some users, but nutrition-app preference and review evidence do not support making them central.",
+      "Reminder and notification effects depend strongly on timing, user control, and message framing; more reminders are not automatically better."
+    ],
+    "sample_and_measurement_limits": [
+      "The 2026 nutrition-app scoping review found that only 18 of 59 studies explicitly defined user engagement, and most measured app use, function frequency, or retention rather than emotional wellbeing or durable dietary outcomes.",
+      "Many intervention studies target overweight or obesity, are conducted in North America or Europe, and use predominantly female samples; applicability to a broad, health-curious audience is limited.",
+      "The qualitative negative-effect studies are valuable safety evidence but often use small, selected samples and should not be interpreted as prevalence estimates.",
+      "The recent AP report provides timely user and expert perspectives but is journalism and includes a small number of anecdotal users, not a controlled study.",
+      "Direct evidence about local-only processing, non-calorie rewards, recovery-oriented streaks, and SuperNutrition-specific willingness to use or pay is absent."
+    ],
+    "inference_rule": "Treat recommendations about rolling progress, no reset, non-numeric rewards, optional mascots, and local-first motivation as design hypotheses grounded in the evidence, not as established causal facts."
+  },
+  "sources": [
+    {
+      "title": "How are habits formed: Modelling habit formation in the real world",
+      "authors_or_publisher": "Lally, van Jaarsveld, Potts, and Wardle; European Journal of Social Psychology",
+      "year": 2010,
+      "source_type": "Peer-reviewed field study",
+      "url": "https://doi.org/10.1002/ejsp.674",
+      "accessed": "2026-08-27",
+      "key_evidence": "96 volunteers repeated a chosen behavior in a stable context for 12 weeks; automaticity varied from 18 to 254 days, and missing one opportunity did not materially affect formation."
+    },
+    {
+      "title": "Does monitoring goal progress promote goal attainment? A meta-analysis of the experimental evidence",
+      "authors_or_publisher": "Harkin et al.; Psychological Bulletin",
+      "year": 2016,
+      "source_type": "Peer-reviewed meta-analysis of randomized studies",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26479070/",
+      "accessed": "2026-08-27",
+      "key_evidence": "138 studies and 19,951 participants; interventions increasing progress monitoring also improved goal attainment, with monitoring frequency mediating the effect."
+    },
+    {
+      "title": "Self-Determination Theory Applied to Health Contexts: A Meta-Analysis",
+      "authors_or_publisher": "Ng et al.; Perspectives on Psychological Science",
+      "year": 2015,
+      "source_type": "Peer-reviewed meta-analysis",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26168470/",
+      "accessed": "2026-08-27",
+      "key_evidence": "184 independent datasets supported relations among autonomy support, psychological need satisfaction, autonomous motivation, and health outcomes."
+    },
+    {
+      "title": "Self-determination theory interventions for health behavior change: Meta-analysis and meta-analytic structural equation modeling of randomized controlled trials",
+      "authors_or_publisher": "Gillison et al.; Health Psychology Review",
+      "year": 2020,
+      "source_type": "Peer-reviewed meta-analysis of randomized studies",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/32437175/",
+      "accessed": "2026-08-27",
+      "key_evidence": "56 articles and 65 independent tests found small positive health-behavior effects; autonomous motivation and perceived competence mediated intervention effects."
+    },
+    {
+      "title": "The effectiveness of app-based mobile interventions on nutrition behaviours and nutrition-related health outcomes: A systematic review and meta-analysis",
+      "authors_or_publisher": "Villinger et al.; Obesity Reviews",
+      "year": 2019,
+      "source_type": "Peer-reviewed systematic review and meta-analysis",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6852183/",
+      "accessed": "2026-08-27",
+      "key_evidence": "41 studies, including 27 randomized trials and 6,348 participants, found small beneficial effects; common behavior-change clusters were goals/planning, feedback/monitoring, knowledge, and social support."
+    },
+    {
+      "title": "Efficacy of interventions that use apps to improve diet, physical activity and sedentary behaviour: A systematic review",
+      "authors_or_publisher": "Schoeppe et al.; International Journal of Behavioral Nutrition and Physical Activity",
+      "year": 2016,
+      "source_type": "Peer-reviewed systematic review",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5142356/",
+      "accessed": "2026-08-27",
+      "key_evidence": "Many effective interventions included goal setting, self-monitoring, and performance feedback; some also used reinforcement, rewards, motivational messages, and social support, but the review could not identify which individual techniques caused the effects."
+    },
+    {
+      "title": "Gamification for health promotion: systematic review of behaviour change techniques in smartphone apps",
+      "authors_or_publisher": "Edwards et al.; BMJ Open",
+      "year": 2016,
+      "source_type": "Peer-reviewed systematic app review",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5073629/",
+      "accessed": "2026-08-27",
+      "key_evidence": "64 of 1,680 top-rated health apps met the gamification criteria; feedback/monitoring, reward/threat, and goals/planning were common, but number of techniques did not correlate with ratings."
+    },
+    {
+      "title": "Gamification for health and wellbeing: A systematic review of the literature",
+      "authors_or_publisher": "Johnson et al.; Internet Interventions",
+      "year": 2016,
+      "source_type": "Peer-reviewed systematic review",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6096297/",
+      "accessed": "2026-08-27",
+      "key_evidence": "Across 37 assessed outcomes, 22 were positive and 15 mixed or neutral; avatars, challenges, progress indicators, rewards, and social interaction had heterogeneous effects and emotional outcomes were rarely measured."
+    },
+    {
+      "title": "Gamification preferences in nutrition apps: Toward healthier diets and food choices",
+      "authors_or_publisher": "Berger and Jung; Digital Health",
+      "year": 2024,
+      "source_type": "Peer-reviewed literature review and best-worst-scaling survey",
+      "url": "https://journals.sagepub.com/doi/full/10.1177/20552076241260482",
+      "accessed": "2026-08-27",
+      "key_evidence": "A structured review identified 25 relevant studies and ten game elements; a survey of 308 people favored goals, progress bars, and coupons, while avatars, virtual goods, social interaction, and leaderboards ranked lower overall."
+    },
+    {
+      "title": "Effect of digital health applications with or without gamification on physical activity and cardiometabolic risk factors: A systematic review and meta-analysis of randomized controlled trials",
+      "authors_or_publisher": "Nishi et al.; peer-reviewed systematic review",
+      "year": 2025,
+      "source_type": "Peer-reviewed systematic review and meta-analysis",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11701442/",
+      "accessed": "2026-08-27",
+      "key_evidence": "Updated searches through May 2024 compared gamified and non-gamified adult health apps; the evidence concerns mostly physical activity and cardiometabolic outcomes, so it is indirect for nutrition and does not establish a specific reward mechanism."
+    },
+    {
+      "title": "Key Features of Engagement Strategies in Nutrition Apps for Adults: Scoping Review",
+      "authors_or_publisher": "Vasiloglou et al.; JMIR mHealth and uHealth",
+      "year": 2026,
+      "source_type": "Peer-reviewed scoping review",
+      "url": "https://mhealth.jmir.org/2026/1/e82276/",
+      "accessed": "2026-08-27",
+      "key_evidence": "59 studies found push notifications in 49%, behavioral theory in 41%, personalization in 32%, goal setting in 31%, and game-like features in 14%; only 31% explicitly defined engagement, which was usually measured as app or function use."
+    },
+    {
+      "title": "Enhancing Healthy Behaviors Through Virtual Self: A Systematic Review of Health Interventions Using Avatars",
+      "authors_or_publisher": "Rheu, Jang, and Peng; Games for Health Journal",
+      "year": 2020,
+      "source_type": "Peer-reviewed systematic review",
+      "url": "https://journals.sagepub.com/doi/full/10.1089/g4h.2018.0134",
+      "accessed": "2026-08-27",
+      "key_evidence": "18 avatar interventions were reviewed; some active, fit, or similar avatars were associated with healthier behavior, but few studies had a no-avatar control, preventing a firm causal conclusion."
+    },
+    {
+      "title": "Effects of diet and fitness apps on eating disorder behaviours: qualitative study",
+      "authors_or_publisher": "Anderberg et al.; BJPsych Open",
+      "year": 2021,
+      "source_type": "Peer-reviewed qualitative study",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8485346/",
+      "accessed": "2026-08-27",
+      "key_evidence": "Interviews and think-aloud sessions with 24 university women with current or past eating-disorder experiences described obsession, guilt, shame, and distress linked to calorie budgets and red visualizations."
+    },
+    {
+      "title": "Impacts of dietary self-monitoring via MyFitnessPal to undergraduate women: a qualitative study",
+      "authors_or_publisher": "Bennett et al.; Journal of Nutrition Education and Behavior",
+      "year": 2021,
+      "source_type": "Peer-reviewed qualitative study following a randomized trial",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8643308/",
+      "accessed": "2026-08-27",
+      "key_evidence": "Among 20 undergraduate women, users described awareness and planning benefits but also self-consciousness, guilt, worry, and anxiety, showing that self-monitoring can have divergent emotional effects."
+    },
+    {
+      "title": "Healthy adults' views and experiences on behavior change strategies in mobile applications for diet monitoring: A single centre qualitative study",
+      "authors_or_publisher": "Jamaludin et al.; BMC Public Health",
+      "year": 2023,
+      "source_type": "Peer-reviewed qualitative study",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10653402/",
+      "accessed": "2026-08-27",
+      "key_evidence": "Healthy adults described self-awareness, knowledge, personalization, support, and user-friendly design as useful; some reported guilt or regret after seeing records of unhealthy eating and said this could stop app use."
+    },
+    {
+      "title": "A qualitative analysis of psychological and behavioral outcomes of weight-related self-monitoring among a population-based sample of emerging adults",
+      "authors_or_publisher": "Hahn et al.; Appetite",
+      "year": 2025,
+      "source_type": "Peer-reviewed qualitative study",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/40566734/",
+      "accessed": "2026-08-27",
+      "key_evidence": "Emerging-adult interviews reported both pride and continued motivation and negative experiences including guilt, shame, unrealistic goals, and moral value assigned to food."
+    },
+    {
+      "title": "Using an app to count calories: Motives, perceptions, and connections to thinness- and muscularity-oriented disordered eating",
+      "authors_or_publisher": "Simpson and Mazzeo; Eating Behaviors",
+      "year": 2021,
+      "source_type": "Peer-reviewed observational study",
+      "url": "https://doi.org/10.1016/j.eatbeh.2021.101568",
+      "accessed": "2026-08-27",
+      "key_evidence": "In 1,357 adults, using calorie-tracking apps for weight-control or shape reasons was associated with more reported eating-disorder symptoms than using them for health or disease-prevention reasons; the observational design does not prove causality."
+    },
+    {
+      "title": "Nutrition apps can help build healthy habits. For some users, their gaming features carry risks",
+      "authors_or_publisher": "Associated Press",
+      "year": 2026,
+      "source_type": "Supporting journalism and user/expert interviews",
+      "url": "https://apnews.com/article/d6f91ade776e75bc83f18fb2fa67daac",
+      "accessed": "2026-08-27",
+      "key_evidence": "A recent report describes users finding streak badges motivating but missed-meal notifications scolding, and experts caution that gamification's effect depends on what behavior it promotes."
+    }
+  ],
+  "popularity_signal": "[uncertain] Nutrition apps and gamified wellness products are visibly common in app stores and media coverage, but public downloads, active use, and long-term retention are not comparable across products and were not used as market-size evidence.",
+  "uncertain": [
+    "demographic_and_life_stage",
+    "psychographics_and_values",
+    "popularity_signal",
+    "current_behaviors_and_alternatives",
+    "privacy_and_data_expectations",
+    "motivation_and_reward_preferences",
+    "ai_trust_and_correction_behavior",
+    "acquisition_channels_and_message_hypotheses"
+  ]
+}

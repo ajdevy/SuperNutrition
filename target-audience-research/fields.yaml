@@ -1,0 +1,71 @@
+field_categories:
+  - category: Audience identity
+    fields:
+      - name: target_segment
+        description: The audience segment or segments supported by the evidence, including the proposed launch segment when applicable
+        detail_level: detailed
+      - name: demographic_and_life_stage
+        description: Age, gender where relevant, geography, income, household, work, and life-stage signals with evidence and limitations
+        detail_level: detailed
+      - name: psychographics_and_values
+        description: Health attitudes, identity, values, diet relationship, privacy stance, and emotional context
+        detail_level: detailed
+  - category: Behavior and needs
+    fields:
+      - name: jobs_to_be_done
+        description: Functional, emotional, and social jobs users are trying to accomplish around food and healthier habits
+        detail_level: detailed
+      - name: current_behaviors_and_alternatives
+        description: Existing logging, planning, search, coaching, wearable, social, or offline alternatives and switching behavior
+        detail_level: detailed
+      - name: pain_points_and_barriers
+        description: Friction, time, effort, accuracy, motivation, privacy, trust, and accessibility barriers
+        detail_level: detailed
+      - name: triggers_and_usage_contexts
+        description: Situations and moments that may trigger photo, text, voice, manual, or review interaction
+        detail_level: detailed
+  - category: Trust and engagement
+    fields:
+      - name: privacy_and_data_expectations
+        description: Expectations about local processing, cloud upload, retention, account requirements, data control, and trustworthy claims
+        detail_level: detailed
+      - name: motivation_and_reward_preferences
+        description: Evidence about goals, rewards, streaks, mascots, feedback, and non-judgmental engagement
+        detail_level: detailed
+      - name: ai_trust_and_correction_behavior
+        description: Willingness to use AI food recognition, expectations of accuracy, tolerance for uncertainty, and willingness to correct results
+        detail_level: detailed
+  - category: Market and product fit
+    fields:
+      - name: competitor_and_positioning_context
+        description: Relevant products, their target audiences and promises, public feedback, and whitespace for SuperNutrition
+        detail_level: detailed
+      - name: acquisition_channels_and_message_hypotheses
+        description: Plausible discovery channels and evidence-backed message or value-proposition hypotheses
+        detail_level: detailed
+      - name: exclusions_and_safety_boundaries
+        description: Audiences not suitable for the initial product and medical, eating-disorder, allergy, or other safety boundaries
+        detail_level: detailed
+      - name: product_implications
+        description: Concrete implications for onboarding, feature priority, copy, privacy controls, local mode, rewards, and evaluation
+        detail_level: detailed
+  - category: Evidence and decision
+    fields:
+      - name: research_summary
+        description: Concise evidence-backed summary of the item and its relevance to SuperNutrition
+        detail_level: detailed
+      - name: evidence_quality_and_limits
+        description: Source quality, sample limitations, recency, generalizability, conflicts, and inferences that should not be treated as facts
+        detail_level: detailed
+      - name: sources
+        description: Direct links to primary or authoritative sources and clearly labeled supporting sources with access dates
+        detail_level: detailed
+uncertain:
+  - demographic_and_life_stage
+  - psychographics_and_values
+  - popularity_signal
+  - current_behaviors_and_alternatives
+  - privacy_and_data_expectations
+  - motivation_and_reward_preferences
+  - ai_trust_and_correction_behavior
+  - acquisition_channels_and_message_hypotheses
