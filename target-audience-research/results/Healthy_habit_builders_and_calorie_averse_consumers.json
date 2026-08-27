@@ -1,0 +1,390 @@
+{
+  "target_segment": {
+    "launch_recommendation": "Primary launch hypothesis: health-curious, calorie-averse habit builders aged approximately 18-35 who want to understand meals and make small, sustainable improvements without weighing food or maintaining a calorie diary. The defining trait should be the job and attitude, not age alone.",
+    "primary_segment": {
+      "label": "Healthy-habit resetters",
+      "description": "Adults who periodically decide to eat better, feel more energetic, improve their relationship with food, or become more ingredient-aware, but abandon rigid plans because detailed logging feels like homework or creates pressure.",
+      "why_fit": "They have a recurring need for awareness and encouragement, are likely to use a smartphone at meals, and can benefit from photo, text, or voice capture followed by a quick human-confirmed explanation and one manageable next step."
+    },
+    "secondary_segments": [
+      "Ingredient-conscious improvers who read labels or avoid selected ingredients but want help interpreting mixed meals, restaurant food, and unfamiliar products.",
+      "Busy early-career adults, students, and young cohabiting adults whose schedules and eating-out patterns make manual meal diaries hard to sustain.",
+      "Time-constrained adults with young families who want household-friendly healthier habits; this is a later or separately validated segment because family meals, privacy, and multi-person logging add complexity."
+    ],
+    "not_a_segment_definition": "Do not define the audience simply as all 18-35-year-olds, women, urban users, or people seeking weight loss. Smartphone reach is high across adjacent age groups, and direct evidence for calorie aversion is not available at population scale.",
+    "decision": "Proceed with 18-35 as an acquisition and research lens, but target the psychographic promise: understand what you eat and build healthier habits without calorie counting. Test 18-24, 25-34, and 30-35 life-stage cohorts separately."
+  },
+  "demographic_and_life_stage": "[uncertain] The best-supported demographic envelope is U.S. adults approximately 18-35, with 18-24-year-olds often in college, first jobs, or other transitional routines and 25-35-year-olds more likely to be in established work, cohabitation, partnership, or early-parenthood contexts. The evidence is directional rather than a validated persona: the 2024 IFIC survey used an 18-80 online U.S. sample, with 30% aged 18-34 and 25% aged 35-49; a separate U.S. Research!America poll reports that adults aged 25-34 pay especially close attention to nutrition information on labels (92%). Work, school, personal finances, eating away from home, and changing routines are more actionable descriptors than age alone. Smartphone ownership in 2025 was 97% for U.S. adults aged 18-29 and 96% for ages 30-49, versus 90% for ages 50-64; this supports mobile reach but does not make 18-35 uniquely smartphone-native. Income should remain broad and inclusive: smartphone ownership was 82% below $30,000 household income and 97% at $100,000 or more, while cost and food access are material barriers. Do not use gender as a gate; the strongest app-preference survey was 79.4% female and therefore gender-skewed. Geography is unresolved: the strongest population evidence is U.S.-based, with supporting UK, European, and Malaysian studies, so food culture and local-food coverage must be validated in the launch market.",
+  "psychographics_and_values": "[uncertain] The segment is likely to value health, energy, practical food literacy, autonomy, and a calmer relationship with eating more than weight-loss identity or numerical control. In the 2024 IFIC survey, energy/less fatigue was the most sought food benefit (43%), followed by healthy aging (40%), weight loss/weight management (37%), and digestive/gut health (36%); 54% had followed a specific eating pattern in the prior year, with high-protein and mindful eating more common than calorie counting. Six in ten described their relationship with food as positive, but the Gen Z subgroup was lower at 54%, suggesting room for supportive tools without implying that all younger adults are distressed. Ingredient awareness is plausible but not universal: younger generations were more likely to identify GMOs and allergens as important food-safety issues, while IFIC also found that nearly one in four Americans do not think about health risks or benefits when choosing food. Food choices can create stress: among stressed respondents, 28% of Gen Z and 27% of Millennials said their food choices had added to their stress, and 51% reported eating less-healthfully because of stress. These findings support non-judgmental, choice-preserving design, but they do not directly measure calorie aversion, privacy values, or willingness to pay within the proposed segment.",
+  "jobs_to_be_done": {
+    "functional_jobs": [
+      "Understand what is plausibly in a meal, including visible ingredients, mixed dishes, sauces, and packaged-food context, without searching a large database item by item.",
+      "Capture a meal in seconds while at work, school, commuting, eating out, or handling other tasks, using a photo first with text and voice alternatives.",
+      "Turn a meal into a simple, understandable reflection about variety, ingredients, or balance rather than a daily calorie budget.",
+      "Decide on one realistic next action, such as adding a vegetable, choosing water, trying a different ingredient, cooking more often, or pausing to notice hunger and satisfaction.",
+      "Check and correct an AI suggestion before saving it, especially for portion size, preparation method, brands, sauces, and hidden ingredients.",
+      "Build an intermittent record of habits that is useful even when the user misses meals or does not log every day."
+    ],
+    "emotional_jobs": [
+      "Feel informed and capable rather than judged, monitored, or told that a food is morally good or bad.",
+      "Reduce decision fatigue and the guilt associated with restarting another strict diet.",
+      "See progress through repeatable behaviors and food discovery, not through weight, calorie deficits, or perfect streaks.",
+      "Maintain control over sensitive food photos, health-adjacent data, and whether any cloud processing occurs."
+    ],
+    "social_jobs": [
+      "Fit healthier choices into shared meals, restaurants, workdays, and family routines without requiring a separate diet identity.",
+      "Use credible explanations that can be trusted more than influencer-driven food claims; social sharing should be optional rather than a condition of motivation."
+    ]
+  },
+  "current_behaviors_and_alternatives": "[uncertain] Current alternatives span manual food search and barcode databases, photo-based AI logging, voice logging, recipe and meal planning, wearables or health platforms, dietitian or coach guidance, social-media food content, and offline notes or memory. In an international web survey of 2,382 mostly European respondents with a mean age of 27.2, 51.5% had used a nutrition or diet app; ease of use was the leading selection criterion (65.9%), followed by free cost (59.3%), automatic calorie estimation (51.7%), automatic nutrient estimation (46.9%), and automatic food recording (46.8%). The same survey found barriers in missing major foods (41.0%), incorrect calorie or nutrient estimates (33.5%), missing local foods (27.5%), and unconvincing portion estimates (27.2%); about one-third of nonusers considered apps time-consuming. This is strong evidence for low-friction capture and correction, but it also shows that many nutrition-app prospects still expect numeric outputs, so a calorie-free product should be positioned as a deliberate alternative rather than assumed to be the default preference. Existing competitors reinforce the pattern: MyFitnessPal combines database, barcode, photo meal scan, and voice logging around calories and macros; YAZIO's AI feature estimates calories and nutrition from a photo; Cal AI combines photo capture with calorie and macro goals; and Ate markets a photo journal around awareness without calorie counting. There is no reliable public evidence here for long-term switching rates, retention, or the size of the calorie-averse subgroup.",
+  "pain_points_and_barriers": {
+    "friction": [
+      "Manual search, selecting the right branded food, entering portions, and correcting composite recipes consume time and attention.",
+      "A meal may be eaten before there is time or social permission to photograph it; image-based studies specifically identify missed post-meal capture as a limitation.",
+      "People eat irregularly and away from home, with restaurant meals, snacks, shared dishes, and unmeasured sauces that defeat a rigid diary.",
+      "Photo recognition cannot reliably see hidden ingredients, cooking fats, exact portion mass, or the full recipe; false precision can damage trust."
+    ],
+    "contextual_barriers": [
+      "Cost, limited availability, work or family responsibilities, taste, and partner or household preferences constrain healthier choices. A USDA ARS focus-group study identified all of these barriers, including distrust of ingredients added to processed foods.",
+      "Among UK adults aged 18-34, choosing healthier options was more difficult when eating out than when preparing food at home, especially in takeaways and fast-food settings.",
+      "Stress and food insecurity can make a motivational app feel like blame if it implies that every choice is freely controllable."
+    ],
+    "trust_and_accessibility_barriers": [
+      "Users may distrust incomplete databases, inaccurate portion estimates, unsupported local foods, unexplained AI outputs, or health advice without a credible source.",
+      "A camera-first flow excludes or burdens blind and low-vision users, people in low-light or low-connectivity settings, and anyone who cannot photograph a meal comfortably; text, voice, and manual alternatives are required.",
+      "Cloud-uploaded photos can reveal faces, homes, routines, locations, and sensitive dietary patterns, creating a barrier for privacy-sensitive users."
+    ]
+  },
+  "triggers_and_usage_contexts": {
+    "high_probability_moments": [
+      "A new health intention, return from a holiday or stressful period, or a desire to restart healthier routines.",
+      "Before or after a workday, class, commute, or social meal when the user wants a fast record without opening a detailed diary.",
+      "A restaurant, takeaway, cafeteria, or shared meal where ingredients and preparation are unclear and a quick explanation is more useful than exact numbers.",
+      "Grocery shopping or reading a packaged-food label when the user wants help understanding ingredients or a specific concern.",
+      "After noticing fatigue, digestive discomfort, stress eating, or a recurring pattern and wanting reflection rather than diagnosis.",
+      "A user-created weekly goal, such as trying more vegetables or cooking once, where a meal capture can provide evidence of progress."
+    ],
+    "input_preferences": "Photo is the shortest path when the meal is visible; voice is useful when hands are busy or the user is away from a table; text is the fallback for leftovers, remembered meals, inaccessible camera contexts, and users who prefer not to upload an image. Offer delayed review and gentle optional reminders, but do not force a photo at every eating occasion.",
+    "timing_evidence": "A 2024 mixed-methods study of image-based dietary assessment found that tailored prompts increased image capture by 1.78 images per day versus no prompts, and 62% of completers preferred image-based records to text-based records. The study also found that users could not capture an image after a meal had already been consumed, supporting a flexible photo-plus-text workflow."
+  },
+  "privacy_and_data_expectations": "[uncertain] Direct segment-level evidence about local-only processing and account refusal is limited, but the category creates a credible privacy need. The FTC warns that health apps may use sensitive information for research, advertising, disclosure, or sale and may not be covered by HIPAA; it recommends simple notices explaining collection, use, sharing, and limits. Cal AI's current privacy notice illustrates the concern: it treats dietary habits, food and medications submitted by voice or image, calories, restrictions, goals, body measurements, and inferred health conditions as personal information; it describes service-provider, analytics, research, marketing, advertising, public-feature, and international-transfer pathways. These disclosures are not evidence that every competitor behaves identically, but they make a clear local-first option differentiating. SuperNutrition should make no-account local use a complete path, explain exactly what stays on-device, strip or minimize photo retention, provide deletion and export controls, make cloud analysis separately opt-in with purpose and retention disclosure, and preserve manual/text use when cloud consent is declined. The product should say “designed to keep data on your device in local mode” only when verified by implementation and should not promise absolute privacy or HIPAA coverage.",
+  "motivation_and_reward_preferences": "[uncertain] Evidence supports feedback, personalization, goal setting, and reminders as common engagement mechanisms, but it does not establish that competitive gamification improves long-term nutrition behavior for calorie-averse adults. A 2024 scoping review of adult nutrition apps found push notifications, behavioral-theory integration, personalization, and goal setting to be the most common engagement strategies, while noting that the evidence base for sustainable engagement needs strengthening. A systematic review of smartphone health apps describes goals, feedback, badges, leaderboards, competitions, rewards, social networks, and avatars as possible mechanics; however, qualitative studies of diet and fitness apps report that calorie colors, warnings, streak pressure, and competition can create guilt, shame, fixation, or an unhealthy contest with the app. A small adolescent mobile-food-record study found that games and rewards were prominent usability themes, but that population is not the proposed launch audience. Use private, user-chosen, behavior-based goals; celebrate variety, exploration, consistency with recovery after missed days, and learning; make reminders adjustable; avoid calorie targets, food morality labels, punitive streak loss, public leaderboards, and shame copy. A warm non-human mascot can provide companionship if it never acts as a judge, clinician, or pressure mechanism.",
+  "ai_trust_and_correction_behavior": "[uncertain] There is meaningful openness to AI but a high requirement for transparency and correction. In the 2024 IFIC survey, 51% of U.S. adults were interested in AI to help make safe and nutritious food choices; interest was higher among Gen Z (65%) and Millennials (61%). Nearly two-thirds believed online tools and mobile apps could improve diet and physical activity, with Gen Z at 71% and Millennials at 75%. In the 2,382-person nutrition-app survey, users valued automatic food recording but rejected apps with missing foods, wrong estimates, unsupported local foods, or poor portion estimation; 33.5% cited incorrect calorie or nutrient estimation as a barrier and 18.8% cited incorrect automatic food recognition. A 2025 qualitative image-assisted dietary-recall study found that users preferred image capture for memory support while still experiencing burden around identifying foods and portions. This supports an AI-as-draft model, not autonomous judgment: show ranked candidates and assumptions, ask for confirmation, allow item/portion/recipe correction, show provenance and uncertainty, abstain when the image is inadequate, and route to text or manual entry. The proportion who will actually correct AI, tolerate uncertainty, or return after an error remains unmeasured for this segment.",
+  "competitor_and_positioning_context": {
+    "market_pattern": "The visible market is crowded with calorie, macro, weight, and diet-goal products that are gradually adding faster multimodal capture. The opportunity is not simply photo logging; it is a trustworthy, health-first interpretation layer that helps users understand ingredients and patterns without making calorie counting the central identity.",
+    "competitors": [
+      {
+        "product": "MyFitnessPal",
+        "audience_and_promise": "Broad nutrition and fitness audience; positions itself around calories, nutrition tracking, weight goals, and lasting habits.",
+        "relevant_features": "Meal Scan, barcode scan, voice logging, large food database, diary, exercise and water tracking; Meal Scan suggests verified foods and lets users edit servings.",
+        "whitespace_or_risk": "Strong reach and convenience set the category expectation, but the core promise remains calorie and macro tracking; its Meal Scan is currently a premium, English-language feature with platform and regional limits."
+      },
+      {
+        "product": "YAZIO",
+        "audience_and_promise": "Calorie-conscious users seeking weight, fasting, meal-planning, and nutrition tracking.",
+        "relevant_features": "AI photo recognition detects foods, estimates portions and nutrition, and is positioned within a broader calorie and macro tracker; barcode and recipes are also central.",
+        "whitespace_or_risk": "Shows that photo recognition is now expected in calorie apps; a calorie-averse user still needs an alternative that does not make estimates the main score."
+      },
+      {
+        "product": "Cal AI",
+        "audience_and_promise": "Photo-first users seeking calorie, macro, protein, weight-loss, or muscle goals.",
+        "relevant_features": "Photo scan, barcode and manual search, goals and personalized insights; its terms explicitly describe food identification and nutrition as automated approximations.",
+        "whitespace_or_risk": "Demonstrates demand for speed but competes on quantified body and nutrition outcomes; its privacy notice demonstrates the cloud, advertising, analytics, and sensitive-data trust questions a local-first product can address."
+      },
+      {
+        "product": "Ate / AteMate",
+        "audience_and_promise": "Mindful and intuitive-eating users who want food awareness without shame or calorie counting.",
+        "relevant_features": "Photo journal, quick capture, reflection on how and why people eat, habit insights, and an explicit no-calorie-counting message.",
+        "whitespace_or_risk": "This is the closest positioning analogue, so the non-calorie space is not empty. SuperNutrition needs a sharper distinction around ingredient-level explanations, honest uncertainty and correction, local/offline use, and a consistent photo-text-voice path."
+      },
+      {
+        "product": "Noom",
+        "audience_and_promise": "Weight-management users seeking psychology, coaching, lessons, and behavior change.",
+        "relevant_features": "Habit-building and coaching are prominent, but food logging, calorie zones, food-color systems, AI logging, and weight management remain central.",
+        "whitespace_or_risk": "Validates that behavior-change framing can broaden nutrition beyond raw tracking, while leaving room for a smaller, quieter product without weight goals or coaching intensity."
+      },
+      {
+        "product": "BiteSnap",
+        "audience_and_promise": "Photo-first food-journal users seeking easier calorie and nutrient tracking.",
+        "relevant_features": "Photo recognition, calorie and nutrient estimation, visual history, manual fallbacks, and a public claim that most processing is on-device.",
+        "whitespace_or_risk": "Illustrates the appeal of local processing and fast capture, but still centers calories; its current public status and adoption are not independently verified here."
+      }
+    ],
+    "positioning_statement": "For people who want to eat healthier but do not want to count calories, SuperNutrition is a private food-awareness companion that lets them snap, say, or type a meal, review honest ingredient hypotheses, and build small habits with no shame."
+  },
+  "acquisition_channels_and_message_hypotheses": "[uncertain] Likely discovery channels are app-store search, short-form educational food content, creator or dietitian demonstrations, friend referrals, campus and workplace wellness communities, and privacy/local-mode communities. In the international nutrition-app survey, users most often found apps through app stores, social media, and friends; in the 2024 IFIC survey, people who saw food and nutrition content saw it most often on Facebook (63%), YouTube (58%), Instagram (52%), and TikTok (42%), with younger generations more likely to see it on Instagram and TikTok. Healthcare professionals and registered dietitians were the most trusted sources for information about what foods to eat and avoid, so qualified expert review is more credible than influencer-only claims. Test these messages rather than treating them as proven acquisition winners: (1) “Eat healthier without counting calories”; (2) “Snap, say, or type what you ate and understand the ingredients”; (3) “A private food journal that works locally and lets you correct the AI”; and (4) “Small food habits, no guilt and no perfect streaks.” Use demonstrations of uncertainty, corrections, and real mixed meals. Avoid claims of allergy safety, disease prevention, exact calories from photos, guaranteed weight loss, or absolute privacy. Acquisition conversion, willingness to pay, and channel economics remain unknown and require message tests with the actual launch geography.",
+  "exclusions_and_safety_boundaries": {
+    "initial_exclusions": [
+      "Children and adolescents under 18 for the first consumer launch unless a separate consent, safeguarding, and clinical/safety design is approved.",
+      "People seeking medical nutrition therapy for diabetes, eating disorders, kidney disease, severe allergies, gastrointestinal disease, pregnancy, or other conditions requiring individualized professional guidance.",
+      "Users whose primary job is precise calorie, macro, body-composition, bodybuilding, athletic fueling, or medication-linked nutrition management; they may use the product later only with a clearly different mode and evidence base.",
+      "Users expecting the product to diagnose conditions, certify a meal as allergen-free or safe, prescribe treatment, or measure exact grams, calories, or nutrient intake from one photograph."
+    ],
+    "safety_requirements": [
+      "Do not infer or guarantee allergies, intolerances, contamination status, medical suitability, or food safety from an image or AI-generated ingredient hypothesis.",
+      "Keep calories and weight targets out of the default motivational loop; if numeric nutrition is shown, label it as an estimate with assumptions and never use it as a pass/fail score.",
+      "Use neutral language and avoid good/bad food labels, moralizing, public comparison, punitive streaks, or prompts that encourage restriction or compensation.",
+      "Provide clear correction, abstention, manual entry, text, and voice pathways; camera use must not be required for access.",
+      "Show a concise boundary that the product is for general food awareness and habits, not diagnosis or professional dietary care, and direct users with medical or eating-disorder concerns to qualified professionals."
+    ],
+    "inclusion_note": "Do not exclude people by gender, race, income, disability, or geography. Instead, recruit across those dimensions and acknowledge that an app cannot solve food prices, food insecurity, inaccessible meals, or structural barriers to healthier choices."
+  },
+  "product_implications": {
+    "onboarding": [
+      "Ask for the user's purpose in plain language: understand ingredients, feel more energetic, build balanced habits, eat mindfully, or explore foods. Do not require weight, calorie, or body-composition goals.",
+      "Make privacy choice visible before the first photo: local-only, optional remote analysis if available, what leaves the device, retention, and how to delete it.",
+      "Let users choose language, units, dietary preferences, reminder intensity, and whether numeric nutrition is shown; defaults must be visible, editable, reversible, and session-scoped where appropriate.",
+      "Include a short explanation that AI proposes possibilities and the user confirms or corrects them."
+    ],
+    "feature_priority": [
+      "Photo-first capture with fast quality checks, candidate ingredients, visible assumptions, uncertainty, and a one-tap correction path.",
+      "Text and voice input as first-class alternatives for hands-busy, post-meal, private, low-connectivity, and accessibility contexts.",
+      "A result focused on ingredients, food groups, preparation context, and practical observations; keep calorie and macro details secondary and optional.",
+      "A local catalog/history path that works without an account or constant connection, with explicit cloud consent for any remote inference.",
+      "Flexible, user-created micro-goals and progress based on behaviors such as variety, vegetables, hydration, cooking, mindful pauses, or regular capture; missed days should not erase progress.",
+      "An approachable companion or mascot that celebrates curiosity and agency, never compliance or restriction."
+    ],
+    "evaluation_plan": [
+      "Recruit 15-20 adults matching the psychographic definition and split them across 18-24, 25-34, and 30-35 life-stage cohorts, with inclusive income, gender, disability, and food-culture coverage.",
+      "Compare calorie-free habit, ingredient-awareness, and privacy-first messages; measure first useful result, time to capture, correction completion, perceived judgment, confidence in the result, day-7 return, and goal completion.",
+      "Instrument abstention and correction as quality signals, not failure: measure how often users accept, edit, reject, or replace AI results and which meal contexts produce errors.",
+      "Run a direct comparison against manual search and a calorie-centric competitor prototype to test whether the non-calorie framing produces higher trust and repeat use among the intended segment."
+    ],
+    "launch_thesis": "The product should win on understanding, speed, control, and emotional safety. The key validation question is not whether young adults own smartphones; it is whether calorie-averse habit builders will repeatedly use a transparent food-awareness loop when the app does not offer calorie targets as the main reward."
+  },
+  "research_summary": "The strongest launch opportunity is a psychographic segment of health-curious, calorie-averse adults who want healthier habits and ingredient awareness but reject the effort, pressure, or moralizing often associated with calorie diaries. Evidence supports the 18-35 lens because smartphone ownership is near-universal, younger adults are more receptive to nutrition technology and AI, and their work, study, eating-out, and stress contexts create a real need for low-friction support. Evidence does not support treating 18-35 as a sufficient segment definition: adjacent age groups are similarly connected, food access and income vary widely, and existing nutrition-app users often still prefer automatic calorie and nutrient estimates. The launch recommendation is therefore to use 18-35 for recruitment and acquisition experiments while targeting the underlying job: understand what was eaten, make one realistic improvement, and build awareness without counting calories. Product differentiation should combine photo/text/voice capture, ingredient-level explanations, visible uncertainty and correction, local-first privacy, and flexible non-judgmental goals. Direct evidence for conversion, retention, willingness to pay, and the size of calorie aversion remains a research gap.",
+  "evidence_quality_and_limits": {
+    "high_confidence": [
+      "U.S. smartphone ownership and income/age differences from Pew's 2025 survey.",
+      "Directional attitudes and subgroup differences from the 2024 IFIC Food & Health Survey of 3,000 U.S. adults.",
+      "The category's declared positioning, capture modes, and privacy disclosures from official competitor pages and policies.",
+      "The existence of food-logging burden, portion uncertainty, and acceptance of image-assisted methods in published studies."
+    ],
+    "moderate_or_limited": [
+      "The 2,382-person app-preference survey was primarily recruited through social media, universities, hospitals, and patient associations; it was mostly European and 79.4% female, so it is not a representative market estimate.",
+      "Photo-record studies often use small, controlled, clinical, student, or convenience samples and measure short periods; they support workflow hypotheses, not consumer retention forecasts.",
+      "The USDA ARS barrier evidence is an 18-person Mississippi focus-group abstract; it is useful for qualitative themes, not prevalence estimates.",
+      "ResearchAmerica, IFIC, Pew, and FSA measures come from different countries, dates, question wordings, and samples; percentages should not be combined into a market-size calculation."
+    ],
+    "critical_gaps": [
+      "No source located directly measures the number of 18-35 adults who are both health-motivated and calorie-averse, nor their willingness to pay for a non-calorie app.",
+      "No reliable public evidence establishes which acquisition channel, message, privacy promise, reward mechanic, or mascot improves repeat use for this exact segment.",
+      "Surveyed interest in AI and mobile tools is not proof of actual meal-capture behavior, correction willingness, or sustained engagement.",
+      "Competitor install, review, and member counts are dynamic, self-reported, platform-specific, and not comparable retention or revenue measures."
+    ],
+    "inference_rule": "Treat the primary segment and product recommendations as evidence-backed hypotheses. Do not present them as population facts until validated with interviews, prototype behavior, and cohort retention in the intended launch market."
+  },
+  "popularity_signal": "[uncertain] The category has visible consumer demand, but public popularity signals are not directly comparable. MyFitnessPal's official site claims more than 280 million members and 5.5 million five-star reviews; Google Play metadata for Cal AI showed a 1M+ install class; Google Play metadata for AteMate showed 100K+ downloads, a 4.1 rating, and roughly 564 reviews at the time checked. These numbers are vendor or storefront signals, can change, and do not establish demand for calorie-free positioning, active retention, or a specific demographic. Use them only to justify competitor testing and market awareness, not as a market-size estimate.",
+  "sources": [
+    {
+      "title": "Pew Research Center: Demographics of Mobile Device Ownership and Adoption in the United States",
+      "url": "https://www.pewresearch.org/internet/fact-sheet/mobile/",
+      "accessed": "2026-08-26",
+      "type": "authoritative population survey",
+      "key_evidence": "2025 smartphone ownership was 97% for ages 18-29, 96% for ages 30-49, 90% for ages 50-64, and 78% for ages 65+; ownership was 82% below $30,000 household income and 97% at $100,000+.",
+      "limitations": "U.S. ownership is not the same as app usage or smartphone-native identity; the 18-35 band is not reported as one group."
+    },
+    {
+      "title": "International Food Information Council: 2024 Food & Health Survey",
+      "url": "https://ific.org/research/2024-food-health-survey/",
+      "accessed": "2026-08-26",
+      "type": "national consumer survey",
+      "key_evidence": "Online survey of 3,000 U.S. adults aged 18-80; covers eating patterns, food relationships, ingredient safety, stress, social-media exposure, AI interest, and mobile-app beliefs.",
+      "limitations": "Online U.S. survey and self-report; subgroup comparisons are not a direct measure of the proposed segment."
+    },
+    {
+      "title": "IFIC: 2024 Food & Health Survey PDF",
+      "url": "https://foodinsight.org/wp-content/uploads/2024/06/2024-IFIC-Food-Health-Survey.pdf",
+      "accessed": "2026-08-26",
+      "type": "survey report",
+      "key_evidence": "Reports 54% following a specific eating pattern in the prior year; energy/less fatigue as the top sought benefit; positive food-relationship and stress findings; higher Gen Z/Millennial interest in AI and mobile tools; younger social-media platform differences.",
+      "limitations": "Survey questions and generations are broad; calorie aversion and actual app behavior were not directly measured."
+    },
+    {
+      "title": "Research!America: 2024 Food and Nutrition Survey",
+      "url": "https://www.researchamerica.org/wp-content/uploads/2024/06/2024-Food-and-Nutrition-Survey.pdf",
+      "accessed": "2026-08-26",
+      "type": "national consumer survey",
+      "key_evidence": "Reports food and mental-well-being links, feeling better and having more energy as a leading diet motivator, cost/time barriers, label attention, and stronger label attention among ages 25-34.",
+      "limitations": "U.S. poll; the public report page provides headline findings rather than a full segment-level behavioral dataset."
+    },
+    {
+      "title": "USDA Agricultural Research Service: Community Group Members' Perceptions about and Barriers to Eating a Healthy Diet",
+      "url": "https://www.ars.usda.gov/research/publications/publication/?seqNo115=412499",
+      "accessed": "2026-08-26",
+      "type": "government research abstract",
+      "key_evidence": "Five focus groups with 18 Mississippi community-group members identified family preferences, busy schedules, expense, taste, ingredient trust, and availability as barriers.",
+      "limitations": "Abstract-only qualitative study with a very small, geographically narrow sample; not a prevalence estimate."
+    },
+    {
+      "title": "Food Standards Agency: Making Food Better Tracker Survey 2024",
+      "url": "https://science.food.gov.uk/article/130815-making-food-better-tracker-survey-2024",
+      "accessed": "2026-08-26",
+      "type": "government consumer research",
+      "key_evidence": "UK adults aged 18-34 reported more difficulty choosing healthier options when eating out and found healthy choices at home easier than in takeaways and fast food.",
+      "limitations": "UK context and broad age band; it measures perceived difficulty, not app adoption or willingness to change."
+    },
+    {
+      "title": "Perspectives and Preferences of Adult Smartphone Users Regarding Nutrition and Diet Apps: Web-Based Survey Study",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8367144/",
+      "accessed": "2026-08-26",
+      "type": "peer-reviewed user survey",
+      "key_evidence": "Among 2,382 respondents, ease of use and free cost led selection criteria; automatic calorie/nutrient estimation and food recording were valued, while missing foods, inaccurate estimates, and missing local foods were important barriers.",
+      "limitations": "Mostly European, mostly female, social-media/university-related recruitment; findings are not representative market shares and are not calorie-averse specific."
+    },
+    {
+      "title": "Tailored Prompting to Improve Adherence to Image-Based Dietary Assessment: Mixed Methods Study",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11034420/",
+      "accessed": "2026-08-26",
+      "type": "peer-reviewed mixed-methods study",
+      "key_evidence": "Tailored prompts improved image capture in a short crossover study; 62% of completers preferred image-based records to text-based records, while portion and post-meal capture remained difficult.",
+      "limitations": "30 completers, mean age 30, controlled short recording periods; not evidence of long-term consumer retention."
+    },
+    {
+      "title": "Comparative Study of the Routine Daily Usability of FoodLog: A Smartphone-based Food Recording Tool Assisted by Image Retrieval",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4025617/",
+      "accessed": "2026-08-26",
+      "type": "peer-reviewed usability study",
+      "key_evidence": "Among 18 university students aged 18-24, image-assisted recording scored higher than text-only recording for ease, fun, browsing, and intention to continue over one month.",
+      "limitations": "Small student sample and older prototype; supports a workflow hypothesis, not a current product benchmark."
+    },
+    {
+      "title": "Mobile Food Tracking Apps: Do They Provoke Disordered Eating Behavior? Results of a Longitudinal Study",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11556259/",
+      "accessed": "2026-08-26",
+      "type": "peer-reviewed longitudinal study",
+      "key_evidence": "A month of mobile food tracking produced mixed psychological findings and a later increase in general disordered-eating risk in the studied sample, supporting caution rather than a simple harm claim.",
+      "limitations": "Population, app, measures, and causal interpretation are limited; this does not prove that all food tracking is harmful or that a non-calorie design is risk-free."
+    },
+    {
+      "title": "Calorie counting and fitness tracking technology: Associations with eating disorder symptomatology",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/28214452/",
+      "accessed": "2026-08-26",
+      "type": "peer-reviewed observational study",
+      "key_evidence": "In 493 college students, calorie-tracker use was associated with higher eating concern and dietary restraint; the authors described the findings as preliminary.",
+      "limitations": "Cross-sectional college sample cannot establish causation and should not be generalized to all users."
+    },
+    {
+      "title": "Introducing Dietary Self-Monitoring to Undergraduate Women via a Calorie Counting App Has No Effect on Mental Health or Health Behaviors",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9109125/",
+      "accessed": "2026-08-26",
+      "type": "peer-reviewed randomized controlled trial",
+      "key_evidence": "Among 200 low-eating-disorder-risk undergraduate women, one month of MyFitnessPal self-monitoring did not increase eating-disorder risk or alter measured mental-health outcomes.",
+      "limitations": "Low-risk selected sample and one-month intervention; it qualifies rather than eliminates safety concerns for higher-risk groups."
+    },
+    {
+      "title": "Key Features of Engagement Strategies in Nutrition Apps for Adults: Scoping Review",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13213328/",
+      "accessed": "2026-08-26",
+      "type": "peer-reviewed scoping review",
+      "key_evidence": "Push notifications, behavioral-theory integration, personalization/customization, and goal setting were common engagement strategies; the review calls for stronger evidence on sustainable engagement.",
+      "limitations": "Describes app strategies and study evidence, not a causal recipe for this product or audience."
+    },
+    {
+      "title": "Healthy adults' views and experiences on behavior change strategies in mobile applications for diet monitoring",
+      "url": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0292390",
+      "accessed": "2026-08-26",
+      "type": "peer-reviewed qualitative study",
+      "key_evidence": "Participants described both motivation from feedback and guilt or regret after seeing unhealthy records, supporting neutral feedback and careful behavior-change framing.",
+      "limitations": "Qualitative sample and context limit prevalence and generalization."
+    },
+    {
+      "title": "Federal Trade Commission: Does your health app protect your sensitive info?",
+      "url": "https://consumidor.ftc.gov/node/76929",
+      "accessed": "2026-08-26",
+      "type": "consumer privacy guidance",
+      "key_evidence": "Warns that health apps may use sensitive data for research, targeted advertising, disclosure, or sale and may not be covered by HIPAA; recommends clear collection and sharing notices.",
+      "limitations": "General consumer guidance, not a survey of SuperNutrition's audience."
+    },
+    {
+      "title": "Cal AI: Privacy Notice",
+      "url": "https://www.calai.app/privacy",
+      "accessed": "2026-08-26",
+      "type": "official competitor privacy policy",
+      "key_evidence": "Declares collection and sharing pathways for food, voice/image logging, health-adjacent data, analytics, research, marketing, service providers, public features, and international transfers.",
+      "limitations": "Describes Cal AI's stated practices only; it is not evidence of all competitors or of user preferences."
+    },
+    {
+      "title": "MyFitnessPal: Meal Scan FAQ",
+      "url": "https://support.myfitnesspal.com/hc/en-us/articles/360045761612-Meal-Scan-FAQ",
+      "accessed": "2026-08-26",
+      "type": "official competitor feature documentation",
+      "key_evidence": "Meal Scan uses computer vision to suggest verified foods, then lets users choose foods and adjust serving sizes; the feature is premium and has language/platform/region conditions.",
+      "limitations": "Feature availability and product behavior can change; official documentation is not independent accuracy evidence."
+    },
+    {
+      "title": "MyFitnessPal: Official nutrition tracking homepage",
+      "url": "https://www.myfitnesspal.com/",
+      "accessed": "2026-08-26",
+      "type": "official competitor marketing page",
+      "key_evidence": "Positions the product around calories, macros, portions, weight goals, photo meal scan, voice logging, barcode scan, and a claimed 280 million members.",
+      "limitations": "Marketing claims are self-reported and not independent popularity or retention evidence."
+    },
+    {
+      "title": "Cal AI: Official product page",
+      "url": "https://getcal.ai/",
+      "accessed": "2026-08-26",
+      "type": "official competitor marketing page",
+      "key_evidence": "Positions photo capture as a way to identify food and provide calories, macros, and personalized insights.",
+      "limitations": "Marketing claims do not establish recognition accuracy or retention."
+    },
+    {
+      "title": "YAZIO: AI food recognition help article",
+      "url": "https://help.yazio.com/hc/en-us/articles/39137901903889-What-is-the-AI-Calorie-Tracking-Feature",
+      "accessed": "2026-08-26",
+      "type": "official competitor feature documentation",
+      "key_evidence": "Describes photo-based AI detection of ingredients, initial portion estimates, and nutritional values within a calorie-tracking workflow.",
+      "limitations": "Feature scope and availability may change; official description is not independent accuracy evidence."
+    },
+    {
+      "title": "Ate: Food Journaling made easy",
+      "url": "https://youate.com/",
+      "accessed": "2026-08-26",
+      "type": "official competitor marketing page",
+      "key_evidence": "Positions a three-tap photo journal around mindful eating, food awareness, reflection, and progress without hard rules or a macro/calorie focus.",
+      "limitations": "Testimonials and positioning are marketing evidence, not independent demand or outcome evidence."
+    },
+    {
+      "title": "Noom: About Us",
+      "url": "https://www.noom.com/about-us/",
+      "accessed": "2026-08-26",
+      "type": "official competitor marketing page",
+      "key_evidence": "Positions behavior change, psychology, coaching, AI food logging, and healthy habits while explicitly retaining weight management as a core focus.",
+      "limitations": "Company claims and product positioning are not independent efficacy evidence."
+    },
+    {
+      "title": "BiteSnap: Photo Food Journal",
+      "url": "https://getbitesnap.com/",
+      "accessed": "2026-08-26",
+      "type": "official competitor marketing page",
+      "key_evidence": "Positions photo recognition as a faster way to track calories and nutrients and build healthy eating habits.",
+      "limitations": "Public product status, current adoption, and independent accuracy were not verified."
+    },
+    {
+      "title": "AteMate Food Journal: Google Play listing",
+      "url": "https://play.google.com/store/apps/details?id=com.youate.android",
+      "accessed": "2026-08-26",
+      "type": "app-store listing and user feedback",
+      "key_evidence": "Shows a no-calorie-counting positioning, 100K+ download class, 4.1 rating, and hundreds of reviews at the time checked.",
+      "limitations": "Storefront figures and reviews are dynamic, self-selected, and not a representative demand or retention study."
+    },
+    {
+      "title": "Cal AI: Google Play listing",
+      "url": "https://play.google.com/store/apps/details?id=com.viraldevelopment.calai",
+      "accessed": "2026-08-26",
+      "type": "app-store listing",
+      "key_evidence": "Shows a photo-first calorie and nutrition positioning and a 1M+ install class at the time checked.",
+      "limitations": "Install class is a coarse storefront signal and does not establish active users, retention, or calorie-averse demand."
+    }
+  ],
+  "uncertain": [
+    "demographic_and_life_stage",
+    "psychographics_and_values",
+    "popularity_signal",
+    "current_behaviors_and_alternatives",
+    "privacy_and_data_expectations",
+    "motivation_and_reward_preferences",
+    "ai_trust_and_correction_behavior",
+    "acquisition_channels_and_message_hypotheses"
+  ]
+}
