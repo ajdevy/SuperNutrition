@@ -1,0 +1,557 @@
+{
+  "target_segment": {
+    "primary_launch_segment": "Busy smartphone-native adults, provisionally 18-35, who want to understand and improve everyday eating without weighing every ingredient, following a rigid diet, or exposing food and health data to a cloud service. The best initial wedge is people who already take meal photos or use notes, but abandon conventional logging because search, portions, and daily targets feel too demanding.",
+    "why_this_segment": [
+      "It has a direct unmet job: reduce the time and mental effort of capturing a meal while keeping the user in control of interpretation.",
+      "It is compatible with local-first use: a user can get value from a single local photo or text entry before creating an account, setting a weight target, or consenting to remote processing.",
+      "It is likely to discover the product through photo-first mobile behavior, but existing options split between detailed diary tools and fast photo estimators.",
+      "It should be defined by behavior and need rather than by weight, gender, or diagnosis: time-poor, curious about food, willing to correct an AI suggestion, and uncomfortable with false certainty or judgmental diet language."
+    ],
+    "secondary_segments": [
+      "Adults roughly 35-55 seeking weight maintenance, energy, meal awareness, or a simpler alternative after abandoning detailed trackers.",
+      "People who eat home-cooked, mixed, culturally specific, or locally branded foods that global databases and photo models handle poorly.",
+      "Privacy-sensitive users, people with unreliable connectivity, and users who prefer an accountless or device-only food journal.",
+      "Fitness and muscle-building users who want quick food capture but do not need SuperNutrition to replace a specialist training or macro application."
+    ],
+    "market_scope": "The category spans weight loss, maintenance, muscle gain, fasting, clinical self-management, mindful eating, and general curiosity. SuperNutrition should launch with one coherent behavioral segment and treat other use cases as hypotheses rather than claiming universal fit."
+  },
+  "demographic_and_life_stage": {
+    "working_hypothesis": "[uncertain] The most promising early adopters are adults 18-35 in smartphone-heavy, time-constrained life stages such as university, early career, shift work, or young families. They are likely to have tried or considered wellness apps and to value convenience, autonomy, and transparent digital services.",
+    "evidence_signals": [
+      "A 2025 randomized study of image-assisted meal reporting evaluated young adults and compared automatic image recognition plus voice reporting with voice-only reporting. This supports the relevance of photo and voice interaction for the life stage, but does not prove commercial demand for SuperNutrition.",
+      "YAZIO public stories include users aged 24, 36, and 47, while Foodvisor reviews include beginners, parents, people in menopause, and people pursuing weight gain. This suggests broad life-stage use rather than a narrow demographic profile.",
+      "App Store age ratings such as 9+, 13+, 16+, or 18+ are platform content ratings, not evidence of actual user distribution.",
+      "A European mHealth survey found meaningful age and education differences in adoption, but it did not identify a nutrition-app launch cohort."
+    ],
+    "geography_and_household": "Start with one explicitly supported catalog country and language pair, then expand by country profile. Prioritize people who cook or eat mixed meals at home, buy local packaged foods, or eat in restaurants, because these contexts expose gaps in generic global databases and photo estimates. Household responsibilities and shared meals are discovery variables, not validated audience facts.",
+    "income_and_willingness_to_pay": "[uncertain] A modest subscription may be acceptable after users experience reliable time savings, but the market includes strong free-tier alternatives. Test willingness to pay against a local-only core, not only against premium AI scans. Competitor prices are not evidence of what the launch cohort can afford."
+  },
+  "psychographics_and_values": {
+    "core_values": [
+      "Health improvement and self-understanding over rapid body transformation.",
+      "Practicality, low cognitive load, and flexibility when life is busy or meals do not match a plan.",
+      "Autonomy: the user wants suggestions and explanations, not an app that decides what food is good or bad.",
+      "Honesty about uncertainty, especially for sauces, oils, mixed dishes, homemade recipes, and portion size.",
+      "Privacy and control over photos, health data, history, account creation, retention, and remote processing.",
+      "Cultural and personal relevance: familiar foods, local products, preferred units, and language."
+    ],
+    "emotional_context": "Many potential users are not opposed to nutrition information; they are opposed to shame, perfectionism, repetitive manual work, and being made to feel that an ordinary meal is a failure. Public reviews of Cronometer and AteMate show demand for a less weight-centric or less guilt-driven framing, while eating-disorder research shows that the same tracking mechanics can be harmful for some users.",
+    "privacy_stance": "[uncertain] The likely launch segment contains a privacy-sensitive subsegment that will understand a concrete local-only promise, especially when it is tied to meal photos and health history. Privacy is unlikely to be the sole acquisition reason for most users; it should be a visible trust advantage that removes an adoption objection.",
+    "identity_and_motivation": "Users may identify as health-conscious, curious, recovering from failed diets, fitness-oriented, busy professionals, parents, or simply people trying to eat more intentionally. Do not make thinness, calorie restriction, or athletic performance the default identity."
+  },
+  "jobs_to_be_done": {
+    "functional_jobs": [
+      "Capture a meal in seconds using a photo, text, or later voice input.",
+      "Get a useful first-pass identification of visible foods and likely ingredients without searching a large database item by item.",
+      "Understand which parts of a result are observed, assumed, or uncertain.",
+      "Correct food identity, ingredients, and serving size with a small number of understandable actions.",
+      "Map confirmed foods to a trustworthy nutrition catalog and see the serving basis and source.",
+      "Use the app offline or with unstable connectivity, then continue manually when AI is unavailable.",
+      "Notice patterns such as meal variety, protein or fiber gaps, regularity, energy, or context without requiring a daily calorie budget."
+    ],
+    "emotional_jobs": [
+      "Feel informed rather than monitored.",
+      "Reduce anxiety about whether a meal was logged correctly by seeing assumptions and being able to fix them.",
+      "Avoid the guilt of missing a day or eating an enjoyable food.",
+      "Build confidence that small, sustainable changes count."
+    ],
+    "social_jobs": [
+      "Explain a food pattern to a clinician, dietitian, partner, or coach only when the user chooses to share it.",
+      "Participate in a health routine without broadcasting weight, food, or progress to a social feed."
+    ]
+  },
+  "current_behaviors_and_alternatives": {
+    "observed_alternatives": [
+      "Manual search and diary entry in MyFitnessPal, YAZIO, Lose It!, Cronometer, MyNetDiary, and similar products.",
+      "Barcode scanning for packaged foods and saved meals or recipes for repeat consumption.",
+      "Photo logging in Foodvisor, Cal AI, SnapCalorie, Cronometer Gold, and the newer AteMate experience.",
+      "Text or voice descriptions when a photo is ambiguous, a meal is homemade, or the user is in a hurry.",
+      "A kitchen scale, packaging labels, restaurant nutrition pages, spreadsheets, notes, messaging themselves, or doing nothing when logging effort exceeds perceived value.",
+      "Wearable and health-platform integrations that bring steps, workouts, sleep, or weight into the same dashboard."
+    ],
+    "switching_patterns": "Public reviews repeatedly describe switching after manual logging became exhausting, after a barcode or AI feature moved behind a paywall, or after inaccurate results. Users also stay because of large databases, saved history, integrations, familiar routines, or a clean interface. Switching will likely require an immediate first-session win plus a migration or repeat-meal path.",
+    "what_users_do_after_ai_error": "[uncertain] Available reviews suggest users edit the result, retake the photo, add a description, use a barcode or label scan, substitute a nearby food, or abandon the AI workflow. SuperNutrition should instrument these branches without assuming that every user will correct a long ingredient list.",
+    "implication": "The product competes with non-use as much as with other apps. A correction that takes longer than a quick manual entry is a failed photo interaction, even if the initial recognition model is technically impressive."
+  },
+  "pain_points_and_barriers": {
+    "workflow_friction": [
+      "Manual database search, portion selection, recipe construction, and repeated taps make logging feel like administrative work.",
+      "Long onboarding questionnaires can delay first value; a Foodvisor review complained that closing the app required filling the form again.",
+      "Paywalls on the speed feature users came for, such as barcode or photo scanning, create distrust and encourage switching.",
+      "Missing local brands, culturally specific foods, homemade meals, and restaurant dishes force substitutions or manual work.",
+      "Cloud-dependent analysis fails in poor connectivity or creates a privacy objection before the user has experienced value."
+    ],
+    "accuracy_and_trust": [
+      "A flat photo cannot directly reveal hidden oil, sugar, ingredients, cooking method, or exact mass; mixed and occluded dishes are especially difficult.",
+      "Public reviews report inaccurate portions, missing foods, bad formulas, stale restaurant data, and results that disappear or require re-entry.",
+      "A confident-looking number can be more harmful than an explicit estimate because users may mistake model output for measurement.",
+      "Users want to edit a result, but excessive correction is almost as burdensome as manual logging."
+    ],
+    "emotional_and_safety_barriers": [
+      "Calorie goals, red/green food labels, streak loss, reminders, and weight-centric language can feel judgmental or triggering.",
+      "People with eating-disorder symptoms or a history of compulsive tracking may be harmed by quantified reinforcement even when the stated goal is healthy eating.",
+      "Users may fear that meal photos, body metrics, and food history are retained, sold, used for advertising, or sent to unknown AI providers."
+    ]
+  },
+  "triggers_and_usage_contexts": {
+    "high_value_moments": [
+      "A restaurant or takeout meal where ingredients and portions are uncertain but the user wants a reasonable estimate.",
+      "A home-cooked mixed dish, lunchbox, or family meal where manual ingredient logging is too slow.",
+      "A packaged food with a barcode or nutrition label when the item is missing from a database.",
+      "A busy workday, commute, travel day, or unstable-connectivity setting where only a quick photo or short text is realistic.",
+      "A meal the user wants to understand rather than judge, such as noticing variety, fiber, protein, hydration, or how food relates to energy.",
+      "A repeat meal after the user has corrected it once and expects the app to remember the personal recipe or serving basis."
+    ],
+    "interaction_sequence": "Preferred path: capture -> quality check -> ranked food and ingredient suggestions -> targeted correction only where confidence is low -> catalog match and serving review -> optional local save. If the photo is poor, offer retake, text, manual search, or offline catalog paths without losing the entry.",
+    "timing_and_frequency": "[uncertain] Expect episodic use at meals, with higher frequency during a health reset, new training block, medical recommendation, travel, or a period of low energy. Do not assume daily logging is desired; the product should deliver value from partial capture and pattern summaries."
+  },
+  "privacy_and_data_expectations": {
+    "market_observation": "[uncertain] Privacy is a meaningful adoption and trust dimension, but its importance varies by person, country, app feature, and perceived benefit. A European survey found data misuse and hacking were common concerns and that people wanted information about data use, deletion, storage, and access before using health apps. A US survey found consent, access, oversight, and deletion protections increased willingness to share digital health data.",
+    "competitor_patterns": [
+      "MyFitnessPal policy and App Store disclosure describe account-linked health, fitness, diary, contact, identifier, and usage data; the product is built around a cross-device account and integrations.",
+      "YAZIO policy describes processing body, health, activity, goal, meal, and account data for personalization and AI functions, including a third-party AI service; its App Store disclosure includes linked health and fitness, user content, contact, identifiers, and purchase data.",
+      "Foodvisor App Store disclosure includes identifiers used for tracking and linked photos or videos, health and fitness, purchases, contact, and usage data; its privacy policy says health data is retained until account deletion.",
+      "Cal AI states that selected meal photos are sent to its API or service providers for analysis, that scan history may be server-synced, and that some features work without Google Sign-In; its policy describes deletion subject to backup and legal or security exceptions.",
+      "BiteSnap materials are not a clean benchmark: one current privacy page claims meal and health data stay on-device and no external-server collection, while another BiteSnap-branded policy describes account, IP, usage, and recipe collection. The App Store listing found here has a different seller identity and only one rating.",
+      "SnapCalorie App Store disclosure describes photos and contact information as not linked to identity, but this does not establish local-only processing or universal retention behavior.",
+      "AteMate markets private, ad-free journaling and says data is not sold or used for AI training without consent, but its App Store disclosure still indicates linked health, location, contact, user content, identifiers, and usage data."
+    ],
+    "expected_controls": [
+      "A clear local-only mode that is useful, searchable, and honest about which features are unavailable locally.",
+      "No mandatory account for the first value moment and no silent upload of a photo.",
+      "A pre-transfer explanation naming what leaves the device, why, processing region or provider policy where applicable, and retention or deletion limits.",
+      "Ephemeral raw photos by default, metadata stripping, visible deletion controls, export or local backup options, and separate consent for optional remote analysis.",
+      "Privacy copy that says what the product does rather than making absolute claims such as 'completely private' without technical proof."
+    ],
+    "positioning_use": "Local-first should be communicated as user control and continuity: 'understand your meals even offline; your photo does not need to leave your phone for the basic path.' Treat cloud analysis as an optional escalation with an explicit choice, not as a hidden dependency."
+  },
+  "motivation_and_reward_preferences": {
+    "positive_mechanics": [
+      "Progress summaries highlighting awareness, variety, consistency, and user-selected habits rather than moral scores.",
+      "Flexible weekly patterns and recovery after missed days; a missed meal should not erase progress.",
+      "Small, optional celebrations for completing a meaningful action such as confirming a meal or trying a new ingredient.",
+      "User-controlled reminders, quiet hours, notification frequency, and the ability to hide calories or weight.",
+      "Explanations and suggestions that connect food to the user's chosen goal, such as energy, variety, protein, fiber, or routine."
+    ],
+    "market_feedback": [
+      "Foodvisor reviewers describe its character or growing plant as engaging, while other reviews complain when gamification does not unlock or when fasting behavior is buggy.",
+      "AteMate explicitly positions around no rules, no guilt, no restarting, optional calories and macros, and insight over restriction.",
+      "Cronometer attracts users who want an unbiased, science-oriented alternative to weight-loss framing and who value detailed nutrition data.",
+      "Research on diet and fitness apps links reminders, streaks, quantified targets, and moralized food messages with obsession, shame, or disordered-eating risk for some users."
+    ],
+    "design_boundary": "Rewards must reinforce reflective action, not compliance with a low calorie target. Never punish a missed day, label food as morally good or bad, or use a streak to pressure a user to log when they have opted out.",
+    "uncertainty_note": "[uncertain] Public reviews reveal strong preferences among vocal users but do not establish which reward mechanics improve long-term behavior for the proposed launch segment. Test optional rewards against a no-gamification control and track well-being signals, not only retention."
+  },
+  "ai_trust_and_correction_behavior": {
+    "observed_expectations": "[uncertain] Users appear willing to accept an estimate when it saves time, but they expect to correct food identity and portions, and they react strongly when a result looks precise but is obviously wrong. Reviews of Cal AI, Foodvisor, SnapCalorie, and Lose It! mention both convenience and the need to fact-check, edit, retake, or add details.",
+    "technical_reality": [
+      "Academic reviews identify hidden ingredients, portions, mixed dishes, occlusion, and culturally diverse meals as persistent challenges for image-based dietary assessment.",
+      "A 2025 randomized young-adult study found value in combining image recognition with voice reporting, but a controlled study should not be treated as commercial accuracy for all foods.",
+      "SnapCalorie publicly reports an average mean caloric error of about 15% and recommends photo logging especially when eating out; this is a vendor claim with a stated methodology, not a universal category benchmark.",
+      "A 2024 comparative study found local food support and inaccurate databases to be important barriers identified by health professionals, reinforcing the need for a catalog and cuisine strategy."
+    ],
+    "trust_contract": [
+      "AI identifies and ranks candidates; it does not silently declare exact nutrition facts.",
+      "The UI distinguishes visible evidence, inferred ingredients, user-provided facts, and catalog-derived values.",
+      "Show uncertainty or a bounded estimate when the photo cannot support a precise portion or ingredient conclusion.",
+      "Ask for correction only at high-impact uncertainty points, such as dish identity, hidden oil or sauce, and serving size.",
+      "Use a single correction to improve repeat meals locally for that user, while making clear whether any learning leaves the device."
+    ],
+    "acceptance_behavior_to_measure": "Measure top-1 and top-3 candidate confirmation, correction rate by cuisine and meal type, time to accepted result, abandonment after correction prompts, retake versus manual fallback, and the percentage of results where users hide or ignore numeric nutrition."
+  },
+  "competitor_and_positioning_context": {
+    "comparison_basis": "Public product pages, help documentation, terms, privacy policies, App Store listings, and representative public reviews checked on 2026-08-26. Prices and ratings are storefront-specific snapshots, not global or permanent values.",
+    "competitors": [
+      {
+        "name": "MyFitnessPal",
+        "audience_and_promise": "Broad calorie, macro, exercise, weight, meal-planning, and fitness audience. Current promise: comprehensive AI-powered health and fitness tracking with a very large food database, 40+ integrations, personalized goals, meal scan, voice logging, AI Coach, fasting, and GLP-1 support.",
+        "onboarding": "Profile setup asks for age, height, weight, sex, activity level, and desired weight change to calculate initial calorie and nutrient goals. Efficient for goal-driven users, but body metrics and weight framing enter the first journey.",
+        "pricing_posture": "Freemium with a large free diary and paid Premium/Premium Plus. US website snapshot: $79.99 per year or $19.99 per month, with a 7-day trial. Barcode scan, meal scan, voice logging, ad-free use, and deeper customization are paid; country and offer vary.",
+        "public_feedback": "US App Store snapshot: 4.7/5 from about 2.4 million ratings. Users value database breadth, integrations, customization, and saved history. Mixed reviews mention logging effort, inaccurate entries, support or account-history problems, ads, and frustration when barcode scanning becomes premium.",
+        "positioning_read": "Scale, history, integrations, and database breadth are strengths. Whitespace is a calmer first-run experience, no-account/local-first use, health insights without weight as the default frame, and more honest photo uncertainty."
+      },
+      {
+        "name": "YAZIO",
+        "audience_and_promise": "Consumers seeking weight loss, maintenance, muscle gain, balanced eating, calorie or macro tracking, intermittent fasting, recipes, and healthy routines. Message: a custom plan, long-term results without extreme diets, AI photo tracking, fasting, recipes, and smart food ratings.",
+        "onboarding": "A personalized plan is presented as available in minutes; policy material says AI personalization and segmentation can tailor onboarding, while the service processes age, gender, height, diet, activity, goals, weight, and related health data.",
+        "pricing_posture": "Freemium with Pro subscriptions for fixed terms, commonly three or twelve months. Current App Store snapshots expose country-specific prices, including a US listing with $47.90 for 12 months and $23.99 for 3 months; exact price is offer and storefront dependent.",
+        "public_feedback": "US App Store snapshot: 4.7/5 from about 50,000 ratings. Users praise design, widgets, recipes, organization, and habit formation. Critiques mention paywalls or ads, database gaps, calorie-target accuracy, and AI results requiring manual checking.",
+        "positioning_read": "YAZIO is a polished habit-and-plan competitor with strong European reach and a less extreme-diet message. Whitespace is transparent local processing, a shorter data-hungry first-value path, and a clear distinction between AI hypotheses and verified nutrition."
+      },
+      {
+        "name": "Foodvisor",
+        "audience_and_promise": "People pursuing weight loss or healthier habits who want fast photo, voice, text, or barcode logging plus courses, recipes, reports, hydration, fasting, activity, and a tailored program. Store copy promises logging in about five seconds and frames understanding rather than restriction.",
+        "onboarding": "Registration can offer a free or paid path; the product uses a personalized nutrition program and may collect health-related profile information. A public review complained about a long questionnaire that had to be re-entered after closing the app.",
+        "pricing_posture": "Freemium: manual diary logging is free, while photo analysis, courses, expert articles, recipes, customized goals, and summaries are premium. US App Store snapshot includes $83.99, $14.99 monthly, and $89.99 for three months, alongside trial and bundle offers; terms say prices are local and subscriptions auto-renew.",
+        "public_feedback": "US App Store snapshot: 4.6/5 from about 17,000 ratings. Users praise photo convenience, interface, editability, and the character or plant. Complaints include inaccurate nutrition or barcode behavior, missing recipes or local foods, fasting bugs, and wanting to create recipes from photos.",
+        "positioning_read": "Closest direct photo-first benchmark and already uses non-restrictive language. SuperNutrition can differentiate through local-first operation, explicit evidence and uncertainty states, catalog provenance, and a smaller correction burden."
+      },
+      {
+        "name": "Cal AI",
+        "audience_and_promise": "Goal-oriented consumers wanting a low-effort calorie and macro tracker, especially people motivated by body confidence, weight change, exercise, and photo logging. Onboarding promise: lifestyle questions -> meal photo -> nutritional breakdown; message says it is not a complicated diet app.",
+        "onboarding": "The first journey asks lifestyle questions to build a plan before the photo result. This gives personalization and a clear conversion path, but public reviews criticize personal-data collection before signup or payment and the lack of free photo analysis.",
+        "pricing_posture": "App Store description says food scanning analysis requires a subscription. UK storefront snapshot lists multiple Unlimited prices including £29.99, £19.99, £9.99, and smaller offers, indicating multiple durations or promotional offers. Exact paywall is experiment and storefront dependent.",
+        "public_feedback": "US App Store snapshot: 4.8/5 from about 359,000 ratings; UK snapshot: 4.7/5 from about 27,000 ratings. Positive reviews value clean design and fewer steps. Negative reviews mention formula errors, missing or stale data, extreme recognition mistakes, bugs, support or subscription issues, and data-collection concern.",
+        "positioning_read": "Cal AI validates demand for photo-first convenience and a simple visual experience. Its trust gap creates room for a correction-first, uncertainty-aware, accountless local path."
+      },
+      {
+        "name": "BiteSnap",
+        "audience_and_promise": "Historically, Bitesnap targeted people wanting a photo food journal that counted calories and nutrients and made healthy habits easier. Current evidence is fragmented: the legacy site describes photo recognition, while a newer App Store listing is branded BiteSnap: AI Calorie Counter.",
+        "onboarding": "Public materials reviewed do not provide a reliable current onboarding description. The App Store evidence is too sparse to infer a stable flow.",
+        "pricing_posture": "[uncertain] The current App Store listing is free with in-app purchases, but no dependable price or feature matrix was visible. A separate BiteSnap privacy page describes optional subscriptions.",
+        "public_feedback": "Current South Africa App Store listing: 1.0/5 from one rating, with a complaint that created food entries were not saved. This is too small to generalize. One 2025 privacy page claims local storage and no external-server collection, while another BiteSnap policy describes account and technical data collection.",
+        "positioning_read": "BiteSnap shows that photo novelty is not durable when accuracy, saving, database coverage, or product continuity are weak. SuperNutrition should make correction, provenance, offline, and deletion behavior visible."
+      },
+      {
+        "name": "Cronometer",
+        "audience_and_promise": "Precision-oriented users, supplement users, athletes, health-conscious users, and people wanting micronutrients and science-backed data beyond weight loss. Public emphasis: accuracy, a verified database, up to 84 or 95 nutrients depending on page, integrations, charts, and a free basic tracker.",
+        "onboarding": "Can begin with a free basic account and expose deeper nutrient targets, charts, and Gold features. It appeals to users willing to configure goals and inspect detail, which is useful for trust but potentially more demanding than SuperNutrition's photo-first front door.",
+        "pricing_posture": "Basic version is free and includes barcode scanning, lab-analyzed food data, custom foods and recipes, syncing, and limited analysis. Gold is recurring; current pricing page shows $10.99 per month billed monthly and says yearly billing saves 54%. Photo log, voice log, custom charts, and Crono Coach are premium.",
+        "public_feedback": "US App Store snapshot: 4.8/5 from about 97,000 ratings. Users praise nutrient depth, barcode workflow, accuracy, and the free tier. Reviews also mention ads, homemade-food setup effort, missing selections, and a desire for simpler logging; one recent review explicitly preferred its neutral framing to weight-loss framing.",
+        "positioning_read": "Cronometer occupies strong health-data and non-weight-centric space, but its detail can be a burden. SuperNutrition should offer a gentler photo-first front door and progressive disclosure while borrowing trusted-source principles."
+      },
+      {
+        "name": "SnapCalorie",
+        "audience_and_promise": "Users wanting photo or voice logging without endless database search, with AI portion estimation, label scanning, USDA-backed nutrition, Apple Health integration, and a visual meal timeline. It targets speed and technical accuracy, including LiDAR on supported iPhones.",
+        "onboarding": "Public store flow is capture-first: photo or voice note -> AI analysis -> calories, macros, and nutrients. Users can add hints such as menu descriptions or ingredients when needed. It is less obviously plan-first than Cal AI but still exposes traditional calorie and macro goals.",
+        "pricing_posture": "Free download with in-app purchases. US App Store snapshot exposes $19.99 monthly and $149 annual among many price points, likely reflecting durations and offers; the listing does not establish one universal current price.",
+        "public_feedback": "US App Store snapshot: 4.7/5 from about 6,400 ratings. Positive reviews emphasize simple photo logging, speed, editability, and free access to multiple inputs. Mixed reviews mention small numerical deviations, missing foods, shortcut or widget requests, and the need to add descriptions for accuracy.",
+        "positioning_read": "Strong direct threat on photo convenience and explicit accuracy claims. SuperNutrition should compete on local/cultural coverage, offline use, calibrated uncertainty, provenance, and no silent transfer rather than a vague 'most accurate' claim."
+      },
+      {
+        "name": "AteMate",
+        "audience_and_promise": "People exhausted by strict calorie tracking who want a reflective health journal covering food, mood, hydration, movement, and sleep, with an AI coach that surfaces patterns. It explicitly says calories and macros are optional learning tools, not daily targets.",
+        "onboarding": "Low-friction public flow: download, take a photo, add a short reflection, and use the coach to interpret patterns. It asks less of users who do not want a weight-loss plan, but is different from SuperNutrition's nutrition-catalog authority.",
+        "pricing_posture": "Subscription with a 7-day free trial, no ads, and full trial access. US App Store snapshot lists monthly options around $9.99 and annual options around $49.99, with other offers present.",
+        "public_feedback": "US App Store snapshot: 4.8/5 from about 10,000 ratings. Public copy and reviews value fast photo journaling, reflection, habit continuity, and nonjudgmental framing. It is not a direct equivalent for catalog-grounded nutrient calculation.",
+        "positioning_read": "AteMate validates emotional whitespace around awareness without guilt, leaving room for a product that combines this tone with transparent nutrition evidence, local-only storage, and user-confirmed catalog values."
+      }
+    ],
+    "positioning_whitespace": [
+      "Evidence-aware photo nutrition: a visible chain from image to candidate to user confirmation to catalog value, with assumptions and uncertainty instead of one authoritative-looking number.",
+      "Local-first nutrition companion: useful without an account, persistent local history, offline catalog search, no silent photo upload, and remote analysis only after purpose-specific consent.",
+      "Culturally relevant everyday food: country-specific catalogs, local brands, mixed dishes, homemade recipes, and language or unit choices treated as foundations rather than edge cases.",
+      "Health-first and non-judgmental: optional numeric depth, no moral labels, no punishment for missed days, and pattern feedback around variety or nourishment rather than compliance.",
+      "A middle path between AteMate's reflective journal and Cronometer's detail: enough nutrient evidence to support a decision, but progressive disclosure so the user does not become a nutrition accountant."
+    ]
+  },
+  "popularity_signal": {
+    "snapshot": "[uncertain] US App Store snapshots observed on or near 2026-08-26: MyFitnessPal about 2.4M ratings at 4.7; Lose It! about 773K at 4.8; Cal AI about 359K at 4.8; YAZIO about 50K at 4.7; Cronometer about 97K at 4.8; AteMate about 10K at 4.8; Foodvisor about 17K at 4.6; SnapCalorie about 6.4K at 4.7; accessible current BiteSnap listing 1 rating at 1.0.",
+    "interpretation": "These figures indicate storefront review volume and sentiment, not active users, retention, revenue, or demographic fit. They are not comparable across countries, platforms, app versions, review solicitation practices, or category placement. Official claims such as YAZIO's 100 million users or Foodvisor's 15 million users are marketing claims and were not independently audited."
+  },
+  "acquisition_channels_and_message_hypotheses": {
+    "channel_hypotheses": [
+      "App Store and Google Play search around photo food logging, offline nutrition, private food journal, healthy eating without calorie counting, local food database, and meal photo analysis.",
+      "Short-form video and creator demonstrations showing a difficult mixed or local meal being identified, corrected, and explained honestly; show the fallback when AI is unsure.",
+      "Privacy-conscious communities and product-review sites where users compare permissions, cloud uploads, and account requirements; messaging must be technically precise.",
+      "Nutrition professionals, coaches, and clinicians who want a low-burden food record, provided sharing is explicit and SuperNutrition makes no medical claims.",
+      "Local-cuisine and home-cooking communities, using country-specific examples rather than generic stock meals.",
+      "Referral or sharing of an exportable meal explanation or personal catalog item, without requiring public sharing of weight or food history."
+    ],
+    "message_hypotheses": [
+      "'See what is in your meal, without turning food into a test.'",
+      "'Your photo is a starting point, not a verdict: confirm, correct, and understand the assumptions.'",
+      "'The everyday nutrition companion that works on your phone, even when the internet does not.'",
+      "'Fast enough for a busy day, honest enough for a mixed dish.'",
+      "'Keep the basic food journal on your device; choose explicitly if a complex photo ever needs remote analysis.'"
+    ],
+    "validation_plan": "[uncertain] Recruit three cohorts: former or current calorie-trackers who abandoned logging; privacy-sensitive or low-connectivity users; and people whose meals are local, homemade, or mixed. Compare a conventional calorie-first prototype with SuperNutrition on time to accepted result, completion, correction burden, perceived trust, and willingness to return. In a four-week pilot, predefine thresholds such as at least 60% of eligible meals reaching a confirmed result within two minutes, at least 70% of users understanding that photo values are estimates, and no material increase in self-reported guilt or compulsive checking; validate these thresholds with a researcher before treating them as product gates.",
+    "message_risk": "Do not lead with 'accurate calories from any photo,' 'private forever,' 'works for everyone,' or medical outcomes. Those claims conflict with the technical evidence, competitor feedback, and SuperNutrition safety boundaries."
+  },
+  "exclusions_and_safety_boundaries": {
+    "initially_excluded_or_deprioritized": [
+      "Children and adolescents unless a separate age-appropriate safety, consent, and clinical review exists.",
+      "People seeking diagnosis, treatment, allergy determination, medication dosing, blood-glucose decisions, or disease-specific prescriptions.",
+      "Users with active or suspected eating disorders, severe body-image distress, or compulsive tracking patterns unless supported by qualified clinicians and a purpose-built safety design.",
+      "Professional clinical nutrition workflows that require validated dietary assessment, clinical-grade portion measurement, or regulated decision support.",
+      "Users who require guaranteed allergen absence or exact nutrient values from a single image; the product cannot make those claims."
+    ],
+    "safety_requirements": [
+      "Show that photo analysis is an estimate and never an allergy or medical determination.",
+      "Avoid prescriptive calorie deficits, moralized food labels, shame, punitive streaks, or messages encouraging compensatory restriction or exercise.",
+      "Offer a no-numbers or reduced-numbers mode and let users hide weight, calories, macros, or progress metrics.",
+      "Provide respectful escalation to a qualified clinician or dietitian for medical questions, with a clear non-medical disclaimer.",
+      "Make uncertain ingredients, oils, sauces, and portions explicit and ask the user to verify high-risk details.",
+      "Do not use personal food or health data for model training, marketing, or sharing without a separate understandable choice and approved policy."
+    ],
+    "research_boundary": "Evaluate whether the product reduces effort and supports understanding, not whether it maximizes calories logged or time spent in the app."
+  },
+  "product_implications": {
+    "onboarding": [
+      "Deliver a first local photo or text result before asking for age, sex, weight, goal weight, or account creation.",
+      "Ask what the user wants to understand—meal composition, variety, protein, fiber, energy, or routine—and make calorie targets optional.",
+      "Explain local-only mode in plain language during onboarding, show which features work offline, and treat remote analysis as a separate opt-in route.",
+      "Keep country, language, unit system, catalog country, and market jurisdiction as separate editable controls.",
+      "Provide a short camera-quality tutorial using representative local and mixed meals, not only clean single-item plates."
+    ],
+    "feature_priority": [
+      "Photo and text capture with a shared meal model, plus manual fallback that does not discard the attempt.",
+      "Ranked candidate and ingredient review with targeted corrections, serving presets, personal repeat meals, and explicit assumptions.",
+      "Versioned catalog mapping displaying source, dataset version, serving basis, and uncertainty alongside nutrient values.",
+      "Offline-searchable country catalog, local packaged-food support, and a safe no-network path.",
+      "Local encrypted history with raw-photo expiry and user-controlled export or deletion.",
+      "Pattern summaries around variety, nutrient coverage, and consistency that work with partial logs and no streak punishment.",
+      "Voice input later, after photo and text correction behavior is proven; voice should use the same uncertainty and provenance contract."
+    ],
+    "copy_and_ux": [
+      "Use 'estimate,' 'suggested match,' 'assumption,' and 'confirm' rather than 'exact' or 'detected perfectly.'",
+      "Use neutral language such as 'What was in this meal?' and 'Want to adjust the portion?' rather than 'You went over.'",
+      "Make uncertainty actionable by explaining what extra fact would improve the result, such as dish name, serving size, recipe, or sauce.",
+      "Keep correction controls close to the evidence and let users accept the whole result when it is good enough.",
+      "Make missed days ordinary: preserve history and offer a gentle restart without a reset or guilt message."
+    ],
+    "privacy_and_data_controls": [
+      "Default to local processing where technically available and visibly label any remote step before transfer.",
+      "Strip EXIF and GPS metadata from photos prepared for analysis; expire raw image bytes after the attempt unless explicitly saved.",
+      "Use explicit consent receipts for remote transfer, including purpose, data, provider or region policy, retention version, and transfer state.",
+      "Do not put photos, filenames, free-form food labels, or request bodies into analytics or logs.",
+      "Test privacy claims with network inspection and deletion evidence before marketing local-first as a differentiator."
+    ],
+    "evaluation": [
+      "Measure time to accepted meal, correction count, abandonment, fallback selection, and repeat-meal reuse by cuisine and context.",
+      "Measure calibration: whether confidence labels predict correction and whether users understand the difference between AI identification and catalog nutrition.",
+      "Measure local/offline success separately from remote success; verify zero network attempts for local and declined-consent scenarios.",
+      "Measure trust, perceived autonomy, food guilt, compulsive checking, and willingness to recommend alongside retention and conversion.",
+      "Benchmark local foods, mixed dishes, sauces, oils, restaurant meals, and portion sizes against a fixed reference set, not only clean stock photos."
+    ]
+  },
+  "research_summary": "The category is crowded but polarized. MyFitnessPal, YAZIO, Lose It!, and Cronometer own large databases, goal tracking, integrations, or nutrient depth; Foodvisor, Cal AI, and SnapCalorie prove that people value photo or voice shortcuts; AteMate shows demand for reflective, non-guilt-based habit support. Across public reviews and research, recurring problems are manual logging burden, paywalls around convenience, inaccurate or overconfident photo estimates, weak support for local or mixed foods, opaque data handling, and motivational mechanics that can become judgmental. SuperNutrition's most credible positioning is a health-first, non-judgmental, local-first companion that converts photos or text into transparent hypotheses, lets the user confirm or correct them, and calculates nutrition from a versioned catalog. The differentiation is the trust-preserving workflow and local control, not an unsupported promise of perfect AI accuracy.",
+  "evidence_quality_and_limits": {
+    "source_mix": [
+      "Primary product pages, help centers, terms, privacy policies, App Store listings, and public reviews for current feature, price, privacy, and sentiment snapshots.",
+      "Peer-reviewed or PubMed/PMC research for food-image limitations, user needs, privacy expectations, and potential harms of weight-related self-monitoring.",
+      "Project-provided SuperNutrition description and architecture were used as product constraints, not as external market evidence."
+    ],
+    "limitations": [
+      "Pricing, paywalls, feature availability, privacy disclosures, ratings, and review counts vary by country, platform, app version, subscription experiment, and time. Recheck before a launch decision.",
+      "App Store ratings and reviews are self-selected, platform-specific, and not representative demographic samples. Some reviews may be solicited or incentivized; one SnapCalorie review explicitly mentions a free offer for a five-star review.",
+      "Official user counts, success rates, accuracy claims, and testimonials are marketing claims unless independently validated.",
+      "Academic studies often use controlled meals, trained participants, specific cuisines, or research prototypes. They support design risks and hypotheses, not guaranteed consumer performance.",
+      "Associations between tracking and disordered eating do not prove every tracker causes harm; they justify safety boundaries and testing for vulnerable users.",
+      "The proposed 18-35 segment, privacy-sensitive subsegment, willingness to pay, acquisition channels, and validation thresholds remain hypotheses until direct interviews, usability tests, and a cohort pilot."
+    ],
+    "inference_rule": "Statements labeled as whitespace, opportunity, segment, message, or product implication are reasoned recommendations from the cited evidence and SuperNutrition constraints, not direct observations of SuperNutrition users."
+  },
+  "sources": [
+    {
+      "title": "MyFitnessPal Premium pricing and feature comparison",
+      "url": "https://www.myfitnesspal.com/premium?legacy=true",
+      "accessed": "2026-08-26",
+      "type": "first-party product and pricing",
+      "supports": "US pricing, trial, free versus Premium feature gating, meal scan, voice log, barcode scan, and positioning."
+    },
+    {
+      "title": "MyFitnessPal App Store listing and reviews",
+      "url": "https://apps.apple.com/us/app/myfitnesspal-calorie-counter/id341232718",
+      "accessed": "2026-08-26",
+      "type": "first-party storefront and public feedback",
+      "supports": "Feature copy, rating volume, privacy disclosure, in-app purchase snapshot, and review themes."
+    },
+    {
+      "title": "How MyFitnessPal calculates initial goals",
+      "url": "https://support.myfitnesspal.com/hc/en-us/articles/360032625391-How-does-MyFitnessPal-calculate-my-initial-goals",
+      "accessed": "2026-08-26",
+      "type": "first-party help documentation",
+      "supports": "Onboarding body metrics, activity, weight-change inputs, and calorie-goal calculation."
+    },
+    {
+      "title": "YAZIO product homepage",
+      "url": "https://www.yazio.com/en",
+      "accessed": "2026-08-26",
+      "type": "first-party product page",
+      "supports": "Custom-plan promise, weight loss, muscle gain, balanced eating, AI photo tracking, fasting, recipes, and integrations."
+    },
+    {
+      "title": "How YAZIO Pro supports user goals",
+      "url": "https://help.yazio.com/hc/en-us/articles/208847005-How-does-Yazio-Pro-support-my-goals",
+      "accessed": "2026-08-26",
+      "type": "first-party help documentation",
+      "supports": "AI food tracking, smart food rating, recipes, fasting, mood and notes, and subscription features."
+    },
+    {
+      "title": "YAZIO terms of use and privacy policy",
+      "url": "https://help.yazio.com/hc/en-us/articles/203444951-Terms-of-Use-Privacy-Policy",
+      "accessed": "2026-08-26",
+      "type": "first-party legal and privacy documentation",
+      "supports": "Body and health data, AI personalization, onboarding segmentation, Health Connect and Apple Health processing, and subscription terms."
+    },
+    {
+      "title": "YAZIO App Store listing and reviews",
+      "url": "https://apps.apple.com/us/app/ai-calorie-tracker-by-yazio/id946099227",
+      "accessed": "2026-08-26",
+      "type": "first-party storefront and public feedback",
+      "supports": "Feature copy, rating volume, storefront-specific prices, privacy disclosure, and review themes."
+    },
+    {
+      "title": "Is Foodvisor free?",
+      "url": "https://foodvisor.zendesk.com/hc/en-us/articles/360013600800-Is-Foodvisor-free",
+      "accessed": "2026-08-26",
+      "type": "first-party help documentation",
+      "supports": "Free manual diary versus premium photo analysis, courses, articles, recipes, custom goals, and summaries."
+    },
+    {
+      "title": "Foodvisor App Store listing and reviews",
+      "url": "https://apps.apple.com/us/app/foodvisor-ai-calorie-counter/id1064020872",
+      "accessed": "2026-08-26",
+      "type": "first-party storefront and public feedback",
+      "supports": "Five-second logging promise, photo/voice/text/barcode inputs, rating volume, prices, privacy disclosure, and review themes."
+    },
+    {
+      "title": "Foodvisor privacy policy",
+      "url": "https://www.foodvisor.io/en/privacy-policy/raw/",
+      "accessed": "2026-08-26",
+      "type": "first-party privacy documentation",
+      "supports": "Account, health-data retention, logs, deletion, and service-provider handling."
+    },
+    {
+      "title": "Cal AI App Store listing and reviews",
+      "url": "https://apps.apple.com/us/app/cal-ai-calorie-tracker/id6480417616",
+      "accessed": "2026-08-26",
+      "type": "first-party storefront and public feedback",
+      "supports": "Lifestyle-question onboarding, photo workflow, subscription-required scan analysis, rating volume, review themes, and privacy disclosure."
+    },
+    {
+      "title": "Cal AI privacy policy",
+      "url": "https://calai.me/privacy",
+      "accessed": "2026-08-26",
+      "type": "first-party privacy documentation",
+      "supports": "Photo upload to API or providers, server-synced history, optional sign-in, analytics, retention, and deletion limits."
+    },
+    {
+      "title": "Cal AI FAQ",
+      "url": "https://calai.app/faq",
+      "accessed": "2026-08-26",
+      "type": "first-party help documentation",
+      "supports": "Paywall and restore-purchase behavior and platform-tied subscriptions."
+    },
+    {
+      "title": "BiteSnap legacy product page",
+      "url": "https://getbitesnap.com/",
+      "accessed": "2026-08-26",
+      "type": "first-party product page",
+      "supports": "Historical photo-journal promise."
+    },
+    {
+      "title": "BiteSnap App Store listing and reviews",
+      "url": "https://apps.apple.com/za/app/bitesnap-ai-calorie-counter/id6747975537",
+      "accessed": "2026-08-26",
+      "type": "first-party storefront and public feedback",
+      "supports": "Current listing identity, one-rating feedback snapshot, and limited-evidence warning."
+    },
+    {
+      "title": "BiteSnap privacy policy claiming device-only storage",
+      "url": "https://www.bitesnap.app/privacy",
+      "accessed": "2026-08-26",
+      "type": "first-party privacy documentation with identity caveat",
+      "supports": "Local data-storage and no-external-server claims that conflict with another BiteSnap-branded policy."
+    },
+    {
+      "title": "Cronometer features",
+      "url": "https://cronometer.com/features/",
+      "accessed": "2026-08-26",
+      "type": "first-party product page",
+      "supports": "Free tracker, verified nutrition, micronutrients, integrations, custom tracking, and health-first positioning."
+    },
+    {
+      "title": "Cronometer Gold pricing and features",
+      "url": "https://cronometer.com/gold/",
+      "accessed": "2026-08-26",
+      "type": "first-party product and pricing",
+      "supports": "Free versus Gold posture, photo log, voice log, Crono Coach, monthly price, and review excerpts."
+    },
+    {
+      "title": "Cronometer App Store listing and reviews",
+      "url": "https://apps.apple.com/us/app/cronometer-calorie-counter/id1145935738",
+      "accessed": "2026-08-26",
+      "type": "first-party storefront and public feedback",
+      "supports": "Rating volume, product promise, privacy disclosure, and review themes about science, ads, and homemade foods."
+    },
+    {
+      "title": "SnapCalorie App Store listing and reviews",
+      "url": "https://apps.apple.com/us/app/snapcalorie-ai-calorie-counter/id1574239307",
+      "accessed": "2026-08-26",
+      "type": "first-party storefront and public feedback",
+      "supports": "Photo and voice workflow, USDA claim, LiDAR positioning, rating volume, prices, privacy disclosure, and review themes."
+    },
+    {
+      "title": "SnapCalorie accuracy FAQ",
+      "url": "https://www.snapcalorie.com/faq.html",
+      "accessed": "2026-08-26",
+      "type": "first-party FAQ",
+      "supports": "Vendor-reported mean caloric error, eating-out use case, hidden-oil limitations, hints, and depth-sensor claims."
+    },
+    {
+      "title": "AteMate product homepage",
+      "url": "https://www.atemate.com/",
+      "accessed": "2026-08-26",
+      "type": "first-party product page",
+      "supports": "No-rules, no-guilt reflective journal, photo capture, optional numbers, and pattern-based positioning."
+    },
+    {
+      "title": "AteMate App Store listing and reviews",
+      "url": "https://apps.apple.com/us/app/atemate-food-journal-ai-coach/id1164976477",
+      "accessed": "2026-08-26",
+      "type": "first-party storefront and public feedback",
+      "supports": "Optional calories and macros, AI coach, subscription, rating volume, privacy disclosure, and review themes."
+    },
+    {
+      "title": "Automatic Image Recognition Meal Reporting Among Young Adults",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/40811729/",
+      "accessed": "2026-08-26",
+      "type": "peer-reviewed research record",
+      "supports": "Controlled evidence about image recognition plus voice reporting, time efficiency, accuracy, and user perception in young adults."
+    },
+    {
+      "title": "Evaluating AI-enabled food image recognition in nutrition apps",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11314244/",
+      "accessed": "2026-08-26",
+      "type": "peer-reviewed review",
+      "supports": "Mixed-dish, culturally diverse food, hidden ingredients, portion, and user-confirmation limitations."
+    },
+    {
+      "title": "Incorporating Consumers' Needs in Nutrition Apps to Promote and Maintain Use",
+      "url": "https://mhealth.jmir.org/2023/1/e39515",
+      "accessed": "2026-08-26",
+      "type": "peer-reviewed mixed-methods study",
+      "supports": "Consumer needs, database accuracy and local-food gaps, usability, and engagement considerations."
+    },
+    {
+      "title": "Public perceptions and engagement in mHealth across Europe",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12199249/",
+      "accessed": "2026-08-26",
+      "type": "peer-reviewed survey",
+      "supports": "Health-app adoption, data-misuse and hacking concerns, and desired information about data access, deletion, privacy, and storage."
+    },
+    {
+      "title": "Consumer views on privacy protections and digital health data sharing",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9982693/",
+      "accessed": "2026-08-26",
+      "type": "peer-reviewed survey study",
+      "supports": "Association of consent, access, oversight, and deletion controls with willingness to share digital health data."
+    },
+    {
+      "title": "Effects of diet and fitness apps on eating-disorder behaviours",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8485346/",
+      "accessed": "2026-08-26",
+      "type": "peer-reviewed qualitative study",
+      "supports": "Potential harms of calorie quantification, reminders, streaks, moralized food messages, and obsessive tracking for vulnerable users."
+    },
+    {
+      "title": "What healthcare professionals think of nutrition and diet apps",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7468977/",
+      "accessed": "2026-08-26",
+      "type": "peer-reviewed international survey",
+      "supports": "Professional concern about inaccurate databases, missing local food composition, and technical burden."
+    }
+  ],
+  "uncertain": [
+    "demographic_and_life_stage",
+    "psychographics_and_values",
+    "popularity_signal",
+    "current_behaviors_and_alternatives",
+    "privacy_and_data_expectations",
+    "motivation_and_reward_preferences",
+    "ai_trust_and_correction_behavior",
+    "acquisition_channels_and_message_hypotheses"
+  ]
+}

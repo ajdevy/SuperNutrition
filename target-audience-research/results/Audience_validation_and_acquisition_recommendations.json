@@ -1,0 +1,571 @@
+{
+  "target_segment": {
+    "recommendation_status": "Working launch hypothesis, to be validated in the intended launch geography",
+    "primary_audience": {
+      "label": "Health-curious, calorie-averse habit builders",
+      "definition": "Adults, initially recruited with an approximately 18-35 lens, who want to understand meals and make healthier, sustainable choices but find detailed calorie diaries, weighing food, or rigid diet plans too effortful, stressful, or judgmental.",
+      "behavioral_signals": [
+        "Has tried, considered, or informally replaced a food tracker with notes, photos, memory, search, or occasional logging.",
+        "Can describe a recent moment when recording or understanding a meal was not worth the effort.",
+        "Eats a mixture of home-cooked, packaged, restaurant, shared, or mixed meals where ingredients or portions are not always obvious.",
+        "Wants a quick explanation, ingredient awareness, or one practical next step rather than a daily calorie budget.",
+        "Is willing to confirm or correct an AI proposal when the app makes the uncertainty and correction path clear.",
+        "Values a no-account or local-first option, or has a concrete reason to avoid unnecessary cloud upload or persistent health-data collection."
+      ],
+      "why_this_is_the_best_first_test": "The segment has a recurring problem that matches the product loop: capture a meal quickly, receive a provisional interpretation, correct it, and learn something useful without turning food into a compliance score. The category evidence supports low-burden image, text, and voice capture, while competitor and safety evidence supports a non-judgmental, correction-first position. The size of the calorie-averse subgroup and its willingness to pay are not established.",
+      "launch_scope": "Use the 18-35 range as a recruitment and acquisition lens, split into 18-24, 25-34, and 30-35 life-stage cohorts, but keep the product definition behavioral rather than age-based. Do not claim that all young adults are calorie-averse or that older adults are not smartphone-capable."
+    },
+    "secondary_audiences": [
+      {
+        "label": "Ingredient-conscious everyday eaters",
+        "definition": "Adults who read labels, care about ingredients or food quality, or want to understand packaged, restaurant, and mixed foods without researching every item manually.",
+        "fit": "Strong fit for catalog-grounded explanations, visible assumptions, local-food coverage, and correction. The job is understanding ingredients and preparation, not necessarily habit streaks.",
+        "validation_need": "Test whether ingredient interpretation is a frequent enough job to drive repeat use when no calorie target is present."
+      },
+      {
+        "label": "Busy household meal decision-makers",
+        "definition": "Adults with demanding work, study, caregiving, or household schedules who want healthier shared meals but cannot maintain a meticulous personal diary.",
+        "fit": "High need for backfill, repeat meals, text and voice capture, shared-dish handling, and practical suggestions that respect budget, taste, and household preferences.",
+        "validation_need": "Treat as a second-wave cohort because shared meals, multi-person records, family privacy, and time constraints add product complexity."
+      },
+      {
+        "label": "Privacy- or connectivity-sensitive users",
+        "definition": "Adults who prefer no account, local processing, local history, or use in settings with unstable connectivity and who can articulate what data they do not want to upload.",
+        "fit": "Potentially strong differentiation for a complete local/manual path, but public evidence supports privacy control more strongly than it proves local-only willingness to pay.",
+        "validation_need": "Measure whether local mode changes activation, trust, and repeat use, and whether users accept any reduction in recognition coverage."
+      }
+    ],
+    "excluded_or_deprioritized_audiences": [
+      "People under 18 for the initial consumer launch unless age-appropriate consent, safeguarding, and safety design are separately approved.",
+      "People seeking diagnosis, treatment, insulin or medication decisions, disease-specific nutrition therapy, allergy guarantees, or clinical-grade dietary measurement.",
+      "People with active or suspected eating disorders, severe body-image distress, or compulsive tracking patterns unless a qualified clinical team and purpose-built safety mode are involved.",
+      "Users whose primary need is exact calories, macros, body-composition control, bodybuilding or athletic fueling precision, or reconstruction of hidden recipe and portion mass from one RGB photo.",
+      "Professional clinical workflows that require validated assessment, regulated decision support, or a complete record of every eating event."
+    ],
+    "decision": "Proceed with the primary audience as the first validation cohort; use ingredient-conscious and privacy/connectivity-sensitive users as deliberate secondary cells; recruit household decision-makers only as a separately analyzed extension. Position the product as general food awareness and healthier habits, not medical care, exact measurement, or weight-loss compliance."
+  },
+  "demographic_and_life_stage": "[uncertain] The most practical initial envelope is adults approximately 18-35 in an English-first, high-smartphone launch market, with separate 18-24, 25-34, and 30-35 life-stage cells. This is a recruitment lens, not a proven market boundary. Pew's 2025 U.S. survey reported smartphone ownership of 97% for ages 18-29 and 96% for ages 30-49, but also 90% for ages 50-64, so smartphone reach does not uniquely support a 35-and-under audience. Ownership was 82% below $30,000 household income versus 97% at $100,000 or more, which argues for inclusive pricing and recruitment. Likely life-stage contexts include university or first jobs, early-career work, cohabitation, eating out, and early household formation; these need direct screening rather than demographic inference. Do not use gender, race, income, disability, or geography as exclusion gates. Recruit across them because food access, culture, language, and accessibility affect whether the workflow works. The internal reference beta markets (United States, Canada, United Kingdom, Australia, and New Zealand) should be treated as a product/configuration assumption until the commercial launch country is chosen; public evidence in this record is primarily U.S.-based, with selected international studies.",
+  "psychographics_and_values": "[uncertain] The likely primary values are health, energy, practical food literacy, autonomy, privacy, and a calmer relationship with eating. The 2024 IFIC Food & Health Survey reported energy or less fatigue as the most sought food benefit, followed by healthy aging, weight management, and digestive or gut health; it also found that many adults follow an eating pattern without proving a single dominant diet identity. Stress, cost, taste, household preferences, and food access can constrain healthier choices, so the product should not frame every choice as individual failure. The segment hypothesis is not that users reject all numbers: nutrition-app survey respondents valued automatic calorie and nutrient estimates, while the proposed audience is expected to reject numbers as the primary motivational frame. Calorie aversion, privacy identity, health literacy, and willingness to pay are not measured at population scale and must be validated through recent-behavior interviews and prototype choices rather than agreement with a leading question.",
+  "jobs_to_be_done": {
+    "functional_jobs": [
+      "When I am about to eat or have just eaten, help me capture the meal in seconds by photo, text, or voice without interrupting work, conversation, cooking, or travel.",
+      "When a meal is mixed, homemade, packaged, shared, or restaurant food, help me form a useful starting hypothesis about foods and ingredients without searching a large database item by item.",
+      "When the first interpretation is incomplete, show what was observed, what was assumed, and the small number of corrections that matter: food identity, preparation, sauce or oil, serving, and shared-plate amount.",
+      "When I forgot to log at the time, let me backfill from a photo, short description, voice note, or memory without treating the missed event as failure.",
+      "When I want healthier habits, turn a meal into one understandable reflection and one realistic next action, such as adding variety or noticing a recurring pattern.",
+      "When I prefer not to upload a personal food photo, let me continue through local analysis, manual catalog search, text, or voice instead of silently switching routes."
+    ],
+    "emotional_jobs": [
+      "Feel informed and capable rather than judged, monitored, or told that a food is morally good or bad.",
+      "Reduce the effort and decision load involved in restarting healthier routines.",
+      "Keep agency over what is saved, what leaves the device, and whether an AI suggestion is accepted.",
+      "Notice progress through repeatable behaviors and learning rather than perfect streaks, weight, or calorie deficits."
+    ],
+    "social_jobs": [
+      "Fit healthier choices into restaurants, shared meals, family routines, and workdays without making the user perform a separate diet identity.",
+      "Explain food in a credible, calm way that can be shared privately if useful without exposing personal weight or food history."
+    ],
+    "highest_priority_job_to_validate": "Whether users repeatedly choose a transparent, editable meal-understanding loop over their current low-effort workaround when the product does not make calorie targets the main reward."
+  },
+  "current_behaviors_and_alternatives": "[uncertain] Current alternatives include manual database search, barcode scanning, saved foods and meal templates, camera-roll photos, notes, memory, recipe and meal-planning tools, social-media food content, wearables or health platforms, dietitians or coaches, and photo or voice AI trackers. A 2,382-person nutrition-app survey found that ease of use and free cost were leading selection criteria, while automatic calorie, nutrient, and food-recording features were also valued; reported barriers included missing foods, inaccurate estimates, missing local foods, and poor portion estimates. A systematic review of 129 smartphone dietary assessment tools found that photo, portion, free-text, and food-database features were common but rarely combined into a single complete workflow. Published mobile assessment studies support photo as a memory aid, voice as a hands-busy path, and later correction or backfill as necessary. Current competitors show two switching poles: calorie and nutrient trackers with deep databases, goals, and integrations; and reflective photo journals with less numerical pressure. Users are most likely to switch when the time and cognitive cost of manual search exceeds the benefit, but actual consumer switching rates, long-term retention, and the size of the calorie-averse group remain unknown.",
+  "pain_points_and_barriers": {
+    "high_confidence_barriers": [
+      "Manual search, brand selection, serving entry, and composite-recipe construction consume time and attention.",
+      "Photos cannot reliably reveal hidden ingredients, oil, sauces, preparation method, brand, exact portion mass, or shared-plate allocation.",
+      "Meals, snacks, and eating contexts are irregular; the phone may be unavailable or it may be socially awkward to photograph food.",
+      "Missing local foods, culturally specific dishes, incomplete databases, and inaccurate portion estimates reduce trust.",
+      "Rigid calorie budgets, red or green food judgments, punitive reminders, streak loss, and competition can produce guilt, shame, avoidance, or fixation for some users.",
+      "Cost, availability, work, caregiving, taste, household preferences, and food insecurity constrain healthier choices beyond what an app can solve."
+    ],
+    "context_and_accessibility_barriers": [
+      "A camera-first product burdens blind or low-vision users, people in low light, people who do not want to photograph a meal, and situations where text or voice is more usable.",
+      "Voice is not socially appropriate in every public setting and needs a discreet text fallback and audible-prompt controls.",
+      "Cloud uploads can expose meal patterns, home or restaurant context, faces, location metadata, or sensitive dietary information.",
+      "Language, unit, catalog-country, cultural-food, and local-brand gaps can make a technically functional app feel irrelevant."
+    ],
+    "research_implication": "Recruit around recent friction episodes and current workarounds, not around claimed interest in an abstract app concept. Ask for the last meal that was difficult to record or understand and observe the real alternative."
+  },
+  "triggers_and_usage_contexts": {
+    "likely_triggers": [
+      "Starting or restarting a healthier routine after stress, travel, a change in schedule, or noticing low energy.",
+      "A work, study, commute, cooking, shopping, or caregiving moment where manual logging competes with another task.",
+      "A restaurant, takeaway, cafeteria, or shared meal where ingredients and preparation are unclear.",
+      "Preparing a home-cooked meal, reading a package label, or reviewing a recipe when ingredient understanding matters.",
+      "An evening or next-day review when the user remembers a meal but did not capture it at the table.",
+      "A user-selected micro-goal around variety, vegetables, cooking, hydration, or regularity where a partial record can show a pattern."
+    ],
+    "input_fit": {
+      "photo": "Fastest when the meal is visible and photographing it is socially comfortable; useful as a memory aid when captured before eating.",
+      "text": "Best fallback for private, post-meal, visually ambiguous, low-light, offline, or no-camera situations.",
+      "voice": "Useful while cooking, shopping, commuting, or carrying something, but must be optional and discreet; treat the first voice result as a draft.",
+      "manual": "Required for poor images, unfamiliar or local foods, high uncertainty, no consent, no network, accessibility needs, and medically sensitive questions that should not be answered by the product."
+    },
+    "workflow_hypothesis": "Use event-contingent capture with optional, adjustable reminders; preserve a backfill route after the meal; allow users to accept, correct, reject, or replace a proposal; and never imply that a missed capture invalidates progress."
+  },
+  "privacy_and_data_expectations": "[uncertain] Evidence supports demand for transparency, consent, access, and deletion controls, but does not establish that local-only processing is the primary purchase driver for this exact audience. The FTC warns that health apps may use sensitive information for research, advertising, disclosure, or sale and may not be covered by HIPAA. A survey of 3,539 U.S. adults found that consent, access, oversight, and deletion controls were associated with greater willingness to share digital health data; a large review analysis found recurring concerns about data sharing, permissions, location, and collection. Competitor policies illustrate why a local-first choice can be meaningful: Cal AI describes voice or image food logging, health-adjacent data, analytics, service providers, marketing, and international transfer pathways, while other products require accounts or cloud processing for photo analysis. SuperNutrition should make no-account local/manual use complete, explain exactly what is processed and stored locally, minimize and expire raw photos, keep location out of the core flow, separate remote consent from basic use, provide export and deletion controls, and avoid claims such as 'private forever,' 'HIPAA compliant,' or 'zero risk' unless independently substantiated. Test local mode as a benefit, a trust prerequisite, and a trade-off against coverage or speed.",
+  "motivation_and_reward_preferences": "[uncertain] Public evidence supports immediate understandable feedback, personalization, user-selected goals, and adjustable reminders as plausible engagement mechanics, but it does not establish the best long-term reward system for calorie-averse adults. Nutrition-app reviews commonly include push notifications, personalization, goal setting, and behavioral-theory components; qualitative evidence also reports guilt or shame from calorie colors, missed-log warnings, streak pressure, and competition. Use private, behavior-based progress around variety, exploration, cooking, hydration, regular capture, or recovery after a missed day. Let users hide numerical nutrition and choose reminder intensity. Avoid calorie-only success, food morality labels, punitive streak resets, public leaderboards, compensation prompts, and rewards that require logging every bite. A warm mascot may be tested as companionship, but it must never act as a judge, clinician, or pressure mechanism. Reward cadence, mascot value, and sustained retention impact are unproven and must be measured rather than assumed.",
+  "ai_trust_and_correction_behavior": "[uncertain] There is a credible openness-to-convenience hypothesis alongside a strong accuracy and control requirement. IFIC reported that 51% of U.S. adults were interested in AI for safe and nutritious food choices, with higher interest among Gen Z and Millennials; the nutrition-app survey reported barriers from missing foods, incorrect estimates, missing local foods, poor portions, and incorrect automatic recognition. A 2025 randomized study of 42 young adults in Taiwan found image recognition identified more dishes and required less reporting time than voice input in a controlled meal scenario, but the sample and meal set were small. These data support AI as a provisional draft, not an authority. Show ranked candidates, supporting evidence, assumptions, confidence or abstention, catalog provenance, and a short correction path; allow accept, edit, reject, manual search, text, and voice alternatives. Measure acceptance, correction, rejection, abstention, time to accepted result, and user understanding separately. The share of users who will correct an error, tolerate uncertainty, or return after an error is not established.",
+  "competitor_and_positioning_context": {
+    "category_read": "The category is polarized between calorie and nutrient trackers with deep databases, goals, integrations, and detailed configuration, and lighter photo journals that emphasize awareness or reflection. Photo and voice products validate demand for shortcut capture, while public reviews and published evaluations repeatedly expose errors in mixed dishes, hidden ingredients, portions, and local foods.",
+    "relevant_benchmarks": [
+      {
+        "competitor": "MyFitnessPal",
+        "audience_and_promise": "Broad calorie, macro, barcode, database, integration, photo-scan, and voice-logging audience.",
+        "positioning_lesson": "Scale and database breadth set a high baseline; SuperNutrition should not compete on database size alone."
+      },
+      {
+        "competitor": "YAZIO and Cal AI",
+        "audience_and_promise": "Weight-management or fitness-oriented users seeking guided plans and fast photo-based calorie or macro estimates.",
+        "positioning_lesson": "They validate photo convenience but leave room for a no-account, correction-first, non-calorie-primary workflow."
+      },
+      {
+        "competitor": "Cronometer",
+        "audience_and_promise": "Precision-oriented users who value verified food data, micronutrients, integrations, and detailed tracking.",
+        "positioning_lesson": "Borrow source and provenance discipline, while offering a gentler, progressive-disclosure front door."
+      },
+      {
+        "competitor": "AteMate",
+        "audience_and_promise": "People exhausted by strict calorie tracking who want photo journaling, awareness, reflection, and no-guilt habits.",
+        "positioning_lesson": "Validates emotional whitespace; SuperNutrition can add catalog-grounded nutrition explanations, local mode, and explicit uncertainty."
+      },
+      {
+        "competitor": "Foodvisor and SnapCalorie",
+        "audience_and_promise": "Photo, voice, barcode, or label capture for rapid nutrition estimates, often with paid analysis or account/cloud dependencies.",
+        "positioning_lesson": "Demonstrate honest uncertainty, local and mixed-food coverage, and user control instead of claiming perfect image accuracy."
+      }
+    ],
+    "positioning_whitespace": [
+      "Evidence-aware capture: photo or text becomes a visible candidate hypothesis, then user confirmation, then catalog-grounded nutrition.",
+      "Local-first control: a useful no-account, offline/manual path with no silent image upload and a separately consented remote option.",
+      "Everyday and culturally relevant food: local dishes, brands, mixed meals, sauces, recipes, language, units, and shared portions treated as core cases.",
+      "Health-first and non-judgmental: optional numeric depth, no moral labels, flexible history, and progress that survives imperfect days.",
+      "A middle path between reflective journaling and nutrition accounting: enough detail to support a decision, not enough pressure to turn every meal into a score."
+    ],
+    "recommended_positioning_statement": "SuperNutrition is a private, low-friction nutrition companion that lets people snap, say, or type what they ate, see a transparent and editable interpretation, and build healthier habits without making calorie counting or cloud upload the default."
+  },
+  "acquisition_channels_and_message_hypotheses": {
+    "overall_strategy": "Start with high-intent store discovery and evidence-led demonstrations, then use qualified creator, professional, community, and referral channels to teach the difference between a fast draft and an authoritative-looking guess. Optimize to qualified activation and repeat use, not cheap installs.",
+    "channel_hypotheses": [
+      {
+        "priority": 1,
+        "channel": "App Store and Google Play search plus store-listing experiments",
+        "why_test": "Apple reports that search is the primary App Store discovery route, that 70% of visitors use search to discover apps and 65% of downloads happen directly after a search; Google Play exposes search, explore, ads/referrals, country, language, UTM, and store-listing conversion reporting.",
+        "keyword_or_creative_themes": [
+          "healthy eating without calorie counting",
+          "private food journal",
+          "offline nutrition app",
+          "meal photo analysis with corrections",
+          "ingredient-aware meal tracker",
+          "voice food journal"
+        ],
+        "message_to_test": "See what is in your meal and choose one realistic next step, without turning food into a test.",
+        "measurement": "Track qualified store-page conversion, install-to-first-capture, first accepted result, week-1 return, and source-specific cost; run one message or visual change at a time."
+      },
+      {
+        "priority": 2,
+        "channel": "Short-form educational video on YouTube, Instagram, and TikTok",
+        "why_test": "Pew reports broad adult reach for YouTube and Instagram and especially high use of Instagram and TikTok among adults under 30. IFIC's 2025 survey reports that 57% of people who encountered food and nutrition content on social media said it encouraged healthier choices. This supports discovery and education, not a guaranteed conversion advantage.",
+        "creative_format": "Show a difficult local or mixed meal, the initial proposal, the uncertainty, the user's correction, and the final catalog-grounded result; also show a no-camera text path and the local-only boundary.",
+        "message_to_test": "Your photo is a starting point, not a verdict: confirm, correct, and understand the assumptions.",
+        "measurement": "Use tagged landing pages and compare qualified screener completion, prototype activation, and four-week repeat use by platform and creative. Do not infer product-market fit from views or likes."
+      },
+      {
+        "priority": 3,
+        "channel": "Registered dietitians, nutrition educators, coaches, campus wellness, and workplace wellbeing partners",
+        "why_test": "Existing research identifies professionals as trusted sources for food guidance and the product's transparent, non-medical framing is more credible when the boundary is explicit. This channel can recruit high-context users and surface safety issues.",
+        "creative_format": "Offer a research invitation or usability study around low-burden food awareness, not clinical treatment or endorsed medical advice; let professionals inspect the correction, provenance, and safety copy.",
+        "message_to_test": "A calmer food record for noticing patterns, with uncertainty and user control visible.",
+        "measurement": "Measure referred participant qualification, completion of a real meal task, trust and safety ratings, and referral-to-activation rather than professional logo count."
+      },
+      {
+        "priority": 3,
+        "channel": "Local-cuisine, home-cooking, privacy, and low-connectivity communities",
+        "why_test": "Published user research identifies local-food gaps, mixed dishes, household context, and privacy controls as meaningful barriers. These communities can test whether local-first and culturally relevant coverage are real acquisition hooks.",
+        "creative_format": "Use representative local meals and invite correction rather than claiming universal recognition; offer a transparent research waitlist and do not collect unnecessary food or health data.",
+        "message_to_test": "Fast enough for a busy day, honest enough for a mixed dish, and useful even when you do not want to upload a photo.",
+        "measurement": "Segment by cuisine, device/connectivity, and privacy preference; compare accepted-result rate, manual fallback, and repeat use."
+      },
+      {
+        "priority": 4,
+        "channel": "Private referrals and shareable explanations",
+        "why_test": "The value can be demonstrated in a meal explanation or local catalog correction without requiring public sharing of weight, calories, or food history.",
+        "creative_format": "Allow users to share a redacted explanation or invite a friend to a private trial; keep sharing opt-in and avoid social comparison.",
+        "message_to_test": "Share how you understood a meal, not a score for your body or your day.",
+        "measurement": "Measure invite-to-qualified-activation and retained cohorts, with no requirement to publish personal food data."
+      }
+    ],
+    "message_hypotheses": [
+      {
+        "id": "H1",
+        "copy": "Eat healthier without counting calories.",
+        "job": "Tests whether relief from numerical tracking is the strongest entry hook.",
+        "risk": "Too broad and may attract users who still expect exact weight-loss guidance."
+      },
+      {
+        "id": "H2",
+        "copy": "Snap, say, or type what you ate. Understand the meal, then choose one realistic next step.",
+        "job": "Tests the photo-text-voice convenience plus actionable health-awareness promise.",
+        "risk": "Must not imply that an image alone proves ingredients or portion."
+      },
+      {
+        "id": "H3",
+        "copy": "Your meal photo is a draft, not a verdict. Confirm, correct, and see where the nutrition comes from.",
+        "job": "Tests trust, editability, and catalog provenance as the differentiator.",
+        "risk": "May be less immediately catchy; show the workflow visually."
+      },
+      {
+        "id": "H4",
+        "copy": "A food journal that can stay on your device, with remote help only when you choose it.",
+        "job": "Tests local-first control as an activation and trust driver.",
+        "risk": "Must match implementation, consent, retention, and network evidence; do not make an absolute privacy claim."
+      },
+      {
+        "id": "H5",
+        "copy": "Small food habits, no guilt and no perfect streaks.",
+        "job": "Tests emotional safety and behavior-based motivation.",
+        "risk": "May sound generic unless paired with a concrete capture demonstration."
+      }
+    ],
+    "messages_to_avoid": [
+      "Accurate calories from any photo.",
+      "Allergy-safe or disease-specific meal advice.",
+      "Guaranteed weight loss or exact nutrient measurement.",
+      "Private forever, zero data risk, or HIPAA protection without substantiation.",
+      "Punitive, moralizing, body-shaming, or scarcity-based language."
+    ],
+    "acquisition_uncertainty": "[uncertain] No public source establishes the winning channel, conversion rate, cost per qualified activated user, willingness to pay, or retention for this exact segment. Treat channel order and message ranking as experiments."
+  },
+  "exclusions_and_safety_boundaries": {
+    "initial_product_boundary": "SuperNutrition is for general food awareness and healthier habits. It does not diagnose, treat, prescribe, determine allergy safety, make medication or glucose decisions, or promise exact nutrition from a single image.",
+    "audience_exclusions": [
+      "Under-18 users in the initial launch without a separately approved age, consent, safeguarding, and content design.",
+      "Users seeking eating-disorder treatment, active recovery support, or a tool for compulsive calorie or body tracking.",
+      "Users needing diabetes, kidney, gastrointestinal, pregnancy, severe-allergy, medication-linked, or other individualized medical nutrition guidance.",
+      "Users needing guaranteed allergen absence, contamination status, exact portion mass, or hidden-recipe reconstruction.",
+      "Clinical or professional users who require validated dietary assessment or regulated decision support."
+    ],
+    "required_safety_behavior": [
+      "State that AI food identity and portion results are provisional and can be wrong.",
+      "Keep numeric nutrition optional and secondary; use estimates, assumptions, source, serving basis, and uncertainty labels.",
+      "Never label food as morally good or bad, encourage compensation, or punish a missed log.",
+      "Provide text, voice, manual, abstention, correction, and no-upload paths; camera use must not be required.",
+      "Ask users to consult a qualified professional for medical or eating-disorder needs and make the boundary visible before reliance.",
+      "Do not use food photos, free-form meal content, or health-adjacent data for marketing, training, analytics, or sharing without a separate approved and understandable choice."
+    ],
+    "inclusion_note": "Do not exclude by gender, race, income, disability, or food culture. Recruit across these dimensions and acknowledge that the product cannot solve food affordability, availability, or structural access barriers."
+  },
+  "product_implications": {
+    "onboarding": [
+      "Offer a first local or manual photo/text result before account creation and before asking for weight, goal weight, or calorie targets.",
+      "Ask what the user wants to understand: ingredients, variety, energy, routine, mindful eating, or another self-chosen goal.",
+      "Show local-only, manual, and optional remote routes before the first photo; explain what remains on-device, what would leave, retention, and deletion.",
+      "Explain that AI proposes candidates and the user confirms or corrects them before catalog nutrition is calculated.",
+      "Keep country, catalog country, language, units, privacy route, numeric display, reminders, and goal intensity separately visible and editable."
+    ],
+    "feature_priority": [
+      "Photo-first capture with quality checks, fast provisional candidates, assumptions, uncertainty, and targeted correction.",
+      "First-class text and manual alternatives; add voice using the same Meal Event, correction, and provenance contract rather than a separate trust model.",
+      "Local catalog/history and no-account operation, with offline search and explicit remote consent when remote analysis exists.",
+      "Support for mixed dishes, sauces, oils, local foods, packaged labels, repeated meals, shared meals, and backfill.",
+      "Nutrition results grounded in a versioned catalog with source, dataset version, serving basis, and assumptions; keep numeric detail progressively disclosed.",
+      "Private, user-selected behavior goals and progress that survive missed days; no punitive streaks or public comparison.",
+      "Accessibility paths that do not require a camera, including readable text, discreet voice controls, and manual search."
+    ],
+    "evaluation_instrumentation": [
+      "Measure route selected, local versus remote, network state, input modality, time to accepted result, correction count, reject or abstain, manual fallback, and repeat-meal reuse.",
+      "Measure whether confidence and uncertainty labels predict correction and whether users distinguish AI identification from catalog nutrition.",
+      "Measure trust, autonomy, perceived judgment, food guilt, compulsive checking, and accessibility alongside activation and retention.",
+      "Do not put raw photos, filenames, free-form meal labels, request bodies, or sensitive content into analytics; use allowlisted aggregate events only.",
+      "Benchmark representative local, mixed, restaurant, packaged, shared, low-light, and poor-network cases against a fixed reference corpus."
+    ],
+    "validation_program": {
+      "principle": "Use recent behavior and observed task completion as the primary evidence. All numerical thresholds below are proposed internal decision rules, not public market benchmarks.",
+      "stage_1_problem_interviews": {
+        "sample": "18 adults, six in each recruitment cell: 18-24, 25-34, and 30-35, with a mix of calorie-tracker abandoners, ingredient-conscious eaters, and privacy/connectivity-sensitive users. Include at least four household meal decision-makers across the sample.",
+        "recruitment_criteria": [
+          "Age 18 or older; smartphone user; in the selected launch geography; eats at least five meals or snacks per week outside a fully controlled institutional meal plan.",
+          "In the past 30 days, has tried to eat healthier, understand ingredients, or track or reflect on food.",
+          "Can describe a recent real meal where logging, portion estimation, ingredient understanding, privacy, or routine friction caused a workaround or abandonment.",
+          "At least half must have stopped or reduced use of a calorie or nutrition tracker because of effort, pressure, missing foods, or poor fit; do not treat this as a requirement for every cell.",
+          "Quota for local, homemade, mixed, restaurant, or shared meals; quota for low-connectivity or explicit no-upload preference; include accessibility needs without making them a separate inferior path."
+        ],
+        "interview_tests": [
+          "Reconstruct the last difficult meal event, current workaround, time cost, emotional response, and what a useful outcome would have been.",
+          "Show four neutral concept cards in randomized order and ask participants to rank the job they would return for, not which slogan sounds nicest.",
+          "Probe what 'local' and 'private' mean behaviorally: account refusal, no network, no raw-photo retention, no ad tracking, or control over remote processing.",
+          "Ask participants to distinguish a provisional food hypothesis from a catalog-derived nutrition value and to name what they would need to correct it.",
+          "Screen out participants whose primary need is medical treatment or exact clinical/athletic measurement and route them to the safety boundary rather than optimizing for their conversion."
+        ],
+        "pass_condition": "Proposed: at least 12 of 18 independently describe a recent, repeated problem that the product can address; at least 10 show an existing workaround or abandonment; and at least 12 rate the problem at 6 or higher on a 7-point importance scale without being shown SuperNutrition copy.",
+        "revise_condition": "If fewer than 10 of 18 have a recent problem or if the top job is exact weight-loss tracking or medical advice, narrow the audience and change the acquisition thesis before prototype investment."
+      },
+      "stage_2_prototype_usability": {
+        "sample": "15-20 new participants drawn from the same cells, with at least five mixed or local meals, five private or low-connectivity contexts, and five users who prefer text or voice over a camera.",
+        "tasks": [
+          "Capture a clear meal locally by photo, review candidates, correct one item, and explain the displayed nutrition source.",
+          "Try a mixed or shared meal and identify where the app should abstain, ask a question, or offer manual search.",
+          "Complete the same type of meal by text and simulated voice, including a post-meal backfill.",
+          "Decline remote upload or disable network and reach a useful manual or local result without an upload attempt.",
+          "Choose a micro-goal and return after a missed day; inspect whether the progress language feels supportive or judgmental."
+        ],
+        "pass_condition": "Proposed: at least 80% complete the core task; median time from input to accepted result is at most 120 seconds for clear meals; at least 70% correctly explain that the AI result is a proposal and the catalog number depends on confirmation and serving assumptions; at least 75% can find correction or fallback without moderator help; and no participant observes a network attempt in the local or declined-consent scenario.",
+        "revise_condition": "Revise the flow if camera capture is the only successful route, if users interpret a provisional result as a guaranteed medical or exact value, or if correction takes more than three targeted actions for ordinary meals."
+      },
+      "stage_3_message_and_channel_test": {
+        "design": "Run H1-H5 as randomized landing-page or store-listing variants with tagged channel sources. Keep the product description, eligibility screen, and consent copy constant; test one primary message at a time.",
+        "proposed_threshold": "Use at least 100 qualified visitors per variant for an early directional read, then replicate the leading two messages with a new audience. Advance only when the winner produces at least a 25% relative lift in qualified screener completion or prototype activation and the lift is consistent in the replication; treat smaller differences as inconclusive.",
+        "quality_controls": [
+          "Define a qualified visitor as an adult in the launch geography who matches the behavioral screen, not merely anyone who clicks an ad.",
+          "Reject a message if it increases clicks but lowers understanding of uncertainty, local processing, or the non-medical boundary.",
+          "Record source, creative, market, device, and message variant so channel economics are not conflated with audience mix."
+        ]
+      },
+      "stage_4_four_week_pilot": {
+        "sample": "60-100 qualified adults, balanced across primary cells, with a pre-registered safety and privacy questionnaire. Use a comparison condition or within-person baseline where feasible.",
+        "measures": [
+          "Activation: first accepted result and first correction within the first session.",
+          "Use: eligible meal opportunities reaching a confirmed result, time to accepted result, correction, rejection, abstention, backfill, and manual fallback.",
+          "Trust: understanding of AI uncertainty, confidence in the catalog source, perceived control, and observed local/remote consent behavior.",
+          "Retention: day-7 return, week-2 and week-4 active use, repeat-meal reuse, and self-selected goal progress.",
+          "Safety: perceived judgment, guilt, compulsive checking, pressure from reminders, and adverse-event or escalation signals."
+        ],
+        "proposed_success_thresholds": [
+          "At least 60% of eligible meal opportunities reach a confirmed result within two minutes among activated users, with photo, text, voice, and manual routes reported separately.",
+          "At least 70% of users correctly describe photo outputs as estimates or hypotheses and know how to correct them.",
+          "At least 50% of activated users return in week 2 and at least 35% remain active in week 4, subject to a pre-specified definition of active use.",
+          "Median correction burden is at most two targeted actions for clear meals, and the product does not hide or suppress abstention on hard meals.",
+          "There is no material increase from baseline in self-reported guilt or compulsive checking; any concerning safety signal triggers review regardless of retention.",
+          "Local or declined-consent sessions produce zero remote transfer attempts and the intended deletion or expiry evidence."
+        ],
+        "decision_rule": "Proceed only if repeat use is accompanied by understanding, correction, autonomy, and safety. A high capture rate caused by pressure, misunderstood certainty, or excessive reminders is not success."
+      },
+      "stage_5_acquisition_economics": {
+        "measurement": "For each channel, report cost per qualified visitor, cost per qualified activation, first accepted result, week-2 retained user, and week-4 retained user. Report organic and paid sources separately.",
+        "threshold": "Do not set a universal CAC target until country, pricing, and entitlement model are chosen. A channel is promising only when it meets the behavioral activation and safety thresholds and its qualified activation cost is sustainable against the tested revenue model.",
+        "stop_conditions": [
+          "Most acquired users match an excluded audience or expect medical, allergy, or exact-calorie claims.",
+          "A channel depends on misleading privacy, weight-loss, or accuracy claims.",
+          "Installs are high but first accepted result, understanding, or week-4 retention is low."
+        ]
+      }
+    },
+    "launch_thesis": "SuperNutrition should win on understanding, speed, control, cultural relevance, and emotional safety. The decisive validation question is whether the primary audience repeatedly uses a transparent food-awareness loop in real life when calorie targets are optional and photos do not silently leave the device."
+  },
+  "research_summary": "Public evidence supports a focused launch hypothesis rather than a broad demographic market: health-curious adults who want healthier habits and ingredient awareness but reject the effort or pressure of meticulous calorie tracking. Smartphone reach, food-health motivations, image-assisted capture, voice feasibility, privacy concerns, and category whitespace all support testing this audience. The product should acquire through high-intent store search, demonstrations of honest correction, trusted nutrition professionals, and local or privacy communities. Primary validation must be behavioral: recent pain, accepted meal results, correction and uncertainty comprehension, repeat use, privacy behavior, and safety—not survey enthusiasm, social reach, or cheap installs. Secondary audiences are ingredient-conscious eaters, busy household decision-makers, and privacy/connectivity-sensitive users. Initial exclusions are medical, allergy, eating-disorder, under-18, clinical-grade, and exact-measurement use cases.",
+  "evidence_quality_and_limits": {
+    "strongest_evidence": [
+      "Pew's 2025 U.S. population survey supports broad smartphone reach and important age, income, and education differences.",
+      "IFIC consumer surveys support health, energy, ingredient, stress, and food-information motivations and provide directional evidence for AI and social-content interest.",
+      "Peer-reviewed and PubMed/PMC studies support practical logging burden, photo and voice workflow hypotheses, portion and mixed-dish limitations, correction need, and potential harms of rigid tracking.",
+      "Official Apple and Google developer documentation supports measurable store discovery, acquisition-source attribution, and store-listing experimentation.",
+      "First-party competitor pages, policies, storefronts, and public reviews support current positioning and feature snapshots, but not independent efficacy or retention claims."
+    ],
+    "important_limits": [
+      "Most audience and motivation evidence is U.S.-based, with some European, UK, Asian, and other international studies; percentages must not be combined into a global market estimate.",
+      "The 2,382-person nutrition-app survey was mostly European and female and recruited through social, university, hospital, and patient channels; it is useful for preference hypotheses, not prevalence or conversion estimates.",
+      "Photo and voice studies often use small, controlled, student, clinical, or convenience samples and short observation periods; they do not establish consumer retention or broad cultural accuracy.",
+      "Competitor pricing, paywalls, features, review counts, install classes, privacy notices, and marketing claims change by platform, geography, experiment, and date; recheck before launch decisions.",
+      "Associations between tracking and disordered-eating risk do not prove universal harm, but justify exclusions, safer defaults, and direct monitoring of guilt and compulsive checking.",
+      "Local-only processing, willingness to pay, the size of the calorie-averse segment, channel economics, message superiority, mascot value, and long-term retention remain unverified."
+    ],
+    "inference_policy": "Treat audience labels, positioning whitespace, message hypotheses, channel order, recruitment criteria, and numerical thresholds as reasoned recommendations from public evidence plus SuperNutrition's product constraints. They become decision-grade only after the staged research program produces observed behavior in the intended launch market.",
+    "product_constraint_note": "The SuperNutrition project description and architecture define product constraints such as a local/manual path, explicit remote consent, human confirmation, catalog-grounded nutrition, no medical claims, and ephemeral photo handling. Those internal documents guide product implications but are not independent market evidence."
+  },
+  "sources": [
+    {
+      "title": "Pew Research Center: Demographics of Mobile Device Ownership and Adoption in the United States",
+      "url": "https://www.pewresearch.org/internet/fact-sheet/mobile/",
+      "accessed": "2026-08-27",
+      "source_type": "Authoritative population survey",
+      "used_for": "2025 smartphone ownership by age, income, education, and community; mobile reach and inclusion limits.",
+      "limitations": "U.S. ownership is not the same as app usage, smartphone-native identity, or willingness to use a nutrition app."
+    },
+    {
+      "title": "IFIC Spotlight Survey: Americans' Perceptions and Priorities on Healthy Eating",
+      "url": "https://ific.org/research/ific-spotlight-survey-americans-perceptions-priorities-on-healthy-eating/",
+      "accessed": "2026-08-27",
+      "source_type": "National consumer survey",
+      "used_for": "Health, budget, preference, planning, preparation, cooking, nutrition-label, and healthy-eating motivation signals.",
+      "limitations": "Online U.S. survey of 1,000 adults; self-report and broad categories do not measure the proposed segment."
+    },
+    {
+      "title": "IFIC 2025 Food and Health Survey Full Report",
+      "url": "https://ific.org/wp-content/uploads/2025-IFIC-Food-Health-Survey-Full-Report.pdf",
+      "accessed": "2026-08-27",
+      "source_type": "National consumer survey report",
+      "used_for": "Social-media food-content effects and directional evidence for food-health information behavior.",
+      "limitations": "Self-reported U.S. survey; exposure to content is not acquisition attribution or product conversion."
+    },
+    {
+      "title": "International Food Information Council: 2024 Food and Health Survey",
+      "url": "https://ific.org/research/2024-food-health-survey/",
+      "accessed": "2026-08-27",
+      "source_type": "National consumer survey",
+      "used_for": "Eating patterns, energy and fatigue, stress, ingredient concerns, AI interest, and generational signals.",
+      "limitations": "Online U.S. sample aged 18-80; calorie aversion, privacy preference, and willingness to pay were not directly measured."
+    },
+    {
+      "title": "Perspectives and Preferences of Adult Smartphone Users Regarding Nutrition and Diet Apps: Web-Based Survey Study",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8367144/",
+      "accessed": "2026-08-27",
+      "source_type": "Peer-reviewed survey study",
+      "used_for": "Selection criteria, automatic recording preferences, missing-food and accuracy barriers, and local-food gaps.",
+      "limitations": "2,382 respondents were mostly European and female and were recruited through online and partner channels; not a representative market sample."
+    },
+    {
+      "title": "Characteristics of Smartphone-Based Dietary Assessment Tools: A Systematic Review",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/34875978/",
+      "accessed": "2026-08-27",
+      "source_type": "Peer-reviewed systematic review",
+      "used_for": "Prevalence of photo, portion, text, food-database, and classification features across smartphone dietary tools.",
+      "limitations": "Research tools and features are not equivalent to consumer adoption, retention, or product-market fit."
+    },
+    {
+      "title": "Factors Perceived to Influence Healthy Eating: A Systematic Review and Meta-Ethnographic Synthesis",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/30202944/",
+      "accessed": "2026-08-27",
+      "source_type": "Peer-reviewed systematic review",
+      "used_for": "Environmental, social, socioeconomic, and practical barriers to healthier eating.",
+      "limitations": "Heterogeneous qualitative literature; themes do not establish prevalence in the launch market."
+    },
+    {
+      "title": "Occurrence of and Reasons for Missing Events in Mobile Dietary Assessments",
+      "url": "https://mhealth.jmir.org/2020/10/e15430/",
+      "accessed": "2026-08-27",
+      "source_type": "Peer-reviewed mobile dietary assessment study",
+      "used_for": "Missed meals and snacks, competing activities, technical context, reminders, addenda, and backfill design.",
+      "limitations": "Event-based research samples and protocols may be more supported than ordinary consumer use."
+    },
+    {
+      "title": "Tailored Prompting to Improve Adherence to Image-Based Dietary Assessment: Mixed Methods Study",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11034420/",
+      "accessed": "2026-08-27",
+      "source_type": "Peer-reviewed mixed-methods study",
+      "used_for": "Image capture preference, prompt effects, and post-meal capture limitations.",
+      "limitations": "Short crossover study; prompting results do not prove long-term engagement or acceptable notification burden."
+    },
+    {
+      "title": "Automatic Image Recognition Meal Reporting Among Young Adults: Randomized Controlled Trial",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/40811729/",
+      "accessed": "2026-08-27",
+      "source_type": "Peer-reviewed randomized controlled trial",
+      "used_for": "Image versus voice reporting accuracy and time in authentic meal scenarios.",
+      "limitations": "42 young adults in Taiwan and a controlled 17-dish menu; not evidence of general consumer performance or retention."
+    },
+    {
+      "title": "Consumer Views on Privacy Protections and Sharing of Personal Digital Health Information",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9982693/",
+      "accessed": "2026-08-27",
+      "source_type": "Peer-reviewed U.S. survey study",
+      "used_for": "Consent, access, oversight, deletion, and willingness to share digital health data.",
+      "limitations": "Digital health data sharing is broader than meal photos; associations do not establish local-only demand."
+    },
+    {
+      "title": "Does Your Health App Protect Your Sensitive Info?",
+      "url": "https://consumidor.ftc.gov/node/76929",
+      "accessed": "2026-08-27",
+      "source_type": "Government consumer-protection guidance",
+      "used_for": "Health-app privacy risk, non-HIPAA coverage caution, and clear collection/use/sharing notices.",
+      "limitations": "Guidance is not a measure of SuperNutrition user preference or competitor-specific compliance."
+    },
+    {
+      "title": "Effects of Diet and Fitness Apps on Eating Disorder Behaviours",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8485346/",
+      "accessed": "2026-08-27",
+      "source_type": "Peer-reviewed qualitative study",
+      "used_for": "Guilt, shame, streak, competition, food-color, and rigid tracking safety concerns.",
+      "limitations": "Qualitative and focused on affected experiences; it supports safety design, not a universal harm estimate."
+    },
+    {
+      "title": "Mobile Food Tracking Apps: Do They Provoke Disordered Eating Behavior?",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11556259/",
+      "accessed": "2026-08-27",
+      "source_type": "Peer-reviewed longitudinal study",
+      "used_for": "Caution about tracking-related psychological outcomes and need to monitor safety signals.",
+      "limitations": "Observed sample and design do not prove that every food-tracking app causes disordered eating."
+    },
+    {
+      "title": "Apple Developer: Get Started with App Discovery and Marketing",
+      "url": "https://developer.apple.com/videos/play/tech-talks/110358/",
+      "accessed": "2026-08-27",
+      "source_type": "First-party platform documentation",
+      "used_for": "App Store search discovery, search-intent, download, and product-page message hypotheses.",
+      "limitations": "Apple's platform-level figures are not a guarantee for a specific app, market, or category."
+    },
+    {
+      "title": "Apple Developer: Acquisition in App Store Connect Analytics",
+      "url": "https://developer.apple.com/help/app-store-connect-analytics/acquisition/acquisition",
+      "accessed": "2026-08-27",
+      "source_type": "First-party platform documentation",
+      "used_for": "Search, browse, app-referrer, web-referrer, and custom-campaign attribution measurement.",
+      "limitations": "Measurement availability does not establish channel quality or sustainable economics."
+    },
+    {
+      "title": "Google Play Console: Understand and Grow Your App's User Base",
+      "url": "https://support.google.com/googleplay/android-developer/answer/9859173?hl=en-ZA",
+      "accessed": "2026-08-27",
+      "source_type": "First-party platform documentation",
+      "used_for": "Google Play acquisition-source, store-listing, country, language, UTM, and conversion measurement.",
+      "limitations": "Available metrics do not provide an industry benchmark for qualified activation or retention."
+    },
+    {
+      "title": "Google Play Console: Run A/B Tests on Your Store Listing",
+      "url": "https://support.google.com/googleplay/android-developer/answer/12053285?hl=en",
+      "accessed": "2026-08-27",
+      "source_type": "First-party platform documentation",
+      "used_for": "Store-listing message and creative experimentation with install, open, and preregistration outcomes.",
+      "limitations": "Store-page optimization results do not prove downstream product value or retention."
+    },
+    {
+      "title": "MyFitnessPal Meal Scan FAQ",
+      "url": "https://support.myfitnesspal.com/hc/en-us/articles/360045761612-Meal-Scan-FAQ",
+      "accessed": "2026-08-27",
+      "source_type": "First-party competitor documentation",
+      "used_for": "Photo recognition, serving edits, suggestions, and calorie-centric competitor baseline.",
+      "limitations": "First-party feature description; does not independently verify accuracy or user retention."
+    },
+    {
+      "title": "YAZIO AI Calorie Tracking Feature",
+      "url": "https://help.yazio.com/hc/en-us/articles/39137901903889-What-is-the-AI-Calorie-Tracking-Feature-and-how-does-it-work",
+      "accessed": "2026-08-27",
+      "source_type": "First-party competitor documentation",
+      "used_for": "Photo-based ingredient and portion estimates, editing, and calorie-tracking positioning.",
+      "limitations": "Vendor documentation and current availability may vary by country, plan, and platform."
+    },
+    {
+      "title": "Cal AI Privacy Notice",
+      "url": "https://calai.me/privacy",
+      "accessed": "2026-08-27",
+      "source_type": "First-party competitor privacy policy",
+      "used_for": "Illustrative cloud, image, voice, health-adjacent, analytics, marketing, and service-provider data pathways.",
+      "limitations": "One competitor's policy is not evidence that all category products use the same practices."
+    },
+    {
+      "title": "AteMate Food Journal",
+      "url": "https://www.atemate.com/",
+      "accessed": "2026-08-27",
+      "source_type": "First-party competitor product page",
+      "used_for": "No-guilt, reflective, photo-journal positioning as an emotional whitespace benchmark.",
+      "limitations": "Marketing copy does not establish efficacy, market size, or retention."
+    },
+    {
+      "title": "Cronometer Features",
+      "url": "https://cronometer.com/features/",
+      "accessed": "2026-08-27",
+      "source_type": "First-party competitor product page",
+      "used_for": "Verified-data, micronutrient, integration, and precision-oriented competitor baseline.",
+      "limitations": "Feature and positioning claims are vendor-provided and can change."
+    }
+  ],
+  "popularity_signal": "[uncertain] Storefront ratings, review volume, download classes, and vendor member claims show category visibility but are not comparable demand, active-user, retention, or revenue measures. Use them only to choose competitor benchmarks and acquisition tests, not to estimate the size of the calorie-averse or local-first audience.",
+  "uncertain": [
+    "demographic_and_life_stage",
+    "psychographics_and_values",
+    "popularity_signal",
+    "current_behaviors_and_alternatives",
+    "privacy_and_data_expectations",
+    "motivation_and_reward_preferences",
+    "ai_trust_and_correction_behavior",
+    "acquisition_channels_and_message_hypotheses"
+  ]
+}

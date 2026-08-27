@@ -1,0 +1,25 @@
+topic: Target audience for SuperNutrition
+time_range: Current as of 2026-08-27, with historical evidence where needed
+items:
+  - name: Healthy habit builders and calorie-averse consumers
+    category: Audience definition and market behavior
+    description: Research the strongest launch segment for a nutrition app focused on healthier habits, ingredient awareness, low-friction meal capture, and motivation without calorie counting. Record demographic and life-stage signals, attitudes toward health and dieting, food-tracking behavior, unmet needs, and evidence for or against the proposed 18-35 smartphone-native segment.
+  - name: Healthy eating jobs barriers and triggers
+    category: Jobs to be done and user behavior
+    description: Research why people try to eat healthier, what prevents consistent behavior, how they currently log or understand meals, and which moments trigger use of a photo, text, or voice food-input tool. Focus on practical friction, time, decision fatigue, cooking and eating contexts, and willingness to correct AI results.
+  - name: Nutrition app competitor audiences and positioning
+    category: Competitive audience research
+    description: Compare the audiences, promises, onboarding, pricing posture, and public feedback of relevant nutrition and AI food-recognition apps such as MyFitnessPal, YAZIO, Foodvisor, Cal AI, BiteSnap, and comparable products. Identify underserved audience needs and positioning whitespace for SuperNutrition's health-first, non-judgmental, local-first approach.
+  - name: Privacy local-only and health-data expectations
+    category: Privacy and trust behavior
+    description: Research consumer expectations and evidence around privacy, local processing, cloud upload, retention, accounts, and control of food and health-related data in consumer apps. Determine which audience segments are most likely to value a fully local mode and how that value should be communicated without making unsupported absolute privacy claims.
+  - name: Habit formation rewards and non-judgmental motivation
+    category: Behavioral engagement
+    description: Research evidence and user feedback about habit formation, self-monitoring, streaks, rewards, mascots, goals, and gamification in nutrition and wellness apps. Identify motivational mechanics that support healthier eating without shame, calorie obsession, moralizing food labels, or coercive retention tactics.
+  - name: Audience validation and acquisition recommendations
+    category: Product strategy and research design
+    description: Synthesize publicly supported evidence into a recommendation for SuperNutrition's primary, secondary, and excluded audiences. Propose message hypotheses, acquisition channels, recruitment criteria, interview and prototype tests, and measurable validation thresholds for a photo-text-voice, local-first nutrition companion.
+execution:
+  batch_size: 3
+  items_per_agent: 1
+  output_dir: ./target-audience-research/results
