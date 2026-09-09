@@ -61,7 +61,7 @@
     <string name="capture_manual_ingredient_add">Add</string>
     <string name="capture_result_placeholder">Dish suggestions and visible photo evidence will appear after analysis.</string>
     <string name="capture_loading">Analyzing photo…</string>
-    <string name="capture_tab">Capture</string>
+    <string name="capture_tab">Home</string>
     <string name="rewards_tab">Rewards</string>
     <string name="rewards_title">Rewards</string>
     <string name="rewards_earned">Added to your rewards</string>

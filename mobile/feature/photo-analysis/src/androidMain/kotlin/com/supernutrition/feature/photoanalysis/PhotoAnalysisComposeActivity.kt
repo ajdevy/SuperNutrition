@@ -8,10 +8,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -20,13 +17,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.supernutrition.core.ui.UiAutomationIds
 import com.supernutrition.domain.photoanalysis.AttemptId
 import com.supernutrition.domain.photoanalysis.PhotoLeaseStore
 import com.supernutrition.domain.photoanalysis.PhotoSessionStore
@@ -253,9 +248,15 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
             val manualIngredientState by feature.manualIngredientStateFlow.collectAsState()
             val rewardsSnapshot by retainedState.rewardsFeature.snapshot.collectAsState()
             PhotoAnalysisTabs(
-                rewardsModel = RewardsPresenterModel.from(rewardsSnapshot, rewardsCopy),
-                captureLabel = getString(R.string.capture_tab),
-                rewardsLabel = getString(R.string.rewards_tab),
+                shell = PhotoAnalysisTabShell(
+                    rewardsModel = RewardsPresenterModel.from(rewardsSnapshot, rewardsCopy),
+                    homeLabel = getString(R.string.capture_tab),
+                    rewardsLabel = getString(R.string.rewards_tab),
+                    cameraLabel = getString(R.string.capture_shutter),
+                    onCameraRequested = {
+                        host.handleAction(PhotoAnalysisPresenterAction.TakePhoto)
+                    },
+                ),
                 captureContent = {
                     PhotoAnalysisCaptureTab(
                         state = PhotoAnalysisCaptureTabState(
@@ -345,19 +346,24 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
 }
 
 @Composable
-private fun PhotoAnalysisTabs(
-    rewardsModel: RewardsPresenterModel,
-    captureLabel: String,
-    rewardsLabel: String,
-    captureContent: @Composable () -> Unit,
-) {
+private fun PhotoAnalysisTabs(shell: PhotoAnalysisTabShell, captureContent: @Composable () -> Unit) {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
     Scaffold(bottomBar = {
-        PhotoAnalysisTabBar(
-            selectedTab = selectedTab,
-            captureLabel = captureLabel,
-            rewardsLabel = rewardsLabel,
-            onTabSelected = { selectedTab = it },
+        PhotoAnalysisMainBottomBar(
+            state = PhotoAnalysisMainBottomBarState(
+                selectedTab = selectedTab,
+                homeLabel = shell.homeLabel,
+                rewardsLabel = shell.rewardsLabel,
+                cameraLabel = shell.cameraLabel,
+            ),
+            actions = PhotoAnalysisMainBottomBarActions(
+                onHomeSelected = { selectedTab = 0 },
+                onRewardsSelected = { selectedTab = 1 },
+                onCameraRequested = {
+                    selectedTab = 0
+                    shell.onCameraRequested()
+                },
+            ),
         )
     }) { contentPadding ->
         Box(
@@ -365,35 +371,18 @@ private fun PhotoAnalysisTabs(
                 .padding(contentPadding)
                 .semantics { testTagsAsResourceId = true },
         ) {
-            if (selectedTab == 0) captureContent() else RewardsScreen(rewardsModel, Modifier.statusBarsPadding())
+            if (selectedTab == 0) captureContent() else RewardsScreen(shell.rewardsModel, Modifier.statusBarsPadding())
         }
     }
 }
 
-@Composable
-private fun PhotoAnalysisTabBar(
-    selectedTab: Int,
-    captureLabel: String,
-    rewardsLabel: String,
-    onTabSelected: (Int) -> Unit,
-) {
-    NavigationBar {
-        NavigationBarItem(
-            selected = selectedTab == 0,
-            onClick = { onTabSelected(0) },
-            icon = {},
-            label = { Text(captureLabel) },
-            modifier = Modifier.testTag(UiAutomationIds.CAPTURE_TAB.value),
-        )
-        NavigationBarItem(
-            selected = selectedTab == 1,
-            onClick = { onTabSelected(1) },
-            icon = {},
-            label = { Text(rewardsLabel) },
-            modifier = Modifier.testTag(UiAutomationIds.REWARDS_TAB.value),
-        )
-    }
-}
+private data class PhotoAnalysisTabShell(
+    val rewardsModel: RewardsPresenterModel,
+    val homeLabel: String,
+    val rewardsLabel: String,
+    val cameraLabel: String,
+    val onCameraRequested: () -> Unit,
+)
 
 @Composable
 private fun PhotoAnalysisCaptureTab(state: PhotoAnalysisCaptureTabState) {
