@@ -5,17 +5,28 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.supernutrition.core.ui.UiAutomationIds
 import com.supernutrition.domain.photoanalysis.AttemptId
 import com.supernutrition.domain.photoanalysis.PhotoLeaseStore
 import com.supernutrition.domain.photoanalysis.PhotoSessionStore
@@ -112,6 +123,45 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         )
     }
 
+    private val rewardsCopy: RewardsPresenterCopy by lazy {
+        RewardsPresenterCopy(
+            title = getString(R.string.rewards_title),
+            earnedLabel = getString(R.string.rewards_earned),
+            readyLabel = getString(R.string.rewards_ready),
+            progressTemplate = getString(R.string.rewards_progress_template),
+            cards = mapOf(
+                com.supernutrition.domain.nutrition.RewardId.PROTEIN_ALL_DAY to RewardsCardCopy(
+                    title = getString(R.string.reward_protein_title),
+                    description = getString(R.string.reward_protein_description),
+                ),
+                com.supernutrition.domain.nutrition.RewardId.FATS_PRESENT to RewardsCardCopy(
+                    title = getString(R.string.reward_fats_title),
+                    description = getString(R.string.reward_fats_description),
+                ),
+                com.supernutrition.domain.nutrition.RewardId.FIBER_PRESENT to RewardsCardCopy(
+                    title = getString(R.string.reward_fiber_title),
+                    description = getString(R.string.reward_fiber_description),
+                ),
+                com.supernutrition.domain.nutrition.RewardId.COLORS_OF_DAY to RewardsCardCopy(
+                    title = getString(R.string.reward_colors_title),
+                    description = getString(R.string.reward_colors_description),
+                ),
+                com.supernutrition.domain.nutrition.RewardId.THIRTY_PRODUCTS to RewardsCardCopy(
+                    title = getString(R.string.reward_products_title),
+                    description = getString(R.string.reward_products_description),
+                ),
+                com.supernutrition.domain.nutrition.RewardId.FERMENTED_THREE_DAYS to RewardsCardCopy(
+                    title = getString(R.string.reward_fermented_title),
+                    description = getString(R.string.reward_fermented_description),
+                ),
+                com.supernutrition.domain.nutrition.RewardId.SEVEN_DAYS_RECORDED to RewardsCardCopy(
+                    title = getString(R.string.reward_seven_days_title),
+                    description = getString(R.string.reward_seven_days_description),
+                ),
+            ),
+        )
+    }
+
     private val importLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult(),
     ) { result ->
@@ -201,50 +251,25 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         setContent {
             val preview by retainedState.previewStore.preview.collectAsState()
             val manualIngredientState by feature.manualIngredientStateFlow.collectAsState()
-            PhotoAnalysisCaptureContent(
-                stateFlow = feature.stateFlow,
-                onAction = host::handleAction,
-                modifier = Modifier
-                    .statusBarsPadding()
-                    .semantics { testTagsAsResourceId = true },
-                surface = PhotoAnalysisCaptureSurface(
-                    presenterCopy = presentationCopy,
-                    liveCamera = if (preview == null) {
-                        {
-                            PhotoAnalysisLiveCameraPreview(
-                                cameraPermissionGranted = cameraPermissionGranted,
-                                permissionHint = presentationCopy.recovery.cameraPermissionRequired,
-                                unavailableHint = presentationCopy.recovery.cameraUnavailable,
-                                cameraController = inlineCameraController,
-                            )
-                        }
-                    } else {
-                        null
-                    },
-                    retainedPhoto = preview?.let { current -> { AndroidRetainedPhotoBackdrop(current) } },
-                    photoTextContrast = preview?.let { current ->
-                        if (current.hasLightBackdrop) {
-                            PhotoAnalysisPhotoTextContrast.DARK_TEXT
-                        } else {
-                            PhotoAnalysisPhotoTextContrast.LIGHT_TEXT
-                        }
-                    },
-                    gridHintsEnabled = runtimeBinding != null,
-                    onGridCellSelected = { index -> host.handleGridCellSelected(index) },
-                    manualIngredientInput = manualIngredientState.query,
-                    manualIngredients = manualIngredientState.ingredients.map { ingredient ->
-                        PhotoAnalysisManualIngredientModel(
-                            canonicalItemId = ingredient.canonicalItemId,
-                            label = ingredient.displayName,
-                            sourceDishName = ingredient.sourceDishName,
-                        )
-                    },
-                    manualIngredientUnresolved = manualIngredientState.unresolvedFragments,
-                    onManualIngredientInputChanged = feature::updateManualIngredientQuery,
-                    onManualIngredientAdded = feature::addManualIngredients,
-                    // Keep camera and captured photo in exactly the same slot.
-                    retainedPhotoAspectRatio = 4f / 3f,
-                ),
+            val rewardsSnapshot by retainedState.rewardsFeature.snapshot.collectAsState()
+            PhotoAnalysisTabs(
+                rewardsModel = RewardsPresenterModel.from(rewardsSnapshot, rewardsCopy),
+                captureLabel = getString(R.string.capture_tab),
+                rewardsLabel = getString(R.string.rewards_tab),
+                captureContent = {
+                    PhotoAnalysisCaptureTab(
+                        state = PhotoAnalysisCaptureTabState(
+                            feature = feature,
+                            host = host,
+                            presentationCopy = presentationCopy,
+                            preview = preview,
+                            manualIngredientState = manualIngredientState,
+                            cameraPermissionGranted = cameraPermissionGranted,
+                            inlineCameraController = inlineCameraController,
+                            gridHintsEnabled = runtimeBinding != null,
+                        ),
+                    )
+                },
             )
         }
     }
@@ -301,6 +326,9 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
             leases = leases,
             sessions = sessions,
         )
+        val rewardsFeature = RewardsFeature(
+            localDay = { java.time.LocalDate.now().toEpochDay().toInt() },
+        )
         val captureOperation = CaptureOperationState()
         var wasBackgrounded: Boolean = false
 
@@ -315,3 +343,120 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         const val PERMISSION_REQUEST_IN_FLIGHT_KEY = "photo_analysis.permission_request_in_flight"
     }
 }
+
+@Composable
+private fun PhotoAnalysisTabs(
+    rewardsModel: RewardsPresenterModel,
+    captureLabel: String,
+    rewardsLabel: String,
+    captureContent: @Composable () -> Unit,
+) {
+    var selectedTab by rememberSaveable { mutableIntStateOf(0) }
+    Scaffold(bottomBar = {
+        PhotoAnalysisTabBar(
+            selectedTab = selectedTab,
+            captureLabel = captureLabel,
+            rewardsLabel = rewardsLabel,
+            onTabSelected = { selectedTab = it },
+        )
+    }) { contentPadding ->
+        Box(
+            modifier = Modifier
+                .padding(contentPadding)
+                .semantics { testTagsAsResourceId = true },
+        ) {
+            if (selectedTab == 0) captureContent() else RewardsScreen(rewardsModel, Modifier.statusBarsPadding())
+        }
+    }
+}
+
+@Composable
+private fun PhotoAnalysisTabBar(
+    selectedTab: Int,
+    captureLabel: String,
+    rewardsLabel: String,
+    onTabSelected: (Int) -> Unit,
+) {
+    NavigationBar {
+        NavigationBarItem(
+            selected = selectedTab == 0,
+            onClick = { onTabSelected(0) },
+            icon = {},
+            label = { Text(captureLabel) },
+            modifier = Modifier.testTag(UiAutomationIds.CAPTURE_TAB.value),
+        )
+        NavigationBarItem(
+            selected = selectedTab == 1,
+            onClick = { onTabSelected(1) },
+            icon = {},
+            label = { Text(rewardsLabel) },
+            modifier = Modifier.testTag(UiAutomationIds.REWARDS_TAB.value),
+        )
+    }
+}
+
+@Composable
+private fun PhotoAnalysisCaptureTab(state: PhotoAnalysisCaptureTabState) {
+    val feature = state.feature
+    val host = state.host
+    val presentationCopy = state.presentationCopy
+    val preview = state.preview
+    val manualIngredientState = state.manualIngredientState
+    val cameraPermissionGranted = state.cameraPermissionGranted
+    val inlineCameraController = state.inlineCameraController
+    val gridHintsEnabled = state.gridHintsEnabled
+    PhotoAnalysisCaptureContent(
+        stateFlow = feature.stateFlow,
+        onAction = host::handleAction,
+        modifier = Modifier.statusBarsPadding(),
+        surface = PhotoAnalysisCaptureSurface(
+            presenterCopy = presentationCopy,
+            liveCamera = if (preview == null) {
+                {
+                    PhotoAnalysisLiveCameraPreview(
+                        cameraPermissionGranted = cameraPermissionGranted,
+                        permissionHint = presentationCopy.recovery.cameraPermissionRequired,
+                        unavailableHint = presentationCopy.recovery.cameraUnavailable,
+                        cameraController = inlineCameraController,
+                    )
+                }
+            } else {
+                null
+            },
+            retainedPhoto = preview?.let { current -> { AndroidRetainedPhotoBackdrop(current) } },
+            photoTextContrast = preview?.let { current ->
+                if (current.hasLightBackdrop) {
+                    PhotoAnalysisPhotoTextContrast.DARK_TEXT
+                } else {
+                    PhotoAnalysisPhotoTextContrast.LIGHT_TEXT
+                }
+            },
+            gridHintsEnabled = gridHintsEnabled,
+            onGridCellSelected = { index -> host.handleGridCellSelected(index) },
+            manualIngredientInput = manualIngredientState.query,
+            manualIngredients = manualIngredientState.ingredients.map { ingredient ->
+                PhotoAnalysisManualIngredientModel(
+                    canonicalItemId = ingredient.canonicalItemId,
+                    label = ingredient.displayName,
+                    sourceDishName = ingredient.sourceDishName,
+                )
+            },
+            manualIngredientUnresolved = manualIngredientState.unresolvedFragments,
+            onManualIngredientInputChanged = feature::updateManualIngredientQuery,
+            onManualIngredientAdded = feature::addManualIngredients,
+            // Keep camera and captured photo in exactly the same slot.
+            retainedPhotoAspectRatio = 4f / 3f,
+        ),
+    )
+}
+
+private data class PhotoAnalysisCaptureTabState(
+    val feature: PhotoAnalysisFeature,
+    val host: PhotoAnalysisAndroidHostController,
+    val presentationCopy: PhotoAnalysisPresenterCopy,
+    val preview: AndroidRetainedPhotoPreview?,
+    val manualIngredientState: PhotoAnalysisManualIngredientState,
+    val cameraPermissionGranted: Boolean,
+    val inlineCameraController: PhotoAnalysisInlineCameraController,
+    val gridHintsEnabled: Boolean,
+)

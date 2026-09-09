@@ -24,15 +24,49 @@ enum PhotoAnalysisAppBootstrap {
 
 struct PhotoAnalysisAppRootView: View {
     let session: SharedKitPhotoAnalysisSession
+    private let rewardsSession: SharedKitRewardsSession
+
+    init(session: SharedKitPhotoAnalysisSession) {
+        self.session = session
+        rewardsSession = SharedKitRewardsSession()
+    }
 
     var body: some View {
-        #if arch(x86_64)
-        PhotoAnalysisIntelCompatibilityView(session: session)
-        #else
-        PhotoAnalysisComposeLifecycleHost(session: session)
-        #endif
+        TabView {
+            Group {
+                #if arch(x86_64)
+                PhotoAnalysisIntelCompatibilityView(session: session)
+                #else
+                PhotoAnalysisComposeLifecycleHost(session: session)
+                #endif
+            }
+            .tabItem { Label("Capture", systemImage: "camera") }
+            .accessibilityIdentifier(SharedKitAutomationIds.shared.captureTab)
+
+            Group {
+                #if arch(x86_64)
+                RewardsIntelCompatibilityView(session: rewardsSession)
+                #else
+                RewardsComposeHost(session: rewardsSession)
+                #endif
+            }
+            .tabItem { Label("Rewards", systemImage: "star") }
+            .accessibilityIdentifier(SharedKitAutomationIds.shared.rewardsTab)
+        }
     }
 }
+
+#if !arch(x86_64)
+struct RewardsComposeHost: UIViewControllerRepresentable {
+    let session: SharedKitRewardsSession
+
+    func makeUIViewController(context: Context) -> UIViewController {
+        SharedKitRewards.shared.viewController(session: session)
+    }
+
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+}
+#endif
 
 private enum PhotoAnalysisHostAction: Int {
     case takePhoto
@@ -319,4 +353,44 @@ private struct PhotoAnalysisNativePresenter: UIViewControllerRepresentable {
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
+
+#if arch(x86_64)
+private struct RewardsIntelCompatibilityView: View {
+    let session: SharedKitRewardsSession
+    private let cards = [
+        ("rewards.protein.title", "rewards.protein.description", "0 of 2"),
+        ("rewards.fats.title", "rewards.fats.description", "0 of 1"),
+        ("rewards.fiber.title", "rewards.fiber.description", "0 of 2"),
+        ("rewards.colors.title", "rewards.colors.description", "0 of 3"),
+        ("rewards.products.title", "rewards.products.description", "0 of 30"),
+        ("rewards.fermented.title", "rewards.fermented.description", "0 of 3"),
+        ("rewards.seven_days.title", "rewards.seven_days.description", "0 of 7"),
+    ]
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 12) {
+                Text(String(localized: "rewards.title"))
+                    .font(.title2)
+                    .accessibilityIdentifier(SharedKitAutomationIds.shared.rewardsTitle)
+                ForEach(Array(cards.enumerated()), id: \.offset) { index, card in
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(String(localized: card.0)).font(.headline)
+                        Text(String(localized: card.1)).font(.body)
+                        Text(card.2).font(.subheadline)
+                        Text(String(localized: "rewards.ready")).font(.subheadline)
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color(.secondarySystemBackground))
+                    .cornerRadius(12)
+                    .accessibilityIdentifier("rewards_row_\(index)")
+                }
+            }
+            .padding()
+        }
+        .accessibilityIdentifier(SharedKitAutomationIds.shared.rewardsList)
+    }
+}
+#endif
 #endif
