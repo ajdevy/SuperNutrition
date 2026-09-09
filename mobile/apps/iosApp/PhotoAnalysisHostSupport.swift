@@ -25,34 +25,193 @@ enum PhotoAnalysisAppBootstrap {
 struct PhotoAnalysisAppRootView: View {
     let session: SharedKitPhotoAnalysisSession
     private let rewardsSession: SharedKitRewardsSession
+    @State private var selectedTab = 0
+    @StateObject private var cameraAction: PhotoAnalysisCameraAction
 
     init(session: SharedKitPhotoAnalysisSession) {
         self.session = session
         rewardsSession = SharedKitRewardsSession()
+        _cameraAction = StateObject(wrappedValue: PhotoAnalysisCameraAction())
     }
 
     var body: some View {
-        TabView {
-            Group {
+        Group {
+            if selectedTab == 0 {
+                Group {
                 #if arch(x86_64)
-                PhotoAnalysisIntelCompatibilityView(session: session)
+                    PhotoAnalysisIntelCompatibilityView(session: session, cameraAction: cameraAction)
                 #else
-                PhotoAnalysisComposeLifecycleHost(session: session)
+                    PhotoAnalysisComposeLifecycleHost(session: session, cameraAction: cameraAction)
                 #endif
-            }
-            .tabItem { Label("Capture", systemImage: "camera") }
-            .accessibilityIdentifier(SharedKitAutomationIds.shared.captureTab)
-
-            Group {
+                }
+                .accessibilityIdentifier(SharedKitAutomationIds.shared.captureTab)
+            } else {
+                Group {
                 #if arch(x86_64)
-                RewardsIntelCompatibilityView(session: rewardsSession)
+                    RewardsIntelCompatibilityView(session: rewardsSession)
                 #else
-                RewardsComposeHost(session: rewardsSession)
+                    RewardsComposeHost(session: rewardsSession)
                 #endif
+                }
+                .accessibilityIdentifier(SharedKitAutomationIds.shared.rewardsTab)
             }
-            .tabItem { Label("Rewards", systemImage: "star") }
-            .accessibilityIdentifier(SharedKitAutomationIds.shared.rewardsTab)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            PhotoAnalysisBottomBar(
+                selectedTab: $selectedTab,
+                onCameraRequested: {
+                    selectedTab = 0
+                    DispatchQueue.main.async { cameraAction.invoke() }
+                },
+            )
+            .padding(.bottom, 12)
+        }
+    }
+}
+
+final class PhotoAnalysisCameraAction: ObservableObject {
+    var action: (() -> Void)? {
+        didSet {
+            guard pendingInvocation, action != nil else { return }
+            pendingInvocation = false
+            DispatchQueue.main.async { [weak self] in self?.action?() }
+        }
+    }
+    private var pendingInvocation = false
+
+    func invoke() {
+        guard let action else {
+            pendingInvocation = true
+            return
+        }
+        action()
+    }
+}
+
+private struct PhotoAnalysisBottomBar: View {
+    @Binding var selectedTab: Int
+    let onCameraRequested: () -> Void
+
+    private let pillColor = Color(red: 0xF3 / 255.0, green: 0xEE / 255.0, blue: 0xEB / 255.0)
+    private let activeColor = Color(red: 0x8E / 255.0, green: 0xA3 / 255.0, blue: 0x36 / 255.0)
+    private let cameraColor = Color(red: 0x92 / 255.0, green: 0xA6 / 255.0, blue: 0x38 / 255.0)
+    private let inactiveIconColor = Color(red: 0x76 / 255.0, green: 0x7B / 255.0, blue: 0x7D / 255.0)
+    private let inactiveLabelColor = Color(red: 0x24 / 255.0, green: 0x37 / 255.0, blue: 0x40 / 255.0)
+
+    var body: some View {
+        ZStack(alignment: .top) {
+            HStack {
+                tabButton(
+                    label: "Home",
+                    systemImage: "house.fill",
+                    selected: selectedTab == 0,
+                    identifier: SharedKitAutomationIds.shared.captureTab,
+                ) {
+                    selectedTab = 0
+                }
+                Spacer()
+                tabButton(
+                    label: "Rewards",
+                    systemImage: "trophy.fill",
+                    selected: selectedTab == 1,
+                    identifier: SharedKitAutomationIds.shared.rewardsTab,
+                ) {
+                    selectedTab = 1
+                }
+            }
+            .padding(.horizontal, 42)
+            .frame(maxWidth: .infinity)
+            .frame(height: 58)
+            .background(
+                PhotoAnalysisNavigationPillShape()
+                    .fill(pillColor)
+                    .shadow(color: Color.black.opacity(0.13), radius: 7, y: 4),
+            )
+            .clipShape(PhotoAnalysisNavigationPillShape())
+            .padding(.top, 10)
+
+            Button(action: onCameraRequested) {
+                Image(systemName: "camera")
+                    .font(.system(size: 20, weight: .medium))
+                    .foregroundStyle(.white)
+                    .frame(width: 50, height: 50)
+                    .background(cameraColor, in: Circle())
+                    .overlay(Circle().stroke(Color(red: 0x25 / 255.0, green: 0x27 / 255.0, blue: 0x26 / 255.0), lineWidth: 3))
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier(SharedKitAutomationIds.shared.cameraAction)
+            .accessibilityLabel("Take photo")
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: 80)
+        .padding(.horizontal, 28)
+    }
+
+    private func tabButton(
+        label: String,
+        systemImage: String,
+        selected: Bool,
+        identifier: String,
+        action: @escaping () -> Void,
+    ) -> some View {
+        Button(action: action) {
+            VStack(spacing: 1) {
+                Image(systemName: systemImage)
+                    .font(.system(size: 17, weight: .semibold))
+                    .frame(height: 18)
+                Text(label)
+                    .font(.system(size: 9, weight: .semibold))
+                    .lineLimit(1)
+            }
+            .foregroundStyle(selected ? activeColor : inactiveIconColor)
+            .frame(width: 52, height: 58)
+        }
+        .buttonStyle(.plain)
+        .foregroundStyle(selected ? activeColor : inactiveLabelColor)
+        .accessibilityIdentifier(identifier)
+        .accessibilityLabel(label)
+        .accessibilityAddTraits(selected ? .isSelected : [])
+    }
+}
+
+private struct PhotoAnalysisNavigationPillShape: Shape {
+    func path(in rect: CGRect) -> Path {
+        let radius = rect.height / 2
+        let center = rect.midX
+        let notchHalfWidth: CGFloat = 50
+        let notchDepth = rect.height * 0.64
+        var path = Path()
+        path.move(to: CGPoint(x: radius, y: rect.minY))
+        path.addLine(to: CGPoint(x: center - notchHalfWidth, y: rect.minY))
+        path.addCurve(
+            to: CGPoint(x: center, y: rect.minY + notchDepth),
+            control1: CGPoint(x: center - notchHalfWidth * 0.72, y: rect.minY),
+            control2: CGPoint(x: center - notchHalfWidth * 0.72, y: rect.minY + notchDepth),
+        )
+        path.addCurve(
+            to: CGPoint(x: center + notchHalfWidth, y: rect.minY),
+            control1: CGPoint(x: center + notchHalfWidth * 0.72, y: rect.minY + notchDepth),
+            control2: CGPoint(x: center + notchHalfWidth * 0.72, y: rect.minY),
+        )
+        path.addLine(to: CGPoint(x: rect.maxX - radius, y: rect.minY))
+        path.addArc(
+            center: CGPoint(x: rect.maxX - radius, y: rect.midY),
+            radius: radius,
+            startAngle: .degrees(-90),
+            endAngle: .degrees(90),
+            clockwise: false,
+        )
+        path.addLine(to: CGPoint(x: radius, y: rect.maxY))
+        path.addArc(
+            center: CGPoint(x: radius, y: rect.midY),
+            radius: radius,
+            startAngle: .degrees(90),
+            endAngle: .degrees(270),
+            clockwise: false,
+        )
+        path.closeSubpath()
+        return path
     }
 }
 
@@ -83,10 +242,11 @@ private enum PhotoAnalysisHostAction: Int {
 
 struct PhotoAnalysisComposeLifecycleHost: View {
     let session: SharedKitPhotoAnalysisSession
+    let cameraAction: PhotoAnalysisCameraAction
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
-        PhotoAnalysisComposeHost(session: session)
+        PhotoAnalysisComposeHost(session: session, cameraAction: cameraAction)
             .onChange(of: scenePhase) { phase in
                 switch phase {
                 case .background:
@@ -104,9 +264,10 @@ struct PhotoAnalysisComposeLifecycleHost: View {
 
 struct PhotoAnalysisComposeHost: UIViewControllerRepresentable {
     let session: SharedKitPhotoAnalysisSession
+    let cameraAction: PhotoAnalysisCameraAction
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(session: session)
+        Coordinator(session: session, cameraAction: cameraAction)
     }
 
     func makeUIViewController(context: Context) -> UIViewController {
@@ -137,8 +298,9 @@ struct PhotoAnalysisComposeHost: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 
     final class Coordinator: NSObject {
-        init(session: SharedKitPhotoAnalysisSession) {
+        init(session: SharedKitPhotoAnalysisSession, cameraAction: PhotoAnalysisCameraAction) {
             presentation = PhotoAnalysisPresentationCoordinator(session: session)
+            cameraAction.action = { [weak self] in self?.presentation.takePhoto() }
         }
 
         let presentation: PhotoAnalysisPresentationCoordinator
@@ -266,13 +428,15 @@ final class PhotoAnalysisPresentationCoordinator {
 /// Compatibility renderer for Intel hosts whose pinned Compose graph has no iosX64 publication.
 struct PhotoAnalysisIntelCompatibilityView: View {
     let session: SharedKitPhotoAnalysisSession
+    let cameraAction: PhotoAnalysisCameraAction
     private let presentation: PhotoAnalysisPresentationCoordinator
     @Environment(\.scenePhase) private var scenePhase
     @State private var status: String
     @State private var presenter: UIViewController?
 
-    init(session: SharedKitPhotoAnalysisSession) {
+    init(session: SharedKitPhotoAnalysisSession, cameraAction: PhotoAnalysisCameraAction) {
         self.session = session
+        self.cameraAction = cameraAction
         presentation = PhotoAnalysisPresentationCoordinator(session: session)
         _status = State(initialValue: session.statusLabel())
     }
@@ -313,6 +477,8 @@ struct PhotoAnalysisIntelCompatibilityView: View {
             presentation.presenter = controller
         })
         .onAppear { presentation.didChange = refreshStatus }
+        .onAppear { cameraAction.action = { presentation.takePhoto() } }
+        .onDisappear { cameraAction.action = nil }
         .onChange(of: scenePhase) { phase in
             handle(scenePhase: phase)
         }

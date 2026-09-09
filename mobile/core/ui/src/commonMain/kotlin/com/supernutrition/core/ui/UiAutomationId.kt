@@ -64,6 +64,7 @@ object UiAutomationIds {
     val MEAL_SEARCH_NO_RESULTS = UiAutomationId("meal_search_no_results")
     val CAPTURE_TAB = UiAutomationId("capture_tab")
     val REWARDS_TAB = UiAutomationId("rewards_tab")
+    val CAMERA_ACTION = UiAutomationId("camera_action")
     val REWARDS_TITLE = UiAutomationId("rewards_title")
     val REWARDS_LIST = UiAutomationId("rewards_list")
 
@@ -117,6 +118,7 @@ object UiAutomationIds {
         MEAL_SEARCH_NO_RESULTS,
         CAPTURE_TAB,
         REWARDS_TAB,
+        CAMERA_ACTION,
         REWARDS_TITLE,
         REWARDS_LIST,
     )
