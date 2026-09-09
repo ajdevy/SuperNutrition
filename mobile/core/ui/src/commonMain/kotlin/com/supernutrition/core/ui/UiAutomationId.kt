@@ -62,6 +62,10 @@ object UiAutomationIds {
     val MEAL_SEARCH_QUERY = UiAutomationId("meal_search_query")
     val MEAL_SEARCH_RESULTS = UiAutomationId("meal_search_results")
     val MEAL_SEARCH_NO_RESULTS = UiAutomationId("meal_search_no_results")
+    val CAPTURE_TAB = UiAutomationId("capture_tab")
+    val REWARDS_TAB = UiAutomationId("rewards_tab")
+    val REWARDS_TITLE = UiAutomationId("rewards_title")
+    val REWARDS_LIST = UiAutomationId("rewards_list")
 
     /**
      * Per-row identifiers, by position rather than by canonical record id.
@@ -80,6 +84,14 @@ object UiAutomationIds {
     fun mealSearchRowTitle(index: Int): UiAutomationId = UiAutomationId("meal_search_row_${index}_title")
 
     fun mealSearchRowDetail(index: Int): UiAutomationId = UiAutomationId("meal_search_row_${index}_detail")
+
+    fun rewardsRow(index: Int): UiAutomationId = UiAutomationId("rewards_row_$index")
+
+    fun rewardsRowTitle(index: Int): UiAutomationId = UiAutomationId("rewards_row_${index}_title")
+
+    fun rewardsRowProgress(index: Int): UiAutomationId = UiAutomationId("rewards_row_${index}_progress")
+
+    fun rewardsRowState(index: Int): UiAutomationId = UiAutomationId("rewards_row_${index}_state")
 
     val all: List<UiAutomationId> = listOf(
         BOOTSTRAP_LAUNCH_DI,
@@ -103,5 +115,9 @@ object UiAutomationIds {
         MEAL_SEARCH_QUERY,
         MEAL_SEARCH_RESULTS,
         MEAL_SEARCH_NO_RESULTS,
+        CAPTURE_TAB,
+        REWARDS_TAB,
+        REWARDS_TITLE,
+        REWARDS_LIST,
     )
 }

@@ -63,3 +63,22 @@
 "photo_analysis.recovery.offline" = "Analysis is offline";
 "photo_analysis.recovery.cancelled" = "Analysis cancelled";
 "photo_analysis.recovery.review_restore_unavailable" = "The photo is available, but analysis results could not be restored.";
+
+"rewards.title" = "Rewards";
+"rewards.earned" = "Added to your rewards";
+"rewards.ready" = "Ready when you are";
+"rewards.progress_template" = "{current} of {target}";
+"rewards.protein.title" = "Protein all day";
+"rewards.protein.description" = "You included a protein source in every recorded meal.";
+"rewards.fats.title" = "Fats in place";
+"rewards.fats.description" = "You included a food from a nourishing fat group.";
+"rewards.fiber.title" = "Fiber in place";
+"rewards.fiber.description" = "You included fiber across at least two recorded meals.";
+"rewards.colors.title" = "Colors of the day";
+"rewards.colors.description" = "You added three different food colors today.";
+"rewards.products.title" = "30 products";
+"rewards.products.description" = "You explored 30 different products across seven days.";
+"rewards.fermented.title" = "Living shelf";
+"rewards.fermented.description" = "You included living or fermented products on three days.";
+"rewards.seven_days.title" = "Seven days recorded";
+"rewards.seven_days.description" = "You recorded food on each day of this seven-day window.";

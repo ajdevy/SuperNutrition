@@ -18,4 +18,12 @@ public object SharedKitAutomationIds {
         get() = UiAutomationIds.CAPTURE_OPEN_SETTINGS.value
     public val captureNative: String
         get() = UiAutomationIds.CAPTURE_NATIVE.value
+    public val captureTab: String
+        get() = UiAutomationIds.CAPTURE_TAB.value
+    public val rewardsTab: String
+        get() = UiAutomationIds.REWARDS_TAB.value
+    public val rewardsTitle: String
+        get() = UiAutomationIds.REWARDS_TITLE.value
+    public val rewardsList: String
+        get() = UiAutomationIds.REWARDS_LIST.value
 }

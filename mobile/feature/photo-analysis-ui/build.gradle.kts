@@ -31,6 +31,7 @@ kotlin {
             api(project(":feature:photo-analysis-presenter"))
             implementation(project(":core:config"))
             implementation(project(":core:ui"))
+            implementation(project(":domain:nutrition"))
             implementation(project(":domain:photo-analysis"))
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)

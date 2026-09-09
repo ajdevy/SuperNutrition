@@ -1,9 +1,12 @@
 package com.supernutrition.sharedkit
 
+import com.supernutrition.domain.nutrition.RewardId
 import com.supernutrition.feature.photoanalysis.CaptureCopy
 import com.supernutrition.feature.photoanalysis.EvidenceCopy
 import com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterCopy
 import com.supernutrition.feature.photoanalysis.RecoveryCopy
+import com.supernutrition.feature.photoanalysis.RewardsCardCopy
+import com.supernutrition.feature.photoanalysis.RewardsPresenterCopy
 import com.supernutrition.feature.photoanalysis.StatusCopy
 import platform.Foundation.NSBundle
 
@@ -76,6 +79,43 @@ internal fun localizedPhotoAnalysisCopy(): PhotoAnalysisPresenterCopy = PhotoAna
         analysisOffline = localized("photo_analysis.recovery.offline"),
         analysisCancelled = localized("photo_analysis.recovery.cancelled"),
         reviewRestoreUnavailable = localized("photo_analysis.recovery.review_restore_unavailable"),
+    ),
+)
+
+internal fun localizedRewardsCopy(): RewardsPresenterCopy = RewardsPresenterCopy(
+    title = localized("rewards.title"),
+    earnedLabel = localized("rewards.earned"),
+    readyLabel = localized("rewards.ready"),
+    progressTemplate = localized("rewards.progress_template"),
+    cards = mapOf(
+        RewardId.PROTEIN_ALL_DAY to RewardsCardCopy(
+            title = localized("rewards.protein.title"),
+            description = localized("rewards.protein.description"),
+        ),
+        RewardId.FATS_PRESENT to RewardsCardCopy(
+            title = localized("rewards.fats.title"),
+            description = localized("rewards.fats.description"),
+        ),
+        RewardId.FIBER_PRESENT to RewardsCardCopy(
+            title = localized("rewards.fiber.title"),
+            description = localized("rewards.fiber.description"),
+        ),
+        RewardId.COLORS_OF_DAY to RewardsCardCopy(
+            title = localized("rewards.colors.title"),
+            description = localized("rewards.colors.description"),
+        ),
+        RewardId.THIRTY_PRODUCTS to RewardsCardCopy(
+            title = localized("rewards.products.title"),
+            description = localized("rewards.products.description"),
+        ),
+        RewardId.FERMENTED_THREE_DAYS to RewardsCardCopy(
+            title = localized("rewards.fermented.title"),
+            description = localized("rewards.fermented.description"),
+        ),
+        RewardId.SEVEN_DAYS_RECORDED to RewardsCardCopy(
+            title = localized("rewards.seven_days.title"),
+            description = localized("rewards.seven_days.description"),
+        ),
     ),
 )
 
