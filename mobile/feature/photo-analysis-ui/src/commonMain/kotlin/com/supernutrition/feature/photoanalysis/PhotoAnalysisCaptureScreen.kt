@@ -40,6 +40,8 @@ enum class PhotoAnalysisPhotoTextContrast {
 
 data class PhotoAnalysisCaptureSurface(
     val presenterCopy: PhotoAnalysisPresenterCopy,
+    val closeLabel: String = "Close",
+    val onCloseRequested: () -> Unit = {},
     val automationIds: PhotoAnalysisCaptureAutomationIds = PhotoAnalysisCaptureAutomationIds(),
     /** Native hosts supply the live camera before a retained photo exists. */
     val liveCamera: (@Composable () -> Unit)? = null,
@@ -70,6 +72,7 @@ data class PhotoAnalysisCaptureAutomationIds(
     val manualIngredientAdd: UiAutomationId = UiAutomationIds.PHOTO_ANALYSIS_MANUAL_INGREDIENT_ADD,
     val shutter: UiAutomationId = UiAutomationIds.CAPTURE_SHUTTER,
     val import: UiAutomationId = UiAutomationIds.CAPTURE_IMPORT,
+    val close: UiAutomationId = UiAutomationIds.CAPTURE_CLOSE,
     val openSettings: UiAutomationId = UiAutomationIds.CAPTURE_OPEN_SETTINGS,
     val scanAgain: UiAutomationId = UiAutomationIds.CAPTURE_SCAN_AGAIN,
     val cancel: UiAutomationId = UiAutomationIds.CAPTURE_CANCEL,

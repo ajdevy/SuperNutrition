@@ -8,3 +8,4 @@ output.camera_action = "camera_action";
 output.photo_analysis_title = "photo_analysis_title";
 output.capture_shutter = "capture_shutter";
 output.capture_import = "capture_import";
+output.capture_close = "capture_close";

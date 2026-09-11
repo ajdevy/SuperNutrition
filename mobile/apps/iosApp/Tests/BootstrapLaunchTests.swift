@@ -19,6 +19,10 @@ final class BootstrapLaunchTests: XCTestCase {
         XCTAssertTrue(app.descendants(matching: .any)[SharedKitAutomationIds.shared.photoAnalysisStatus].exists)
         XCTAssertTrue(app.buttons[SharedKitAutomationIds.shared.captureShutter].waitForExistence(timeout: 15))
         XCTAssertTrue(app.buttons[SharedKitAutomationIds.shared.captureImport].exists)
+        XCTAssertTrue(app.buttons[SharedKitAutomationIds.shared.captureClose].exists)
+        XCTAssertFalse(app.buttons[SharedKitAutomationIds.shared.cameraAction].exists)
+        app.buttons[SharedKitAutomationIds.shared.captureClose].tap()
+        XCTAssertTrue(homeSurfaceIsReady(in: app, timeout: 10))
     }
 
     func testCameraActionUsesNativeSourceOrRecovery() {

@@ -5,6 +5,7 @@
     <string name="capture_open_settings">Open settings</string>
     <string name="capture_scan_again">Take another photo</string>
     <string name="capture_cancel">Cancel</string>
+    <string name="capture_close">Close</string>
     <string name="capture_status_ready">Ready to capture</string>
     <string name="capture_status_preparing">Preparing photo</string>
     <string name="capture_status_ready_photo">Photo ready</string>

@@ -57,6 +57,7 @@ object UiAutomationIds {
     val CAPTURE_IMPORT = UiAutomationId("capture_import")
     val CAPTURE_SCAN_AGAIN = UiAutomationId("capture_scan_again")
     val CAPTURE_CANCEL = UiAutomationId("capture_cancel")
+    val CAPTURE_CLOSE = UiAutomationId("capture_close")
     val CAPTURE_OPEN_SETTINGS = UiAutomationId("capture_open_settings")
     val CAPTURE_NATIVE = UiAutomationId("capture_native")
     val MEAL_SEARCH_QUERY = UiAutomationId("meal_search_query")
@@ -119,6 +120,7 @@ object UiAutomationIds {
         CAPTURE_IMPORT,
         CAPTURE_SCAN_AGAIN,
         CAPTURE_CANCEL,
+        CAPTURE_CLOSE,
         CAPTURE_OPEN_SETTINGS,
         CAPTURE_NATIVE,
         MEAL_SEARCH_QUERY,
