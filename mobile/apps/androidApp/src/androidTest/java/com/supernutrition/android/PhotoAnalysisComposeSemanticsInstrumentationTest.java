@@ -24,12 +24,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-/** Physical-device semantic contract for the Compose home surface. */
+/** Physical-device semantic contract for the Compose photo-analysis shell. */
 public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
     private static final long SEMANTICS_TIMEOUT_MS = 15_000L;
 
     @Test
-    public void homeSurfaceExposesStableAutomationIdsAndLabels() throws RemoteException {
+    public void initialLaunchOpensCaptureSurface() throws RemoteException {
         UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         device.wakeUp();
         device.waitForIdle();
@@ -42,15 +42,12 @@ public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
         InstrumentationRegistry.getInstrumentation().startActivitySync(launchIntent);
 
         device.waitForIdle();
-        UiObject2 homeTab = waitForNode(device, UiAutomationIds.INSTANCE.getHOME_TAB().getValue());
-        assertNotNull("missing Home tab semantic id", homeTab);
-        assertTrue("Home tab must be selected on launch", homeTab.isSelected());
-        assertSemantic(device, UiAutomationIds.INSTANCE.getHOME_TITLE().getValue(),
-                targetContext.getString(R.string.home_title));
-        assertSemantic(device, UiAutomationIds.INSTANCE.getHOME_GREETING().getValue(),
-                targetContext.getString(R.string.home_greeting));
-        assertSemantic(device, UiAutomationIds.INSTANCE.getHOME_ADD_FOOD().getValue(),
-                targetContext.getString(R.string.home_add_food));
+        assertSemantic(device, UiAutomationIds.INSTANCE.getPHOTO_ANALYSIS_TITLE().getValue(),
+                targetContext.getString(R.string.capture_title));
+        assertNotNull("missing initial capture close action semantic id",
+                waitForNode(device, UiAutomationIds.INSTANCE.getCAPTURE_CLOSE().getValue()));
+        assertNull("bottom tab bar must be hidden while initial capture is open",
+                device.findObject(By.res(UiAutomationIds.INSTANCE.getCAMERA_ACTION().getValue())));
     }
 
     @Test
@@ -65,6 +62,8 @@ public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
         assertNotNull("the acceptance app must expose a launcher activity", launchIntent);
         launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         InstrumentationRegistry.getInstrumentation().startActivitySync(launchIntent);
+
+        closeInitialCapture(device);
 
         UiObject2 rewardsTab = waitForNode(device, UiAutomationIds.INSTANCE.getREWARDS_TAB().getValue());
         assertNotNull("missing Rewards tab semantic id", rewardsTab);
@@ -93,6 +92,8 @@ public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
         assertNotNull("the acceptance app must expose a launcher activity", launchIntent);
         launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         InstrumentationRegistry.getInstrumentation().startActivitySync(launchIntent);
+
+        closeInitialCapture(device);
 
         UiObject2 cameraAction = waitForNode(device, UiAutomationIds.INSTANCE.getCAMERA_ACTION().getValue());
         assertNotNull("missing centered camera action semantic id", cameraAction);
@@ -127,6 +128,8 @@ public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
         launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         InstrumentationRegistry.getInstrumentation().startActivitySync(launchIntent);
 
+        closeInitialCapture(device);
+
         UiObject2 cameraAction = waitForNode(device, UiAutomationIds.INSTANCE.getCAMERA_ACTION().getValue());
         assertNotNull("missing centered camera action semantic id", cameraAction);
         device.executeShellCommand("pm grant " + targetContext.getPackageName() + " android.permission.CAMERA");
@@ -153,6 +156,8 @@ public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
         assertNotNull("the acceptance app must expose a launcher activity", launchIntent);
         launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         InstrumentationRegistry.getInstrumentation().startActivitySync(launchIntent);
+
+        closeInitialCapture(device);
 
         UiObject2 addFood = waitForNode(device, UiAutomationIds.INSTANCE.getHOME_ADD_FOOD().getValue());
         assertNotNull("missing Home add-meal semantic id", addFood);
@@ -193,6 +198,14 @@ public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
             SystemClock.sleep(100L);
         }
         return null;
+    }
+
+    private static void closeInitialCapture(UiDevice device) {
+        UiObject2 close = waitForNode(device, UiAutomationIds.INSTANCE.getCAPTURE_CLOSE().getValue());
+        assertNotNull("initial capture surface did not open", close);
+        close.click();
+        assertNotNull("Home surface did not open after closing initial capture",
+                waitForNode(device, UiAutomationIds.INSTANCE.getHOME_TITLE().getValue()));
     }
 
     private static String textFor(UiObject2 node) {

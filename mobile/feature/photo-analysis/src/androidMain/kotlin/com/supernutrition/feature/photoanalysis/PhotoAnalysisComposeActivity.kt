@@ -29,7 +29,10 @@ import com.supernutrition.domain.photoanalysis.PhotoSessionStore
 import com.supernutrition.platform.photoandroid.AndroidImageNormalizer
 import com.supernutrition.platform.photoandroid.AndroidPhotoAttemptIds
 import com.supernutrition.platform.photoandroid.AndroidPhotoBridge
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /** Android composition root: lifecycle, result launchers, and feature wiring only. */
 class PhotoAnalysisComposeActivity : ComponentActivity() {
@@ -39,8 +42,9 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
     }
     private val feature: PhotoAnalysisFeature get() = retainedState.feature
     private lateinit var host: PhotoAnalysisAndroidHostController
-    private var analysisLauncher: PhotoAnalysisAnalysisLauncher = PhotoAnalysisAnalysisLauncher.None
+    private var analysisLauncher: PhotoAnalysisAnalysisLauncher? = null
     private var runtimeBinding: PhotoAnalysisAndroidRuntimeBinding? = null
+    private var runtimeReady by mutableStateOf(false)
     private val inlineCameraController = PhotoAnalysisInlineCameraController()
     private var cameraPermissionGranted by mutableStateOf(false)
     private var permissionRationale: android.app.AlertDialog? = null
@@ -179,7 +183,6 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
             context = this,
             permissionRequestInFlight = retainedState.captureOperation.permissionRequestInFlight,
         )
-        bindAnalysisRuntime()
         host = createHost(photoBridge).also { it.initialize() }
         inlineCameraController.onCaptureResult = { operationId, result ->
             host.onInlinePhotoResult(operationId, result)
@@ -187,6 +190,7 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         restoreFeatureSnapshot(savedInstanceState)
         observeRetainedPhotoLifecycle()
         renderContent()
+        bindAnalysisRuntimeAsync()
     }
 
     private fun restoreActivityState(savedInstanceState: Bundle?) {
@@ -199,16 +203,34 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         retainedState.captureOperation.permissionRequestInFlight = false
     }
 
-    private fun bindAnalysisRuntime() {
+    private fun bindAnalysisRuntimeAsync() {
         val factory = (application as? PhotoAnalysisAndroidRuntimeProvider)?.photoAnalysisRuntimeFactory
-        runtimeBinding = factory?.create(
-            context = this,
-            feature = feature,
-            leases = retainedState.leases,
-            sessions = retainedState.sessions,
-            scope = lifecycleScope,
-        )
-        analysisLauncher = runtimeBinding?.analysisLauncher ?: PhotoAnalysisAnalysisLauncher.None
+            ?: return
+        lifecycleScope.launch(Dispatchers.Default) {
+            val binding = runCatching {
+                factory.create(
+                    context = this@PhotoAnalysisComposeActivity,
+                    feature = feature,
+                    leases = retainedState.leases,
+                    sessions = retainedState.sessions,
+                    scope = lifecycleScope,
+                )
+            }.getOrNull() ?: return@launch
+            if (!isActive) {
+                binding.close()
+                return@launch
+            }
+            withContext(Dispatchers.Main.immediate) {
+                if (isFinishing || isDestroyed) {
+                    binding.close()
+                } else {
+                    runtimeBinding = binding
+                    analysisLauncher = binding.analysisLauncher
+                    host.setAnalysisLauncher(binding.analysisLauncher)
+                    runtimeReady = true
+                }
+            }
+        }
     }
 
     private fun createHost(photoBridge: AndroidPhotoBridge): PhotoAnalysisAndroidHostController =
@@ -280,7 +302,7 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
                             manualIngredientState = manualIngredientState,
                             cameraPermissionGranted = cameraPermissionGranted,
                             inlineCameraController = inlineCameraController,
-                            gridHintsEnabled = runtimeBinding != null,
+                            gridHintsEnabled = runtimeReady,
                         ),
                     )
                 },
@@ -364,7 +386,7 @@ private fun PhotoAnalysisTabs(
     captureContent: @Composable (onCloseRequested: () -> Unit) -> Unit,
 ) {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
-    var captureVisible by rememberSaveable { mutableStateOf(false) }
+    var captureVisible by rememberSaveable { mutableStateOf(true) }
     var captureReturnTab by rememberSaveable { mutableIntStateOf(0) }
     val closeCapture: () -> Unit = {
         captureVisible = false
