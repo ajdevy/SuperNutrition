@@ -249,6 +249,16 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
             val rewardsSnapshot by retainedState.rewardsFeature.snapshot.collectAsState()
             PhotoAnalysisTabs(
                 shell = PhotoAnalysisTabShell(
+                    homeModel = HomeScreenModel(
+                        title = getString(R.string.home_title),
+                        greeting = getString(R.string.home_greeting),
+                        dailySummaryTitle = getString(R.string.home_summary_title),
+                        dailySummaryValue = getString(R.string.home_summary_value),
+                        dailySummaryDescription = getString(R.string.home_summary_description),
+                        emptyTitle = getString(R.string.home_empty_title),
+                        emptyDescription = getString(R.string.home_empty_description),
+                        addFoodLabel = getString(R.string.home_add_food),
+                    ),
                     rewardsModel = RewardsPresenterModel.from(rewardsSnapshot, rewardsCopy),
                     homeLabel = getString(R.string.capture_tab),
                     rewardsLabel = getString(R.string.rewards_tab),
@@ -348,6 +358,7 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
 @Composable
 private fun PhotoAnalysisTabs(shell: PhotoAnalysisTabShell, captureContent: @Composable () -> Unit) {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
+    var captureVisible by rememberSaveable { mutableStateOf(false) }
     Scaffold(bottomBar = {
         PhotoAnalysisMainBottomBar(
             state = PhotoAnalysisMainBottomBarState(
@@ -357,10 +368,17 @@ private fun PhotoAnalysisTabs(shell: PhotoAnalysisTabShell, captureContent: @Com
                 cameraLabel = shell.cameraLabel,
             ),
             actions = PhotoAnalysisMainBottomBarActions(
-                onHomeSelected = { selectedTab = 0 },
-                onRewardsSelected = { selectedTab = 1 },
+                onHomeSelected = {
+                    selectedTab = 0
+                    captureVisible = false
+                },
+                onRewardsSelected = {
+                    selectedTab = 1
+                    captureVisible = false
+                },
                 onCameraRequested = {
                     selectedTab = 0
+                    captureVisible = true
                     shell.onCameraRequested()
                 },
             ),
@@ -371,12 +389,24 @@ private fun PhotoAnalysisTabs(shell: PhotoAnalysisTabShell, captureContent: @Com
                 .padding(contentPadding)
                 .semantics { testTagsAsResourceId = true },
         ) {
-            if (selectedTab == 0) captureContent() else RewardsScreen(shell.rewardsModel, Modifier.statusBarsPadding())
+            when {
+                captureVisible -> captureContent()
+                selectedTab == 0 -> HomeScreen(
+                    model = shell.homeModel,
+                    modifier = Modifier.statusBarsPadding(),
+                    onAddFoodRequested = {
+                        captureVisible = true
+                        shell.onCameraRequested()
+                    },
+                )
+                else -> RewardsScreen(shell.rewardsModel, Modifier.statusBarsPadding())
+            }
         }
     }
 }
 
 private data class PhotoAnalysisTabShell(
+    val homeModel: HomeScreenModel,
     val rewardsModel: RewardsPresenterModel,
     val homeLabel: String,
     val rewardsLabel: String,

@@ -2,6 +2,8 @@ package com.supernutrition.feature.photoanalysis
 
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotSelected
+import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.v2.runComposeUiTest
@@ -31,8 +33,14 @@ class PhotoAnalysisMainBottomBarComposeTest {
             )
         }
 
-        onNodeWithTag(UiAutomationIds.CAPTURE_TAB.value).assertIsDisplayed().performClick()
-        onNodeWithTag(UiAutomationIds.REWARDS_TAB.value).assertIsDisplayed().performClick()
+        onNodeWithTag(UiAutomationIds.CAPTURE_TAB.value)
+            .assertIsDisplayed()
+            .assertIsSelected()
+            .performClick()
+        onNodeWithTag(UiAutomationIds.REWARDS_TAB.value)
+            .assertIsDisplayed()
+            .assertIsNotSelected()
+            .performClick()
         onNodeWithTag(UiAutomationIds.CAMERA_ACTION.value).assertIsDisplayed().performClick()
 
         assertEquals(listOf("home", "rewards", "camera"), events)

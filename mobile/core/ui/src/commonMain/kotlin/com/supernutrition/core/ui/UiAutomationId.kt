@@ -63,8 +63,16 @@ object UiAutomationIds {
     val MEAL_SEARCH_RESULTS = UiAutomationId("meal_search_results")
     val MEAL_SEARCH_NO_RESULTS = UiAutomationId("meal_search_no_results")
     val CAPTURE_TAB = UiAutomationId("capture_tab")
+    /** Compatibility alias: the first tab is now the Home surface. */
+    val HOME_TAB = CAPTURE_TAB
     val REWARDS_TAB = UiAutomationId("rewards_tab")
     val CAMERA_ACTION = UiAutomationId("camera_action")
+    val HOME_TITLE = UiAutomationId("home_title")
+    val HOME_GREETING = UiAutomationId("home_greeting")
+    val HOME_SUMMARY = UiAutomationId("home_summary")
+    val HOME_EMPTY_TITLE = UiAutomationId("home_empty_title")
+    val HOME_EMPTY_DESCRIPTION = UiAutomationId("home_empty_description")
+    val HOME_ADD_FOOD = UiAutomationId("home_add_food")
     val REWARDS_TITLE = UiAutomationId("rewards_title")
     val REWARDS_LIST = UiAutomationId("rewards_list")
 
@@ -119,6 +127,12 @@ object UiAutomationIds {
         CAPTURE_TAB,
         REWARDS_TAB,
         CAMERA_ACTION,
+        HOME_TITLE,
+        HOME_GREETING,
+        HOME_SUMMARY,
+        HOME_EMPTY_TITLE,
+        HOME_EMPTY_DESCRIPTION,
+        HOME_ADD_FOOD,
         REWARDS_TITLE,
         REWARDS_LIST,
     )

@@ -26,8 +26,11 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -109,7 +112,7 @@ private fun PhotoAnalysisBottomBarPill(
             PhotoAnalysisBottomBarItem(
                 label = state.homeLabel,
                 selected = state.selectedTab == 0,
-                automationId = UiAutomationIds.CAPTURE_TAB,
+                automationId = UiAutomationIds.HOME_TAB,
                 onClick = actions.onHomeSelected,
                 icon = { color -> HomeIcon(color) },
             )
@@ -136,7 +139,10 @@ private fun PhotoAnalysisCameraButton(modifier: Modifier, cameraLabel: String, o
             .clip(CircleShape)
             .background(CameraGreen)
             .clickable(onClick = onClick)
-            .semantics { contentDescription = cameraLabel }
+            .semantics {
+                contentDescription = cameraLabel
+                role = Role.Button
+            }
             .automationId(UiAutomationIds.CAMERA_ACTION),
         contentAlignment = Alignment.Center,
     ) {
@@ -199,6 +205,8 @@ private fun PhotoAnalysisBottomBarItem(
             .clickable(onClick = onClick)
             .semantics {
                 contentDescription = label
+                role = Role.Tab
+                this.selected = selected
             }
             .automationId(automationId),
         contentAlignment = Alignment.Center,

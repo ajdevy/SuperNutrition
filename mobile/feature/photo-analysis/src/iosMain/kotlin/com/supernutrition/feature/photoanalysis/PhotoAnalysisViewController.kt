@@ -15,7 +15,6 @@ import platform.UIKit.UIViewController
  */
 @Suppress("FunctionNaming")
 @OptIn(ExperimentalForeignApi::class)
-@Suppress("FunctionNaming")
 fun PhotoAnalysisViewController(
     feature: PhotoAnalysisFeature,
     copy: PhotoAnalysisPresenterCopy,
