@@ -61,4 +61,24 @@
     <string name="capture_manual_ingredient_add">Add</string>
     <string name="capture_result_placeholder">Dish suggestions and visible photo evidence will appear after analysis.</string>
     <string name="capture_loading">Analyzing photo…</string>
+    <string name="capture_tab">Home</string>
+    <string name="rewards_tab">Rewards</string>
+    <string name="rewards_title">Rewards</string>
+    <string name="rewards_earned">Added to your rewards</string>
+    <string name="rewards_ready">Ready when you are</string>
+    <string name="rewards_progress_template">{current} of {target}</string>
+    <string name="reward_protein_title">Protein all day</string>
+    <string name="reward_protein_description">You included a protein source in every recorded meal.</string>
+    <string name="reward_fats_title">Fats in place</string>
+    <string name="reward_fats_description">You included a food from a nourishing fat group.</string>
+    <string name="reward_fiber_title">Fiber in place</string>
+    <string name="reward_fiber_description">You included fiber across at least two recorded meals.</string>
+    <string name="reward_colors_title">Colors of the day</string>
+    <string name="reward_colors_description">You added three different food colors today.</string>
+    <string name="reward_products_title">30 products</string>
+    <string name="reward_products_description">You explored 30 different products across seven days.</string>
+    <string name="reward_fermented_title">Living shelf</string>
+    <string name="reward_fermented_description">You included living or fermented products on three days.</string>
+    <string name="reward_seven_days_title">Seven days recorded</string>
+    <string name="reward_seven_days_description">You recorded food on each day of this seven-day window.</string>
 </resources>
