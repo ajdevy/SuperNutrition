@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.android.kotlin.multiplatform.library)
     alias(libs.plugins.compose)
     alias(libs.plugins.kotlin.compose)
     id("com.supernutrition.kmp-apple-targets")
@@ -25,6 +26,11 @@ val enableIntelX64 = extra["supernutrition.enableIntelX64"] as Boolean
 
 kotlin {
     jvm()
+    android {
+        namespace = "com.supernutrition.feature.photoanalysis.ui"
+        compileSdk = libs.versions.compileSdk.get().toInt()
+        minSdk = libs.versions.minSdk.get().toInt()
+    }
 
     sourceSets {
         commonMain.dependencies {
