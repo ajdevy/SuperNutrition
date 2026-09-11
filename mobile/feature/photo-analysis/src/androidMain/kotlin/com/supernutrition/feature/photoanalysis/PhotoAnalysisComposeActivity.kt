@@ -3,6 +3,7 @@ package com.supernutrition.feature.photoanalysis
 import android.Manifest
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
@@ -28,7 +29,10 @@ import com.supernutrition.domain.photoanalysis.PhotoSessionStore
 import com.supernutrition.platform.photoandroid.AndroidImageNormalizer
 import com.supernutrition.platform.photoandroid.AndroidPhotoAttemptIds
 import com.supernutrition.platform.photoandroid.AndroidPhotoBridge
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /** Android composition root: lifecycle, result launchers, and feature wiring only. */
 class PhotoAnalysisComposeActivity : ComponentActivity() {
@@ -38,8 +42,9 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
     }
     private val feature: PhotoAnalysisFeature get() = retainedState.feature
     private lateinit var host: PhotoAnalysisAndroidHostController
-    private var analysisLauncher: PhotoAnalysisAnalysisLauncher = PhotoAnalysisAnalysisLauncher.None
+    private var analysisLauncher: PhotoAnalysisAnalysisLauncher? = null
     private var runtimeBinding: PhotoAnalysisAndroidRuntimeBinding? = null
+    private var runtimeReady by mutableStateOf(false)
     private val inlineCameraController = PhotoAnalysisInlineCameraController()
     private var cameraPermissionGranted by mutableStateOf(false)
     private var permissionRationale: android.app.AlertDialog? = null
@@ -178,7 +183,6 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
             context = this,
             permissionRequestInFlight = retainedState.captureOperation.permissionRequestInFlight,
         )
-        bindAnalysisRuntime()
         host = createHost(photoBridge).also { it.initialize() }
         inlineCameraController.onCaptureResult = { operationId, result ->
             host.onInlinePhotoResult(operationId, result)
@@ -186,6 +190,7 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         restoreFeatureSnapshot(savedInstanceState)
         observeRetainedPhotoLifecycle()
         renderContent()
+        bindAnalysisRuntimeAsync()
     }
 
     private fun restoreActivityState(savedInstanceState: Bundle?) {
@@ -198,16 +203,34 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         retainedState.captureOperation.permissionRequestInFlight = false
     }
 
-    private fun bindAnalysisRuntime() {
+    private fun bindAnalysisRuntimeAsync() {
         val factory = (application as? PhotoAnalysisAndroidRuntimeProvider)?.photoAnalysisRuntimeFactory
-        runtimeBinding = factory?.create(
-            context = this,
-            feature = feature,
-            leases = retainedState.leases,
-            sessions = retainedState.sessions,
-            scope = lifecycleScope,
-        )
-        analysisLauncher = runtimeBinding?.analysisLauncher ?: PhotoAnalysisAnalysisLauncher.None
+            ?: return
+        lifecycleScope.launch(Dispatchers.Default) {
+            val binding = runCatching {
+                factory.create(
+                    context = this@PhotoAnalysisComposeActivity,
+                    feature = feature,
+                    leases = retainedState.leases,
+                    sessions = retainedState.sessions,
+                    scope = lifecycleScope,
+                )
+            }.getOrNull() ?: return@launch
+            if (!isActive) {
+                binding.close()
+                return@launch
+            }
+            withContext(Dispatchers.Main.immediate) {
+                if (isFinishing || isDestroyed) {
+                    binding.close()
+                } else {
+                    runtimeBinding = binding
+                    analysisLauncher = binding.analysisLauncher
+                    host.setAnalysisLauncher(binding.analysisLauncher)
+                    runtimeReady = true
+                }
+            }
+        }
     }
 
     private fun createHost(photoBridge: AndroidPhotoBridge): PhotoAnalysisAndroidHostController =
@@ -249,6 +272,16 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
             val rewardsSnapshot by retainedState.rewardsFeature.snapshot.collectAsState()
             PhotoAnalysisTabs(
                 shell = PhotoAnalysisTabShell(
+                    homeModel = HomeScreenModel(
+                        title = getString(R.string.home_title),
+                        greeting = getString(R.string.home_greeting),
+                        dailySummaryTitle = getString(R.string.home_summary_title),
+                        dailySummaryValue = getString(R.string.home_summary_value),
+                        dailySummaryDescription = getString(R.string.home_summary_description),
+                        emptyTitle = getString(R.string.home_empty_title),
+                        emptyDescription = getString(R.string.home_empty_description),
+                        addFoodLabel = getString(R.string.home_add_food),
+                    ),
                     rewardsModel = RewardsPresenterModel.from(rewardsSnapshot, rewardsCopy),
                     homeLabel = getString(R.string.capture_tab),
                     rewardsLabel = getString(R.string.rewards_tab),
@@ -257,17 +290,19 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
                         host.handleAction(PhotoAnalysisPresenterAction.TakePhoto)
                     },
                 ),
-                captureContent = {
+                captureContent = { onCloseRequested ->
                     PhotoAnalysisCaptureTab(
                         state = PhotoAnalysisCaptureTabState(
                             feature = feature,
                             host = host,
                             presentationCopy = presentationCopy,
+                            closeLabel = getString(R.string.capture_close),
+                            onCloseRequested = onCloseRequested,
                             preview = preview,
                             manualIngredientState = manualIngredientState,
                             cameraPermissionGranted = cameraPermissionGranted,
                             inlineCameraController = inlineCameraController,
-                            gridHintsEnabled = runtimeBinding != null,
+                            gridHintsEnabled = runtimeReady,
                         ),
                     )
                 },
@@ -346,37 +381,69 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
 }
 
 @Composable
-private fun PhotoAnalysisTabs(shell: PhotoAnalysisTabShell, captureContent: @Composable () -> Unit) {
+private fun PhotoAnalysisTabs(
+    shell: PhotoAnalysisTabShell,
+    captureContent: @Composable (onCloseRequested: () -> Unit) -> Unit,
+) {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
+    var captureVisible by rememberSaveable { mutableStateOf(true) }
+    var captureReturnTab by rememberSaveable { mutableIntStateOf(0) }
+    val closeCapture: () -> Unit = {
+        captureVisible = false
+        selectedTab = captureReturnTab
+    }
+    BackHandler(enabled = captureVisible, onBack = closeCapture)
     Scaffold(bottomBar = {
-        PhotoAnalysisMainBottomBar(
-            state = PhotoAnalysisMainBottomBarState(
-                selectedTab = selectedTab,
-                homeLabel = shell.homeLabel,
-                rewardsLabel = shell.rewardsLabel,
-                cameraLabel = shell.cameraLabel,
-            ),
-            actions = PhotoAnalysisMainBottomBarActions(
-                onHomeSelected = { selectedTab = 0 },
-                onRewardsSelected = { selectedTab = 1 },
-                onCameraRequested = {
-                    selectedTab = 0
-                    shell.onCameraRequested()
-                },
-            ),
-        )
+        if (!captureVisible) {
+            PhotoAnalysisMainBottomBar(
+                state = PhotoAnalysisMainBottomBarState(
+                    selectedTab = selectedTab,
+                    homeLabel = shell.homeLabel,
+                    rewardsLabel = shell.rewardsLabel,
+                    cameraLabel = shell.cameraLabel,
+                ),
+                actions = PhotoAnalysisMainBottomBarActions(
+                    onHomeSelected = {
+                        selectedTab = 0
+                        captureVisible = false
+                    },
+                    onRewardsSelected = {
+                        selectedTab = 1
+                        captureVisible = false
+                    },
+                    onCameraRequested = {
+                        captureReturnTab = selectedTab
+                        captureVisible = true
+                        shell.onCameraRequested()
+                    },
+                ),
+            )
+        }
     }) { contentPadding ->
         Box(
             modifier = Modifier
                 .padding(contentPadding)
                 .semantics { testTagsAsResourceId = true },
         ) {
-            if (selectedTab == 0) captureContent() else RewardsScreen(shell.rewardsModel, Modifier.statusBarsPadding())
+            when {
+                captureVisible -> captureContent(closeCapture)
+                selectedTab == 0 -> HomeScreen(
+                    model = shell.homeModel,
+                    modifier = Modifier.statusBarsPadding(),
+                    onAddFoodRequested = {
+                        captureReturnTab = 0
+                        captureVisible = true
+                        shell.onCameraRequested()
+                    },
+                )
+                else -> RewardsScreen(shell.rewardsModel, Modifier.statusBarsPadding())
+            }
         }
     }
 }
 
 private data class PhotoAnalysisTabShell(
+    val homeModel: HomeScreenModel,
     val rewardsModel: RewardsPresenterModel,
     val homeLabel: String,
     val rewardsLabel: String,
@@ -400,6 +467,8 @@ private fun PhotoAnalysisCaptureTab(state: PhotoAnalysisCaptureTabState) {
         modifier = Modifier.statusBarsPadding(),
         surface = PhotoAnalysisCaptureSurface(
             presenterCopy = presentationCopy,
+            closeLabel = state.closeLabel,
+            onCloseRequested = state.onCloseRequested,
             liveCamera = if (preview == null) {
                 {
                     PhotoAnalysisLiveCameraPreview(
@@ -443,6 +512,8 @@ private data class PhotoAnalysisCaptureTabState(
     val feature: PhotoAnalysisFeature,
     val host: PhotoAnalysisAndroidHostController,
     val presentationCopy: PhotoAnalysisPresenterCopy,
+    val closeLabel: String,
+    val onCloseRequested: () -> Unit,
     val preview: AndroidRetainedPhotoPreview?,
     val manualIngredientState: PhotoAnalysisManualIngredientState,
     val cameraPermissionGranted: Boolean,

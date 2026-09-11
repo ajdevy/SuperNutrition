@@ -7,6 +7,39 @@ appId: ${APP_ID}
 - assertVisible:
     id: ${output.photo_analysis_title}
 - assertVisible:
+    id: ${output.capture_close}
+- tapOn:
+    id: ${output.capture_close}
+- assertVisible:
+    id: ${output.home_title}
+- tapOn:
+    id: ${output.rewards_tab}
+- assertVisible:
+    id: ${output.rewards_title}
+- tapOn:
+    id: ${output.home_tab}
+- assertVisible:
+    id: ${output.home_title}
+- tapOn:
+    id: ${output.home_add_food}
+- assertVisible:
+    id: ${output.photo_analysis_title}
+- assertVisible:
+    id: ${output.capture_close}
+- tapOn:
+    id: ${output.capture_close}
+- assertVisible:
+    id: ${output.home_title}
+- tapOn:
+    id: ${output.camera_action}
+- assertVisible:
+    id: ${output.photo_analysis_title}
+- assertVisible:
     id: ${output.capture_shutter}
 - assertVisible:
     id: ${output.capture_import}
+- assertVisible:
+    id: ${output.capture_close}
+- back
+- assertVisible:
+    id: ${output.home_title}

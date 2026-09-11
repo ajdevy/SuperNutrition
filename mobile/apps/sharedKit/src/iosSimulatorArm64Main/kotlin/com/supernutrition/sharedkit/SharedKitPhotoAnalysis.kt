@@ -10,11 +10,14 @@ public object SharedKitPhotoAnalysis {
     public fun viewController(
         session: SharedKitPhotoAnalysisSession,
         onNativeAction: (SharedKitPhotoAnalysisNativeAction) -> Unit,
+        onCloseRequested: () -> Unit,
     ): UIViewController = PhotoAnalysisViewController(
-        session.feature,
-        session.presenterCopy,
+        feature = session.feature,
+        copy = session.presenterCopy,
         retainedPhoto = { session.retainedPhoto },
-    ) { action -> onNativeAction(action.toSharedKitAction()) }
+        onNativeAction = { action -> onNativeAction(action.toSharedKitAction()) },
+        onCloseRequested = onCloseRequested,
+    )
 }
 
 private fun PhotoAnalysisNativeAction.toSharedKitAction(): SharedKitPhotoAnalysisNativeAction = when (this) {
