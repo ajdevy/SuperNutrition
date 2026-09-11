@@ -10,6 +10,7 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":core:config"))
             implementation(project(":core:ui"))
+            implementation(project(":domain:nutrition"))
             implementation(project(":domain:photo-analysis"))
             implementation(libs.kotlinx.coroutines.core)
         }
