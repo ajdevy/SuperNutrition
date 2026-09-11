@@ -26,6 +26,7 @@ struct PhotoAnalysisAppRootView: View {
     let session: SharedKitPhotoAnalysisSession
     private let rewardsSession: SharedKitRewardsSession
     @State private var selectedTab = 0
+    @State private var showingCapture = true
     @StateObject private var cameraAction: PhotoAnalysisCameraAction
 
     init(session: SharedKitPhotoAnalysisSession) {
@@ -37,14 +38,27 @@ struct PhotoAnalysisAppRootView: View {
     var body: some View {
         Group {
             if selectedTab == 0 {
-                Group {
-                #if arch(x86_64)
-                    PhotoAnalysisIntelCompatibilityView(session: session, cameraAction: cameraAction)
-                #else
-                    PhotoAnalysisComposeLifecycleHost(session: session, cameraAction: cameraAction)
-                #endif
+                if showingCapture {
+                    Group {
+                    #if arch(x86_64)
+                        PhotoAnalysisIntelCompatibilityView(
+                            session: session,
+                            cameraAction: cameraAction,
+                            onCloseRequested: { showingCapture = false },
+                        )
+                    #else
+                        PhotoAnalysisComposeLifecycleHost(
+                            session: session,
+                            cameraAction: cameraAction,
+                            onCloseRequested: { showingCapture = false },
+                        )
+                    #endif
+                    }
+                    .accessibilityIdentifier(SharedKitAutomationIds.shared.captureTab)
+                } else {
+                    PhotoAnalysisHomeView(onAddFoodRequested: showCaptureSurface)
+                        .accessibilityIdentifier(SharedKitAutomationIds.shared.homeTab)
                 }
-                .accessibilityIdentifier(SharedKitAutomationIds.shared.captureTab)
             } else {
                 Group {
                 #if arch(x86_64)
@@ -58,14 +72,74 @@ struct PhotoAnalysisAppRootView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .safeAreaInset(edge: .bottom, spacing: 0) {
-            PhotoAnalysisBottomBar(
-                selectedTab: $selectedTab,
-                onCameraRequested: {
-                    selectedTab = 0
-                    DispatchQueue.main.async { cameraAction.invoke() }
-                },
-            )
-            .padding(.bottom, 12)
+            if !showingCapture {
+                PhotoAnalysisBottomBar(
+                    selectedTab: $selectedTab,
+                    onHomeSelected: {
+                        selectedTab = 0
+                        showingCapture = false
+                    },
+                    onRewardsSelected: {
+                        selectedTab = 1
+                        showingCapture = false
+                    },
+                    onCameraRequested: {
+                        showCaptureSurface()
+                    },
+                )
+                .padding(.bottom, 12)
+            }
+        }
+    }
+
+    private func showCaptureSurface() {
+        selectedTab = 0
+        showingCapture = true
+        DispatchQueue.main.async { cameraAction.invoke() }
+    }
+}
+
+private struct PhotoAnalysisHomeView: View {
+    let onAddFoodRequested: () -> Void
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("Home")
+                    .font(.title2.weight(.semibold))
+                    .accessibilityIdentifier(SharedKitAutomationIds.shared.homeTitle)
+                    .padding(.top, 16)
+
+                Text("Welcome back")
+                    .font(.body)
+                    .accessibilityIdentifier(SharedKitAutomationIds.shared.homeGreeting)
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Today’s progress")
+                        .font(.subheadline.weight(.semibold))
+                    Text("Ready when you are")
+                        .font(.title3.weight(.semibold))
+                    Text("Add a meal whenever you’re ready to start your day.")
+                        .font(.body)
+                }
+                .padding(20)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color(red: 0.88, green: 0.92, blue: 0.76), in: RoundedRectangle(cornerRadius: 16))
+                .accessibilityIdentifier(SharedKitAutomationIds.shared.homeSummary)
+
+                Text("Build your day")
+                    .font(.headline)
+                    .accessibilityIdentifier(SharedKitAutomationIds.shared.homeEmptyTitle)
+
+                Text("Keep track of what you eat and notice the good choices you make.")
+                    .font(.body)
+                    .accessibilityIdentifier(SharedKitAutomationIds.shared.homeEmptyDescription)
+
+                Button("Add a meal", action: onAddFoodRequested)
+                    .frame(maxWidth: .infinity)
+                    .accessibilityIdentifier(SharedKitAutomationIds.shared.homeAddFood)
+            }
+            .padding(.horizontal, 20)
         }
     }
 }
@@ -91,6 +165,8 @@ final class PhotoAnalysisCameraAction: ObservableObject {
 
 private struct PhotoAnalysisBottomBar: View {
     @Binding var selectedTab: Int
+    let onHomeSelected: () -> Void
+    let onRewardsSelected: () -> Void
     let onCameraRequested: () -> Void
 
     private let pillColor = Color(red: 0xF3 / 255.0, green: 0xEE / 255.0, blue: 0xEB / 255.0)
@@ -106,9 +182,9 @@ private struct PhotoAnalysisBottomBar: View {
                     label: "Home",
                     systemImage: "house.fill",
                     selected: selectedTab == 0,
-                    identifier: SharedKitAutomationIds.shared.captureTab,
+                    identifier: SharedKitAutomationIds.shared.homeTab,
                 ) {
-                    selectedTab = 0
+                    onHomeSelected()
                 }
                 Spacer()
                 tabButton(
@@ -117,7 +193,7 @@ private struct PhotoAnalysisBottomBar: View {
                     selected: selectedTab == 1,
                     identifier: SharedKitAutomationIds.shared.rewardsTab,
                 ) {
-                    selectedTab = 1
+                    onRewardsSelected()
                 }
             }
             .padding(.horizontal, 42)
@@ -243,10 +319,15 @@ private enum PhotoAnalysisHostAction: Int {
 struct PhotoAnalysisComposeLifecycleHost: View {
     let session: SharedKitPhotoAnalysisSession
     let cameraAction: PhotoAnalysisCameraAction
+    let onCloseRequested: () -> Void
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
-        PhotoAnalysisComposeHost(session: session, cameraAction: cameraAction)
+        PhotoAnalysisComposeHost(
+            session: session,
+            cameraAction: cameraAction,
+            onCloseRequested: onCloseRequested,
+        )
             .onChange(of: scenePhase) { phase in
                 switch phase {
                 case .background:
@@ -265,9 +346,14 @@ struct PhotoAnalysisComposeLifecycleHost: View {
 struct PhotoAnalysisComposeHost: UIViewControllerRepresentable {
     let session: SharedKitPhotoAnalysisSession
     let cameraAction: PhotoAnalysisCameraAction
+    let onCloseRequested: () -> Void
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(session: session, cameraAction: cameraAction)
+        Coordinator(
+            session: session,
+            cameraAction: cameraAction,
+            onCloseRequested: onCloseRequested,
+        )
     }
 
     func makeUIViewController(context: Context) -> UIViewController {
@@ -275,6 +361,9 @@ struct PhotoAnalysisComposeHost: UIViewControllerRepresentable {
             session: session,
             onNativeAction: { action in
                 context.coordinator.handle(action: action)
+            },
+            onCloseRequested: {
+                context.coordinator.closeCapture()
             },
         )
         let launchMarker = UIView(frame: .zero)
@@ -298,18 +387,28 @@ struct PhotoAnalysisComposeHost: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 
     final class Coordinator: NSObject {
-        init(session: SharedKitPhotoAnalysisSession, cameraAction: PhotoAnalysisCameraAction) {
+        init(
+            session: SharedKitPhotoAnalysisSession,
+            cameraAction: PhotoAnalysisCameraAction,
+            onCloseRequested: @escaping () -> Void,
+        ) {
             presentation = PhotoAnalysisPresentationCoordinator(session: session)
+            self.onCloseRequested = onCloseRequested
             cameraAction.action = { [weak self] in self?.presentation.takePhoto() }
         }
 
         let presentation: PhotoAnalysisPresentationCoordinator
+        private let onCloseRequested: () -> Void
         weak var hostViewController: UIViewController? {
             didSet { presentation.presenter = hostViewController }
         }
 
         func handle(action: PhotoAnalysisNativeAction) {
             presentation.handle(action: action)
+        }
+
+        func closeCapture() {
+            onCloseRequested()
         }
     }
 }
@@ -429,20 +528,31 @@ final class PhotoAnalysisPresentationCoordinator {
 struct PhotoAnalysisIntelCompatibilityView: View {
     let session: SharedKitPhotoAnalysisSession
     let cameraAction: PhotoAnalysisCameraAction
+    let onCloseRequested: () -> Void
     private let presentation: PhotoAnalysisPresentationCoordinator
     @Environment(\.scenePhase) private var scenePhase
     @State private var status: String
     @State private var presenter: UIViewController?
 
-    init(session: SharedKitPhotoAnalysisSession, cameraAction: PhotoAnalysisCameraAction) {
+    init(
+        session: SharedKitPhotoAnalysisSession,
+        cameraAction: PhotoAnalysisCameraAction,
+        onCloseRequested: @escaping () -> Void,
+    ) {
         self.session = session
         self.cameraAction = cameraAction
+        self.onCloseRequested = onCloseRequested
         presentation = PhotoAnalysisPresentationCoordinator(session: session)
         _status = State(initialValue: session.statusLabel())
     }
 
     var body: some View {
         VStack(spacing: 16) {
+            HStack {
+                Spacer()
+                Button("×", action: onCloseRequested)
+                    .accessibilityIdentifier(SharedKitAutomationIds.shared.captureClose)
+            }
             Text(" ")
                 .accessibilityIdentifier(SharedKitAutomationIds.shared.bootstrapLaunchMarker)
                 .accessibilityLabel(String(localized: "bootstrap.ready"))

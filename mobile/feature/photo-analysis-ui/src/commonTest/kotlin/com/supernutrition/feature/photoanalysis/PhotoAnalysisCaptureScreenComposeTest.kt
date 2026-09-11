@@ -15,6 +15,7 @@ import com.supernutrition.core.ui.photoAnalysisGridCellId
 import com.supernutrition.core.ui.photoAnalysisVisibleComponentId
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 /** The shared production screen is exercised through the Compose UI Test v2 API. */
 @OptIn(ExperimentalTestApi::class)
@@ -22,6 +23,7 @@ class PhotoAnalysisCaptureScreenComposeTest {
     @Test
     fun `capture screen exposes the shared semantic contract`() = runComposeUiTest {
         val copy = PhotoAnalysisPresenterCopyFixtures.localized()
+        var closeRequested = false
         setContent {
             PhotoAnalysisCaptureScreen(
                 model = PhotoAnalysisPresenterModel.from(
@@ -29,7 +31,11 @@ class PhotoAnalysisCaptureScreenComposeTest {
                     copy,
                 ),
                 onAction = {},
-                surface = PhotoAnalysisCaptureSurface(presenterCopy = copy),
+                surface = PhotoAnalysisCaptureSurface(
+                    presenterCopy = copy,
+                    closeLabel = "Chiudi",
+                    onCloseRequested = { closeRequested = true },
+                ),
             )
         }
 
@@ -41,6 +47,8 @@ class PhotoAnalysisCaptureScreenComposeTest {
         onNodeWithTag(UiAutomationIds.CAPTURE_SHUTTER.value).assertTextEquals(copy.capture.takeMealPhoto)
         onNodeWithTag(UiAutomationIds.CAPTURE_IMPORT.value).assertIsDisplayed()
         onNodeWithTag(UiAutomationIds.CAPTURE_IMPORT.value).assertTextEquals(copy.capture.choosePhoto)
+        onNodeWithTag(UiAutomationIds.CAPTURE_CLOSE.value).assertIsDisplayed().performClick()
+        assertTrue(closeRequested)
     }
 
     @Test

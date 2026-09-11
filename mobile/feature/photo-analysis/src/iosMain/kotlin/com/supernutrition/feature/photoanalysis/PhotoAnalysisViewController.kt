@@ -15,12 +15,12 @@ import platform.UIKit.UIViewController
  */
 @Suppress("FunctionNaming")
 @OptIn(ExperimentalForeignApi::class)
-@Suppress("FunctionNaming")
 fun PhotoAnalysisViewController(
     feature: PhotoAnalysisFeature,
     copy: PhotoAnalysisPresenterCopy,
     retainedPhoto: () -> IosRetainedPhotoPreview?,
     onNativeAction: (PhotoAnalysisNativeAction) -> Unit,
+    onCloseRequested: () -> Unit,
 ): UIViewController = ComposeUIViewController {
     // retainedPhoto is native state, so observe the shared state stream here
     // as well as inside the content to refresh the same-slot preview after a
@@ -32,6 +32,8 @@ fun PhotoAnalysisViewController(
         onAction = { action -> feature.route(action, onNativeAction) },
         surface = PhotoAnalysisCaptureSurface(
             presenterCopy = copy,
+            closeLabel = "Close",
+            onCloseRequested = onCloseRequested,
             retainedPhoto = preview?.let { current -> { IosRetainedPhotoBackdrop(current) } },
             photoTextContrast = null,
         ),

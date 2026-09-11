@@ -16,6 +16,8 @@ class SharedKitBootstrapTest {
     @Test
     fun automationRegistryProjectsTheBootstrapAndCaptureIds() {
         assertEquals("bootstrap_shell_launch_di", SharedKitAutomationIds.bootstrapLaunchMarker)
+        assertEquals("capture_tab", SharedKitAutomationIds.homeTab)
+        assertEquals("home_title", SharedKitAutomationIds.homeTitle)
         assertEquals("photo_analysis_status", SharedKitAutomationIds.photoAnalysisStatus)
         assertEquals("capture_shutter", SharedKitAutomationIds.captureShutter)
         assertEquals("capture_import", SharedKitAutomationIds.captureImport)

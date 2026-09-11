@@ -8,10 +8,13 @@ import platform.Foundation.NSDate
 public class SharedKitRewardsSession {
     public val presenterCopy: RewardsPresenterCopy = localizedRewardsCopy()
     internal val feature: RewardsFeature = RewardsFeature(
-        localDay = { (NSDate().timeIntervalSince1970 / SECONDS_PER_DAY).toInt() },
+        localDay = {
+            ((NSDate().timeIntervalSinceReferenceDate + APPLE_REFERENCE_DATE_OFFSET_SECONDS) / SECONDS_PER_DAY).toInt()
+        },
     )
 
     private companion object {
         const val SECONDS_PER_DAY = 86_400.0
+        const val APPLE_REFERENCE_DATE_OFFSET_SECONDS = 978_307_200.0
     }
 }
