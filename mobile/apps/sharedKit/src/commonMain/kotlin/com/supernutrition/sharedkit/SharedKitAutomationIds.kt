@@ -20,10 +20,24 @@ public object SharedKitAutomationIds {
         get() = UiAutomationIds.CAPTURE_NATIVE.value
     public val captureTab: String
         get() = UiAutomationIds.CAPTURE_TAB.value
+    public val homeTab: String
+        get() = UiAutomationIds.HOME_TAB.value
     public val rewardsTab: String
         get() = UiAutomationIds.REWARDS_TAB.value
     public val cameraAction: String
         get() = UiAutomationIds.CAMERA_ACTION.value
+    public val homeTitle: String
+        get() = UiAutomationIds.HOME_TITLE.value
+    public val homeGreeting: String
+        get() = UiAutomationIds.HOME_GREETING.value
+    public val homeSummary: String
+        get() = UiAutomationIds.HOME_SUMMARY.value
+    public val homeEmptyTitle: String
+        get() = UiAutomationIds.HOME_EMPTY_TITLE.value
+    public val homeEmptyDescription: String
+        get() = UiAutomationIds.HOME_EMPTY_DESCRIPTION.value
+    public val homeAddFood: String
+        get() = UiAutomationIds.HOME_ADD_FOOD.value
     public val rewardsTitle: String
         get() = UiAutomationIds.REWARDS_TITLE.value
     public val rewardsList: String

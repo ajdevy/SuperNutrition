@@ -13,6 +13,8 @@ final class BootstrapLaunchTests: XCTestCase {
         let app = XCUIApplication()
         app.launch()
 
+        XCTAssertTrue(homeSurfaceIsReady(in: app, timeout: 15))
+        app.buttons[SharedKitAutomationIds.shared.cameraAction].tap()
         XCTAssertTrue(captureSurfaceIsReady(in: app, timeout: 15))
         XCTAssertTrue(app.descendants(matching: .any)[SharedKitAutomationIds.shared.photoAnalysisStatus].exists)
         XCTAssertTrue(app.buttons[SharedKitAutomationIds.shared.captureShutter].waitForExistence(timeout: 15))
@@ -30,6 +32,8 @@ final class BootstrapLaunchTests: XCTestCase {
         defer { removeUIInterruptionMonitor(permissionMonitor) }
         app.launch()
 
+        XCTAssertTrue(homeSurfaceIsReady(in: app, timeout: 15))
+        app.buttons[SharedKitAutomationIds.shared.cameraAction].tap()
         let shutter = app.buttons[SharedKitAutomationIds.shared.captureShutter]
         XCTAssertTrue(shutter.waitForExistence(timeout: 15))
         shutter.tap()
@@ -50,6 +54,8 @@ final class BootstrapLaunchTests: XCTestCase {
         let app = XCUIApplication()
         app.launch()
 
+        XCTAssertTrue(homeSurfaceIsReady(in: app, timeout: 15))
+        app.buttons[SharedKitAutomationIds.shared.cameraAction].tap()
         let importButton = app.buttons[SharedKitAutomationIds.shared.captureImport]
         XCTAssertTrue(importButton.waitForExistence(timeout: 15))
         importButton.tap()
@@ -67,6 +73,8 @@ final class BootstrapLaunchTests: XCTestCase {
         let app = XCUIApplication()
         app.launch()
 
+        XCTAssertTrue(homeSurfaceIsReady(in: app, timeout: 15))
+        app.buttons[SharedKitAutomationIds.shared.cameraAction].tap()
         let shutter = app.buttons[SharedKitAutomationIds.shared.captureShutter]
         XCTAssertTrue(shutter.waitForExistence(timeout: 15))
         shutter.tap()
@@ -90,6 +98,26 @@ final class BootstrapLaunchTests: XCTestCase {
         }
     }
 
+    func testFirstTabReturnsToHomeFromRewards() {
+        let app = XCUIApplication()
+        app.launch()
+
+        XCTAssertTrue(homeSurfaceIsReady(in: app, timeout: 15))
+        app.buttons[SharedKitAutomationIds.shared.rewardsTab].tap()
+        XCTAssertTrue(app.staticTexts[SharedKitAutomationIds.shared.rewardsTitle].waitForExistence(timeout: 15))
+        app.buttons[SharedKitAutomationIds.shared.homeTab].tap()
+        XCTAssertTrue(homeSurfaceIsReady(in: app, timeout: 15))
+    }
+
+    func testHomeAddMealOpensCaptureSurface() {
+        let app = XCUIApplication()
+        app.launch()
+
+        XCTAssertTrue(homeSurfaceIsReady(in: app, timeout: 15))
+        app.buttons[SharedKitAutomationIds.shared.homeAddFood].tap()
+        XCTAssertTrue(captureSurfaceIsReady(in: app, timeout: 15))
+    }
+
     private func nativeCameraControlIsVisible(in app: XCUIApplication) -> Bool {
         let capture = app.descendants(matching: .any)[SharedKitAutomationIds.shared.captureNative]
         return capture.waitForExistence(timeout: 10)
@@ -104,6 +132,12 @@ final class BootstrapLaunchTests: XCTestCase {
             && importButton.waitForExistence(timeout: timeout)
     }
 
+    private func homeSurfaceIsReady(in app: XCUIApplication, timeout: TimeInterval) -> Bool {
+        let title = app.staticTexts[SharedKitAutomationIds.shared.homeTitle]
+        let addFood = app.buttons[SharedKitAutomationIds.shared.homeAddFood]
+        return title.waitForExistence(timeout: timeout) && addFood.waitForExistence(timeout: timeout)
+    }
+
     private func dismissOrRecoverPresentedCamera(from app: XCUIApplication) -> Bool {
         // iOS 26 exposes the native controller across a system-owned process,
         // but XCTest cannot reliably tap its dismiss control. Relaunch only
@@ -111,6 +145,8 @@ final class BootstrapLaunchTests: XCTestCase {
         // weakening the native-source assertion above.
         app.terminate()
         app.launch()
+        guard homeSurfaceIsReady(in: app, timeout: 15) else { return false }
+        app.buttons[SharedKitAutomationIds.shared.cameraAction].tap()
         return app.buttons[SharedKitAutomationIds.shared.captureShutter].waitForExistence(timeout: 15)
     }
 }

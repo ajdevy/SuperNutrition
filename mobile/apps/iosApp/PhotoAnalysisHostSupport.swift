@@ -26,6 +26,7 @@ struct PhotoAnalysisAppRootView: View {
     let session: SharedKitPhotoAnalysisSession
     private let rewardsSession: SharedKitRewardsSession
     @State private var selectedTab = 0
+    @State private var showingCapture = false
     @StateObject private var cameraAction: PhotoAnalysisCameraAction
 
     init(session: SharedKitPhotoAnalysisSession) {
@@ -37,14 +38,19 @@ struct PhotoAnalysisAppRootView: View {
     var body: some View {
         Group {
             if selectedTab == 0 {
-                Group {
-                #if arch(x86_64)
-                    PhotoAnalysisIntelCompatibilityView(session: session, cameraAction: cameraAction)
-                #else
-                    PhotoAnalysisComposeLifecycleHost(session: session, cameraAction: cameraAction)
-                #endif
+                if showingCapture {
+                    Group {
+                    #if arch(x86_64)
+                        PhotoAnalysisIntelCompatibilityView(session: session, cameraAction: cameraAction)
+                    #else
+                        PhotoAnalysisComposeLifecycleHost(session: session, cameraAction: cameraAction)
+                    #endif
+                    }
+                    .accessibilityIdentifier(SharedKitAutomationIds.shared.captureTab)
+                } else {
+                    PhotoAnalysisHomeView(onAddFoodRequested: showCaptureSurface)
+                        .accessibilityIdentifier(SharedKitAutomationIds.shared.homeTab)
                 }
-                .accessibilityIdentifier(SharedKitAutomationIds.shared.captureTab)
             } else {
                 Group {
                 #if arch(x86_64)
@@ -60,12 +66,70 @@ struct PhotoAnalysisAppRootView: View {
         .safeAreaInset(edge: .bottom, spacing: 0) {
             PhotoAnalysisBottomBar(
                 selectedTab: $selectedTab,
-                onCameraRequested: {
+                onHomeSelected: {
                     selectedTab = 0
-                    DispatchQueue.main.async { cameraAction.invoke() }
+                    showingCapture = false
+                },
+                onRewardsSelected: {
+                    selectedTab = 1
+                    showingCapture = false
+                },
+                onCameraRequested: {
+                    showCaptureSurface()
                 },
             )
             .padding(.bottom, 12)
+        }
+    }
+
+    private func showCaptureSurface() {
+        selectedTab = 0
+        showingCapture = true
+        DispatchQueue.main.async { cameraAction.invoke() }
+    }
+}
+
+private struct PhotoAnalysisHomeView: View {
+    let onAddFoodRequested: () -> Void
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("Home")
+                    .font(.title2.weight(.semibold))
+                    .accessibilityIdentifier(SharedKitAutomationIds.shared.homeTitle)
+                    .padding(.top, 16)
+
+                Text("Welcome back")
+                    .font(.body)
+                    .accessibilityIdentifier(SharedKitAutomationIds.shared.homeGreeting)
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Today’s progress")
+                        .font(.subheadline.weight(.semibold))
+                    Text("Ready when you are")
+                        .font(.title3.weight(.semibold))
+                    Text("Add a meal whenever you’re ready to start your day.")
+                        .font(.body)
+                }
+                .padding(20)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color(red: 0.88, green: 0.92, blue: 0.76), in: RoundedRectangle(cornerRadius: 16))
+                .accessibilityIdentifier(SharedKitAutomationIds.shared.homeSummary)
+
+                Text("Build your day")
+                    .font(.headline)
+                    .accessibilityIdentifier(SharedKitAutomationIds.shared.homeEmptyTitle)
+
+                Text("Keep track of what you eat and notice the good choices you make.")
+                    .font(.body)
+                    .accessibilityIdentifier(SharedKitAutomationIds.shared.homeEmptyDescription)
+
+                Button("Add a meal", action: onAddFoodRequested)
+                    .frame(maxWidth: .infinity)
+                    .accessibilityIdentifier(SharedKitAutomationIds.shared.homeAddFood)
+            }
+            .padding(.horizontal, 20)
         }
     }
 }
@@ -91,6 +155,8 @@ final class PhotoAnalysisCameraAction: ObservableObject {
 
 private struct PhotoAnalysisBottomBar: View {
     @Binding var selectedTab: Int
+    let onHomeSelected: () -> Void
+    let onRewardsSelected: () -> Void
     let onCameraRequested: () -> Void
 
     private let pillColor = Color(red: 0xF3 / 255.0, green: 0xEE / 255.0, blue: 0xEB / 255.0)
@@ -106,9 +172,9 @@ private struct PhotoAnalysisBottomBar: View {
                     label: "Home",
                     systemImage: "house.fill",
                     selected: selectedTab == 0,
-                    identifier: SharedKitAutomationIds.shared.captureTab,
+                    identifier: SharedKitAutomationIds.shared.homeTab,
                 ) {
-                    selectedTab = 0
+                    onHomeSelected()
                 }
                 Spacer()
                 tabButton(
@@ -117,7 +183,7 @@ private struct PhotoAnalysisBottomBar: View {
                     selected: selectedTab == 1,
                     identifier: SharedKitAutomationIds.shared.rewardsTab,
                 ) {
-                    selectedTab = 1
+                    onRewardsSelected()
                 }
             }
             .padding(.horizontal, 42)

@@ -63,6 +63,14 @@
     <string name="capture_loading">Analyzing photo…</string>
     <string name="capture_tab">Home</string>
     <string name="rewards_tab">Rewards</string>
+    <string name="home_title">Home</string>
+    <string name="home_greeting">Welcome back</string>
+    <string name="home_summary_title">Today’s progress</string>
+    <string name="home_summary_value">Ready when you are</string>
+    <string name="home_summary_description">Add a meal whenever you’re ready to start your day.</string>
+    <string name="home_empty_title">Build your day</string>
+    <string name="home_empty_description">Keep track of what you eat and notice the good choices you make.</string>
+    <string name="home_add_food">Add a meal</string>
     <string name="rewards_title">Rewards</string>
     <string name="rewards_earned">Added to your rewards</string>
     <string name="rewards_ready">Ready when you are</string>
