@@ -26,7 +26,7 @@ struct PhotoAnalysisAppRootView: View {
     let session: SharedKitPhotoAnalysisSession
     private let rewardsSession: SharedKitRewardsSession
     @State private var selectedTab = 0
-    @State private var showingCapture = false
+    @State private var showingCapture = true
     @StateObject private var cameraAction: PhotoAnalysisCameraAction
 
     init(session: SharedKitPhotoAnalysisSession) {
@@ -41,7 +41,11 @@ struct PhotoAnalysisAppRootView: View {
                 if showingCapture {
                     Group {
                     #if arch(x86_64)
-                        PhotoAnalysisIntelCompatibilityView(session: session, cameraAction: cameraAction)
+                        PhotoAnalysisIntelCompatibilityView(
+                            session: session,
+                            cameraAction: cameraAction,
+                            onCloseRequested: { showingCapture = false },
+                        )
                     #else
                         PhotoAnalysisComposeLifecycleHost(
                             session: session,
@@ -524,20 +528,31 @@ final class PhotoAnalysisPresentationCoordinator {
 struct PhotoAnalysisIntelCompatibilityView: View {
     let session: SharedKitPhotoAnalysisSession
     let cameraAction: PhotoAnalysisCameraAction
+    let onCloseRequested: () -> Void
     private let presentation: PhotoAnalysisPresentationCoordinator
     @Environment(\.scenePhase) private var scenePhase
     @State private var status: String
     @State private var presenter: UIViewController?
 
-    init(session: SharedKitPhotoAnalysisSession, cameraAction: PhotoAnalysisCameraAction) {
+    init(
+        session: SharedKitPhotoAnalysisSession,
+        cameraAction: PhotoAnalysisCameraAction,
+        onCloseRequested: @escaping () -> Void,
+    ) {
         self.session = session
         self.cameraAction = cameraAction
+        self.onCloseRequested = onCloseRequested
         presentation = PhotoAnalysisPresentationCoordinator(session: session)
         _status = State(initialValue: session.statusLabel())
     }
 
     var body: some View {
         VStack(spacing: 16) {
+            HStack {
+                Spacer()
+                Button("×", action: onCloseRequested)
+                    .accessibilityIdentifier(SharedKitAutomationIds.shared.captureClose)
+            }
             Text(" ")
                 .accessibilityIdentifier(SharedKitAutomationIds.shared.bootstrapLaunchMarker)
                 .accessibilityLabel(String(localized: "bootstrap.ready"))

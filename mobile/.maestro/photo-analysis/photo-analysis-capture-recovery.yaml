@@ -5,6 +5,12 @@ appId: ${APP_ID}
     file: ./photo-analysis-locators.js
 - launchApp
 - assertVisible:
+    id: ${output.photo_analysis_title}
+- assertVisible:
+    id: ${output.capture_close}
+- tapOn:
+    id: ${output.capture_close}
+- assertVisible:
     id: ${output.home_title}
 - tapOn:
     id: ${output.rewards_tab}

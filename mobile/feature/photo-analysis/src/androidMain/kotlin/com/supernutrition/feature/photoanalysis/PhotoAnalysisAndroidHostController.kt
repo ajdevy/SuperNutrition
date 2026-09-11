@@ -34,16 +34,31 @@ class PhotoAnalysisAndroidHostController(
     private val captureOperation: CaptureOperationState,
     private val onRetainedPhotoReady: (NormalizedPhotoInput) -> Unit,
     private val onRetainedPhotoInvalidated: () -> Unit,
-    private val analysisLauncher: PhotoAnalysisAnalysisLauncher = PhotoAnalysisAnalysisLauncher.None,
+    private var analysisLauncher: PhotoAnalysisAnalysisLauncher? = null,
 ) {
+    private var pendingAnalysisStart = false
+    private var pendingGridCellIndex: Int? = null
+
     fun initialize() {
         photoBridge.cleanupStaleCaptureFiles()
+    }
+
+    fun setAnalysisLauncher(launcher: PhotoAnalysisAnalysisLauncher) {
+        analysisLauncher = launcher
+        if (pendingAnalysisStart) {
+            pendingAnalysisStart = false
+            val gridCellIndex = pendingGridCellIndex
+            pendingGridCellIndex = null
+            launcher.start(gridCellIndex)
+        }
     }
 
     fun handleAction(action: PhotoAnalysisPresenterAction) {
         feature.route(action, ::handleNativeAction)
         if (action in ACTIONS_RESETTING_ANALYSIS) {
-            analysisLauncher.cancel()
+            pendingAnalysisStart = false
+            pendingGridCellIndex = null
+            analysisLauncher?.cancel()
             onRetainedPhotoInvalidated()
         }
     }
@@ -51,7 +66,13 @@ class PhotoAnalysisAndroidHostController(
     fun handleGridCellSelected(index: Int) {
         val action = PhotoAnalysisPresenterAction.SelectGridCell(index)
         feature.route(action, ::handleNativeAction)
-        analysisLauncher.start(index)
+        val launcher = analysisLauncher
+        if (launcher == null) {
+            pendingAnalysisStart = true
+            pendingGridCellIndex = index
+        } else {
+            launcher.start(index)
+        }
     }
 
     fun onPermissionResult(granted: Boolean) {
@@ -120,7 +141,7 @@ class PhotoAnalysisAndroidHostController(
 
     @Suppress("SwallowedException", "TooGenericExceptionCaught")
     private fun processPhotoBytes(sourceBytes: ByteArray) {
-        analysisLauncher.cancel()
+        analysisLauncher?.cancel()
         onRetainedPhotoInvalidated()
         val ref = feature.issuePhotoRef(UUID.randomUUID().toString())
         feature.dispatch(PhotoAnalysisEvent.PhotoCaptured(ref))
@@ -128,7 +149,13 @@ class PhotoAnalysisAndroidHostController(
             val input = normalizer.normalize(ref, sourceBytes)
             feature.dispatch(PhotoAnalysisEvent.PreparationSucceeded(input))
             onRetainedPhotoReady(input)
-            analysisLauncher.start()
+            val launcher = analysisLauncher
+            if (launcher == null) {
+                pendingAnalysisStart = true
+                pendingGridCellIndex = null
+            } else {
+                launcher.start()
+            }
         } catch (_: PhotoPreparationException) {
             failPreparation(RecoveryReason.POOR_IMAGE)
         } catch (_: RuntimeException) {
@@ -180,7 +207,7 @@ class PhotoAnalysisAndroidHostController(
     }
 
     private fun failPreparation(reason: RecoveryReason) {
-        analysisLauncher.cancel()
+        analysisLauncher?.cancel()
         onRetainedPhotoInvalidated()
         feature.dispatch(PhotoAnalysisEvent.PreparationFailed(reason))
     }
