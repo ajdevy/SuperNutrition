@@ -21,6 +21,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /** Physical-device semantic contract for the Compose home surface. */
@@ -103,6 +104,41 @@ public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
                 targetContext.getString(R.string.capture_shutter));
         assertSemantic(device, UiAutomationIds.INSTANCE.getCAPTURE_IMPORT().getValue(),
                 targetContext.getString(R.string.capture_import));
+        assertNotNull("missing capture close action semantic id",
+                waitForNode(device, UiAutomationIds.INSTANCE.getCAPTURE_CLOSE().getValue()));
+        assertNull("bottom tab bar must be hidden while capture is open",
+                device.findObject(By.res(UiAutomationIds.INSTANCE.getCAMERA_ACTION().getValue())));
+
+        device.findObject(By.res(UiAutomationIds.INSTANCE.getCAPTURE_CLOSE().getValue())).click();
+        assertSemantic(device, UiAutomationIds.INSTANCE.getHOME_TITLE().getValue(),
+                targetContext.getString(R.string.home_title));
+    }
+
+    @Test
+    public void backFromCaptureReturnsToHomeWithoutBottomBarInCapture() throws RemoteException, IOException {
+        UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        device.wakeUp();
+        device.waitForIdle();
+
+        Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        Intent launchIntent = targetContext.getPackageManager()
+                .getLaunchIntentForPackage(targetContext.getPackageName());
+        assertNotNull("the acceptance app must expose a launcher activity", launchIntent);
+        launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        InstrumentationRegistry.getInstrumentation().startActivitySync(launchIntent);
+
+        UiObject2 cameraAction = waitForNode(device, UiAutomationIds.INSTANCE.getCAMERA_ACTION().getValue());
+        assertNotNull("missing centered camera action semantic id", cameraAction);
+        device.executeShellCommand("pm grant " + targetContext.getPackageName() + " android.permission.CAMERA");
+        cameraAction.click();
+        assertNotNull("capture surface did not open", waitForNode(
+                device, UiAutomationIds.INSTANCE.getPHOTO_ANALYSIS_TITLE().getValue()));
+        assertNull("bottom tab bar must be hidden while capture is open",
+                device.findObject(By.res(UiAutomationIds.INSTANCE.getCAMERA_ACTION().getValue())));
+
+        device.pressBack();
+        assertSemantic(device, UiAutomationIds.INSTANCE.getHOME_TITLE().getValue(),
+                targetContext.getString(R.string.home_title));
     }
 
     @Test

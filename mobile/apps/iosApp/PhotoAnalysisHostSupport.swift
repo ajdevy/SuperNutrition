@@ -43,7 +43,11 @@ struct PhotoAnalysisAppRootView: View {
                     #if arch(x86_64)
                         PhotoAnalysisIntelCompatibilityView(session: session, cameraAction: cameraAction)
                     #else
-                        PhotoAnalysisComposeLifecycleHost(session: session, cameraAction: cameraAction)
+                        PhotoAnalysisComposeLifecycleHost(
+                            session: session,
+                            cameraAction: cameraAction,
+                            onCloseRequested: { showingCapture = false },
+                        )
                     #endif
                     }
                     .accessibilityIdentifier(SharedKitAutomationIds.shared.captureTab)
@@ -64,21 +68,23 @@ struct PhotoAnalysisAppRootView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .safeAreaInset(edge: .bottom, spacing: 0) {
-            PhotoAnalysisBottomBar(
-                selectedTab: $selectedTab,
-                onHomeSelected: {
-                    selectedTab = 0
-                    showingCapture = false
-                },
-                onRewardsSelected: {
-                    selectedTab = 1
-                    showingCapture = false
-                },
-                onCameraRequested: {
-                    showCaptureSurface()
-                },
-            )
-            .padding(.bottom, 12)
+            if !showingCapture {
+                PhotoAnalysisBottomBar(
+                    selectedTab: $selectedTab,
+                    onHomeSelected: {
+                        selectedTab = 0
+                        showingCapture = false
+                    },
+                    onRewardsSelected: {
+                        selectedTab = 1
+                        showingCapture = false
+                    },
+                    onCameraRequested: {
+                        showCaptureSurface()
+                    },
+                )
+                .padding(.bottom, 12)
+            }
         }
     }
 
@@ -309,10 +315,15 @@ private enum PhotoAnalysisHostAction: Int {
 struct PhotoAnalysisComposeLifecycleHost: View {
     let session: SharedKitPhotoAnalysisSession
     let cameraAction: PhotoAnalysisCameraAction
+    let onCloseRequested: () -> Void
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
-        PhotoAnalysisComposeHost(session: session, cameraAction: cameraAction)
+        PhotoAnalysisComposeHost(
+            session: session,
+            cameraAction: cameraAction,
+            onCloseRequested: onCloseRequested,
+        )
             .onChange(of: scenePhase) { phase in
                 switch phase {
                 case .background:
@@ -331,9 +342,14 @@ struct PhotoAnalysisComposeLifecycleHost: View {
 struct PhotoAnalysisComposeHost: UIViewControllerRepresentable {
     let session: SharedKitPhotoAnalysisSession
     let cameraAction: PhotoAnalysisCameraAction
+    let onCloseRequested: () -> Void
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(session: session, cameraAction: cameraAction)
+        Coordinator(
+            session: session,
+            cameraAction: cameraAction,
+            onCloseRequested: onCloseRequested,
+        )
     }
 
     func makeUIViewController(context: Context) -> UIViewController {
@@ -341,6 +357,9 @@ struct PhotoAnalysisComposeHost: UIViewControllerRepresentable {
             session: session,
             onNativeAction: { action in
                 context.coordinator.handle(action: action)
+            },
+            onCloseRequested: {
+                context.coordinator.closeCapture()
             },
         )
         let launchMarker = UIView(frame: .zero)
@@ -364,18 +383,28 @@ struct PhotoAnalysisComposeHost: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 
     final class Coordinator: NSObject {
-        init(session: SharedKitPhotoAnalysisSession, cameraAction: PhotoAnalysisCameraAction) {
+        init(
+            session: SharedKitPhotoAnalysisSession,
+            cameraAction: PhotoAnalysisCameraAction,
+            onCloseRequested: @escaping () -> Void,
+        ) {
             presentation = PhotoAnalysisPresentationCoordinator(session: session)
+            self.onCloseRequested = onCloseRequested
             cameraAction.action = { [weak self] in self?.presentation.takePhoto() }
         }
 
         let presentation: PhotoAnalysisPresentationCoordinator
+        private let onCloseRequested: () -> Void
         weak var hostViewController: UIViewController? {
             didSet { presentation.presenter = hostViewController }
         }
 
         func handle(action: PhotoAnalysisNativeAction) {
             presentation.handle(action: action)
+        }
+
+        func closeCapture() {
+            onCloseRequested()
         }
     }
 }

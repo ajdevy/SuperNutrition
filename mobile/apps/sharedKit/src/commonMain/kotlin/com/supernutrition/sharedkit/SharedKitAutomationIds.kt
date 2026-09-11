@@ -14,6 +14,8 @@ public object SharedKitAutomationIds {
         get() = UiAutomationIds.CAPTURE_SHUTTER.value
     public val captureImport: String
         get() = UiAutomationIds.CAPTURE_IMPORT.value
+    public val captureClose: String
+        get() = UiAutomationIds.CAPTURE_CLOSE.value
     public val captureOpenSettings: String
         get() = UiAutomationIds.CAPTURE_OPEN_SETTINGS.value
     public val captureNative: String

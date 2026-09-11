@@ -3,6 +3,7 @@ package com.supernutrition.feature.photoanalysis
 import android.Manifest
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
@@ -267,12 +268,14 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
                         host.handleAction(PhotoAnalysisPresenterAction.TakePhoto)
                     },
                 ),
-                captureContent = {
+                captureContent = { onCloseRequested ->
                     PhotoAnalysisCaptureTab(
                         state = PhotoAnalysisCaptureTabState(
                             feature = feature,
                             host = host,
                             presentationCopy = presentationCopy,
+                            closeLabel = getString(R.string.capture_close),
+                            onCloseRequested = onCloseRequested,
                             preview = preview,
                             manualIngredientState = manualIngredientState,
                             cameraPermissionGranted = cameraPermissionGranted,
@@ -356,33 +359,44 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
 }
 
 @Composable
-private fun PhotoAnalysisTabs(shell: PhotoAnalysisTabShell, captureContent: @Composable () -> Unit) {
+private fun PhotoAnalysisTabs(
+    shell: PhotoAnalysisTabShell,
+    captureContent: @Composable (onCloseRequested: () -> Unit) -> Unit,
+) {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
     var captureVisible by rememberSaveable { mutableStateOf(false) }
+    var captureReturnTab by rememberSaveable { mutableIntStateOf(0) }
+    val closeCapture: () -> Unit = {
+        captureVisible = false
+        selectedTab = captureReturnTab
+    }
+    BackHandler(enabled = captureVisible, onBack = closeCapture)
     Scaffold(bottomBar = {
-        PhotoAnalysisMainBottomBar(
-            state = PhotoAnalysisMainBottomBarState(
-                selectedTab = selectedTab,
-                homeLabel = shell.homeLabel,
-                rewardsLabel = shell.rewardsLabel,
-                cameraLabel = shell.cameraLabel,
-            ),
-            actions = PhotoAnalysisMainBottomBarActions(
-                onHomeSelected = {
-                    selectedTab = 0
-                    captureVisible = false
-                },
-                onRewardsSelected = {
-                    selectedTab = 1
-                    captureVisible = false
-                },
-                onCameraRequested = {
-                    selectedTab = 0
-                    captureVisible = true
-                    shell.onCameraRequested()
-                },
-            ),
-        )
+        if (!captureVisible) {
+            PhotoAnalysisMainBottomBar(
+                state = PhotoAnalysisMainBottomBarState(
+                    selectedTab = selectedTab,
+                    homeLabel = shell.homeLabel,
+                    rewardsLabel = shell.rewardsLabel,
+                    cameraLabel = shell.cameraLabel,
+                ),
+                actions = PhotoAnalysisMainBottomBarActions(
+                    onHomeSelected = {
+                        selectedTab = 0
+                        captureVisible = false
+                    },
+                    onRewardsSelected = {
+                        selectedTab = 1
+                        captureVisible = false
+                    },
+                    onCameraRequested = {
+                        captureReturnTab = selectedTab
+                        captureVisible = true
+                        shell.onCameraRequested()
+                    },
+                ),
+            )
+        }
     }) { contentPadding ->
         Box(
             modifier = Modifier
@@ -390,11 +404,12 @@ private fun PhotoAnalysisTabs(shell: PhotoAnalysisTabShell, captureContent: @Com
                 .semantics { testTagsAsResourceId = true },
         ) {
             when {
-                captureVisible -> captureContent()
+                captureVisible -> captureContent(closeCapture)
                 selectedTab == 0 -> HomeScreen(
                     model = shell.homeModel,
                     modifier = Modifier.statusBarsPadding(),
                     onAddFoodRequested = {
+                        captureReturnTab = 0
                         captureVisible = true
                         shell.onCameraRequested()
                     },
@@ -430,6 +445,8 @@ private fun PhotoAnalysisCaptureTab(state: PhotoAnalysisCaptureTabState) {
         modifier = Modifier.statusBarsPadding(),
         surface = PhotoAnalysisCaptureSurface(
             presenterCopy = presentationCopy,
+            closeLabel = state.closeLabel,
+            onCloseRequested = state.onCloseRequested,
             liveCamera = if (preview == null) {
                 {
                     PhotoAnalysisLiveCameraPreview(
@@ -473,6 +490,8 @@ private data class PhotoAnalysisCaptureTabState(
     val feature: PhotoAnalysisFeature,
     val host: PhotoAnalysisAndroidHostController,
     val presentationCopy: PhotoAnalysisPresenterCopy,
+    val closeLabel: String,
+    val onCloseRequested: () -> Unit,
     val preview: AndroidRetainedPhotoPreview?,
     val manualIngredientState: PhotoAnalysisManualIngredientState,
     val cameraPermissionGranted: Boolean,

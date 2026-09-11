@@ -18,8 +18,10 @@ appId: ${APP_ID}
     id: ${output.home_add_food}
 - assertVisible:
     id: ${output.photo_analysis_title}
+- assertVisible:
+    id: ${output.capture_close}
 - tapOn:
-    id: ${output.home_tab}
+    id: ${output.capture_close}
 - assertVisible:
     id: ${output.home_title}
 - tapOn:
@@ -30,3 +32,8 @@ appId: ${APP_ID}
     id: ${output.capture_shutter}
 - assertVisible:
     id: ${output.capture_import}
+- assertVisible:
+    id: ${output.capture_close}
+- back
+- assertVisible:
+    id: ${output.home_title}
