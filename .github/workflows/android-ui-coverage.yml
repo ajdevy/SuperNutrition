@@ -43,6 +43,7 @@ jobs:
           name: android-ui-reports-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             ${{ runner.temp }}/supernutrition-ui-android/emulator.log
+            ${{ runner.temp }}/supernutrition-ui-android/logcat.log
             ${{ runner.temp }}/supernutrition-ui-android/report/junit.xml
             ${{ runner.temp }}/supernutrition-ui-android/report/android-instrumentation-files.txt
             mobile/apps/androidApp/build/outputs/androidTest-results/**/*.xml

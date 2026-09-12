@@ -15,6 +15,7 @@
 		B10000010000000000000007 /* SharedKit.framework in Production Frameworks */ = {isa = PBXBuildFile; fileRef = F20000010000000000000003 /* SharedKit.framework */; };
 		B10000010000000000000008 /* SharedKit.framework in Production Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F20000010000000000000003 /* SharedKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B10000010000000000000009 /* SuperNutritionApp.swift in Production Sources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000008 /* SuperNutritionApp.swift */; };
+		B10000010000000000000010 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000009 /* Localizable.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +28,7 @@
 		F20000010000000000000006 /* SuperNutritionUIAcceptanceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SuperNutritionUIAcceptanceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F20000010000000000000007 /* SuperNutrition.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SuperNutrition.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F20000010000000000000008 /* SuperNutritionApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperNutritionApp.swift; sourceTree = "<group>"; };
+		F20000010000000000000009 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +100,7 @@
 				F20000010000000000000001 /* SuperNutritionUIAcceptanceApp.swift */,
 				F20000010000000000000008 /* SuperNutritionApp.swift */,
 				F20000010000000000000002 /* Info.plist */,
+				F20000010000000000000009 /* Localizable.strings */,
 			);
 			sourceTree = "<group>";
 		};
@@ -221,9 +224,9 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		P30000010000000000000004 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		P30000010000000000000004 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (B10000010000000000000010 /* Localizable.strings in Resources */); runOnlyForDeploymentPostprocessing = 0; };
 		P30000010000000000000006 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
-		P30000010000000000000008 /* Production Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		P30000010000000000000008 /* Production Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (B10000010000000000000010 /* Localizable.strings in Resources */); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
