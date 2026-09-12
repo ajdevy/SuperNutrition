@@ -76,6 +76,12 @@ except subprocess.TimeoutExpired:
 PY
 fi
 
+for cache_dir in "$sdk_root/.temp" "$sdk_root/.cache" "$ANDROID_USER_HOME/cache"; do
+  if test -d "$cache_dir"; then
+    find "$cache_dir" -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +
+  fi
+done
+
 for executable in "$emulator_bin" "$adb_bin"; do
   test -x "$executable" || {
     printf 'missing Android tool after SDK setup: %s\n' "$executable" >&2
