@@ -24,6 +24,11 @@ test -n "$sdk_root" || {
   exit 1
 }
 
+android_user_home="${ANDROID_USER_HOME:-$HOME/.android}"
+export ANDROID_USER_HOME="$android_user_home"
+export ANDROID_AVD_HOME="${ANDROID_AVD_HOME:-$android_user_home/avd}"
+mkdir -p "$ANDROID_AVD_HOME"
+
 sdkmanager_bin="${ANDROID_SDKMANAGER:-$sdk_root/cmdline-tools/latest/bin/sdkmanager}"
 avdmanager_bin="${ANDROID_AVDMANAGER:-$sdk_root/cmdline-tools/latest/bin/avdmanager}"
 emulator_bin="${ANDROID_EMULATOR:-$sdk_root/emulator/emulator}"
@@ -79,12 +84,18 @@ for executable in "$emulator_bin" "$adb_bin"; do
 done
 
 avd_name="supernutrition-api36-x86_64"
-if ! "$avdmanager_bin" list avd | grep -Fq "Name: $avd_name"; then
+if ! test -f "$ANDROID_AVD_HOME/$avd_name.ini"; then
   printf 'no\n' | "$avdmanager_bin" create avd \
     --name "$avd_name" \
     --package "system-images;android-36;google_apis;x86_64" \
-    --device "pixel_6"
+    --device "pixel_6" \
+    --force
 fi
+test -f "$ANDROID_AVD_HOME/$avd_name.ini" || {
+  printf 'Android AVD was not created at %s\n' "$ANDROID_AVD_HOME/$avd_name.ini" >&2
+  "$avdmanager_bin" list avd >&2 || true
+  exit 1
+}
 
 "$emulator_bin" -avd "$avd_name" \
   -no-window \
