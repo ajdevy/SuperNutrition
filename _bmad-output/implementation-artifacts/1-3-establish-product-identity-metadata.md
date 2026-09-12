@@ -35,8 +35,8 @@ and acceptance suffix, Android visible label, iOS display name and acceptance
 bundle configurations, plus the web/backend preselection lifecycle records.
 
 The production identity is now executable as well: Android exposes a
-`production` flavor with `com.supernutrition.android`, while the acceptance
-flavor remains isolated at `com.supernutrition.android.uiAcceptance`. The iOS
+`production` flavor with `app.supernutrition`, while the acceptance
+flavor remains isolated at `app.supernutrition.uiAcceptance`. The iOS
 host project exposes both `SuperNutrition` (`com.supernutrition.ios`) and
 `SuperNutritionUIAcceptance` (`com.supernutrition.ios.uiacceptance`) targets.
 The product-identity contract is a versioned release with compatibility digest

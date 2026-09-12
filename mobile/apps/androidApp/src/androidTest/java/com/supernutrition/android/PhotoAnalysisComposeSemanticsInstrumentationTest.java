@@ -2,6 +2,7 @@ package com.supernutrition.android;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.RemoteException;
 import android.os.SystemClock;
 
@@ -47,6 +48,29 @@ public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
         assertNotNull("missing initial capture close action semantic id",
                 waitForNode(device, UiAutomationIds.INSTANCE.getCAPTURE_CLOSE().getValue()));
         assertNull("bottom tab bar must be hidden while initial capture is open",
+                device.findObject(By.res(UiAutomationIds.INSTANCE.getCAMERA_ACTION().getValue())));
+    }
+
+    @Test
+    public void profileLinkOpensProfileSurface() throws RemoteException {
+        UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        device.wakeUp();
+        device.waitForIdle();
+
+        Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        Intent profileIntent = new Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse("https://supernutrition.app/profile/alice_123"));
+        profileIntent.setPackage(targetContext.getPackageName());
+        profileIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        InstrumentationRegistry.getInstrumentation().startActivitySync(profileIntent);
+
+        assertSemantic(device, UiAutomationIds.INSTANCE.getPROFILE_TITLE().getValue(),
+                targetContext.getString(R.string.profile_title));
+        assertSemantic(device, UiAutomationIds.INSTANCE.getPROFILE_ID().getValue(), "alice_123");
+        assertNotNull("missing profile close semantic id",
+                waitForNode(device, UiAutomationIds.INSTANCE.getPROFILE_CLOSE().getValue()));
+        assertNull("bottom tab bar must be hidden on the profile destination",
                 device.findObject(By.res(UiAutomationIds.INSTANCE.getCAMERA_ACTION().getValue())));
     }
 
