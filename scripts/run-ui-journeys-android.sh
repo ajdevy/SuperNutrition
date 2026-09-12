@@ -97,6 +97,18 @@ test -f "$ANDROID_AVD_HOME/$avd_name.ini" || {
   exit 1
 }
 
+avd_config="$ANDROID_AVD_HOME/$avd_name.avd/config.ini"
+test -f "$avd_config" || {
+  printf 'Android AVD config was not created at %s\n' "$avd_config" >&2
+  exit 1
+}
+data_partition_bytes="${SUPERNUTRITION_ANDROID_DATA_PARTITION_BYTES:-4294967296}"
+if grep -q '^disk\.dataPartition\.size=' "$avd_config"; then
+  sed -i.bak "s/^disk\.dataPartition\.size=.*/disk.dataPartition.size=$data_partition_bytes/" "$avd_config"
+else
+  printf '\ndisk.dataPartition.size=%s\n' "$data_partition_bytes" >>"$avd_config"
+fi
+
 emulator_accel_args=()
 if ! test -r /dev/kvm || ! test -w /dev/kvm; then
   printf 'KVM is unavailable; running the Android emulator without VM acceleration\n' >&2
