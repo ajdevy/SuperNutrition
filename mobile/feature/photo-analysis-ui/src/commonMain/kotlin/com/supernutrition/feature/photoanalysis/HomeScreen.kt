@@ -19,23 +19,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.supernutrition.core.ui.UiAutomationIds
 
-data class HomeScreenModel(
-    val title: String,
-    val greeting: String,
-    val dailySummaryTitle: String,
-    val dailySummaryValue: String,
-    val dailySummaryDescription: String,
-    val emptyTitle: String,
-    val emptyDescription: String,
-    val addFoodLabel: String,
-)
-
 @Composable
-fun HomeScreen(
-    model: HomeScreenModel,
-    modifier: Modifier = Modifier,
-    onAddFoodRequested: () -> Unit = {},
-) {
+fun HomeScreen(model: HomeScreenModel, modifier: Modifier = Modifier, onAddFoodRequested: () -> Unit = {}) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -55,39 +40,7 @@ fun HomeScreen(
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.automationId(UiAutomationIds.HOME_GREETING),
         )
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .automationId(UiAutomationIds.HOME_SUMMARY)
-                .semantics {
-                    contentDescription = listOf(
-                        model.dailySummaryTitle,
-                        model.dailySummaryValue,
-                        model.dailySummaryDescription,
-                    ).joinToString(". ")
-                },
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-            ),
-        ) {
-            Column(
-                modifier = Modifier.padding(20.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                Text(
-                    text = model.dailySummaryTitle,
-                    style = MaterialTheme.typography.labelLarge,
-                )
-                Text(
-                    text = model.dailySummaryValue,
-                    style = MaterialTheme.typography.titleLarge,
-                )
-                Text(
-                    text = model.dailySummaryDescription,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
-        }
+        HomeSummaryCard(model)
         Text(
             text = model.emptyTitle,
             style = MaterialTheme.typography.titleMedium,
@@ -105,6 +58,43 @@ fun HomeScreen(
                 .automationId(UiAutomationIds.HOME_ADD_FOOD),
         ) {
             Text(text = model.addFoodLabel)
+        }
+    }
+}
+
+@Composable
+private fun HomeSummaryCard(model: HomeScreenModel) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .automationId(UiAutomationIds.HOME_SUMMARY)
+            .semantics {
+                contentDescription = listOf(
+                    model.dailySummaryTitle,
+                    model.dailySummaryValue,
+                    model.dailySummaryDescription,
+                ).joinToString(". ")
+            },
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+        ),
+    ) {
+        Column(
+            modifier = Modifier.padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Text(
+                text = model.dailySummaryTitle,
+                style = MaterialTheme.typography.labelLarge,
+            )
+            Text(
+                text = model.dailySummaryValue,
+                style = MaterialTheme.typography.titleLarge,
+            )
+            Text(
+                text = model.dailySummaryDescription,
+                style = MaterialTheme.typography.bodyMedium,
+            )
         }
     }
 }

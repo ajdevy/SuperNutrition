@@ -3,6 +3,7 @@ package com.supernutrition.feature.photoanalysis
 import android.content.Context
 import com.supernutrition.domain.photoanalysis.PhotoLeaseStorePort
 import com.supernutrition.domain.photoanalysis.PhotoSessionStorePort
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 
 /** Explicit app-to-feature composition seam for the local model-backed app host. */
@@ -23,6 +24,7 @@ fun interface PhotoAnalysisAndroidRuntimeFactory {
  */
 interface PhotoAnalysisAndroidRuntimeProvider {
     val photoAnalysisRuntimeFactory: PhotoAnalysisAndroidRuntimeFactory
+    val photoAnalysisBackgroundDispatcher: CoroutineDispatcher
 }
 
 fun interface PhotoAnalysisAndroidRuntimeCloseAction {

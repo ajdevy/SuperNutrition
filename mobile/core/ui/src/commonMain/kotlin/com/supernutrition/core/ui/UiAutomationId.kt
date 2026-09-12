@@ -64,6 +64,7 @@ object UiAutomationIds {
     val MEAL_SEARCH_RESULTS = UiAutomationId("meal_search_results")
     val MEAL_SEARCH_NO_RESULTS = UiAutomationId("meal_search_no_results")
     val CAPTURE_TAB = UiAutomationId("capture_tab")
+
     /** Compatibility alias: the first tab is now the Home surface. */
     val HOME_TAB = CAPTURE_TAB
     val REWARDS_TAB = UiAutomationId("rewards_tab")
