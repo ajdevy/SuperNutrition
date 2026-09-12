@@ -114,16 +114,27 @@ private struct IntelCompatibilityCaptureView: View {
                     refreshStatus()
                     return
                 }
-                photoBridge.presentCamera(from: presenter) { data in
-                    DispatchQueue.main.async {
-                        if let data {
-                            session.photoReturned(opaqueId: UUID().uuidString, sourceData: data)
-                        } else {
-                            session.captureCancelled()
+                photoBridge.presentCamera(
+                    from: presenter,
+                    cancelLabel: session.presenterCopy.capture.cancel,
+                    shutterLabel: session.presenterCopy.capture.takeMealPhoto,
+                    onResult: { data in
+                        DispatchQueue.main.async {
+                            if let data {
+                                session.photoReturned(opaqueId: UUID().uuidString, sourceData: data)
+                            } else {
+                                session.captureCancelled()
+                            }
+                            refreshStatus()
                         }
-                        refreshStatus()
-                    }
-                }
+                    },
+                    onFailure: {
+                        DispatchQueue.main.async {
+                            session.captureFailed()
+                            refreshStatus()
+                        }
+                    },
+                )
             }
         }
     }
@@ -134,16 +145,25 @@ private struct IntelCompatibilityCaptureView: View {
             refreshStatus()
             return
         }
-        photoBridge.presentPhotoPicker(from: presenter) { data in
-            DispatchQueue.main.async {
-                if let data {
-                    session.photoReturned(opaqueId: UUID().uuidString, sourceData: data)
-                } else {
-                    session.captureCancelled()
+        photoBridge.presentPhotoPicker(
+            from: presenter,
+            onResult: { data in
+                DispatchQueue.main.async {
+                    if let data {
+                        session.photoReturned(opaqueId: UUID().uuidString, sourceData: data)
+                    } else {
+                        session.captureCancelled()
+                    }
+                    refreshStatus()
                 }
-                refreshStatus()
-            }
-        }
+            },
+            onFailure: {
+                DispatchQueue.main.async {
+                    session.captureFailed()
+                    refreshStatus()
+                }
+            },
+        )
     }
 
     private func openSettings() {
@@ -250,38 +270,56 @@ private struct PhotoAnalysisComposeHost: UIViewControllerRepresentable {
                         self.session.captureFailed()
                         return
                     }
-                    self.photoBridge.presentCamera(from: hostViewController) { [weak self] data in
-                        DispatchQueue.main.async {
-                            guard let self else { return }
-                            if let data {
-                                self.session.photoReturned(
-                                    opaqueId: UUID().uuidString,
-                                    sourceData: data,
-                                )
-                            } else {
-                                self.session.captureCancelled()
+                    self.photoBridge.presentCamera(
+                        from: hostViewController,
+                        cancelLabel: self.session.presenterCopy.capture.cancel,
+                        shutterLabel: self.session.presenterCopy.capture.takeMealPhoto,
+                        onResult: { [weak self] data in
+                            DispatchQueue.main.async {
+                                guard let self else { return }
+                                if let data {
+                                    self.session.photoReturned(
+                                        opaqueId: UUID().uuidString,
+                                        sourceData: data,
+                                    )
+                                } else {
+                                    self.session.captureCancelled()
+                                }
                             }
-                        }
-                    }
+                        },
+                        onFailure: { [weak self] in
+                            DispatchQueue.main.async {
+                                self?.session.captureFailed()
+                            }
+                        },
+                    )
                 }
             }
         }
 
         private func presentPhotoPicker() {
             guard let hostViewController else { return }
-            photoBridge.presentPhotoPicker(from: hostViewController) { [weak self] data in
-                DispatchQueue.main.async {
-                    guard let self else { return }
-                    if let data {
-                        self.session.photoReturned(
-                            opaqueId: UUID().uuidString,
-                            sourceData: data,
-                        )
-                    } else {
-                        self.session.captureCancelled()
+            photoBridge.presentPhotoPicker(
+                from: hostViewController,
+                onResult: { [weak self] data in
+                    DispatchQueue.main.async {
+                        guard let self else { return }
+                        if let data {
+                            self.session.photoReturned(
+                                opaqueId: UUID().uuidString,
+                                sourceData: data,
+                            )
+                        } else {
+                            self.session.captureCancelled()
+                        }
                     }
-                }
-            }
+                },
+                onFailure: { [weak self] in
+                    DispatchQueue.main.async {
+                        self?.session.captureFailed()
+                    }
+                },
+            )
         }
     }
 }
