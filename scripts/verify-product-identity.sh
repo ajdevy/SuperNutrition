@@ -58,9 +58,9 @@ expected_field_values = {
     "in_app_name": "Super Nutrition",
     "accessibility_name": "Super Nutrition",
     "store_listing_title": "SuperNutrition AI nutritionist",
-    "android_application_id": "com.supernutrition.android",
+    "android_application_id": "app.supernutrition",
     "ios_bundle_identifier": "com.supernutrition.ios",
-    "acceptance_android_application_id": "com.supernutrition.android.uiAcceptance",
+    "acceptance_android_application_id": "app.supernutrition.uiAcceptance",
     "acceptance_ios_bundle_identifier": "com.supernutrition.ios.uiacceptance",
 }
 if set(field_schema) != set(expected_field_values):
@@ -148,7 +148,7 @@ if "SuperNutrition AI nutritionist" in [contract.get(key) for key in visible_key
 
 repo_root = Path(os.environ.get("SUPERNUTRITION_REPO_ROOT", str(mobile_path.parents[2])))
 android_build = (repo_root / "mobile/apps/androidApp/build.gradle.kts").read_text(encoding="utf-8")
-if not re.search(r'(?m)^\s*applicationId\s*=\s*"com\.supernutrition\.android"\s*$', android_build):
+if not re.search(r'(?m)^\s*applicationId\s*=\s*"app\.supernutrition"\s*$', android_build):
     fail("Android host applicationId does not match the identity manifest")
 if not re.search(r'create\("production"\)\s*\{\s*dimension\s*=\s*"distribution"', android_build, re.S):
     fail("Android production flavor is missing")

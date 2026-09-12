@@ -21,7 +21,7 @@ listing_title = "SuperNutrition AI nutritionist"
 listing_title = "SuperNutrition AI nutritionist"
 
 [technical]
-android_application_id = "com.supernutrition.android"
+android_application_id = "app.supernutrition"
 ios_bundle_identifier = "com.supernutrition.ios"
-acceptance_android_application_id = "com.supernutrition.android.uiAcceptance"
+acceptance_android_application_id = "app.supernutrition.uiAcceptance"
 acceptance_ios_bundle_identifier = "com.supernutrition.ios.uiacceptance"

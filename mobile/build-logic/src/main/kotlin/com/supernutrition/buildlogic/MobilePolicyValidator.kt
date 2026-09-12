@@ -166,7 +166,8 @@ object MobilePolicyValidator {
         )) {
             "Product identity forbidden variants must cover every visible identity field"
         }
-        requireManifestProperty(identity, "acceptance_android_application_id", "com.supernutrition.android.uiAcceptance")
+        requireManifestProperty(identity, "android_application_id", "app.supernutrition")
+        requireManifestProperty(identity, "acceptance_android_application_id", "app.supernutrition.uiAcceptance")
         requireManifestProperty(identity, "acceptance_ios_bundle_identifier", "com.supernutrition.ios.uiacceptance")
         val androidStrings = mobileRoot.resolve("apps/androidApp/src/main/res/values/strings.xml")
         require(Files.isRegularFile(androidStrings) && xmlResourceValue(androidStrings, "app_name") == "Super Nutrition") {
