@@ -87,6 +87,13 @@ if test "${GITHUB_ACTIONS:-}" = "true"; then
     test "$image_dir" = "$sdk_root/system-images/android-36" && continue
     rm -rf -- "$image_dir"
   done
+
+  gradle_user_home="${GRADLE_USER_HOME:-$HOME/.gradle}"
+  if test -d "$gradle_user_home/caches"; then
+    printf 'Removing restored Gradle caches before Android emulator:\n' >&2
+    du -sh "$gradle_user_home/caches" >&2 || true
+    find "$gradle_user_home/caches" -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +
+  fi
 fi
 df -h "$ANDROID_AVD_HOME" >&2 || true
 
@@ -131,6 +138,10 @@ if ! test -r /dev/kvm || ! test -w /dev/kvm; then
   printf 'KVM is unavailable; running the Android emulator without VM acceleration\n' >&2
   emulator_accel_args=(-no-accel)
 fi
+boot_wait_iterations="${SUPERNUTRITION_ANDROID_BOOT_WAIT_ITERATIONS:-90}"
+if ((${#emulator_accel_args[@]} > 0)); then
+  boot_wait_iterations="${SUPERNUTRITION_ANDROID_SOFTWARE_BOOT_WAIT_ITERATIONS:-180}"
+fi
 
 "$emulator_bin" -avd "$avd_name" \
   -no-window \
@@ -147,7 +158,7 @@ trap cleanup EXIT
 
 "$adb_bin" start-server >/dev/null
 device_serial=""
-for _ in $(seq 1 90); do
+for _ in $(seq 1 "$boot_wait_iterations"); do
   if ! kill -0 "$emulator_pid" 2>/dev/null; then
     printf 'Android emulator exited before boot completed\n' >&2
     tail -n 80 "$temp_root/emulator.log" >&2 || true
