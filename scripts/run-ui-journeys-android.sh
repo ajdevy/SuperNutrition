@@ -118,6 +118,15 @@ for executable in "$emulator_bin" "$adb_bin"; do
   }
 done
 
+# Build before starting the emulator so the guest does not sit idle while
+# Gradle downloads dependencies and compiles the APKs.
+"$repo_root/mobile/gradlew" -p "$repo_root/mobile" \
+  :apps:androidApp:assembleUiAcceptanceDebug \
+  :apps:androidApp:assembleUiAcceptanceDebugAndroidTest \
+  --dependency-verification=strict \
+  --no-daemon \
+  --no-configuration-cache
+
 avd_name="supernutrition-api36-x86_64"
 if ! test -f "$ANDROID_AVD_HOME/$avd_name.ini"; then
   printf 'no\n' | "$avdmanager_bin" create avd \
@@ -198,7 +207,6 @@ export ANDROID_SERIAL="$device_serial"
 
 "$repo_root/mobile/gradlew" -p "$repo_root/mobile" \
   :apps:androidApp:connectedUiAcceptanceDebugAndroidTest \
-  :apps:androidApp:assembleUiAcceptanceDebug \
   -Pandroid.testInstrumentationRunnerArguments.deviceSerial="$device_serial" \
   --dependency-verification=strict \
   --no-daemon \

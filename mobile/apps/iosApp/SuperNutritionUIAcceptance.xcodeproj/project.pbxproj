@@ -254,7 +254,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\ncd \"${PROJECT_DIR}/../..\"\n./gradlew -Psupernutrition.enableSharedKitFramework=true -Psupernutrition.enableIosDeviceTarget=true -Psupernutrition.enableIntelIosX64=true \":apps:sharedKit:link${CONFIGURATION}Framework${KOTLIN_TARGET}\"\n";
+			shellScript = "set -e\ncd \"${PROJECT_DIR}/../..\"\n./gradlew -Psupernutrition.enableSharedKitFramework=true -Psupernutrition.enableIosDeviceTarget=true -Psupernutrition.enableTestingAppleTargets=true -Psupernutrition.enableIntelIosX64=true \":apps:sharedKit:link${CONFIGURATION}Framework${KOTLIN_TARGET}\"\n";
 		};
 		S32000010000000000000002 /* Build Production SharedKit framework */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -269,7 +269,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\ncd \"${PROJECT_DIR}/../..\"\n./gradlew -Psupernutrition.enableSharedKitFramework=true -Psupernutrition.enableIosDeviceTarget=true -Psupernutrition.enableIntelIosX64=true \":apps:sharedKit:link${CONFIGURATION}Framework${KOTLIN_TARGET}\"\n";
+			shellScript = "set -e\ncd \"${PROJECT_DIR}/../..\"\n./gradlew -Psupernutrition.enableSharedKitFramework=true -Psupernutrition.enableIosDeviceTarget=true -Psupernutrition.enableTestingAppleTargets=true -Psupernutrition.enableIntelIosX64=true \":apps:sharedKit:link${CONFIGURATION}Framework${KOTLIN_TARGET}\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
