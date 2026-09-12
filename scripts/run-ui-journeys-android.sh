@@ -185,7 +185,15 @@ fi
   "${emulator_accel_args[@]}" \
   -gpu swiftshader >"$temp_root/emulator.log" 2>&1 &
 emulator_pid=$!
+dump_ui_hierarchy() {
+  test -n "${device_serial:-}" || return 0
+  local remote_path=/sdcard/supernutrition-window.xml
+  local local_path="$temp_root/ui-hierarchy.xml"
+  "$adb_bin" -s "$device_serial" shell uiautomator dump "$remote_path" >/dev/null 2>&1 || return 0
+  "$adb_bin" -s "$device_serial" pull "$remote_path" "$local_path" >/dev/null 2>&1 || true
+}
 cleanup() {
+  dump_ui_hierarchy
   if test -n "${logcat_pid:-}"; then
     kill "$logcat_pid" 2>/dev/null || true
     wait "$logcat_pid" 2>/dev/null || true
