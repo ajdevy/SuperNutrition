@@ -88,6 +88,20 @@ if test "${GITHUB_ACTIONS:-}" = "true"; then
     rm -rf -- "$image_dir"
   done
 
+  for platform_dir in "$sdk_root"/platforms/android-*; do
+    test -d "$platform_dir" || continue
+    test "$platform_dir" = "$sdk_root/platforms/android-36" && continue
+    rm -rf -- "$platform_dir"
+  done
+  for disposable_sdk_dir in "$sdk_root/sources" "$sdk_root/ndk" "$sdk_root/cmake" "$sdk_root/extras"; do
+    test -d "$disposable_sdk_dir" || continue
+    rm -rf -- "$disposable_sdk_dir"
+  done
+  for disposable_host_dir in /usr/share/dotnet /opt/ghc; do
+    test -d "$disposable_host_dir" || continue
+    sudo rm -rf -- "$disposable_host_dir"
+  done
+
   gradle_user_home="${GRADLE_USER_HOME:-$HOME/.gradle}"
   if test -d "$gradle_user_home/caches"; then
     printf 'Removing restored Gradle caches before Android emulator:\n' >&2
