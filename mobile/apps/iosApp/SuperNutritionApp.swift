@@ -104,19 +104,29 @@ private struct ProductionPhotoAnalysisComposeHost: UIViewControllerRepresentable
                         self.session.captureFailed()
                         return
                     }
-                    self.photoBridge.presentCamera(from: hostViewController) { [weak self] data in
-                        DispatchQueue.main.async {
-                            guard let self else { return }
-                            if let data {
-                                self.session.photoReturned(
-                                    opaqueId: UUID().uuidString,
-                                    sourceData: data,
-                                )
-                            } else {
-                                self.session.captureCancelled()
+                    self.photoBridge.presentCamera(
+                        from: hostViewController,
+                        cancelLabel: self.session.presenterCopy.capture.cancel,
+                        shutterLabel: self.session.presenterCopy.capture.takeMealPhoto,
+                        onResult: { [weak self] data in
+                            DispatchQueue.main.async {
+                                guard let self else { return }
+                                if let data {
+                                    self.session.photoReturned(
+                                        opaqueId: UUID().uuidString,
+                                        sourceData: data,
+                                    )
+                                } else {
+                                    self.session.captureCancelled()
+                                }
                             }
-                        }
-                    }
+                        },
+                        onFailure: { [weak self] in
+                            DispatchQueue.main.async {
+                                self?.session.captureFailed()
+                            }
+                        },
+                    )
                 }
             }
         }
@@ -126,19 +136,27 @@ private struct ProductionPhotoAnalysisComposeHost: UIViewControllerRepresentable
                 session.captureFailed()
                 return
             }
-            photoBridge.presentPhotoPicker(from: hostViewController) { [weak self] data in
-                DispatchQueue.main.async {
-                    guard let self else { return }
-                    if let data {
-                        self.session.photoReturned(
-                            opaqueId: UUID().uuidString,
-                            sourceData: data,
-                        )
-                    } else {
-                        self.session.captureCancelled()
+            photoBridge.presentPhotoPicker(
+                from: hostViewController,
+                onResult: { [weak self] data in
+                    DispatchQueue.main.async {
+                        guard let self else { return }
+                        if let data {
+                            self.session.photoReturned(
+                                opaqueId: UUID().uuidString,
+                                sourceData: data,
+                            )
+                        } else {
+                            self.session.captureCancelled()
+                        }
                     }
-                }
-            }
+                },
+                onFailure: { [weak self] in
+                    DispatchQueue.main.async {
+                        self?.session.captureFailed()
+                    }
+                },
+            )
         }
     }
 }
