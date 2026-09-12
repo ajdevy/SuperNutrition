@@ -219,7 +219,7 @@ private struct PhotoAnalysisComposeHost: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
         let controller = SharedKitPhotoAnalysis.shared.viewController(
             session: session,
-            onNativeAction: { action in
+            onNativeAction: { (action: SharedKitPhotoAnalysisNativeAction) in
                 context.coordinator.handle(action: action)
             },
             onCloseRequested: {
