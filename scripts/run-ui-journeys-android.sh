@@ -186,6 +186,10 @@ fi
   -gpu swiftshader >"$temp_root/emulator.log" 2>&1 &
 emulator_pid=$!
 cleanup() {
+  if test -n "${logcat_pid:-}"; then
+    kill "$logcat_pid" 2>/dev/null || true
+    wait "$logcat_pid" 2>/dev/null || true
+  fi
   kill "$emulator_pid" 2>/dev/null || true
 }
 trap cleanup EXIT
@@ -233,6 +237,11 @@ fi
 printf 'Android framework services are ready: activity and package\n'
 
 export ANDROID_SERIAL="$device_serial"
+
+logcat_path="$temp_root/logcat.log"
+"$adb_bin" -s "$device_serial" logcat -c || true
+"$adb_bin" -s "$device_serial" logcat -v threadtime >"$logcat_path" 2>&1 &
+logcat_pid=$!
 
 "$repo_root/mobile/gradlew" -p "$repo_root/mobile" \
   :apps:androidApp:connectedUiAcceptanceDebugAndroidTest \
