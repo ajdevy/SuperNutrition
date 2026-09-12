@@ -95,7 +95,6 @@ struct PhotoAnalysisAppRootView: View {
     private func showCaptureSurface() {
         selectedTab = 0
         showingCapture = true
-        DispatchQueue.main.async { cameraAction.invoke() }
     }
 }
 

@@ -323,9 +323,6 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
                             homeLabel = getString(R.string.capture_tab),
                             rewardsLabel = getString(R.string.rewards_tab),
                             cameraLabel = getString(R.string.capture_shutter),
-                            onCameraRequested = {
-                                host.handleAction(PhotoAnalysisPresenterAction.TakePhoto)
-                            },
                         ),
                         captureContent = { onCloseRequested ->
                             PhotoAnalysisCaptureTab(
@@ -494,7 +491,6 @@ private fun PhotoAnalysisTabs(
                         onCameraRequested = {
                             captureReturnTab = selectedTab
                             captureVisible = true
-                            shell.onCameraRequested()
                         },
                     ),
                 )
@@ -515,7 +511,6 @@ private fun PhotoAnalysisTabs(
                     onAddFoodRequested = {
                         captureReturnTab = 0
                         captureVisible = true
-                        shell.onCameraRequested()
                     },
                 )
 
@@ -531,7 +526,6 @@ private data class PhotoAnalysisTabShell(
     val homeLabel: String,
     val rewardsLabel: String,
     val cameraLabel: String,
-    val onCameraRequested: () -> Unit,
 )
 
 @Composable
