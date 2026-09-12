@@ -156,6 +156,16 @@ rm -f "$avd_config.bak"
 printf 'Android AVD userdata size: '
 grep '^disk\.dataPartition\.size=' "$avd_config"
 
+cpu_cores="${SUPERNUTRITION_ANDROID_CPU_CORES:-4}"
+if grep -q '^hw\.cpu\.ncore=' "$avd_config"; then
+  sed -i.bak "s/^hw\.cpu\.ncore=.*/hw.cpu.ncore=$cpu_cores/" "$avd_config"
+else
+  printf 'hw.cpu.ncore=%s\n' "$cpu_cores" >>"$avd_config"
+fi
+rm -f "$avd_config.bak"
+printf 'Android AVD CPU cores: '
+grep '^hw\.cpu\.ncore=' "$avd_config"
+
 emulator_accel_args=()
 if ! test -r /dev/kvm || ! test -w /dev/kvm; then
   printf 'KVM is unavailable; running the Android emulator without VM acceleration\n' >&2
