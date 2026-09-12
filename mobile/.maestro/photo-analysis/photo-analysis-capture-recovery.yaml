@@ -40,6 +40,7 @@ appId: ${APP_ID}
     id: ${output.capture_import}
 - assertVisible:
     id: ${output.capture_close}
-- back
+- tapOn:
+    id: ${output.capture_close}
 - assertVisible:
     id: ${output.home_title}
