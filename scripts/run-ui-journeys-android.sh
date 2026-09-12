@@ -111,19 +111,32 @@ test -f "$ANDROID_AVD_HOME/$avd_name.ini" || {
   exit 1
 }
 
+avd_config="$ANDROID_AVD_HOME/$avd_name.avd/config.ini"
+test -f "$avd_config" || {
+  printf 'Android AVD config was not created at %s\n' "$avd_config" >&2
+  exit 1
+}
+data_partition_size="${SUPERNUTRITION_ANDROID_DATA_PARTITION_SIZE:-4096M}"
+if grep -q '^disk\.dataPartition\.size=' "$avd_config"; then
+  sed -i.bak "s/^disk\.dataPartition\.size=.*/disk.dataPartition.size=$data_partition_size/" "$avd_config"
+else
+  printf '\ndisk.dataPartition.size=%s\n' "$data_partition_size" >>"$avd_config"
+fi
+rm -f "$avd_config.bak"
+printf 'Android AVD userdata size: '
+grep '^disk\.dataPartition\.size=' "$avd_config"
+
 emulator_accel_args=()
 if ! test -r /dev/kvm || ! test -w /dev/kvm; then
   printf 'KVM is unavailable; running the Android emulator without VM acceleration\n' >&2
   emulator_accel_args=(-no-accel)
 fi
-partition_size_mb="${SUPERNUTRITION_ANDROID_PARTITION_SIZE_MB:-4096}"
 
 "$emulator_bin" -avd "$avd_name" \
   -no-window \
   -no-audio \
   -no-boot-anim \
   -no-snapshot \
-  -partition-size "$partition_size_mb" \
   "${emulator_accel_args[@]}" \
   -gpu swiftshader >"$temp_root/emulator.log" 2>&1 &
 emulator_pid=$!
