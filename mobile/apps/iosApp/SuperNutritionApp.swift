@@ -4,6 +4,12 @@ import UIKit
 
 typealias PhotoAnalysisNativeAction = SharedKitPhotoAnalysisNativeAction
 
+private enum PhotoAnalysisNativeActionKind: Int {
+    case takePhoto
+    case importPhoto
+    case openSettings
+}
+
 /// Production host. UI-acceptance-only launch and compatibility code remains in
 /// SuperNutritionUIAcceptanceApp.swift and is compiled only by the acceptance target.
 @main
@@ -77,6 +83,7 @@ private struct ProductionPhotoAnalysisComposeHost: UIViewControllerRepresentable
         }
 
         func handle(action: PhotoAnalysisNativeAction) {
+            guard let action = PhotoAnalysisNativeActionKind(rawValue: Int(action.ordinal)) else { return }
             switch action {
             case .takePhoto:
                 requestCameraOrRecover()

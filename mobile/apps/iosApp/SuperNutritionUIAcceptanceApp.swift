@@ -4,6 +4,12 @@ import UIKit
 
 typealias PhotoAnalysisNativeAction = SharedKitPhotoAnalysisNativeAction
 
+private enum PhotoAnalysisNativeActionKind: Int {
+    case takePhoto
+    case importPhoto
+    case openSettings
+}
+
 @main
 struct SuperNutritionUIAcceptanceApp: App {
     private let session: SharedKitPhotoAnalysisSession
@@ -243,6 +249,7 @@ private struct PhotoAnalysisComposeHost: UIViewControllerRepresentable {
         }
 
         func handle(action: PhotoAnalysisNativeAction) {
+            guard let action = PhotoAnalysisNativeActionKind(rawValue: Int(action.ordinal)) else { return }
             switch action {
             case .takePhoto:
                 requestCameraOrRecover()
