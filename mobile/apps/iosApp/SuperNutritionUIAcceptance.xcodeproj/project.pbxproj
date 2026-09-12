@@ -7,64 +7,26 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		04A773EB110E60C189ADF31B /* libPods-SuperNutritionUIAcceptance.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6024B1BBAB0B8CDD173AE4D1 /* libPods-SuperNutritionUIAcceptance.a */; };
-		6F3C5C6ECE289D56427C831D /* libPods-SuperNutrition.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 92C886F1AE9ACD72D4CDAEA2 /* libPods-SuperNutrition.a */; };
 		B10000010000000000000001 /* SuperNutritionUIAcceptanceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000001 /* SuperNutritionUIAcceptanceApp.swift */; };
 		B10000010000000000000002 /* SharedKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F20000010000000000000003 /* SharedKit.framework */; };
+		B10000010000000000000003 /* SharedKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F20000010000000000000003 /* SharedKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B10000010000000000000004 /* BootstrapLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000004 /* BootstrapLaunchTests.swift */; };
 		B10000010000000000000005 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F20000010000000000000005 /* XCTest.framework */; };
-		B10000010000000000000007 /* SharedKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F20000010000000000000003 /* SharedKit.framework */; };
-		B10000010000000000000009 /* SuperNutritionApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000008 /* SuperNutritionApp.swift */; };
-		B10000010000000000000010 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000009 /* Localizable.strings */; };
-		B10000010000000000000011 /* PhotoAnalysisHostSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000010 /* PhotoAnalysisHostSupport.swift */; };
-		B10000010000000000000012 /* PhotoAnalysisHostSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000010 /* PhotoAnalysisHostSupport.swift */; };
-		B10000010000000000000013 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000011 /* InfoPlist.strings */; };
-		B10000010000000000000014 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000009 /* Localizable.strings */; };
-		B10000010000000000000015 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000011 /* InfoPlist.strings */; };
-		B10000010000000000000016 /* IosPocInference.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000012 /* IosPocInference.swift */; };
-		B10000010000000000000017 /* IosPocInference.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000012 /* IosPocInference.swift */; };
-		B10000010000000000000018 /* swin-finetuned-food101-matmul-int8.onnx in Resources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000014 /* swin-finetuned-food101-matmul-int8.onnx */; };
-		B10000010000000000000019 /* yolov8s-worldv2-coco.onnx in Resources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000015 /* yolov8s-worldv2-coco.onnx */; };
-		B10000010000000000000020 /* food101-labels.txt in Resources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000016 /* food101-labels.txt */; };
-		B10000010000000000000021 /* swin-finetuned-food101-matmul-int8.onnx in Production Resources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000014 /* swin-finetuned-food101-matmul-int8.onnx */; };
-		B10000010000000000000022 /* yolov8s-worldv2-coco.onnx in Production Resources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000015 /* yolov8s-worldv2-coco.onnx */; };
-		B10000010000000000000023 /* food101-labels.txt in Production Resources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000016 /* food101-labels.txt */; };
+		B10000010000000000000007 /* SharedKit.framework in Production Frameworks */ = {isa = PBXBuildFile; fileRef = F20000010000000000000003 /* SharedKit.framework */; };
+		B10000010000000000000008 /* SharedKit.framework in Production Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F20000010000000000000003 /* SharedKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B10000010000000000000009 /* SuperNutritionApp.swift in Production Sources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000008 /* SuperNutritionApp.swift */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		Q90000010000000000000001 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = R80000010000000000000001 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = T50000010000000000000001;
-			remoteInfo = SuperNutritionUIAcceptance;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
-		1A6B5A956AF30F3FEBE2DA94 /* Pods-SuperNutrition.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SuperNutrition.debug.xcconfig"; path = "Target Support Files/Pods-SuperNutrition/Pods-SuperNutrition.debug.xcconfig"; sourceTree = "<group>"; };
-		6024B1BBAB0B8CDD173AE4D1 /* libPods-SuperNutritionUIAcceptance.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SuperNutritionUIAcceptance.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		82285E4E8DD1F5649AF547C4 /* Pods-SuperNutrition.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SuperNutrition.release.xcconfig"; path = "Target Support Files/Pods-SuperNutrition/Pods-SuperNutrition.release.xcconfig"; sourceTree = "<group>"; };
-		92C886F1AE9ACD72D4CDAEA2 /* libPods-SuperNutrition.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SuperNutrition.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		DCC9F374F280F81C0B2800F7 /* Pods-SuperNutritionUIAcceptance.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SuperNutritionUIAcceptance.release.xcconfig"; path = "Target Support Files/Pods-SuperNutritionUIAcceptance/Pods-SuperNutritionUIAcceptance.release.xcconfig"; sourceTree = "<group>"; };
 		F20000010000000000000000 /* SuperNutritionUIAcceptance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SuperNutritionUIAcceptance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F20000010000000000000001 /* SuperNutritionUIAcceptanceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperNutritionUIAcceptanceApp.swift; sourceTree = "<group>"; };
 		F20000010000000000000002 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F20000010000000000000003 /* SharedKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = SharedKit.framework; path = "$(SHARED_KIT_FRAMEWORK_DIR)/SharedKit.framework"; sourceTree = "<group>"; };
+		F20000010000000000000003 /* SharedKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = SharedKit.framework; path = "$(SHARED_KIT_FRAMEWORK_DIR)/SharedKit.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F20000010000000000000004 /* BootstrapLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BootstrapLaunchTests.swift; sourceTree = "<group>"; };
-		F20000010000000000000005 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = System/Library/Frameworks/XCTest.framework; sourceTree = SDKROOT; };
+		F20000010000000000000005 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = "System/Library/Frameworks/XCTest.framework"; sourceTree = SDKROOT; };
 		F20000010000000000000006 /* SuperNutritionUIAcceptanceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SuperNutritionUIAcceptanceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F20000010000000000000007 /* SuperNutrition.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SuperNutrition.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F20000010000000000000008 /* SuperNutritionApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperNutritionApp.swift; sourceTree = "<group>"; };
-		F20000010000000000000009 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
-		F20000010000000000000010 /* PhotoAnalysisHostSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAnalysisHostSupport.swift; sourceTree = "<group>"; };
-		F20000010000000000000011 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = "<group>"; };
-		F20000010000000000000012 /* IosPocInference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IosPocInference.swift; sourceTree = "<group>"; };
-		F20000010000000000000013 /* IosPocInferenceBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IosPocInferenceBridge.h; sourceTree = "<group>"; };
-		F20000010000000000000014 /* swin-finetuned-food101-matmul-int8.onnx */ = {isa = PBXFileReference; lastKnownFileType = file; path = ../../inference/local-android-poc/src/main/assets/swin-finetuned-food101-matmul-int8.onnx; sourceTree = "<group>"; };
-		F20000010000000000000015 /* yolov8s-worldv2-coco.onnx */ = {isa = PBXFileReference; lastKnownFileType = file; path = ../../inference/local-android-poc/src/main/assets/yolov8s-worldv2-coco.onnx; sourceTree = "<group>"; };
-		F20000010000000000000016 /* food101-labels.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = ../../inference/local-android-poc/src/main/assets/food101-labels.txt; sourceTree = "<group>"; };
-		FAA76CF4D0EBB6031291DC0F /* Pods-SuperNutritionUIAcceptance.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SuperNutritionUIAcceptance.debug.xcconfig"; path = "Target Support Files/Pods-SuperNutritionUIAcceptance/Pods-SuperNutritionUIAcceptance.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,7 +35,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B10000010000000000000002 /* SharedKit.framework in Frameworks */,
-				04A773EB110E60C189ADF31B /* libPods-SuperNutritionUIAcceptance.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -85,55 +46,58 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		P30000010000000000000009 /* Frameworks */ = {
+		P30000010000000000000009 /* Production Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B10000010000000000000007 /* SharedKit.framework in Frameworks */,
-				6F3C5C6ECE289D56427C831D /* libPods-SuperNutrition.a in Frameworks */,
+				B10000010000000000000007 /* SharedKit.framework in Production Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
-/* Begin PBXGroup section */
-		CD97D3A784CCF255B9C203ED /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				1A6B5A956AF30F3FEBE2DA94 /* Pods-SuperNutrition.debug.xcconfig */,
-				82285E4E8DD1F5649AF547C4 /* Pods-SuperNutrition.release.xcconfig */,
-				FAA76CF4D0EBB6031291DC0F /* Pods-SuperNutritionUIAcceptance.debug.xcconfig */,
-				DCC9F374F280F81C0B2800F7 /* Pods-SuperNutritionUIAcceptance.release.xcconfig */,
+/* Begin PBXCopyFilesBuildPhase section */
+		P31000010000000000000001 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				B10000010000000000000003 /* SharedKit.framework in Embed Frameworks */,
 			);
-			name = Pods;
-			path = Pods;
-			sourceTree = "<group>";
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
+		P31000010000000000000002 /* Production Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				B10000010000000000000008 /* SharedKit.framework in Production Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXGroup section */
 		G40000010000000000000000 = {
 			isa = PBXGroup;
 			children = (
-				G40000010000000000000001 /*  */,
+				G40000010000000000000001 /* SuperNutritionUIAcceptance */,
 				G40000010000000000000002 /* Tests */,
 				G40000010000000000000003 /* Frameworks */,
 				G40000010000000000000004 /* Products */,
-				CD97D3A784CCF255B9C203ED /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
-		G40000010000000000000001 /*  */ = {
+		G40000010000000000000001 /* SuperNutritionUIAcceptance */ = {
 			isa = PBXGroup;
 			children = (
 				F20000010000000000000001 /* SuperNutritionUIAcceptanceApp.swift */,
 				F20000010000000000000008 /* SuperNutritionApp.swift */,
-				F20000010000000000000010 /* PhotoAnalysisHostSupport.swift */,
-				F20000010000000000000012 /* IosPocInference.swift */,
-				F20000010000000000000013 /* IosPocInferenceBridge.h */,
-				F20000010000000000000014 /* swin-finetuned-food101-matmul-int8.onnx */,
-				F20000010000000000000015 /* yolov8s-worldv2-coco.onnx */,
-				F20000010000000000000016 /* food101-labels.txt */,
 				F20000010000000000000002 /* Info.plist */,
-				F20000010000000000000011 /* InfoPlist.strings */,
-				F20000010000000000000009 /* Localizable.strings */,
 			);
 			sourceTree = "<group>";
 		};
@@ -150,8 +114,6 @@
 			children = (
 				F20000010000000000000003 /* SharedKit.framework */,
 				F20000010000000000000005 /* XCTest.framework */,
-				92C886F1AE9ACD72D4CDAEA2 /* libPods-SuperNutrition.a */,
-				6024B1BBAB0B8CDD173AE4D1 /* libPods-SuperNutritionUIAcceptance.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -173,10 +135,10 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = L60000010000000000000001 /* Build configuration list for PBXNativeTarget "SuperNutritionUIAcceptance" */;
 			buildPhases = (
-				12E9AD19D7C1C23B4280C593 /* [CP] Check Pods Manifest.lock */,
-				S32000010000000000000001 /* Build SharedKit framework */,
 				P30000010000000000000003 /* Sources */,
 				P30000010000000000000001 /* Frameworks */,
+				S32000010000000000000001 /* Build SharedKit framework */,
+				P31000010000000000000001 /* Embed Frameworks */,
 				P30000010000000000000004 /* Resources */,
 			);
 			buildRules = (
@@ -210,11 +172,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = L60000010000000000000003 /* Build configuration list for PBXNativeTarget "SuperNutrition" */;
 			buildPhases = (
-				B6C825270708C9604C0CBA7F /* [CP] Check Pods Manifest.lock */,
+				P30000010000000000000007 /* Production Sources */,
+				P30000010000000000000009 /* Production Frameworks */,
 				S32000010000000000000002 /* Build Production SharedKit framework */,
-				P30000010000000000000007 /* Sources */,
-				P30000010000000000000009 /* Frameworks */,
-				P30000010000000000000008 /* Resources */,
+				P31000010000000000000002 /* Production Embed Frameworks */,
+				P30000010000000000000008 /* Production Resources */,
 			);
 			buildRules = (
 			);
@@ -232,17 +194,10 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 2600;
-				TargetAttributes = {
-					T50000010000000000000001 = {
-						CreatedOnToolsVersion = 26.0;
-					};
-					T50000010000000000000002 = {
-						CreatedOnToolsVersion = 26.0;
-						TestTargetID = T50000010000000000000001;
-					};
-					T50000010000000000000003 = {
-						CreatedOnToolsVersion = 26.0;
-					};
+			TargetAttributes = {
+				T50000010000000000000001 = { CreatedOnToolsVersion = 26.0; };
+				T50000010000000000000002 = { CreatedOnToolsVersion = 26.0; TestTargetID = T50000010000000000000001; };
+				T50000010000000000000003 = { CreatedOnToolsVersion = 26.0; };
 				};
 			};
 			buildConfigurationList = L60000010000000000000000 /* Build configuration list for PBXProject "SuperNutritionUIAcceptance" */;
@@ -266,97 +221,32 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		P30000010000000000000004 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B10000010000000000000010 /* Localizable.strings in Resources */,
-				B10000010000000000000013 /* InfoPlist.strings in Resources */,
-				B10000010000000000000018 /* swin-finetuned-food101-matmul-int8.onnx in Resources */,
-				B10000010000000000000019 /* yolov8s-worldv2-coco.onnx in Resources */,
-				B10000010000000000000020 /* food101-labels.txt in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		P30000010000000000000006 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		P30000010000000000000008 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B10000010000000000000014 /* Localizable.strings in Resources */,
-				B10000010000000000000015 /* InfoPlist.strings in Resources */,
-				B10000010000000000000021 /* swin-finetuned-food101-matmul-int8.onnx in Production Resources */,
-				B10000010000000000000022 /* yolov8s-worldv2-coco.onnx in Production Resources */,
-				B10000010000000000000023 /* food101-labels.txt in Production Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
+		P30000010000000000000004 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		P30000010000000000000006 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		P30000010000000000000008 /* Production Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXSourcesBuildPhase section */
+		P30000010000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B10000010000000000000001 /* SuperNutritionUIAcceptanceApp.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
+		P30000010000000000000005 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B10000010000000000000004 /* BootstrapLaunchTests.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
+		P30000010000000000000007 /* Production Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B10000010000000000000009 /* SuperNutritionApp.swift in Production Sources */); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D70000010000000000000001 /* PBXTargetDependency */ = {isa = PBXTargetDependency; target = T50000010000000000000001 /* SuperNutritionUIAcceptance */; targetProxy = Q90000010000000000000001 /* PBXContainerItemProxy */; };
+/* End PBXTargetDependency section */
+
+/* Begin PBXContainerItemProxy section */
+		Q90000010000000000000001 /* PBXContainerItemProxy */ = {isa = PBXContainerItemProxy; containerPortal = R80000010000000000000001 /* Project object */; proxyType = 1; remoteGlobalIDString = T50000010000000000000001; remoteInfo = SuperNutritionUIAcceptance; };
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXShellScriptBuildPhase section */
-		12E9AD19D7C1C23B4280C593 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SuperNutritionUIAcceptance-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		B6C825270708C9604C0CBA7F /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SuperNutrition-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
 		S32000010000000000000001 /* Build SharedKit framework */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
-				"$(PROJECT_DIR)/../../../scripts/build-sharedkit-framework.sh",
-				"$(PROJECT_DIR)/../../../mobile/gradle/libs.versions.toml",
-				"$(PROJECT_DIR)/../../../mobile/gradle/verification-metadata.xml",
-				"$(PROJECT_DIR)/../../../mobile/apps/sharedKit/build.gradle.kts",
-				"$(PROJECT_DIR)/../../../mobile/apps/sharedKit/src",
-				"$(PROJECT_DIR)/../../../mobile/platform/photo-ios/src",
-				"$(PROJECT_DIR)/../../../mobile/feature/photo-analysis/src",
 			);
 			name = "Build SharedKit framework";
 			outputPaths = (
@@ -364,7 +254,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\ncd \"${PROJECT_DIR}/../../..\"\nbash ./scripts/build-sharedkit-framework.sh \"${CONFIGURATION}\" \"${KOTLIN_TARGET}\"\n";
+			shellScript = "set -e\ncd \"${PROJECT_DIR}/../..\"\n./gradlew -Psupernutrition.enableSharedKitFramework=true -Psupernutrition.enableIosDeviceTarget=true -Psupernutrition.enableIntelIosX64=true \":apps:sharedKit:link${CONFIGURATION}Framework${KOTLIN_TARGET}\"\n";
 		};
 		S32000010000000000000002 /* Build Production SharedKit framework */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -372,13 +262,6 @@
 			files = (
 			);
 			inputPaths = (
-				"$(PROJECT_DIR)/../../../scripts/build-sharedkit-framework.sh",
-				"$(PROJECT_DIR)/../../../mobile/gradle/libs.versions.toml",
-				"$(PROJECT_DIR)/../../../mobile/gradle/verification-metadata.xml",
-				"$(PROJECT_DIR)/../../../mobile/apps/sharedKit/build.gradle.kts",
-				"$(PROJECT_DIR)/../../../mobile/apps/sharedKit/src",
-				"$(PROJECT_DIR)/../../../mobile/platform/photo-ios/src",
-				"$(PROJECT_DIR)/../../../mobile/feature/photo-analysis/src",
 			);
 			name = "Build Production SharedKit framework";
 			outputPaths = (
@@ -386,252 +269,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\ncd \"${PROJECT_DIR}/../../..\"\nbash ./scripts/build-sharedkit-framework.sh \"${CONFIGURATION}\" \"${KOTLIN_TARGET}\"\n";
+			shellScript = "set -e\ncd \"${PROJECT_DIR}/../..\"\n./gradlew -Psupernutrition.enableSharedKitFramework=true -Psupernutrition.enableIosDeviceTarget=true -Psupernutrition.enableIntelIosX64=true \":apps:sharedKit:link${CONFIGURATION}Framework${KOTLIN_TARGET}\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
-/* Begin PBXSourcesBuildPhase section */
-		P30000010000000000000003 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B10000010000000000000001 /* SuperNutritionUIAcceptanceApp.swift in Sources */,
-				B10000010000000000000011 /* PhotoAnalysisHostSupport.swift in Sources */,
-				B10000010000000000000016 /* IosPocInference.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		P30000010000000000000005 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B10000010000000000000004 /* BootstrapLaunchTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		P30000010000000000000007 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B10000010000000000000009 /* SuperNutritionApp.swift in Sources */,
-				B10000010000000000000012 /* PhotoAnalysisHostSupport.swift in Sources */,
-				B10000010000000000000017 /* IosPocInference.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		D70000010000000000000001 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = T50000010000000000000001 /* SuperNutritionUIAcceptance */;
-			targetProxy = Q90000010000000000000001 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin XCBuildConfiguration section */
-		C40000010000000000000001 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = FAA76CF4D0EBB6031291DC0F /* Pods-SuperNutritionUIAcceptance.debug.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = REDACTED_TEAM_ID;
-				CURRENT_PROJECT_VERSION = 1;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SHARED_KIT_FRAMEWORK_DIR)",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				KOTLIN_TARGET = "$(KOTLIN_TARGET_$(PLATFORM_NAME)_$(NATIVE_ARCH))";
-				KOTLIN_TARGET_iphoneos_arm64 = iosArm64;
-				KOTLIN_TARGET_iphoneos_x86_64 = iosArm64;
-				KOTLIN_TARGET_iphonesimulator_arm64 = iosSimulatorArm64;
-				KOTLIN_TARGET_iphonesimulator_x86_64 = iosX64;
-				PRODUCT_BUNDLE_IDENTIFIER = com.supernutrition.ios.uiacceptance;
-				PRODUCT_NAME = SuperNutritionUIAcceptance;
-				SDKROOT = iphoneos;
-				SHARED_KIT_FRAMEWORK_DIR = "$(PROJECT_DIR)/../sharedKit/build/bin/$(KOTLIN_TARGET)/debugFramework";
-					SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-					SWIFT_OBJC_BRIDGING_HEADER = IosPocInferenceBridge.h;
-					SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		C40000010000000000000002 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = DCC9F374F280F81C0B2800F7 /* Pods-SuperNutritionUIAcceptance.release.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = REDACTED_TEAM_ID;
-				CURRENT_PROJECT_VERSION = 1;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SHARED_KIT_FRAMEWORK_DIR)",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				KOTLIN_TARGET = "$(KOTLIN_TARGET_$(PLATFORM_NAME)_$(NATIVE_ARCH))";
-				KOTLIN_TARGET_iphoneos_arm64 = iosArm64;
-				KOTLIN_TARGET_iphoneos_x86_64 = iosArm64;
-				KOTLIN_TARGET_iphonesimulator_arm64 = iosSimulatorArm64;
-				KOTLIN_TARGET_iphonesimulator_x86_64 = iosX64;
-				PRODUCT_BUNDLE_IDENTIFIER = com.supernutrition.ios.uiacceptance;
-				PRODUCT_NAME = SuperNutritionUIAcceptance;
-				SDKROOT = iphoneos;
-				SHARED_KIT_FRAMEWORK_DIR = "$(PROJECT_DIR)/../sharedKit/build/bin/$(KOTLIN_TARGET)/releaseFramework";
-					SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-					SWIFT_OBJC_BRIDGING_HEADER = IosPocInferenceBridge.h;
-					SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		C40000010000000000000003 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = REDACTED_TEAM_ID;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "SuperNutrition UI Acceptance Tests";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.supernutrition.ios.uiacceptance.tests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-					SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-					SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = SuperNutritionUIAcceptance;
-			};
-			name = Debug;
-		};
-		C40000010000000000000004 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = REDACTED_TEAM_ID;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "SuperNutrition UI Acceptance Tests";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.supernutrition.ios.uiacceptance.tests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-					SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-					SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = SuperNutritionUIAcceptance;
-			};
-			name = Release;
-		};
-		C40000010000000000000005 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1A6B5A956AF30F3FEBE2DA94 /* Pods-SuperNutrition.debug.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = REDACTED_TEAM_ID;
-				CURRENT_PROJECT_VERSION = 1;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SHARED_KIT_FRAMEWORK_DIR)",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				KOTLIN_TARGET = "$(KOTLIN_TARGET_$(PLATFORM_NAME)_$(NATIVE_ARCH))";
-				KOTLIN_TARGET_iphoneos_arm64 = iosArm64;
-				KOTLIN_TARGET_iphoneos_x86_64 = iosArm64;
-				KOTLIN_TARGET_iphonesimulator_arm64 = iosSimulatorArm64;
-				KOTLIN_TARGET_iphonesimulator_x86_64 = iosX64;
-				PRODUCT_BUNDLE_IDENTIFIER = com.supernutrition.ios;
-				PRODUCT_NAME = SuperNutrition;
-				SDKROOT = iphoneos;
-				SHARED_KIT_FRAMEWORK_DIR = "$(PROJECT_DIR)/../sharedKit/build/bin/$(KOTLIN_TARGET)/debugFramework";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SWIFT_OBJC_BRIDGING_HEADER = IosPocInferenceBridge.h;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		C40000010000000000000006 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 82285E4E8DD1F5649AF547C4 /* Pods-SuperNutrition.release.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = REDACTED_TEAM_ID;
-				CURRENT_PROJECT_VERSION = 1;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SHARED_KIT_FRAMEWORK_DIR)",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				KOTLIN_TARGET = "$(KOTLIN_TARGET_$(PLATFORM_NAME)_$(NATIVE_ARCH))";
-				KOTLIN_TARGET_iphoneos_arm64 = iosArm64;
-				KOTLIN_TARGET_iphoneos_x86_64 = iosArm64;
-				KOTLIN_TARGET_iphonesimulator_arm64 = iosSimulatorArm64;
-				KOTLIN_TARGET_iphonesimulator_x86_64 = iosX64;
-				PRODUCT_BUNDLE_IDENTIFIER = com.supernutrition.ios;
-				PRODUCT_NAME = SuperNutrition;
-				SDKROOT = iphoneos;
-				SHARED_KIT_FRAMEWORK_DIR = "$(PROJECT_DIR)/../sharedKit/build/bin/$(KOTLIN_TARGET)/releaseFramework";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SWIFT_OBJC_BRIDGING_HEADER = IosPocInferenceBridge.h;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
+		C40000010000000000000001 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = { ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; FRAMEWORK_SEARCH_PATHS = ("$(SHARED_KIT_FRAMEWORK_DIR)", "$(inherited)"); IPHONEOS_DEPLOYMENT_TARGET = 15.0; PRODUCT_BUNDLE_IDENTIFIER = "com.supernutrition.ios.uiacceptance"; PRODUCT_NAME = "SuperNutritionUIAcceptance"; SDKROOT = iphoneos; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; KOTLIN_TARGET = iosSimulatorArm64; "KOTLIN_TARGET[sdk=iphoneos*]" = iosArm64; "KOTLIN_TARGET[sdk=iphonesimulator*][arch=x86_64]" = iosX64; SHARED_KIT_FRAMEWORK_DIR = "$(PROJECT_DIR)/../sharedKit/build/bin/$(KOTLIN_TARGET)/$(CONFIGURATION)Framework"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; }; name = Debug; };
+		C40000010000000000000002 /* Release */ = {isa = XCBuildConfiguration; buildSettings = { ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; FRAMEWORK_SEARCH_PATHS = ("$(SHARED_KIT_FRAMEWORK_DIR)", "$(inherited)"); IPHONEOS_DEPLOYMENT_TARGET = 15.0; PRODUCT_BUNDLE_IDENTIFIER = "com.supernutrition.ios.uiacceptance"; PRODUCT_NAME = "SuperNutritionUIAcceptance"; SDKROOT = iphoneos; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; KOTLIN_TARGET = iosSimulatorArm64; "KOTLIN_TARGET[sdk=iphoneos*]" = iosArm64; "KOTLIN_TARGET[sdk=iphonesimulator*][arch=x86_64]" = iosX64; SHARED_KIT_FRAMEWORK_DIR = "$(PROJECT_DIR)/../sharedKit/build/bin/$(KOTLIN_TARGET)/$(CONFIGURATION)Framework"; SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; }; name = Release; };
+		C40000010000000000000003 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = { CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_CFBundleDisplayName = "SuperNutrition UI Acceptance Tests"; IPHONEOS_DEPLOYMENT_TARGET = 15.0; PRODUCT_BUNDLE_IDENTIFIER = "com.supernutrition.ios.uiacceptance.tests"; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; TEST_TARGET_NAME = "SuperNutritionUIAcceptance"; }; name = Debug; };
+		C40000010000000000000004 /* Release */ = {isa = XCBuildConfiguration; buildSettings = { CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_CFBundleDisplayName = "SuperNutrition UI Acceptance Tests"; IPHONEOS_DEPLOYMENT_TARGET = 15.0; PRODUCT_BUNDLE_IDENTIFIER = "com.supernutrition.ios.uiacceptance.tests"; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; TEST_TARGET_NAME = "SuperNutritionUIAcceptance"; }; name = Release; };
+		C40000010000000000000005 /* Production Debug */ = {isa = XCBuildConfiguration; buildSettings = { CLANG_ENABLE_MODULES = YES; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; FRAMEWORK_SEARCH_PATHS = ("$(SHARED_KIT_FRAMEWORK_DIR)", "$(inherited)"); INFOPLIST_FILE = Info.plist; IPHONEOS_DEPLOYMENT_TARGET = 15.0; PRODUCT_BUNDLE_IDENTIFIER = "com.supernutrition.ios"; PRODUCT_NAME = "SuperNutrition"; SDKROOT = iphoneos; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; KOTLIN_TARGET = iosSimulatorArm64; "KOTLIN_TARGET[sdk=iphoneos*]" = iosArm64; "KOTLIN_TARGET[sdk=iphonesimulator*][arch=x86_64]" = iosX64; SHARED_KIT_FRAMEWORK_DIR = "$(PROJECT_DIR)/../sharedKit/build/bin/$(KOTLIN_TARGET)/$(CONFIGURATION)Framework"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; }; name = Debug; };
+		C40000010000000000000006 /* Production Release */ = {isa = XCBuildConfiguration; buildSettings = { CLANG_ENABLE_MODULES = YES; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; FRAMEWORK_SEARCH_PATHS = ("$(SHARED_KIT_FRAMEWORK_DIR)", "$(inherited)"); INFOPLIST_FILE = Info.plist; IPHONEOS_DEPLOYMENT_TARGET = 15.0; PRODUCT_BUNDLE_IDENTIFIER = "com.supernutrition.ios"; PRODUCT_NAME = "SuperNutrition"; SDKROOT = iphoneos; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; KOTLIN_TARGET = iosSimulatorArm64; "KOTLIN_TARGET[sdk=iphoneos*]" = iosArm64; "KOTLIN_TARGET[sdk=iphonesimulator*][arch=x86_64]" = iosX64; SHARED_KIT_FRAMEWORK_DIR = "$(PROJECT_DIR)/../sharedKit/build/bin/$(KOTLIN_TARGET)/$(CONFIGURATION)Framework"; SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; }; name = Release; };
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		L60000010000000000000000 /* Build configuration list for PBXProject "SuperNutritionUIAcceptance" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				C40000010000000000000001 /* Debug */,
-				C40000010000000000000002 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		L60000010000000000000001 /* Build configuration list for PBXNativeTarget "SuperNutritionUIAcceptance" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				C40000010000000000000001 /* Debug */,
-				C40000010000000000000002 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		L60000010000000000000002 /* Build configuration list for PBXNativeTarget "SuperNutritionUIAcceptanceTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				C40000010000000000000003 /* Debug */,
-				C40000010000000000000004 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		L60000010000000000000003 /* Build configuration list for PBXNativeTarget "SuperNutrition" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				C40000010000000000000005 /* Debug */,
-				C40000010000000000000006 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
+		L60000010000000000000000 /* Build configuration list for PBXProject "SuperNutritionUIAcceptance" */ = {isa = XCConfigurationList; buildConfigurations = (C40000010000000000000001 /* Debug */, C40000010000000000000002 /* Release */); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		L60000010000000000000001 /* Build configuration list for PBXNativeTarget "SuperNutritionUIAcceptance" */ = {isa = XCConfigurationList; buildConfigurations = (C40000010000000000000001 /* Debug */, C40000010000000000000002 /* Release */); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		L60000010000000000000002 /* Build configuration list for PBXNativeTarget "SuperNutritionUIAcceptanceTests" */ = {isa = XCConfigurationList; buildConfigurations = (C40000010000000000000003 /* Debug */, C40000010000000000000004 /* Release */); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		L60000010000000000000003 /* Build configuration list for PBXNativeTarget "SuperNutrition" */ = {isa = XCConfigurationList; buildConfigurations = (C40000010000000000000005 /* Production Debug */, C40000010000000000000006 /* Production Release */); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
 /* End XCConfigurationList section */
 	};
 	rootObject = R80000010000000000000001 /* Project object */;
