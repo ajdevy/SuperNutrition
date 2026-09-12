@@ -394,6 +394,7 @@ struct PhotoAnalysisComposeHost: UIViewControllerRepresentable {
         ) {
             presentation = PhotoAnalysisPresentationCoordinator(session: session)
             self.onCloseRequested = onCloseRequested
+            super.init()
             cameraAction.action = { [weak self] in self?.presentation.takePhoto() }
         }
 
