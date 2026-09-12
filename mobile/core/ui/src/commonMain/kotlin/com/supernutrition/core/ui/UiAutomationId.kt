@@ -76,6 +76,9 @@ object UiAutomationIds {
     val HOME_ADD_FOOD = UiAutomationId("home_add_food")
     val REWARDS_TITLE = UiAutomationId("rewards_title")
     val REWARDS_LIST = UiAutomationId("rewards_list")
+    val PROFILE_TITLE = UiAutomationId("profile_title")
+    val PROFILE_ID = UiAutomationId("profile_id")
+    val PROFILE_CLOSE = UiAutomationId("profile_close")
 
     /**
      * Per-row identifiers, by position rather than by canonical record id.
@@ -137,5 +140,8 @@ object UiAutomationIds {
         HOME_ADD_FOOD,
         REWARDS_TITLE,
         REWARDS_LIST,
+        PROFILE_TITLE,
+        PROFILE_ID,
+        PROFILE_CLOSE,
     )
 }

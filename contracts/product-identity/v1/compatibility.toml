@@ -1,7 +1,7 @@
 schema = "supernutrition.product-identity-compatibility.v1"
 contract_id = "product-identity"
 release = "v1"
-digest = "c1e90150c971712735eb3dee95d80d86d813530fdd32400452513304a71d2c66"
+digest = "dd8e242a83a32f3d088b81a6513e98a1d964206f557ffe6dfa0a20eb82a4e7bc"
 source_manifest = "mobile/config/product-identity.toml"
 
 [compatibility]

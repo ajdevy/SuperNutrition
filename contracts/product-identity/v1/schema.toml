@@ -31,7 +31,7 @@ allowed_values = ["SuperNutrition AI nutritionist"]
 
 [fields.android_application_id]
 type = "string"
-allowed_values = ["com.supernutrition.android"]
+allowed_values = ["app.supernutrition"]
 
 [fields.ios_bundle_identifier]
 type = "string"
@@ -39,7 +39,7 @@ allowed_values = ["com.supernutrition.ios"]
 
 [fields.acceptance_android_application_id]
 type = "string"
-allowed_values = ["com.supernutrition.android.uiAcceptance"]
+allowed_values = ["app.supernutrition.uiAcceptance"]
 
 [fields.acceptance_ios_bundle_identifier]
 type = "string"

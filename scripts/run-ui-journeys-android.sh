@@ -153,7 +153,7 @@ maestro_bin="$(ensure_maestro_cli "$repo_root" "$temp_root")"
 
 "$maestro_bin" --device "$device_serial" test \
   "$repo_root/mobile/.maestro/photo-analysis" \
-  --env APP_ID=com.supernutrition.android.uiAcceptance \
+  --env APP_ID=app.supernutrition.uiAcceptance \
   --format junit \
   --output "$report_root/junit.xml" \
   --test-output-dir "$report_root/debug"

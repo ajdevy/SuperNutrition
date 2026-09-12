@@ -15,7 +15,7 @@ expected = "SuperNutrition AI nutritionist"
 [[case]]
 id = "production-android-id"
 field = "android_application_id"
-expected = "com.supernutrition.android"
+expected = "app.supernutrition"
 
 [[case]]
 id = "production-ios-id"

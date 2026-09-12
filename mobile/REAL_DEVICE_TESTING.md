@@ -50,7 +50,7 @@ setting cannot silently return to the scaffold.
    ```bash
    adb -s <physical-serial> install -r mobile/apps/androidApp/build/outputs/apk/uiAcceptance/debug/androidApp-uiAcceptance-debug.apk
    adb -s <physical-serial> shell am start \
-     -n com.supernutrition.android.uiAcceptance/com.supernutrition.feature.photoanalysis.PhotoAnalysisComposeActivity
+     -n app.supernutrition.uiAcceptance/com.supernutrition.feature.photoanalysis.PhotoAnalysisComposeActivity
    ```
 
 To emit a reproducible native-evidence bundle after the connected run, use an
