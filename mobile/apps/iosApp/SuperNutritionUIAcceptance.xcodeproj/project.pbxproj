@@ -16,6 +16,7 @@
 		B10000010000000000000008 /* SharedKit.framework in Production Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F20000010000000000000003 /* SharedKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B10000010000000000000009 /* SuperNutritionApp.swift in Production Sources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000008 /* SuperNutritionApp.swift */; };
 		B10000010000000000000010 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000009 /* Localizable.strings */; };
+		B10000010000000000000011 /* PhotoAnalysisHostSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000010 /* PhotoAnalysisHostSupport.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +30,7 @@
 		F20000010000000000000007 /* SuperNutrition.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SuperNutrition.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F20000010000000000000008 /* SuperNutritionApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperNutritionApp.swift; sourceTree = "<group>"; };
 		F20000010000000000000009 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
+		F20000010000000000000010 /* PhotoAnalysisHostSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAnalysisHostSupport.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,6 +101,7 @@
 			children = (
 				F20000010000000000000001 /* SuperNutritionUIAcceptanceApp.swift */,
 				F20000010000000000000008 /* SuperNutritionApp.swift */,
+				F20000010000000000000010 /* PhotoAnalysisHostSupport.swift */,
 				F20000010000000000000002 /* Info.plist */,
 				F20000010000000000000009 /* Localizable.strings */,
 			);
@@ -230,7 +233,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		P30000010000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B10000010000000000000001 /* SuperNutritionUIAcceptanceApp.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
+		P30000010000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B10000010000000000000001 /* SuperNutritionUIAcceptanceApp.swift in Sources */, B10000010000000000000011 /* PhotoAnalysisHostSupport.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
 		P30000010000000000000005 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B10000010000000000000004 /* BootstrapLaunchTests.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
 		P30000010000000000000007 /* Production Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B10000010000000000000009 /* SuperNutritionApp.swift in Production Sources */); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXSourcesBuildPhase section */
