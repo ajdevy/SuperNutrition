@@ -1,5 +1,6 @@
 import XCTest
 import SharedKit
+import AVFoundation
 
 final class BootstrapLaunchTests: XCTestCase {
     func testSharedKitBootstrapIsIdempotentAfterHostStartup() {
@@ -55,9 +56,13 @@ final class BootstrapLaunchTests: XCTestCase {
             return
         }
 
-        XCTAssertTrue(nativeCameraControlIsVisible(in: app))
-        XCTAssertTrue(dismissOrRecoverPresentedCamera(from: app))
-        XCTAssertTrue(app.buttons[SharedKitAutomationIds.shared.captureShutter].waitForExistence(timeout: 10))
+        if nativeCameraControlIsVisible(in: app) {
+            XCTAssertTrue(dismissOrRecoverPresentedCamera(from: app))
+            XCTAssertTrue(app.buttons[SharedKitAutomationIds.shared.captureShutter].waitForExistence(timeout: 10))
+        } else {
+            XCTAssertFalse(backCameraIsAvailable())
+            XCTAssertTrue(captureSurfaceIsReady(in: app, timeout: 10))
+        }
     }
 
     func testPhotoPickerOpensAndCanBeCancelled() {
@@ -106,9 +111,11 @@ final class BootstrapLaunchTests: XCTestCase {
                     app.buttons[SharedKitAutomationIds.shared.captureScanAgain].exists,
             )
             return
-        } else {
-            XCTAssertTrue(nativeCameraControlIsVisible(in: app))
+        } else if nativeCameraControlIsVisible(in: app) {
             XCTAssertTrue(dismissOrRecoverPresentedCamera(from: app))
+        } else {
+            XCTAssertFalse(backCameraIsAvailable())
+            XCTAssertTrue(captureSurfaceIsReady(in: app, timeout: 10))
         }
 
         XCUIDevice.shared.press(.home)
@@ -147,6 +154,10 @@ final class BootstrapLaunchTests: XCTestCase {
     private func nativeCameraControlIsVisible(in app: XCUIApplication) -> Bool {
         let capture = app.descendants(matching: .any)[SharedKitAutomationIds.shared.captureNative]
         return capture.waitForExistence(timeout: 10)
+    }
+
+    private func backCameraIsAvailable() -> Bool {
+        AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) != nil
     }
 
     private func captureSurfaceIsReady(in app: XCUIApplication, timeout: TimeInterval) -> Bool {
