@@ -24,12 +24,12 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -46,6 +46,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /** Android composition root: lifecycle, result launchers, and feature wiring only. */
+@Suppress("TooManyFunctions")
 class PhotoAnalysisComposeActivity : ComponentActivity() {
     private val attemptId = AttemptId(AndroidPhotoAttemptIds.CAPTURE)
     private val retainedState: RetainedState by lazy {
@@ -227,9 +228,10 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
     }
 
     private fun bindAnalysisRuntimeAsync() {
-        val factory = (application as? PhotoAnalysisAndroidRuntimeProvider)?.photoAnalysisRuntimeFactory
+        val runtimeProvider = application as? PhotoAnalysisAndroidRuntimeProvider
             ?: return
-        lifecycleScope.launch(Dispatchers.Default) {
+        val factory = runtimeProvider.photoAnalysisRuntimeFactory
+        lifecycleScope.launch(runtimeProvider.photoAnalysisBackgroundDispatcher) {
             val binding = runCatching {
                 factory.create(
                     context = this@PhotoAnalysisComposeActivity,
@@ -412,10 +414,7 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
 }
 
 @Composable
-private fun ProfileScreen(
-    profileId: String,
-    onCloseRequested: () -> Unit,
-) {
+private fun ProfileScreen(profileId: String, onCloseRequested: () -> Unit) {
     BackHandler(onBack = onCloseRequested)
     Scaffold { contentPadding ->
         Column(
@@ -503,6 +502,7 @@ private fun PhotoAnalysisTabs(
         ) {
             when {
                 captureVisible -> captureContent(closeCapture)
+
                 selectedTab == 0 -> HomeScreen(
                     model = shell.homeModel,
                     modifier = Modifier.statusBarsPadding(),
@@ -512,6 +512,7 @@ private fun PhotoAnalysisTabs(
                         shell.onCameraRequested()
                     },
                 )
+
                 else -> RewardsScreen(shell.rewardsModel, Modifier.statusBarsPadding())
             }
         }
