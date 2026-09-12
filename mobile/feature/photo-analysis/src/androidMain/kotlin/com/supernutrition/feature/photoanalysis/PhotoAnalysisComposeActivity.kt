@@ -296,49 +296,55 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
             val manualIngredientState by feature.manualIngredientStateFlow.collectAsState()
             val rewardsSnapshot by retainedState.rewardsFeature.snapshot.collectAsState()
             val openedProfileId = profileId
-            if (openedProfileId != null) {
-                ProfileScreen(
-                    profileId = openedProfileId,
-                    onCloseRequested = { profileId = null },
-                )
-            } else {
-                PhotoAnalysisTabs(
-                    shell = PhotoAnalysisTabShell(
-                        homeModel = HomeScreenModel(
-                            title = getString(R.string.home_title),
-                            greeting = getString(R.string.home_greeting),
-                            dailySummaryTitle = getString(R.string.home_summary_title),
-                            dailySummaryValue = getString(R.string.home_summary_value),
-                            dailySummaryDescription = getString(R.string.home_summary_description),
-                            emptyTitle = getString(R.string.home_empty_title),
-                            emptyDescription = getString(R.string.home_empty_description),
-                            addFoodLabel = getString(R.string.home_add_food),
-                        ),
-                        rewardsModel = RewardsPresenterModel.from(rewardsSnapshot, rewardsCopy),
-                        homeLabel = getString(R.string.capture_tab),
-                        rewardsLabel = getString(R.string.rewards_tab),
-                        cameraLabel = getString(R.string.capture_shutter),
-                        onCameraRequested = {
-                            host.handleAction(PhotoAnalysisPresenterAction.TakePhoto)
-                        },
-                    ),
-                    captureContent = { onCloseRequested ->
-                        PhotoAnalysisCaptureTab(
-                            state = PhotoAnalysisCaptureTabState(
-                                feature = feature,
-                                host = host,
-                                presentationCopy = presentationCopy,
-                                closeLabel = getString(R.string.capture_close),
-                                onCloseRequested = onCloseRequested,
-                                preview = preview,
-                                manualIngredientState = manualIngredientState,
-                                cameraPermissionGranted = cameraPermissionGranted,
-                                inlineCameraController = inlineCameraController,
-                                gridHintsEnabled = runtimeReady,
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .semantics { testTagsAsResourceId = true },
+            ) {
+                if (openedProfileId != null) {
+                    ProfileScreen(
+                        profileId = openedProfileId,
+                        onCloseRequested = { profileId = null },
+                    )
+                } else {
+                    PhotoAnalysisTabs(
+                        shell = PhotoAnalysisTabShell(
+                            homeModel = HomeScreenModel(
+                                title = getString(R.string.home_title),
+                                greeting = getString(R.string.home_greeting),
+                                dailySummaryTitle = getString(R.string.home_summary_title),
+                                dailySummaryValue = getString(R.string.home_summary_value),
+                                dailySummaryDescription = getString(R.string.home_summary_description),
+                                emptyTitle = getString(R.string.home_empty_title),
+                                emptyDescription = getString(R.string.home_empty_description),
+                                addFoodLabel = getString(R.string.home_add_food),
                             ),
-                        )
-                    },
-                )
+                            rewardsModel = RewardsPresenterModel.from(rewardsSnapshot, rewardsCopy),
+                            homeLabel = getString(R.string.capture_tab),
+                            rewardsLabel = getString(R.string.rewards_tab),
+                            cameraLabel = getString(R.string.capture_shutter),
+                            onCameraRequested = {
+                                host.handleAction(PhotoAnalysisPresenterAction.TakePhoto)
+                            },
+                        ),
+                        captureContent = { onCloseRequested ->
+                            PhotoAnalysisCaptureTab(
+                                state = PhotoAnalysisCaptureTabState(
+                                    feature = feature,
+                                    host = host,
+                                    presentationCopy = presentationCopy,
+                                    closeLabel = getString(R.string.capture_close),
+                                    onCloseRequested = onCloseRequested,
+                                    preview = preview,
+                                    manualIngredientState = manualIngredientState,
+                                    cameraPermissionGranted = cameraPermissionGranted,
+                                    inlineCameraController = inlineCameraController,
+                                    gridHintsEnabled = runtimeReady,
+                                ),
+                            )
+                        },
+                    )
+                }
             }
         }
     }
