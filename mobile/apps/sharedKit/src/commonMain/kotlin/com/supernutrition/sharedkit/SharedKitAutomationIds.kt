@@ -18,6 +18,8 @@ public object SharedKitAutomationIds {
         get() = UiAutomationIds.CAPTURE_CLOSE.value
     public val captureOpenSettings: String
         get() = UiAutomationIds.CAPTURE_OPEN_SETTINGS.value
+    public val captureScanAgain: String
+        get() = UiAutomationIds.CAPTURE_SCAN_AGAIN.value
     public val captureNative: String
         get() = UiAutomationIds.CAPTURE_NATIVE.value
     public val captureTab: String
