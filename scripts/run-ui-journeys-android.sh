@@ -166,6 +166,7 @@ if ((${#emulator_accel_args[@]} > 0)); then
   boot_wait_iterations="${SUPERNUTRITION_ANDROID_SOFTWARE_BOOT_WAIT_ITERATIONS:-180}"
 fi
 
+"$adb_bin" start-server >/dev/null
 "$emulator_bin" -avd "$avd_name" \
   -no-window \
   -no-audio \
@@ -179,7 +180,6 @@ cleanup() {
 }
 trap cleanup EXIT
 
-"$adb_bin" start-server >/dev/null
 device_serial=""
 for _ in $(seq 1 "$boot_wait_iterations"); do
   if ! kill -0 "$emulator_pid" 2>/dev/null; then
@@ -202,6 +202,25 @@ test -n "$device_serial" &&
   tail -n 80 "$temp_root/emulator.log" >&2 || true
   exit 1
 }
+
+service_wait_iterations="${SUPERNUTRITION_ANDROID_SERVICE_WAIT_ITERATIONS:-90}"
+services_ready=false
+for _ in $(seq 1 "$service_wait_iterations"); do
+  activity_service="$("$adb_bin" -s "$device_serial" shell service check activity 2>/dev/null || true)"
+  package_service="$("$adb_bin" -s "$device_serial" shell service check package 2>/dev/null || true)"
+  if [[ "$activity_service" == *"found"* && "$package_service" == *"found"* ]]; then
+    services_ready=true
+    break
+  fi
+  sleep 2
+done
+if test "$services_ready" != true; then
+  printf 'Android framework services did not become ready after boot\n' >&2
+  printf 'activity: %s\npackage: %s\n' "$activity_service" "$package_service" >&2
+  tail -n 80 "$temp_root/emulator.log" >&2 || true
+  exit 1
+fi
+printf 'Android framework services are ready: activity and package\n'
 
 export ANDROID_SERIAL="$device_serial"
 
