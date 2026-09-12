@@ -97,11 +97,18 @@ test -f "$ANDROID_AVD_HOME/$avd_name.ini" || {
   exit 1
 }
 
+emulator_accel_args=()
+if ! test -r /dev/kvm || ! test -w /dev/kvm; then
+  printf 'KVM is unavailable; running the Android emulator without VM acceleration\n' >&2
+  emulator_accel_args=(-no-accel)
+fi
+
 "$emulator_bin" -avd "$avd_name" \
   -no-window \
   -no-audio \
   -no-boot-anim \
   -no-snapshot \
+  "${emulator_accel_args[@]}" \
   -gpu swiftshader >"$temp_root/emulator.log" 2>&1 &
 emulator_pid=$!
 cleanup() {
