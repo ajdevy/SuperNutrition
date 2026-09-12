@@ -1,15 +1,22 @@
 package com.supernutrition.feature.photoanalysis
 
 import android.Manifest
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -18,8 +25,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -49,6 +60,7 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
     private var cameraPermissionGranted by mutableStateOf(false)
     private var permissionRationale: android.app.AlertDialog? = null
     private var wasBackgrounded = false
+    private var profileId by mutableStateOf<String?>(null)
 
     private val presentationCopy: PhotoAnalysisPresenterCopy by lazy {
         PhotoAnalysisPresenterCopy(
@@ -189,8 +201,19 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         }
         restoreFeatureSnapshot(savedInstanceState)
         observeRetainedPhotoLifecycle()
+        handleIntent(intent)
         renderContent()
         bindAnalysisRuntimeAsync()
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleIntent(intent)
+    }
+
+    private fun handleIntent(intent: Intent?) {
+        profileId = ProfileDeepLink.profileIdFrom(intent)
     }
 
     private fun restoreActivityState(savedInstanceState: Bundle?) {
@@ -270,43 +293,51 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
             val preview by retainedState.previewStore.preview.collectAsState()
             val manualIngredientState by feature.manualIngredientStateFlow.collectAsState()
             val rewardsSnapshot by retainedState.rewardsFeature.snapshot.collectAsState()
-            PhotoAnalysisTabs(
-                shell = PhotoAnalysisTabShell(
-                    homeModel = HomeScreenModel(
-                        title = getString(R.string.home_title),
-                        greeting = getString(R.string.home_greeting),
-                        dailySummaryTitle = getString(R.string.home_summary_title),
-                        dailySummaryValue = getString(R.string.home_summary_value),
-                        dailySummaryDescription = getString(R.string.home_summary_description),
-                        emptyTitle = getString(R.string.home_empty_title),
-                        emptyDescription = getString(R.string.home_empty_description),
-                        addFoodLabel = getString(R.string.home_add_food),
-                    ),
-                    rewardsModel = RewardsPresenterModel.from(rewardsSnapshot, rewardsCopy),
-                    homeLabel = getString(R.string.capture_tab),
-                    rewardsLabel = getString(R.string.rewards_tab),
-                    cameraLabel = getString(R.string.capture_shutter),
-                    onCameraRequested = {
-                        host.handleAction(PhotoAnalysisPresenterAction.TakePhoto)
-                    },
-                ),
-                captureContent = { onCloseRequested ->
-                    PhotoAnalysisCaptureTab(
-                        state = PhotoAnalysisCaptureTabState(
-                            feature = feature,
-                            host = host,
-                            presentationCopy = presentationCopy,
-                            closeLabel = getString(R.string.capture_close),
-                            onCloseRequested = onCloseRequested,
-                            preview = preview,
-                            manualIngredientState = manualIngredientState,
-                            cameraPermissionGranted = cameraPermissionGranted,
-                            inlineCameraController = inlineCameraController,
-                            gridHintsEnabled = runtimeReady,
+            val openedProfileId = profileId
+            if (openedProfileId != null) {
+                ProfileScreen(
+                    profileId = openedProfileId,
+                    onCloseRequested = { profileId = null },
+                )
+            } else {
+                PhotoAnalysisTabs(
+                    shell = PhotoAnalysisTabShell(
+                        homeModel = HomeScreenModel(
+                            title = getString(R.string.home_title),
+                            greeting = getString(R.string.home_greeting),
+                            dailySummaryTitle = getString(R.string.home_summary_title),
+                            dailySummaryValue = getString(R.string.home_summary_value),
+                            dailySummaryDescription = getString(R.string.home_summary_description),
+                            emptyTitle = getString(R.string.home_empty_title),
+                            emptyDescription = getString(R.string.home_empty_description),
+                            addFoodLabel = getString(R.string.home_add_food),
                         ),
-                    )
-                },
-            )
+                        rewardsModel = RewardsPresenterModel.from(rewardsSnapshot, rewardsCopy),
+                        homeLabel = getString(R.string.capture_tab),
+                        rewardsLabel = getString(R.string.rewards_tab),
+                        cameraLabel = getString(R.string.capture_shutter),
+                        onCameraRequested = {
+                            host.handleAction(PhotoAnalysisPresenterAction.TakePhoto)
+                        },
+                    ),
+                    captureContent = { onCloseRequested ->
+                        PhotoAnalysisCaptureTab(
+                            state = PhotoAnalysisCaptureTabState(
+                                feature = feature,
+                                host = host,
+                                presentationCopy = presentationCopy,
+                                closeLabel = getString(R.string.capture_close),
+                                onCloseRequested = onCloseRequested,
+                                preview = preview,
+                                manualIngredientState = manualIngredientState,
+                                cameraPermissionGranted = cameraPermissionGranted,
+                                inlineCameraController = inlineCameraController,
+                                gridHintsEnabled = runtimeReady,
+                            ),
+                        )
+                    },
+                )
+            }
         }
     }
 
@@ -381,6 +412,48 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
 }
 
 @Composable
+private fun ProfileScreen(
+    profileId: String,
+    onCloseRequested: () -> Unit,
+) {
+    BackHandler(onBack = onCloseRequested)
+    Scaffold { contentPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(contentPadding)
+                .statusBarsPadding()
+                .padding(horizontal = 20.dp, vertical = 16.dp)
+                .semantics { testTagsAsResourceId = true },
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Box(modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    text = stringResource(R.string.profile_title),
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .testTag(com.supernutrition.core.ui.UiAutomationIds.PROFILE_TITLE.value),
+                )
+                TextButton(
+                    onClick = onCloseRequested,
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .testTag(com.supernutrition.core.ui.UiAutomationIds.PROFILE_CLOSE.value),
+                ) {
+                    Text(text = stringResource(R.string.profile_close))
+                }
+            }
+            Text(text = stringResource(R.string.profile_opened_from_link))
+            Text(text = stringResource(R.string.profile_id_label))
+            Text(
+                text = profileId,
+                modifier = Modifier.testTag(com.supernutrition.core.ui.UiAutomationIds.PROFILE_ID.value),
+            )
+        }
+    }
+}
+
+@Composable
 private fun PhotoAnalysisTabs(
     shell: PhotoAnalysisTabShell,
     captureContent: @Composable (onCloseRequested: () -> Unit) -> Unit,
@@ -393,33 +466,36 @@ private fun PhotoAnalysisTabs(
         selectedTab = captureReturnTab
     }
     BackHandler(enabled = captureVisible, onBack = closeCapture)
-    Scaffold(bottomBar = {
-        if (!captureVisible) {
-            PhotoAnalysisMainBottomBar(
-                state = PhotoAnalysisMainBottomBarState(
-                    selectedTab = selectedTab,
-                    homeLabel = shell.homeLabel,
-                    rewardsLabel = shell.rewardsLabel,
-                    cameraLabel = shell.cameraLabel,
-                ),
-                actions = PhotoAnalysisMainBottomBarActions(
-                    onHomeSelected = {
-                        selectedTab = 0
-                        captureVisible = false
-                    },
-                    onRewardsSelected = {
-                        selectedTab = 1
-                        captureVisible = false
-                    },
-                    onCameraRequested = {
-                        captureReturnTab = selectedTab
-                        captureVisible = true
-                        shell.onCameraRequested()
-                    },
-                ),
-            )
-        }
-    }) { contentPadding ->
+    Scaffold(
+        modifier = Modifier.semantics { testTagsAsResourceId = true },
+        bottomBar = {
+            if (!captureVisible) {
+                PhotoAnalysisMainBottomBar(
+                    state = PhotoAnalysisMainBottomBarState(
+                        selectedTab = selectedTab,
+                        homeLabel = shell.homeLabel,
+                        rewardsLabel = shell.rewardsLabel,
+                        cameraLabel = shell.cameraLabel,
+                    ),
+                    actions = PhotoAnalysisMainBottomBarActions(
+                        onHomeSelected = {
+                            selectedTab = 0
+                            captureVisible = false
+                        },
+                        onRewardsSelected = {
+                            selectedTab = 1
+                            captureVisible = false
+                        },
+                        onCameraRequested = {
+                            captureReturnTab = selectedTab
+                            captureVisible = true
+                            shell.onCameraRequested()
+                        },
+                    ),
+                )
+            }
+        },
+    ) { contentPadding ->
         Box(
             modifier = Modifier
                 .padding(contentPadding)

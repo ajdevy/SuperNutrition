@@ -90,4 +90,8 @@
     <string name="reward_fermented_description">You included living or fermented products on three days.</string>
     <string name="reward_seven_days_title">Seven days recorded</string>
     <string name="reward_seven_days_description">You recorded food on each day of this seven-day window.</string>
+    <string name="profile_title">Profile</string>
+    <string name="profile_opened_from_link">Opened from a profile link</string>
+    <string name="profile_id_label">Profile ID</string>
+    <string name="profile_close">Close profile</string>
 </resources>
