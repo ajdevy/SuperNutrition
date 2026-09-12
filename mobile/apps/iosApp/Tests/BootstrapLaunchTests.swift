@@ -49,7 +49,8 @@ final class BootstrapLaunchTests: XCTestCase {
         app.tap()
 
         let recovery = app.buttons[SharedKitAutomationIds.shared.captureOpenSettings]
-        if recovery.waitForExistence(timeout: 5) {
+        let retry = app.buttons[SharedKitAutomationIds.shared.captureScanAgain]
+        if recovery.waitForExistence(timeout: 5) || retry.waitForExistence(timeout: 5) {
             XCTAssertTrue(app.descendants(matching: .any)[SharedKitAutomationIds.shared.photoAnalysisStatus].exists)
             return
         }
@@ -91,8 +92,20 @@ final class BootstrapLaunchTests: XCTestCase {
         shutter.tap()
 
         let recovery = app.buttons[SharedKitAutomationIds.shared.captureOpenSettings]
-        if recovery.waitForExistence(timeout: 5) {
+        let retry = app.buttons[SharedKitAutomationIds.shared.captureScanAgain]
+        if recovery.waitForExistence(timeout: 5) || retry.waitForExistence(timeout: 5) {
             XCTAssertTrue(app.descendants(matching: .any)[SharedKitAutomationIds.shared.photoAnalysisStatus].exists)
+
+            XCUIDevice.shared.press(.home)
+            app.activate()
+
+            XCTAssertTrue(app.descendants(matching: .any)[SharedKitAutomationIds.shared.photoAnalysisStatus]
+                .waitForExistence(timeout: 10))
+            XCTAssertTrue(
+                app.buttons[SharedKitAutomationIds.shared.captureOpenSettings].exists ||
+                    app.buttons[SharedKitAutomationIds.shared.captureScanAgain].exists,
+            )
+            return
         } else {
             XCTAssertTrue(nativeCameraControlIsVisible(in: app))
             XCTAssertTrue(dismissOrRecoverPresentedCamera(from: app))
@@ -104,7 +117,7 @@ final class BootstrapLaunchTests: XCTestCase {
         XCTAssertTrue(captureSurfaceIsReady(in: app, timeout: 10))
         XCTAssertTrue(app.buttons[SharedKitAutomationIds.shared.captureShutter].exists)
         XCTAssertTrue(app.buttons[SharedKitAutomationIds.shared.captureImport].exists)
-        if recovery.exists {
+        if recovery.exists || retry.exists {
             XCTAssertTrue(app.descendants(matching: .any)[SharedKitAutomationIds.shared.photoAnalysisStatus].exists)
         }
     }
