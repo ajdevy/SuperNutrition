@@ -2,6 +2,8 @@ import SwiftUI
 import SharedKit
 import UIKit
 
+typealias PhotoAnalysisNativeAction = SharedKitPhotoAnalysisNativeAction
+
 @main
 struct SuperNutritionUIAcceptanceApp: App {
     private let session: SharedKitPhotoAnalysisSession
