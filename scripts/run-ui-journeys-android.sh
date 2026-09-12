@@ -156,7 +156,7 @@ rm -f "$avd_config.bak"
 printf 'Android AVD userdata size: '
 grep '^disk\.dataPartition\.size=' "$avd_config"
 
-cpu_cores="${SUPERNUTRITION_ANDROID_CPU_CORES:-4}"
+cpu_cores="${SUPERNUTRITION_ANDROID_CPU_CORES:-2}"
 if grep -q '^hw\.cpu\.ncore=' "$avd_config"; then
   sed -i.bak "s/^hw\.cpu\.ncore=.*/hw.cpu.ncore=$cpu_cores/" "$avd_config"
 else
