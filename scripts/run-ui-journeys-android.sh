@@ -81,6 +81,14 @@ for cache_dir in "$sdk_root/.temp" "$sdk_root/.cache" "$ANDROID_USER_HOME/cache"
     find "$cache_dir" -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +
   fi
 done
+if test "${GITHUB_ACTIONS:-}" = "true"; then
+  for image_dir in "$sdk_root"/system-images/android-*; do
+    test -d "$image_dir" || continue
+    test "$image_dir" = "$sdk_root/system-images/android-36" && continue
+    rm -rf -- "$image_dir"
+  done
+fi
+df -h "$ANDROID_AVD_HOME" >&2 || true
 
 for executable in "$emulator_bin" "$adb_bin"; do
   test -x "$executable" || {
