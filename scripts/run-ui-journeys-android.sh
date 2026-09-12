@@ -244,6 +244,18 @@ if test "$services_ready" != true; then
 fi
 printf 'Android framework services are ready: activity and package\n'
 
+for animation_scale in window_animation_scale transition_animation_scale animator_duration_scale; do
+  "$adb_bin" -s "$device_serial" shell settings put global "$animation_scale" 0 || true
+done
+for background_package in \
+  com.google.android.apps.nexuslauncher \
+  com.google.android.googlequicksearchbox \
+  com.google.android.gms \
+  com.google.android.inputmethod.latin; do
+  "$adb_bin" -s "$device_serial" shell am force-stop "$background_package" || true
+done
+printf 'Android UI animations disabled and nonessential background packages stopped\n'
+
 export ANDROID_SERIAL="$device_serial"
 
 logcat_path="$temp_root/logcat.log"
