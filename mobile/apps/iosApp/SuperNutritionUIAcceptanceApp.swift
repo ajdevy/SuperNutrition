@@ -222,6 +222,9 @@ private struct PhotoAnalysisComposeHost: UIViewControllerRepresentable {
             onNativeAction: { action in
                 context.coordinator.handle(action: action)
             },
+            onCloseRequested: {
+                session.captureCancelled()
+            },
         )
         context.coordinator.hostViewController = controller
         return controller
