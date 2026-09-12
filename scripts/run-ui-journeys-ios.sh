@@ -91,7 +91,7 @@ result_bundle="$report_root/SuperNutritionUIAcceptance-${GITHUB_RUN_ID:-local}-$
 xcodebuild clean test -quiet \
   -project "$repo_root/mobile/apps/iosApp/SuperNutritionUIAcceptance.xcodeproj" \
   -scheme SuperNutritionUIAcceptance \
-  -destination "platform=iOS Simulator,id=$simulator_udid" \
+  -destination "platform=iOS Simulator,id=$simulator_udid,arch=$host_arch" \
   -derivedDataPath "$derived_data" \
   -resultBundlePath "$result_bundle" \
   SHARED_KIT_FRAMEWORK_DIR="$repo_root/mobile/apps/sharedKit/build/bin/$kotlin_target/debugFramework" \
