@@ -21,6 +21,10 @@ composeCompiler {
     )
 }
 
+compose.resources {
+    packageOfResClass = "com.supernutrition.feature.photoanalysis.resources"
+}
+
 val enableIosDeviceTarget = extra["supernutrition.enableIosDeviceTarget"] as Boolean
 val enableIntelX64 = extra["supernutrition.enableIntelX64"] as Boolean
 
@@ -30,6 +34,7 @@ kotlin {
         namespace = "com.supernutrition.feature.photoanalysis.ui"
         compileSdk = libs.versions.compileSdk.get().toInt()
         minSdk = libs.versions.minSdk.get().toInt()
+        androidResources.enable = true
     }
 
     sourceSets {
@@ -43,6 +48,7 @@ kotlin {
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
             implementation(libs.compose.ui)
+            implementation(libs.compose.resources)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))

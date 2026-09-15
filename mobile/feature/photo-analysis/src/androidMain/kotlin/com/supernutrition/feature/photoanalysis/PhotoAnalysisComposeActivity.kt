@@ -31,6 +31,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -188,6 +190,16 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        window.statusBarColor = android.graphics.Color.TRANSPARENT
+        window.navigationBarColor = android.graphics.Color.TRANSPARENT
+        WindowInsetsControllerCompat(window, window.decorView).apply {
+            isAppearanceLightStatusBars = false
+            isAppearanceLightNavigationBars = false
+        }
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            window.isNavigationBarContrastEnforced = false
+        }
         restoreActivityState(savedInstanceState)
         cameraPermissionGranted = checkSelfPermission(Manifest.permission.CAMERA) ==
             android.content.pm.PackageManager.PERMISSION_GRANTED
@@ -311,6 +323,37 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
                             emptyTitle = getString(R.string.home_empty_title),
                             emptyDescription = getString(R.string.home_empty_description),
                             addFoodLabel = getString(R.string.home_add_food),
+                            dateLabel = getString(R.string.home_date_label),
+                            careQuestion = getString(R.string.home_care_question),
+                            rhythmTitle = getString(R.string.home_rhythm_title),
+                            rhythmSubtitle = getString(R.string.home_rhythm_subtitle),
+                            rhythmBadgeLabel = getString(R.string.home_rhythm_badge),
+                            fiber = HomeMetricModel(
+                                label = getString(R.string.home_fiber_label),
+                                value = getString(R.string.home_fiber_value),
+                            ),
+                            water = HomeMetricModel(
+                                label = getString(R.string.home_water_label),
+                                value = getString(R.string.home_water_value),
+                            ),
+                            protein = HomeMetricModel(
+                                label = getString(R.string.home_protein_label),
+                                value = getString(R.string.home_protein_value),
+                            ),
+                            movement = HomeMetricModel(
+                                label = getString(R.string.home_movement_label),
+                                value = getString(R.string.home_movement_value),
+                            ),
+                            nextStepTitle = getString(R.string.home_next_step_title),
+                            nextStepDescription = getString(R.string.home_next_step_description),
+                            nextStepAction = getString(R.string.home_next_step_action),
+                            viewGoalsLabel = getString(R.string.home_view_goals),
+                            goalsTitle = getString(R.string.home_goals_title),
+                            goalsDescription = getString(R.string.home_goals_description),
+                            goalsDoneLabel = getString(R.string.home_goals_done),
+                            profileActionLabel = getString(R.string.home_profile_action),
+                            mascotDescription = getString(R.string.home_mascot_description),
+                            saladDescription = getString(R.string.home_salad_description),
                         ),
                         rewardsModel = RewardsPresenterModel.from(rewardsSnapshot, rewardsCopy),
                         homeLabel = getString(R.string.capture_tab),
@@ -319,6 +362,7 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
                         onCameraRequested = {
                             host.handleAction(PhotoAnalysisPresenterAction.TakePhoto)
                         },
+                        onProfileRequested = { profileId = "me" },
                     ),
                     captureContent = { onCloseRequested ->
                         PhotoAnalysisCaptureTab(
@@ -459,61 +503,56 @@ private fun PhotoAnalysisTabs(
     captureContent: @Composable (onCloseRequested: () -> Unit) -> Unit,
 ) {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
-    var captureVisible by rememberSaveable { mutableStateOf(true) }
+    var captureVisible by rememberSaveable { mutableStateOf(false) }
     var captureReturnTab by rememberSaveable { mutableIntStateOf(0) }
     val closeCapture: () -> Unit = {
         captureVisible = false
         selectedTab = captureReturnTab
     }
     BackHandler(enabled = captureVisible, onBack = closeCapture)
-    Scaffold(
-        modifier = Modifier.semantics { testTagsAsResourceId = true },
-        bottomBar = {
-            if (!captureVisible) {
-                PhotoAnalysisMainBottomBar(
-                    state = PhotoAnalysisMainBottomBarState(
-                        selectedTab = selectedTab,
-                        homeLabel = shell.homeLabel,
-                        rewardsLabel = shell.rewardsLabel,
-                        cameraLabel = shell.cameraLabel,
-                    ),
-                    actions = PhotoAnalysisMainBottomBarActions(
-                        onHomeSelected = {
-                            selectedTab = 0
-                            captureVisible = false
-                        },
-                        onRewardsSelected = {
-                            selectedTab = 1
-                            captureVisible = false
-                        },
-                        onCameraRequested = {
-                            captureReturnTab = selectedTab
-                            captureVisible = true
-                            shell.onCameraRequested()
-                        },
-                    ),
-                )
-            }
-        },
-    ) { contentPadding ->
-        Box(
-            modifier = Modifier
-                .padding(contentPadding)
-                .semantics { testTagsAsResourceId = true },
-        ) {
-            when {
-                captureVisible -> captureContent(closeCapture)
-                selectedTab == 0 -> HomeScreen(
-                    model = shell.homeModel,
-                    modifier = Modifier.statusBarsPadding(),
-                    onAddFoodRequested = {
-                        captureReturnTab = 0
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .semantics { testTagsAsResourceId = true },
+    ) {
+        when {
+            captureVisible -> captureContent(closeCapture)
+            selectedTab == 0 -> HomeScreen(
+                model = shell.homeModel,
+                onAddFoodRequested = {
+                    captureReturnTab = 0
+                    captureVisible = true
+                    shell.onCameraRequested()
+                },
+                onProfileRequested = shell.onProfileRequested,
+            )
+            else -> RewardsScreen(shell.rewardsModel, Modifier.statusBarsPadding())
+        }
+        if (!captureVisible) {
+            PhotoAnalysisMainBottomBar(
+                modifier = Modifier.align(Alignment.BottomCenter),
+                state = PhotoAnalysisMainBottomBarState(
+                    selectedTab = selectedTab,
+                    homeLabel = shell.homeLabel,
+                    rewardsLabel = shell.rewardsLabel,
+                    cameraLabel = shell.cameraLabel,
+                ),
+                actions = PhotoAnalysisMainBottomBarActions(
+                    onHomeSelected = {
+                        selectedTab = 0
+                        captureVisible = false
+                    },
+                    onRewardsSelected = {
+                        selectedTab = 1
+                        captureVisible = false
+                    },
+                    onCameraRequested = {
+                        captureReturnTab = selectedTab
                         captureVisible = true
                         shell.onCameraRequested()
                     },
-                )
-                else -> RewardsScreen(shell.rewardsModel, Modifier.statusBarsPadding())
-            }
+                ),
+            )
         }
     }
 }
@@ -525,6 +564,7 @@ private data class PhotoAnalysisTabShell(
     val rewardsLabel: String,
     val cameraLabel: String,
     val onCameraRequested: () -> Unit,
+    val onProfileRequested: () -> Unit,
 )
 
 @Composable
