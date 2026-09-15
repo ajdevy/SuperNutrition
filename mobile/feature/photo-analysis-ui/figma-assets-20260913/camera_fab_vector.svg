@@ -1,0 +1,10 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="FAB / Camera">
+<circle id="Disc" cx="25" cy="25" r="25" fill="#92A638"/>
+<g id="Icon / camera">
+<path id="Vector" d="M17.2727 19.4727C16.1727 19.4727 15.2727 20.3727 15.2727 21.4727V29.4727C15.2727 30.5727 16.1727 31.4727 17.2727 31.4727H31.2727C32.3727 31.4727 33.2727 30.5727 33.2727 29.4727V21.4727C33.2727 20.3727 32.3727 19.4727 31.2727 19.4727H28.6727L27.1727 17.0727H21.3727L19.8727 19.4727H17.2727Z" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_2" d="M24.2727 28.7727C26.0927 28.7727 27.5727 27.2927 27.5727 25.4727C27.5727 23.6527 26.0927 22.1727 24.2727 22.1727C22.4527 22.1727 20.9727 23.6527 20.9727 25.4727C20.9727 27.2927 22.4527 28.7727 24.2727 28.7727Z" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<circle id="Flash" cx="30.9659" cy="20.9623" r="0.875" fill="white"/>
+</g>
+</svg>

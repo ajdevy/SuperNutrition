@@ -30,7 +30,7 @@ public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
     private static final long SEMANTICS_TIMEOUT_MS = 15_000L;
 
     @Test
-    public void initialLaunchOpensCaptureSurface() throws RemoteException {
+    public void initialLaunchOpensHomeSurface() throws RemoteException {
         UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         device.wakeUp();
         device.waitForIdle();
@@ -43,12 +43,10 @@ public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
         InstrumentationRegistry.getInstrumentation().startActivitySync(launchIntent);
 
         device.waitForIdle();
-        assertSemantic(device, UiAutomationIds.INSTANCE.getPHOTO_ANALYSIS_TITLE().getValue(),
-                targetContext.getString(R.string.capture_title));
-        assertNotNull("missing initial capture close action semantic id",
-                waitForNode(device, UiAutomationIds.INSTANCE.getCAPTURE_CLOSE().getValue()));
-        assertNull("bottom tab bar must be hidden while initial capture is open",
-                device.findObject(By.res(UiAutomationIds.INSTANCE.getCAMERA_ACTION().getValue())));
+        assertSemantic(device, UiAutomationIds.INSTANCE.getHOME_TITLE().getValue(),
+                targetContext.getString(R.string.home_title));
+        assertNotNull("missing Home camera action semantic id",
+                waitForNode(device, UiAutomationIds.INSTANCE.getCAMERA_ACTION().getValue()));
     }
 
     @Test
@@ -87,7 +85,7 @@ public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
         launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         InstrumentationRegistry.getInstrumentation().startActivitySync(launchIntent);
 
-        closeInitialCapture(device);
+        ensureHomeSurface(device);
 
         UiObject2 rewardsTab = waitForNode(device, UiAutomationIds.INSTANCE.getREWARDS_TAB().getValue());
         assertNotNull("missing Rewards tab semantic id", rewardsTab);
@@ -117,7 +115,7 @@ public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
         launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         InstrumentationRegistry.getInstrumentation().startActivitySync(launchIntent);
 
-        closeInitialCapture(device);
+        ensureHomeSurface(device);
 
         UiObject2 cameraAction = waitForNode(device, UiAutomationIds.INSTANCE.getCAMERA_ACTION().getValue());
         assertNotNull("missing centered camera action semantic id", cameraAction);
@@ -152,7 +150,7 @@ public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
         launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         InstrumentationRegistry.getInstrumentation().startActivitySync(launchIntent);
 
-        closeInitialCapture(device);
+        ensureHomeSurface(device);
 
         UiObject2 cameraAction = waitForNode(device, UiAutomationIds.INSTANCE.getCAMERA_ACTION().getValue());
         assertNotNull("missing centered camera action semantic id", cameraAction);
@@ -181,7 +179,7 @@ public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
         launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         InstrumentationRegistry.getInstrumentation().startActivitySync(launchIntent);
 
-        closeInitialCapture(device);
+        ensureHomeSurface(device);
 
         UiObject2 addFood = waitForNode(device, UiAutomationIds.INSTANCE.getHOME_ADD_FOOD().getValue());
         assertNotNull("missing Home add-meal semantic id", addFood);
@@ -224,11 +222,8 @@ public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
         return null;
     }
 
-    private static void closeInitialCapture(UiDevice device) {
-        UiObject2 close = waitForNode(device, UiAutomationIds.INSTANCE.getCAPTURE_CLOSE().getValue());
-        assertNotNull("initial capture surface did not open", close);
-        close.click();
-        assertNotNull("Home surface did not open after closing initial capture",
+    private static void ensureHomeSurface(UiDevice device) {
+        assertNotNull("Home surface did not open on launch",
                 waitForNode(device, UiAutomationIds.INSTANCE.getHOME_TITLE().getValue()));
     }
 
@@ -236,6 +231,10 @@ public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
         String text = node.getText();
         if (text != null) {
             return text;
+        }
+        String contentDescription = node.getContentDescription();
+        if (contentDescription != null) {
+            return contentDescription;
         }
         List<UiObject2> children = node.getChildren();
         for (UiObject2 child : children) {

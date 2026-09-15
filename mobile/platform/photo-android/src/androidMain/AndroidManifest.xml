@@ -3,6 +3,7 @@
     <application>
         <activity
             android:name="com.supernutrition.platform.photoandroid.AndroidCameraCaptureActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
     </application>
 </manifest>

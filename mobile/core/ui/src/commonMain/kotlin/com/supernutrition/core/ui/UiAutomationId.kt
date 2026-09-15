@@ -68,12 +68,17 @@ object UiAutomationIds {
     val HOME_TAB = CAPTURE_TAB
     val REWARDS_TAB = UiAutomationId("rewards_tab")
     val CAMERA_ACTION = UiAutomationId("camera_action")
+    val BOTTOM_BAR_PILL = UiAutomationId("bottom_bar_pill")
     val HOME_TITLE = UiAutomationId("home_title")
     val HOME_GREETING = UiAutomationId("home_greeting")
     val HOME_SUMMARY = UiAutomationId("home_summary")
     val HOME_EMPTY_TITLE = UiAutomationId("home_empty_title")
     val HOME_EMPTY_DESCRIPTION = UiAutomationId("home_empty_description")
     val HOME_ADD_FOOD = UiAutomationId("home_add_food")
+    val HOME_SCREEN = UiAutomationId("home_screen")
+    val HOME_DATE = UiAutomationId("home_date")
+    val HOME_PROFILE = UiAutomationId("home_profile")
+    val HOME_VIEW_GOALS = UiAutomationId("home_view_goals")
     val REWARDS_TITLE = UiAutomationId("rewards_title")
     val REWARDS_LIST = UiAutomationId("rewards_list")
     val PROFILE_TITLE = UiAutomationId("profile_title")
@@ -132,12 +137,17 @@ object UiAutomationIds {
         CAPTURE_TAB,
         REWARDS_TAB,
         CAMERA_ACTION,
+        BOTTOM_BAR_PILL,
         HOME_TITLE,
         HOME_GREETING,
         HOME_SUMMARY,
         HOME_EMPTY_TITLE,
         HOME_EMPTY_DESCRIPTION,
         HOME_ADD_FOOD,
+        HOME_SCREEN,
+        HOME_DATE,
+        HOME_PROFILE,
+        HOME_VIEW_GOALS,
         REWARDS_TITLE,
         REWARDS_LIST,
         PROFILE_TITLE,
