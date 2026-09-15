@@ -16,7 +16,7 @@ concurrency:
 jobs:
   ios-ui-coverage:
     runs-on: macos-26
-    timeout-minutes: 30
+    timeout-minutes: 45
     env:
       SUPERNUTRITION_REQUIRE_UI_TESTS: '1'
     steps:

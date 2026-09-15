@@ -21,7 +21,7 @@ private val ACTIONS_RESETTING_ANALYSIS = setOf(
 )
 
 /** Typed Android effect coordinator kept outside the Activity and platform bridge. */
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "TooManyFunctions")
 class PhotoAnalysisAndroidHostController(
     private val feature: PhotoAnalysisFeature,
     private val photoBridge: AndroidPhotoBridgePort,

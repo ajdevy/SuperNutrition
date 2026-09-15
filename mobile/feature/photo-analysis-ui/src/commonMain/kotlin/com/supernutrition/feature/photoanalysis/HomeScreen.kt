@@ -23,7 +23,6 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -95,43 +94,6 @@ private fun frauncesFont() = FontFamily(Font(Res.font.fraunces))
 
 @Composable
 private fun nunitoFont() = FontFamily(Font(Res.font.nunito))
-
-@Immutable
-data class HomeMetricModel(
-    val label: String,
-    val value: String,
-)
-
-@Immutable
-data class HomeScreenModel(
-    val title: String,
-    val greeting: String,
-    val dailySummaryTitle: String,
-    val dailySummaryValue: String,
-    val dailySummaryDescription: String,
-    val emptyTitle: String,
-    val emptyDescription: String,
-    val addFoodLabel: String,
-    val dateLabel: String,
-    val careQuestion: String,
-    val rhythmTitle: String,
-    val rhythmSubtitle: String,
-    val rhythmBadgeLabel: String,
-    val fiber: HomeMetricModel,
-    val water: HomeMetricModel,
-    val protein: HomeMetricModel,
-    val movement: HomeMetricModel,
-    val nextStepTitle: String,
-    val nextStepDescription: String,
-    val nextStepAction: String,
-    val viewGoalsLabel: String,
-    val goalsTitle: String,
-    val goalsDescription: String,
-    val goalsDoneLabel: String,
-    val profileActionLabel: String,
-    val mascotDescription: String,
-    val saladDescription: String,
-)
 
 /** Native Compose rendering of Figma node 14:125 (Home / Main). */
 @Composable
