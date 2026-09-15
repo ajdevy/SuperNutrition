@@ -90,14 +90,16 @@ public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
         UiObject2 rewardsTab = waitForNode(device, UiAutomationIds.INSTANCE.getREWARDS_TAB().getValue());
         assertNotNull("missing Rewards tab semantic id", rewardsTab);
         rewardsTab.click();
-        assertTrue("Rewards tab must be selected after tapping it", rewardsTab.isSelected());
+        assertSelected(device, UiAutomationIds.INSTANCE.getREWARDS_TAB().getValue(),
+                "Rewards tab must be selected after tapping it");
         assertSemantic(device, UiAutomationIds.INSTANCE.getREWARDS_TITLE().getValue(),
                 targetContext.getString(R.string.rewards_title));
 
         UiObject2 homeTab = waitForNode(device, UiAutomationIds.INSTANCE.getHOME_TAB().getValue());
         assertNotNull("missing Home tab semantic id", homeTab);
         homeTab.click();
-        assertTrue("Home tab must be selected after tapping it", homeTab.isSelected());
+        assertSelected(device, UiAutomationIds.INSTANCE.getHOME_TAB().getValue(),
+                "Home tab must be selected after tapping it");
         assertSemantic(device, UiAutomationIds.INSTANCE.getHOME_TITLE().getValue(),
                 targetContext.getString(R.string.home_title));
     }
@@ -225,6 +227,24 @@ public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
     private static void ensureHomeSurface(UiDevice device) {
         assertNotNull("Home surface did not open on launch",
                 waitForNode(device, UiAutomationIds.INSTANCE.getHOME_TITLE().getValue()));
+    }
+
+    private static void assertSelected(UiDevice device, String id, String message) {
+        long deadline = SystemClock.uptimeMillis() + SEMANTICS_TIMEOUT_MS;
+        while (SystemClock.uptimeMillis() < deadline) {
+            UiObject2 node = device.findObject(By.res(id));
+            if (node != null) {
+                try {
+                    if (node.isSelected()) {
+                        return;
+                    }
+                } catch (StaleObjectException ignored) {
+                    // Compose may replace the semantics node during recomposition.
+                }
+            }
+            SystemClock.sleep(100L);
+        }
+        assertTrue(message, false);
     }
 
     private static String textFor(UiObject2 node) {

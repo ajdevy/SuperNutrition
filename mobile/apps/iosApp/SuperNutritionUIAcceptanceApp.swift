@@ -1,6 +1,5 @@
 import SwiftUI
 import SharedKit
-import UIKit
 
 @main
 struct SuperNutritionUIAcceptanceApp: App {

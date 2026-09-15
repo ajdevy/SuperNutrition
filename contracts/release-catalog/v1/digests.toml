@@ -256,7 +256,8 @@ path = "contracts/product-identity/v1"
 digest = "c1e90150c971712735eb3dee95d80d86d813530fdd32400452513304a71d2c66"
 algorithm = "release-sha256-v2"
 recorded_at_commit = "35a4693"
-status = "current"
+status = "superseded"
+superseded_by_commit = "pending"
 
 [[entry]]
 release_id = "inference-evidence/v2"
@@ -281,3 +282,12 @@ status = "current"
 note = """
 Published by main in Epic 7 (#37) and absent from the catalog until now. This
 branch records it; it does not author it."""
+
+[[entry]]
+release_id = "product-identity/v1"
+path = "contracts/product-identity/v1"
+digest = "dd8e242a83a32f3d088b81a6513e98a1d964206f557ffe6dfa0a20eb82a4e7bc"
+algorithm = "release-sha256-v2"
+recorded_at_commit = "9d340d90"
+status = "current"
+note = "Recomputed after main updated the product identity contract; the previous current row is retained as superseded history."

@@ -57,8 +57,29 @@ fi
 xcrun simctl boot "$simulator_udid" 2>/dev/null || true
 xcrun simctl bootstatus "$simulator_udid" -b
 
+host_arch="$(uname -m)"
+case "$host_arch" in
+  arm64)
+    kotlin_target="iosSimulatorArm64"
+    gradle_target="IosSimulatorArm64"
+    enable_intel_x64=false
+    ;;
+  x86_64)
+    kotlin_target="iosX64"
+    gradle_target="IosX64"
+    enable_intel_x64=true
+    ;;
+  *)
+    printf 'Unsupported macOS host architecture: %s\n' "$host_arch" >&2
+    exit 1
+    ;;
+esac
+
 "$repo_root/mobile/gradlew" -p "$repo_root/mobile" \
-  :apps:sharedKit:linkDebugFrameworkIosSimulatorArm64 \
+  ":apps:sharedKit:linkDebugFramework${gradle_target}" \
+  -Psupernutrition.enableIosDeviceTarget=true \
+  -Psupernutrition.enableTestingAppleTargets=true \
+  -Psupernutrition.enableIntelIosX64="$enable_intel_x64" \
   -Psupernutrition.enableSharedKitFramework=true \
   --dependency-verification=strict \
   --no-daemon \
@@ -70,10 +91,12 @@ result_bundle="$report_root/SuperNutritionUIAcceptance-${GITHUB_RUN_ID:-local}-$
 xcodebuild clean test -quiet \
   -project "$repo_root/mobile/apps/iosApp/SuperNutritionUIAcceptance.xcodeproj" \
   -scheme SuperNutritionUIAcceptance \
-  -destination "platform=iOS Simulator,id=$simulator_udid" \
+  -destination "platform=iOS Simulator,id=$simulator_udid,arch=$host_arch" \
   -derivedDataPath "$derived_data" \
   -resultBundlePath "$result_bundle" \
-  SHARED_KIT_FRAMEWORK_DIR="$repo_root/mobile/apps/sharedKit/build/bin/iosSimulatorArm64/debugFramework" \
+  SHARED_KIT_FRAMEWORK_DIR="$repo_root/mobile/apps/sharedKit/build/bin/$kotlin_target/debugFramework" \
+  ARCHS="$host_arch" \
+  ONLY_ACTIVE_ARCH=YES \
   CODE_SIGNING_ALLOWED=NO
 
 ios_app="$(find "$derived_data" -type d -path '*/Debug-iphonesimulator/SuperNutritionUIAcceptance.app' -print -quit)"

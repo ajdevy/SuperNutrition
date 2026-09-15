@@ -1,5 +1,6 @@
 import XCTest
 import SharedKit
+import AVFoundation
 
 final class BootstrapLaunchTests: XCTestCase {
     func testSharedKitBootstrapIsIdempotentAfterHostStartup() {
@@ -49,14 +50,19 @@ final class BootstrapLaunchTests: XCTestCase {
         app.tap()
 
         let recovery = app.buttons[SharedKitAutomationIds.shared.captureOpenSettings]
-        if recovery.waitForExistence(timeout: 5) {
+        let retry = app.buttons[SharedKitAutomationIds.shared.captureScanAgain]
+        if recovery.waitForExistence(timeout: 5) || retry.waitForExistence(timeout: 5) {
             XCTAssertTrue(app.descendants(matching: .any)[SharedKitAutomationIds.shared.photoAnalysisStatus].exists)
             return
         }
 
-        XCTAssertTrue(nativeCameraControlIsVisible(in: app))
-        XCTAssertTrue(dismissOrRecoverPresentedCamera(from: app))
-        XCTAssertTrue(app.buttons[SharedKitAutomationIds.shared.captureShutter].waitForExistence(timeout: 10))
+        if nativeCameraControlIsVisible(in: app) {
+            XCTAssertTrue(dismissOrRecoverPresentedCamera(from: app))
+            XCTAssertTrue(app.buttons[SharedKitAutomationIds.shared.captureShutter].waitForExistence(timeout: 10))
+        } else {
+            XCTAssertFalse(backCameraIsAvailable())
+            XCTAssertTrue(captureSurfaceIsReady(in: app, timeout: 10))
+        }
     }
 
     func testPhotoPickerOpensAndCanBeCancelled() {
@@ -91,11 +97,25 @@ final class BootstrapLaunchTests: XCTestCase {
         shutter.tap()
 
         let recovery = app.buttons[SharedKitAutomationIds.shared.captureOpenSettings]
-        if recovery.waitForExistence(timeout: 5) {
+        let retry = app.buttons[SharedKitAutomationIds.shared.captureScanAgain]
+        if recovery.waitForExistence(timeout: 5) || retry.waitForExistence(timeout: 5) {
             XCTAssertTrue(app.descendants(matching: .any)[SharedKitAutomationIds.shared.photoAnalysisStatus].exists)
-        } else {
-            XCTAssertTrue(nativeCameraControlIsVisible(in: app))
+
+            XCUIDevice.shared.press(.home)
+            app.activate()
+
+            XCTAssertTrue(app.descendants(matching: .any)[SharedKitAutomationIds.shared.photoAnalysisStatus]
+                .waitForExistence(timeout: 10))
+            XCTAssertTrue(
+                app.buttons[SharedKitAutomationIds.shared.captureOpenSettings].exists ||
+                    app.buttons[SharedKitAutomationIds.shared.captureScanAgain].exists,
+            )
+            return
+        } else if nativeCameraControlIsVisible(in: app) {
             XCTAssertTrue(dismissOrRecoverPresentedCamera(from: app))
+        } else {
+            XCTAssertFalse(backCameraIsAvailable())
+            XCTAssertTrue(captureSurfaceIsReady(in: app, timeout: 10))
         }
 
         XCUIDevice.shared.press(.home)
@@ -104,7 +124,7 @@ final class BootstrapLaunchTests: XCTestCase {
         XCTAssertTrue(captureSurfaceIsReady(in: app, timeout: 10))
         XCTAssertTrue(app.buttons[SharedKitAutomationIds.shared.captureShutter].exists)
         XCTAssertTrue(app.buttons[SharedKitAutomationIds.shared.captureImport].exists)
-        if recovery.exists {
+        if recovery.exists || retry.exists {
             XCTAssertTrue(app.descendants(matching: .any)[SharedKitAutomationIds.shared.photoAnalysisStatus].exists)
         }
     }
@@ -134,6 +154,10 @@ final class BootstrapLaunchTests: XCTestCase {
     private func nativeCameraControlIsVisible(in app: XCUIApplication) -> Bool {
         let capture = app.descendants(matching: .any)[SharedKitAutomationIds.shared.captureNative]
         return capture.waitForExistence(timeout: 10)
+    }
+
+    private func backCameraIsAvailable() -> Bool {
+        AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) != nil
     }
 
     private func captureSurfaceIsReady(in app: XCUIApplication, timeout: TimeInterval) -> Bool {

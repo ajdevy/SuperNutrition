@@ -48,6 +48,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /** Android composition root: lifecycle, result launchers, and feature wiring only. */
+@Suppress("TooManyFunctions")
 class PhotoAnalysisComposeActivity : ComponentActivity() {
     private val attemptId = AttemptId(AndroidPhotoAttemptIds.CAPTURE)
     private val retainedState: RetainedState by lazy {
@@ -239,9 +240,10 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
     }
 
     private fun bindAnalysisRuntimeAsync() {
-        val factory = (application as? PhotoAnalysisAndroidRuntimeProvider)?.photoAnalysisRuntimeFactory
+        val runtimeProvider = application as? PhotoAnalysisAndroidRuntimeProvider
             ?: return
-        lifecycleScope.launch(Dispatchers.Default) {
+        val factory = runtimeProvider.photoAnalysisRuntimeFactory
+        lifecycleScope.launch(runtimeProvider.photoAnalysisBackgroundDispatcher) {
             val binding = runCatching {
                 factory.create(
                     context = this@PhotoAnalysisComposeActivity,
@@ -306,81 +308,84 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
             val manualIngredientState by feature.manualIngredientStateFlow.collectAsState()
             val rewardsSnapshot by retainedState.rewardsFeature.snapshot.collectAsState()
             val openedProfileId = profileId
-            if (openedProfileId != null) {
-                ProfileScreen(
-                    profileId = openedProfileId,
-                    onCloseRequested = { profileId = null },
-                )
-            } else {
-                PhotoAnalysisTabs(
-                    shell = PhotoAnalysisTabShell(
-                        homeModel = HomeScreenModel(
-                            title = getString(R.string.home_title),
-                            greeting = getString(R.string.home_greeting),
-                            dailySummaryTitle = getString(R.string.home_summary_title),
-                            dailySummaryValue = getString(R.string.home_summary_value),
-                            dailySummaryDescription = getString(R.string.home_summary_description),
-                            emptyTitle = getString(R.string.home_empty_title),
-                            emptyDescription = getString(R.string.home_empty_description),
-                            addFoodLabel = getString(R.string.home_add_food),
-                            dateLabel = getString(R.string.home_date_label),
-                            careQuestion = getString(R.string.home_care_question),
-                            rhythmTitle = getString(R.string.home_rhythm_title),
-                            rhythmSubtitle = getString(R.string.home_rhythm_subtitle),
-                            rhythmBadgeLabel = getString(R.string.home_rhythm_badge),
-                            fiber = HomeMetricModel(
-                                label = getString(R.string.home_fiber_label),
-                                value = getString(R.string.home_fiber_value),
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .semantics { testTagsAsResourceId = true },
+            ) {
+                if (openedProfileId != null) {
+                    ProfileScreen(
+                        profileId = openedProfileId,
+                        onCloseRequested = { profileId = null },
+                    )
+                } else {
+                    PhotoAnalysisTabs(
+                        shell = PhotoAnalysisTabShell(
+                            homeModel = HomeScreenModel(
+                                title = getString(R.string.home_title),
+                                greeting = getString(R.string.home_greeting),
+                                dailySummaryTitle = getString(R.string.home_summary_title),
+                                dailySummaryValue = getString(R.string.home_summary_value),
+                                dailySummaryDescription = getString(R.string.home_summary_description),
+                                emptyTitle = getString(R.string.home_empty_title),
+                                emptyDescription = getString(R.string.home_empty_description),
+                                addFoodLabel = getString(R.string.home_add_food),
+                                dateLabel = getString(R.string.home_date_label),
+                                careQuestion = getString(R.string.home_care_question),
+                                rhythmTitle = getString(R.string.home_rhythm_title),
+                                rhythmSubtitle = getString(R.string.home_rhythm_subtitle),
+                                rhythmBadgeLabel = getString(R.string.home_rhythm_badge),
+                                fiber = HomeMetricModel(
+                                    label = getString(R.string.home_fiber_label),
+                                    value = getString(R.string.home_fiber_value),
+                                ),
+                                water = HomeMetricModel(
+                                    label = getString(R.string.home_water_label),
+                                    value = getString(R.string.home_water_value),
+                                ),
+                                protein = HomeMetricModel(
+                                    label = getString(R.string.home_protein_label),
+                                    value = getString(R.string.home_protein_value),
+                                ),
+                                movement = HomeMetricModel(
+                                    label = getString(R.string.home_movement_label),
+                                    value = getString(R.string.home_movement_value),
+                                ),
+                                nextStepTitle = getString(R.string.home_next_step_title),
+                                nextStepDescription = getString(R.string.home_next_step_description),
+                                nextStepAction = getString(R.string.home_next_step_action),
+                                viewGoalsLabel = getString(R.string.home_view_goals),
+                                goalsTitle = getString(R.string.home_goals_title),
+                                goalsDescription = getString(R.string.home_goals_description),
+                                goalsDoneLabel = getString(R.string.home_goals_done),
+                                profileActionLabel = getString(R.string.home_profile_action),
+                                mascotDescription = getString(R.string.home_mascot_description),
+                                saladDescription = getString(R.string.home_salad_description),
                             ),
-                            water = HomeMetricModel(
-                                label = getString(R.string.home_water_label),
-                                value = getString(R.string.home_water_value),
-                            ),
-                            protein = HomeMetricModel(
-                                label = getString(R.string.home_protein_label),
-                                value = getString(R.string.home_protein_value),
-                            ),
-                            movement = HomeMetricModel(
-                                label = getString(R.string.home_movement_label),
-                                value = getString(R.string.home_movement_value),
-                            ),
-                            nextStepTitle = getString(R.string.home_next_step_title),
-                            nextStepDescription = getString(R.string.home_next_step_description),
-                            nextStepAction = getString(R.string.home_next_step_action),
-                            viewGoalsLabel = getString(R.string.home_view_goals),
-                            goalsTitle = getString(R.string.home_goals_title),
-                            goalsDescription = getString(R.string.home_goals_description),
-                            goalsDoneLabel = getString(R.string.home_goals_done),
-                            profileActionLabel = getString(R.string.home_profile_action),
-                            mascotDescription = getString(R.string.home_mascot_description),
-                            saladDescription = getString(R.string.home_salad_description),
+                            rewardsModel = RewardsPresenterModel.from(rewardsSnapshot, rewardsCopy),
+                            homeLabel = getString(R.string.capture_tab),
+                            rewardsLabel = getString(R.string.rewards_tab),
+                            cameraLabel = getString(R.string.capture_shutter),
+                            onProfileRequested = { profileId = "me" },
                         ),
-                        rewardsModel = RewardsPresenterModel.from(rewardsSnapshot, rewardsCopy),
-                        homeLabel = getString(R.string.capture_tab),
-                        rewardsLabel = getString(R.string.rewards_tab),
-                        cameraLabel = getString(R.string.capture_shutter),
-                        onCameraRequested = {
-                            host.handleAction(PhotoAnalysisPresenterAction.TakePhoto)
+                        captureContent = { onCloseRequested ->
+                            PhotoAnalysisCaptureTab(
+                                state = PhotoAnalysisCaptureTabState(
+                                    feature = feature,
+                                    host = host,
+                                    presentationCopy = presentationCopy,
+                                    closeLabel = getString(R.string.capture_close),
+                                    onCloseRequested = onCloseRequested,
+                                    preview = preview,
+                                    manualIngredientState = manualIngredientState,
+                                    cameraPermissionGranted = cameraPermissionGranted,
+                                    inlineCameraController = inlineCameraController,
+                                    gridHintsEnabled = runtimeReady,
+                                ),
+                            )
                         },
-                        onProfileRequested = { profileId = "me" },
-                    ),
-                    captureContent = { onCloseRequested ->
-                        PhotoAnalysisCaptureTab(
-                            state = PhotoAnalysisCaptureTabState(
-                                feature = feature,
-                                host = host,
-                                presentationCopy = presentationCopy,
-                                closeLabel = getString(R.string.capture_close),
-                                onCloseRequested = onCloseRequested,
-                                preview = preview,
-                                manualIngredientState = manualIngredientState,
-                                cameraPermissionGranted = cameraPermissionGranted,
-                                inlineCameraController = inlineCameraController,
-                                gridHintsEnabled = runtimeReady,
-                            ),
-                        )
-                    },
-                )
+                    )
+                }
             }
         }
     }
@@ -519,11 +524,10 @@ private fun PhotoAnalysisTabs(
             captureVisible -> captureContent(closeCapture)
             selectedTab == 0 -> HomeScreen(
                 model = shell.homeModel,
-                onAddFoodRequested = {
-                    captureReturnTab = 0
-                    captureVisible = true
-                    shell.onCameraRequested()
-                },
+                        onAddFoodRequested = {
+                            captureReturnTab = 0
+                            captureVisible = true
+                        },
                 onProfileRequested = shell.onProfileRequested,
             )
             else -> RewardsScreen(shell.rewardsModel, Modifier.statusBarsPadding())
@@ -549,7 +553,6 @@ private fun PhotoAnalysisTabs(
                     onCameraRequested = {
                         captureReturnTab = selectedTab
                         captureVisible = true
-                        shell.onCameraRequested()
                     },
                 ),
             )
@@ -563,7 +566,6 @@ private data class PhotoAnalysisTabShell(
     val homeLabel: String,
     val rewardsLabel: String,
     val cameraLabel: String,
-    val onCameraRequested: () -> Unit,
     val onProfileRequested: () -> Unit,
 )
 
