@@ -92,5 +92,23 @@ class RewardsPresenterTest {
         readyLabel = readyLabel,
         progressTemplate = progressTemplate,
         cards = cards,
+        levelTitle = "Level 4 • Garden Guide",
+        levelSummary = "7 rewards earned · 320 pts to next",
+        earnedSectionTitle = "Earned",
+        earnedSeeAllLabel = "See all 7",
+        inProgressSectionTitle = "In progress",
+        backLabel = "Back",
+        visualCards = listOf(
+            RewardsVisualCardCopy(RewardId.FIBER_PRESENT, "Fiber Friend", "Fiber goal · 3 days"),
+            RewardsVisualCardCopy(RewardId.PROTEIN_ALL_DAY, "Protein Pal", "Protein · 5 meals"),
+            RewardsVisualCardCopy(RewardId.SEVEN_DAYS_RECORDED, "Rhythm Keeper", "7 days in a row"),
+            RewardsVisualCardCopy(RewardId.FATS_PRESENT, "Good Fats", "Fats goal · 3 days"),
+            RewardsVisualCardCopy(RewardId.FERMENTED_THREE_DAYS, "Culture Keeper", "Culture · 3 days"),
+            RewardsVisualCardCopy(RewardId.THIRTY_PRODUCTS, "Veggie Explorer", "30 different foods"),
+            RewardsVisualCardCopy(RewardId.COLORS_OF_DAY, "Rainbow Plate", "Colors goal · 5 colors"),
+            RewardsVisualCardCopy(RewardId.PROTEIN_ALL_DAY, "Protein Pro", "Protein goal · 5 meals"),
+            RewardsVisualCardCopy(RewardId.SEVEN_DAYS_RECORDED, "Rhythm Master", "Rhythm goal · 7 days"),
+            RewardsVisualCardCopy(RewardId.FIBER_PRESENT, "Fiber Legend", "Fiber goal · 3 days"),
+        ),
     )
 }

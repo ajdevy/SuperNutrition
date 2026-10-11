@@ -80,7 +80,13 @@ object UiAutomationIds {
     val HOME_DATE = UiAutomationId("home_date")
     val HOME_PROFILE = UiAutomationId("home_profile")
     val HOME_VIEW_GOALS = UiAutomationId("home_view_goals")
+    val REWARDS_SCREEN = UiAutomationId("rewards_screen")
     val REWARDS_TITLE = UiAutomationId("rewards_title")
+    val REWARDS_BACK = UiAutomationId("rewards_back")
+    val REWARDS_LEVEL_HERO = UiAutomationId("rewards_level_hero")
+    val REWARDS_EARNED_SECTION = UiAutomationId("rewards_earned_section")
+    val REWARDS_EARNED_LINK = UiAutomationId("rewards_earned_link")
+    val REWARDS_IN_PROGRESS_SECTION = UiAutomationId("rewards_in_progress_section")
     val REWARDS_LIST = UiAutomationId("rewards_list")
     val PROFILE_TITLE = UiAutomationId("profile_title")
     val PROFILE_ID = UiAutomationId("profile_id")
@@ -149,7 +155,13 @@ object UiAutomationIds {
         HOME_DATE,
         HOME_PROFILE,
         HOME_VIEW_GOALS,
+        REWARDS_SCREEN,
         REWARDS_TITLE,
+        REWARDS_BACK,
+        REWARDS_LEVEL_HERO,
+        REWARDS_EARNED_SECTION,
+        REWARDS_EARNED_LINK,
+        REWARDS_IN_PROGRESS_SECTION,
         REWARDS_LIST,
         PROFILE_TITLE,
         PROFILE_ID,
