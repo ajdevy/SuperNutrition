@@ -1,6 +1,7 @@
 package com.supernutrition.sharedkit
 
 import com.supernutrition.feature.photoanalysis.PhotoAnalysisNativeAction
+import com.supernutrition.feature.photoanalysis.PhotoAnalysisNativeCallbacks
 import com.supernutrition.feature.photoanalysis.PhotoAnalysisViewController
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.UIKit.UIViewController
@@ -11,12 +12,16 @@ public object SharedKitPhotoAnalysis {
         session: SharedKitPhotoAnalysisSession,
         onNativeAction: (SharedKitPhotoAnalysisNativeAction) -> Unit,
         onCloseRequested: () -> Unit,
+        onMealReviewCompleted: () -> Unit,
     ): UIViewController = PhotoAnalysisViewController(
         feature = session.feature,
         copy = session.presenterCopy,
         retainedPhoto = { session.retainedPhoto },
-        onNativeAction = { action -> onNativeAction(action.toSharedKitAction()) },
-        onCloseRequested = onCloseRequested,
+        callbacks = PhotoAnalysisNativeCallbacks(
+            onNativeAction = { action -> onNativeAction(action.toSharedKitAction()) },
+            onCloseRequested = onCloseRequested,
+            onMealReviewCompleted = onMealReviewCompleted,
+        ),
     )
 }
 

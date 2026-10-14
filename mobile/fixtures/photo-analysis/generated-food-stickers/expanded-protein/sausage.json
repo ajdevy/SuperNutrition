@@ -1,0 +1,43 @@
+{
+  "key": "sausage",
+  "generator": "built-in image_gen",
+  "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: SAUSAGE only: two plump cooked sausage links, browned natural casing, with one cut end exposing the fine textured pink-brown meat filling. No bread or garnish.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+  "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-00ab4a95-11c7-4a53-9125-45e8c96b4e30.png",
+  "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_sausage.png",
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_sausage.png",
+  "saved_at_utc": "2026-10-12T06:51:28.477027+00:00",
+  "transparent_background": true,
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "8282af9853f4126408b8ed6ad7afe73dc683495491c23cf2839ee08466b05e7e",
+  "bytes": 1365347,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 1054530,
+    "opaque_pixels": 669,
+    "partial_pixels": 517317,
+    "nontransparent_bounds": [
+      0,
+      19,
+      1222,
+      1254
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      95,
+      262,
+      1179,
+      991
+    ],
+    "pixels_alpha_1_to_10": 10084
+  },
+  "visually_inspected": true,
+  "visual_result": "Visually inspected: two browned sausage links, one cut end showing textured filling, realistic casing and thin white outline; all pieces visible."
+}

@@ -1,0 +1,1801 @@
+{
+  "version": 1,
+  "date": "2026-10-13",
+  "baseline_commit": "5ee5de077866feed70b418ee2760af24322b1d22",
+  "existing_food_identity_count": 47,
+  "new_food_identity_count": 105,
+  "total_food_identity_count": 152,
+  "runtime_png_count": 156,
+  "new_png_bytes": 156841550,
+  "generator": "built-in image_gen, one image per call",
+  "pixel_edits": "none; original PNG bytes copied unchanged",
+  "matching": "finite exact whole-label English/Russian aliases; unknown labels keep text",
+  "selection": "actual photo component IDs; asset availability never proposes a food",
+  "assets": [
+    {
+      "id": "apricot",
+      "resource": "food_sticker_apricot",
+      "sha256": "8d485fffea169a6366b9f03a4d6b685e41660732e962a1741a381ec7a5180511",
+      "bytes": 1614109,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/apricot.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_apricot.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_apricot.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "artichoke",
+      "resource": "food_sticker_artichoke",
+      "sha256": "15cc4bd70ea514c9904dede20b3fd1e58762adc716ffc7b1d586e0b607f76e0a",
+      "bytes": 1915966,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/artichoke.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_artichoke.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_artichoke.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "asparagus",
+      "resource": "food_sticker_asparagus",
+      "sha256": "87e102bd83c54e73a57bdcf0058698351ee68d7f23318b4319848bceb135d374",
+      "bytes": 1398886,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/asparagus.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_asparagus.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_asparagus.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "barley",
+      "resource": "food_sticker_barley",
+      "sha256": "1a4af04c1a30b89011633c30fc14481e9850d2dabde13ea5bf3f761700329dc7",
+      "bytes": 1741495,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/barley.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_barley.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_barley.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "beet",
+      "resource": "food_sticker_beet",
+      "sha256": "6fa3c1c56576ef730632742e36be408457646bbf7b628183074164a6030d09d1",
+      "bytes": 1844314,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/beet.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_beet.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_beet.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "blackberry",
+      "resource": "food_sticker_blackberry",
+      "sha256": "9bb7e583dc1ea8ec8d98fcacf8534b7e66ece18237fa2ef433db5d39f23ad5de",
+      "bytes": 1704714,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/blackberry.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_blackberry.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_blackberry.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "blackcurrant",
+      "resource": "food_sticker_blackcurrant",
+      "sha256": "c4c23a604b0b5c5fe931fe94b7cff3bba0336bbdee2eda537bdf2e1f31fe3b16",
+      "bytes": 1681783,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/blackcurrant.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_blackcurrant.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_blackcurrant.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "brussels_sprouts",
+      "resource": "food_sticker_brussels_sprouts",
+      "sha256": "509fa3d3eceb4f3f795247b88468bddbfc38a731fdc39b511907e1df635096ac",
+      "bytes": 1691218,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/brussels_sprouts.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_brussels_sprouts.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_brussels_sprouts.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "buckwheat",
+      "resource": "food_sticker_buckwheat",
+      "sha256": "e6a43873675947fc33edc95260df7092ff9302df473a8405c32d7f7deed129f6",
+      "bytes": 1547344,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/buckwheat.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_buckwheat.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_buckwheat.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "bulgur",
+      "resource": "food_sticker_bulgur",
+      "sha256": "b34e66816cee14c6abd50350b5b1410d49e9bd286a19d96c6472f30656dd665c",
+      "bytes": 1747414,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/bulgur.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_bulgur.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_bulgur.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "cabbage",
+      "resource": "food_sticker_cabbage",
+      "sha256": "7cd8aca907b5bfa8e75e0e374086e73436cc6cb4f51d95e5bbfa7eec8cf09299",
+      "bytes": 1641779,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/cabbage.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_cabbage.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_cabbage.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "celery",
+      "resource": "food_sticker_celery",
+      "sha256": "914879ce044f91267044f3bf9fe5fc4d136887958d4706f004b1e622dbe2f8be",
+      "bytes": 1379075,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/celery.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_celery.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_celery.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "cherry",
+      "resource": "food_sticker_cherry",
+      "sha256": "6f875386c86846bbd8d155e5c3df88329a511d3ab5ed701c3d053436957f62bb",
+      "bytes": 1527570,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/cherry.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_cherry.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_cherry.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "coconut",
+      "resource": "food_sticker_coconut",
+      "sha256": "7b633e92ff0f975495a1b74f24880deb215546918a0b151b1cfb5fd7330b3f9e",
+      "bytes": 1989616,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/coconut.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_coconut.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_coconut.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "corn",
+      "resource": "food_sticker_corn",
+      "sha256": "d33ba6a1c4192a1e56f3eb2ce390f2e5e3ca4d335114ddfb1af6a8379d131701",
+      "bytes": 1139436,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/corn.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_corn.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_corn.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "cornmeal",
+      "resource": "food_sticker_cornmeal",
+      "sha256": "ad0853abfe0bd322ae86f6f588e43cdd23ebae1661f8e833ecd7a9ce356a74f5",
+      "bytes": 1620907,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/cornmeal.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_cornmeal.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_cornmeal.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "couscous",
+      "resource": "food_sticker_couscous",
+      "sha256": "6a23d146797c8e5fe29fdc85ba9a7dbb2f6a1b19b2ff6960c53bf2d41239015a",
+      "bytes": 1364626,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/couscous.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_couscous.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_couscous.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "cranberry",
+      "resource": "food_sticker_cranberry",
+      "sha256": "4ff887aec8757e8634f4d07a595a0a808edf38699338cfaff68a6d22484d79e6",
+      "bytes": 1601171,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/cranberry.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_cranberry.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_cranberry.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "dates",
+      "resource": "food_sticker_dates",
+      "sha256": "dead0b9644a10773657c73cc8b12259f3089dab70ec784e0eee8277b21dfee17",
+      "bytes": 1717717,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/dates.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_dates.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_dates.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "eggplant",
+      "resource": "food_sticker_eggplant",
+      "sha256": "10a6b70d127b54ff4cc431f056b608397686315b53ca480283db91a9621c9973",
+      "bytes": 1239748,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/eggplant.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_eggplant.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_eggplant.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "fennel",
+      "resource": "food_sticker_fennel",
+      "sha256": "99e16f4894d725bfde06bff80e5adc0774ddbf9cfa20b6a5a297992199d2c066",
+      "bytes": 1448167,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/fennel.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_fennel.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_fennel.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "fig",
+      "resource": "food_sticker_fig",
+      "sha256": "6b1c9b4babc223e8d7590211a3c8cb1d9df5002a7df6176704502384931862a8",
+      "bytes": 2084474,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/fig.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_fig.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_fig.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "garlic",
+      "resource": "food_sticker_garlic",
+      "sha256": "c3c5137ad698fb1ff111c848b52a1f95a43857d48918dece55d0cc77181f1e60",
+      "bytes": 1431210,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/garlic.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_garlic.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_garlic.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "grapefruit",
+      "resource": "food_sticker_grapefruit",
+      "sha256": "d14c20f3bc13b358e8471596f440306867c6e35aa48b9bd0593a81c3035a806c",
+      "bytes": 1678633,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/grapefruit.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_grapefruit.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_grapefruit.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "green_beans",
+      "resource": "food_sticker_green_beans",
+      "sha256": "367970b54f625b89894409d487223fb60d51b944f917f19b89df96244ba8281d",
+      "bytes": 1209258,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/green_beans.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_green_beans.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_green_beans.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "green_bell_pepper",
+      "resource": "food_sticker_green_bell_pepper",
+      "sha256": "b8236561c8292f70d19b31b320fcacf7dccd2ca974bcda0927b271791dfca871",
+      "bytes": 1660010,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/green_bell_pepper.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_green_bell_pepper.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_green_bell_pepper.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "guava",
+      "resource": "food_sticker_guava",
+      "sha256": "d55f7b62a751c6121217c8deb94b5d524fb83ddf86c09d6bbb234d5b44767fa5",
+      "bytes": 1653403,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/guava.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_guava.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_guava.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "kale",
+      "resource": "food_sticker_kale",
+      "sha256": "111b67dbb698fd411ee806ef46af8fe460eb3c90f9d9ea0752678c47528af28d",
+      "bytes": 2142524,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/kale.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_kale.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_kale.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "leek",
+      "resource": "food_sticker_leek",
+      "sha256": "0a8dd80f0ae017460dcd88583d6cf7eff12009270e6f44c6550c083e79e26fea",
+      "bytes": 924572,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/leek.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_leek.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_leek.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "lettuce",
+      "resource": "food_sticker_lettuce",
+      "sha256": "45aeb8ed4549a055a3a1119414c9b0ae38ba121c9739fd2932b4ce5636b7d09c",
+      "bytes": 1786373,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/lettuce.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_lettuce.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_lettuce.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "lime",
+      "resource": "food_sticker_lime",
+      "sha256": "eb2f58c0957c4dbad87f51d44b1c81a33873fed7a48ebf510431c123f238e702",
+      "bytes": 1734221,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/lime.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_lime.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_lime.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "lychee",
+      "resource": "food_sticker_lychee",
+      "sha256": "332ba7ca40b150d6e516df11d00a0c2601518947bdb48dbe772bdf63baa790df",
+      "bytes": 1823107,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/lychee.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_lychee.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_lychee.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "mandarin",
+      "resource": "food_sticker_mandarin",
+      "sha256": "b993dd1f5a15b868980de8ab8f3dab6eb78ebe4359ed3535841b1f2e04cb9836",
+      "bytes": 1376135,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/mandarin.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_mandarin.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_mandarin.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "melon",
+      "resource": "food_sticker_melon",
+      "sha256": "6c81c0d063d68b1678c80474157fc47a9cb87292ce8e9fbce56b096f00fcbba1",
+      "bytes": 1897535,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/melon.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_melon.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_melon.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "millet",
+      "resource": "food_sticker_millet",
+      "sha256": "9f8208992ea3ed68c6afaa972a62286c7d812f3e99e071b5907f7ad421444d8b",
+      "bytes": 1358937,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/millet.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_millet.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_millet.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "nectarine",
+      "resource": "food_sticker_nectarine",
+      "sha256": "324bda04bf79161740cbcb9cd00fbf6ef8de69de384659d21883b070d52d40bd",
+      "bytes": 1676887,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/nectarine.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_nectarine.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_nectarine.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "papaya",
+      "resource": "food_sticker_papaya",
+      "sha256": "4a18f4a8b515aace66aeca657d5368f7815bb38b3fe4a160da15635bb7420f99",
+      "bytes": 1581162,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/papaya.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_papaya.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_papaya.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "passion_fruit",
+      "resource": "food_sticker_passion_fruit",
+      "sha256": "f67a3f9691e50360a468a00fe50a673dc3a8ee4a10ef4fe3b9767cd3ebdccb3b",
+      "bytes": 1865684,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/passion_fruit.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_passion_fruit.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_passion_fruit.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "peas",
+      "resource": "food_sticker_peas",
+      "sha256": "5ec42f6c5a77eec1fb031f0569080c31afe59cab596bead116d80b2709b50d81",
+      "bytes": 1143119,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/peas.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_peas.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_peas.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "persimmon",
+      "resource": "food_sticker_persimmon",
+      "sha256": "62854abfb5c9d3c82b9fb7ce2d6d54fe8324ae27293b58f44679023bd57b26aa",
+      "bytes": 1722068,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/persimmon.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_persimmon.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_persimmon.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "plum",
+      "resource": "food_sticker_plum",
+      "sha256": "354fbe08bda2f86f3af7dbde5ea19609d0d732cfc119f1d4c8b69059e3d241fa",
+      "bytes": 1922310,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/plum.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_plum.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_plum.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "pomegranate",
+      "resource": "food_sticker_pomegranate",
+      "sha256": "29aba16da4f887273ce28e91a081cc8b9b6fec99d711e4118f47cff5e388bd36",
+      "bytes": 1882147,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/pomegranate.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_pomegranate.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_pomegranate.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "pumpkin",
+      "resource": "food_sticker_pumpkin",
+      "sha256": "1154e63eb50df9431ebfbb2b6683e16c348cb679b498b908036ce93d57a9e391",
+      "bytes": 1614755,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/pumpkin.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_pumpkin.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_pumpkin.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "radish",
+      "resource": "food_sticker_radish",
+      "sha256": "05de9aad4f9d9fa92372e832ced75cb0e526ed73ec48ea62a44ff41cb98c0323",
+      "bytes": 1579487,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/radish.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_radish.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_radish.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "raspberry",
+      "resource": "food_sticker_raspberry",
+      "sha256": "372a1c49a4e5999f753155857d7daf0c6d99eeb74d3ce2a7d7e8898311e6555c",
+      "bytes": 1858724,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/raspberry.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_raspberry.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_raspberry.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "red_cabbage",
+      "resource": "food_sticker_red_cabbage",
+      "sha256": "70d717a2a8e4e8f71d34509568f2c40f3c15c9a49649156df7eb3a5c93e8938a",
+      "bytes": 2148960,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/red_cabbage.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_red_cabbage.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_red_cabbage.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "rye",
+      "resource": "food_sticker_rye",
+      "sha256": "e73cc146da08d96ab92bc34136980755f55d25c256b5264f1f4140af7df4633d",
+      "bytes": 1812025,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/rye.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_rye.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_rye.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "semolina",
+      "resource": "food_sticker_semolina",
+      "sha256": "8e6672ff90f6ec43ae13adb0228dd2aac8dd2a6fee1ec946288adfe4f5f90d60",
+      "bytes": 1546614,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/semolina.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_semolina.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_semolina.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "spinach",
+      "resource": "food_sticker_spinach",
+      "sha256": "ada6212de2bcbe07f91eed796d64173b7429d33c4e9c0fb82068a617d3855b40",
+      "bytes": 1716384,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/spinach.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_spinach.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_spinach.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "turnip",
+      "resource": "food_sticker_turnip",
+      "sha256": "b0e63f984c55a94a327f97a954f54203d9aaac1f388ad1ce2910f0e83c002ed5",
+      "bytes": 1379730,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/turnip.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_turnip.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_turnip.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "wheat",
+      "resource": "food_sticker_wheat",
+      "sha256": "db66f85f0f8d30e34ee5ee8ee8866be225427b0a79082b35ea46630014527fa2",
+      "bytes": 1585635,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/wheat.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_wheat.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_wheat.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "zucchini",
+      "resource": "food_sticker_zucchini",
+      "sha256": "344c9cfed34473868d02a93a17ced5fbe67c96bdd40d5834e6a2db6e3b592714",
+      "bytes": 1610699,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/zucchini.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_zucchini.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_zucchini.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "almond_milk",
+      "resource": "food_sticker_almond_milk",
+      "sha256": "66ed28ad81d27e8dbbad1767f4f03c8b410a2441ce79205c3beec37254541dee",
+      "bytes": 933974,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/almond_milk.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_almond_milk.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_almond_milk.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "bacon",
+      "resource": "food_sticker_bacon",
+      "sha256": "9f40ea26b29b5f969533200f34f1ddb6c5e066afe0f13a0b20ea728fea901871",
+      "bytes": 1789033,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/bacon.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_bacon.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_bacon.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "butter",
+      "resource": "food_sticker_butter",
+      "sha256": "c7a273110611dcc586e0e4e40d508e8fa4234bbb46a8b6acc5ac8a8ba33941f7",
+      "bytes": 1075939,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/butter.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_butter.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_butter.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "chia_seeds",
+      "resource": "food_sticker_chia_seeds",
+      "sha256": "5570407cf7d152a0321fdc24934d035477f6ab0ccf9f26ae700e7fcf29e990dd",
+      "bytes": 1355556,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/chia_seeds.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_chia_seeds.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_chia_seeds.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "chickpeas",
+      "resource": "food_sticker_chickpeas",
+      "sha256": "cf17e7190893cb3f3622ead3c626b9e4fe4a1738f9ad66abd8410f1225726e65",
+      "bytes": 1162503,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/chickpeas.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_chickpeas.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_chickpeas.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "coconut_milk",
+      "resource": "food_sticker_coconut_milk",
+      "sha256": "c1bfd4db1ed0275ac6e52c16c58ee637cec919e92662fe803cc8069e2f7a0bfd",
+      "bytes": 830595,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/coconut_milk.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_coconut_milk.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_coconut_milk.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "cod",
+      "resource": "food_sticker_cod",
+      "sha256": "327f60ae453e1b24b0f6775b83e33c46a710edc88ecdbd87a81467af03242233",
+      "bytes": 1012565,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/cod.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_cod.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_cod.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "cottage_cheese",
+      "resource": "food_sticker_cottage_cheese",
+      "sha256": "30f81fca747c9d2b92f5c47b3c7fff029e4aa8333df44106583bb2c2483b1cc8",
+      "bytes": 1129406,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/cottage_cheese.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_cottage_cheese.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_cottage_cheese.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "crab",
+      "resource": "food_sticker_crab",
+      "sha256": "2aa45b20dc58a3381732f746abfd2f96d12c871266e74e92d512f30bf87f4986",
+      "bytes": 1512799,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/crab.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_crab.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_crab.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "cream",
+      "resource": "food_sticker_cream",
+      "sha256": "fd431043886d64876fffcd685664a53360c41c78f8495b4a03cfd0ee569847ea",
+      "bytes": 944123,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/cream.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_cream.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_cream.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "cream_cheese",
+      "resource": "food_sticker_cream_cheese",
+      "sha256": "58503525da89a4102bdb43597c9f6a6ea6b5bc79fcc043ff80f69b8325ca4c8c",
+      "bytes": 1033284,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/cream_cheese.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_cream_cheese.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_cream_cheese.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "duck",
+      "resource": "food_sticker_duck",
+      "sha256": "01b27f772cabf252400ff48a9755813ff118bdcb8fa65b880f13bebf6d554090",
+      "bytes": 1937647,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/duck.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_duck.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_duck.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "feta",
+      "resource": "food_sticker_feta",
+      "sha256": "3f5ac786687f9a5a74386a5ba976e4d8a9f0b0b2538f1603e96c5930d0c404ba",
+      "bytes": 1203404,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/feta.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_feta.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_feta.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "flax_seeds",
+      "resource": "food_sticker_flax_seeds",
+      "sha256": "b8783d83bf846de459a25f89c1ca902f061e275e526a59a01bd09f2829b91fc2",
+      "bytes": 1343615,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/flax_seeds.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_flax_seeds.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_flax_seeds.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "ham",
+      "resource": "food_sticker_ham",
+      "sha256": "f221134634e74be64efaf56b5cac0562e4e1a5577a176cecffe21c964e3b8d13",
+      "bytes": 1415067,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/ham.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_ham.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_ham.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "herring",
+      "resource": "food_sticker_herring",
+      "sha256": "661d8e03f589bac7c7c2fe92726cce54235adae8e755f6d2b7871bf26ea1a3cb",
+      "bytes": 1244163,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/herring.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_herring.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_herring.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "hummus",
+      "resource": "food_sticker_hummus",
+      "sha256": "071269c3b8ab70354ee05c0063dccaa15687721bdfe2e727ca08da8b5fbbe3a1",
+      "bytes": 1359612,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/hummus.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_hummus.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_hummus.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "kefir",
+      "resource": "food_sticker_kefir",
+      "sha256": "10039cd18ac6c28bdfb9dca9d03996ae4245e78406a2d4372032da054135eb8d",
+      "bytes": 808840,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/kefir.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_kefir.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_kefir.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "lamb",
+      "resource": "food_sticker_lamb",
+      "sha256": "f75fdcd47a50f6e453d096dfdc3e674786855de4dabfd47e89cccaadcf6274ce",
+      "bytes": 1831607,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/lamb.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_lamb.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_lamb.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "liver",
+      "resource": "food_sticker_liver",
+      "sha256": "d02e698cc8f6cf9b397167ef288c72b97f088fb05f2af95f019896db6a746b7b",
+      "bytes": 1449625,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/liver.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_liver.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_liver.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "mackerel",
+      "resource": "food_sticker_mackerel",
+      "sha256": "a80dc88fba70d0a6c941dc1f85b46b481f796a61b8cc543e49be5c945a72f866",
+      "bytes": 911524,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/mackerel.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_mackerel.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_mackerel.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "mozzarella",
+      "resource": "food_sticker_mozzarella",
+      "sha256": "2db965d1284eb07b58f267471a9ac8439c30891cd7f34c170b2c8a9d0da50c41",
+      "bytes": 1188909,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/mozzarella.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_mozzarella.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_mozzarella.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "mussels",
+      "resource": "food_sticker_mussels",
+      "sha256": "8464d00f04fd0c6444163aeea69b4598eec1b3a0ab4621167e5c91560c863e2d",
+      "bytes": 1522346,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/mussels.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_mussels.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_mussels.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "oat_milk",
+      "resource": "food_sticker_oat_milk",
+      "sha256": "73a30e7e579df3c156e3d0765f3bb493f8d4936c7567d7ef2284f0847de28a24",
+      "bytes": 1009927,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/oat_milk.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_oat_milk.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_oat_milk.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "oysters",
+      "resource": "food_sticker_oysters",
+      "sha256": "0f071fd968abc561ba2a59a15a47641d83e474923e5738e4b06bbc0ddd24d63f",
+      "bytes": 1489457,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/oysters.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_oysters.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_oysters.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "parmesan",
+      "resource": "food_sticker_parmesan",
+      "sha256": "34e88a28a7886c8c72d4427c4ffa6bd433f80748800b343d6b06d0ee1664c3ca",
+      "bytes": 1408562,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/parmesan.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_parmesan.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_parmesan.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "peanut_butter",
+      "resource": "food_sticker_peanut_butter",
+      "sha256": "05bceee474174435628273a0e3551c8d6de46d8dd4a7d857dbd4fcab50541d4d",
+      "bytes": 1420229,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/peanut_butter.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_peanut_butter.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_peanut_butter.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "pollock",
+      "resource": "food_sticker_pollock",
+      "sha256": "581088f66cec57a9709e65f8a3767de43b3dd8f2bfb18fd7fa05ed4d153a0b63",
+      "bytes": 933468,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/pollock.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_pollock.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_pollock.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "pork",
+      "resource": "food_sticker_pork",
+      "sha256": "32030ce8c18c30eac6ae505d2900190e7549ec2fb4ec446a0ea9cc3b0127217a",
+      "bytes": 2091340,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/pork.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_pork.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_pork.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "pumpkin_seeds",
+      "resource": "food_sticker_pumpkin_seeds",
+      "sha256": "9c8a7623a76c5a48c4233ff6ddaf41c8d78e0ae62b8b420edb27a1c128dee1c8",
+      "bytes": 1494430,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/pumpkin_seeds.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_pumpkin_seeds.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_pumpkin_seeds.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "rabbit",
+      "resource": "food_sticker_rabbit",
+      "sha256": "ed294e04921dca84e2e1c41106950e9107336567d447ae075ac023e67b421c58",
+      "bytes": 1109128,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/rabbit.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_rabbit.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_rabbit.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "sardines",
+      "resource": "food_sticker_sardines",
+      "sha256": "ebe78efde803dfe215958019c067b77e2f9c9375be16b4f49cf84b6b153efce3",
+      "bytes": 1423884,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/sardines.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_sardines.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_sardines.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "sausage",
+      "resource": "food_sticker_sausage",
+      "sha256": "8282af9853f4126408b8ed6ad7afe73dc683495491c23cf2839ee08466b05e7e",
+      "bytes": 1365347,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/sausage.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_sausage.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_sausage.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "seitan",
+      "resource": "food_sticker_seitan",
+      "sha256": "49fb935cbe1f8d6f9a1c2c2b4133dcd303b6a188f485b96f46d2fe054d8f9049",
+      "bytes": 1869844,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/seitan.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_seitan.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_seitan.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "shrimp",
+      "resource": "food_sticker_shrimp",
+      "sha256": "fc28b1d2667e18544f1309457ab6e984aee532017b17671724cb1a689f8d3d0f",
+      "bytes": 1518161,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/shrimp.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_shrimp.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_shrimp.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "sour_cream",
+      "resource": "food_sticker_sour_cream",
+      "sha256": "2d6ca58d3c9fc27b3dfebe4bf413650129361d67576dfb2b246d9889e4036d7f",
+      "bytes": 1034143,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/sour_cream.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_sour_cream.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_sour_cream.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "soy_milk",
+      "resource": "food_sticker_soy_milk",
+      "sha256": "0eb49277f76c8c5783c70706289ad5a27a2ac3b48b156bd48737954a87c530ed",
+      "bytes": 824535,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/soy_milk.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_soy_milk.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_soy_milk.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "squid",
+      "resource": "food_sticker_squid",
+      "sha256": "a8f183c0911cf7794f889af8ac14fac600ad724c1088abaaa8f524670ce3177d",
+      "bytes": 1088056,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/squid.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_squid.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_squid.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "sunflower_seeds",
+      "resource": "food_sticker_sunflower_seeds",
+      "sha256": "f1718bc310593233372ae464539d75178121eed7d6b88076ae424a398d4ccadb",
+      "bytes": 1802776,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/sunflower_seeds.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_sunflower_seeds.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_sunflower_seeds.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "tempeh",
+      "resource": "food_sticker_tempeh",
+      "sha256": "2ec1bd13d5847fe29795dfded43dd1494f9130649e7d33d06812271a5b7f8ca6",
+      "bytes": 1302437,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/tempeh.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_tempeh.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_tempeh.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "tilapia",
+      "resource": "food_sticker_tilapia",
+      "sha256": "850e51ab1bd49ea600e3e090d1d45a3f4c7ed9d0a1d4329ea26f55d8c6c5d431",
+      "bytes": 1549134,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/tilapia.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_tilapia.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_tilapia.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "tofu",
+      "resource": "food_sticker_tofu",
+      "sha256": "497ae89c71645e209fde4c68103c5c2ff09f464056e0f40331a2f91857d70663",
+      "bytes": 1153383,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/tofu.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_tofu.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_tofu.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "trout",
+      "resource": "food_sticker_trout",
+      "sha256": "d79f345eeccc0515e8248971a0b3ac8bce0a946066784587207ac0087f26f089",
+      "bytes": 1074291,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/trout.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_trout.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_trout.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "tuna",
+      "resource": "food_sticker_tuna",
+      "sha256": "c9838c38839d332943d4f8c70fc85e82149f035cbe2a8f148fa7776c7d8e5319",
+      "bytes": 1760890,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/tuna.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_tuna.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_tuna.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "turkey",
+      "resource": "food_sticker_turkey",
+      "sha256": "5ec317bc9fd3436944afc6af57b7f04b2fadf69997adf8ab1d8c7bfaeab06bd7",
+      "bytes": 2114224,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/turkey.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_turkey.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_turkey.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "almonds",
+      "resource": "food_sticker_almonds",
+      "sha256": "7141d657c55029d1102f05a3f9d29b3db26a71e66ad0313eaccff09e1b1e1c4a",
+      "bytes": 1700761,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-staples/almonds.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-staples/food_sticker_almonds.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_almonds.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "brown_rice",
+      "resource": "food_sticker_brown_rice",
+      "sha256": "a6faa74f3f86967ceeb3fe9cdc03b12528113179db09983df2d5b42e7d3dc44b",
+      "bytes": 1683899,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-staples/brown_rice.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-staples/food_sticker_brown_rice.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_brown_rice.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "cashews",
+      "resource": "food_sticker_cashews",
+      "sha256": "486dd53bcb6e78172278f1b075e14011d6afe313d000c7d02bf8f7d835cd369e",
+      "bytes": 1378075,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-staples/cashews.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-staples/food_sticker_cashews.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_cashews.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "hazelnuts",
+      "resource": "food_sticker_hazelnuts",
+      "sha256": "00b275584f3aed7af015f8af1b87ef03904a28893e8bcb7d89f418589906cafb",
+      "bytes": 1442836,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-staples/hazelnuts.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-staples/food_sticker_hazelnuts.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_hazelnuts.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "olives",
+      "resource": "food_sticker_olives",
+      "sha256": "46f663ea1b03b96b67c98a6ffae13443ffdb8b2686336fa1a9b8d20f2b0da472",
+      "bytes": 1116759,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-staples/olives.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-staples/food_sticker_olives.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_olives.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "peanuts",
+      "resource": "food_sticker_peanuts",
+      "sha256": "a4c7bf73a8835b13bb7c63cab68b5be965b26381e69264283a508ca2ddab6792",
+      "bytes": 1408474,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-staples/peanuts.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-staples/food_sticker_peanuts.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_peanuts.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "pistachios",
+      "resource": "food_sticker_pistachios",
+      "sha256": "1e02f4981f5943732aea3f3cde18121dd0c887972884f0f3616f4c062f72d3ee",
+      "bytes": 1476688,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-staples/pistachios.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-staples/food_sticker_pistachios.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_pistachios.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "walnuts",
+      "resource": "food_sticker_walnuts",
+      "sha256": "d39e3de4ef6abbb943ccc53299cd1cff1fa47d23a8b612f5146c13578a0442c5",
+      "bytes": 1836439,
+      "source_metadata": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-staples/walnuts.json",
+      "source_png": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-staples/food_sticker_walnuts.png",
+      "resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_walnuts.png",
+      "visual_inspection": "passed",
+      "image_mode": "RGBA",
+      "width": 1254,
+      "height": 1254,
+      "alpha_range": [
+        0,
+        255
+      ]
+    }
+  ]
+}

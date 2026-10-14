@@ -10,3 +10,7 @@
   not close G-3: iOS energy evidence, tier/accuracy/rollback decisions, and
   owner signatures remain required.
 - Concrete local-runtime production wiring remains gated by G-3 and must not be invented in the adapter stories.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-home-rewards-spacing.md`
+  summary: Production iOS needs a separate Home/Rewards navigation integration before its acceptance-only Swift spacing can ship there.
+  evidence: SuperNutritionApp.swift already hosts only the photo-analysis controller; PhotoAnalysisHostSupport.swift contains the existing Home/Rewards surfaces in the UIAcceptance target. The frozen spacing scope preserves that architecture.

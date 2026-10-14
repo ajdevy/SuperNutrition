@@ -1,0 +1,43 @@
+{
+  "key": "walnuts",
+  "generator": "built-in image_gen",
+  "prompt": "Use case: product-mockup\nAsset type: one food-selection sticker for the Super Nutrition mobile app.\nPrimary request: WALNUTS only: three golden-tan shelled walnut halves with clearly recognizable wrinkled brain-like lobes, beside one cracked round walnut shell holding a walnut kernel. No other nut species.\nStyle/medium: crisp photorealistic food cutout with natural texture and gentle soft studio lighting, matching the existing mixed-nuts, rice and peeled-banana stickers with a thin clean white die-cut outline around the food silhouette.\nComposition/framing: one coherent centered three-quarter food cluster on a square transparent canvas, complete food and outline visible inside the central 78 percent. Keep clear transparent padding on every edge.\nConstraints: genuine transparent alpha background, no scene or cast shadow. No plate, bowl, board, table, utensils, packaging, unrelated ingredients, green backing, text, letters, badges, checkmarks, faces, watermark or UI.\n",
+  "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec2-311b-7691-96d6-9634b2fa56d6/exec-4d335e5c-8552-439f-a3e9-6be625504494.png",
+  "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-staples/food_sticker_walnuts.png",
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_walnuts.png",
+  "saved_at_utc": "2026-10-12T07:41:36.485015+00:00",
+  "transparent_background": true,
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "d39e3de4ef6abbb943ccc53299cd1cff1fa47d23a8b612f5146c13578a0442c5",
+  "bytes": 1836439,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 816991,
+    "opaque_pixels": 661,
+    "partial_pixels": 754864,
+    "nontransparent_bounds": [
+      0,
+      30,
+      1240,
+      1230
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      112,
+      187,
+      1171,
+      1106
+    ],
+    "pixels_alpha_1_to_10": 15603
+  },
+  "visually_inspected": true,
+  "visual_result": "Visually inspected: three shelled golden walnut halves with wrinkled brain-like lobes and one kernel in a cracked walnut shell; realistic texture, complete white outline, transparent background."
+}

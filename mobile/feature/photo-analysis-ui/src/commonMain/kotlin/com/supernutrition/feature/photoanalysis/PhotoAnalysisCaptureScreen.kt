@@ -58,6 +58,11 @@ data class PhotoAnalysisCaptureSurface(
     val manualIngredientUnresolved: List<String> = emptyList(),
     val onManualIngredientInputChanged: (String) -> Unit = {},
     val onManualIngredientAdded: () -> Unit = {},
+    val onMealReviewConfirmed: (PhotoAnalysisMealReviewConfirmation) -> Unit = {},
+    val mealReviewSelection: PhotoAnalysisMealReviewSelection? = null,
+    val onMealReviewSelectionChanged: (PhotoAnalysisMealReviewSelection) -> Unit = {},
+    /** Explicit diagnostic surface; ordinary capture uses the consumer design. */
+    val researchLayout: Boolean = false,
 )
 
 data class PhotoAnalysisCaptureAutomationIds(
@@ -97,6 +102,20 @@ fun PhotoAnalysisCaptureContent(
 /** Shared production Compose presenter surface used by Android and iOS hosts. */
 @Composable
 fun PhotoAnalysisCaptureScreen(
+    model: PhotoAnalysisPresenterModel,
+    onAction: (PhotoAnalysisPresenterAction) -> Unit,
+    surface: PhotoAnalysisCaptureSurface,
+    modifier: Modifier = Modifier,
+) {
+    if (surface.researchLayout) {
+        PhotoAnalysisResearchCaptureScreen(model, onAction, surface, modifier)
+    } else {
+        PhotoAnalysisCameraScreen(model, onAction, surface, modifier)
+    }
+}
+
+@Composable
+internal fun PhotoAnalysisResearchCaptureScreen(
     model: PhotoAnalysisPresenterModel,
     onAction: (PhotoAnalysisPresenterAction) -> Unit,
     surface: PhotoAnalysisCaptureSurface,

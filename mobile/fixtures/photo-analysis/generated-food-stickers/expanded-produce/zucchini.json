@@ -1,0 +1,33 @@
+{
+  "key": "zucchini",
+  "generator": "builtin image_gen.imagegen",
+  "transparent_background": true,
+  "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: one recognizable dark-green zucchini beside two clean cut round slices with pale cream interiors.\nStyle/medium: crisp photorealistic food product photograph with realistic texture and gentle white studio light. Match the existing app food stickers: natural colors, clean thin white die-cut outline tracing the complete food silhouette. Individual asset only, not a sheet.\nComposition/framing: one compact recognizable food group centered on a square transparent canvas. Entire subject visible with around 10% clear padding on every side; fills about 75-80% of the canvas. It must read clearly at a small mobile icon size. For elongated vegetables use a diagonal arrangement.\nConstraints: actual transparent alpha background, not checkerboard or solid background. Only the named food and its own natural stems/peel/leaves; no decorative herbs, other foods, table, plate, bowl, packaging, shadows beyond the silhouette, text, labels, logo, watermark, face, anthropomorphic features, checkmark, badge or UI. White outline follows only the silhouette; no colored backing. Preserve truthful characteristic shapes and colors.",
+  "generator_output_path": "/Users/anastasia/.codex/generated_images/01a12f29-e518-7d93-b918-a24d32930940/exec-c2174547-fc8c-4afa-a1c5-6985b5a8f79d.png",
+  "workspace_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_zucchini.png",
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_zucchini.png",
+  "sha256": "344c9cfed34473868d02a93a17ced5fbe67c96bdd40d5834e6a2db6e3b592714",
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "alpha_min": 0,
+  "alpha_max": 255,
+  "corner_alpha": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "alpha_bbox": [
+    81,
+    67,
+    1191,
+    1165
+  ],
+  "bytes": 1610699,
+  "saved_at_utc": "2026-10-13T05:53:17.039566+00:00",
+  "visual_inspection": {
+    "status": "passed",
+    "notes": "Recognizable dark-green zucchini and two pale cream circular cut slices; complete diagonal composition, realistic natural texture and thin white silhouette outline, no text or unrelated food."
+  }
+}

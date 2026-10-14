@@ -1,0 +1,33 @@
+{
+  "key": "bulgur",
+  "generator": "builtin image_gen.imagegen",
+  "transparent_background": true,
+  "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: a compact mound of coarse golden-brown cracked bulgur wheat pieces, no bowl.\nStyle/medium: crisp photorealistic food product photograph with realistic texture and gentle white studio light. Match the existing app food stickers: natural colors, clean thin white die-cut outline tracing the complete food silhouette. Individual asset only, not a sheet.\nComposition/framing: one compact recognizable food group centered on a square transparent canvas. Entire subject visible with around 10% clear padding on every side; fills about 75-80% of the canvas. It must read clearly at a small mobile icon size. For elongated vegetables use a diagonal arrangement.\nConstraints: actual transparent alpha background, not checkerboard or solid background. Only the named food and its own natural stems/peel/leaves; no decorative herbs, other foods, table, plate, bowl, packaging, shadows beyond the silhouette, text, labels, logo, watermark, face, anthropomorphic features, checkmark, badge or UI. White outline follows only the silhouette; no colored backing. Preserve truthful characteristic shapes and colors.",
+  "generator_output_path": "/Users/anastasia/.codex/generated_images/01a133c2-7301-7323-86ec-bca0e577d821/exec-b1e44464-5473-4c6d-8f1e-a2730ab7bfb6.png",
+  "workspace_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_bulgur.png",
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_bulgur.png",
+  "sha256": "b34e66816cee14c6abd50350b5b1410d49e9bd286a19d96c6472f30656dd665c",
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "alpha_min": 0,
+  "alpha_max": 255,
+  "corner_alpha": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "alpha_bbox": [
+    14,
+    20,
+    1239,
+    1254
+  ],
+  "bytes": 1747414,
+  "saved_at_utc": "2026-10-13T05:40:58.237304+00:00",
+  "visual_inspection": {
+    "status": "passed",
+    "notes": "Visually inspected generated output: irregular coarse golden cracked wheat pieces in a compact mound, thin white silhouette contour; complete subject, no bowl, text, other food or badge."
+  }
+}

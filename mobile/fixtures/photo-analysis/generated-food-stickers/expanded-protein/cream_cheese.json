@@ -1,0 +1,43 @@
+{
+  "key": "cream_cheese",
+  "generator": "built-in image_gen",
+  "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: CREAM CHEESE only: one soft ivory rectangular cream cheese block with gently rounded corners, fine smooth satin cut surface and a small thick creamy smear touching its front base. Recognizable soft spreadable dairy cheese, no crumbly pores, rind or holes. No tub, wrapper, plate, board, knife, bread, garnish or other food.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, peeled banana, milk and yogurt cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+  "generated_path": "/Users/anastasia/.codex/generated_images/01a12f44-bbe1-7482-8976-d12fdfa7fac8/exec-37a0bb5f-f3a1-4d2f-bdc9-c34921430bff.png",
+  "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_cream_cheese.png",
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_cream_cheese.png",
+  "saved_at_utc": "2026-10-12T09:04:44.646160+00:00",
+  "transparent_background": true,
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "58503525da89a4102bdb43597c9f6a6ea6b5bc79fcc043ff80f69b8325ca4c8c",
+  "bytes": 1033284,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 917231,
+    "opaque_pixels": 1404,
+    "partial_pixels": 653881,
+    "nontransparent_bounds": [
+      37,
+      35,
+      1204,
+      1254
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      85,
+      246,
+      1176,
+      1015
+    ],
+    "pixels_alpha_1_to_10": 7685
+  },
+  "visually_inspected": true,
+  "visual_result": "Visually inspected generated output: Soft satin ivory rectangular spreadable cheese with rounded corners and a thick attached creamy smear, no rind or crumbly pores, full cutout outline. Transparent background, no unrelated ingredients, text, badges or UI."
+}

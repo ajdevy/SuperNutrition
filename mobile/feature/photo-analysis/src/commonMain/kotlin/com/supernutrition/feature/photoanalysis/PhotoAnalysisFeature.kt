@@ -47,15 +47,74 @@ class PhotoAnalysisFeature(
     val manualIngredientStateFlow: StateFlow<PhotoAnalysisManualIngredientState> =
         _manualIngredientStateFlow.asStateFlow()
 
+    private val _confirmedMealReview = MutableStateFlow<PhotoAnalysisMealReviewConfirmation?>(null)
+    val confirmedMealReview: StateFlow<PhotoAnalysisMealReviewConfirmation?> = _confirmedMealReview.asStateFlow()
+
+    private val _mealReviewSelection = MutableStateFlow(PhotoAnalysisMealReviewSelection())
+    val mealReviewSelection: StateFlow<PhotoAnalysisMealReviewSelection> = _mealReviewSelection.asStateFlow()
+
     /** Lets host-owned background work continue against the retained domain state. */
     fun currentWorkState(): PhotoAnalysisState = reducer.currentWorkState()
 
     fun dispatch(event: PhotoAnalysisEvent) {
+        val previous = currentWorkState()
         reducer.dispatch(event)
         _state.value = reducer.state
-        if (event == PhotoAnalysisEvent.Cancel) {
+        if (previous != currentWorkState() && event.resetsMealReview()) {
             _manualIngredientStateFlow.value = PhotoAnalysisManualIngredientState()
+            _confirmedMealReview.value = null
+            _mealReviewSelection.value = PhotoAnalysisMealReviewSelection()
+        } else if (previous != currentWorkState() && event is PhotoAnalysisEvent.GridCellSelected) {
+            _confirmedMealReview.value = null
+            _mealReviewSelection.value = _mealReviewSelection.value.withoutPhotoEvidence()
         }
+    }
+
+    /** Stores UI choices against the retained review, including while its renderer is backgrounded. */
+    fun updateMealReviewSelection(selection: PhotoAnalysisMealReviewSelection): Boolean {
+        val draft = when (val current = currentWorkState()) {
+            is PhotoAnalysisState.CandidateReview -> current.draft
+            is PhotoAnalysisState.Ready -> null
+            else -> return false
+        }
+        if (selection.customMeal && selection.dishId != null) return false
+        val validDishIds = draft?.mainDishProposals.orEmpty().map { it.candidateId }
+        if (selection.dishId != null && selection.dishId !in validDishIds) return false
+        val validComponentIds = draft?.photoEvidence.orEmpty().map { it.componentId }
+        if (selection.componentIds.any { it !in validComponentIds }) return false
+        _mealReviewSelection.value = selection.copy(
+            componentIds = selection.componentIds.toSet(),
+            pantryIds = selection.pantryIds.toSet(),
+        )
+        return true
+    }
+
+    /** Retains the user's reviewed draft for this session, without inventing nutrition or catalog matches. */
+    fun confirmMealReview(confirmation: PhotoAnalysisMealReviewConfirmation): Boolean {
+        val draft = when (val current = currentWorkState()) {
+            is PhotoAnalysisState.CandidateReview -> current.draft
+            is PhotoAnalysisState.Ready -> null
+            else -> return false
+        }
+        val dish = confirmation.dishCandidateId?.let { id ->
+            draft?.mainDishProposals?.firstOrNull { it.candidateId == id } ?: return false
+        }
+        val validComponentIds = draft?.photoEvidence.orEmpty().map { it.componentId }
+        if (confirmation.photoEvidenceComponentIds.any { it !in validComponentIds }) return false
+        val added = confirmation.addedIngredientLabels.map(String::trim).filter(String::isNotEmpty).distinct()
+        val note = confirmation.note.trim()
+        val hasUserContent =
+            confirmation.photoEvidenceComponentIds.isNotEmpty() || added.isNotEmpty() || note.isNotEmpty()
+        if (dish == null && !hasUserContent) {
+            return false
+        }
+        _confirmedMealReview.value = confirmation.copy(
+            dishLabel = dish?.label ?: confirmation.dishLabel,
+            photoEvidenceComponentIds = validComponentIds.filter { it in confirmation.photoEvidenceComponentIds },
+            addedIngredientLabels = added,
+            note = note,
+        )
+        return true
     }
 
     fun updateManualIngredientQuery(query: String) {
@@ -85,4 +144,14 @@ class PhotoAnalysisFeature(
     fun startRouteAttempt(context: RouteAttemptContext): RouteAttemptToken = reducer.startRouteAttempt(context)
 
     fun acceptRouteDecision(decision: RouteDecision): Boolean = reducer.acceptRouteDecision(decision)
+}
+
+private fun PhotoAnalysisEvent.resetsMealReview(): Boolean = when (this) {
+    PhotoAnalysisEvent.Cancel,
+    PhotoAnalysisEvent.ScanAgain,
+    is PhotoAnalysisEvent.PhotoCaptured,
+    is PhotoAnalysisEvent.ReplacePhoto,
+    -> true
+
+    else -> false
 }

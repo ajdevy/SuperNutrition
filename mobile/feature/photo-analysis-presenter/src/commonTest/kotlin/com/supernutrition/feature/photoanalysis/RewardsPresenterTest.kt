@@ -19,6 +19,20 @@ class RewardsPresenterTest {
         assertEquals("Added to your rewards", model.cards.first().stateLabel)
         assertEquals("2 of 2", model.cards.first().progressLabel)
         assertEquals("Ready when you are", model.cards[1].stateLabel)
+        assertEquals("1 of 7", model.earnedSummary)
+        assertEquals("Added to your rewards", model.earnedSummaryLabel)
+    }
+
+    @Test
+    fun `earned summary follows actual snapshot state and localized copy`() {
+        val localizedCopy = copy(progressTemplate = "{current} из {target}", earnedLabel = "Твои награды")
+        listOf(false to "0 из 7", true to "7 из 7").forEach { (earned, expected) ->
+            val snapshot = snapshot().copy(cards = snapshot().cards.map { it.copy(isEarned = earned) })
+            val model = RewardsPresenterModel.from(snapshot, localizedCopy)
+
+            assertEquals(expected, model.earnedSummary)
+            assertEquals("Твои награды", model.earnedSummaryLabel)
+        }
     }
 
     @Test

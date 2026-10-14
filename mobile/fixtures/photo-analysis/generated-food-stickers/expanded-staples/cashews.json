@@ -1,0 +1,43 @@
+{
+  "key": "cashews",
+  "generator": "built-in image_gen",
+  "prompt": "Use case: product-mockup\nAsset type: one food-selection sticker for the Super Nutrition mobile app.\nPrimary request: CASHEWS only: a small overlapping cluster of five cream-colored shelled cashew nuts with clearly recognizable plump curved C-shaped silhouettes and fine natural nut texture. No other nut species and no shells.\nStyle/medium: crisp photorealistic food cutout with natural texture and gentle soft studio lighting, matching the existing mixed-nuts, rice and peeled-banana stickers with a thin clean white die-cut outline around the food silhouette.\nComposition/framing: one coherent centered three-quarter food cluster on a square transparent canvas, complete food and outline visible inside the central 78 percent. Keep clear transparent padding on every edge.\nConstraints: genuine transparent alpha background, no scene or cast shadow. No plate, bowl, board, table, utensils, packaging, unrelated ingredients, green backing, text, letters, badges, checkmarks, faces, watermark or UI.\n",
+  "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec2-311b-7691-96d6-9634b2fa56d6/exec-3b7cfd94-8ae7-40fe-ba91-70ea7d53120f.png",
+  "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-staples/food_sticker_cashews.png",
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_cashews.png",
+  "saved_at_utc": "2026-10-12T07:55:03.096938+00:00",
+  "transparent_background": true,
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "486dd53bcb6e78172278f1b075e14011d6afe313d000c7d02bf8f7d835cd369e",
+  "bytes": 1378075,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 899438,
+    "opaque_pixels": 1216,
+    "partial_pixels": 671862,
+    "nontransparent_bounds": [
+      0,
+      41,
+      1214,
+      1158
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      98,
+      147,
+      1157,
+      1090
+    ],
+    "pixels_alpha_1_to_10": 11889
+  },
+  "visually_inspected": true,
+  "visual_result": "Visually inspected: five cream-colored shelled cashews with distinct plump curved C-shaped silhouettes, natural fine nut texture, full thin white outline and no other nut species."
+}

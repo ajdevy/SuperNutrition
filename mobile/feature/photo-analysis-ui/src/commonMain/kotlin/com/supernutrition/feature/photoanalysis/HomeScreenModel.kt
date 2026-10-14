@@ -3,10 +3,7 @@ package com.supernutrition.feature.photoanalysis
 import androidx.compose.runtime.Immutable
 
 @Immutable
-data class HomeMetricModel(
-    val label: String,
-    val value: String,
-)
+data class HomeMetricModel(val label: String, val value: String)
 
 @Immutable
 data class HomeScreenModel(

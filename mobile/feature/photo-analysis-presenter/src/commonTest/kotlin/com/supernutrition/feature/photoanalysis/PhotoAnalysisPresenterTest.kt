@@ -122,4 +122,14 @@ class PhotoAnalysisPresenterTest {
             PhotoAnalysisPresenterAction.SelectGridCell(9)
         }
     }
+
+    @Test
+    fun `host pantry copy rejects blank ingredient labels`() {
+        val copy = PhotoAnalysisPresenterCopyFixtures.localized()
+        val localized = copy.copy(review = copy.review.copy(pantryIngredientLabels = mapOf("carrot" to "Carota")))
+        assertEquals("Carota", localized.review.pantryIngredientLabels["carrot"])
+        assertFailsWith<IllegalArgumentException> {
+            copy.copy(review = copy.review.copy(pantryIngredientLabels = mapOf("carrot" to " ")))
+        }
+    }
 }

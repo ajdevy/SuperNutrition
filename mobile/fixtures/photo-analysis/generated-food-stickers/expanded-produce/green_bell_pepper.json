@@ -1,0 +1,33 @@
+{
+  "key": "green_bell_pepper",
+  "generator": "builtin image_gen.imagegen",
+  "transparent_background": true,
+  "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: one recognizable glossy green bell pepper with a short curved green stem beside one cut half showing hollow flesh and pale seed core.\nStyle/medium: crisp photorealistic food product photograph with realistic texture and gentle white studio light. Match the existing app food stickers: natural colors, clean thin white die-cut outline tracing the complete food silhouette. Individual asset only, not a sheet.\nComposition/framing: one compact recognizable food group centered on a square transparent canvas. Entire subject visible with around 10% clear padding on every side; fills about 75-80% of the canvas. It must read clearly at a small mobile icon size. For elongated vegetables use a diagonal arrangement.\nConstraints: actual transparent alpha background, not checkerboard or solid background. Only the named food and its own natural stems/peel/leaves; no decorative herbs, other foods, table, plate, bowl, packaging, shadows beyond the silhouette, text, labels, logo, watermark, face, anthropomorphic features, checkmark, badge or UI. White outline follows only the silhouette; no colored backing. Preserve truthful characteristic shapes and colors.",
+  "generator_output_path": "/Users/anastasia/.codex/generated_images/01a133c1-e7f5-7611-89d9-bc6f9b6afb35/exec-3e6af706-2a8f-4a9a-b945-f12aafe9a3b5.png",
+  "workspace_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_green_bell_pepper.png",
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_green_bell_pepper.png",
+  "sha256": "b8236561c8292f70d19b31b320fcacf7dccd2ca974bcda0927b271791dfca871",
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "alpha_min": 0,
+  "alpha_max": 255,
+  "corner_alpha": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "alpha_bbox": [
+    0,
+    67,
+    1206,
+    1184
+  ],
+  "bytes": 1660010,
+  "saved_at_utc": "2026-10-13T05:42:35.009015+00:00",
+  "visual_inspection": {
+    "status": "passed",
+    "notes": "Recognizable glossy whole green bell pepper and cut half exposing hollow flesh and seed core; realistic texture, complete compact subject and thin white sticker outline; no text or additional objects."
+  }
+}

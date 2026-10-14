@@ -1,0 +1,43 @@
+{
+  "key": "mushroom",
+  "generator": "built-in image_gen",
+  "generated_path": "/Users/anastasia/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-35b65df0-d837-4649-bd99-32caf7618289.png",
+  "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_mushroom.png",
+  "intended_resource_name": "food_sticker_mushroom.png",
+  "prompt_file": "broad-library-prompts.json",
+  "saved_at_utc": "2026-10-12T05:02:31.807118+00:00",
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "52354e8e6e1a0ed9a395028f597051d87061aa72df891a5fc433e15c51f3a193",
+  "bytes": 1513717,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 802569,
+    "opaque_pixels": 1014,
+    "partial_pixels": 768933,
+    "nontransparent_bounds": [
+      0,
+      81,
+      1240,
+      1139
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      54,
+      135,
+      1206,
+      1129
+    ],
+    "pixels_alpha_1_to_10": 14663
+  },
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_mushroom.png",
+  "visually_inspected": true,
+  "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+}

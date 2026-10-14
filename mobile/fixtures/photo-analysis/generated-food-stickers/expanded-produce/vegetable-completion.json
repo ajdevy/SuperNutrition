@@ -1,0 +1,385 @@
+{
+  "schema_version": 1,
+  "scope": "Eleven delegated additional vegetable food-selection stickers",
+  "generator": "builtin image_gen.imagegen",
+  "prompt_set_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/prompts.json",
+  "completed_at_utc": "2026-10-13T05:53:34.075779+00:00",
+  "asset_count": 11,
+  "missing_keys": [],
+  "assets": [
+    {
+      "key": "asparagus",
+      "generator": "builtin image_gen.imagegen",
+      "transparent_background": true,
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: a compact group of four fresh green asparagus spears with distinct tightly packed pointed tips and natural cut bases.\nStyle/medium: crisp photorealistic food product photograph with realistic texture and gentle white studio light. Match the existing app food stickers: natural colors, clean thin white die-cut outline tracing the complete food silhouette. Individual asset only, not a sheet.\nComposition/framing: one compact recognizable food group centered on a square transparent canvas. Entire subject visible with around 10% clear padding on every side; fills about 75-80% of the canvas. It must read clearly at a small mobile icon size. For elongated vegetables use a diagonal arrangement.\nConstraints: actual transparent alpha background, not checkerboard or solid background. Only the named food and its own natural stems/peel/leaves; no decorative herbs, other foods, table, plate, bowl, packaging, shadows beyond the silhouette, text, labels, logo, watermark, face, anthropomorphic features, checkmark, badge or UI. White outline follows only the silhouette; no colored backing. Preserve truthful characteristic shapes and colors.",
+      "generator_output_path": "/Users/anastasia/.codex/generated_images/01a133c1-e7f5-7611-89d9-bc6f9b6afb35/exec-9bdb6136-51f9-41b5-ab81-ee201a88460b.png",
+      "workspace_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_asparagus.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_asparagus.png",
+      "sha256": "87e102bd83c54e73a57bdcf0058698351ee68d7f23318b4319848bceb135d374",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_bbox": [
+        51,
+        28,
+        1253,
+        1230
+      ],
+      "bytes": 1398886,
+      "saved_at_utc": "2026-10-13T05:38:56.739778+00:00",
+      "visual_inspection": {
+        "status": "passed",
+        "notes": "Four recognizable green asparagus spears with tightly packed pointed tips and cut bases; complete diagonal subject, realistic texture, thin white sticker outline, no text or additional objects."
+      },
+      "metadata_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/asparagus.json"
+    },
+    {
+      "key": "celery",
+      "generator": "builtin image_gen.imagegen",
+      "transparent_background": true,
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: three recognizable ribbed pale-green celery stalks with a few attached celery leaves.\nStyle/medium: crisp photorealistic food product photograph with realistic texture and gentle white studio light. Match the existing app food stickers: natural colors, clean thin white die-cut outline tracing the complete food silhouette. Individual asset only, not a sheet.\nComposition/framing: one compact recognizable food group centered on a square transparent canvas. Entire subject visible with around 10% clear padding on every side; fills about 75-80% of the canvas. It must read clearly at a small mobile icon size. For elongated vegetables use a diagonal arrangement.\nConstraints: actual transparent alpha background, not checkerboard or solid background. Only the named food and its own natural stems/peel/leaves; no decorative herbs, other foods, table, plate, bowl, packaging, shadows beyond the silhouette, text, labels, logo, watermark, face, anthropomorphic features, checkmark, badge or UI. White outline follows only the silhouette; no colored backing. Preserve truthful characteristic shapes and colors.",
+      "generator_output_path": "/Users/anastasia/.codex/generated_images/01a133c1-e7f5-7611-89d9-bc6f9b6afb35/exec-d62063d6-a853-42cc-ba90-4706b87463f5.png",
+      "workspace_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_celery.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_celery.png",
+      "sha256": "914879ce044f91267044f3bf9fe5fc4d136887958d4706f004b1e622dbe2f8be",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_bbox": [
+        0,
+        5,
+        1218,
+        1230
+      ],
+      "bytes": 1379075,
+      "saved_at_utc": "2026-10-13T05:38:56.794345+00:00",
+      "visual_inspection": {
+        "status": "passed",
+        "notes": "Recognizable ribbed pale-green celery stalks with attached celery leaves; complete diagonal group, realistic texture, thin white sticker outline, no text or additional objects."
+      },
+      "metadata_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/celery.json"
+    },
+    {
+      "key": "lettuce",
+      "generator": "builtin image_gen.imagegen",
+      "transparent_background": true,
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: one small pale-green butterhead lettuce with layered soft ruffled leaves.\nStyle/medium: crisp photorealistic food product photograph with realistic texture and gentle white studio light. Match the existing app food stickers: natural colors, clean thin white die-cut outline tracing the complete food silhouette. Individual asset only, not a sheet.\nComposition/framing: one compact recognizable food group centered on a square transparent canvas. Entire subject visible with around 10% clear padding on every side; fills about 75-80% of the canvas. It must read clearly at a small mobile icon size. For elongated vegetables use a diagonal arrangement.\nConstraints: actual transparent alpha background, not checkerboard or solid background. Only the named food and its own natural stems/peel/leaves; no decorative herbs, other foods, table, plate, bowl, packaging, shadows beyond the silhouette, text, labels, logo, watermark, face, anthropomorphic features, checkmark, badge or UI. White outline follows only the silhouette; no colored backing. Preserve truthful characteristic shapes and colors.",
+      "generator_output_path": "/Users/anastasia/.codex/generated_images/01a133c1-e7f5-7611-89d9-bc6f9b6afb35/exec-b08338ed-25a1-4968-b3e3-e39ee43e028f.png",
+      "workspace_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_lettuce.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_lettuce.png",
+      "sha256": "45aeb8ed4549a055a3a1119414c9b0ae38ba121c9739fd2932b4ce5636b7d09c",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_bbox": [
+        0,
+        123,
+        1251,
+        1212
+      ],
+      "bytes": 1786373,
+      "saved_at_utc": "2026-10-13T05:38:56.857000+00:00",
+      "visual_inspection": {
+        "status": "passed",
+        "notes": "Recognizable butterhead lettuce with layered soft ruffled pale-green leaves; complete compact head, realistic texture, thin white sticker outline, no text or additional objects."
+      },
+      "metadata_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/lettuce.json"
+    },
+    {
+      "key": "kale",
+      "generator": "builtin image_gen.imagegen",
+      "transparent_background": true,
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: three overlapping dark-green kale leaves with unmistakably curly edges and visible natural stems.\nStyle/medium: crisp photorealistic food product photograph with realistic texture and gentle white studio light. Match the existing app food stickers: natural colors, clean thin white die-cut outline tracing the complete food silhouette. Individual asset only, not a sheet.\nComposition/framing: one compact recognizable food group centered on a square transparent canvas. Entire subject visible with around 10% clear padding on every side; fills about 75-80% of the canvas. It must read clearly at a small mobile icon size. For elongated vegetables use a diagonal arrangement.\nConstraints: actual transparent alpha background, not checkerboard or solid background. Only the named food and its own natural stems/peel/leaves; no decorative herbs, other foods, table, plate, bowl, packaging, shadows beyond the silhouette, text, labels, logo, watermark, face, anthropomorphic features, checkmark, badge or UI. White outline follows only the silhouette; no colored backing. Preserve truthful characteristic shapes and colors.",
+      "generator_output_path": "/Users/anastasia/.codex/generated_images/01a133c1-e7f5-7611-89d9-bc6f9b6afb35/exec-d5c623e3-ee7c-46ac-a392-021cf22eba25.png",
+      "workspace_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_kale.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_kale.png",
+      "sha256": "111b67dbb698fd411ee806ef46af8fe460eb3c90f9d9ea0752678c47528af28d",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_bbox": [
+        0,
+        68,
+        1214,
+        1186
+      ],
+      "bytes": 2142524,
+      "saved_at_utc": "2026-10-13T05:42:35.022067+00:00",
+      "visual_inspection": {
+        "status": "passed",
+        "notes": "Three recognizable dark-green curly kale leaves with stems, realistic texture, complete compact subject and thin white sticker outline; no text or additional objects."
+      },
+      "metadata_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/kale.json"
+    },
+    {
+      "key": "brussels_sprouts",
+      "generator": "builtin image_gen.imagegen",
+      "transparent_background": true,
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: four small round green Brussels sprout heads, one cut half showing tightly layered pale-green leaves.\nStyle/medium: crisp photorealistic food product photograph with realistic texture and gentle white studio light. Match the existing app food stickers: natural colors, clean thin white die-cut outline tracing the complete food silhouette. Individual asset only, not a sheet.\nComposition/framing: one compact recognizable food group centered on a square transparent canvas. Entire subject visible with around 10% clear padding on every side; fills about 75-80% of the canvas. It must read clearly at a small mobile icon size. For elongated vegetables use a diagonal arrangement.\nConstraints: actual transparent alpha background, not checkerboard or solid background. Only the named food and its own natural stems/peel/leaves; no decorative herbs, other foods, table, plate, bowl, packaging, shadows beyond the silhouette, text, labels, logo, watermark, face, anthropomorphic features, checkmark, badge or UI. White outline follows only the silhouette; no colored backing. Preserve truthful characteristic shapes and colors.",
+      "generator_output_path": "/Users/anastasia/.codex/generated_images/01a133c1-e7f5-7611-89d9-bc6f9b6afb35/exec-7f19b394-e19a-41c2-80a7-077bcac87c8f.png",
+      "workspace_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_brussels_sprouts.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_brussels_sprouts.png",
+      "sha256": "509fa3d3eceb4f3f795247b88468bddbfc38a731fdc39b511907e1df635096ac",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_bbox": [
+        0,
+        59,
+        1209,
+        1214
+      ],
+      "bytes": 1691218,
+      "saved_at_utc": "2026-10-13T05:42:35.005385+00:00",
+      "visual_inspection": {
+        "status": "passed",
+        "notes": "Recognizable small Brussels sprout heads and a cut half with tightly layered pale-green leaves; complete compact subject, realistic texture and thin white sticker outline; no text or additional objects."
+      },
+      "metadata_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/brussels_sprouts.json"
+    },
+    {
+      "key": "green_bell_pepper",
+      "generator": "builtin image_gen.imagegen",
+      "transparent_background": true,
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: one recognizable glossy green bell pepper with a short curved green stem beside one cut half showing hollow flesh and pale seed core.\nStyle/medium: crisp photorealistic food product photograph with realistic texture and gentle white studio light. Match the existing app food stickers: natural colors, clean thin white die-cut outline tracing the complete food silhouette. Individual asset only, not a sheet.\nComposition/framing: one compact recognizable food group centered on a square transparent canvas. Entire subject visible with around 10% clear padding on every side; fills about 75-80% of the canvas. It must read clearly at a small mobile icon size. For elongated vegetables use a diagonal arrangement.\nConstraints: actual transparent alpha background, not checkerboard or solid background. Only the named food and its own natural stems/peel/leaves; no decorative herbs, other foods, table, plate, bowl, packaging, shadows beyond the silhouette, text, labels, logo, watermark, face, anthropomorphic features, checkmark, badge or UI. White outline follows only the silhouette; no colored backing. Preserve truthful characteristic shapes and colors.",
+      "generator_output_path": "/Users/anastasia/.codex/generated_images/01a133c1-e7f5-7611-89d9-bc6f9b6afb35/exec-3e6af706-2a8f-4a9a-b945-f12aafe9a3b5.png",
+      "workspace_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_green_bell_pepper.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_green_bell_pepper.png",
+      "sha256": "b8236561c8292f70d19b31b320fcacf7dccd2ca974bcda0927b271791dfca871",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_bbox": [
+        0,
+        67,
+        1206,
+        1184
+      ],
+      "bytes": 1660010,
+      "saved_at_utc": "2026-10-13T05:42:35.009015+00:00",
+      "visual_inspection": {
+        "status": "passed",
+        "notes": "Recognizable glossy whole green bell pepper and cut half exposing hollow flesh and seed core; realistic texture, complete compact subject and thin white sticker outline; no text or additional objects."
+      },
+      "metadata_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/green_bell_pepper.json"
+    },
+    {
+      "key": "leek",
+      "generator": "builtin image_gen.imagegen",
+      "transparent_background": true,
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: one recognizable leek with a long white base and overlapping dark-green flat leaves, placed diagonally to remain compact.\nStyle/medium: crisp photorealistic food product photograph with realistic texture and gentle white studio light. Match the existing app food stickers: natural colors, clean thin white die-cut outline tracing the complete food silhouette. Individual asset only, not a sheet.\nComposition/framing: one compact recognizable food group centered on a square transparent canvas. Entire subject visible with around 10% clear padding on every side; fills about 75-80% of the canvas. It must read clearly at a small mobile icon size. For elongated vegetables use a diagonal arrangement.\nConstraints: actual transparent alpha background, not checkerboard or solid background. Only the named food and its own natural stems/peel/leaves; no decorative herbs, other foods, table, plate, bowl, packaging, shadows beyond the silhouette, text, labels, logo, watermark, face, anthropomorphic features, checkmark, badge or UI. White outline follows only the silhouette; no colored backing. Preserve truthful characteristic shapes and colors.",
+      "generator_output_path": "/Users/anastasia/.codex/generated_images/01a133c1-e7f5-7611-89d9-bc6f9b6afb35/exec-b78ba4fa-2069-4cf2-a403-b789beb64e7d.png",
+      "workspace_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_leek.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_leek.png",
+      "sha256": "0a8dd80f0ae017460dcd88583d6cf7eff12009270e6f44c6550c083e79e26fea",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_bbox": [
+        25,
+        47,
+        1236,
+        1234
+      ],
+      "bytes": 924572,
+      "saved_at_utc": "2026-10-13T05:48:01.218137+00:00",
+      "visual_inspection": {
+        "status": "passed",
+        "notes": "Recognizable leek with long white base, attached fine roots and overlapping dark-green flat leaves; complete diagonal subject, realistic texture and thin white sticker outline; no text or additional objects."
+      },
+      "metadata_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/leek.json"
+    },
+    {
+      "key": "artichoke",
+      "generator": "builtin image_gen.imagegen",
+      "transparent_background": true,
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: one recognizable whole green artichoke with densely overlapping pointed leaf bracts and a short natural stem.\nStyle/medium: crisp photorealistic food product photograph with realistic texture and gentle white studio light. Match the existing app food stickers: natural colors, clean thin white die-cut outline tracing the complete food silhouette. Individual asset only, not a sheet.\nComposition/framing: one compact recognizable food group centered on a square transparent canvas. Entire subject visible with around 10% clear padding on every side; fills about 75-80% of the canvas. It must read clearly at a small mobile icon size. For elongated vegetables use a diagonal arrangement.\nConstraints: actual transparent alpha background, not checkerboard or solid background. Only the named food and its own natural stems/peel/leaves; no decorative herbs, other foods, table, plate, bowl, packaging, shadows beyond the silhouette, text, labels, logo, watermark, face, anthropomorphic features, checkmark, badge or UI. White outline follows only the silhouette; no colored backing. Preserve truthful characteristic shapes and colors.",
+      "generator_output_path": "/Users/anastasia/.codex/generated_images/01a133c1-e7f5-7611-89d9-bc6f9b6afb35/exec-1cc8dc7c-5e3a-4f7d-b869-d941e13cf865.png",
+      "workspace_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_artichoke.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_artichoke.png",
+      "sha256": "15cc4bd70ea514c9904dede20b3fd1e58762adc716ffc7b1d586e0b607f76e0a",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_bbox": [
+        0,
+        31,
+        1144,
+        1176
+      ],
+      "bytes": 1915966,
+      "saved_at_utc": "2026-10-13T05:45:49.902845+00:00",
+      "visual_inspection": {
+        "status": "passed",
+        "notes": "Recognizable whole green artichoke with tightly overlapping pointed bracts and short natural stem; complete subject, realistic texture and thin white sticker outline; no text or additional objects."
+      },
+      "metadata_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/artichoke.json"
+    },
+    {
+      "key": "fennel",
+      "generator": "builtin image_gen.imagegen",
+      "transparent_background": true,
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: one recognizable white fennel bulb with pale-green stalks and a modest tuft of delicate feathery green fronds.\nStyle/medium: crisp photorealistic food product photograph with realistic texture and gentle white studio light. Match the existing app food stickers: natural colors, clean thin white die-cut outline tracing the complete food silhouette. Individual asset only, not a sheet.\nComposition/framing: one compact recognizable food group centered on a square transparent canvas. Entire subject visible with around 10% clear padding on every side; fills about 75-80% of the canvas. It must read clearly at a small mobile icon size. For elongated vegetables use a diagonal arrangement.\nConstraints: actual transparent alpha background, not checkerboard or solid background. Only the named food and its own natural stems/peel/leaves; no decorative herbs, other foods, table, plate, bowl, packaging, shadows beyond the silhouette, text, labels, logo, watermark, face, anthropomorphic features, checkmark, badge or UI. White outline follows only the silhouette; no colored backing. Preserve truthful characteristic shapes and colors.",
+      "generator_output_path": "/Users/anastasia/.codex/generated_images/01a133c1-e7f5-7611-89d9-bc6f9b6afb35/exec-c4b5f1c7-3773-437a-afad-0d0cce428df4.png",
+      "workspace_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_fennel.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_fennel.png",
+      "sha256": "99e16f4894d725bfde06bff80e5adc0774ddbf9cfa20b6a5a297992199d2c066",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_bbox": [
+        0,
+        19,
+        1162,
+        1232
+      ],
+      "bytes": 1448167,
+      "saved_at_utc": "2026-10-13T05:48:01.223984+00:00",
+      "visual_inspection": {
+        "status": "passed",
+        "notes": "Recognizable white fennel bulb with pale-green stalks and delicate feathery fronds; complete subject, realistic texture and thin white sticker outline; no text or additional objects."
+      },
+      "metadata_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/fennel.json"
+    },
+    {
+      "key": "turnip",
+      "generator": "builtin image_gen.imagegen",
+      "transparent_background": true,
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: one white turnip root with a purple upper shoulder, thin natural root tail and one small cut half showing white flesh.\nStyle/medium: crisp photorealistic food product photograph with realistic texture and gentle white studio light. Match the existing app food stickers: natural colors, clean thin white die-cut outline tracing the complete food silhouette. Individual asset only, not a sheet.\nComposition/framing: one compact recognizable food group centered on a square transparent canvas. Entire subject visible with around 10% clear padding on every side; fills about 75-80% of the canvas. It must read clearly at a small mobile icon size. For elongated vegetables use a diagonal arrangement.\nConstraints: actual transparent alpha background, not checkerboard or solid background. Only the named food and its own natural stems/peel/leaves; no decorative herbs, other foods, table, plate, bowl, packaging, shadows beyond the silhouette, text, labels, logo, watermark, face, anthropomorphic features, checkmark, badge or UI. White outline follows only the silhouette; no colored backing. Preserve truthful characteristic shapes and colors.",
+      "generator_output_path": "/Users/anastasia/.codex/generated_images/01a133c1-e7f5-7611-89d9-bc6f9b6afb35/exec-e7f8c600-4eb7-40c8-b507-b6eb9646bc56.png",
+      "workspace_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_turnip.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_turnip.png",
+      "sha256": "b0e63f984c55a94a327f97a954f54203d9aaac1f388ad1ce2910f0e83c002ed5",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_bbox": [
+        65,
+        20,
+        1226,
+        1240
+      ],
+      "bytes": 1379730,
+      "saved_at_utc": "2026-10-13T05:52:05.290196+00:00",
+      "visual_inspection": {
+        "status": "passed",
+        "notes": "Recognizable white turnip root with purple shoulder, thin root tail and attached natural leaves beside a cut white-flesh half; complete subject, realistic texture and thin white sticker outline; no text or additional objects."
+      },
+      "metadata_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/turnip.json"
+    },
+    {
+      "key": "spinach",
+      "generator": "builtin image_gen.imagegen",
+      "transparent_background": true,
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: a compact group of four fresh deep-green smooth oval spinach leaves with slender natural stems.\nStyle/medium: crisp photorealistic food product photograph with realistic texture and gentle white studio light. Match the existing app food stickers: natural colors, clean thin white die-cut outline tracing the complete food silhouette. Individual asset only, not a sheet.\nComposition/framing: one compact recognizable food group centered on a square transparent canvas. Entire subject visible with around 10% clear padding on every side; fills about 75-80% of the canvas. It must read clearly at a small mobile icon size. For elongated vegetables use a diagonal arrangement.\nConstraints: actual transparent alpha background, not checkerboard or solid background. Only the named food and its own natural stems/peel/leaves; no decorative herbs, other foods, table, plate, bowl, packaging, shadows beyond the silhouette, text, labels, logo, watermark, face, anthropomorphic features, checkmark, badge or UI. White outline follows only the silhouette; no colored backing. Preserve truthful characteristic shapes and colors.",
+      "generator_output_path": "/Users/anastasia/.codex/generated_images/01a133c1-e7f5-7611-89d9-bc6f9b6afb35/exec-a4b7ac02-f436-4c6d-9b9f-b231407cda37.png",
+      "workspace_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_spinach.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_spinach.png",
+      "sha256": "ada6212de2bcbe07f91eed796d64173b7429d33c4e9c0fb82068a617d3855b40",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_bbox": [
+        95,
+        78,
+        1200,
+        1216
+      ],
+      "bytes": 1716384,
+      "saved_at_utc": "2026-10-13T05:52:05.303215+00:00",
+      "visual_inspection": {
+        "status": "passed",
+        "notes": "Four recognizable smooth oval deep-green spinach leaves with slender stems, realistic texture, complete compact subject and thin white sticker outline; no text or additional objects."
+      },
+      "metadata_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/spinach.json"
+    }
+  ]
+}

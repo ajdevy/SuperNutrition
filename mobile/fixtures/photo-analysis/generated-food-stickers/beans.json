@@ -1,0 +1,43 @@
+{
+  "key": "beans",
+  "generator": "built-in image_gen",
+  "generated_path": "/Users/anastasia/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-1aafedda-8f6c-4d56-aa40-99a595105519.png",
+  "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_beans.png",
+  "intended_resource_name": "food_sticker_beans.png",
+  "prompt_file": "broad-library-prompts.json",
+  "saved_at_utc": "2026-10-12T05:02:31.803631+00:00",
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "65af53810b8d212bc08f38273d94a8272affe0c26889888cbb69fd16a1ddaff2",
+  "bytes": 1713107,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 820640,
+    "opaque_pixels": 619,
+    "partial_pixels": 751257,
+    "nontransparent_bounds": [
+      0,
+      53,
+      1218,
+      1254
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      59,
+      194,
+      1201,
+      1063
+    ],
+    "pixels_alpha_1_to_10": 12204
+  },
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_beans.png",
+  "visually_inspected": true,
+  "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+}

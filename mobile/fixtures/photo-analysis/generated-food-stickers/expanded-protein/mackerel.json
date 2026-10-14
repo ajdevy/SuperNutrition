@@ -1,0 +1,43 @@
+{
+  "key": "mackerel",
+  "generator": "built-in image_gen",
+  "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: MACKEREL fish only: one whole fresh mackerel, blue-green back with distinctive dark wavy vertical stripes, silvery belly and forked tail. Full head, fins and tail visible.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+  "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-f934fa2e-2f11-47eb-b9ec-208c2f14907a.png",
+  "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_mackerel.png",
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_mackerel.png",
+  "saved_at_utc": "2026-10-12T06:59:41.416468+00:00",
+  "transparent_background": true,
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "a80dc88fba70d0a6c941dc1f85b46b481f796a61b8cc543e49be5c945a72f866",
+  "bytes": 911524,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 1258809,
+    "opaque_pixels": 1122,
+    "partial_pixels": 312585,
+    "nontransparent_bounds": [
+      41,
+      41,
+      1238,
+      1206
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      47,
+      245,
+      1235,
+      940
+    ],
+    "pixels_alpha_1_to_10": 10361
+  },
+  "visually_inspected": true,
+  "visual_result": "Visually inspected: whole silver mackerel with distinctive dark wavy blue-green back stripes, intact head/fins/tail and thin white outline."
+}

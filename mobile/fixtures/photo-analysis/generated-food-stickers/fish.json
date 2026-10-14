@@ -1,0 +1,43 @@
+{
+  "key": "fish",
+  "generator": "built-in image_gen",
+  "generated_path": "/Users/anastasia/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-a4d942ba-2806-4845-8e13-3f08ab99d84c.png",
+  "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_fish.png",
+  "intended_resource_name": "food_sticker_fish.png",
+  "prompt_file": "broad-library-prompts.json",
+  "saved_at_utc": "2026-10-12T05:02:47.804499+00:00",
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "a0d6664ff700607a6451934f23669082548aab3109eb37e78fd16b3d49698990",
+  "bytes": 1053633,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 1219562,
+    "opaque_pixels": 763,
+    "partial_pixels": 352191,
+    "nontransparent_bounds": [
+      0,
+      37,
+      1234,
+      1228
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      49,
+      317,
+      1221,
+      944
+    ],
+    "pixels_alpha_1_to_10": 11965
+  },
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_fish.png",
+  "visually_inspected": true,
+  "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+}

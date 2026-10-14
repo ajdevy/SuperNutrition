@@ -56,10 +56,25 @@ data class PhotoAnalysisPresenterCopy(
     val status: StatusCopy,
     val evidence: EvidenceCopy,
     val recovery: RecoveryCopy,
+    val review: MealReviewCopy = MealReviewCopy(),
 ) {
     init {
-        (capture.values + status.values + evidence.values + recovery.values).forEach { require(it.isNotBlank()) }
+        (capture.values + status.values + evidence.values + recovery.values + review.values)
+            .forEach { require(it.isNotBlank()) }
     }
+}
+
+data class MealReviewCopy(
+    val title: String = "Let’s make it accurate",
+    val subtitle: String = "Pick the foods in your photo. Uncheck the rest.",
+    val customMeal: String = "Custom meal",
+    val anythingElse: String = "Anything else?",
+    val retake: String = "Retake",
+    val addToMeal: String = "Add to meal",
+    val pantryIngredientLabels: Map<String, String> = emptyMap(),
+) {
+    val values: List<String>
+        get() = listOf(title, subtitle, customMeal, anythingElse, retake, addToMeal) + pantryIngredientLabels.values
 }
 
 data class CaptureCopy(
@@ -317,6 +332,8 @@ data class PhotoAnalysisDishProposalModel(
     val rank: Int,
     val confidenceLabel: String,
     val provenanceLabel: String,
+    /** Engine metadata remains separate from localized text and explicit user selection. */
+    val confidenceBand: ConfidenceBand? = null,
 )
 
 data class PhotoAnalysisVisibleComponentModel(
@@ -389,6 +406,7 @@ private fun CandidateReviewDraft.toPresentation(copy: PhotoAnalysisPresenterCopy
                 rank = candidate.rank,
                 confidenceLabel = confidenceLabel(candidate.confidence.band, copy.evidence),
                 provenanceLabel = provenanceLabel(candidate.provenance.route, copy.evidence),
+                confidenceBand = candidate.confidence.band,
             )
         },
         visibleComponents = visibleComponents,

@@ -7,10 +7,8 @@ import platform.UIKit.UIViewController
 
 @Suppress("FunctionNaming")
 @OptIn(ExperimentalForeignApi::class)
-fun RewardsViewController(
-    feature: RewardsFeature,
-    copy: RewardsPresenterCopy,
-): UIViewController = ComposeUIViewController {
-    val snapshot = feature.snapshot.collectAsState().value
-    RewardsScreen(RewardsPresenterModel.from(snapshot, copy))
-}
+fun RewardsViewController(feature: RewardsFeature, copy: RewardsPresenterCopy): UIViewController =
+    ComposeUIViewController {
+        val snapshot = feature.snapshot.collectAsState().value
+        RewardsScreen(RewardsPresenterModel.from(snapshot, copy))
+    }

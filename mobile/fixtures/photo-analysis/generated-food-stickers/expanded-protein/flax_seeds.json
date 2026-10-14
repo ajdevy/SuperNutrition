@@ -1,0 +1,43 @@
+{
+  "key": "flax_seeds",
+  "generator": "built-in image_gen",
+  "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: FLAX SEEDS only: one small compact mound of dry flax seeds, glossy warm reddish-brown flattened oval seeds with pointed ends. Their smooth reflective natural seed coats are clearly visible. A coherent heap without a bowl, spoon, liquid or garnish.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, peeled banana, milk and yogurt cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+  "generated_path": "/Users/anastasia/.codex/generated_images/01a12f44-bbe1-7482-8976-d12fdfa7fac8/exec-0b6880a3-7957-4b13-8777-86251adeda73.png",
+  "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_flax_seeds.png",
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_flax_seeds.png",
+  "saved_at_utc": "2026-10-12T08:52:56.143788+00:00",
+  "transparent_background": true,
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "b8783d83bf846de459a25f89c1ca902f061e275e526a59a01bd09f2829b91fc2",
+  "bytes": 1343615,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 1050044,
+    "opaque_pixels": 1248,
+    "partial_pixels": 521224,
+    "nontransparent_bounds": [
+      35,
+      31,
+      1222,
+      1230
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      73,
+      283,
+      1183,
+      971
+    ],
+    "pixels_alpha_1_to_10": 8602
+  },
+  "visually_inspected": true,
+  "visual_result": "Visually inspected generated output: Glossy reddish-brown flattened oval flax seeds with pointed ends in a compact heap; distinct natural seed coats, thin white outline and full silhouette. Transparent background, no dish, text, badges or UI."
+}

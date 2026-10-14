@@ -1,0 +1,1952 @@
+{
+  "generator": "built-in image_gen",
+  "style_reference_paths": [
+    "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_salmon.png",
+    "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_cucumber.png",
+    "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_banana.png"
+  ],
+  "completed_count": 45,
+  "expected_count": 45,
+  "assets": [
+    {
+      "key": "almond_milk",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: ALMOND MILK only: one small clear drinking glass filled with pale almond milk, with two brown whole almonds beside its base as identity cues. One coherent beverage sticker, no packaging or labels.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-c8270030-5b53-4d1d-b3c1-6d5247fcf8a7.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_almond_milk.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_almond_milk.png",
+      "saved_at_utc": "2026-10-12T07:46:53.573817+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "66ed28ad81d27e8dbbad1767f4f03c8b410a2441ce79205c3beec37254541dee",
+      "bytes": 933974,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 1004662,
+        "opaque_pixels": 1187,
+        "partial_pixels": 566667,
+        "nontransparent_bounds": [
+          59,
+          146,
+          1232,
+          1234
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          248,
+          157,
+          1006,
+          1097
+        ],
+        "pixels_alpha_1_to_10": 8473
+      },
+      "visually_inspected": true,
+      "visual_result": "Root visually inspected the saved PNG through view_image: recognizable almond milk with almonds as the correct identity cue, transparent background, consistent photographic texture and white outline, no text, UI or checkmarks.",
+      "inspected_by": "root"
+    },
+    {
+      "key": "bacon",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: BACON only: three crisp cooked bacon strips grouped diagonally, with recognizable wavy brown-red meat and golden white fat bands. No eggs or other food.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-e30869bb-8d9d-44a2-b30b-c6a39fb88278.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_bacon.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_bacon.png",
+      "saved_at_utc": "2026-10-12T06:51:28.099280+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "9f40ea26b29b5f969533200f34f1ddb6c5e066afe0f13a0b20ea728fea901871",
+      "bytes": 1789033,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 957631,
+        "opaque_pixels": 576,
+        "partial_pixels": 614309,
+        "nontransparent_bounds": [
+          0,
+          9,
+          1228,
+          1254
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          75,
+          120,
+          1179,
+          1131
+        ],
+        "pixels_alpha_1_to_10": 19168
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected: three recognizable cooked bacon strips with wavy browned red meat and golden fat bands, crisp texture, full outline and clear transparency."
+    },
+    {
+      "key": "butter",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: BUTTER only: one compact rectangular block of pale golden dairy butter with one thick butter slice leaning at its front, smooth velvety cut faces and very subtle knife marks. Complete butter portions with no wrapper, butter dish, board, bread, knife or garnish.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, peeled banana, milk and yogurt cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12f44-bbe1-7482-8976-d12fdfa7fac8/exec-92e9615f-f007-408c-817b-b6d91305fcd9.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_butter.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_butter.png",
+      "saved_at_utc": "2026-10-12T08:58:54.754219+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "c7a273110611dcc586e0e4e40d508e8fa4234bbb46a8b6acc5ac8a8ba33941f7",
+      "bytes": 1075939,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 939436,
+        "opaque_pixels": 1359,
+        "partial_pixels": 631721,
+        "nontransparent_bounds": [
+          25,
+          21,
+          1240,
+          1254
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          71,
+          230,
+          1185,
+          1027
+        ],
+        "pixels_alpha_1_to_10": 10573
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected generated output: Pale golden butter block and one front slice, smooth velvety surfaces and fine knife marks, complete recognizable butter silhouette and thin white outline. Transparent background, no text, badges or UI."
+    },
+    {
+      "key": "chia_seeds",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: CHIA SEEDS only: one small compact mound of dry chia seeds, many tiny oval gray-black and off-white speckled seeds with distinct natural mottled surfaces. A coherent heap of dry seeds without a bowl, spoon, liquid, pudding or garnish.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, peeled banana, milk and yogurt cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12f44-bbe1-7482-8976-d12fdfa7fac8/exec-82015a38-1921-4784-b02e-943b92d2b026.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_chia_seeds.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_chia_seeds.png",
+      "saved_at_utc": "2026-10-12T08:47:40.434375+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "5570407cf7d152a0321fdc24934d035477f6ab0ccf9f26ae700e7fcf29e990dd",
+      "bytes": 1355556,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 1103798,
+        "opaque_pixels": 617,
+        "partial_pixels": 468101,
+        "nontransparent_bounds": [
+          0,
+          0,
+          1226,
+          1222
+        ],
+        "corner_alpha": [
+          1,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          84,
+          349,
+          1176,
+          961
+        ],
+        "pixels_alpha_1_to_10": 6811
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected: compact mound of recognizable tiny mottled dark and pale chia seeds, realistic crisp seed texture, clean thin white cutout outline, full silhouette, no dish, text or UI."
+    },
+    {
+      "key": "chickpeas",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: CHICKPEAS only: a small compact mound of pale golden cooked chickpeas, their round lobed shapes and tiny beaks clearly visible. A coherent mound without a bowl, plate or garnish.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-372652ca-2c7f-4e3c-8002-b93bc7b99776.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_chickpeas.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_chickpeas.png",
+      "saved_at_utc": "2026-10-12T07:42:16.007911+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "cf17e7190893cb3f3622ead3c626b9e4fe4a1738f9ad66abd8410f1225726e65",
+      "bytes": 1162503,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 977402,
+        "opaque_pixels": 1036,
+        "partial_pixels": 594078,
+        "nontransparent_bounds": [
+          51,
+          23,
+          1216,
+          1246
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          101,
+          217,
+          1179,
+          1024
+        ],
+        "pixels_alpha_1_to_10": 10263
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected: pale golden cooked chickpeas in a compact mound, distinctive round lobed shape and beaks, coherent white outline without a bowl."
+    },
+    {
+      "key": "coconut_milk",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: COCONUT MILK only: one small clear drinking glass filled with rich white coconut milk, with a small brown coconut half showing white flesh beside its base as an identity cue. One coherent beverage sticker, no packaging or labels.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-73b8a090-111c-428e-a14f-862b9b9675d6.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_coconut_milk.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_coconut_milk.png",
+      "saved_at_utc": "2026-10-12T07:46:53.987607+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "c1bfd4db1ed0275ac6e52c16c58ee637cec919e92662fe803cc8069e2f7a0bfd",
+      "bytes": 830595,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 1097346,
+        "opaque_pixels": 729,
+        "partial_pixels": 474441,
+        "nontransparent_bounds": [
+          0,
+          65,
+          1228,
+          1129
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          264,
+          217,
+          1003,
+          1045
+        ],
+        "pixels_alpha_1_to_10": 10446
+      },
+      "visually_inspected": true,
+      "visual_result": "Root visually inspected the saved PNG through view_image: recognizable coconut milk with coconut as the correct identity cue, transparent background, consistent photographic texture and white outline, no text, UI or checkmarks.",
+      "inspected_by": "root"
+    },
+    {
+      "key": "cod",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: COD fish only: one small whole fresh Atlantic cod, olive-brown speckled back, pale belly, characteristic three dorsal fins and tiny chin barbel. Whole head and tail visible in a compact diagonal silhouette.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-98da79ea-ea26-4a7d-83b1-c9608248c79f.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_cod.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_cod.png",
+      "saved_at_utc": "2026-10-12T07:09:28.153336+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "327f60ae453e1b24b0f6775b83e33c46a710edc88ecdbd87a81467af03242233",
+      "bytes": 1012565,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 1205006,
+        "opaque_pixels": 406,
+        "partial_pixels": 367104,
+        "nontransparent_bounds": [
+          0,
+          20,
+          1254,
+          1231
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          47,
+          278,
+          1241,
+          982
+        ],
+        "pixels_alpha_1_to_10": 18052
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected: whole mottled olive-brown cod with three dorsal fins, chin barbel and pale belly, thin white outline. Tail outline is close to the right canvas edge; fish silhouette remains visible."
+    },
+    {
+      "key": "cottage_cheese",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: COTTAGE CHEESE only: one small low clear glass bowl filled with fresh white cottage cheese, distinct irregular moist dairy curds and a lightly creamy texture piled above the rim. No spoon, plate, fruit or garnish. The transparent bowl is a simple serving vessel, not packaging.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, peeled banana, milk and yogurt cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12f44-bbe1-7482-8976-d12fdfa7fac8/exec-289917cc-2a69-4c4a-80ce-aab48726c193.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_cottage_cheese.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_cottage_cheese.png",
+      "saved_at_utc": "2026-10-12T08:58:53.914822+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "30f81fca747c9d2b92f5c47b3c7fff029e4aa8333df44106583bb2c2483b1cc8",
+      "bytes": 1129406,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 947856,
+        "opaque_pixels": 811,
+        "partial_pixels": 623849,
+        "nontransparent_bounds": [
+          0,
+          19,
+          1244,
+          1238
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          118,
+          221,
+          1136,
+          1056
+        ],
+        "pixels_alpha_1_to_10": 9988
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected generated output: Distinct irregular moist white dairy curds piled into a simple clear glass bowl, recognizable cottage cheese texture and full white cutout outline. Transparent background, no text, badges or UI."
+    },
+    {
+      "key": "crab",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: CRAB only: one cooked orange-red crab with a rounded shell and two characteristic claws, compact recognizable whole crab silhouette, natural shell texture. No sauce or garnish.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-d224c174-2e88-4931-bc56-ebd755ad19e5.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_crab.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_crab.png",
+      "saved_at_utc": "2026-10-12T07:26:25.923577+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "2aa45b20dc58a3381732f746abfd2f96d12c871266e74e92d512f30bf87f4986",
+      "bytes": 1512799,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 958552,
+        "opaque_pixels": 1414,
+        "partial_pixels": 612550,
+        "nontransparent_bounds": [
+          25,
+          23,
+          1254,
+          1254
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "visible_bounds_alpha_128": [
+          52,
+          296,
+          1202,
+          1021
+        ],
+        "pixels_alpha_1_to_10": 14529
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected: recognizable cooked orange-red crab with round shell, claws and folded legs, full silhouette and thin white outline. Bottom-right corner has negligible alpha 1/255 fringe."
+    },
+    {
+      "key": "cream",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: DAIRY CREAM only: one small clear glass pouring jug with a short spout and curved handle, filled with thick ivory pouring cream. Smooth opaque dairy cream visible near the rim, no froth, curds or toppings. One coherent creamy beverage icon; jug is a serving vessel, no packaging, labels, spoon or garnish.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, peeled banana, milk and yogurt cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12f44-bbe1-7482-8976-d12fdfa7fac8/exec-33ba8866-9aeb-4d53-b602-85542708d451.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_cream.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_cream.png",
+      "saved_at_utc": "2026-10-12T09:04:43.644920+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "fd431043886d64876fffcd685664a53360c41c78f8495b4a03cfd0ee569847ea",
+      "bytes": 944123,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 971318,
+        "opaque_pixels": 1043,
+        "partial_pixels": 600155,
+        "nontransparent_bounds": [
+          0,
+          39,
+          1214,
+          1094
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          225,
+          179,
+          1117,
+          1089
+        ],
+        "pixels_alpha_1_to_10": 10018
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected generated output: Smooth ivory pouring cream in one clear spouted serving jug with handle, full glass silhouette and white border. Transparent background, no unrelated ingredients, text, badges or UI."
+    },
+    {
+      "key": "cream_cheese",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: CREAM CHEESE only: one soft ivory rectangular cream cheese block with gently rounded corners, fine smooth satin cut surface and a small thick creamy smear touching its front base. Recognizable soft spreadable dairy cheese, no crumbly pores, rind or holes. No tub, wrapper, plate, board, knife, bread, garnish or other food.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, peeled banana, milk and yogurt cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12f44-bbe1-7482-8976-d12fdfa7fac8/exec-37a0bb5f-f3a1-4d2f-bdc9-c34921430bff.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_cream_cheese.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_cream_cheese.png",
+      "saved_at_utc": "2026-10-12T09:04:44.646160+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "58503525da89a4102bdb43597c9f6a6ea6b5bc79fcc043ff80f69b8325ca4c8c",
+      "bytes": 1033284,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 917231,
+        "opaque_pixels": 1404,
+        "partial_pixels": 653881,
+        "nontransparent_bounds": [
+          37,
+          35,
+          1204,
+          1254
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          85,
+          246,
+          1176,
+          1015
+        ],
+        "pixels_alpha_1_to_10": 7685
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected generated output: Soft satin ivory rectangular spreadable cheese with rounded corners and a thick attached creamy smear, no rind or crumbly pores, full cutout outline. Transparent background, no unrelated ingredients, text, badges or UI."
+    },
+    {
+      "key": "duck",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: DUCK meat only: a small roasted duck breast with golden brown skin, with two carved slices showing rose-brown meat and the thin white fat layer. No vegetables or sauce.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible with modest even padding, occupying around 78 percent of the canvas. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-83659595-009d-4159-a4c4-98276be3bf38.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_duck.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_duck.png",
+      "saved_at_utc": "2026-10-12T06:27:14.916107+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "01b27f772cabf252400ff48a9755813ff118bdcb8fa65b880f13bebf6d554090",
+      "bytes": 1937647,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 849952,
+        "opaque_pixels": 397,
+        "partial_pixels": 722167,
+        "nontransparent_bounds": [
+          0,
+          15,
+          1254,
+          1254
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          9,
+          174,
+          1245,
+          1082
+        ],
+        "pixels_alpha_1_to_10": 14643
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected: recognizable roast duck breast with skin, fat layer and two rosy slices; realistic cutout with white outline. The leftmost outline sits very close to the canvas edge; no food interior visibly cut off."
+    },
+    {
+      "key": "feta",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: FETA CHEESE only: a small chalk-white feta block with three irregular cubes nestled at its front, unmistakably crumbly brined cheese texture with tiny pores and fractured edges. Complete feta portions, no herbs, olives, plate, packaging or garnish.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, peeled banana, milk and yogurt cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12f44-bbe1-7482-8976-d12fdfa7fac8/exec-dd5e84f7-db42-4af2-af80-230f41f22f1e.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_feta.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_feta.png",
+      "saved_at_utc": "2026-10-12T09:04:44.320535+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "3f5ac786687f9a5a74386a5ba976e4d8a9f0b0b2538f1603e96c5930d0c404ba",
+      "bytes": 1203404,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 891876,
+        "opaque_pixels": 869,
+        "partial_pixels": 679771,
+        "nontransparent_bounds": [
+          0,
+          32,
+          1189,
+          1254
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          96,
+          219,
+          1161,
+          1044
+        ],
+        "pixels_alpha_1_to_10": 12685
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected generated output: Chalk-white crumbly feta block and three front cubes, fractured edges and tiny pores distinguish brined cheese, full cutout outline. Transparent background, no unrelated ingredients, text, badges or UI."
+    },
+    {
+      "key": "flax_seeds",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: FLAX SEEDS only: one small compact mound of dry flax seeds, glossy warm reddish-brown flattened oval seeds with pointed ends. Their smooth reflective natural seed coats are clearly visible. A coherent heap without a bowl, spoon, liquid or garnish.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, peeled banana, milk and yogurt cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12f44-bbe1-7482-8976-d12fdfa7fac8/exec-0b6880a3-7957-4b13-8777-86251adeda73.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_flax_seeds.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_flax_seeds.png",
+      "saved_at_utc": "2026-10-12T08:52:56.143788+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "b8783d83bf846de459a25f89c1ca902f061e275e526a59a01bd09f2829b91fc2",
+      "bytes": 1343615,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 1050044,
+        "opaque_pixels": 1248,
+        "partial_pixels": 521224,
+        "nontransparent_bounds": [
+          35,
+          31,
+          1222,
+          1230
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          73,
+          283,
+          1183,
+          971
+        ],
+        "pixels_alpha_1_to_10": 8602
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected generated output: Glossy reddish-brown flattened oval flax seeds with pointed ends in a compact heap; distinct natural seed coats, thin white outline and full silhouette. Transparent background, no dish, text, badges or UI."
+    },
+    {
+      "key": "ham",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: HAM only: a compact fan of three thin pink ham slices, one loosely folded, with subtle white fat marbling and darker rose edges. No other food.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-f09b9e64-e707-40df-b648-4b88abae7ce2.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_ham.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_ham.png",
+      "saved_at_utc": "2026-10-12T06:42:05.099854+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "f221134634e74be64efaf56b5cac0562e4e1a5577a176cecffe21c964e3b8d13",
+      "bytes": 1415067,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 919174,
+        "opaque_pixels": 751,
+        "partial_pixels": 652591,
+        "nontransparent_bounds": [
+          0,
+          25,
+          1238,
+          1230
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          135,
+          201,
+          1121,
+          1058
+        ],
+        "pixels_alpha_1_to_10": 8318
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected: pink ham slices with fine white fat marbling, one rolled edge, thin white outline, clear padding and no unrelated foods or labels."
+    },
+    {
+      "key": "herring",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: HERRING fish only: two small whole fresh silver herrings, with a blue-green back, small heads and forked tails, neatly grouped diagonally. Full fish silhouettes visible.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-02ec9d9d-27aa-4e94-a669-eade9e9381ef.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_herring.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_herring.png",
+      "saved_at_utc": "2026-10-12T06:59:41.114598+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "661d8e03f589bac7c7c2fe92726cce54235adae8e755f6d2b7871bf26ea1a3cb",
+      "bytes": 1244163,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 1147131,
+        "opaque_pixels": 517,
+        "partial_pixels": 424868,
+        "nontransparent_bounds": [
+          27,
+          61,
+          1232,
+          1254
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          124,
+          207,
+          1222,
+          1026
+        ],
+        "pixels_alpha_1_to_10": 19821
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected: two whole silver-blue herrings with forked tails in a coherent group; complete silhouettes and thin white cutout outline."
+    },
+    {
+      "key": "hummus",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: HUMMUS only: a shallow swirl-shaped dollop of smooth pale beige chickpea hummus, creamy fine texture and recognizable spiral ridges, one coherent food silhouette. No oil, garnish, bread, plate or bowl.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-380874a2-e222-4a35-895b-b7ceb9da188d.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_hummus.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_hummus.png",
+      "saved_at_utc": "2026-10-12T07:42:16.474019+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "071269c3b8ab70354ee05c0063dccaa15687721bdfe2e727ca08da8b5fbbe3a1",
+      "bytes": 1359612,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 904019,
+        "opaque_pixels": 596,
+        "partial_pixels": 667901,
+        "nontransparent_bounds": [
+          0,
+          21,
+          1234,
+          1206
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          123,
+          209,
+          1152,
+          1080
+        ],
+        "pixels_alpha_1_to_10": 11343
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected: creamy beige hummus dollop with spiral ridges and fine chickpea texture, complete coherent silhouette and thin white outline."
+    },
+    {
+      "key": "kefir",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: KEFIR only: one simple small clear glass carafe with a narrow neck filled with creamy white kefir, paired closely with one short clear glass of the same kefir at its base; tiny surface bubbles show the fermented drink. One compact coherent beverage group. No label, lid, packaging, straw, fruit or garnish.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, peeled banana, milk and yogurt cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12f44-bbe1-7482-8976-d12fdfa7fac8/exec-d90b7706-d6fb-4d7e-b99e-5612cff8fc8a.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_kefir.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_kefir.png",
+      "saved_at_utc": "2026-10-12T08:58:53.405383+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "10039cd18ac6c28bdfb9dca9d03996ae4245e78406a2d4372032da054135eb8d",
+      "bytes": 808840,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 1061009,
+        "opaque_pixels": 1773,
+        "partial_pixels": 509734,
+        "nontransparent_bounds": [
+          0,
+          31,
+          1224,
+          1190
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          288,
+          68,
+          979,
+          1184
+        ],
+        "pixels_alpha_1_to_10": 7610
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected generated output: White fermented dairy drink in a clear narrow-neck carafe and short glass, tiny frothy surface bubbles, one coherent beverage silhouette and full white outline. Transparent background, no text, badges or UI."
+    },
+    {
+      "key": "lamb",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: LAMB only: two compact grilled lamb rib chops with their slim rib bones and rosy meat centers clearly visible. No sauce, garnish or other food.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible with modest even padding, occupying around 78 percent of the canvas. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-25ff4ecc-acf7-43c7-9a0e-4a67e4bcdc2b.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_lamb.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_lamb.png",
+      "saved_at_utc": "2026-10-12T06:27:14.721954+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "f75fdcd47a50f6e453d096dfdc3e674786855de4dabfd47e89cccaadcf6274ce",
+      "bytes": 1831607,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 939652,
+        "opaque_pixels": 792,
+        "partial_pixels": 632072,
+        "nontransparent_bounds": [
+          0,
+          27,
+          1230,
+          1208
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          129,
+          94,
+          1131,
+          1168
+        ],
+        "pixels_alpha_1_to_10": 16027
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected: two recognizable grilled lamb rib chops with slim bones and rosy meat centers, realistic texture, transparent background and white outline; complete subject visible."
+    },
+    {
+      "key": "liver",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: LIVER only: three compact pieces of cooked liver, rich dark chestnut brown with smooth slightly shiny surfaces and rounded natural edges. A simple neat cluster, not raw gore, no garnish.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-953b6e68-8592-4020-a3ed-415b9f4dedb1.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_liver.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_liver.png",
+      "saved_at_utc": "2026-10-12T06:42:04.802850+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "d02e698cc8f6cf9b397167ef288c72b97f088fb05f2af95f019896db6a746b7b",
+      "bytes": 1449625,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 1062009,
+        "opaque_pixels": 541,
+        "partial_pixels": 509966,
+        "nontransparent_bounds": [
+          0,
+          33,
+          1218,
+          1230
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          97,
+          238,
+          1165,
+          1015
+        ],
+        "pixels_alpha_1_to_10": 8359
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected: three dark brown smooth cooked liver pieces with natural rounded edges, realistic texture and thin white cutout outline; full cluster visible."
+    },
+    {
+      "key": "mackerel",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: MACKEREL fish only: one whole fresh mackerel, blue-green back with distinctive dark wavy vertical stripes, silvery belly and forked tail. Full head, fins and tail visible.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-f934fa2e-2f11-47eb-b9ec-208c2f14907a.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_mackerel.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_mackerel.png",
+      "saved_at_utc": "2026-10-12T06:59:41.416468+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "a80dc88fba70d0a6c941dc1f85b46b481f796a61b8cc543e49be5c945a72f866",
+      "bytes": 911524,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 1258809,
+        "opaque_pixels": 1122,
+        "partial_pixels": 312585,
+        "nontransparent_bounds": [
+          41,
+          41,
+          1238,
+          1206
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          47,
+          245,
+          1235,
+          940
+        ],
+        "pixels_alpha_1_to_10": 10361
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected: whole silver mackerel with distinctive dark wavy blue-green back stripes, intact head/fins/tail and thin white outline."
+    },
+    {
+      "key": "mozzarella",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: MOZZARELLA only: one moist white mozzarella cheese ball with one thick round slice leaning beside it, subtle fibrous milk-white cut surface and smooth softly rounded exterior. Complete mozzarella portions, no herbs, basil, tomato, plate, packaging or garnish.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, peeled banana, milk and yogurt cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12f44-bbe1-7482-8976-d12fdfa7fac8/exec-cf4dbeb0-aaa9-4948-92f3-2ce79cf2c64a.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_mozzarella.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_mozzarella.png",
+      "saved_at_utc": "2026-10-12T09:04:43.990415+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "2db965d1284eb07b58f267471a9ac8439c30891cd7f34c170b2c8a9d0da50c41",
+      "bytes": 1188909,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 890458,
+        "opaque_pixels": 953,
+        "partial_pixels": 681105,
+        "nontransparent_bounds": [
+          0,
+          89,
+          1220,
+          1152
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          88,
+          210,
+          1167,
+          1058
+        ],
+        "pixels_alpha_1_to_10": 8575
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected generated output: Moist white mozzarella ball with a round front slice revealing subtle fibrous texture, softly rounded surface and full cutout outline. Transparent background, no unrelated ingredients, text, badges or UI."
+    },
+    {
+      "key": "mussels",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: MUSSELS only: three opened dark blue-black mussel shells with glossy orange mussel meat visible. Compact neat cluster, no lemon, sauce or garnish.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-b9289d5b-5c07-4262-b536-57c156ead525.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_mussels.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_mussels.png",
+      "saved_at_utc": "2026-10-12T07:26:25.005909+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "8464d00f04fd0c6444163aeea69b4598eec1b3a0ab4621167e5c91560c863e2d",
+      "bytes": 1522346,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 940810,
+        "opaque_pixels": 994,
+        "partial_pixels": 630712,
+        "nontransparent_bounds": [
+          0,
+          39,
+          1200,
+          1254
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          103,
+          99,
+          1152,
+          1070
+        ],
+        "pixels_alpha_1_to_10": 11193
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected: three opened blue-black mussel shells showing glossy orange meat, natural shell texture, full cluster and white outline."
+    },
+    {
+      "key": "oat_milk",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: OAT MILK only: one small clear drinking glass filled with pale creamy oat milk, with a small pinch of rolled oat flakes beside its base as identity cues. One coherent beverage sticker, no packaging or labels.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-e4ed05e3-531d-4a66-a57a-ad4e19f9ffb2.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_oat_milk.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_oat_milk.png",
+      "saved_at_utc": "2026-10-12T07:46:53.135914+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "73a30e7e579df3c156e3d0765f3bb493f8d4936c7567d7ef2284f0847de28a24",
+      "bytes": 1009927,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 956286,
+        "opaque_pixels": 1355,
+        "partial_pixels": 614875,
+        "nontransparent_bounds": [
+          0,
+          44,
+          1186,
+          1202
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          215,
+          145,
+          1033,
+          1107
+        ],
+        "pixels_alpha_1_to_10": 9742
+      },
+      "visually_inspected": true,
+      "visual_result": "Root visually inspected the saved PNG through view_image: recognizable oat milk with oats as the correct identity cue, transparent background, consistent photographic texture and white outline, no text, UI or checkmarks.",
+      "inspected_by": "root"
+    },
+    {
+      "key": "oysters",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: OYSTERS only: two open rough gray oyster half shells with the pearly cream oyster flesh and natural clear moisture visible. No lemon, sauce or garnish.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-198056b8-5637-431c-9e3b-f5714e1f034c.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_oysters.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_oysters.png",
+      "saved_at_utc": "2026-10-12T07:26:25.443144+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "0f071fd968abc561ba2a59a15a47641d83e474923e5738e4b06bbc0ddd24d63f",
+      "bytes": 1489457,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 919031,
+        "opaque_pixels": 1068,
+        "partial_pixels": 652417,
+        "nontransparent_bounds": [
+          65,
+          23,
+          1175,
+          1254
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          86,
+          173,
+          1171,
+          1101
+        ],
+        "pixels_alpha_1_to_10": 10042
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected: two open rough oyster half shells with pearly cream flesh and moisture, complete shells visible, thin white cutout outline and transparent surroundings."
+    },
+    {
+      "key": "parmesan",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: PARMESAN CHEESE only: one compact triangular wedge of aged parmesan cheese, pale straw-yellow hard grainy interior with tiny natural protein crystals and a curved warm amber rind, with a very small attached mound of fine parmesan shavings at its base. Complete cheese wedge, no branding pressed into rind, no text, herbs, grater, plate, packaging or garnish.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, peeled banana, milk and yogurt cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12f44-bbe1-7482-8976-d12fdfa7fac8/exec-1eeb3488-122a-4c71-b0cc-7ee93f3f1e93.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_parmesan.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_parmesan.png",
+      "saved_at_utc": "2026-10-12T09:07:51.971327+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "34e88a28a7886c8c72d4427c4ffa6bd433f80748800b343d6b06d0ee1664c3ca",
+      "bytes": 1408562,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 926938,
+        "opaque_pixels": 770,
+        "partial_pixels": 644808,
+        "nontransparent_bounds": [
+          0,
+          39,
+          1240,
+          1254
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          1,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          80,
+          174,
+          1180,
+          1082
+        ],
+        "pixels_alpha_1_to_10": 11833
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected generated output: recognizable aged parmesan wedge with straw-yellow hard grainy cheese, protein crystals, warm amber rind and small parmesan shavings, complete thin white outline and transparent background. No branding, labels, text, badges or UI. Bottom-left corner alpha is 1/255, an invisible generated fringe; original pixels preserved."
+    },
+    {
+      "key": "peanut_butter",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: PEANUT BUTTER only: a thick glossy peanut-brown swirl-shaped dollop of smooth peanut butter, with two small split shelled peanut kernels nestled at its base. One compact food silhouette, no bread, jar, spoon or labels.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-fb966011-f295-429f-a60e-78f123026c1c.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_peanut_butter.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_peanut_butter.png",
+      "saved_at_utc": "2026-10-12T07:46:54.435764+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "05bceee474174435628273a0e3551c8d6de46d8dd4a7d857dbd4fcab50541d4d",
+      "bytes": 1420229,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 864169,
+        "opaque_pixels": 1037,
+        "partial_pixels": 707310,
+        "nontransparent_bounds": [
+          0,
+          41,
+          1234,
+          1200
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          87,
+          125,
+          1175,
+          1130
+        ],
+        "pixels_alpha_1_to_10": 12480
+      },
+      "visually_inspected": true,
+      "visual_result": "Root visually inspected the saved PNG through view_image: recognizable peanut butter with peanuts as the correct identity cue, transparent background, consistent photographic texture and white outline, no text, UI or checkmarks.",
+      "inspected_by": "root"
+    },
+    {
+      "key": "pollock",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: POLLOCK fish only: one small whole fresh Alaska pollock, mottled olive-gray back, pale silvery sides, three dorsal fins and a shallow forked tail. Whole head and tail visible.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-87306276-3237-4f40-92dc-e152d4d12442.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_pollock.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_pollock.png",
+      "saved_at_utc": "2026-10-12T07:09:28.460714+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "581088f66cec57a9709e65f8a3767de43b3dd8f2bfb18fd7fa05ed4d153a0b63",
+      "bytes": 933468,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 1249194,
+        "opaque_pixels": 1092,
+        "partial_pixels": 322230,
+        "nontransparent_bounds": [
+          33,
+          47,
+          1240,
+          1188
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          39,
+          369,
+          1230,
+          884
+        ],
+        "pixels_alpha_1_to_10": 10592
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected: whole mottled gray-olive pollock with three dorsal fins and shallow forked tail, realistic scales, full silhouette and thin white cutout outline."
+    },
+    {
+      "key": "pork",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: PORK only: one cooked pork loin chop, lightly browned on the outside, with the characteristic curved chop bone and pale pink-brown meat clearly visible. No sauce or herbs.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible with modest even padding, occupying around 78 percent of the canvas. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-79c4d359-7ae3-4e2c-9301-80e08080a17b.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_pork.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_pork.png",
+      "saved_at_utc": "2026-10-12T06:27:14.513660+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "32030ce8c18c30eac6ae505d2900190e7549ec2fb4ec446a0ea9cc3b0127217a",
+      "bytes": 2091340,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 812185,
+        "opaque_pixels": 680,
+        "partial_pixels": 759651,
+        "nontransparent_bounds": [
+          0,
+          29,
+          1228,
+          1254
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          1,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          49,
+          107,
+          1225,
+          1144
+        ],
+        "pixels_alpha_1_to_10": 10627
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected: recognizable browned pork loin chop with characteristic curved bone, crisp meat texture and thin white outline; complete food visible. One bottom-left corner has negligible alpha 1/255 fringe."
+    },
+    {
+      "key": "pumpkin_seeds",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: PUMPKIN SEEDS only: a small compact mound of shelled pepitas, broad flat oval deep olive-green pumpkin seed kernels, a few overlapping seeds at the front to show their flattened shape. A coherent heap without a bowl, spoon, pumpkin fruit or garnish.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, peeled banana, milk and yogurt cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12f44-bbe1-7482-8976-d12fdfa7fac8/exec-14c01f78-4e3e-4dfb-aead-77fbae610afd.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_pumpkin_seeds.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_pumpkin_seeds.png",
+      "saved_at_utc": "2026-10-12T08:52:56.437339+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "9c8a7623a76c5a48c4233ff6ddaf41c8d78e0ae62b8b420edb27a1c128dee1c8",
+      "bytes": 1494430,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 996165,
+        "opaque_pixels": 1332,
+        "partial_pixels": 575019,
+        "nontransparent_bounds": [
+          0,
+          88,
+          1206,
+          1206
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          75,
+          261,
+          1179,
+          992
+        ],
+        "pixels_alpha_1_to_10": 9410
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected generated output: Recognizable broad flattened olive-green pepita kernels in a compact heap, natural seed texture, thin white outline and full silhouette. Transparent background, no dish, text, badges or UI."
+    },
+    {
+      "key": "rabbit",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: RABBIT meat only: one compact roasted rabbit hind leg portion, with the long slender leg bone and pale brown cooked meat clearly visible. No garnish or other food.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-dd6d60d7-36fc-44fc-af23-e7c3171d90f9.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_rabbit.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_rabbit.png",
+      "saved_at_utc": "2026-10-12T06:42:04.400760+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "ed294e04921dca84e2e1c41106950e9107336567d447ae075ac023e67b421c58",
+      "bytes": 1109128,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 1185347,
+        "opaque_pixels": 733,
+        "partial_pixels": 386436,
+        "nontransparent_bounds": [
+          25,
+          84,
+          1240,
+          1254
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          123,
+          131,
+          1156,
+          1141
+        ],
+        "pixels_alpha_1_to_10": 9173
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected: complete cooked pale-meat hind leg with a long slender bone, realistic browned surface and thin white outline. Species identity relies on the matched label; a cut of cooked rabbit is not uniquely distinguishable from all other poultry cuts by artwork alone."
+    },
+    {
+      "key": "sardines",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: SARDINES fish only: a neat compact cluster of three small whole fresh silver sardines with blue-gray backs and forked tails. Full fish silhouettes visible.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-97092596-432a-4c8b-8e7f-0638a526a302.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_sardines.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_sardines.png",
+      "saved_at_utc": "2026-10-12T07:09:27.833905+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "ebe78efde803dfe215958019c067b77e2f9c9375be16b4f49cf84b6b153efce3",
+      "bytes": 1423884,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 1064681,
+        "opaque_pixels": 979,
+        "partial_pixels": 506856,
+        "nontransparent_bounds": [
+          0,
+          33,
+          1232,
+          1254
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          82,
+          276,
+          1185,
+          983
+        ],
+        "pixels_alpha_1_to_10": 17012
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected: three small whole silver-blue sardines in a compact aligned group, intact heads and forked tails, realistic scales and thin white outline."
+    },
+    {
+      "key": "sausage",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: SAUSAGE only: two plump cooked sausage links, browned natural casing, with one cut end exposing the fine textured pink-brown meat filling. No bread or garnish.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-00ab4a95-11c7-4a53-9125-45e8c96b4e30.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_sausage.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_sausage.png",
+      "saved_at_utc": "2026-10-12T06:51:28.477027+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "8282af9853f4126408b8ed6ad7afe73dc683495491c23cf2839ee08466b05e7e",
+      "bytes": 1365347,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 1054530,
+        "opaque_pixels": 669,
+        "partial_pixels": 517317,
+        "nontransparent_bounds": [
+          0,
+          19,
+          1222,
+          1254
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          95,
+          262,
+          1179,
+          991
+        ],
+        "pixels_alpha_1_to_10": 10084
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected: two browned sausage links, one cut end showing textured filling, realistic casing and thin white outline; all pieces visible."
+    },
+    {
+      "key": "seitan",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: SEITAN only: a compact golden-brown cooked wheat-gluten seitan block with two thick cut slices exposing the slightly fibrous porous beige interior. No sauce or garnish.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-a28c880b-443c-4cc8-8b6a-9222eb80101a.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_seitan.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_seitan.png",
+      "saved_at_utc": "2026-10-12T07:42:16.903986+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "49fb935cbe1f8d6f9a1c2c2b4133dcd303b6a188f485b96f46d2fe054d8f9049",
+      "bytes": 1869844,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 859486,
+        "opaque_pixels": 841,
+        "partial_pixels": 712189,
+        "nontransparent_bounds": [
+          46,
+          37,
+          1211,
+          1254
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          52,
+          159,
+          1204,
+          1095
+        ],
+        "pixels_alpha_1_to_10": 8031
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected: golden-brown wheat-gluten block and slices showing dense porous beige interior. Its loaf-like cooked form can resemble other foods, so the exact matched text label should remain visible; no substitute illustration was reused."
+    },
+    {
+      "key": "shrimp",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: SHRIMP only: three peeled cooked shrimp, pink-orange outside and pearly white flesh, gently curved with intact tail tips. Compact group, no sauce or garnish.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-a1eae7aa-a266-45e5-b62b-c717d5b1b798.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_shrimp.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_shrimp.png",
+      "saved_at_utc": "2026-10-12T07:26:24.118554+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "fc28b1d2667e18544f1309457ab6e984aee532017b17671724cb1a689f8d3d0f",
+      "bytes": 1518161,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 875560,
+        "opaque_pixels": 1436,
+        "partial_pixels": 695520,
+        "nontransparent_bounds": [
+          33,
+          20,
+          1218,
+          1254
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          57,
+          145,
+          1201,
+          1079
+        ],
+        "pixels_alpha_1_to_10": 13683
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected: three peeled cooked shrimp with orange tails, pearly flesh and curved bodies, full silhouettes and thin white cutout border."
+    },
+    {
+      "key": "sour_cream",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: SOUR CREAM only: one small low clear glass bowl filled with thick silky white sour cream, a soft rounded dollop and smooth glossy folds above the rim. Rich spoonable dairy texture with no curds. No spoon, plate, fruit or garnish. The transparent bowl is a simple serving vessel, not packaging.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, peeled banana, milk and yogurt cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12f44-bbe1-7482-8976-d12fdfa7fac8/exec-be042061-d513-455f-8c84-bde1c127c714.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_sour_cream.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_sour_cream.png",
+      "saved_at_utc": "2026-10-12T08:58:54.328340+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "2d6ca58d3c9fc27b3dfebe4bf413650129361d67576dfb2b246d9889e4036d7f",
+      "bytes": 1034143,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 935814,
+        "opaque_pixels": 1131,
+        "partial_pixels": 635571,
+        "nontransparent_bounds": [
+          25,
+          27,
+          1158,
+          1218
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          98,
+          207,
+          1153,
+          1051
+        ],
+        "pixels_alpha_1_to_10": 8017
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected generated output: Thick silky glossy sour cream with a soft dollop and smooth folds in a low glass bowl, no curds or unrelated food, full white cutout outline. Transparent background, no text, badges or UI."
+    },
+    {
+      "key": "soy_milk",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: SOY MILK only: one small clear drinking glass filled with ivory soy milk, with three beige soybeans beside its base as identity cues. One coherent beverage sticker, no packaging or labels.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-08d1d786-23c6-4522-b25a-0f0998adaa94.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_soy_milk.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_soy_milk.png",
+      "saved_at_utc": "2026-10-12T07:46:52.618741+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "0eb49277f76c8c5783c70706289ad5a27a2ac3b48b156bd48737954a87c530ed",
+      "bytes": 824535,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 1042559,
+        "opaque_pixels": 1125,
+        "partial_pixels": 528832,
+        "nontransparent_bounds": [
+          0,
+          35,
+          1117,
+          1136
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          255,
+          185,
+          990,
+          1075
+        ],
+        "pixels_alpha_1_to_10": 7683
+      },
+      "visually_inspected": true,
+      "visual_result": "Root visually inspected the saved PNG through view_image: recognizable soy milk with soybeans as the correct identity cue, transparent background, consistent photographic texture and white outline, no text, UI or checkmarks.",
+      "inspected_by": "root"
+    },
+    {
+      "key": "squid",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: SQUID only: several white cooked squid rings and one small clean squid mantle with short tentacles, glossy pearly flesh. Compact cluster, no black ink, sauce or garnish.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-f2b63bd5-d5e4-435c-ab32-c4c387325246.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_squid.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_squid.png",
+      "saved_at_utc": "2026-10-12T07:26:24.512806+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "a8f183c0911cf7794f889af8ac14fac600ad724c1088abaaa8f524670ce3177d",
+      "bytes": 1088056,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 1001053,
+        "opaque_pixels": 1534,
+        "partial_pixels": 569929,
+        "nontransparent_bounds": [
+          81,
+          23,
+          1240,
+          1254
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          94,
+          211,
+          1168,
+          1037
+        ],
+        "pixels_alpha_1_to_10": 11989
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected: clean cooked squid mantle and tentacles with several pearly white squid rings, realistic subtle browned texture, coherent cluster and thin white outline."
+    },
+    {
+      "key": "sunflower_seeds",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: SUNFLOWER SEEDS only: a compact mound of sunflower seeds, recognizable tapered gray shells with pale longitudinal stripes, a few peeled ivory sunflower seed kernels nestled at the front. One coherent seed heap without a bowl, spoon, sunflower flower or garnish.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, peeled banana, milk and yogurt cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12f44-bbe1-7482-8976-d12fdfa7fac8/exec-42393367-7780-4553-b5b9-3293e7c718c6.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_sunflower_seeds.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_sunflower_seeds.png",
+      "saved_at_utc": "2026-10-12T08:52:55.763209+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "f1718bc310593233372ae464539d75178121eed7d6b88076ae424a398d4ccadb",
+      "bytes": 1802776,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 945928,
+        "opaque_pixels": 1284,
+        "partial_pixels": 625304,
+        "nontransparent_bounds": [
+          0,
+          65,
+          1206,
+          1156
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          64,
+          253,
+          1196,
+          1003
+        ],
+        "pixels_alpha_1_to_10": 11011
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected generated output: Recognizable striped gray sunflower seed shells with ivory peeled kernels in front, crisp natural texture, thin white outline and full silhouette. Transparent background, no dish, text, badges or UI."
+    },
+    {
+      "key": "tempeh",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: TEMPEH only: one rectangular light beige tempeh slab and two small cut slices, clearly showing the distinctive tightly packed whole soybean mosaic bound by white fermentation culture. No garnish.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-177a812d-eeb9-4613-8f5e-341ce7696b7d.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_tempeh.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_tempeh.png",
+      "saved_at_utc": "2026-10-12T07:42:15.616329+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "2ec1bd13d5847fe29795dfded43dd1494f9130649e7d33d06812271a5b7f8ca6",
+      "bytes": 1302437,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 924586,
+        "opaque_pixels": 730,
+        "partial_pixels": 647200,
+        "nontransparent_bounds": [
+          0,
+          23,
+          1208,
+          1182
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          113,
+          200,
+          1182,
+          1086
+        ],
+        "pixels_alpha_1_to_10": 15324
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected: tempeh slab and slices with clearly visible tightly packed soybean mosaic bound by pale fermentation culture, realistic texture and thin white outline."
+    },
+    {
+      "key": "tilapia",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: TILAPIA fish only: one whole fresh tilapia, deep flattened oval silver-gray body with faint vertical dark bands and a long spiny dorsal fin. Full head and tail visible.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-ba75ca72-caf3-45e3-8e17-852c118b2bae.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_tilapia.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_tilapia.png",
+      "saved_at_utc": "2026-10-12T07:09:28.791900+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "850e51ab1bd49ea600e3e090d1d45a3f4c7ed9d0a1d4329ea26f55d8c6c5d431",
+      "bytes": 1549134,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 1034092,
+        "opaque_pixels": 533,
+        "partial_pixels": 537891,
+        "nontransparent_bounds": [
+          0,
+          37,
+          1232,
+          1254
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          41,
+          266,
+          1217,
+          987
+        ],
+        "pixels_alpha_1_to_10": 14266
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected: recognizable deep oval tilapia body with silver-gray scales, faint bands and long spiny dorsal fin; full fish silhouette, white outline and transparent background."
+    },
+    {
+      "key": "tofu",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: TOFU only: a small ivory tofu block with three clean-cut tofu cubes in front, smooth moist surface and a subtle fine soy curd texture. Uncooked plain tofu, no garnish.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-06bd9318-100a-4394-bfbb-b385b8db0a7a.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_tofu.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_tofu.png",
+      "saved_at_utc": "2026-10-12T07:42:15.162894+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "497ae89c71645e209fde4c68103c5c2ff09f464056e0f40331a2f91857d70663",
+      "bytes": 1153383,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 857169,
+        "opaque_pixels": 1181,
+        "partial_pixels": 714166,
+        "nontransparent_bounds": [
+          102,
+          161,
+          1198,
+          1238
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          109,
+          189,
+          1166,
+          1105
+        ],
+        "pixels_alpha_1_to_10": 9630
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected: moist ivory tofu block and three tofu cubes with subtle fine curd pores, coherent silhouette, full outline and genuine transparency."
+    },
+    {
+      "key": "trout",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: TROUT fish only: one small whole fresh rainbow trout, its silver skin with a subtle pink side band and tiny dark speckles visible, gently curved diagonally, full head and tail intact.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-ac01ecc5-8053-44eb-aab4-b9a629a437b6.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_trout.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_trout.png",
+      "saved_at_utc": "2026-10-12T06:59:40.700448+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "d79f345eeccc0515e8248971a0b3ac8bce0a946066784587207ac0087f26f089",
+      "bytes": 1074291,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 1218338,
+        "opaque_pixels": 730,
+        "partial_pixels": 353448,
+        "nontransparent_bounds": [
+          31,
+          95,
+          1225,
+          1206
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          46,
+          319,
+          1222,
+          922
+        ],
+        "pixels_alpha_1_to_10": 10084
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected: complete whole trout with pink lateral band, dark speckles, silver scales and intact head/tail, realistic natural fish texture and thin white outline."
+    },
+    {
+      "key": "tuna",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: TUNA only: one compact ruby-red fresh tuna steak with two thick slices in front, recognizable dense red fish flesh with fine pale muscle lines. No plate, no garnish.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-9d2a78fa-8e99-4898-9807-4edf558e9e08.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_tuna.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_tuna.png",
+      "saved_at_utc": "2026-10-12T06:51:28.803906+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "c9838c38839d332943d4f8c70fc85e82149f035cbe2a8f148fa7776c7d8e5319",
+      "bytes": 1760890,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 856291,
+        "opaque_pixels": 417,
+        "partial_pixels": 715808,
+        "nontransparent_bounds": [
+          0,
+          57,
+          1224,
+          1254
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          66,
+          178,
+          1203,
+          1077
+        ],
+        "pixels_alpha_1_to_10": 9960
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected: dense ruby-red tuna portion with two thick slices and fine pale muscle lines, realistic fish texture, full food silhouette and thin white cutout border."
+    },
+    {
+      "key": "turkey",
+      "generator": "built-in image_gen",
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: TURKEY meat only: a compact golden-brown roasted turkey breast portion with two pale carved slices showing the moist white meat, recognizable as poultry breast. Individual turkey icon, not a whole roast or a sheet.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation.\nComposition/framing: centered three-quarter view on a square transparent canvas. Entire turkey portion and slices visible with modest even padding, occupying about 78 percent of the canvas. One coherent food silhouette.\nConstraints: genuinely transparent alpha background, thin white outline following the complete food silhouette. No table, plate, board, cutlery, packaging, other ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+      "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-c777beb7-457f-49a1-9341-91b6b4726cdd.png",
+      "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_turkey.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_turkey.png",
+      "saved_at_utc": "2026-10-12T06:21:01.405932+00:00",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "5ec317bc9fd3436944afc6af57b7f04b2fadf69997adf8ab1d8c7bfaeab06bd7",
+      "bytes": 2114224,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 668087,
+        "opaque_pixels": 787,
+        "partial_pixels": 903642,
+        "nontransparent_bounds": [
+          0,
+          69,
+          1240,
+          1254
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          21,
+          98,
+          1233,
+          1156
+        ],
+        "pixels_alpha_1_to_10": 12174
+      },
+      "visually_inspected": true,
+      "visual_result": "Visually inspected: recognizable roasted poultry breast and two pale meat slices, crisp realistic texture, thin white cutout border, no plate or text; entire turkey portion visible."
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "key": "cream",
+  "generator": "built-in image_gen",
+  "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: DAIRY CREAM only: one small clear glass pouring jug with a short spout and curved handle, filled with thick ivory pouring cream. Smooth opaque dairy cream visible near the rim, no froth, curds or toppings. One coherent creamy beverage icon; jug is a serving vessel, no packaging, labels, spoon or garnish.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, peeled banana, milk and yogurt cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+  "generated_path": "/Users/anastasia/.codex/generated_images/01a12f44-bbe1-7482-8976-d12fdfa7fac8/exec-33ba8866-9aeb-4d53-b602-85542708d451.png",
+  "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_cream.png",
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_cream.png",
+  "saved_at_utc": "2026-10-12T09:04:43.644920+00:00",
+  "transparent_background": true,
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "fd431043886d64876fffcd685664a53360c41c78f8495b4a03cfd0ee569847ea",
+  "bytes": 944123,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 971318,
+    "opaque_pixels": 1043,
+    "partial_pixels": 600155,
+    "nontransparent_bounds": [
+      0,
+      39,
+      1214,
+      1094
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      225,
+      179,
+      1117,
+      1089
+    ],
+    "pixels_alpha_1_to_10": 10018
+  },
+  "visually_inspected": true,
+  "visual_result": "Visually inspected generated output: Smooth ivory pouring cream in one clear spouted serving jug with handle, full glass silhouette and white border. Transparent background, no unrelated ingredients, text, badges or UI."
+}

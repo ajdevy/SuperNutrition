@@ -1,0 +1,43 @@
+{
+  "key": "strawberry",
+  "generator": "built-in image_gen",
+  "generated_path": "/Users/anastasia/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-6f850997-6d00-441d-b27f-4d1f2fd3ddf2.png",
+  "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_strawberry.png",
+  "intended_resource_name": "food_sticker_strawberry.png",
+  "prompt_file": "broad-library-prompts.json",
+  "saved_at_utc": "2026-10-12T04:51:42.453539+00:00",
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "6b703f88635d7f0a1e2422ac1ceca7f8c9304f5363980e4cf8fab35744d41800",
+  "bytes": 1641972,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 886324,
+    "opaque_pixels": 748,
+    "partial_pixels": 685444,
+    "nontransparent_bounds": [
+      49,
+      39,
+      1218,
+      1254
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      86,
+      141,
+      1171,
+      1091
+    ],
+    "pixels_alpha_1_to_10": 16865
+  },
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_strawberry.png",
+  "visually_inspected": true,
+  "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+}
