@@ -1,0 +1,320 @@
+{
+  "generator": "builtin image_gen.imagegen",
+  "asset_type": "transparent photorealistic food sticker",
+  "completed_at_utc": "2026-10-13T05:51:59.279087+00:00",
+  "completed_keys": [
+    "buckwheat",
+    "barley",
+    "millet",
+    "bulgur",
+    "couscous",
+    "semolina",
+    "cornmeal",
+    "wheat",
+    "rye"
+  ],
+  "missing_keys": [],
+  "count": 9,
+  "prompt_set_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/prompts.json",
+  "scope_note": "Only these nine grain PNGs and their per-key metadata plus this aggregate were authored. Production resources/code and shared manifest/prompts untouched.",
+  "validation": "All nine individual outputs visually inspected. All PNGs 1254x1254 RGBA, alpha min0/max255, SHA256 matches metadata, exact prompts match prompt set; no duplicate files. Rye has a negligible alpha1/255 lower-left generated fringe recorded in its metadata.",
+  "assets": [
+    {
+      "key": "buckwheat",
+      "generator": "builtin image_gen.imagegen",
+      "transparent_background": true,
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: a compact mound of distinct toasted brown triangular buckwheat groats, no bowl.\nStyle/medium: crisp photorealistic food product photograph with realistic texture and gentle white studio light. Match the existing app food stickers: natural colors, clean thin white die-cut outline tracing the complete food silhouette. Individual asset only, not a sheet.\nComposition/framing: one compact recognizable food group centered on a square transparent canvas. Entire subject visible with around 10% clear padding on every side; fills about 75-80% of the canvas. It must read clearly at a small mobile icon size. For elongated vegetables use a diagonal arrangement.\nConstraints: actual transparent alpha background, not checkerboard or solid background. Only the named food and its own natural stems/peel/leaves; no decorative herbs, other foods, table, plate, bowl, packaging, shadows beyond the silhouette, text, labels, logo, watermark, face, anthropomorphic features, checkmark, badge or UI. White outline follows only the silhouette; no colored backing. Preserve truthful characteristic shapes and colors.",
+      "generator_output_path": "/Users/REDACTED/.codex/generated_images/01a133c2-7301-7323-86ec-bca0e577d821/exec-db183262-9027-4c0b-9657-668f30f8a65c.png",
+      "workspace_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_buckwheat.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_buckwheat.png",
+      "sha256": "e6a43873675947fc33edc95260df7092ff9302df473a8405c32d7f7deed129f6",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_bbox": [
+        0,
+        10,
+        1240,
+        1254
+      ],
+      "bytes": 1547344,
+      "saved_at_utc": "2026-10-13T05:38:37.511496+00:00",
+      "visual_inspection": {
+        "status": "passed",
+        "notes": "Visually inspected generated output: distinct brown triangular buckwheat groats in a compact photoreal mound; thin white silhouette outline; no bowl, text, other food or badge; complete subject."
+      }
+    },
+    {
+      "key": "barley",
+      "generator": "builtin image_gen.imagegen",
+      "transparent_background": true,
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: a compact mound of plain pearled barley grains, pale beige oval kernels with recognizable grooves, no bowl.\nStyle/medium: crisp photorealistic food product photograph with realistic texture and gentle white studio light. Match the existing app food stickers: natural colors, clean thin white die-cut outline tracing the complete food silhouette. Individual asset only, not a sheet.\nComposition/framing: one compact recognizable food group centered on a square transparent canvas. Entire subject visible with around 10% clear padding on every side; fills about 75-80% of the canvas. It must read clearly at a small mobile icon size. For elongated vegetables use a diagonal arrangement.\nConstraints: actual transparent alpha background, not checkerboard or solid background. Only the named food and its own natural stems/peel/leaves; no decorative herbs, other foods, table, plate, bowl, packaging, shadows beyond the silhouette, text, labels, logo, watermark, face, anthropomorphic features, checkmark, badge or UI. White outline follows only the silhouette; no colored backing. Preserve truthful characteristic shapes and colors.",
+      "generator_output_path": "/Users/REDACTED/.codex/generated_images/01a133c2-7301-7323-86ec-bca0e577d821/exec-47fba132-76a0-4694-9043-5aafeaca334d.png",
+      "workspace_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_barley.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_barley.png",
+      "sha256": "1a4af04c1a30b89011633c30fc14481e9850d2dabde13ea5bf3f761700329dc7",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_bbox": [
+        0,
+        35,
+        1238,
+        1218
+      ],
+      "bytes": 1741495,
+      "saved_at_utc": "2026-10-13T05:40:58.235266+00:00",
+      "visual_inspection": {
+        "status": "passed",
+        "notes": "Visually inspected generated output: pale beige oval pearled barley kernels with longitudinal grooves; compact mound, thin white contour, complete subject, no bowl, text, unrelated food or badge."
+      }
+    },
+    {
+      "key": "millet",
+      "generator": "builtin image_gen.imagegen",
+      "transparent_background": true,
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: a compact mound of small round pale-golden millet grains, no bowl.\nStyle/medium: crisp photorealistic food product photograph with realistic texture and gentle white studio light. Match the existing app food stickers: natural colors, clean thin white die-cut outline tracing the complete food silhouette. Individual asset only, not a sheet.\nComposition/framing: one compact recognizable food group centered on a square transparent canvas. Entire subject visible with around 10% clear padding on every side; fills about 75-80% of the canvas. It must read clearly at a small mobile icon size. For elongated vegetables use a diagonal arrangement.\nConstraints: actual transparent alpha background, not checkerboard or solid background. Only the named food and its own natural stems/peel/leaves; no decorative herbs, other foods, table, plate, bowl, packaging, shadows beyond the silhouette, text, labels, logo, watermark, face, anthropomorphic features, checkmark, badge or UI. White outline follows only the silhouette; no colored backing. Preserve truthful characteristic shapes and colors.",
+      "generator_output_path": "/Users/REDACTED/.codex/generated_images/01a133c2-7301-7323-86ec-bca0e577d821/exec-af871ccd-6712-44a4-b300-5bc979e9012e.png",
+      "workspace_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_millet.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_millet.png",
+      "sha256": "9f8208992ea3ed68c6afaa972a62286c7d812f3e99e071b5907f7ad421444d8b",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_bbox": [
+        0,
+        55,
+        1215,
+        1254
+      ],
+      "bytes": 1358937,
+      "saved_at_utc": "2026-10-13T05:40:58.234014+00:00",
+      "visual_inspection": {
+        "status": "passed",
+        "notes": "Visually inspected generated output: distinct round golden millet grains, clearly different from elongated barley and irregular bulgur; compact mound, thin white contour, no bowl, text or badge."
+      }
+    },
+    {
+      "key": "bulgur",
+      "generator": "builtin image_gen.imagegen",
+      "transparent_background": true,
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: a compact mound of coarse golden-brown cracked bulgur wheat pieces, no bowl.\nStyle/medium: crisp photorealistic food product photograph with realistic texture and gentle white studio light. Match the existing app food stickers: natural colors, clean thin white die-cut outline tracing the complete food silhouette. Individual asset only, not a sheet.\nComposition/framing: one compact recognizable food group centered on a square transparent canvas. Entire subject visible with around 10% clear padding on every side; fills about 75-80% of the canvas. It must read clearly at a small mobile icon size. For elongated vegetables use a diagonal arrangement.\nConstraints: actual transparent alpha background, not checkerboard or solid background. Only the named food and its own natural stems/peel/leaves; no decorative herbs, other foods, table, plate, bowl, packaging, shadows beyond the silhouette, text, labels, logo, watermark, face, anthropomorphic features, checkmark, badge or UI. White outline follows only the silhouette; no colored backing. Preserve truthful characteristic shapes and colors.",
+      "generator_output_path": "/Users/REDACTED/.codex/generated_images/01a133c2-7301-7323-86ec-bca0e577d821/exec-b1e44464-5473-4c6d-8f1e-a2730ab7bfb6.png",
+      "workspace_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_bulgur.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_bulgur.png",
+      "sha256": "b34e66816cee14c6abd50350b5b1410d49e9bd286a19d96c6472f30656dd665c",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_bbox": [
+        14,
+        20,
+        1239,
+        1254
+      ],
+      "bytes": 1747414,
+      "saved_at_utc": "2026-10-13T05:40:58.237304+00:00",
+      "visual_inspection": {
+        "status": "passed",
+        "notes": "Visually inspected generated output: irregular coarse golden cracked wheat pieces in a compact mound, thin white silhouette contour; complete subject, no bowl, text, other food or badge."
+      }
+    },
+    {
+      "key": "couscous",
+      "generator": "builtin image_gen.imagegen",
+      "transparent_background": true,
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: a compact mound of tiny pale-golden couscous granules, visibly small even rounded grains, no bowl.\nStyle/medium: crisp photorealistic food product photograph with realistic texture and gentle white studio light. Match the existing app food stickers: natural colors, clean thin white die-cut outline tracing the complete food silhouette. Individual asset only, not a sheet.\nComposition/framing: one compact recognizable food group centered on a square transparent canvas. Entire subject visible with around 10% clear padding on every side; fills about 75-80% of the canvas. It must read clearly at a small mobile icon size. For elongated vegetables use a diagonal arrangement.\nConstraints: actual transparent alpha background, not checkerboard or solid background. Only the named food and its own natural stems/peel/leaves; no decorative herbs, other foods, table, plate, bowl, packaging, shadows beyond the silhouette, text, labels, logo, watermark, face, anthropomorphic features, checkmark, badge or UI. White outline follows only the silhouette; no colored backing. Preserve truthful characteristic shapes and colors.",
+      "generator_output_path": "/Users/REDACTED/.codex/generated_images/01a133c2-7301-7323-86ec-bca0e577d821/exec-3861463e-9e8d-4512-b283-a58bb8d620b9.png",
+      "workspace_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_couscous.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_couscous.png",
+      "sha256": "6a23d146797c8e5fe29fdc85ba9a7dbb2f6a1b19b2ff6960c53bf2d41239015a",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_bbox": [
+        25,
+        41,
+        1240,
+        1254
+      ],
+      "bytes": 1364626,
+      "saved_at_utc": "2026-10-13T05:43:58.062075+00:00",
+      "visual_inspection": {
+        "status": "passed",
+        "notes": "Visually inspected generated output: tiny even rounded pale-golden couscous granules in a compact mound; clearly distinct from millet and fine semolina, thin white contour, no bowl, text or badge."
+      }
+    },
+    {
+      "key": "semolina",
+      "generator": "builtin image_gen.imagegen",
+      "transparent_background": true,
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: a compact mound of fine pale-cream semolina granules with a delicate granular texture, no bowl.\nStyle/medium: crisp photorealistic food product photograph with realistic texture and gentle white studio light. Match the existing app food stickers: natural colors, clean thin white die-cut outline tracing the complete food silhouette. Individual asset only, not a sheet.\nComposition/framing: one compact recognizable food group centered on a square transparent canvas. Entire subject visible with around 10% clear padding on every side; fills about 75-80% of the canvas. It must read clearly at a small mobile icon size. For elongated vegetables use a diagonal arrangement.\nConstraints: actual transparent alpha background, not checkerboard or solid background. Only the named food and its own natural stems/peel/leaves; no decorative herbs, other foods, table, plate, bowl, packaging, shadows beyond the silhouette, text, labels, logo, watermark, face, anthropomorphic features, checkmark, badge or UI. White outline follows only the silhouette; no colored backing. Preserve truthful characteristic shapes and colors.",
+      "generator_output_path": "/Users/REDACTED/.codex/generated_images/01a133c2-7301-7323-86ec-bca0e577d821/exec-01e6d9f7-79c1-4b5e-9bf9-342c0f38361b.png",
+      "workspace_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_semolina.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_semolina.png",
+      "sha256": "8e6672ff90f6ec43ae13adb0228dd2aac8dd2a6fee1ec946288adfe4f5f90d60",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_bbox": [
+        0,
+        17,
+        1243,
+        1254
+      ],
+      "bytes": 1546614,
+      "saved_at_utc": "2026-10-13T05:43:58.066866+00:00",
+      "visual_inspection": {
+        "status": "passed",
+        "notes": "Visually inspected generated output: fine pale-cream semolina granules form a soft granular mound; different texture and color from golden cornmeal, thin white contour, no bowl, text or badge."
+      }
+    },
+    {
+      "key": "cornmeal",
+      "generator": "builtin image_gen.imagegen",
+      "transparent_background": true,
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: a compact mound of fine naturally golden-yellow cornmeal with a slightly coarse powder texture, no bowl.\nStyle/medium: crisp photorealistic food product photograph with realistic texture and gentle white studio light. Match the existing app food stickers: natural colors, clean thin white die-cut outline tracing the complete food silhouette. Individual asset only, not a sheet.\nComposition/framing: one compact recognizable food group centered on a square transparent canvas. Entire subject visible with around 10% clear padding on every side; fills about 75-80% of the canvas. It must read clearly at a small mobile icon size. For elongated vegetables use a diagonal arrangement.\nConstraints: actual transparent alpha background, not checkerboard or solid background. Only the named food and its own natural stems/peel/leaves; no decorative herbs, other foods, table, plate, bowl, packaging, shadows beyond the silhouette, text, labels, logo, watermark, face, anthropomorphic features, checkmark, badge or UI. White outline follows only the silhouette; no colored backing. Preserve truthful characteristic shapes and colors.",
+      "generator_output_path": "/Users/REDACTED/.codex/generated_images/01a133c2-7301-7323-86ec-bca0e577d821/exec-b96e89a8-176a-4e45-a89b-2ae8a4645c1c.png",
+      "workspace_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_cornmeal.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_cornmeal.png",
+      "sha256": "ad0853abfe0bd322ae86f6f588e43cdd23ebae1661f8e833ecd7a9ce356a74f5",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_bbox": [
+        0,
+        16,
+        1230,
+        1254
+      ],
+      "bytes": 1620907,
+      "saved_at_utc": "2026-10-13T05:43:58.062006+00:00",
+      "visual_inspection": {
+        "status": "passed",
+        "notes": "Visually inspected generated output: bright naturally golden-yellow coarse powder mound with granular cornmeal texture; thin white contour, complete subject, no bowl, text, other food or badge."
+      }
+    },
+    {
+      "key": "wheat",
+      "generator": "builtin image_gen.imagegen",
+      "transparent_background": true,
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: a compact mound of golden-brown whole wheat kernels beside two small natural wheat ears with fine awns.\nStyle/medium: crisp photorealistic food product photograph with realistic texture and gentle white studio light. Match the existing app food stickers: natural colors, clean thin white die-cut outline tracing the complete food silhouette. Individual asset only, not a sheet.\nComposition/framing: one compact recognizable food group centered on a square transparent canvas. Entire subject visible with around 10% clear padding on every side; fills about 75-80% of the canvas. It must read clearly at a small mobile icon size. For elongated vegetables use a diagonal arrangement.\nConstraints: actual transparent alpha background, not checkerboard or solid background. Only the named food and its own natural stems/peel/leaves; no decorative herbs, other foods, table, plate, bowl, packaging, shadows beyond the silhouette, text, labels, logo, watermark, face, anthropomorphic features, checkmark, badge or UI. White outline follows only the silhouette; no colored backing. Preserve truthful characteristic shapes and colors.",
+      "generator_output_path": "/Users/REDACTED/.codex/generated_images/01a133c2-7301-7323-86ec-bca0e577d821/exec-233e80fc-6f3b-4014-bc0e-8c39cea83f3f.png",
+      "workspace_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_wheat.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_wheat.png",
+      "sha256": "db66f85f0f8d30e34ee5ee8ee8866be225427b0a79082b35ea46630014527fa2",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_bbox": [
+        0,
+        89,
+        1209,
+        1254
+      ],
+      "bytes": 1585635,
+      "saved_at_utc": "2026-10-13T05:50:34.931843+00:00",
+      "visual_inspection": {
+        "status": "passed",
+        "notes": "Visually inspected generated output: golden-brown whole wheat kernels with central grooves and natural wheat ears; photoreal textures, thin white outline, full subject, no bowl, text, other food or badge."
+      }
+    },
+    {
+      "key": "rye",
+      "generator": "builtin image_gen.imagegen",
+      "transparent_background": true,
+      "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: a compact mound of slender grey-beige rye kernels beside two small natural rye ears with long fine awns.\nStyle/medium: crisp photorealistic food product photograph with realistic texture and gentle white studio light. Match the existing app food stickers: natural colors, clean thin white die-cut outline tracing the complete food silhouette. Individual asset only, not a sheet.\nComposition/framing: one compact recognizable food group centered on a square transparent canvas. Entire subject visible with around 10% clear padding on every side; fills about 75-80% of the canvas. It must read clearly at a small mobile icon size. For elongated vegetables use a diagonal arrangement.\nConstraints: actual transparent alpha background, not checkerboard or solid background. Only the named food and its own natural stems/peel/leaves; no decorative herbs, other foods, table, plate, bowl, packaging, shadows beyond the silhouette, text, labels, logo, watermark, face, anthropomorphic features, checkmark, badge or UI. White outline follows only the silhouette; no colored backing. Preserve truthful characteristic shapes and colors.",
+      "generator_output_path": "/Users/REDACTED/.codex/generated_images/01a133c2-7301-7323-86ec-bca0e577d821/exec-8ad8e0eb-e4b0-487d-8ed2-8a2d9dfd538f.png",
+      "workspace_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_rye.png",
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_rye.png",
+      "sha256": "e73cc146da08d96ab92bc34136980755f55d25c256b5264f1f4140af7df4633d",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "corner_alpha": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "alpha_bbox": [
+        0,
+        96,
+        1207,
+        1254
+      ],
+      "bytes": 1812025,
+      "saved_at_utc": "2026-10-13T05:50:34.941803+00:00",
+      "visual_inspection": {
+        "status": "passed",
+        "notes": "Visually inspected generated output: visibly slender grey-beige rye kernels beside two long-awned natural rye ears; distinct from warm rounded wheat grains, thin white outline, full subject, no bowl, text or badge. Alpha at bottom-left corner is 1/255 (negligible generated fringe); preserve original output without image editing."
+      }
+    }
+  ]
+}

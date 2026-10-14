@@ -1,0 +1,33 @@
+{
+  "key": "fig",
+  "generator": "builtin image_gen.imagegen",
+  "transparent_background": true,
+  "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: one ripe purple fig beside one cut fig half showing ruby-pink seeded flesh and pale skin.\nStyle/medium: crisp photorealistic food product photograph with realistic texture and gentle white studio light. Match the existing app food stickers: natural colors, clean thin white die-cut outline tracing the complete food silhouette. Individual asset only, not a sheet.\nComposition/framing: one compact recognizable food group centered on a square transparent canvas. Entire subject visible with around 10% clear padding on every side; fills about 75-80% of the canvas. It must read clearly at a small mobile icon size. For elongated vegetables use a diagonal arrangement.\nConstraints: actual transparent alpha background, not checkerboard or solid background. Only the named food and its own natural stems/peel/leaves; no decorative herbs, other foods, table, plate, bowl, packaging, shadows beyond the silhouette, text, labels, logo, watermark, face, anthropomorphic features, checkmark, badge or UI. White outline follows only the silhouette; no colored backing. Preserve truthful characteristic shapes and colors.",
+  "generator_output_path": "/Users/REDACTED/.codex/generated_images/01a12f29-e518-7d93-b918-a24d32930940/exec-568cb60f-a376-40aa-9f0b-34a4aa9d1058.png",
+  "workspace_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_fig.png",
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_fig.png",
+  "sha256": "6b1c9b4babc223e8d7590211a3c8cb1d9df5002a7df6176704502384931862a8",
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "alpha_min": 0,
+  "alpha_max": 255,
+  "corner_alpha": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "alpha_bbox": [
+    0,
+    21,
+    1240,
+    1254
+  ],
+  "bytes": 2084474,
+  "saved_at_utc": "2026-10-12T09:04:38.757532+00:00",
+  "visual_inspection": {
+    "status": "passed",
+    "notes": "Recognizable whole purple fig and cut ruby-pink seeded half; complete centered silhouette, natural colors and thin white outline, no unrelated foods or text."
+  }
+}

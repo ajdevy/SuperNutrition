@@ -3,6 +3,7 @@
     <string name="capture_shutter">Take photo</string>
     <string name="capture_import">Choose photo</string>
     <string name="capture_open_settings">Open settings</string>
+    <string name="capture_allow_camera">Allow camera</string>
     <string name="capture_scan_again">Take another photo</string>
     <string name="capture_cancel">Cancel</string>
     <string name="capture_close">Close</string>
@@ -117,4 +118,27 @@
     <string name="profile_opened_from_link">Opened from a profile link</string>
     <string name="profile_id_label">Profile ID</string>
     <string name="profile_close">Close profile</string>
+    <string name="capture_review_title">Let’s make it accurate</string>
+    <string name="capture_review_subtitle">Pick the foods in your photo. Uncheck the rest.</string>
+    <string name="capture_review_custom_meal">Custom meal</string>
+    <string name="capture_review_anything_else">Anything else?</string>
+    <string name="capture_review_retake">Retake</string>
+    <string name="capture_review_add_to_meal">Add to meal</string>
+    <string name="capture_pantry_salmon">Salmon</string>
+    <string name="capture_pantry_broccoli">Broccoli</string>
+    <string name="capture_pantry_quinoa">Quinoa</string>
+    <string name="capture_pantry_avocado">Avocado</string>
+    <string name="capture_pantry_leafy_greens">Leafy greens</string>
+    <string name="capture_pantry_carrot">Carrot</string>
+    <string name="capture_pantry_red_bell_pepper">Red bell pepper</string>
+    <string name="capture_pantry_cucumber">Cucumber</string>
+    <string name="capture_pantry_olive_oil">Olive oil</string>
+    <string name="capture_pantry_yellow_bell_pepper">Yellow bell pepper</string>
+    <string name="capture_pantry_cauliflower">Cauliflower</string>
+    <string name="capture_pantry_edamame">Edamame</string>
+    <string name="capture_pantry_tahini">Tahini</string>
+    <string name="capture_pantry_soy_sauce">Soy sauce</string>
+    <string name="capture_pantry_salt">Salt</string>
+    <string name="capture_pantry_blueberries">Blueberries</string>
+    <string name="capture_pantry_sweet_potato">Sweet potato</string>
 </resources>

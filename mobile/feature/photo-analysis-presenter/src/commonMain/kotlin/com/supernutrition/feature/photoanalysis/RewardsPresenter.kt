@@ -35,11 +35,20 @@ data class RewardsCardModel(
     val isEarned: Boolean,
 )
 
-data class RewardsPresenterModel(val title: String, val cards: List<RewardsCardModel>) {
+data class RewardsPresenterModel(
+    val title: String,
+    val cards: List<RewardsCardModel>,
+    val earnedSummary: String = "",
+    val earnedSummaryLabel: String = "",
+) {
     companion object {
         fun from(snapshot: RewardsSnapshot, copy: RewardsPresenterCopy): RewardsPresenterModel = RewardsPresenterModel(
             title = copy.title,
             cards = snapshot.cards.map { status -> status.toModel(copy) },
+            earnedSummary = copy.progressTemplate
+                .replace("{current}", snapshot.cards.count(RewardStatus::isEarned).toString())
+                .replace("{target}", snapshot.cards.size.toString()),
+            earnedSummaryLabel = copy.earnedLabel,
         )
 
         private fun RewardStatus.toModel(copy: RewardsPresenterCopy): RewardsCardModel {

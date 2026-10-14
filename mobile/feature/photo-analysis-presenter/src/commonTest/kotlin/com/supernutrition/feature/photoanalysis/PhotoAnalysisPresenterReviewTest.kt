@@ -38,6 +38,41 @@ class PhotoAnalysisPresenterReviewTest {
     private val requestId = RequestId("presenter-review-request")
 
     @Test
+    fun `dish confidence bands survive identical localized confidence labels`() {
+        val bands = ConfidenceBand.entries
+        val proposals = bands.mapIndexed { index, band ->
+            dish("dish-${band.name}", "Dish ${index + 1}", index + 1).copy(
+                confidence = Confidence(
+                    score = when (band) {
+                        ConfidenceBand.LOW -> 0.1
+                        ConfidenceBand.MEDIUM -> 0.6
+                        ConfidenceBand.HIGH -> 0.9
+                    },
+                    band = band,
+                ),
+            )
+        }
+        val localized = copy.copy(
+            evidence = copy.evidence.copy(
+                lowConfidence = "Localized confidence",
+                mediumConfidence = "Localized confidence",
+                highConfidence = "Localized confidence",
+            ),
+        )
+        val model = PhotoAnalysisPresenterModel.from(
+            PhotoAnalysisState.CandidateReview(
+                ref,
+                requestId,
+                CandidateReviewDraft(mainDishProposals = proposals, photoEvidence = emptyList()),
+            ),
+            localized,
+        )
+        val projected = assertNotNull(model.review).mainDishProposals
+        assertEquals(bands, projected.map { it.confidenceBand })
+        assertEquals(setOf("Localized confidence"), projected.map { it.confidenceLabel }.toSet())
+    }
+
+    @Test
     fun `presenter maps every factual local stage without a time estimate`() {
         val expectedLabels = mapOf(
             LocalAnalysisStage.FINDING_VISIBLE_FOODS to copy.status.findingVisibleFoods,

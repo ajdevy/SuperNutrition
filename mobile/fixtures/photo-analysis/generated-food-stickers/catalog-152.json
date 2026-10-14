@@ -1,0 +1,2306 @@
+{
+  "version": 1,
+  "prepared_at": "2026-10-12",
+  "baseline_commit": "5ee5de077866feed70b418ee2760af24322b1d22",
+  "status": "integrated; verification pending",
+  "matching": "trim, lowercase, underscore-to-space, full alias equality; no substring matching",
+  "category_counts": {
+    "fruit": 21,
+    "vegetable": 22,
+    "grain": 10,
+    "meat": 9,
+    "fish": 13,
+    "plant": 21,
+    "dairy": 9
+  },
+  "existing_identity_count": 47,
+  "expanded_identity_count": 105,
+  "total_identity_count": 152,
+  "existing_alias_migrations": [
+    {
+      "id": "leafy_greens",
+      "remove": [
+        "spinach",
+        "шпинат",
+        "spinaci"
+      ],
+      "new_owner": "spinach"
+    }
+  ],
+  "existing_records_after_migration": [
+    {
+      "id": "salmon",
+      "label": "Salmon",
+      "aliases": [
+        "salmon",
+        "лосось",
+        "сёмга",
+        "семга",
+        "salmone"
+      ]
+    },
+    {
+      "id": "broccoli",
+      "label": "Broccoli",
+      "aliases": [
+        "broccoli",
+        "брокколи"
+      ]
+    },
+    {
+      "id": "quinoa",
+      "label": "Quinoa",
+      "aliases": [
+        "quinoa",
+        "киноа"
+      ]
+    },
+    {
+      "id": "avocado",
+      "label": "Avocado",
+      "aliases": [
+        "avocado",
+        "авокадо"
+      ]
+    },
+    {
+      "id": "leafy_greens",
+      "label": "Leafy greens",
+      "aliases": [
+        "leafy greens",
+        "зелень"
+      ]
+    },
+    {
+      "id": "carrot",
+      "label": "Carrot",
+      "aliases": [
+        "carrot",
+        "carrots",
+        "морковь",
+        "carota",
+        "carote"
+      ]
+    },
+    {
+      "id": "red_bell_pepper",
+      "label": "Red bell pepper",
+      "aliases": [
+        "red bell pepper",
+        "красный перец",
+        "peperone rosso"
+      ]
+    },
+    {
+      "id": "cucumber",
+      "label": "Cucumber",
+      "aliases": [
+        "cucumber",
+        "огурец",
+        "cetriolo"
+      ]
+    },
+    {
+      "id": "olive_oil",
+      "label": "Olive oil",
+      "aliases": [
+        "olive oil",
+        "оливковое масло",
+        "olio di oliva"
+      ]
+    },
+    {
+      "id": "yellow_bell_pepper",
+      "label": "Yellow bell pepper",
+      "aliases": [
+        "yellow bell pepper",
+        "жёлтый перец",
+        "желтый перец",
+        "peperone giallo"
+      ]
+    },
+    {
+      "id": "cauliflower",
+      "label": "Cauliflower",
+      "aliases": [
+        "cauliflower",
+        "цветная капуста",
+        "cavolfiore"
+      ]
+    },
+    {
+      "id": "edamame",
+      "label": "Edamame",
+      "aliases": [
+        "edamame",
+        "эдамаме"
+      ]
+    },
+    {
+      "id": "tahini",
+      "label": "Tahini",
+      "aliases": [
+        "tahini",
+        "тахини"
+      ]
+    },
+    {
+      "id": "soy_sauce",
+      "label": "Soy sauce",
+      "aliases": [
+        "soy sauce",
+        "соевый соус",
+        "salsa di soia"
+      ]
+    },
+    {
+      "id": "salt",
+      "label": "Salt",
+      "aliases": [
+        "salt",
+        "соль",
+        "sale"
+      ]
+    },
+    {
+      "id": "blueberries",
+      "label": "Blueberries",
+      "aliases": [
+        "blueberry",
+        "blueberries",
+        "черника",
+        "голубика",
+        "mirtilli"
+      ]
+    },
+    {
+      "id": "sweet_potato",
+      "label": "Sweet potato",
+      "aliases": [
+        "sweet potato",
+        "батат",
+        "patata dolce"
+      ]
+    },
+    {
+      "id": "apple",
+      "label": "Apple",
+      "aliases": [
+        "apple",
+        "apples",
+        "яблоко",
+        "яблоки",
+        "mela",
+        "mele",
+        "manzana",
+        "manzanas"
+      ]
+    },
+    {
+      "id": "banana",
+      "label": "Banana",
+      "aliases": [
+        "banana",
+        "bananas",
+        "банан",
+        "бананы",
+        "plátano",
+        "plátanos",
+        "platano",
+        "platanos"
+      ]
+    },
+    {
+      "id": "orange",
+      "label": "Orange",
+      "aliases": [
+        "orange",
+        "oranges",
+        "апельсин",
+        "апельсины",
+        "arancia",
+        "arance",
+        "naranja",
+        "naranjas"
+      ]
+    },
+    {
+      "id": "tomato",
+      "label": "Tomato",
+      "aliases": [
+        "tomato",
+        "tomatoes",
+        "помидор",
+        "помидоры",
+        "томат",
+        "томаты"
+      ]
+    },
+    {
+      "id": "potato",
+      "label": "Potato",
+      "aliases": [
+        "potato",
+        "potatoes",
+        "картофель",
+        "картошка"
+      ]
+    },
+    {
+      "id": "rice",
+      "label": "Rice",
+      "aliases": [
+        "rice",
+        "рис"
+      ]
+    },
+    {
+      "id": "chicken",
+      "label": "Chicken",
+      "aliases": [
+        "chicken",
+        "курица"
+      ]
+    },
+    {
+      "id": "egg",
+      "label": "Egg",
+      "aliases": [
+        "egg",
+        "eggs",
+        "яйцо",
+        "яйца"
+      ]
+    },
+    {
+      "id": "cheese",
+      "label": "Cheese",
+      "aliases": [
+        "cheese",
+        "сыр"
+      ]
+    },
+    {
+      "id": "yogurt",
+      "label": "Yogurt",
+      "aliases": [
+        "yogurt",
+        "yoghurt",
+        "йогурт"
+      ]
+    },
+    {
+      "id": "strawberry",
+      "label": "Strawberry",
+      "aliases": [
+        "strawberry",
+        "strawberries",
+        "клубника"
+      ]
+    },
+    {
+      "id": "grapes",
+      "label": "Grapes",
+      "aliases": [
+        "grape",
+        "grapes",
+        "виноград"
+      ]
+    },
+    {
+      "id": "beans",
+      "label": "Beans",
+      "aliases": [
+        "bean",
+        "beans",
+        "фасоль"
+      ]
+    },
+    {
+      "id": "mushroom",
+      "label": "Mushroom",
+      "aliases": [
+        "mushroom",
+        "mushrooms",
+        "гриб",
+        "грибы"
+      ]
+    },
+    {
+      "id": "bread",
+      "label": "Bread",
+      "aliases": [
+        "bread",
+        "хлеб"
+      ]
+    },
+    {
+      "id": "beef",
+      "label": "Beef",
+      "aliases": [
+        "beef",
+        "говядина"
+      ]
+    },
+    {
+      "id": "lentils",
+      "label": "Lentils",
+      "aliases": [
+        "lentil",
+        "lentils",
+        "чечевица"
+      ]
+    },
+    {
+      "id": "pear",
+      "label": "Pear",
+      "aliases": [
+        "pear",
+        "pears",
+        "груша",
+        "груши"
+      ]
+    },
+    {
+      "id": "oats",
+      "label": "Oats",
+      "aliases": [
+        "oats",
+        "oat",
+        "овёс",
+        "овес"
+      ]
+    },
+    {
+      "id": "pasta",
+      "label": "Pasta",
+      "aliases": [
+        "pasta",
+        "макароны",
+        "паста"
+      ]
+    },
+    {
+      "id": "milk",
+      "label": "Milk",
+      "aliases": [
+        "milk",
+        "молоко"
+      ]
+    },
+    {
+      "id": "watermelon",
+      "label": "Watermelon",
+      "aliases": [
+        "watermelon",
+        "watermelons",
+        "арбуз",
+        "арбузы"
+      ]
+    },
+    {
+      "id": "lemon",
+      "label": "Lemon",
+      "aliases": [
+        "lemon",
+        "lemons",
+        "лимон",
+        "лимоны"
+      ]
+    },
+    {
+      "id": "nuts",
+      "label": "Nuts",
+      "aliases": [
+        "nut",
+        "nuts",
+        "орех",
+        "орехи"
+      ]
+    },
+    {
+      "id": "fish",
+      "label": "Fish",
+      "aliases": [
+        "fish",
+        "рыба"
+      ]
+    },
+    {
+      "id": "onion",
+      "label": "Onion",
+      "aliases": [
+        "onion",
+        "onions",
+        "лук"
+      ]
+    },
+    {
+      "id": "peach",
+      "label": "Peach",
+      "aliases": [
+        "peach",
+        "peaches",
+        "персик",
+        "персики"
+      ]
+    },
+    {
+      "id": "mango",
+      "label": "Mango",
+      "aliases": [
+        "mango",
+        "mangoes",
+        "mangos",
+        "манго"
+      ]
+    },
+    {
+      "id": "pineapple",
+      "label": "Pineapple",
+      "aliases": [
+        "pineapple",
+        "pineapples",
+        "ананас",
+        "ананасы"
+      ]
+    },
+    {
+      "id": "kiwi",
+      "label": "Kiwi",
+      "aliases": [
+        "kiwi",
+        "kiwis",
+        "kiwifruit",
+        "киви"
+      ]
+    }
+  ],
+  "expanded_records": [
+    {
+      "id": "mandarin",
+      "category": "fruit",
+      "label": "Mandarin",
+      "resource": "food_sticker_mandarin",
+      "aliases": [
+        "mandarin",
+        "mandarins",
+        "tangerine",
+        "tangerines",
+        "mandarin orange",
+        "mandarin oranges",
+        "мандарин",
+        "мандарины"
+      ]
+    },
+    {
+      "id": "grapefruit",
+      "category": "fruit",
+      "label": "Grapefruit",
+      "resource": "food_sticker_grapefruit",
+      "aliases": [
+        "grapefruit",
+        "grapefruits",
+        "грейпфрут",
+        "грейпфруты"
+      ]
+    },
+    {
+      "id": "lime",
+      "category": "fruit",
+      "label": "Lime",
+      "resource": "food_sticker_lime",
+      "aliases": [
+        "lime",
+        "limes",
+        "лайм",
+        "лаймы"
+      ]
+    },
+    {
+      "id": "cherry",
+      "category": "fruit",
+      "label": "Cherry",
+      "resource": "food_sticker_cherry",
+      "aliases": [
+        "cherry",
+        "cherries",
+        "вишня",
+        "черешня"
+      ]
+    },
+    {
+      "id": "plum",
+      "category": "fruit",
+      "label": "Plum",
+      "resource": "food_sticker_plum",
+      "aliases": [
+        "plum",
+        "plums",
+        "слива",
+        "сливы"
+      ]
+    },
+    {
+      "id": "apricot",
+      "category": "fruit",
+      "label": "Apricot",
+      "resource": "food_sticker_apricot",
+      "aliases": [
+        "apricot",
+        "apricots",
+        "абрикос",
+        "абрикосы"
+      ]
+    },
+    {
+      "id": "nectarine",
+      "category": "fruit",
+      "label": "Nectarine",
+      "resource": "food_sticker_nectarine",
+      "aliases": [
+        "nectarine",
+        "nectarines",
+        "нектарин",
+        "нектарины"
+      ]
+    },
+    {
+      "id": "persimmon",
+      "category": "fruit",
+      "label": "Persimmon",
+      "resource": "food_sticker_persimmon",
+      "aliases": [
+        "persimmon",
+        "persimmons",
+        "хурма"
+      ]
+    },
+    {
+      "id": "pomegranate",
+      "category": "fruit",
+      "label": "Pomegranate",
+      "resource": "food_sticker_pomegranate",
+      "aliases": [
+        "pomegranate",
+        "pomegranates",
+        "гранат",
+        "гранаты"
+      ]
+    },
+    {
+      "id": "melon",
+      "category": "fruit",
+      "label": "Melon",
+      "resource": "food_sticker_melon",
+      "aliases": [
+        "melon",
+        "melons",
+        "дыня",
+        "дыни"
+      ]
+    },
+    {
+      "id": "raspberry",
+      "category": "fruit",
+      "label": "Raspberry",
+      "resource": "food_sticker_raspberry",
+      "aliases": [
+        "raspberry",
+        "raspberries",
+        "малина"
+      ]
+    },
+    {
+      "id": "blackberry",
+      "category": "fruit",
+      "label": "Blackberry",
+      "resource": "food_sticker_blackberry",
+      "aliases": [
+        "blackberry",
+        "blackberries",
+        "ежевика"
+      ]
+    },
+    {
+      "id": "cranberry",
+      "category": "fruit",
+      "label": "Cranberry",
+      "resource": "food_sticker_cranberry",
+      "aliases": [
+        "cranberry",
+        "cranberries",
+        "клюква"
+      ]
+    },
+    {
+      "id": "blackcurrant",
+      "category": "fruit",
+      "label": "Blackcurrant",
+      "resource": "food_sticker_blackcurrant",
+      "aliases": [
+        "blackcurrant",
+        "blackcurrants",
+        "black currant",
+        "black currants",
+        "чёрная смородина",
+        "черная смородина"
+      ]
+    },
+    {
+      "id": "fig",
+      "category": "fruit",
+      "label": "Fig",
+      "resource": "food_sticker_fig",
+      "aliases": [
+        "fig",
+        "figs",
+        "инжир"
+      ]
+    },
+    {
+      "id": "dates",
+      "category": "fruit",
+      "label": "Dates",
+      "resource": "food_sticker_dates",
+      "aliases": [
+        "date",
+        "dates",
+        "финик",
+        "финики"
+      ]
+    },
+    {
+      "id": "coconut",
+      "category": "fruit",
+      "label": "Coconut",
+      "resource": "food_sticker_coconut",
+      "aliases": [
+        "coconut",
+        "coconuts",
+        "кокос",
+        "кокосы"
+      ]
+    },
+    {
+      "id": "papaya",
+      "category": "fruit",
+      "label": "Papaya",
+      "resource": "food_sticker_papaya",
+      "aliases": [
+        "papaya",
+        "papayas",
+        "папайя",
+        "папайи"
+      ]
+    },
+    {
+      "id": "passion_fruit",
+      "category": "fruit",
+      "label": "Passion Fruit",
+      "resource": "food_sticker_passion_fruit",
+      "aliases": [
+        "passion fruit",
+        "passion fruits",
+        "passionfruit",
+        "passionfruits",
+        "маракуйя"
+      ]
+    },
+    {
+      "id": "guava",
+      "category": "fruit",
+      "label": "Guava",
+      "resource": "food_sticker_guava",
+      "aliases": [
+        "guava",
+        "guavas",
+        "гуава",
+        "гуавы"
+      ]
+    },
+    {
+      "id": "lychee",
+      "category": "fruit",
+      "label": "Lychee",
+      "resource": "food_sticker_lychee",
+      "aliases": [
+        "lychee",
+        "lychees",
+        "litchi",
+        "litchis",
+        "личи"
+      ]
+    },
+    {
+      "id": "cabbage",
+      "category": "vegetable",
+      "label": "Cabbage",
+      "resource": "food_sticker_cabbage",
+      "aliases": [
+        "cabbage",
+        "cabbages",
+        "white cabbage",
+        "капуста",
+        "белокочанная капуста"
+      ]
+    },
+    {
+      "id": "red_cabbage",
+      "category": "vegetable",
+      "label": "Red Cabbage",
+      "resource": "food_sticker_red_cabbage",
+      "aliases": [
+        "red cabbage",
+        "purple cabbage",
+        "краснокочанная капуста",
+        "красная капуста"
+      ]
+    },
+    {
+      "id": "eggplant",
+      "category": "vegetable",
+      "label": "Eggplant",
+      "resource": "food_sticker_eggplant",
+      "aliases": [
+        "eggplant",
+        "eggplants",
+        "aubergine",
+        "aubergines",
+        "баклажан",
+        "баклажаны"
+      ]
+    },
+    {
+      "id": "zucchini",
+      "category": "vegetable",
+      "label": "Zucchini",
+      "resource": "food_sticker_zucchini",
+      "aliases": [
+        "zucchini",
+        "zucchinis",
+        "courgette",
+        "courgettes",
+        "кабачок",
+        "кабачки",
+        "цукини"
+      ]
+    },
+    {
+      "id": "beet",
+      "category": "vegetable",
+      "label": "Beet",
+      "resource": "food_sticker_beet",
+      "aliases": [
+        "beet",
+        "beets",
+        "beetroot",
+        "beetroots",
+        "свёкла",
+        "свекла"
+      ]
+    },
+    {
+      "id": "pumpkin",
+      "category": "vegetable",
+      "label": "Pumpkin",
+      "resource": "food_sticker_pumpkin",
+      "aliases": [
+        "pumpkin",
+        "pumpkins",
+        "тыква",
+        "тыквы"
+      ]
+    },
+    {
+      "id": "radish",
+      "category": "vegetable",
+      "label": "Radish",
+      "resource": "food_sticker_radish",
+      "aliases": [
+        "radish",
+        "radishes",
+        "редис",
+        "редиска"
+      ]
+    },
+    {
+      "id": "garlic",
+      "category": "vegetable",
+      "label": "Garlic",
+      "resource": "food_sticker_garlic",
+      "aliases": [
+        "garlic",
+        "чеснок"
+      ]
+    },
+    {
+      "id": "corn",
+      "category": "vegetable",
+      "label": "Corn",
+      "resource": "food_sticker_corn",
+      "aliases": [
+        "corn",
+        "maize",
+        "sweetcorn",
+        "sweet corn",
+        "кукуруза"
+      ]
+    },
+    {
+      "id": "peas",
+      "category": "vegetable",
+      "label": "Peas",
+      "resource": "food_sticker_peas",
+      "aliases": [
+        "pea",
+        "peas",
+        "green pea",
+        "green peas",
+        "горох",
+        "горошек",
+        "зелёный горошек",
+        "зеленый горошек"
+      ]
+    },
+    {
+      "id": "green_beans",
+      "category": "vegetable",
+      "label": "Green Beans",
+      "resource": "food_sticker_green_beans",
+      "aliases": [
+        "green bean",
+        "green beans",
+        "french bean",
+        "french beans",
+        "стручковая фасоль",
+        "зелёная фасоль",
+        "зеленая фасоль",
+        "спаржевая фасоль"
+      ]
+    },
+    {
+      "id": "asparagus",
+      "category": "vegetable",
+      "label": "Asparagus",
+      "resource": "food_sticker_asparagus",
+      "aliases": [
+        "asparagus",
+        "спаржа"
+      ]
+    },
+    {
+      "id": "celery",
+      "category": "vegetable",
+      "label": "Celery",
+      "resource": "food_sticker_celery",
+      "aliases": [
+        "celery",
+        "сельдерей"
+      ]
+    },
+    {
+      "id": "lettuce",
+      "category": "vegetable",
+      "label": "Lettuce",
+      "resource": "food_sticker_lettuce",
+      "aliases": [
+        "lettuce",
+        "lettuces",
+        "латук",
+        "салат латук",
+        "салат-латук",
+        "листовой салат"
+      ]
+    },
+    {
+      "id": "kale",
+      "category": "vegetable",
+      "label": "Kale",
+      "resource": "food_sticker_kale",
+      "aliases": [
+        "kale",
+        "кейл",
+        "кале",
+        "кудрявая капуста"
+      ]
+    },
+    {
+      "id": "brussels_sprouts",
+      "category": "vegetable",
+      "label": "Brussels Sprouts",
+      "resource": "food_sticker_brussels_sprouts",
+      "aliases": [
+        "brussels sprout",
+        "brussels sprouts",
+        "брюссельская капуста"
+      ]
+    },
+    {
+      "id": "green_bell_pepper",
+      "category": "vegetable",
+      "label": "Green Bell Pepper",
+      "resource": "food_sticker_green_bell_pepper",
+      "aliases": [
+        "green bell pepper",
+        "green bell peppers",
+        "зелёный болгарский перец",
+        "зеленый болгарский перец",
+        "зелёный перец",
+        "зеленый перец"
+      ]
+    },
+    {
+      "id": "leek",
+      "category": "vegetable",
+      "label": "Leek",
+      "resource": "food_sticker_leek",
+      "aliases": [
+        "leek",
+        "leeks",
+        "лук-порей",
+        "лук порей",
+        "порей"
+      ]
+    },
+    {
+      "id": "artichoke",
+      "category": "vegetable",
+      "label": "Artichoke",
+      "resource": "food_sticker_artichoke",
+      "aliases": [
+        "artichoke",
+        "artichokes",
+        "артишок",
+        "артишоки"
+      ]
+    },
+    {
+      "id": "fennel",
+      "category": "vegetable",
+      "label": "Fennel",
+      "resource": "food_sticker_fennel",
+      "aliases": [
+        "fennel",
+        "фенхель"
+      ]
+    },
+    {
+      "id": "turnip",
+      "category": "vegetable",
+      "label": "Turnip",
+      "resource": "food_sticker_turnip",
+      "aliases": [
+        "turnip",
+        "turnips",
+        "репа"
+      ]
+    },
+    {
+      "id": "spinach",
+      "category": "vegetable",
+      "label": "Spinach",
+      "resource": "food_sticker_spinach",
+      "aliases": [
+        "spinach",
+        "spinaci",
+        "шпинат"
+      ]
+    },
+    {
+      "id": "buckwheat",
+      "category": "grain",
+      "label": "Buckwheat",
+      "resource": "food_sticker_buckwheat",
+      "aliases": [
+        "buckwheat",
+        "гречка",
+        "гречневая крупа",
+        "гречиха"
+      ]
+    },
+    {
+      "id": "barley",
+      "category": "grain",
+      "label": "Barley",
+      "resource": "food_sticker_barley",
+      "aliases": [
+        "barley",
+        "перловка",
+        "перловая крупа",
+        "ячмень",
+        "ячневая крупа"
+      ]
+    },
+    {
+      "id": "millet",
+      "category": "grain",
+      "label": "Millet",
+      "resource": "food_sticker_millet",
+      "aliases": [
+        "millet",
+        "пшено",
+        "просо"
+      ]
+    },
+    {
+      "id": "bulgur",
+      "category": "grain",
+      "label": "Bulgur",
+      "resource": "food_sticker_bulgur",
+      "aliases": [
+        "bulgur",
+        "булгур"
+      ]
+    },
+    {
+      "id": "couscous",
+      "category": "grain",
+      "label": "Couscous",
+      "resource": "food_sticker_couscous",
+      "aliases": [
+        "couscous",
+        "cous cous",
+        "кускус",
+        "кус-кус"
+      ]
+    },
+    {
+      "id": "semolina",
+      "category": "grain",
+      "label": "Semolina",
+      "resource": "food_sticker_semolina",
+      "aliases": [
+        "semolina",
+        "манка",
+        "манная крупа"
+      ]
+    },
+    {
+      "id": "cornmeal",
+      "category": "grain",
+      "label": "Cornmeal",
+      "resource": "food_sticker_cornmeal",
+      "aliases": [
+        "cornmeal",
+        "corn meal",
+        "кукурузная крупа"
+      ]
+    },
+    {
+      "id": "wheat",
+      "category": "grain",
+      "label": "Wheat",
+      "resource": "food_sticker_wheat",
+      "aliases": [
+        "wheat",
+        "пшеница",
+        "пшеничная крупа"
+      ]
+    },
+    {
+      "id": "rye",
+      "category": "grain",
+      "label": "Rye",
+      "resource": "food_sticker_rye",
+      "aliases": [
+        "rye",
+        "рожь"
+      ]
+    },
+    {
+      "id": "turkey",
+      "category": "meat",
+      "label": "Turkey",
+      "resource": "food_sticker_turkey",
+      "aliases": [
+        "turkey",
+        "turkeys",
+        "turkey meat",
+        "индейка",
+        "индейки",
+        "индюшатина",
+        "мясо индейки"
+      ]
+    },
+    {
+      "id": "pork",
+      "category": "meat",
+      "label": "Pork",
+      "resource": "food_sticker_pork",
+      "aliases": [
+        "pork",
+        "свинина"
+      ]
+    },
+    {
+      "id": "lamb",
+      "category": "meat",
+      "label": "Lamb",
+      "resource": "food_sticker_lamb",
+      "aliases": [
+        "lamb",
+        "lamb meat",
+        "баранина",
+        "ягнятина"
+      ]
+    },
+    {
+      "id": "duck",
+      "category": "meat",
+      "label": "Duck",
+      "resource": "food_sticker_duck",
+      "aliases": [
+        "duck",
+        "ducks",
+        "duck meat",
+        "утка",
+        "утки",
+        "утиное мясо"
+      ]
+    },
+    {
+      "id": "rabbit",
+      "category": "meat",
+      "label": "Rabbit",
+      "resource": "food_sticker_rabbit",
+      "aliases": [
+        "rabbit",
+        "rabbits",
+        "rabbit meat",
+        "кролик",
+        "кролики",
+        "крольчатина"
+      ]
+    },
+    {
+      "id": "liver",
+      "category": "meat",
+      "label": "Liver",
+      "resource": "food_sticker_liver",
+      "aliases": [
+        "liver",
+        "печень"
+      ]
+    },
+    {
+      "id": "ham",
+      "category": "meat",
+      "label": "Ham",
+      "resource": "food_sticker_ham",
+      "aliases": [
+        "ham",
+        "ветчина"
+      ]
+    },
+    {
+      "id": "bacon",
+      "category": "meat",
+      "label": "Bacon",
+      "resource": "food_sticker_bacon",
+      "aliases": [
+        "bacon",
+        "бекон"
+      ]
+    },
+    {
+      "id": "sausage",
+      "category": "meat",
+      "label": "Sausage",
+      "resource": "food_sticker_sausage",
+      "aliases": [
+        "sausage",
+        "sausages",
+        "колбаса",
+        "сосиска",
+        "сосиски"
+      ]
+    },
+    {
+      "id": "tuna",
+      "category": "fish",
+      "label": "Tuna",
+      "resource": "food_sticker_tuna",
+      "aliases": [
+        "tuna",
+        "тунец"
+      ]
+    },
+    {
+      "id": "trout",
+      "category": "fish",
+      "label": "Trout",
+      "resource": "food_sticker_trout",
+      "aliases": [
+        "trout",
+        "форель"
+      ]
+    },
+    {
+      "id": "herring",
+      "category": "fish",
+      "label": "Herring",
+      "resource": "food_sticker_herring",
+      "aliases": [
+        "herring",
+        "herrings",
+        "сельдь",
+        "селёдка",
+        "селедка"
+      ]
+    },
+    {
+      "id": "mackerel",
+      "category": "fish",
+      "label": "Mackerel",
+      "resource": "food_sticker_mackerel",
+      "aliases": [
+        "mackerel",
+        "mackerels",
+        "скумбрия"
+      ]
+    },
+    {
+      "id": "sardines",
+      "category": "fish",
+      "label": "Sardines",
+      "resource": "food_sticker_sardines",
+      "aliases": [
+        "sardine",
+        "sardines",
+        "сардина",
+        "сардины"
+      ]
+    },
+    {
+      "id": "cod",
+      "category": "fish",
+      "label": "Cod",
+      "resource": "food_sticker_cod",
+      "aliases": [
+        "cod",
+        "треска"
+      ]
+    },
+    {
+      "id": "pollock",
+      "category": "fish",
+      "label": "Pollock",
+      "resource": "food_sticker_pollock",
+      "aliases": [
+        "pollock",
+        "минтай"
+      ]
+    },
+    {
+      "id": "tilapia",
+      "category": "fish",
+      "label": "Tilapia",
+      "resource": "food_sticker_tilapia",
+      "aliases": [
+        "tilapia",
+        "тилапия",
+        "тиляпия"
+      ]
+    },
+    {
+      "id": "shrimp",
+      "category": "fish",
+      "label": "Shrimp",
+      "resource": "food_sticker_shrimp",
+      "aliases": [
+        "shrimp",
+        "shrimps",
+        "prawn",
+        "prawns",
+        "креветка",
+        "креветки"
+      ]
+    },
+    {
+      "id": "squid",
+      "category": "fish",
+      "label": "Squid",
+      "resource": "food_sticker_squid",
+      "aliases": [
+        "squid",
+        "кальмар",
+        "кальмары"
+      ]
+    },
+    {
+      "id": "mussels",
+      "category": "fish",
+      "label": "Mussels",
+      "resource": "food_sticker_mussels",
+      "aliases": [
+        "mussel",
+        "mussels",
+        "мидия",
+        "мидии"
+      ]
+    },
+    {
+      "id": "oysters",
+      "category": "fish",
+      "label": "Oysters",
+      "resource": "food_sticker_oysters",
+      "aliases": [
+        "oyster",
+        "oysters",
+        "устрица",
+        "устрицы"
+      ]
+    },
+    {
+      "id": "crab",
+      "category": "fish",
+      "label": "Crab",
+      "resource": "food_sticker_crab",
+      "aliases": [
+        "crab",
+        "crabs",
+        "краб",
+        "крабы"
+      ]
+    },
+    {
+      "id": "tofu",
+      "category": "plant",
+      "label": "Tofu",
+      "resource": "food_sticker_tofu",
+      "aliases": [
+        "tofu",
+        "тофу"
+      ]
+    },
+    {
+      "id": "tempeh",
+      "category": "plant",
+      "label": "Tempeh",
+      "resource": "food_sticker_tempeh",
+      "aliases": [
+        "tempeh",
+        "темпе",
+        "темпех"
+      ]
+    },
+    {
+      "id": "chickpeas",
+      "category": "plant",
+      "label": "Chickpeas",
+      "resource": "food_sticker_chickpeas",
+      "aliases": [
+        "chickpea",
+        "chickpeas",
+        "chick pea",
+        "chick peas",
+        "garbanzo bean",
+        "garbanzo beans",
+        "нут",
+        "турецкий горох"
+      ]
+    },
+    {
+      "id": "hummus",
+      "category": "plant",
+      "label": "Hummus",
+      "resource": "food_sticker_hummus",
+      "aliases": [
+        "hummus",
+        "houmous",
+        "хумус"
+      ]
+    },
+    {
+      "id": "seitan",
+      "category": "plant",
+      "label": "Seitan",
+      "resource": "food_sticker_seitan",
+      "aliases": [
+        "seitan",
+        "сейтан"
+      ]
+    },
+    {
+      "id": "soy_milk",
+      "category": "plant",
+      "label": "Soy Milk",
+      "resource": "food_sticker_soy_milk",
+      "aliases": [
+        "soy milk",
+        "soya milk",
+        "соевое молоко",
+        "соевый напиток"
+      ]
+    },
+    {
+      "id": "oat_milk",
+      "category": "plant",
+      "label": "Oat Milk",
+      "resource": "food_sticker_oat_milk",
+      "aliases": [
+        "oat milk",
+        "овсяное молоко",
+        "овсяный напиток"
+      ]
+    },
+    {
+      "id": "almond_milk",
+      "category": "plant",
+      "label": "Almond Milk",
+      "resource": "food_sticker_almond_milk",
+      "aliases": [
+        "almond milk",
+        "миндальное молоко",
+        "миндальный напиток"
+      ]
+    },
+    {
+      "id": "coconut_milk",
+      "category": "plant",
+      "label": "Coconut Milk",
+      "resource": "food_sticker_coconut_milk",
+      "aliases": [
+        "coconut milk",
+        "кокосовое молоко",
+        "кокосовый напиток"
+      ]
+    },
+    {
+      "id": "peanut_butter",
+      "category": "plant",
+      "label": "Peanut Butter",
+      "resource": "food_sticker_peanut_butter",
+      "aliases": [
+        "peanut butter",
+        "арахисовая паста",
+        "арахисовое масло"
+      ]
+    },
+    {
+      "id": "chia_seeds",
+      "category": "plant",
+      "label": "Chia Seeds",
+      "resource": "food_sticker_chia_seeds",
+      "aliases": [
+        "chia seed",
+        "chia seeds",
+        "chia",
+        "семена чиа",
+        "чиа"
+      ]
+    },
+    {
+      "id": "flax_seeds",
+      "category": "plant",
+      "label": "Flax Seeds",
+      "resource": "food_sticker_flax_seeds",
+      "aliases": [
+        "flax seed",
+        "flax seeds",
+        "flaxseed",
+        "flaxseeds",
+        "linseed",
+        "linseeds",
+        "семена льна",
+        "льняные семена"
+      ]
+    },
+    {
+      "id": "pumpkin_seeds",
+      "category": "plant",
+      "label": "Pumpkin Seeds",
+      "resource": "food_sticker_pumpkin_seeds",
+      "aliases": [
+        "pumpkin seed",
+        "pumpkin seeds",
+        "семена тыквы",
+        "тыквенные семечки"
+      ]
+    },
+    {
+      "id": "sunflower_seeds",
+      "category": "plant",
+      "label": "Sunflower Seeds",
+      "resource": "food_sticker_sunflower_seeds",
+      "aliases": [
+        "sunflower seed",
+        "sunflower seeds",
+        "семена подсолнечника",
+        "подсолнечные семечки",
+        "семечки подсолнечника"
+      ]
+    },
+    {
+      "id": "cottage_cheese",
+      "category": "dairy",
+      "label": "Cottage Cheese",
+      "resource": "food_sticker_cottage_cheese",
+      "aliases": [
+        "cottage cheese",
+        "творог"
+      ]
+    },
+    {
+      "id": "kefir",
+      "category": "dairy",
+      "label": "Kefir",
+      "resource": "food_sticker_kefir",
+      "aliases": [
+        "kefir",
+        "кефир"
+      ]
+    },
+    {
+      "id": "sour_cream",
+      "category": "dairy",
+      "label": "Sour Cream",
+      "resource": "food_sticker_sour_cream",
+      "aliases": [
+        "sour cream",
+        "сметана"
+      ]
+    },
+    {
+      "id": "butter",
+      "category": "dairy",
+      "label": "Butter",
+      "resource": "food_sticker_butter",
+      "aliases": [
+        "butter",
+        "сливочное масло"
+      ]
+    },
+    {
+      "id": "cream",
+      "category": "dairy",
+      "label": "Cream",
+      "resource": "food_sticker_cream",
+      "aliases": [
+        "cream",
+        "сливки"
+      ]
+    },
+    {
+      "id": "mozzarella",
+      "category": "dairy",
+      "label": "Mozzarella",
+      "resource": "food_sticker_mozzarella",
+      "aliases": [
+        "mozzarella",
+        "mozzarella cheese",
+        "моцарелла"
+      ]
+    },
+    {
+      "id": "feta",
+      "category": "dairy",
+      "label": "Feta",
+      "resource": "food_sticker_feta",
+      "aliases": [
+        "feta",
+        "feta cheese",
+        "фета"
+      ]
+    },
+    {
+      "id": "cream_cheese",
+      "category": "dairy",
+      "label": "Cream Cheese",
+      "resource": "food_sticker_cream_cheese",
+      "aliases": [
+        "cream cheese",
+        "сливочный сыр",
+        "творожный сыр",
+        "крем-чиз",
+        "крем чиз"
+      ]
+    },
+    {
+      "id": "parmesan",
+      "category": "dairy",
+      "label": "Parmesan",
+      "resource": "food_sticker_parmesan",
+      "aliases": [
+        "parmesan",
+        "parmesan cheese",
+        "пармезан"
+      ]
+    },
+    {
+      "id": "brown_rice",
+      "category": "grain",
+      "label": "Brown rice",
+      "resource": "food_sticker_brown_rice",
+      "aliases": [
+        "brown rice",
+        "wholegrain rice",
+        "бурый рис",
+        "коричневый рис",
+        "нешлифованный рис"
+      ]
+    },
+    {
+      "id": "almonds",
+      "category": "plant",
+      "label": "Almonds",
+      "resource": "food_sticker_almonds",
+      "aliases": [
+        "almond",
+        "almonds",
+        "миндаль"
+      ]
+    },
+    {
+      "id": "peanuts",
+      "category": "plant",
+      "label": "Peanuts",
+      "resource": "food_sticker_peanuts",
+      "aliases": [
+        "peanut",
+        "peanuts",
+        "арахис"
+      ]
+    },
+    {
+      "id": "walnuts",
+      "category": "plant",
+      "label": "Walnuts",
+      "resource": "food_sticker_walnuts",
+      "aliases": [
+        "walnut",
+        "walnuts",
+        "грецкий орех",
+        "грецкие орехи"
+      ]
+    },
+    {
+      "id": "cashews",
+      "category": "plant",
+      "label": "Cashews",
+      "resource": "food_sticker_cashews",
+      "aliases": [
+        "cashew",
+        "cashews",
+        "кешью",
+        "кэшью"
+      ]
+    },
+    {
+      "id": "pistachios",
+      "category": "plant",
+      "label": "Pistachios",
+      "resource": "food_sticker_pistachios",
+      "aliases": [
+        "pistachio",
+        "pistachios",
+        "фисташка",
+        "фисташки"
+      ]
+    },
+    {
+      "id": "hazelnuts",
+      "category": "plant",
+      "label": "Hazelnuts",
+      "resource": "food_sticker_hazelnuts",
+      "aliases": [
+        "hazelnut",
+        "hazelnuts",
+        "фундук",
+        "лесной орех",
+        "лесные орехи"
+      ]
+    },
+    {
+      "id": "olives",
+      "category": "plant",
+      "label": "Olives",
+      "resource": "food_sticker_olives",
+      "aliases": [
+        "olive",
+        "olives",
+        "оливка",
+        "оливки",
+        "маслина",
+        "маслины"
+      ]
+    }
+  ],
+  "normalized_alias_owners": {
+    "salmon": "salmon",
+    "лосось": "salmon",
+    "сёмга": "salmon",
+    "семга": "salmon",
+    "salmone": "salmon",
+    "broccoli": "broccoli",
+    "брокколи": "broccoli",
+    "quinoa": "quinoa",
+    "киноа": "quinoa",
+    "avocado": "avocado",
+    "авокадо": "avocado",
+    "leafy greens": "leafy_greens",
+    "зелень": "leafy_greens",
+    "carrot": "carrot",
+    "carrots": "carrot",
+    "морковь": "carrot",
+    "carota": "carrot",
+    "carote": "carrot",
+    "red bell pepper": "red_bell_pepper",
+    "красный перец": "red_bell_pepper",
+    "peperone rosso": "red_bell_pepper",
+    "cucumber": "cucumber",
+    "огурец": "cucumber",
+    "cetriolo": "cucumber",
+    "olive oil": "olive_oil",
+    "оливковое масло": "olive_oil",
+    "olio di oliva": "olive_oil",
+    "yellow bell pepper": "yellow_bell_pepper",
+    "жёлтый перец": "yellow_bell_pepper",
+    "желтый перец": "yellow_bell_pepper",
+    "peperone giallo": "yellow_bell_pepper",
+    "cauliflower": "cauliflower",
+    "цветная капуста": "cauliflower",
+    "cavolfiore": "cauliflower",
+    "edamame": "edamame",
+    "эдамаме": "edamame",
+    "tahini": "tahini",
+    "тахини": "tahini",
+    "soy sauce": "soy_sauce",
+    "соевый соус": "soy_sauce",
+    "salsa di soia": "soy_sauce",
+    "salt": "salt",
+    "соль": "salt",
+    "sale": "salt",
+    "blueberry": "blueberries",
+    "blueberries": "blueberries",
+    "черника": "blueberries",
+    "голубика": "blueberries",
+    "mirtilli": "blueberries",
+    "sweet potato": "sweet_potato",
+    "батат": "sweet_potato",
+    "patata dolce": "sweet_potato",
+    "apple": "apple",
+    "apples": "apple",
+    "яблоко": "apple",
+    "яблоки": "apple",
+    "mela": "apple",
+    "mele": "apple",
+    "manzana": "apple",
+    "manzanas": "apple",
+    "banana": "banana",
+    "bananas": "banana",
+    "банан": "banana",
+    "бананы": "banana",
+    "plátano": "banana",
+    "plátanos": "banana",
+    "platano": "banana",
+    "platanos": "banana",
+    "orange": "orange",
+    "oranges": "orange",
+    "апельсин": "orange",
+    "апельсины": "orange",
+    "arancia": "orange",
+    "arance": "orange",
+    "naranja": "orange",
+    "naranjas": "orange",
+    "tomato": "tomato",
+    "tomatoes": "tomato",
+    "помидор": "tomato",
+    "помидоры": "tomato",
+    "томат": "tomato",
+    "томаты": "tomato",
+    "potato": "potato",
+    "potatoes": "potato",
+    "картофель": "potato",
+    "картошка": "potato",
+    "rice": "rice",
+    "рис": "rice",
+    "chicken": "chicken",
+    "курица": "chicken",
+    "egg": "egg",
+    "eggs": "egg",
+    "яйцо": "egg",
+    "яйца": "egg",
+    "cheese": "cheese",
+    "сыр": "cheese",
+    "yogurt": "yogurt",
+    "yoghurt": "yogurt",
+    "йогурт": "yogurt",
+    "strawberry": "strawberry",
+    "strawberries": "strawberry",
+    "клубника": "strawberry",
+    "grape": "grapes",
+    "grapes": "grapes",
+    "виноград": "grapes",
+    "bean": "beans",
+    "beans": "beans",
+    "фасоль": "beans",
+    "mushroom": "mushroom",
+    "mushrooms": "mushroom",
+    "гриб": "mushroom",
+    "грибы": "mushroom",
+    "bread": "bread",
+    "хлеб": "bread",
+    "beef": "beef",
+    "говядина": "beef",
+    "lentil": "lentils",
+    "lentils": "lentils",
+    "чечевица": "lentils",
+    "pear": "pear",
+    "pears": "pear",
+    "груша": "pear",
+    "груши": "pear",
+    "oats": "oats",
+    "oat": "oats",
+    "овёс": "oats",
+    "овес": "oats",
+    "pasta": "pasta",
+    "макароны": "pasta",
+    "паста": "pasta",
+    "milk": "milk",
+    "молоко": "milk",
+    "watermelon": "watermelon",
+    "watermelons": "watermelon",
+    "арбуз": "watermelon",
+    "арбузы": "watermelon",
+    "lemon": "lemon",
+    "lemons": "lemon",
+    "лимон": "lemon",
+    "лимоны": "lemon",
+    "nut": "nuts",
+    "nuts": "nuts",
+    "орех": "nuts",
+    "орехи": "nuts",
+    "fish": "fish",
+    "рыба": "fish",
+    "onion": "onion",
+    "onions": "onion",
+    "лук": "onion",
+    "peach": "peach",
+    "peaches": "peach",
+    "персик": "peach",
+    "персики": "peach",
+    "mango": "mango",
+    "mangoes": "mango",
+    "mangos": "mango",
+    "манго": "mango",
+    "pineapple": "pineapple",
+    "pineapples": "pineapple",
+    "ананас": "pineapple",
+    "ананасы": "pineapple",
+    "kiwi": "kiwi",
+    "kiwis": "kiwi",
+    "kiwifruit": "kiwi",
+    "киви": "kiwi",
+    "mandarin": "mandarin",
+    "mandarins": "mandarin",
+    "tangerine": "mandarin",
+    "tangerines": "mandarin",
+    "mandarin orange": "mandarin",
+    "mandarin oranges": "mandarin",
+    "мандарин": "mandarin",
+    "мандарины": "mandarin",
+    "grapefruit": "grapefruit",
+    "grapefruits": "grapefruit",
+    "грейпфрут": "grapefruit",
+    "грейпфруты": "grapefruit",
+    "lime": "lime",
+    "limes": "lime",
+    "лайм": "lime",
+    "лаймы": "lime",
+    "cherry": "cherry",
+    "cherries": "cherry",
+    "вишня": "cherry",
+    "черешня": "cherry",
+    "plum": "plum",
+    "plums": "plum",
+    "слива": "plum",
+    "сливы": "plum",
+    "apricot": "apricot",
+    "apricots": "apricot",
+    "абрикос": "apricot",
+    "абрикосы": "apricot",
+    "nectarine": "nectarine",
+    "nectarines": "nectarine",
+    "нектарин": "nectarine",
+    "нектарины": "nectarine",
+    "persimmon": "persimmon",
+    "persimmons": "persimmon",
+    "хурма": "persimmon",
+    "pomegranate": "pomegranate",
+    "pomegranates": "pomegranate",
+    "гранат": "pomegranate",
+    "гранаты": "pomegranate",
+    "melon": "melon",
+    "melons": "melon",
+    "дыня": "melon",
+    "дыни": "melon",
+    "raspberry": "raspberry",
+    "raspberries": "raspberry",
+    "малина": "raspberry",
+    "blackberry": "blackberry",
+    "blackberries": "blackberry",
+    "ежевика": "blackberry",
+    "cranberry": "cranberry",
+    "cranberries": "cranberry",
+    "клюква": "cranberry",
+    "blackcurrant": "blackcurrant",
+    "blackcurrants": "blackcurrant",
+    "black currant": "blackcurrant",
+    "black currants": "blackcurrant",
+    "чёрная смородина": "blackcurrant",
+    "черная смородина": "blackcurrant",
+    "fig": "fig",
+    "figs": "fig",
+    "инжир": "fig",
+    "date": "dates",
+    "dates": "dates",
+    "финик": "dates",
+    "финики": "dates",
+    "coconut": "coconut",
+    "coconuts": "coconut",
+    "кокос": "coconut",
+    "кокосы": "coconut",
+    "papaya": "papaya",
+    "papayas": "papaya",
+    "папайя": "papaya",
+    "папайи": "papaya",
+    "passion fruit": "passion_fruit",
+    "passion fruits": "passion_fruit",
+    "passionfruit": "passion_fruit",
+    "passionfruits": "passion_fruit",
+    "маракуйя": "passion_fruit",
+    "guava": "guava",
+    "guavas": "guava",
+    "гуава": "guava",
+    "гуавы": "guava",
+    "lychee": "lychee",
+    "lychees": "lychee",
+    "litchi": "lychee",
+    "litchis": "lychee",
+    "личи": "lychee",
+    "cabbage": "cabbage",
+    "cabbages": "cabbage",
+    "white cabbage": "cabbage",
+    "капуста": "cabbage",
+    "белокочанная капуста": "cabbage",
+    "red cabbage": "red_cabbage",
+    "purple cabbage": "red_cabbage",
+    "краснокочанная капуста": "red_cabbage",
+    "красная капуста": "red_cabbage",
+    "eggplant": "eggplant",
+    "eggplants": "eggplant",
+    "aubergine": "eggplant",
+    "aubergines": "eggplant",
+    "баклажан": "eggplant",
+    "баклажаны": "eggplant",
+    "zucchini": "zucchini",
+    "zucchinis": "zucchini",
+    "courgette": "zucchini",
+    "courgettes": "zucchini",
+    "кабачок": "zucchini",
+    "кабачки": "zucchini",
+    "цукини": "zucchini",
+    "beet": "beet",
+    "beets": "beet",
+    "beetroot": "beet",
+    "beetroots": "beet",
+    "свёкла": "beet",
+    "свекла": "beet",
+    "pumpkin": "pumpkin",
+    "pumpkins": "pumpkin",
+    "тыква": "pumpkin",
+    "тыквы": "pumpkin",
+    "radish": "radish",
+    "radishes": "radish",
+    "редис": "radish",
+    "редиска": "radish",
+    "garlic": "garlic",
+    "чеснок": "garlic",
+    "corn": "corn",
+    "maize": "corn",
+    "sweetcorn": "corn",
+    "sweet corn": "corn",
+    "кукуруза": "corn",
+    "pea": "peas",
+    "peas": "peas",
+    "green pea": "peas",
+    "green peas": "peas",
+    "горох": "peas",
+    "горошек": "peas",
+    "зелёный горошек": "peas",
+    "зеленый горошек": "peas",
+    "green bean": "green_beans",
+    "green beans": "green_beans",
+    "french bean": "green_beans",
+    "french beans": "green_beans",
+    "стручковая фасоль": "green_beans",
+    "зелёная фасоль": "green_beans",
+    "зеленая фасоль": "green_beans",
+    "спаржевая фасоль": "green_beans",
+    "asparagus": "asparagus",
+    "спаржа": "asparagus",
+    "celery": "celery",
+    "сельдерей": "celery",
+    "lettuce": "lettuce",
+    "lettuces": "lettuce",
+    "латук": "lettuce",
+    "салат латук": "lettuce",
+    "салат-латук": "lettuce",
+    "листовой салат": "lettuce",
+    "kale": "kale",
+    "кейл": "kale",
+    "кале": "kale",
+    "кудрявая капуста": "kale",
+    "brussels sprout": "brussels_sprouts",
+    "brussels sprouts": "brussels_sprouts",
+    "брюссельская капуста": "brussels_sprouts",
+    "green bell pepper": "green_bell_pepper",
+    "green bell peppers": "green_bell_pepper",
+    "зелёный болгарский перец": "green_bell_pepper",
+    "зеленый болгарский перец": "green_bell_pepper",
+    "зелёный перец": "green_bell_pepper",
+    "зеленый перец": "green_bell_pepper",
+    "leek": "leek",
+    "leeks": "leek",
+    "лук-порей": "leek",
+    "лук порей": "leek",
+    "порей": "leek",
+    "artichoke": "artichoke",
+    "artichokes": "artichoke",
+    "артишок": "artichoke",
+    "артишоки": "artichoke",
+    "fennel": "fennel",
+    "фенхель": "fennel",
+    "turnip": "turnip",
+    "turnips": "turnip",
+    "репа": "turnip",
+    "spinach": "spinach",
+    "spinaci": "spinach",
+    "шпинат": "spinach",
+    "buckwheat": "buckwheat",
+    "гречка": "buckwheat",
+    "гречневая крупа": "buckwheat",
+    "гречиха": "buckwheat",
+    "barley": "barley",
+    "перловка": "barley",
+    "перловая крупа": "barley",
+    "ячмень": "barley",
+    "ячневая крупа": "barley",
+    "millet": "millet",
+    "пшено": "millet",
+    "просо": "millet",
+    "bulgur": "bulgur",
+    "булгур": "bulgur",
+    "couscous": "couscous",
+    "cous cous": "couscous",
+    "кускус": "couscous",
+    "кус-кус": "couscous",
+    "semolina": "semolina",
+    "манка": "semolina",
+    "манная крупа": "semolina",
+    "cornmeal": "cornmeal",
+    "corn meal": "cornmeal",
+    "кукурузная крупа": "cornmeal",
+    "wheat": "wheat",
+    "пшеница": "wheat",
+    "пшеничная крупа": "wheat",
+    "rye": "rye",
+    "рожь": "rye",
+    "turkey": "turkey",
+    "turkeys": "turkey",
+    "turkey meat": "turkey",
+    "индейка": "turkey",
+    "индейки": "turkey",
+    "индюшатина": "turkey",
+    "мясо индейки": "turkey",
+    "pork": "pork",
+    "свинина": "pork",
+    "lamb": "lamb",
+    "lamb meat": "lamb",
+    "баранина": "lamb",
+    "ягнятина": "lamb",
+    "duck": "duck",
+    "ducks": "duck",
+    "duck meat": "duck",
+    "утка": "duck",
+    "утки": "duck",
+    "утиное мясо": "duck",
+    "rabbit": "rabbit",
+    "rabbits": "rabbit",
+    "rabbit meat": "rabbit",
+    "кролик": "rabbit",
+    "кролики": "rabbit",
+    "крольчатина": "rabbit",
+    "liver": "liver",
+    "печень": "liver",
+    "ham": "ham",
+    "ветчина": "ham",
+    "bacon": "bacon",
+    "бекон": "bacon",
+    "sausage": "sausage",
+    "sausages": "sausage",
+    "колбаса": "sausage",
+    "сосиска": "sausage",
+    "сосиски": "sausage",
+    "tuna": "tuna",
+    "тунец": "tuna",
+    "trout": "trout",
+    "форель": "trout",
+    "herring": "herring",
+    "herrings": "herring",
+    "сельдь": "herring",
+    "селёдка": "herring",
+    "селедка": "herring",
+    "mackerel": "mackerel",
+    "mackerels": "mackerel",
+    "скумбрия": "mackerel",
+    "sardine": "sardines",
+    "sardines": "sardines",
+    "сардина": "sardines",
+    "сардины": "sardines",
+    "cod": "cod",
+    "треска": "cod",
+    "pollock": "pollock",
+    "минтай": "pollock",
+    "tilapia": "tilapia",
+    "тилапия": "tilapia",
+    "тиляпия": "tilapia",
+    "shrimp": "shrimp",
+    "shrimps": "shrimp",
+    "prawn": "shrimp",
+    "prawns": "shrimp",
+    "креветка": "shrimp",
+    "креветки": "shrimp",
+    "squid": "squid",
+    "кальмар": "squid",
+    "кальмары": "squid",
+    "mussel": "mussels",
+    "mussels": "mussels",
+    "мидия": "mussels",
+    "мидии": "mussels",
+    "oyster": "oysters",
+    "oysters": "oysters",
+    "устрица": "oysters",
+    "устрицы": "oysters",
+    "crab": "crab",
+    "crabs": "crab",
+    "краб": "crab",
+    "крабы": "crab",
+    "tofu": "tofu",
+    "тофу": "tofu",
+    "tempeh": "tempeh",
+    "темпе": "tempeh",
+    "темпех": "tempeh",
+    "chickpea": "chickpeas",
+    "chickpeas": "chickpeas",
+    "chick pea": "chickpeas",
+    "chick peas": "chickpeas",
+    "garbanzo bean": "chickpeas",
+    "garbanzo beans": "chickpeas",
+    "нут": "chickpeas",
+    "турецкий горох": "chickpeas",
+    "hummus": "hummus",
+    "houmous": "hummus",
+    "хумус": "hummus",
+    "seitan": "seitan",
+    "сейтан": "seitan",
+    "soy milk": "soy_milk",
+    "soya milk": "soy_milk",
+    "соевое молоко": "soy_milk",
+    "соевый напиток": "soy_milk",
+    "oat milk": "oat_milk",
+    "овсяное молоко": "oat_milk",
+    "овсяный напиток": "oat_milk",
+    "almond milk": "almond_milk",
+    "миндальное молоко": "almond_milk",
+    "миндальный напиток": "almond_milk",
+    "coconut milk": "coconut_milk",
+    "кокосовое молоко": "coconut_milk",
+    "кокосовый напиток": "coconut_milk",
+    "peanut butter": "peanut_butter",
+    "арахисовая паста": "peanut_butter",
+    "арахисовое масло": "peanut_butter",
+    "chia seed": "chia_seeds",
+    "chia seeds": "chia_seeds",
+    "chia": "chia_seeds",
+    "семена чиа": "chia_seeds",
+    "чиа": "chia_seeds",
+    "flax seed": "flax_seeds",
+    "flax seeds": "flax_seeds",
+    "flaxseed": "flax_seeds",
+    "flaxseeds": "flax_seeds",
+    "linseed": "flax_seeds",
+    "linseeds": "flax_seeds",
+    "семена льна": "flax_seeds",
+    "льняные семена": "flax_seeds",
+    "pumpkin seed": "pumpkin_seeds",
+    "pumpkin seeds": "pumpkin_seeds",
+    "семена тыквы": "pumpkin_seeds",
+    "тыквенные семечки": "pumpkin_seeds",
+    "sunflower seed": "sunflower_seeds",
+    "sunflower seeds": "sunflower_seeds",
+    "семена подсолнечника": "sunflower_seeds",
+    "подсолнечные семечки": "sunflower_seeds",
+    "семечки подсолнечника": "sunflower_seeds",
+    "cottage cheese": "cottage_cheese",
+    "творог": "cottage_cheese",
+    "kefir": "kefir",
+    "кефир": "kefir",
+    "sour cream": "sour_cream",
+    "сметана": "sour_cream",
+    "butter": "butter",
+    "сливочное масло": "butter",
+    "cream": "cream",
+    "сливки": "cream",
+    "mozzarella": "mozzarella",
+    "mozzarella cheese": "mozzarella",
+    "моцарелла": "mozzarella",
+    "feta": "feta",
+    "feta cheese": "feta",
+    "фета": "feta",
+    "cream cheese": "cream_cheese",
+    "сливочный сыр": "cream_cheese",
+    "творожный сыр": "cream_cheese",
+    "крем-чиз": "cream_cheese",
+    "крем чиз": "cream_cheese",
+    "parmesan": "parmesan",
+    "parmesan cheese": "parmesan",
+    "пармезан": "parmesan",
+    "brown rice": "brown_rice",
+    "wholegrain rice": "brown_rice",
+    "бурый рис": "brown_rice",
+    "коричневый рис": "brown_rice",
+    "нешлифованный рис": "brown_rice",
+    "almond": "almonds",
+    "almonds": "almonds",
+    "миндаль": "almonds",
+    "peanut": "peanuts",
+    "peanuts": "peanuts",
+    "арахис": "peanuts",
+    "walnut": "walnuts",
+    "walnuts": "walnuts",
+    "грецкий орех": "walnuts",
+    "грецкие орехи": "walnuts",
+    "cashew": "cashews",
+    "cashews": "cashews",
+    "кешью": "cashews",
+    "кэшью": "cashews",
+    "pistachio": "pistachios",
+    "pistachios": "pistachios",
+    "фисташка": "pistachios",
+    "фисташки": "pistachios",
+    "hazelnut": "hazelnuts",
+    "hazelnuts": "hazelnuts",
+    "фундук": "hazelnuts",
+    "лесной орех": "hazelnuts",
+    "лесные орехи": "hazelnuts",
+    "olive": "olives",
+    "olives": "olives",
+    "оливка": "olives",
+    "оливки": "olives",
+    "маслина": "olives",
+    "маслины": "olives"
+  }
+}

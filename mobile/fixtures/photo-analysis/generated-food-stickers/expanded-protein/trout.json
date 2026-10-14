@@ -1,0 +1,43 @@
+{
+  "key": "trout",
+  "generator": "built-in image_gen",
+  "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: TROUT fish only: one small whole fresh rainbow trout, its silver skin with a subtle pink side band and tiny dark speckles visible, gently curved diagonally, full head and tail intact.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-ac01ecc5-8053-44eb-aab4-b9a629a437b6.png",
+  "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_trout.png",
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_trout.png",
+  "saved_at_utc": "2026-10-12T06:59:40.700448+00:00",
+  "transparent_background": true,
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "d79f345eeccc0515e8248971a0b3ac8bce0a946066784587207ac0087f26f089",
+  "bytes": 1074291,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 1218338,
+    "opaque_pixels": 730,
+    "partial_pixels": 353448,
+    "nontransparent_bounds": [
+      31,
+      95,
+      1225,
+      1206
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      46,
+      319,
+      1222,
+      922
+    ],
+    "pixels_alpha_1_to_10": 10084
+  },
+  "visually_inspected": true,
+  "visual_result": "Visually inspected: complete whole trout with pink lateral band, dark speckles, silver scales and intact head/tail, realistic natural fish texture and thin white outline."
+}

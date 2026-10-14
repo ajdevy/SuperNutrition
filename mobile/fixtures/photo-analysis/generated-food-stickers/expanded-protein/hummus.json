@@ -1,0 +1,43 @@
+{
+  "key": "hummus",
+  "generator": "built-in image_gen",
+  "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: HUMMUS only: a shallow swirl-shaped dollop of smooth pale beige chickpea hummus, creamy fine texture and recognizable spiral ridges, one coherent food silhouette. No oil, garnish, bread, plate or bowl.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-380874a2-e222-4a35-895b-b7ceb9da188d.png",
+  "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_hummus.png",
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_hummus.png",
+  "saved_at_utc": "2026-10-12T07:42:16.474019+00:00",
+  "transparent_background": true,
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "071269c3b8ab70354ee05c0063dccaa15687721bdfe2e727ca08da8b5fbbe3a1",
+  "bytes": 1359612,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 904019,
+    "opaque_pixels": 596,
+    "partial_pixels": 667901,
+    "nontransparent_bounds": [
+      0,
+      21,
+      1234,
+      1206
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      123,
+      209,
+      1152,
+      1080
+    ],
+    "pixels_alpha_1_to_10": 11343
+  },
+  "visually_inspected": true,
+  "visual_result": "Visually inspected: creamy beige hummus dollop with spiral ridges and fine chickpea texture, complete coherent silhouette and thin white outline."
+}

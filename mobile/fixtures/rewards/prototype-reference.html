@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Sprout — nutrition companion</title>
+  <style>
+    :root {
+      --ink: #27322c;
+      --muted: #7b867f;
+      --line: #e5eae2;
+      --paper: #fbfcf8;
+      --mint: #dff1e1;
+      --leaf: #3d8a62;
+      --deep-leaf: #276243;
+      --lime: #bde768;
+      --peach: #ffe1cb;
+      --lavender: #e9e4fb;
+      --sun: #ffd46d;
+      --shadow: 0 18px 50px rgba(39, 50, 44, .10);
+      font-family: ui-rounded, "SF Pro Rounded", "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; background: #edf2ec; color: var(--ink); }
+    button, input { font: inherit; }
+    button { border: 0; cursor: pointer; color: inherit; }
+    .app-shell { width: 100%; max-width: 430px; min-height: 100vh; margin: 0 auto; background: var(--paper); position: relative; overflow: hidden; box-shadow: 0 0 0 1px rgba(39,50,44,.03); }
+    .app { min-height: 100vh; padding: 24px 20px 108px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .brand { display: flex; gap: 10px; align-items: center; }
+    .brand-mark { width: 38px; height: 38px; border-radius: 14px; background: var(--deep-leaf); display: grid; place-items: center; color: #fff; font-size: 20px; box-shadow: 0 7px 14px rgba(39,98,67,.18); }
+    .eyebrow { color: var(--leaf); font-size: 11px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+    .brand-name { font-size: 19px; font-weight: 850; letter-spacing: -.03em; }
+    .avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--peach); display: grid; place-items: center; font-size: 21px; }
+    .screen { display: none; animation: rise .24s ease-out; }
+    .screen.active { display: block; }
+    body.photo-mode { background: #142018; }
+    .photo-mode .app-shell { background: #142018; overflow: visible; }
+    .photo-mode .app { padding: 0; }
+    .photo-mode .topbar, .photo-mode .nav { display: none; }
+    .photo-screen { min-height: 100vh; margin: 0; }
+    .camera-screen { position: relative; display: flex; flex-direction: column; justify-content: space-between; padding: 18px 18px 26px; color: #fff; background: linear-gradient(180deg, rgba(18,31,23,.62), rgba(18,31,23,.08) 48%, rgba(18,31,23,.84)), url('assets/generated/meal-photo.png') center / cover no-repeat; }
+    .camera-top, .camera-bottom { display: flex; align-items: center; justify-content: space-between; gap: 12px; position: relative; z-index: 2; }
+    .camera-icon-btn { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: rgba(18,31,23,.48); color: #fff; font-size: 20px; backdrop-filter: blur(10px); }
+    .camera-title { text-align: center; flex: 1; } .camera-title strong { display: block; font-size: 15px; } .camera-title span { display: block; opacity: .72; font-size: 10px; margin-top: 3px; }
+    .camera-tip { align-self: center; margin-top: 18px; padding: 10px 13px; border-radius: 99px; background: rgba(255,255,255,.88); color: var(--deep-leaf); font-size: 11px; font-weight: 850; position: relative; z-index: 2; }
+    .camera-stage { flex: 1; position: relative; min-height: 360px; margin: 18px 0; }
+    .focus-frame { position: absolute; left: 12%; right: 12%; top: 18%; bottom: 16%; border: 1.5px solid rgba(255,255,255,.78); border-radius: 25px; box-shadow: 0 0 0 999px rgba(10,24,15,.08); }
+    .focus-frame:before, .focus-frame:after { content: ""; position: absolute; width: 34px; height: 34px; border-color: #d9f08e; }
+    .focus-frame:before { left: -2px; top: -2px; border-left: 3px solid; border-top: 3px solid; border-radius: 9px 0 0; } .focus-frame:after { right: -2px; bottom: -2px; border-right: 3px solid; border-bottom: 3px solid; border-radius: 0 0 9px; }
+    .live-marker { position: absolute; display: flex; gap: 6px; align-items: center; padding: 7px 9px; border-radius: 12px; background: rgba(27,48,33,.72); color: #fff; font-size: 10px; font-weight: 800; backdrop-filter: blur(8px); }
+    .live-marker i { width: 7px; height: 7px; border-radius: 50%; background: var(--lime); } .live-marker.salmon { left: 23%; top: 49%; } .live-marker.greens { right: 19%; top: 29%; } .live-marker.grain { right: 18%; bottom: 25%; }
+    .camera-bottom { flex-wrap: wrap; }
+    .camera-bottom .camera-side { width: 54px; height: 54px; border-radius: 16px; background: rgba(255,255,255,.18); display: grid; place-items: center; font-size: 23px; backdrop-filter: blur(8px); }
+    .shutter { width: 76px; height: 76px; border-radius: 50%; background: #fff; border: 5px solid rgba(255,255,255,.42); box-shadow: 0 0 0 3px rgba(255,255,255,.82) inset; color: var(--deep-leaf); font-size: 0; }
+    .camera-bottom-note { width: 100%; text-align: center; font-size: 10px; opacity: .78; margin-top: 2px; }
+    .photo-result { position: relative; min-height: 100vh; background: linear-gradient(180deg, rgba(12,22,15,.24) 0%, rgba(12,22,15,.08) 43%, rgba(12,22,15,.74) 100%), url('assets/generated/meal-photo.png') center / cover no-repeat; color: #fff; padding-bottom: 28px; overflow: hidden; }
+    .result-photo { position: absolute; inset: 0; width: 100%; height: 100%; background: transparent; overflow: hidden; pointer-events: none; }
+    .result-photo > .result-photo-img { display: none; }
+    .result-photo > * { position: relative; z-index: 2; }
+    .result-photo .result-top { pointer-events: auto; }
+    .result-top { display: flex; align-items: center; justify-content: space-between; padding: 18px 18px 0; color: #fff; }
+    .result-top .camera-icon-btn { background: rgba(18,31,23,.42); } .result-status { padding: 8px 11px; border-radius: 99px; background: rgba(255,255,255,.88); color: var(--deep-leaf); font-size: 10px; font-weight: 850; }
+    .result-grid-lines { position: absolute; inset: 0; z-index: 1; opacity: .28; background: linear-gradient(90deg, transparent 32.8%, #fff 33%, transparent 33.2%, transparent 66.1%, #fff 66.3%, transparent 66.5%), linear-gradient(0deg, transparent 32.8%, #fff 33%, transparent 33.2%, transparent 66.1%, #fff 66.3%, transparent 66.5%); }
+    .result-pin { position: absolute; z-index: 3; width: 32px; height: 32px; border-radius: 50%; border: 2px solid #fff; background: rgba(39,98,67,.88); color: #fff; display: grid; place-items: center; font-size: 12px; font-weight: 900; box-shadow: 0 4px 12px rgba(20,40,25,.25); }
+    .result-pin.salmon { left: 35%; top: 55%; } .result-pin.broccoli { left: 26%; top: 24%; } .result-pin.quinoa { right: 26%; top: 25%; } .result-pin.avocado { right: 24%; bottom: 22%; } .result-pin.greens { left: 21%; bottom: 25%; }
+    .result-sheet { position: relative; z-index: 4; margin-top: 0; padding: 43vh 18px 32px; min-height: 108vh; border-radius: 0; background: transparent; box-shadow: none; }
+    .sheet-handle { width: 38px; height: 4px; border-radius: 99px; background: rgba(255,255,255,.72); margin: 0 auto 16px; }
+    .confidence-pill { padding: 8px 10px; border-radius: 12px; background: var(--mint); color: var(--deep-leaf); font-size: 10px; font-weight: 850; white-space: nowrap; }
+    .result-section { margin-top: 19px; } .result-section-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 9px; } .result-section-head h2 { color: #fff; font-size: 16px; text-shadow: 0 1px 8px rgba(0,0,0,.25); } .result-section-head span { color: rgba(255,255,255,.72); font-size: 10px; }
+    .dish-options { display: grid; gap: 7px; }
+    .dish-option { display: flex; align-items: center; gap: 10px; width: 100%; padding: 11px 12px; border: 1px solid var(--line); border-radius: 15px; background: #fff; text-align: left; }
+    .dish-option.selected { background: #eef7eb; border-color: #9cc49f; } .dish-option .radio { width: 17px; height: 17px; border: 1.5px solid #b8c2b8; border-radius: 50%; flex: 0 0 auto; } .dish-option.selected .radio { border: 5px solid var(--leaf); }
+    .dish-option b { display: block; font-size: 12px; } .dish-option span { display: block; color: var(--muted); font-size: 10px; margin-top: 2px; }
+    .ingredient-input { display: flex; align-items: center; gap: 8px; margin-top: 19px; padding: 12px 13px; border: 1px solid rgba(255,255,255,.62); border-radius: 15px; background: rgba(255,255,255,.94); color: var(--ink); } .ingredient-input span { color: var(--muted); } .ingredient-input input { width: 100%; border: 0; outline: 0; background: transparent; font-size: 12px; }
+    .food-packing { position: relative; height: 390px; margin: 3px -18px 0; padding: 9px 0; overflow-x: hidden; overflow-y: auto; scrollbar-width: none; border-radius: 28px; background: rgba(19,35,24,.22); box-shadow: inset 0 0 22px rgba(255,255,255,.08); backdrop-filter: blur(10px); } .food-packing::-webkit-scrollbar { display: none; }
+    .food-packing-track { position: relative; width: 100%; height: 690px; }
+    .food-node { position: absolute; width: 72px; height: 72px; display: grid; place-items: center; border: 0; background: transparent; color: var(--ink); padding: 0; transition: transform .18s ease; }
+    .food-node:hover { transform: scale(1.08); } .food-node .food-icon { width: 66px; height: 66px; display: grid; place-items: center; font-size: 42px; line-height: 1; filter: drop-shadow(0 6px 5px rgba(0,0,0,.28)); }
+    .food-node img { width: 100%; height: 100%; object-fit: contain; } .food-node b { display: block; margin-top: 4px; color: rgba(255,255,255,.82); font-size: 9px; font-weight: 800; white-space: nowrap; text-shadow: 0 1px 6px rgba(0,0,0,.32); }
+    .food-node.selected .food-icon { filter: drop-shadow(0 0 0.5px var(--leaf)) drop-shadow(0 7px 6px rgba(0,0,0,.3)); } .food-node.selected b { color: #e2f5d7; }
+    .food-node.add-node { left: 16px; top: 20px; } .food-node.salmon-node { left: 130px; top: 0; } .food-node.broccoli-node { left: 266px; top: 38px; } .food-node.quinoa-node { left: 74px; top: 111px; } .food-node.avocado-node { left: 198px; top: 133px; } .food-node.greens-node { left: 320px; top: 104px; } .food-node.cucumber-node { left: 12px; top: 224px; } .food-node.tomato-node { left: 142px; top: 255px; } .food-node.oil-node { left: 278px; top: 224px; } .food-node.tahini-node { left: 61px; top: 365px; } .food-node.soy-node { left: 205px; top: 382px; } .food-node.salt-node { left: 322px; top: 354px; } .food-node.dressing-node { left: 145px; top: 495px; }
+    .food-node.add-node .food-icon { width: 64px; height: 64px; border-radius: 50%; border: 2px dashed rgba(255,255,255,.82); background: transparent; color: #fff; font-size: 28px; filter: drop-shadow(0 6px 5px rgba(0,0,0,.28)); } .food-node.add-node b { color: #fff; }
+    .food-node.large .food-icon { width: 64px; height: 64px; font-size: 42px; } .food-node.small .food-icon { width: 52px; height: 52px; font-size: 33px; } .food-node.tiny .food-icon { width: 44px; height: 44px; font-size: 27px; }
+    .packing-caption { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1px; } .packing-caption h2 { color: #fff; font-size: 16px; text-shadow: 0 1px 8px rgba(0,0,0,.25); } .packing-caption span { color: rgba(255,255,255,.72); font-size: 10px; }
+    .add-ons { padding: 13px; border-radius: 18px; background: #fff6df; border: 1px solid #f3dfaf; } .add-ons h3 { font-size: 13px; } .add-ons p { margin-top: 3px; font-size: 10px; }
+    .addon-row { display: flex; gap: 7px; overflow-x: auto; padding: 11px 0 2px; scrollbar-width: none; } .addon-row::-webkit-scrollbar { display:none; }
+    .addon-chip { flex: 0 0 auto; padding: 9px 10px; border-radius: 99px; border: 1px solid #e6d49c; background: #fff; color: #8b6c25; font-size: 10px; font-weight: 800; } .addon-chip.active { background: #8b6c25; color: #fff; }
+    .detail-input { display: flex; align-items: center; gap: 8px; margin-top: 13px; padding: 12px; border: 1px solid var(--line); border-radius: 15px; background: #fff; } .detail-input input { width: 100%; border: 0; outline: 0; background: transparent; font-size: 12px; }
+    .detail-input button { width: 28px; height: 28px; border-radius: 10px; background: var(--mint); color: var(--deep-leaf); font-weight: 900; }
+    .result-footer { position: sticky; bottom: 0; display: flex; gap: 9px; padding-top: 18px; background: transparent; } .result-footer .btn { flex: 1; } .result-footer .btn.ghost { flex: 0 0 92px; }
+    .home-screen { position: relative; min-height: calc(100vh - 28px); margin: -4px -20px -108px; padding: 4px 20px 126px; background: linear-gradient(180deg, rgba(251,252,248,.15) 0%, rgba(251,252,248,.16) 40%, rgba(251,252,248,.92) 88%), url('assets/generated/sprout-background.png') center top / cover no-repeat; }
+    .home-screen > * { position: relative; z-index: 1; }
+    .home-kicker { display: flex; justify-content: space-between; align-items: center; color: #fff; text-shadow: 0 1px 8px rgba(39,50,44,.24); font-size: 12px; font-weight: 800; margin: 1px 0 13px; }
+    .streak-pill { padding: 8px 11px; border-radius: 99px; background: rgba(255,255,255,.78); color: var(--deep-leaf); text-shadow: none; }
+    .home-pet-card { min-height: 255px; position: relative; display: flex; align-items: flex-start; justify-content: center; padding-top: 15px; }
+    .home-pet-bubble { width: 92%; padding: 15px 17px 16px; border-radius: 24px; background: rgba(255,255,255,.91); box-shadow: 0 14px 35px rgba(39,50,44,.12); text-align: center; }
+    .home-pet-bubble:after { content: ""; position: absolute; top: 83px; left: 50%; width: 16px; height: 16px; background: rgba(255,255,255,.91); transform: translateX(-50%) rotate(45deg); }
+    .bubble-label { color: var(--leaf); font-size: 10px; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
+    .home-pet-bubble h2 { margin-top: 5px; font-size: 17px; }
+    .pet-actions { display: flex; gap: 7px; justify-content: center; margin-top: 12px; }
+    .pet-action { padding: 9px 10px; border-radius: 12px; background: #eff6ec; color: var(--deep-leaf); font-size: 10px; font-weight: 850; }
+    .pet-action.primary { background: var(--deep-leaf); color: #fff; }
+    .home-pet { position: absolute; bottom: 1px; z-index: 2; width: 155px; line-height: 1; filter: drop-shadow(0 10px 4px rgba(39,50,44,.15)); }
+    .home-pet img { display: block; width: 100%; height: auto; }
+    .home-summary-card, .home-next-card, .home-plan-card { padding: 17px; border-radius: 24px; background: rgba(255,255,255,.94); box-shadow: 0 12px 33px rgba(39,50,44,.10); margin: 11px -12px 0; }
+    .summary-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+    .summary-head h2 { margin-top: 4px; font-size: 18px; }
+    .summary-count { color: var(--leaf); font-size: 11px; font-weight: 850; white-space: nowrap; }
+    .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+    .summary-metric { padding: 12px; border-radius: 16px; background: #f5f8f2; }
+    .metric-top { display: flex; justify-content: space-between; gap: 6px; align-items: baseline; }
+    .metric-label { color: var(--muted); font-size: 11px; font-weight: 750; }
+    .metric-value { display: block; color: var(--ink); font-size: 18px; font-weight: 900; letter-spacing: -.05em; }
+    .metric-value span { color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: 0; }
+    .summary-metric .progress { height: 6px; margin-top: 9px; background: #e4ebe1; }
+    .summary-metric.water .progress i { background: #72abc7; } .summary-metric.protein .progress i { background: #e49b73; } .summary-metric.movement .progress i { background: #9d8fd1; }
+    .home-next-card { display: flex; align-items: center; gap: 12px; background: rgba(255,241,206,.95); }
+    .next-icon { width: 58px; height: 48px; border-radius: 13px; display: grid; place-items: center; background: #fff; overflow: hidden; flex: 0 0 auto; }
+    .next-icon img { width: 100%; height: 100%; object-fit: contain; }
+    .home-next-card h3 { font-size: 13px; } .home-next-card p { margin-top: 3px; font-size: 11px; } .home-next-card .link { margin-left: auto; white-space: nowrap; }
+    .home-plan-card { background: rgba(255,255,255,.82); } .home-plan-card h3 { font-size: 13px; } .plan-tags { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 10px; } .plan-tag { padding: 8px 10px; border-radius: 99px; background: #eff5ed; color: var(--deep-leaf); font-size: 10px; font-weight: 800; }
+    .home-plan-spacer { height: 82px; margin: 0 -12px; }
+    @keyframes rise { from { opacity: .3; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    h1 { font-size: 29px; line-height: 1.04; letter-spacing: -.055em; margin: 0 0 8px; }
+    h2 { font-size: 19px; letter-spacing: -.03em; margin: 0; }
+    h3 { font-size: 15px; margin: 0; }
+    p { margin: 0; color: var(--muted); line-height: 1.45; font-size: 13px; }
+    .subhead { margin-bottom: 20px; }
+    .btn { border-radius: 16px; padding: 13px 16px; background: var(--deep-leaf); color: white; font-size: 13px; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn.ghost { background: #fff; color: var(--deep-leaf); border: 1px solid var(--line); }
+    .btn.soft { background: var(--mint); color: var(--deep-leaf); }
+    .btn.small { padding: 10px 12px; border-radius: 13px; font-size: 12px; }
+    .section-row { display: flex; justify-content: space-between; align-items: center; margin: 23px 0 12px; }
+    .link { color: var(--leaf); font-weight: 800; font-size: 12px; background: none; padding: 0; }
+    .capture-card { min-height: 270px; border-radius: 28px; overflow: hidden; position: relative; background: linear-gradient(145deg, #365c45 0%, #8eba76 100%); box-shadow: var(--shadow); }
+    .capture-card:before { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 28% 24%, rgba(255,255,255,.35), transparent 22%), radial-gradient(circle at 85% 80%, rgba(255,227,165,.4), transparent 24%); }
+    .table { position: absolute; left: -10%; right: -10%; bottom: -24%; height: 62%; background: #d8ab7f; border-radius: 50% 50% 0 0; transform: rotate(-3deg); }
+    .plate { position: absolute; width: 188px; height: 188px; border-radius: 50%; left: 50%; top: 50%; transform: translate(-50%, -43%); background: #f7f4e8; border: 10px solid rgba(255,255,255,.55); box-shadow: 0 20px 34px rgba(23,53,34,.24); }
+    .food { position: absolute; border-radius: 50%; box-shadow: inset -7px -7px 0 rgba(0,0,0,.08); }
+    .food.a { width: 73px; height: 73px; background: #e89957; left: 28px; top: 22px; }
+    .food.b { width: 55px; height: 55px; background: #6caa63; right: 25px; top: 30px; }
+    .food.c { width: 64px; height: 64px; background: #f5c35d; left: 61px; bottom: 25px; }
+    .food.d { width: 33px; height: 33px; background: #d66f5e; right: 35px; bottom: 35px; }
+    .capture-label { position: absolute; z-index: 2; top: 17px; left: 17px; padding: 8px 11px; border-radius: 99px; background: rgba(255,255,255,.88); font-size: 11px; font-weight: 800; color: var(--deep-leaf); }
+    .camera-corner { position: absolute; z-index: 2; width: 38px; height: 38px; border: 2px solid rgba(255,255,255,.8); border-radius: 9px; top: 17px; right: 17px; }
+    .camera-corner:before, .camera-corner:after { content: ""; position: absolute; width: 10px; height: 10px; border-color: white; }
+    .camera-corner:before { top: -2px; left: -2px; border-top: 2px solid; border-left: 2px solid; }
+    .camera-corner:after { bottom: -2px; right: -2px; border-bottom: 2px solid; border-right: 2px solid; }
+    .capture-cta { position: absolute; z-index: 3; left: 50%; bottom: 18px; transform: translateX(-50%); width: 64px; height: 64px; border-radius: 50%; background: white; box-shadow: 0 5px 0 rgba(39,98,67,.15); display: grid; place-items: center; color: var(--deep-leaf); font-size: 25px; }
+    .mode-tabs { display: flex; gap: 6px; padding: 5px; margin-top: 13px; border-radius: 16px; background: #f0f4ed; }
+    .mode-tabs button { flex: 1; padding: 10px 4px; border-radius: 12px; background: transparent; font-size: 12px; color: var(--muted); font-weight: 750; }
+    .mode-tabs button.active { color: var(--deep-leaf); background: #fff; box-shadow: 0 3px 11px rgba(39,50,44,.08); }
+    .mode-panel { margin-top: 14px; }
+    .input-wrap { display: flex; align-items: center; gap: 8px; padding: 14px 15px; background: #fff; border: 1px solid var(--line); border-radius: 17px; }
+    .input-wrap input { width: 100%; border: 0; outline: 0; color: var(--ink); font-size: 13px; background: transparent; }
+    .search-icon { color: var(--muted); }
+    .product-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
+    .product { text-align: left; background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 8px; min-height: 112px; }
+    .product-art { height: 58px; border-radius: 12px; display: grid; place-items: center; font-size: 29px; margin-bottom: 7px; }
+    .product:nth-child(1) .product-art { background: #fbe2af; } .product:nth-child(2) .product-art { background: #d8eccd; } .product:nth-child(3) .product-art { background: #f3d4d0; }
+    .product-name { display: block; font-size: 11px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .product-meta { display: block; font-size: 10px; color: var(--muted); margin-top: 2px; }
+    .barcode-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px; border-radius: 18px; background: var(--mint); margin-top: 12px; }
+    .barcode-copy { display: flex; gap: 10px; align-items: center; }
+    .barcode-icon { width: 36px; height: 36px; border-radius: 12px; display: grid; place-items: center; background: #fff; color: var(--deep-leaf); font-size: 20px; }
+    .barcode-copy strong { display: block; font-size: 12px; } .barcode-copy span { display: block; color: var(--muted); font-size: 10px; margin-top: 3px; }
+    .stat-card { padding: 17px; border-radius: 22px; background: var(--mint); }
+    .macro-row { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 12px; }
+    .macro-value { font-size: 26px; font-weight: 850; letter-spacing: -.06em; }
+    .macro-label { font-size: 11px; color: var(--muted); margin-left: 3px; }
+    .progress { height: 8px; background: rgba(255,255,255,.8); border-radius: 99px; margin-top: 10px; overflow: hidden; }
+    .progress i { display: block; height: 100%; border-radius: inherit; background: var(--deep-leaf); }
+    .date-strip { display: flex; gap: 7px; margin: 18px 0 20px; overflow: hidden; }
+    .date { min-width: 50px; padding: 9px 5px; border-radius: 15px; text-align: center; background: #f2f5ef; color: var(--muted); }
+    .date b { display: block; font-size: 14px; color: var(--ink); } .date span { display: block; font-size: 10px; margin-top: 3px; }
+    .date.selected { background: var(--deep-leaf); color: #d5efcf; } .date.selected b { color: #fff; }
+    .meal-card { display: flex; align-items: center; gap: 12px; padding: 12px; margin-bottom: 9px; border: 1px solid var(--line); background: #fff; border-radius: 18px; }
+    .meal-thumb { width: 52px; height: 52px; border-radius: 15px; display: grid; place-items: center; font-size: 25px; background: #f9e4bd; flex: 0 0 auto; }
+    .meal-card:nth-of-type(2) .meal-thumb { background: #d8eacf; } .meal-card:nth-of-type(3) .meal-thumb { background: #f4d6cf; }
+    .meal-info { min-width: 0; flex: 1; } .meal-info b { font-size: 13px; display: block; } .meal-info span { color: var(--muted); font-size: 11px; display: block; margin-top: 4px; }
+    .meal-kcal { text-align: right; font-weight: 850; font-size: 13px; } .meal-kcal span { display: block; color: var(--muted); font-size: 10px; font-weight: 600; margin-top: 3px; }
+    .goal-card { padding: 16px; border-radius: 22px; background: #fff; border: 1px solid var(--line); margin-bottom: 11px; }
+    .goal-card.green { background: var(--mint); border: 0; } .goal-top { display: flex; align-items: flex-start; gap: 12px; } .goal-icon { width: 42px; height: 42px; border-radius: 14px; background: #fff; display: grid; place-items: center; font-size: 21px; flex: 0 0 auto; }
+    .goal-card h3 { line-height: 1.2; } .goal-card p { font-size: 11px; margin-top: 4px; } .goal-count { margin-left: auto; font-size: 12px; font-weight: 850; color: var(--deep-leaf); white-space: nowrap; }
+    .goal-card .progress { background: rgba(255,255,255,.9); } .goal-card .progress i { background: var(--leaf); }
+    .add-goal { width: 100%; border: 1px dashed #a8c8ab; color: var(--deep-leaf); padding: 14px; border-radius: 17px; background: transparent; font-size: 12px; font-weight: 800; }
+    .pet-hero { padding: 20px 18px 17px; border-radius: 25px; background: linear-gradient(145deg, #efeafb, #f8e9d7); text-align: center; overflow: hidden; position: relative; }
+    .pet-hero:after { content: "✦  ✦  ✦"; position: absolute; top: 16px; right: 19px; color: #baaee5; letter-spacing: 4px; font-size: 12px; }
+    .pet { font-size: 76px; line-height: 1; filter: drop-shadow(0 8px 2px rgba(79,64,113,.12)); margin: 6px 0 3px; } .pet img { display: block; width: 155px; height: 155px; object-fit: contain; margin: 0 auto; } .pet-name { font-weight: 850; font-size: 20px; } .pet-level { color: #7a70a7; font-size: 11px; margin-top: 3px; }
+    .pet-xp { display: flex; align-items: center; gap: 8px; max-width: 230px; margin: 13px auto 0; } .pet-xp .progress { flex: 1; margin: 0; background: rgba(255,255,255,.7); } .pet-xp small { color: #7a70a7; font-size: 10px; font-weight: 800; }
+    .profile-list { margin-top: 15px; background: #fff; border: 1px solid var(--line); border-radius: 20px; overflow: hidden; } .profile-item { display: flex; align-items: center; gap: 12px; padding: 15px; border-bottom: 1px solid var(--line); } .profile-item:last-child { border: 0; }
+    .profile-item .mini-icon { width: 33px; height: 33px; border-radius: 11px; display: grid; place-items: center; background: var(--mint); } .profile-item:nth-child(2) .mini-icon { background: var(--peach); } .profile-item:nth-child(3) .mini-icon { background: var(--lavender); }
+    .profile-item b { font-size: 12px; display: block; } .profile-item span { font-size: 10px; color: var(--muted); display: block; margin-top: 3px; } .profile-item em { margin-left: auto; color: var(--muted); font-style: normal; font-size: 20px; }
+    .reward-banner { padding: 17px; border-radius: 22px; background: #fff1ce; display: flex; align-items: center; gap: 12px; } .reward-banner .trophy { font-size: 31px; } .reward-banner b { font-size: 14px; } .reward-banner p { font-size: 11px; margin-top: 3px; }
+    .reward-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; } .reward { min-height: 132px; padding: 15px; border-radius: 20px; background: #fff; border: 1px solid var(--line); } .reward .badge { font-size: 26px; } .reward b { display: block; font-size: 12px; margin-top: 9px; } .reward span { display: block; font-size: 10px; color: var(--muted); margin-top: 4px; }
+    .nav { position: fixed; z-index: 10; bottom: 0; left: 50%; width: 100%; max-width: 430px; transform: translateX(-50%); padding: 10px 12px max(12px, env(safe-area-inset-bottom)); background: rgba(251,252,248,.94); border-top: 1px solid rgba(229,234,226,.8); backdrop-filter: blur(16px); display: grid; grid-template-columns: repeat(5, 1fr); }
+    .nav button { background: transparent; color: #9aa39c; font-size: 10px; font-weight: 750; display: flex; flex-direction: column; gap: 4px; align-items: center; padding: 4px 0; } .nav .nav-icon { font-size: 20px; line-height: 1; } .nav button.active { color: var(--deep-leaf); } .nav button.active .nav-icon { transform: translateY(-1px); }
+    .modal-backdrop { display: none; position: fixed; z-index: 20; inset: 0; background: rgba(25,38,29,.55); align-items: flex-end; justify-content: center; } .modal-backdrop.open { display: flex; }
+    .modal { width: 100%; max-width: 430px; background: var(--paper); border-radius: 27px 27px 0 0; padding: 19px 20px calc(22px + env(safe-area-inset-bottom)); animation: sheet .25s ease-out; } @keyframes sheet { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; } .close { width: 32px; height: 32px; border-radius: 50%; background: #eef2ec; color: var(--muted); }
+    .scanner { height: 178px; border-radius: 20px; background: #25392d; position: relative; display: grid; place-items: center; overflow: hidden; margin-bottom: 13px; } .scanner:before { content: ""; width: 190px; height: 100px; border: 2px solid var(--lime); border-radius: 18px; box-shadow: 0 0 0 999px rgba(13,26,18,.35); } .scanner:after { content: ""; position: absolute; width: 190px; height: 2px; background: #fff; box-shadow: 0 0 10px #fff; animation: scan 2s infinite ease-in-out; } @keyframes scan { 0%,100% { transform: translateY(-42px); opacity: .5; } 50% { transform: translateY(42px); opacity: 1; } }
+    .country-row { display: flex; align-items: center; justify-content: space-between; padding: 11px 0 14px; font-size: 12px; } .country-row select { border: 0; background: #eef3ec; padding: 8px 10px; border-radius: 10px; color: var(--deep-leaf); font-weight: 800; outline: 0; }
+    .notice { display: flex; gap: 8px; padding: 11px; border-radius: 13px; background: #fff2d4; color: #8e691b; font-size: 11px; line-height: 1.4; margin-bottom: 14px; }
+    .form-label { display: block; font-size: 11px; color: var(--muted); font-weight: 800; margin: 13px 0 6px; } .form-input { width: 100%; padding: 13px 14px; border: 1px solid var(--line); border-radius: 14px; outline: 0; background: #fff; color: var(--ink); }
+    .modal-actions { display: flex; gap: 9px; margin-top: 17px; } .modal-actions .btn { flex: 1; }
+    @media (min-width: 500px) { .app-shell { min-height: 850px; margin: 22px auto; border-radius: 32px; } .nav { bottom: 22px; border-radius: 0 0 32px 32px; } }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <main class="app">
+      <header class="topbar">
+        <div class="brand"><div class="brand-mark">✦</div><div><div class="eyebrow">your food companion</div><div class="brand-name">sprout</div></div></div>
+        <button class="avatar" aria-label="Open capybara profile" data-screen="profile">🦫</button>
+      </header>
+
+      <section class="screen active home-screen" id="home">
+        <div class="home-kicker"><span>Thursday, Aug 7</span><span class="streak-pill">✦ 6 day rhythm</span></div>
+        <div class="home-pet-card"><div class="home-pet-bubble"><div class="bubble-label">Mochi's tiny check-in</div><h2>What kind of care do you need today?</h2><div class="pet-actions"><button class="pet-action primary" data-screen="photo-camera">＋ Add a meal</button><button class="pet-action" data-screen="goals">View my goals</button></div></div><div class="home-pet" aria-label="Capybara companion"><img src="assets/generated/capybara.png" alt="Mochi the capybara" /></div></div>
+        <div class="home-summary-card"><div class="summary-head"><div><div class="eyebrow">today's rhythm</div><h2>You're building a good day</h2></div><span class="summary-count">2 / 3 meals</span></div><div class="summary-grid"><div class="summary-metric"><div class="metric-top"><span class="metric-label">Fiber</span><b class="metric-value">12 <span>/ 25 g</span></b></div><div class="progress"><i style="width:48%"></i></div></div><div class="summary-metric water"><div class="metric-top"><span class="metric-label">Water</span><b class="metric-value">1.2 <span>/ 2 L</span></b></div><div class="progress"><i style="width:60%"></i></div></div><div class="summary-metric protein"><div class="metric-top"><span class="metric-label">Protein</span><b class="metric-value">72 <span>/ 90 g</span></b></div><div class="progress"><i style="width:80%"></i></div></div><div class="summary-metric movement"><div class="metric-top"><span class="metric-label">Movement</span><b class="metric-value">32 <span>/ 45 min</span></b></div><div class="progress"><i style="width:71%"></i></div></div></div></div>
+        <div class="home-next-card"><div class="next-icon"><img src="assets/generated/salad.png" alt="Fresh salad" /></div><div><h3>Your next helpful step</h3><p>Add one leafy green to dinner.</p></div><button class="link" data-screen="goals">Do it →</button></div>
+        <div class="home-plan-spacer" aria-hidden="true"></div>
+      </section>
+
+      <section class="screen photo-screen camera-screen" id="photo-camera">
+        <div class="camera-top"><button class="camera-icon-btn" aria-label="Close camera" data-screen="home">×</button><div class="camera-title"><strong>Scan your meal</strong><span>Good light helps Sprout recognize more</span></div><button class="camera-icon-btn" aria-label="Turn flash on">☼</button></div>
+        <div class="camera-tip">Center the whole plate in the frame</div>
+        <div class="camera-stage"><div class="focus-frame"></div></div>
+        <div class="camera-bottom"><button class="camera-side" aria-label="Choose from library">▧</button><button class="shutter" aria-label="Take photo" data-screen="photo-result">Take photo</button><button class="camera-side" aria-label="Switch camera">↺</button><div class="camera-bottom-note">Your photo stays yours. You can edit every suggestion before saving.</div></div>
+      </section>
+
+      <section class="screen photo-screen photo-result" id="photo-result">
+        <div class="result-photo"><img class="result-photo-img" src="assets/generated/meal-photo.png" alt="Captured salmon grain bowl" /><div class="result-top"><button class="camera-icon-btn" aria-label="Retake photo" data-screen="photo-camera">×</button><span class="result-status">✓ Analysis ready</span><button class="camera-icon-btn" aria-label="More photo actions">···</button></div><div class="result-grid-lines"></div><div class="result-pin salmon">1</div><div class="result-pin broccoli">2</div><div class="result-pin quinoa">3</div><div class="result-pin avocado">4</div><div class="result-pin greens">5</div></div>
+        <div class="result-sheet"><div class="sheet-handle"></div>
+          <div class="result-section" style="margin-top:2px"><div class="result-section-head"><h2>What is this dish?</h2><span>choose one</span></div><div class="dish-options"><button class="dish-option selected" data-dish><span class="radio"></span><div><b>Salmon grain bowl</b><span>82% match · salmon, greens & grains</span></div></button><button class="dish-option" data-dish><span class="radio"></span><div><b>Green power bowl</b><span>11% match · mixed vegetables & quinoa</span></div></button><button class="dish-option" data-dish><span class="radio"></span><div><b>Custom meal</b><span>Build it from the ingredients below</span></div></button></div></div>
+          <label class="ingredient-input"><span>⌕</span><input placeholder="Tell us what you see or add a detail" /></label>
+          <div class="result-section" style="margin-top:17px"><div class="packing-caption"><h2>Ingredients & extras</h2><span>scroll down</span></div><div class="food-packing"><div class="food-packing-track"><button class="food-node add-node" data-ingredient aria-label="Add ingredient"><span class="food-icon">＋</span></button><button class="food-node salmon-node selected large" data-ingredient aria-label="Salmon"><span class="food-icon">🐟</span></button><button class="food-node broccoli-node selected small" data-ingredient aria-label="Broccoli"><span class="food-icon">🥦</span></button><button class="food-node quinoa-node selected" data-ingredient aria-label="Quinoa"><span class="food-icon">🌾</span></button><button class="food-node avocado-node selected small" data-ingredient aria-label="Avocado"><span class="food-icon">🥑</span></button><button class="food-node greens-node selected" data-ingredient aria-label="Leafy greens"><span class="food-icon">🥗</span></button><button class="food-node cucumber-node tiny" data-ingredient aria-label="Cucumber"><span class="food-icon">🥒</span></button><button class="food-node tomato-node tiny" data-ingredient aria-label="Tomato"><span class="food-icon">🍅</span></button><button class="food-node oil-node" data-ingredient aria-label="Olive oil"><span class="food-icon">🫒</span></button><button class="food-node tahini-node small" data-ingredient aria-label="Tahini"><span class="food-icon">🥜</span></button><button class="food-node soy-node tiny" data-ingredient aria-label="Soy sauce"><span class="food-icon">🥢</span></button><button class="food-node salt-node tiny" data-ingredient aria-label="Extra salt"><span class="food-icon">🧂</span></button><button class="food-node dressing-node small" data-ingredient aria-label="Dressing"><span class="food-icon">🥣</span></button></div></div></div>
+          <div class="result-footer"><button class="btn ghost" data-screen="photo-camera">Retake</button><button class="btn" data-screen="history">Add to meal · <span class="selected-count">5</span></button></div>
+        </div>
+      </section>
+
+      <section class="screen" id="capture">
+        <div class="subhead"><h1>What did you<br>eat today?</h1><p>One photo, one little step toward your goals.</p></div>
+        <div class="capture-card"><div class="capture-label">AI meal capture</div><div class="camera-corner"></div><div class="table"></div><div class="plate"><div class="food a"></div><div class="food b"></div><div class="food c"></div><div class="food d"></div></div><button class="capture-cta" aria-label="Take meal photo">⌾</button></div>
+        <div class="mode-tabs"><button class="active" data-mode="photo">📷 Photo</button><button data-mode="type">⌨ Type</button><button data-mode="voice">◉ Voice</button></div>
+        <div class="mode-panel" id="mode-photo"><div class="section-row" style="margin-top:16px"><h2>Quick add</h2><button class="link" data-open="scanner">Scan barcode →</button></div><div class="product-grid"><button class="product"><div class="product-art">🥣</div><span class="product-name">Oat bowl</span><span class="product-meta">320 kcal</span></button><button class="product"><div class="product-art">🥑</div><span class="product-name">Avocado toast</span><span class="product-meta">285 kcal</span></button><button class="product"><div class="product-art">🍓</div><span class="product-name">Berry yogurt</span><span class="product-meta">190 kcal</span></button></div><div class="barcode-row"><div class="barcode-copy"><div class="barcode-icon">▥</div><div><strong>Packaged product?</strong><span>Scan any UPC or EAN barcode</span></div></div><button class="btn small" data-open="scanner">Scan</button></div></div>
+        <div class="mode-panel" id="mode-type" style="display:none"><div class="input-wrap"><span class="search-icon">⌕</span><input placeholder="Try “chicken salad with rice”" /><span style="color:var(--leaf)">↵</span></div><p style="font-size:11px;margin:10px 2px">We’ll turn your words into editable ingredients.</p></div>
+        <div class="mode-panel" id="mode-voice" style="display:none"><div class="stat-card" style="text-align:center"><div style="font-size:40px">◉</div><h3>Tap and tell Sprout</h3><p style="font-size:11px;margin-top:4px">“I had a salmon bowl and green tea.”</p><button class="btn small" style="margin-top:12px">Hold to talk</button></div></div>
+      </section>
+
+      <section class="screen" id="history"><div class="subhead"><h1>Your meal history</h1><p>A gentle look back, without the judgment.</p></div><div class="stat-card"><div style="display:flex;justify-content:space-between;align-items:center"><div><div class="eyebrow">today</div><div class="macro-value">1,240 <span class="macro-label">/ 1,850 kcal</span></div></div><div style="font-size:33px">🌿</div></div><div class="progress"><i style="width:67%"></i></div><div class="macro-row"><span class="macro-label">Protein 72g</span><span class="macro-label">Carbs 126g</span><span class="macro-label">Fat 44g</span></div></div><div class="date-strip"><div class="date"><span>MON</span><b>04</b></div><div class="date"><span>TUE</span><b>05</b></div><div class="date"><span>WED</span><b>06</b></div><div class="date selected"><span>THU</span><b>07</b></div><div class="date"><span>FRI</span><b>08</b></div><div class="date"><span>SAT</span><b>09</b></div></div><div class="section-row"><h2>Thursday, Aug 7</h2><button class="link" data-screen="capture">+ Add</button></div><div class="meal-card"><div class="meal-thumb">🍳</div><div class="meal-info"><b>Eggs & greens</b><span>Breakfast · 8:20 AM</span></div><div class="meal-kcal">410<span>kcal</span></div></div><div class="meal-card"><div class="meal-thumb">🥗</div><div class="meal-info"><b>Chicken garden salad</b><span>Lunch · 1:05 PM</span></div><div class="meal-kcal">520<span>kcal</span></div></div><div class="meal-card"><div class="meal-thumb">🍎</div><div class="meal-info"><b>Apple & almond butter</b><span>Snack · 4:30 PM</span></div><div class="meal-kcal">310<span>kcal</span></div></div></section>
+
+      <section class="screen" id="goals"><div class="subhead"><h1>Little goals,<br>real change.</h1><p>Choose habits that feel good to keep.</p></div><div class="section-row" style="margin-top:12px"><h2>Active goals</h2><span class="eyebrow">2 in progress</span></div><div class="goal-card green"><div class="goal-top"><div class="goal-icon">🥬</div><div><h3>Eat greens</h3><p>Add a leafy green to one meal.</p></div><div class="goal-count">6 / 10 days</div></div><div class="progress"><i style="width:60%"></i></div><p style="margin-top:9px;color:var(--deep-leaf);font-weight:800;font-size:10px">4 more days to grow your streak ✦</p></div><div class="goal-card"><div class="goal-top"><div class="goal-icon">💧</div><div><h3>Hydration hello</h3><p>Drink 6 glasses of water today.</p></div><div class="goal-count">4 / 6</div></div><div class="progress"><i style="width:66%;background:var(--sun)"></i></div></div><button class="add-goal" data-open="goal">＋ Create a custom goal</button><div class="section-row"><h2>Completed</h2><button class="link">See all</button></div><div class="goal-card" style="opacity:.7"><div class="goal-top"><div class="goal-icon">🍳</div><div><h3>Protein at breakfast</h3><p>7 day streak completed</p></div><div class="goal-count">✓</div></div></div></section>
+
+      <section class="screen" id="rewards"><div class="subhead"><h1>Your rewards</h1><p>Every photo and every kind choice helps Sprout grow.</p></div><div class="reward-banner"><div class="trophy">🏆</div><div><b>Level 4 · Thoughtful eater</b><p>240 XP until your next companion item.</p></div></div><div class="section-row"><h2>Recent wins</h2><button class="link">All rewards</button></div><div class="reward-grid"><div class="reward"><div class="badge">📸</div><b>First photo</b><span>Logged your first meal</span></div><div class="reward"><div class="badge">🥬</div><b>Green thumb</b><span>5 greens in a week</span></div><div class="reward"><div class="badge">🎙️</div><b>Say it out loud</b><span>Logged by voice</span></div><div class="reward"><div class="badge">🌈</div><b>Color collector</b><span>3 colors on one plate</span></div></div><div class="section-row"><h2>Next up</h2></div><div class="goal-card"><div class="goal-top"><div class="goal-icon">🧺</div><div><h3>Picnic palette</h3><p>Log 3 meals with 4+ food colors.</p></div><div class="goal-count">2 / 3</div></div><div class="progress"><i style="width:66%;background:var(--lavender)"></i></div></div></section>
+
+      <section class="screen" id="profile"><div class="subhead"><h1>Make Sprout<br>feel like yours.</h1><p>A small companion for your everyday choices.</p></div><div class="pet-hero"><div class="pet" aria-label="Capybara companion"><img src="assets/generated/capybara.png" alt="Mochi the capybara" /></div><div class="pet-name">Mochi</div><div class="pet-level">Level 4 · 760 XP</div><div class="pet-xp"><small>760</small><div class="progress"><i style="width:72%;background:#9c8ed2"></i></div><small>1K</small></div><button class="btn small" style="background:#fff;color:#6f62a0;margin-top:14px" data-open="pet">Style your pet</button></div><div class="profile-list"><button class="profile-item" data-screen="rewards"><div class="mini-icon">🏆</div><div><b>Rewards & badges</b><span>12 collected · 3 waiting for you</span></div><em>›</em></button><button class="profile-item" data-open="country"><div class="mini-icon">🌍</div><div><b>Food database</b><span>United States · Global fallback on</span></div><em>›</em></button><button class="profile-item"><div class="mini-icon">⚙</div><div><b>Preferences</b><span>Units, reminders, privacy</span></div><em>›</em></button></div></section>
+    </main>
+
+    <nav class="nav"><button class="active" data-screen="home"><span class="nav-icon">⌂</span>Home</button><button data-screen="history"><span class="nav-icon">▤</span>History</button><button data-screen="goals"><span class="nav-icon">◒</span>Goals</button><button data-screen="rewards"><span class="nav-icon">✦</span>Rewards</button><button data-screen="profile"><span class="nav-icon">●</span>Profile</button></nav>
+  </div>
+
+  <div class="modal-backdrop" id="scanner-modal"><div class="modal"><div class="modal-head"><div><div class="eyebrow">product scanner</div><h2>Find a packaged food</h2></div><button class="close" data-close>×</button></div><div class="scanner"></div><div class="country-row"><span>Search this market first</span><select id="country-select"><option>🇺🇸 United States</option><option>🇬🇧 United Kingdom</option><option>🇩🇪 Germany</option><option>🇫🇷 France</option><option>🇯🇵 Japan</option><option>🌍 Global</option></select></div><div class="notice">ⓘ Coverage varies by country. We’ll check the local branded-food source, then Open Food Facts, and let you add the label if no match is found.</div><button class="btn" style="width:100%" data-close>Use this product</button></div></div>
+  <div class="modal-backdrop" id="goal-modal"><div class="modal"><div class="modal-head"><div><div class="eyebrow">make it yours</div><h2>Create a custom goal</h2></div><button class="close" data-close>×</button></div><label class="form-label">I want to…</label><input class="form-input" placeholder="e.g. Eat one fruit at lunch" /><label class="form-label">Repeat</label><select class="form-input"><option>Every day</option><option>3 times a week</option><option>Once a week</option></select><label class="form-label">For how long?</label><select class="form-input"><option>10 days</option><option>21 days</option><option>Until I say stop</option></select><div class="modal-actions"><button class="btn ghost" data-close>Not now</button><button class="btn" data-close>Create goal</button></div></div></div>
+  <div class="modal-backdrop" id="pet-modal"><div class="modal"><div class="modal-head"><div><div class="eyebrow">pet studio</div><h2>Style Mochi</h2></div><button class="close" data-close>×</button></div><div style="text-align:center;background:var(--lavender);border-radius:20px;padding:18px"><img src="assets/generated/capybara.png" alt="Mochi the capybara" style="height:130px;max-width:100%;object-fit:contain" /></div><label class="form-label">Accessory</label><div class="mode-tabs" style="margin-top:0"><button class="active">🌼 Flower</button><button>🧢 Cap</button><button>🎀 Bow</button></div><label class="form-label">Pet name</label><input class="form-input" value="Mochi" /><div class="modal-actions"><button class="btn ghost" data-close>Cancel</button><button class="btn" data-close>Save style</button></div></div></div>
+  <div class="modal-backdrop" id="country-modal"><div class="modal"><div class="modal-head"><div><div class="eyebrow">food database</div><h2>Regional coverage</h2></div><button class="close" data-close>×</button></div><p>Barcode numbers are global identifiers, but nutrition records are market-specific. Sprout searches your market first and keeps a worldwide fallback ready.</p><div class="country-row" style="margin-top:12px"><span>Your home market</span><select><option>🇺🇸 United States</option><option>🇬🇧 United Kingdom</option><option>🇩🇪 Germany</option><option>🇫🇷 France</option><option>🇯🇵 Japan</option></select></div><div class="notice">✓ Primary: USDA branded foods in the US<br>↗ Fallback: Open Food Facts across 150 countries<br>＋ User label entry when coverage is incomplete</div><button class="btn" style="width:100%" data-close>Save market</button></div></div>
+
+  <script>
+    const screens = [...document.querySelectorAll('.screen')];
+    const nav = [...document.querySelectorAll('.nav button')];
+    function showScreen(id) { screens.forEach(s => s.classList.toggle('active', s.id === id)); nav.forEach(b => b.classList.toggle('active', b.dataset.screen === id)); document.body.classList.toggle('photo-mode', id.startsWith('photo-')); window.scrollTo({top:0, behavior:'smooth'}); }
+    document.querySelectorAll('[data-screen]').forEach(el => el.addEventListener('click', () => showScreen(el.dataset.screen)));
+    document.querySelectorAll('[data-open]').forEach(el => el.addEventListener('click', () => document.getElementById(el.dataset.open + '-modal').classList.add('open')));
+    document.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', () => el.closest('.modal-backdrop').classList.remove('open')));
+    document.querySelectorAll('.modal-backdrop').forEach(el => el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); }));
+    document.querySelectorAll('.mode-tabs button[data-mode]').forEach(button => button.addEventListener('click', () => { const mode = button.dataset.mode; document.querySelectorAll('.mode-tabs button[data-mode]').forEach(b => b.classList.toggle('active', b === button)); ['photo','type','voice'].forEach(name => { const panel = document.getElementById('mode-' + name); if (panel) panel.style.display = name === mode ? 'block' : 'none'; }); }));
+    document.querySelectorAll('[data-dish]').forEach(option => option.addEventListener('click', () => { document.querySelectorAll('[data-dish]').forEach(item => item.classList.toggle('selected', item === option)); }));
+    function refreshIngredientCount() { const count = document.querySelectorAll('[data-ingredient].selected').length; document.querySelectorAll('.selected-count').forEach(el => el.textContent = count); }
+    document.querySelectorAll('[data-ingredient]').forEach(item => item.addEventListener('click', () => { if (item.classList.contains('add-node')) return; item.classList.toggle('selected'); refreshIngredientCount(); }));
+    document.querySelectorAll('[data-addon]').forEach(item => item.addEventListener('click', () => item.classList.toggle('active')));
+    refreshIngredientCount();
+  </script>
+</body>
+</html>

@@ -104,14 +104,14 @@ private struct PhotoAnalysisHomeView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                Text("Home")
-                    .font(.title2.weight(.semibold))
-                    .accessibilityIdentifier(SharedKitAutomationIds.shared.homeTitle)
-                    .padding(.top, 16)
-
-                Text("Welcome back")
-                    .font(.body)
-                    .accessibilityIdentifier(SharedKitAutomationIds.shared.homeGreeting)
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Home")
+                        .font(.title2.weight(.semibold))
+                        .accessibilityIdentifier(SharedKitAutomationIds.shared.homeTitle)
+                    Text("Welcome back")
+                        .font(.body)
+                        .accessibilityIdentifier(SharedKitAutomationIds.shared.homeGreeting)
+                }
 
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Today’s progress")
@@ -121,24 +121,27 @@ private struct PhotoAnalysisHomeView: View {
                     Text("Add a meal whenever you’re ready to start your day.")
                         .font(.body)
                 }
-                .padding(20)
+                .padding(16)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(Color(red: 0.88, green: 0.92, blue: 0.76), in: RoundedRectangle(cornerRadius: 16))
                 .accessibilityIdentifier(SharedKitAutomationIds.shared.homeSummary)
 
-                Text("Build your day")
-                    .font(.headline)
-                    .accessibilityIdentifier(SharedKitAutomationIds.shared.homeEmptyTitle)
-
-                Text("Keep track of what you eat and notice the good choices you make.")
-                    .font(.body)
-                    .accessibilityIdentifier(SharedKitAutomationIds.shared.homeEmptyDescription)
-
-                Button("Add a meal", action: onAddFoodRequested)
-                    .frame(maxWidth: .infinity)
-                    .accessibilityIdentifier(SharedKitAutomationIds.shared.homeAddFood)
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Build your day")
+                        .font(.headline)
+                        .accessibilityIdentifier(SharedKitAutomationIds.shared.homeEmptyTitle)
+                    Text("Keep track of what you eat and notice the good choices you make.")
+                        .font(.body)
+                        .accessibilityIdentifier(SharedKitAutomationIds.shared.homeEmptyDescription)
+                    Button("Add a meal", action: onAddFoodRequested)
+                        .frame(maxWidth: .infinity)
+                        .accessibilityIdentifier(SharedKitAutomationIds.shared.homeAddFood)
+                }
             }
-            .padding(.horizontal, 20)
+            .padding(.horizontal, 24)
+            .padding(.vertical, 16)
+            .frame(maxWidth: 430, alignment: .leading)
+            .frame(maxWidth: .infinity, alignment: .center)
         }
     }
 }
@@ -362,6 +365,9 @@ struct PhotoAnalysisComposeHost: UIViewControllerRepresentable {
                 context.coordinator.handle(action: action)
             },
             onCloseRequested: {
+                context.coordinator.closeCapture()
+            },
+            onMealReviewCompleted: {
                 context.coordinator.closeCapture()
             },
         )
@@ -630,7 +636,10 @@ private struct RewardsIntelCompatibilityView: View {
                     .accessibilityIdentifier("rewards_row_\(index)")
                 }
             }
-            .padding()
+            .padding(.horizontal, 24)
+            .padding(.vertical, 16)
+            .frame(maxWidth: 430, alignment: .leading)
+            .frame(maxWidth: .infinity, alignment: .center)
         }
         .accessibilityIdentifier(SharedKitAutomationIds.shared.rewardsList)
     }

@@ -10,33 +10,40 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.supernutrition.core.ui.CameraPermissionState
 import com.supernutrition.domain.photoanalysis.AttemptId
+import com.supernutrition.domain.photoanalysis.PhotoAnalysisState
 import com.supernutrition.domain.photoanalysis.PhotoLeaseStore
 import com.supernutrition.domain.photoanalysis.PhotoSessionStore
 import com.supernutrition.platform.photoandroid.AndroidImageNormalizer
@@ -60,7 +67,8 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
     private var runtimeBinding: PhotoAnalysisAndroidRuntimeBinding? = null
     private var runtimeReady by mutableStateOf(false)
     private val inlineCameraController = PhotoAnalysisInlineCameraController()
-    private var cameraPermissionGranted by mutableStateOf(false)
+    private var cameraPermissionState by mutableStateOf(CameraPermissionState.NOT_DETERMINED)
+    private var cameraPermissionRequestInFlight by mutableStateOf(false)
     private var permissionRationale: android.app.AlertDialog? = null
     private var wasBackgrounded = false
     private var profileId by mutableStateOf<String?>(null)
@@ -135,6 +143,15 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
                 analysisCancelled = getString(R.string.capture_recovery_cancelled),
                 reviewRestoreUnavailable = getString(R.string.capture_recovery_review_restore_unavailable),
             ),
+            review = MealReviewCopy(
+                title = getString(R.string.capture_review_title),
+                subtitle = getString(R.string.capture_review_subtitle),
+                customMeal = getString(R.string.capture_review_custom_meal),
+                anythingElse = getString(R.string.capture_review_anything_else),
+                retake = getString(R.string.capture_review_retake),
+                addToMeal = getString(R.string.capture_review_add_to_meal),
+                pantryIngredientLabels = pantryIngredientLabels(),
+            ),
         )
     }
 
@@ -185,8 +202,9 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission(),
     ) { granted ->
-        cameraPermissionGranted = granted
         host.onPermissionResult(granted)
+        cameraPermissionRequestInFlight = false
+        cameraPermissionState = host.refreshCameraPermission()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -194,21 +212,18 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         window.statusBarColor = android.graphics.Color.TRANSPARENT
         window.navigationBarColor = android.graphics.Color.TRANSPARENT
-        WindowInsetsControllerCompat(window, window.decorView).apply {
-            isAppearanceLightStatusBars = false
-            isAppearanceLightNavigationBars = false
-        }
+        updateSystemBarAppearance(darkIcons = false)
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
             window.isNavigationBarContrastEnforced = false
         }
         restoreActivityState(savedInstanceState)
-        cameraPermissionGranted = checkSelfPermission(Manifest.permission.CAMERA) ==
-            android.content.pm.PackageManager.PERMISSION_GRANTED
         val photoBridge = AndroidPhotoBridge(
             context = this,
             permissionRequestInFlight = retainedState.captureOperation.permissionRequestInFlight,
         )
         host = createHost(photoBridge).also { it.initialize() }
+        cameraPermissionState = host.refreshCameraPermission()
+        cameraPermissionRequestInFlight = retainedState.captureOperation.permissionRequestInFlight
         inlineCameraController.onCaptureResult = { operationId, result ->
             host.onInlinePhotoResult(operationId, result)
         }
@@ -231,12 +246,14 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
 
     private fun restoreActivityState(savedInstanceState: Bundle?) {
         wasBackgrounded = retainedState.wasBackgrounded
-        savedInstanceState?.getString(PENDING_OPERATION_ID_KEY)?.let {
-            retainedState.captureOperation.pendingOperationId = it
+        // Legacy Bundles may carry a shutter token whose Activity-owned camera
+        // controller no longer exists. Never restore that native effect.
+        if (savedInstanceState?.getString(PENDING_OPERATION_ID_KEY) != null) {
+            retainedState.captureOperation.pendingOperationId = null
         }
-        // Android does not replay an Activity Result permission callback after
-        // process death. Restoring this transient guard would prevent a retry.
-        retainedState.captureOperation.permissionRequestInFlight = false
+        // Keep the live request guard across configuration changes. A new
+        // ViewModel starts with a cleared guard after process death; this
+        // transient value is deliberately not restored from the Bundle.
     }
 
     private fun bindAnalysisRuntimeAsync() {
@@ -275,7 +292,10 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
             feature = feature,
             photoBridge = photoBridge,
             normalizer = AndroidImageNormalizer(),
-            requestCameraPermission = { permissionLauncher.launch(Manifest.permission.CAMERA) },
+            requestCameraPermission = {
+                cameraPermissionRequestInFlight = true
+                permissionLauncher.launch(Manifest.permission.CAMERA)
+            },
             showCameraPermissionRationale = { onContinue ->
                 permissionRationale?.dismiss()
                 if (!isFinishing && !isDestroyed) {
@@ -314,6 +334,7 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
                     .semantics { testTagsAsResourceId = true },
             ) {
                 if (openedProfileId != null) {
+                    SideEffect { updateSystemBarAppearance(darkIcons = true) }
                     ProfileScreen(
                         profileId = openedProfileId,
                         onCloseRequested = { profileId = null },
@@ -321,52 +342,13 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
                 } else {
                     PhotoAnalysisTabs(
                         shell = PhotoAnalysisTabShell(
-                            homeModel = HomeScreenModel(
-                                title = getString(R.string.home_title),
-                                greeting = getString(R.string.home_greeting),
-                                dailySummaryTitle = getString(R.string.home_summary_title),
-                                dailySummaryValue = getString(R.string.home_summary_value),
-                                dailySummaryDescription = getString(R.string.home_summary_description),
-                                emptyTitle = getString(R.string.home_empty_title),
-                                emptyDescription = getString(R.string.home_empty_description),
-                                addFoodLabel = getString(R.string.home_add_food),
-                                dateLabel = getString(R.string.home_date_label),
-                                careQuestion = getString(R.string.home_care_question),
-                                rhythmTitle = getString(R.string.home_rhythm_title),
-                                rhythmSubtitle = getString(R.string.home_rhythm_subtitle),
-                                rhythmBadgeLabel = getString(R.string.home_rhythm_badge),
-                                fiber = HomeMetricModel(
-                                    label = getString(R.string.home_fiber_label),
-                                    value = getString(R.string.home_fiber_value),
-                                ),
-                                water = HomeMetricModel(
-                                    label = getString(R.string.home_water_label),
-                                    value = getString(R.string.home_water_value),
-                                ),
-                                protein = HomeMetricModel(
-                                    label = getString(R.string.home_protein_label),
-                                    value = getString(R.string.home_protein_value),
-                                ),
-                                movement = HomeMetricModel(
-                                    label = getString(R.string.home_movement_label),
-                                    value = getString(R.string.home_movement_value),
-                                ),
-                                nextStepTitle = getString(R.string.home_next_step_title),
-                                nextStepDescription = getString(R.string.home_next_step_description),
-                                nextStepAction = getString(R.string.home_next_step_action),
-                                viewGoalsLabel = getString(R.string.home_view_goals),
-                                goalsTitle = getString(R.string.home_goals_title),
-                                goalsDescription = getString(R.string.home_goals_description),
-                                goalsDoneLabel = getString(R.string.home_goals_done),
-                                profileActionLabel = getString(R.string.home_profile_action),
-                                mascotDescription = getString(R.string.home_mascot_description),
-                                saladDescription = getString(R.string.home_salad_description),
-                            ),
+                            homeModel = homeScreenModel(),
                             rewardsModel = RewardsPresenterModel.from(rewardsSnapshot, rewardsCopy),
                             homeLabel = getString(R.string.capture_tab),
                             rewardsLabel = getString(R.string.rewards_tab),
                             cameraLabel = getString(R.string.capture_shutter),
                             onProfileRequested = { profileId = "me" },
+                            onSystemBarAppearanceChanged = ::updateSystemBarAppearance,
                         ),
                         captureContent = { onCloseRequested ->
                             PhotoAnalysisCaptureTab(
@@ -378,7 +360,16 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
                                     onCloseRequested = onCloseRequested,
                                     preview = preview,
                                     manualIngredientState = manualIngredientState,
-                                    cameraPermissionGranted = cameraPermissionGranted,
+                                    cameraAccess = PhotoAnalysisCameraAccess(
+                                        permissionState = cameraPermissionState,
+                                        requestInFlight = cameraPermissionRequestInFlight,
+                                        onAccessRequested = {
+                                            cameraPermissionState = host.requestCameraPreviewAccess()
+                                        },
+                                    ),
+                                    onCameraPreviewEntered = {
+                                        cameraPermissionState = host.onCameraPreviewEntered()
+                                    },
                                     inlineCameraController = inlineCameraController,
                                     gridHintsEnabled = runtimeReady,
                                 ),
@@ -390,12 +381,51 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         }
     }
 
+    private fun homeScreenModel() = HomeScreenModel(
+        title = getString(R.string.home_title),
+        greeting = getString(R.string.home_greeting),
+        dailySummaryTitle = getString(R.string.home_summary_title),
+        dailySummaryValue = getString(R.string.home_summary_value),
+        dailySummaryDescription = getString(R.string.home_summary_description),
+        emptyTitle = getString(R.string.home_empty_title),
+        emptyDescription = getString(R.string.home_empty_description),
+        addFoodLabel = getString(R.string.home_add_food),
+        dateLabel = getString(R.string.home_date_label),
+        careQuestion = getString(R.string.home_care_question),
+        rhythmTitle = getString(R.string.home_rhythm_title),
+        rhythmSubtitle = getString(R.string.home_rhythm_subtitle),
+        rhythmBadgeLabel = getString(R.string.home_rhythm_badge),
+        fiber = HomeMetricModel(
+            label = getString(R.string.home_fiber_label),
+            value = getString(R.string.home_fiber_value),
+        ),
+        water = HomeMetricModel(
+            label = getString(R.string.home_water_label),
+            value = getString(R.string.home_water_value),
+        ),
+        protein = HomeMetricModel(
+            label = getString(R.string.home_protein_label),
+            value = getString(R.string.home_protein_value),
+        ),
+        movement = HomeMetricModel(
+            label = getString(R.string.home_movement_label),
+            value = getString(R.string.home_movement_value),
+        ),
+        nextStepTitle = getString(R.string.home_next_step_title),
+        nextStepDescription = getString(R.string.home_next_step_description),
+        nextStepAction = getString(R.string.home_next_step_action),
+        viewGoalsLabel = getString(R.string.home_view_goals),
+        goalsTitle = getString(R.string.home_goals_title),
+        goalsDescription = getString(R.string.home_goals_description),
+        goalsDoneLabel = getString(R.string.home_goals_done),
+        profileActionLabel = getString(R.string.home_profile_action),
+        mascotDescription = getString(R.string.home_mascot_description),
+        saladDescription = getString(R.string.home_salad_description),
+    )
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putAll(PhotoAnalysisSnapshotBundleCodec.encode(feature.snapshotForPersistence(), attemptId))
-        retainedState.captureOperation.pendingOperationId?.let {
-            outState.putString(PENDING_OPERATION_ID_KEY, it)
-        }
         outState.putBoolean(
             PERMISSION_REQUEST_IN_FLIGHT_KEY,
             retainedState.captureOperation.permissionRequestInFlight,
@@ -408,6 +438,19 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
             feature.dispatch(com.supernutrition.domain.photoanalysis.PhotoAnalysisEvent.Restored)
             wasBackgrounded = false
             retainedState.wasBackgrounded = false
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        cameraPermissionState = host.refreshCameraPermission()
+        cameraPermissionRequestInFlight = retainedState.captureOperation.permissionRequestInFlight
+    }
+
+    private fun updateSystemBarAppearance(darkIcons: Boolean) {
+        WindowInsetsControllerCompat(window, window.decorView).apply {
+            isAppearanceLightStatusBars = darkIcons
+            isAppearanceLightNavigationBars = darkIcons
         }
     }
 
@@ -461,10 +504,7 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
 }
 
 @Composable
-private fun ProfileScreen(
-    profileId: String,
-    onCloseRequested: () -> Unit,
-) {
+private fun ProfileScreen(profileId: String, onCloseRequested: () -> Unit) {
     BackHandler(onBack = onCloseRequested)
     Scaffold { contentPadding ->
         Column(
@@ -514,27 +554,17 @@ private fun PhotoAnalysisTabs(
         captureVisible = false
         selectedTab = captureReturnTab
     }
+    val showCapture: () -> Unit = {
+        captureReturnTab = selectedTab
+        captureVisible = true
+    }
+    SideEffect { shell.onSystemBarAppearanceChanged(!captureVisible && selectedTab != 0) }
     BackHandler(enabled = captureVisible, onBack = closeCapture)
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .semantics { testTagsAsResourceId = true },
-    ) {
-        when {
-            captureVisible -> captureContent(closeCapture)
-            selectedTab == 0 -> HomeScreen(
-                model = shell.homeModel,
-                        onAddFoodRequested = {
-                            captureReturnTab = 0
-                            captureVisible = true
-                        },
-                onProfileRequested = shell.onProfileRequested,
-            )
-            else -> RewardsScreen(shell.rewardsModel, Modifier.statusBarsPadding())
-        }
-        if (!captureVisible) {
-            PhotoAnalysisMainBottomBar(
-                modifier = Modifier.align(Alignment.BottomCenter),
+    Box(Modifier.fillMaxSize().semantics { testTagsAsResourceId = true }) {
+        if (captureVisible) {
+            captureContent(closeCapture)
+        } else {
+            PhotoAnalysisMainLayout(
                 state = PhotoAnalysisMainBottomBarState(
                     selectedTab = selectedTab,
                     homeLabel = shell.homeLabel,
@@ -542,21 +572,28 @@ private fun PhotoAnalysisTabs(
                     cameraLabel = shell.cameraLabel,
                 ),
                 actions = PhotoAnalysisMainBottomBarActions(
-                    onHomeSelected = {
-                        selectedTab = 0
-                        captureVisible = false
-                    },
-                    onRewardsSelected = {
-                        selectedTab = 1
-                        captureVisible = false
-                    },
-                    onCameraRequested = {
-                        captureReturnTab = selectedTab
-                        captureVisible = true
-                    },
+                    onHomeSelected = { selectedTab = 0 },
+                    onRewardsSelected = { selectedTab = 1 },
+                    onCameraRequested = showCapture,
                 ),
-            )
+                contentPadding = WindowInsets.safeDrawing.asPaddingValues(),
+            ) {
+                PhotoAnalysisTabContent(shell, selectedTab, showCapture)
+            }
         }
+    }
+}
+
+@Composable
+private fun PhotoAnalysisTabContent(shell: PhotoAnalysisTabShell, selectedTab: Int, onAddFood: () -> Unit) {
+    if (selectedTab == 0) {
+        HomeScreen(
+            model = shell.homeModel,
+            onAddFoodRequested = onAddFood,
+            onProfileRequested = shell.onProfileRequested,
+        )
+    } else {
+        RewardsScreen(shell.rewardsModel)
     }
 }
 
@@ -567,38 +604,31 @@ private data class PhotoAnalysisTabShell(
     val rewardsLabel: String,
     val cameraLabel: String,
     val onProfileRequested: () -> Unit,
+    val onSystemBarAppearanceChanged: (darkIcons: Boolean) -> Unit,
 )
 
 @Composable
 private fun PhotoAnalysisCaptureTab(state: PhotoAnalysisCaptureTabState) {
     val feature = state.feature
+    val mealReviewSelection by feature.mealReviewSelection.collectAsState()
+    val workflowState by feature.stateFlow.collectAsState()
     val host = state.host
     val presentationCopy = state.presentationCopy
     val preview = state.preview
     val manualIngredientState = state.manualIngredientState
-    val cameraPermissionGranted = state.cameraPermissionGranted
-    val inlineCameraController = state.inlineCameraController
     val gridHintsEnabled = state.gridHintsEnabled
+    val needsLivePreview = workflowState == PhotoAnalysisState.Capture && preview == null
+    LaunchedEffect(host, needsLivePreview) {
+        if (needsLivePreview) state.onCameraPreviewEntered()
+    }
     PhotoAnalysisCaptureContent(
         stateFlow = feature.stateFlow,
         onAction = host::handleAction,
-        modifier = Modifier.statusBarsPadding(),
         surface = PhotoAnalysisCaptureSurface(
             presenterCopy = presentationCopy,
             closeLabel = state.closeLabel,
             onCloseRequested = state.onCloseRequested,
-            liveCamera = if (preview == null) {
-                {
-                    PhotoAnalysisLiveCameraPreview(
-                        cameraPermissionGranted = cameraPermissionGranted,
-                        permissionHint = presentationCopy.recovery.cameraPermissionRequired,
-                        unavailableHint = presentationCopy.recovery.cameraUnavailable,
-                        cameraController = inlineCameraController,
-                    )
-                }
-            } else {
-                null
-            },
+            liveCamera = captureLiveCamera(state, workflowState),
             retainedPhoto = preview?.let { current -> { AndroidRetainedPhotoBackdrop(current) } },
             photoTextContrast = preview?.let { current ->
                 if (current.hasLightBackdrop) {
@@ -620,10 +650,30 @@ private fun PhotoAnalysisCaptureTab(state: PhotoAnalysisCaptureTabState) {
             manualIngredientUnresolved = manualIngredientState.unresolvedFragments,
             onManualIngredientInputChanged = feature::updateManualIngredientQuery,
             onManualIngredientAdded = feature::addManualIngredients,
-            // Keep camera and captured photo in exactly the same slot.
-            retainedPhotoAspectRatio = 4f / 3f,
+            mealReviewSelection = mealReviewSelection,
+            onMealReviewSelectionChanged = { feature.updateMealReviewSelection(it) },
+            onMealReviewConfirmed = { confirmation ->
+                if (feature.confirmMealReview(confirmation)) state.onCloseRequested()
+            },
         ),
     )
+}
+
+private fun captureLiveCamera(
+    state: PhotoAnalysisCaptureTabState,
+    workflowState: PhotoAnalysisState,
+): (@Composable () -> Unit)? {
+    if (state.preview != null) return null
+    return {
+        PhotoAnalysisLiveCameraPreview(
+            cameraAccess = state.cameraAccess.copy(
+                actionVisible = workflowState == PhotoAnalysisState.Capture,
+            ),
+            permissionHint = state.presentationCopy.recovery.cameraPermissionRequired,
+            unavailableHint = state.presentationCopy.recovery.cameraUnavailable,
+            cameraController = state.inlineCameraController,
+        )
+    }
 }
 
 private data class PhotoAnalysisCaptureTabState(
@@ -634,7 +684,8 @@ private data class PhotoAnalysisCaptureTabState(
     val onCloseRequested: () -> Unit,
     val preview: AndroidRetainedPhotoPreview?,
     val manualIngredientState: PhotoAnalysisManualIngredientState,
-    val cameraPermissionGranted: Boolean,
+    val cameraAccess: PhotoAnalysisCameraAccess,
+    val onCameraPreviewEntered: () -> Unit,
     val inlineCameraController: PhotoAnalysisInlineCameraController,
     val gridHintsEnabled: Boolean,
 )

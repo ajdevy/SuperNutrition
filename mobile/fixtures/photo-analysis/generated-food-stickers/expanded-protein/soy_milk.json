@@ -1,0 +1,44 @@
+{
+  "key": "soy_milk",
+  "generator": "built-in image_gen",
+  "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: SOY MILK only: one small clear drinking glass filled with ivory soy milk, with three beige soybeans beside its base as identity cues. One coherent beverage sticker, no packaging or labels.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-08d1d786-23c6-4522-b25a-0f0998adaa94.png",
+  "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_soy_milk.png",
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_soy_milk.png",
+  "saved_at_utc": "2026-10-12T07:46:52.618741+00:00",
+  "transparent_background": true,
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "0eb49277f76c8c5783c70706289ad5a27a2ac3b48b156bd48737954a87c530ed",
+  "bytes": 824535,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 1042559,
+    "opaque_pixels": 1125,
+    "partial_pixels": 528832,
+    "nontransparent_bounds": [
+      0,
+      35,
+      1117,
+      1136
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      255,
+      185,
+      990,
+      1075
+    ],
+    "pixels_alpha_1_to_10": 7683
+  },
+  "visually_inspected": true,
+  "visual_result": "Root visually inspected the saved PNG through view_image: recognizable soy milk with soybeans as the correct identity cue, transparent background, consistent photographic texture and white outline, no text, UI or checkmarks.",
+  "inspected_by": "root"
+}

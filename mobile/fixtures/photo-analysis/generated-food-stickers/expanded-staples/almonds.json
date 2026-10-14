@@ -1,0 +1,43 @@
+{
+  "key": "almonds",
+  "generator": "built-in image_gen",
+  "prompt": "Use case: product-mockup\nAsset type: one food-selection sticker for the Super Nutrition mobile app.\nPrimary request: ALMONDS only: a small overlapping cluster of five whole raw brown almonds with their long pointed oval shape and fine ridged skins visible. No other nut species and no shells.\nStyle/medium: crisp photorealistic food cutout with natural texture and gentle soft studio lighting, matching the existing mixed-nuts, rice and peeled-banana stickers with a thin clean white die-cut outline around the food silhouette.\nComposition/framing: one coherent centered three-quarter food cluster on a square transparent canvas, complete food and outline visible inside the central 78 percent. Keep clear transparent padding on every edge.\nConstraints: genuine transparent alpha background, no scene or cast shadow. No plate, bowl, board, table, utensils, packaging, unrelated ingredients, green backing, text, letters, badges, checkmarks, faces, watermark or UI.\n",
+  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12ec2-311b-7691-96d6-9634b2fa56d6/exec-b17e4f2d-8053-4a6b-8d7b-03e9c7193aaa.png",
+  "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-staples/food_sticker_almonds.png",
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_almonds.png",
+  "saved_at_utc": "2026-10-12T07:37:46.866107+00:00",
+  "transparent_background": true,
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "7141d657c55029d1102f05a3f9d29b3db26a71e66ad0313eaccff09e1b1e1c4a",
+  "bytes": 1700761,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 938779,
+    "opaque_pixels": 530,
+    "partial_pixels": 633207,
+    "nontransparent_bounds": [
+      0,
+      30,
+      1234,
+      1254
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      76,
+      184,
+      1203,
+      1048
+    ],
+    "pixels_alpha_1_to_10": 15610
+  },
+  "visually_inspected": true,
+  "visual_result": "Visually inspected: five whole pointed oval brown almonds with crisp ridged skin, compact overlapping silhouette, thin white outline and transparent background; no other nut species."
+}

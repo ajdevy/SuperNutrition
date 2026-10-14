@@ -1,0 +1,43 @@
+{
+  "key": "turkey",
+  "generator": "built-in image_gen",
+  "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: TURKEY meat only: a compact golden-brown roasted turkey breast portion with two pale carved slices showing the moist white meat, recognizable as poultry breast. Individual turkey icon, not a whole roast or a sheet.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation.\nComposition/framing: centered three-quarter view on a square transparent canvas. Entire turkey portion and slices visible with modest even padding, occupying about 78 percent of the canvas. One coherent food silhouette.\nConstraints: genuinely transparent alpha background, thin white outline following the complete food silhouette. No table, plate, board, cutlery, packaging, other ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-c777beb7-457f-49a1-9341-91b6b4726cdd.png",
+  "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_turkey.png",
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_turkey.png",
+  "saved_at_utc": "2026-10-12T06:21:01.405932+00:00",
+  "transparent_background": true,
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "5ec317bc9fd3436944afc6af57b7f04b2fadf69997adf8ab1d8c7bfaeab06bd7",
+  "bytes": 2114224,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 668087,
+    "opaque_pixels": 787,
+    "partial_pixels": 903642,
+    "nontransparent_bounds": [
+      0,
+      69,
+      1240,
+      1254
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      21,
+      98,
+      1233,
+      1156
+    ],
+    "pixels_alpha_1_to_10": 12174
+  },
+  "visually_inspected": true,
+  "visual_result": "Visually inspected: recognizable roasted poultry breast and two pale meat slices, crisp realistic texture, thin white cutout border, no plate or text; entire turkey portion visible."
+}

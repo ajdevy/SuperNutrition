@@ -1,0 +1,43 @@
+{
+  "key": "sour_cream",
+  "generator": "built-in image_gen",
+  "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: SOUR CREAM only: one small low clear glass bowl filled with thick silky white sour cream, a soft rounded dollop and smooth glossy folds above the rim. Rich spoonable dairy texture with no curds. No spoon, plate, fruit or garnish. The transparent bowl is a simple serving vessel, not packaging.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, peeled banana, milk and yogurt cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12f44-bbe1-7482-8976-d12fdfa7fac8/exec-be042061-d513-455f-8c84-bde1c127c714.png",
+  "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_sour_cream.png",
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_sour_cream.png",
+  "saved_at_utc": "2026-10-12T08:58:54.328340+00:00",
+  "transparent_background": true,
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "2d6ca58d3c9fc27b3dfebe4bf413650129361d67576dfb2b246d9889e4036d7f",
+  "bytes": 1034143,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 935814,
+    "opaque_pixels": 1131,
+    "partial_pixels": 635571,
+    "nontransparent_bounds": [
+      25,
+      27,
+      1158,
+      1218
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      98,
+      207,
+      1153,
+      1051
+    ],
+    "pixels_alpha_1_to_10": 8017
+  },
+  "visually_inspected": true,
+  "visual_result": "Visually inspected generated output: Thick silky glossy sour cream with a soft dollop and smooth folds in a low glass bowl, no curds or unrelated food, full white cutout outline. Transparent background, no text, badges or UI."
+}

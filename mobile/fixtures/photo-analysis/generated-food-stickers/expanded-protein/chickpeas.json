@@ -1,0 +1,43 @@
+{
+  "key": "chickpeas",
+  "generator": "built-in image_gen",
+  "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: CHICKPEAS only: a small compact mound of pale golden cooked chickpeas, their round lobed shapes and tiny beaks clearly visible. A coherent mound without a bowl, plate or garnish.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-372652ca-2c7f-4e3c-8002-b93bc7b99776.png",
+  "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_chickpeas.png",
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_chickpeas.png",
+  "saved_at_utc": "2026-10-12T07:42:16.007911+00:00",
+  "transparent_background": true,
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "cf17e7190893cb3f3622ead3c626b9e4fe4a1738f9ad66abd8410f1225726e65",
+  "bytes": 1162503,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 977402,
+    "opaque_pixels": 1036,
+    "partial_pixels": 594078,
+    "nontransparent_bounds": [
+      51,
+      23,
+      1216,
+      1246
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      101,
+      217,
+      1179,
+      1024
+    ],
+    "pixels_alpha_1_to_10": 10263
+  },
+  "visually_inspected": true,
+  "visual_result": "Visually inspected: pale golden cooked chickpeas in a compact mound, distinctive round lobed shape and beaks, coherent white outline without a bowl."
+}

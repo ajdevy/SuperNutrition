@@ -1,0 +1,43 @@
+{
+  "key": "tempeh",
+  "generator": "built-in image_gen",
+  "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: TEMPEH only: one rectangular light beige tempeh slab and two small cut slices, clearly showing the distinctive tightly packed whole soybean mosaic bound by white fermentation culture. No garnish.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-177a812d-eeb9-4613-8f5e-341ce7696b7d.png",
+  "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_tempeh.png",
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_tempeh.png",
+  "saved_at_utc": "2026-10-12T07:42:15.616329+00:00",
+  "transparent_background": true,
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "2ec1bd13d5847fe29795dfded43dd1494f9130649e7d33d06812271a5b7f8ca6",
+  "bytes": 1302437,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 924586,
+    "opaque_pixels": 730,
+    "partial_pixels": 647200,
+    "nontransparent_bounds": [
+      0,
+      23,
+      1208,
+      1182
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      113,
+      200,
+      1182,
+      1086
+    ],
+    "pixels_alpha_1_to_10": 15324
+  },
+  "visually_inspected": true,
+  "visual_result": "Visually inspected: tempeh slab and slices with clearly visible tightly packed soybean mosaic bound by pale fermentation culture, realistic texture and thin white outline."
+}

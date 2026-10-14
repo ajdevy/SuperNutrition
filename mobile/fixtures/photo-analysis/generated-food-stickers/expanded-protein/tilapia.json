@@ -1,0 +1,43 @@
+{
+  "key": "tilapia",
+  "generator": "built-in image_gen",
+  "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: TILAPIA fish only: one whole fresh tilapia, deep flattened oval silver-gray body with faint vertical dark bands and a long spiny dorsal fin. Full head and tail visible.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-ba75ca72-caf3-45e3-8e17-852c118b2bae.png",
+  "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_tilapia.png",
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_tilapia.png",
+  "saved_at_utc": "2026-10-12T07:09:28.791900+00:00",
+  "transparent_background": true,
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "850e51ab1bd49ea600e3e090d1d45a3f4c7ed9d0a1d4329ea26f55d8c6c5d431",
+  "bytes": 1549134,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 1034092,
+    "opaque_pixels": 533,
+    "partial_pixels": 537891,
+    "nontransparent_bounds": [
+      0,
+      37,
+      1232,
+      1254
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      41,
+      266,
+      1217,
+      987
+    ],
+    "pixels_alpha_1_to_10": 14266
+  },
+  "visually_inspected": true,
+  "visual_result": "Visually inspected: recognizable deep oval tilapia body with silver-gray scales, faint bands and long spiny dorsal fin; full fish silhouette, white outline and transparent background."
+}

@@ -15,5 +15,6 @@ public object SharedKitPhotoAnalysis {
         session: SharedKitPhotoAnalysisSession,
         onNativeAction: (SharedKitPhotoAnalysisNativeAction) -> Unit,
         onCloseRequested: () -> Unit,
+        onMealReviewCompleted: () -> Unit,
     ): UIViewController = error("Compose iOS UI is unavailable on the iosX64 compatibility lane")
 }

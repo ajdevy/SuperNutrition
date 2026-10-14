@@ -1,0 +1,43 @@
+{
+  "key": "yogurt",
+  "generator": "built-in image_gen",
+  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-e3358541-12ab-4f20-b54c-e0d47f4e8fa4.png",
+  "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_yogurt.png",
+  "intended_resource_name": "food_sticker_yogurt.png",
+  "prompt_file": "broad-library-prompts.json",
+  "saved_at_utc": "2026-10-12T04:50:57.544199+00:00",
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "56a8d2de6fa4af1111066beee021ecd59714605a46b4ec611fda5c0b93c547bf",
+  "bytes": 1197649,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 838385,
+    "opaque_pixels": 1021,
+    "partial_pixels": 733110,
+    "nontransparent_bounds": [
+      31,
+      39,
+      1230,
+      1230
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      79,
+      199,
+      1175,
+      1064
+    ],
+    "pixels_alpha_1_to_10": 9076
+  },
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_yogurt.png",
+  "visually_inspected": true,
+  "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+}

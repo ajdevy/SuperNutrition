@@ -1,0 +1,33 @@
+{
+  "key": "semolina",
+  "generator": "builtin image_gen.imagegen",
+  "transparent_background": true,
+  "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: a compact mound of fine pale-cream semolina granules with a delicate granular texture, no bowl.\nStyle/medium: crisp photorealistic food product photograph with realistic texture and gentle white studio light. Match the existing app food stickers: natural colors, clean thin white die-cut outline tracing the complete food silhouette. Individual asset only, not a sheet.\nComposition/framing: one compact recognizable food group centered on a square transparent canvas. Entire subject visible with around 10% clear padding on every side; fills about 75-80% of the canvas. It must read clearly at a small mobile icon size. For elongated vegetables use a diagonal arrangement.\nConstraints: actual transparent alpha background, not checkerboard or solid background. Only the named food and its own natural stems/peel/leaves; no decorative herbs, other foods, table, plate, bowl, packaging, shadows beyond the silhouette, text, labels, logo, watermark, face, anthropomorphic features, checkmark, badge or UI. White outline follows only the silhouette; no colored backing. Preserve truthful characteristic shapes and colors.",
+  "generator_output_path": "/Users/REDACTED/.codex/generated_images/01a133c2-7301-7323-86ec-bca0e577d821/exec-01e6d9f7-79c1-4b5e-9bf9-342c0f38361b.png",
+  "workspace_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_semolina.png",
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_semolina.png",
+  "sha256": "8e6672ff90f6ec43ae13adb0228dd2aac8dd2a6fee1ec946288adfe4f5f90d60",
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "alpha_min": 0,
+  "alpha_max": 255,
+  "corner_alpha": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "alpha_bbox": [
+    0,
+    17,
+    1243,
+    1254
+  ],
+  "bytes": 1546614,
+  "saved_at_utc": "2026-10-13T05:43:58.066866+00:00",
+  "visual_inspection": {
+    "status": "passed",
+    "notes": "Visually inspected generated output: fine pale-cream semolina granules form a soft granular mound; different texture and color from golden cornmeal, thin white contour, no bowl, text or badge."
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "key": "pistachios",
+  "generator": "built-in image_gen",
+  "prompt": "Use case: product-mockup\nAsset type: one food-selection sticker for the Super Nutrition mobile app.\nPrimary request: PISTACHIOS only: three naturally split beige pistachio shells with green kernels and faint purple skins visible, plus two shelled green pistachio kernels in front. No other nut species, no salt dust.\nStyle/medium: crisp photorealistic food cutout with natural texture and gentle soft studio lighting, matching the existing mixed-nuts, rice and peeled-banana stickers with a thin clean white die-cut outline around the food silhouette.\nComposition/framing: one coherent centered three-quarter food cluster on a square transparent canvas, complete food and outline visible inside the central 78 percent. Keep clear transparent padding on every edge.\nConstraints: genuine transparent alpha background, no scene or cast shadow. No plate, bowl, board, table, utensils, packaging, unrelated ingredients, green backing, text, letters, badges, checkmarks, faces, watermark or UI.\n",
+  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12ec2-311b-7691-96d6-9634b2fa56d6/exec-085d2f41-9681-4a7c-9999-5981cc93e10c.png",
+  "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-staples/food_sticker_pistachios.png",
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_pistachios.png",
+  "saved_at_utc": "2026-10-12T08:04:30.038209+00:00",
+  "transparent_background": true,
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "1e02f4981f5943732aea3f3cde18121dd0c887972884f0f3616f4c062f72d3ee",
+  "bytes": 1476688,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 925141,
+    "opaque_pixels": 1295,
+    "partial_pixels": 646080,
+    "nontransparent_bounds": [
+      0,
+      29,
+      1211,
+      1254
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      97,
+      149,
+      1190,
+      1098
+    ],
+    "pixels_alpha_1_to_10": 10416
+  },
+  "visually_inspected": true,
+  "visual_result": "Visually inspected: three open beige pistachio shells and two shelled green kernels with faint purple skins, recognizable pistachio texture, full thin white outline and no salt or other nut species."
+}

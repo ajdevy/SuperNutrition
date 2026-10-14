@@ -1,0 +1,87 @@
+{
+  "style_reference_paths": [
+    "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_salmon.png",
+    "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_avocado.png",
+    "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_cucumber.png"
+  ],
+  "assets": [
+    {
+      "key": "banana",
+      "prompt": "Use case: product-mockup\nAsset type: a transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: one recognizable ripe yellow banana, partly peeled so the cream fruit and folded yellow peel are visible. This is an individual food icon, not a sheet.\nStyle/medium: realistic crisp product photograph, natural food texture and subtle soft studio light. Match the visual language of small photorealistic food cutout stickers: a clean thin white die-cut outline follows the complete banana silhouette.\nComposition/framing: banana gently curves from lower left to upper right, centered on a square transparent canvas, entire fruit and peel visible with modest even padding; subject fills around 80% of image. No plate or table.\nColor palette: natural yellow peel, cream banana, tiny natural brown stem.\nConstraints: real transparent alpha background; white outline only around the food; no shadow/background slab, no other food, no green backing, no text, faces, checkmarks, badges, labels, watermarks or UI.",
+      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-0a8ad74c-5e2b-4a64-a515-0348f78e334d.png",
+      "output_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_banana.png",
+      "generator": "built-in image_gen",
+      "generated_on": "2026-10-11",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "56aa7cd76183d83ebf5a7727c5dbb92b1a9c37e2b390ea6d317708a28a1702ba",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 944192,
+        "opaque_pixels": 1578,
+        "partial_pixels": 626746,
+        "nontransparent_bounds": [
+          49,
+          29,
+          1240,
+          1230
+        ]
+      }
+    },
+    {
+      "key": "apple",
+      "prompt": "Use case: product-mockup\nAsset type: a transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: one recognizable fresh red apple with a short natural brown stem and a small green leaf. This is an individual food icon, not a sheet.\nStyle/medium: realistic crisp product photograph, natural apple skin texture and subtle soft studio light. Match the visual language of small photorealistic food cutout stickers: a clean thin white die-cut outline follows the complete apple silhouette.\nComposition/framing: centered three-quarter view on a square transparent canvas, entire apple visible with modest even padding; subject fills around 80% of image. No plate or table.\nColor palette: natural red apple with warm yellow skin variation, brown stem, green leaf.\nConstraints: real transparent alpha background; white outline only around the food; no shadow/background slab, no other food, no green backing, no text, faces, checkmarks, badges, labels, watermarks or UI.",
+      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-31b9137a-6fc9-4de2-8ae5-43a392c305e2.png",
+      "output_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_apple.png",
+      "generator": "built-in image_gen",
+      "generated_on": "2026-10-11",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "354bbb59d38d6e92e9ce7950f1eaaa0a7f954f49f74c3e7374172d7842e82054",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 702161,
+        "opaque_pixels": 126,
+        "partial_pixels": 870229,
+        "nontransparent_bounds": [
+          0,
+          50,
+          1230,
+          1254
+        ]
+      }
+    },
+    {
+      "key": "orange",
+      "prompt": "Use case: product-mockup\nAsset type: a transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: one recognizable fresh orange with a cut orange half positioned just in front so juicy citrus segments are visible. Both pieces are the same food: orange. This is an individual food icon, not a sheet.\nStyle/medium: realistic crisp product photograph, natural citrus skin and flesh texture and subtle soft studio light. Match the visual language of small photorealistic food cutout stickers: a clean thin white die-cut outline follows the combined food silhouette.\nComposition/framing: centered three-quarter view on a square transparent canvas, entire whole fruit and half visible with modest even padding; subject fills around 80% of image. No plate or table.\nColor palette: natural vivid orange peel and flesh, cream-white pith.\nConstraints: real transparent alpha background; white outline only around the food; no shadow/background slab, no other food, no green backing, no text, faces, checkmarks, badges, labels, watermarks or UI.",
+      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-ad7902ce-f021-4434-8a6d-f6989a7369cb.png",
+      "output_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_orange.png",
+      "generator": "built-in image_gen",
+      "generated_on": "2026-10-11",
+      "transparent_background": true,
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "03b66b893722a82c97f06b04f3b7b77976f35e241b5f057f04f3c37d6de1a866",
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 716396,
+        "opaque_pixels": 1262,
+        "partial_pixels": 854858,
+        "nontransparent_bounds": [
+          0,
+          35,
+          1248,
+          1254
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "key": "lamb",
+  "generator": "built-in image_gen",
+  "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: LAMB only: two compact grilled lamb rib chops with their slim rib bones and rosy meat centers clearly visible. No sauce, garnish or other food.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible with modest even padding, occupying around 78 percent of the canvas. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-25ff4ecc-acf7-43c7-9a0e-4a67e4bcdc2b.png",
+  "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_lamb.png",
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_lamb.png",
+  "saved_at_utc": "2026-10-12T06:27:14.721954+00:00",
+  "transparent_background": true,
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "f75fdcd47a50f6e453d096dfdc3e674786855de4dabfd47e89cccaadcf6274ce",
+  "bytes": 1831607,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 939652,
+    "opaque_pixels": 792,
+    "partial_pixels": 632072,
+    "nontransparent_bounds": [
+      0,
+      27,
+      1230,
+      1208
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      129,
+      94,
+      1131,
+      1168
+    ],
+    "pixels_alpha_1_to_10": 16027
+  },
+  "visually_inspected": true,
+  "visual_result": "Visually inspected: two recognizable grilled lamb rib chops with slim bones and rosy meat centers, realistic texture, transparent background and white outline; complete subject visible."
+}

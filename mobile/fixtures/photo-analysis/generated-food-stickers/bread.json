@@ -1,0 +1,43 @@
+{
+  "key": "bread",
+  "generator": "built-in image_gen",
+  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-f689d6b3-83e6-4c45-af3c-d7d66f0085ab.png",
+  "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_bread.png",
+  "intended_resource_name": "food_sticker_bread.png",
+  "prompt_file": "broad-library-prompts.json",
+  "saved_at_utc": "2026-10-12T04:58:31.387560+00:00",
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "1568dc4582b504b22e1e6adb2bf10ef1e2835107c7847ae5da3df9e3d5f65209",
+  "bytes": 2626961,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 622443,
+    "opaque_pixels": 764,
+    "partial_pixels": 949309,
+    "nontransparent_bounds": [
+      0,
+      3,
+      1242,
+      1254
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      55,
+      115,
+      1213,
+      1177
+    ],
+    "pixels_alpha_1_to_10": 15230
+  },
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_bread.png",
+  "visually_inspected": true,
+  "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+}

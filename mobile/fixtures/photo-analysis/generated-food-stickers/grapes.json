@@ -1,0 +1,43 @@
+{
+  "key": "grapes",
+  "generator": "built-in image_gen",
+  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-3b3ecb27-9e1a-4d78-9d4b-961092a105fa.png",
+  "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_grapes.png",
+  "intended_resource_name": "food_sticker_grapes.png",
+  "prompt_file": "broad-library-prompts.json",
+  "saved_at_utc": "2026-10-12T04:52:27.330364+00:00",
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "5c4c64ebbeb982e1447fa22ee3b6914d27d61203c5b0e958318ed1d69787c0c9",
+  "bytes": 1675155,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 883918,
+    "opaque_pixels": 796,
+    "partial_pixels": 687802,
+    "nontransparent_bounds": [
+      0,
+      31,
+      1198,
+      1244
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      96,
+      131,
+      1188,
+      1113
+    ],
+    "pixels_alpha_1_to_10": 16933
+  },
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_grapes.png",
+  "visually_inspected": true,
+  "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+}
