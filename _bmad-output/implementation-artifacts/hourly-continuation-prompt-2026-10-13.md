@@ -3,7 +3,7 @@
 The user requested hourly continuation in this existing chat on 2026-10-13
 (Europe/Moscow). No separate task or project run was requested.
 
-## Schedule status
+## Schedule status — prior October 16 checkpoint
 
 The hourly heartbeat **super-nutrition** (Продолжать Super Nutrition) was
 created October 15 in this chat and **deleted October 16 after completion
@@ -98,3 +98,7 @@ See `keyboard-review-pan-2026-10-15.md` for the complete final result,
 commands and before/after evidence, and `gallery-photo-fit-verification-2026-10-15.md`
 for the gallery/permission/Home/Rewards history. No repeated device question
 or hourly unchanged-status report is needed.
+
+## Current schedule status — October 17
+
+The subsequent hourly `super-nutrition` heartbeat is now PAUSED, confirmed by `automation_update` after the agreed emulator and Home/Rewards work completed. Its prompt, recurrence and chat attachment remain preserved. Do not interpret the older deleted/blocked checkpoints above as the current automation state. The retained emulator is open for the user's manual review; this does not authorize physical-phone interaction.

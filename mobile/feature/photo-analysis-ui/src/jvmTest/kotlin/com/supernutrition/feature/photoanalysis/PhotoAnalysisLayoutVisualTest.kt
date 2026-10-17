@@ -255,6 +255,33 @@ class PhotoAnalysisLayoutVisualTest {
     }
 
     @Test
+    fun `metric rows retain equal card heights when values wrap`() = runSkikoComposeUiTest(
+        size = Size(320f, 568f),
+        density = Density(1f),
+    ) {
+        val movementValue = "32 / 45 minutes of movement today"
+        setContent {
+            PhotoAnalysisMainLayout(layoutBottomBarState(), layoutBottomBarActions()) {
+                HomeScreen(layoutHomeModel().copy(movement = HomeMetricModel("Movement", movementValue)))
+            }
+        }
+        onNodeWithTag(UiAutomationIds.HOME_SUMMARY.value).performScrollTo()
+        val fiber = onNodeWithTag(UiAutomationIds.HOME_METRIC_FIBER.value).fetchSemanticsNode().boundsInRoot
+        val water = onNodeWithTag(UiAutomationIds.HOME_METRIC_WATER.value).fetchSemanticsNode().boundsInRoot
+        val protein = onNodeWithTag(UiAutomationIds.HOME_METRIC_PROTEIN.value).fetchSemanticsNode().boundsInRoot
+        val movement = onNodeWithTag(UiAutomationIds.HOME_METRIC_MOVEMENT.value).fetchSemanticsNode().boundsInRoot
+        val layouts = mutableListOf<TextLayoutResult>()
+        onNodeWithText(movementValue).performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
+        assertTrue(layouts.single().lineCount > 1, "The value must wrap to exercise equal row heights")
+        writeLayoutScreenshot("home-metrics-wrapped-row", captureToImage().asSkiaBitmap())
+        assertTrue(abs(fiber.top - water.top) <= 1f && abs(fiber.bottom - water.bottom) <= 1f)
+        assertTrue(
+            abs(protein.top - movement.top) <= 1f && abs(protein.bottom - movement.bottom) <= 1f,
+            "Wrapped metric cards have different heights: protein=$protein movement=$movement",
+        )
+    }
+
+    @Test
     fun `metric cards stay aligned with wrapped values and larger text`() {
         val longValue = "32 / 45 minutes of movement today"
         listOf(1f, 1.5f).forEach { fontScale ->
