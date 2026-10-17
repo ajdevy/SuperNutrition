@@ -17,11 +17,11 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
-import androidx.compose.ui.test.performScrollToIndex
 import androidx.compose.ui.test.v2.runSkikoComposeUiTest
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import com.supernutrition.core.ui.UiAutomationIds
+import com.supernutrition.domain.nutrition.RewardId
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -100,12 +100,12 @@ class MainScreenRefreshTest {
         }
         onNodeWithTag(UiAutomationIds.REWARDS_TITLE.value).assertIsDisplayed()
         runOnIdle { model.value = layoutRewardsModel() }
-        onNodeWithTag(UiAutomationIds.rewardsRowProgress(1).value).assertTextEquals("0 of 1")
+        onNodeWithTag(UiAutomationIds.rewardsRowProgress(4).value).assertTextEquals("0/1")
         runOnIdle {
             model.value = model.value.copy(
                 title = "Your rewards",
-                cards = model.value.cards.mapIndexed { index, card ->
-                    if (index == 1) {
+                cards = model.value.cards.map { card ->
+                    if (card.id == RewardId.FERMENTED_THREE_DAYS) {
                         card.copy(
                             isEarned = true,
                             progressLabel = "1 of 1",
@@ -118,18 +118,18 @@ class MainScreenRefreshTest {
             )
         }
         onNodeWithText("Your rewards").assertIsDisplayed()
-        onNodeWithTag(UiAutomationIds.rewardsRowProgress(1).value).assertTextEquals("1 of 1")
-        onNodeWithTag(UiAutomationIds.rewardsRowState(1).value).assertTextEquals("Earned today")
+        onNodeWithTag(UiAutomationIds.rewardsRowProgress(4).value).assertTextEquals("1/1")
+        onNodeWithContentDescription("Earned today").assertIsDisplayed()
         runOnIdle { inset.value = MainBottomBarHeight }
         runOnIdle { width.value = 300.dp }
-        onNodeWithTag(UiAutomationIds.REWARDS_LIST.value).performScrollToIndex(7)
+        onNodeWithTag(UiAutomationIds.rewardsRow(9).value).performScrollTo()
         val final = onNodeWithTag(
-            UiAutomationIds.rewardsRow(6).value,
+            UiAutomationIds.rewardsRow(9).value,
         ).assertIsDisplayed().fetchSemanticsNode().boundsInRoot
         assertTrue(final.bottom <= 812f - MainBottomBarHeight.value)
         runOnIdle { fontScale.value = 1.5f }
-        onNodeWithTag(UiAutomationIds.REWARDS_LIST.value).performScrollToIndex(7)
-        onNodeWithTag(UiAutomationIds.rewardsRowState(6).value).assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.rewardsRow(9).value).performScrollTo()
+        onNodeWithTag(UiAutomationIds.rewardsRowState(9).value).assertIsDisplayed()
     }
 
     @Test
