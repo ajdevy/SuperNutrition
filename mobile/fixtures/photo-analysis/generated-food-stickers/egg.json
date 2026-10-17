@@ -1,0 +1,43 @@
+{
+  "key": "egg",
+  "generator": "built-in image_gen",
+  "generated_path": "/Users/anastasia/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-30026fb6-9fb2-4dc5-a354-c0967268b824.png",
+  "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_egg.png",
+  "intended_resource_name": "food_sticker_egg.png",
+  "prompt_file": "broad-library-prompts.json",
+  "saved_at_utc": "2026-10-12T04:49:48.799547+00:00",
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "9fedd19e970aef68cb4ed79afc13c756321ee2afb62d3a9fd40032aaa0d1a044",
+  "bytes": 1244549,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 771722,
+    "opaque_pixels": 1641,
+    "partial_pixels": 799153,
+    "nontransparent_bounds": [
+      0,
+      40,
+      1198,
+      1183
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      62,
+      118,
+      1193,
+      1140
+    ],
+    "pixels_alpha_1_to_10": 7567
+  },
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_egg.png",
+  "visually_inspected": true,
+  "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+}

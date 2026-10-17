@@ -171,6 +171,25 @@ public class SharedKitPhotoAnalysisSession private constructor(
         }
 
         feature.dispatch(PhotoAnalysisEvent.LocalAnalysisStageChanged(request, LocalAnalysisStage.IDENTIFYING_DISH))
+        val dishes = nativePocDishes(dishLabels, dishConfidences)
+        val components = nativePocComponents(
+            regionLabels,
+            regionConfidences,
+            regionLefts,
+            regionTops,
+            regionRights,
+            regionBottoms,
+        )
+        feature.dispatch(PhotoAnalysisEvent.LocalAnalysisStageChanged(request, LocalAnalysisStage.CHECKING_RESULTS))
+        feature.dispatch(
+            PhotoAnalysisEvent.ReviewEvidenceAvailable(
+                request,
+                BoundedDishIngredientFusion.merge(dishes, components),
+            ),
+        )
+    }
+
+    private fun nativePocDishes(dishLabels: List<String>, dishConfidences: List<Double>): List<InferenceCandidate> {
         val dishProvenance = InferenceProvenance(
             route = InferenceRoute.LOCAL,
             engineId = IOS_POC_DISH_ENGINE_ID,
@@ -178,7 +197,7 @@ public class SharedKitPhotoAnalysisSession private constructor(
             calibrationVersion = IOS_POC_DISH_CALIBRATION_VERSION,
             contractVersion = PHOTO_INFERENCE_CONTRACT_V1,
         )
-        val dishes = dishLabels.take(MAX_DISH_PROPOSALS).mapIndexed { index, label ->
+        return dishLabels.take(MAX_DISH_PROPOSALS).mapIndexed { index, label ->
             val score = dishConfidences[index]
             require(score.isFinite() && score in 0.0..1.0) { "Dish confidence must be finite and bounded" }
             InferenceCandidate(
@@ -196,6 +215,16 @@ public class SharedKitPhotoAnalysisSession private constructor(
                 provenance = dishProvenance,
             )
         }
+    }
+
+    private fun nativePocComponents(
+        regionLabels: List<String>,
+        regionConfidences: List<Double>,
+        regionLefts: List<Double>,
+        regionTops: List<Double>,
+        regionRights: List<Double>,
+        regionBottoms: List<Double>,
+    ): List<VisibleComponent> {
         val componentProvenance = InferenceV2Provenance(
             route = InferenceRoute.LOCAL,
             engineId = IOS_POC_COMPONENT_ENGINE_ID,
@@ -204,7 +233,7 @@ public class SharedKitPhotoAnalysisSession private constructor(
             calibrationVersion = IOS_POC_COMPONENT_CALIBRATION_VERSION,
             contractVersion = INFERENCE_EVIDENCE_CONTRACT_V2,
         )
-        val components = regionLabels.mapIndexed { index, label ->
+        return regionLabels.mapIndexed { index, label ->
             val score = regionConfidences[index]
             val left = regionLefts[index]
             val top = regionTops[index]
@@ -215,7 +244,7 @@ public class SharedKitPhotoAnalysisSession private constructor(
             }
             require(
                 score in 0.0..1.0 && left in 0.0..1.0 && top in 0.0..1.0 &&
-                right in left..1.0 && bottom in top..1.0 && right > left && bottom > top
+                    right in left..1.0 && bottom in top..1.0 && right > left && bottom > top,
             ) {
                 "Region output must be bounded and non-degenerate"
             }
@@ -233,13 +262,6 @@ public class SharedKitPhotoAnalysisSession private constructor(
                 provenance = componentProvenance,
             )
         }
-        feature.dispatch(PhotoAnalysisEvent.LocalAnalysisStageChanged(request, LocalAnalysisStage.CHECKING_RESULTS))
-        feature.dispatch(
-            PhotoAnalysisEvent.ReviewEvidenceAvailable(
-                request,
-                BoundedDishIngredientFusion.merge(dishes, components),
-            ),
-        )
     }
 
     public fun nativePocFailed(opaqueId: String, requestId: String) {

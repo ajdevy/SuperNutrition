@@ -1,0 +1,44 @@
+{
+  "key": "almond_milk",
+  "generator": "built-in image_gen",
+  "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: ALMOND MILK only: one small clear drinking glass filled with pale almond milk, with two brown whole almonds beside its base as identity cues. One coherent beverage sticker, no packaging or labels.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+  "generated_path": "/Users/anastasia/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-c8270030-5b53-4d1d-b3c1-6d5247fcf8a7.png",
+  "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_almond_milk.png",
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_almond_milk.png",
+  "saved_at_utc": "2026-10-12T07:46:53.573817+00:00",
+  "transparent_background": true,
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "66ed28ad81d27e8dbbad1767f4f03c8b410a2441ce79205c3beec37254541dee",
+  "bytes": 933974,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 1004662,
+    "opaque_pixels": 1187,
+    "partial_pixels": 566667,
+    "nontransparent_bounds": [
+      59,
+      146,
+      1232,
+      1234
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      248,
+      157,
+      1006,
+      1097
+    ],
+    "pixels_alpha_1_to_10": 8473
+  },
+  "visually_inspected": true,
+  "visual_result": "Root visually inspected the saved PNG through view_image: recognizable almond milk with almonds as the correct identity cue, transparent background, consistent photographic texture and white outline, no text, UI or checkmarks.",
+  "inspected_by": "root"
+}

@@ -1,0 +1,33 @@
+{
+  "key": "couscous",
+  "generator": "builtin image_gen.imagegen",
+  "transparent_background": true,
+  "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: a compact mound of tiny pale-golden couscous granules, visibly small even rounded grains, no bowl.\nStyle/medium: crisp photorealistic food product photograph with realistic texture and gentle white studio light. Match the existing app food stickers: natural colors, clean thin white die-cut outline tracing the complete food silhouette. Individual asset only, not a sheet.\nComposition/framing: one compact recognizable food group centered on a square transparent canvas. Entire subject visible with around 10% clear padding on every side; fills about 75-80% of the canvas. It must read clearly at a small mobile icon size. For elongated vegetables use a diagonal arrangement.\nConstraints: actual transparent alpha background, not checkerboard or solid background. Only the named food and its own natural stems/peel/leaves; no decorative herbs, other foods, table, plate, bowl, packaging, shadows beyond the silhouette, text, labels, logo, watermark, face, anthropomorphic features, checkmark, badge or UI. White outline follows only the silhouette; no colored backing. Preserve truthful characteristic shapes and colors.",
+  "generator_output_path": "/Users/anastasia/.codex/generated_images/01a133c2-7301-7323-86ec-bca0e577d821/exec-3861463e-9e8d-4512-b283-a58bb8d620b9.png",
+  "workspace_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_couscous.png",
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_couscous.png",
+  "sha256": "6a23d146797c8e5fe29fdc85ba9a7dbb2f6a1b19b2ff6960c53bf2d41239015a",
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "alpha_min": 0,
+  "alpha_max": 255,
+  "corner_alpha": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "alpha_bbox": [
+    25,
+    41,
+    1240,
+    1254
+  ],
+  "bytes": 1364626,
+  "saved_at_utc": "2026-10-13T05:43:58.062075+00:00",
+  "visual_inspection": {
+    "status": "passed",
+    "notes": "Visually inspected generated output: tiny even rounded pale-golden couscous granules in a compact mound; clearly distinct from millet and fine semolina, thin white contour, no bowl, text or badge."
+  }
+}

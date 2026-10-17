@@ -1,0 +1,33 @@
+{
+  "key": "barley",
+  "generator": "builtin image_gen.imagegen",
+  "transparent_background": true,
+  "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: a compact mound of plain pearled barley grains, pale beige oval kernels with recognizable grooves, no bowl.\nStyle/medium: crisp photorealistic food product photograph with realistic texture and gentle white studio light. Match the existing app food stickers: natural colors, clean thin white die-cut outline tracing the complete food silhouette. Individual asset only, not a sheet.\nComposition/framing: one compact recognizable food group centered on a square transparent canvas. Entire subject visible with around 10% clear padding on every side; fills about 75-80% of the canvas. It must read clearly at a small mobile icon size. For elongated vegetables use a diagonal arrangement.\nConstraints: actual transparent alpha background, not checkerboard or solid background. Only the named food and its own natural stems/peel/leaves; no decorative herbs, other foods, table, plate, bowl, packaging, shadows beyond the silhouette, text, labels, logo, watermark, face, anthropomorphic features, checkmark, badge or UI. White outline follows only the silhouette; no colored backing. Preserve truthful characteristic shapes and colors.",
+  "generator_output_path": "/Users/anastasia/.codex/generated_images/01a133c2-7301-7323-86ec-bca0e577d821/exec-47fba132-76a0-4694-9043-5aafeaca334d.png",
+  "workspace_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_barley.png",
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_barley.png",
+  "sha256": "1a4af04c1a30b89011633c30fc14481e9850d2dabde13ea5bf3f761700329dc7",
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "alpha_min": 0,
+  "alpha_max": 255,
+  "corner_alpha": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "alpha_bbox": [
+    0,
+    35,
+    1238,
+    1218
+  ],
+  "bytes": 1741495,
+  "saved_at_utc": "2026-10-13T05:40:58.235266+00:00",
+  "visual_inspection": {
+    "status": "passed",
+    "notes": "Visually inspected generated output: pale beige oval pearled barley kernels with longitudinal grooves; compact mound, thin white contour, complete subject, no bowl, text, unrelated food or badge."
+  }
+}

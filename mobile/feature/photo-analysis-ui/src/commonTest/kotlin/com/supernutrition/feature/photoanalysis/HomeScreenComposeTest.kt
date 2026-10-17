@@ -1,5 +1,8 @@
 package com.supernutrition.feature.photoanalysis
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertHeightIsEqualTo
 import androidx.compose.ui.test.assertIsDisplayed
@@ -8,9 +11,6 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.v2.runComposeUiTest
-import androidx.compose.ui.Modifier
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.ui.unit.dp
 import com.supernutrition.core.ui.UiAutomationIds
 import kotlin.test.Test
@@ -21,35 +21,7 @@ class HomeScreenComposeTest {
     @Test
     fun `home screen exposes the Figma rhythm surface and add meal action`() = runComposeUiTest {
         var addFoodRequested = false
-        val model = HomeScreenModel(
-            title = "Home",
-            greeting = "Welcome back",
-            dailySummaryTitle = "Today's progress",
-            dailySummaryValue = "Ready when you are",
-            dailySummaryDescription = "Add a meal whenever you are ready.",
-            emptyTitle = "Build your day",
-            emptyDescription = "Notice the good choices you make.",
-            addFoodLabel = "Add a meal",
-            dateLabel = "Thursday, Aug 7",
-            careQuestion = "What kind of care do you need today?",
-            rhythmTitle = "Today’s rhythm",
-            rhythmSubtitle = "You’re building a good day",
-            rhythmBadgeLabel = "6 day rhythm",
-            fiber = HomeMetricModel("Fiber", "12 / 25 g"),
-            water = HomeMetricModel("Water", "1.2 / 2 L"),
-            protein = HomeMetricModel("Protein", "72 / 90 g"),
-            movement = HomeMetricModel("Movement", "32 / 45 min"),
-            nextStepTitle = "Your next helpful step",
-            nextStepDescription = "Add one leafy green to dinner",
-            nextStepAction = "Do it",
-            viewGoalsLabel = "View goals",
-            goalsTitle = "Your goals",
-            goalsDescription = "Fiber 25 g · Water 2 L · Protein 90 g · Movement 45 min",
-            goalsDoneLabel = "Done",
-            profileActionLabel = "Open profile",
-            mascotDescription = "Capybara mascot",
-            saladDescription = "Salad",
-        )
+        val model = layoutHomeModel()
 
         setContent {
             Box(Modifier.requiredSize(375.dp, 812.dp)) {
@@ -88,35 +60,7 @@ class HomeScreenComposeTest {
     fun `home screen keeps goals and profile actions reachable`() = runComposeUiTest {
         var goalsRequested = false
         var profileRequested = false
-        val model = HomeScreenModel(
-            title = "Home",
-            greeting = "Welcome back",
-            dailySummaryTitle = "Today's progress",
-            dailySummaryValue = "Ready when you are",
-            dailySummaryDescription = "Add a meal whenever you are ready.",
-            emptyTitle = "Build your day",
-            emptyDescription = "Notice the good choices you make.",
-            addFoodLabel = "Add a meal",
-            dateLabel = "Thursday, Aug 7",
-            careQuestion = "What kind of care do you need today?",
-            rhythmTitle = "Today’s rhythm",
-            rhythmSubtitle = "You’re building a good day",
-            rhythmBadgeLabel = "6 day rhythm",
-            fiber = HomeMetricModel("Fiber", "12 / 25 g"),
-            water = HomeMetricModel("Water", "1.2 / 2 L"),
-            protein = HomeMetricModel("Protein", "72 / 90 g"),
-            movement = HomeMetricModel("Movement", "32 / 45 min"),
-            nextStepTitle = "Your next helpful step",
-            nextStepDescription = "Add one leafy green to dinner",
-            nextStepAction = "Do it",
-            viewGoalsLabel = "View goals",
-            goalsTitle = "Your goals",
-            goalsDescription = "Fiber 25 g · Water 2 L · Protein 90 g · Movement 45 min",
-            goalsDoneLabel = "Done",
-            profileActionLabel = "Open profile",
-            mascotDescription = "Capybara mascot",
-            saladDescription = "Salad",
-        )
+        val model = layoutHomeModel()
 
         setContent {
             HomeScreen(

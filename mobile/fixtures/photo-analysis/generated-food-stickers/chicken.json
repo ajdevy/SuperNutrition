@@ -1,0 +1,43 @@
+{
+  "key": "chicken",
+  "generator": "built-in image_gen",
+  "generated_path": "/Users/anastasia/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-c4b1cbe9-a3d7-4cd1-8513-6b82da0084a3.png",
+  "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_chicken.png",
+  "intended_resource_name": "food_sticker_chicken.png",
+  "prompt_file": "broad-library-prompts.json",
+  "saved_at_utc": "2026-10-12T04:49:18.542472+00:00",
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "e3765c4890d16342f076478d72a210a1abea3017d5e468d3a57579abe820fc88",
+  "bytes": 1535815,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 938137,
+    "opaque_pixels": 763,
+    "partial_pixels": 633616,
+    "nontransparent_bounds": [
+      0,
+      21,
+      1224,
+      1254
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      60,
+      216,
+      1197,
+      1042
+    ],
+    "pixels_alpha_1_to_10": 9002
+  },
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_chicken.png",
+  "visually_inspected": true,
+  "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+}

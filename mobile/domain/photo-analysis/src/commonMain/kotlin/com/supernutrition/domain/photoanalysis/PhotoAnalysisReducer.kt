@@ -31,8 +31,9 @@ class PhotoAnalysisReducer(leases: PhotoLeaseStorePort, sessions: PhotoSessionSt
         val reduction = retainedState?.let { PhotoAnalysisReduction(lifecycle.restoreInMemory(it)) }
             ?: reduce(state, event)
         state = reduction.state
-        updateInMemoryBackgroundState(previous, event)
-        if (state != previous && event.invalidatesRoute()) {
+        val stateChanged = state != previous
+        updateInMemoryBackgroundState(previous, event, stateChanged)
+        if (stateChanged && event.invalidatesRoute()) {
             routeCoordinator.cancel()
         }
         reduction.effects.forEach(context::apply)
@@ -58,18 +59,27 @@ class PhotoAnalysisReducer(leases: PhotoLeaseStorePort, sessions: PhotoSessionSt
             null
         }
 
-    private fun updateInMemoryBackgroundState(previous: PhotoAnalysisState, event: PhotoAnalysisEvent) {
+    private fun updateInMemoryBackgroundState(
+        previous: PhotoAnalysisState,
+        event: PhotoAnalysisEvent,
+        stateChanged: Boolean,
+    ) {
         when (event) {
             PhotoAnalysisEvent.Backgrounded -> if (previous !is PhotoAnalysisState.Backgrounded) {
                 inMemoryBackgroundState = previous
             }
 
             PhotoAnalysisEvent.Restored,
-            is PhotoAnalysisEvent.RestoreFromSnapshot,
             is PhotoAnalysisEvent.ReplacePhoto,
             PhotoAnalysisEvent.Cancel,
             PhotoAnalysisEvent.ScanAgain,
-            -> inMemoryBackgroundState = null
+            -> if (stateChanged) {
+                inMemoryBackgroundState = null
+            }
+
+            is PhotoAnalysisEvent.RestoreFromSnapshot -> if (previous.canRestoreFromSnapshot()) {
+                inMemoryBackgroundState = null
+            }
 
             else -> Unit
         }
@@ -87,7 +97,7 @@ class PhotoAnalysisReducer(leases: PhotoLeaseStorePort, sessions: PhotoSessionSt
         current is PhotoAnalysisState.Backgrounded && event is PhotoAnalysisEvent.Restored ->
             PhotoAnalysisReduction(lifecycle.restore(current.snapshot))
 
-        current == PhotoAnalysisState.Capture && event is PhotoAnalysisEvent.RestoreFromSnapshot ->
+        event is PhotoAnalysisEvent.RestoreFromSnapshot && current.canRestoreFromSnapshot() ->
             PhotoAnalysisReduction(lifecycle.restore(event.snapshot))
 
         else -> transitions.reduce(current, event)
@@ -99,6 +109,9 @@ class PhotoAnalysisReducer(leases: PhotoLeaseStorePort, sessions: PhotoSessionSt
         else -> lifecycle.backgroundSnapshot(current).snapshot
     }
 }
+
+/** An ignored process snapshot must also leave the retained live lifecycle state untouched. */
+private fun PhotoAnalysisState.canRestoreFromSnapshot(): Boolean = this == PhotoAnalysisState.Capture
 
 private fun PhotoAnalysisEvent.invalidatesRoute(): Boolean = when (this) {
     is PhotoAnalysisEvent.ReplacePhoto,

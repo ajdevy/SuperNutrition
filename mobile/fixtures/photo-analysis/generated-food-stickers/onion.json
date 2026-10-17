@@ -1,0 +1,43 @@
+{
+  "key": "onion",
+  "generator": "built-in image_gen",
+  "generated_path": "/Users/anastasia/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-66c1e245-ea0c-4bfa-8c58-df5143c29770.png",
+  "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_onion.png",
+  "intended_resource_name": "food_sticker_onion.png",
+  "prompt_file": "broad-library-prompts.json",
+  "saved_at_utc": "2026-10-12T05:03:31.325786+00:00",
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "f94a34b598383b7ec26ed2fd7aef54ced428a0f95d11761a66ce1c2b242070be",
+  "bytes": 1511429,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 797090,
+    "opaque_pixels": 1011,
+    "partial_pixels": 774415,
+    "nontransparent_bounds": [
+      0,
+      83,
+      1240,
+      1254
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      68,
+      104,
+      1198,
+      1129
+    ],
+    "pixels_alpha_1_to_10": 14653
+  },
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_onion.png",
+  "visually_inspected": true,
+  "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+}

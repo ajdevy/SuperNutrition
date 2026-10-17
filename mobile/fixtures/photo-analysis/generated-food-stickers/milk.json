@@ -1,0 +1,43 @@
+{
+  "key": "milk",
+  "generator": "built-in image_gen",
+  "generated_path": "/Users/anastasia/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-ee1e22cb-964b-4dba-aa56-894300f44f50.png",
+  "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_milk.png",
+  "intended_resource_name": "food_sticker_milk.png",
+  "prompt_file": "broad-library-prompts.json",
+  "saved_at_utc": "2026-10-12T05:02:31.796488+00:00",
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "96b65e73bca1962e31aeb4b5faa7bf45456c34753bfbd3da38a06cea3fdad846",
+  "bytes": 993418,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 866274,
+    "opaque_pixels": 2165,
+    "partial_pixels": 704077,
+    "nontransparent_bounds": [
+      0,
+      91,
+      1242,
+      1162
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      236,
+      97,
+      1018,
+      1158
+    ],
+    "pixels_alpha_1_to_10": 8428
+  },
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_milk.png",
+  "visually_inspected": true,
+  "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+}

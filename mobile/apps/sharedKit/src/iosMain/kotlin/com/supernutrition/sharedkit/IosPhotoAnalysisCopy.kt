@@ -3,6 +3,7 @@ package com.supernutrition.sharedkit
 import com.supernutrition.domain.nutrition.RewardId
 import com.supernutrition.feature.photoanalysis.CaptureCopy
 import com.supernutrition.feature.photoanalysis.EvidenceCopy
+import com.supernutrition.feature.photoanalysis.MealReviewCopy
 import com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterCopy
 import com.supernutrition.feature.photoanalysis.RecoveryCopy
 import com.supernutrition.feature.photoanalysis.RewardsCardCopy
@@ -41,33 +42,7 @@ internal fun localizedPhotoAnalysisCopy(): PhotoAnalysisPresenterCopy = PhotoAna
         reviewCandidate = localized("photo_analysis.status.review_candidate"),
         restoringPhotoAnalysis = localized("photo_analysis.status.restoring_photo_analysis"),
     ),
-    evidence = EvidenceCopy(
-        fromThisPhoto = localized("photo_analysis.evidence.from_photo"),
-        highConfidence = localized("photo_analysis.evidence.high_confidence"),
-        mediumConfidence = localized("photo_analysis.evidence.medium_confidence"),
-        lowConfidence = localized("photo_analysis.evidence.low_confidence"),
-        identityClear = localized("photo_analysis.evidence.identity_clear"),
-        identityAmbiguous = localized("photo_analysis.evidence.identity_ambiguous"),
-        mixedContent = localized("photo_analysis.evidence.mixed_content"),
-        fullyVisible = localized("photo_analysis.evidence.fully_visible"),
-        partiallyOccluded = localized("photo_analysis.evidence.partially_occluded"),
-        regionAvailable = localized("photo_analysis.evidence.region_available"),
-        regionUnavailable = localized("photo_analysis.evidence.region_unavailable"),
-        estimatedMass = localized("photo_analysis.evidence.estimated_mass"),
-        massNotEvaluable = localized("photo_analysis.evidence.mass_not_evaluable"),
-        massAbstained = localized("photo_analysis.evidence.mass_abstained"),
-        localProvenance = localized("photo_analysis.evidence.local_provenance"),
-        remoteProvenance = localized("photo_analysis.evidence.remote_provenance"),
-        selected = localized("photo_analysis.evidence.selected"),
-        notSelected = localized("photo_analysis.evidence.not_selected"),
-        dishCandidatesTitle = localized("photo_analysis.evidence.dish_candidates"),
-        visibleComponentsTitle = localized("photo_analysis.evidence.visible_components"),
-        visibleRegionCount = localized("photo_analysis.evidence.visible_region_count"),
-        compositionHintsTitle = localized("photo_analysis.evidence.composition_hints"),
-        compositionHintSource = localized("photo_analysis.evidence.composition_hint_source"),
-        manualIngredientSource = localized("photo_analysis.evidence.manual_ingredient_source"),
-        partialDegradation = localized("photo_analysis.evidence.partial_degradation"),
-    ),
+    evidence = localizedEvidenceCopy(),
     recovery = RecoveryCopy(
         scanAgain = localized("photo_analysis.recovery.scan_again"),
         cameraPermissionRequired = localized("photo_analysis.recovery.permission_required"),
@@ -80,6 +55,63 @@ internal fun localizedPhotoAnalysisCopy(): PhotoAnalysisPresenterCopy = PhotoAna
         analysisCancelled = localized("photo_analysis.recovery.cancelled"),
         reviewRestoreUnavailable = localized("photo_analysis.recovery.review_restore_unavailable"),
     ),
+    review = MealReviewCopy(
+        title = localized("photo_analysis.review.title"),
+        subtitle = localized("photo_analysis.review.subtitle"),
+        customMeal = localized("photo_analysis.review.custom_meal"),
+        anythingElse = localized("photo_analysis.review.anything_else"),
+        retake = localized("photo_analysis.review.retake"),
+        addToMeal = localized("photo_analysis.review.add_to_meal"),
+        pantryIngredientLabels = localizedPantryIngredientLabels(),
+    ),
+)
+
+private fun localizedPantryIngredientLabels(): Map<String, String> = listOf(
+    "salmon",
+    "broccoli",
+    "quinoa",
+    "avocado",
+    "leafy_greens",
+    "carrot",
+    "red_bell_pepper",
+    "cucumber",
+    "olive_oil",
+    "yellow_bell_pepper",
+    "cauliflower",
+    "edamame",
+    "tahini",
+    "soy_sauce",
+    "salt",
+    "blueberries",
+    "sweet_potato",
+).associateWith { localized("photo_analysis.pantry.$it") }
+
+private fun localizedEvidenceCopy() = EvidenceCopy(
+    fromThisPhoto = localized("photo_analysis.evidence.from_photo"),
+    highConfidence = localized("photo_analysis.evidence.high_confidence"),
+    mediumConfidence = localized("photo_analysis.evidence.medium_confidence"),
+    lowConfidence = localized("photo_analysis.evidence.low_confidence"),
+    identityClear = localized("photo_analysis.evidence.identity_clear"),
+    identityAmbiguous = localized("photo_analysis.evidence.identity_ambiguous"),
+    mixedContent = localized("photo_analysis.evidence.mixed_content"),
+    fullyVisible = localized("photo_analysis.evidence.fully_visible"),
+    partiallyOccluded = localized("photo_analysis.evidence.partially_occluded"),
+    regionAvailable = localized("photo_analysis.evidence.region_available"),
+    regionUnavailable = localized("photo_analysis.evidence.region_unavailable"),
+    estimatedMass = localized("photo_analysis.evidence.estimated_mass"),
+    massNotEvaluable = localized("photo_analysis.evidence.mass_not_evaluable"),
+    massAbstained = localized("photo_analysis.evidence.mass_abstained"),
+    localProvenance = localized("photo_analysis.evidence.local_provenance"),
+    remoteProvenance = localized("photo_analysis.evidence.remote_provenance"),
+    selected = localized("photo_analysis.evidence.selected"),
+    notSelected = localized("photo_analysis.evidence.not_selected"),
+    dishCandidatesTitle = localized("photo_analysis.evidence.dish_candidates"),
+    visibleComponentsTitle = localized("photo_analysis.evidence.visible_components"),
+    visibleRegionCount = localized("photo_analysis.evidence.visible_region_count"),
+    compositionHintsTitle = localized("photo_analysis.evidence.composition_hints"),
+    compositionHintSource = localized("photo_analysis.evidence.composition_hint_source"),
+    manualIngredientSource = localized("photo_analysis.evidence.manual_ingredient_source"),
+    partialDegradation = localized("photo_analysis.evidence.partial_degradation"),
 )
 
 internal fun localizedRewardsCopy(): RewardsPresenterCopy = RewardsPresenterCopy(

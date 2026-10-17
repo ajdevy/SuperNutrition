@@ -1,0 +1,33 @@
+{
+  "key": "papaya",
+  "generator": "builtin image_gen.imagegen",
+  "transparent_background": true,
+  "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: one ripe elongated yellow-orange papaya half showing orange flesh and a central cavity of round black seeds, with a small piece of whole papaya skin behind.\nStyle/medium: crisp photorealistic food product photograph with realistic texture and gentle white studio light. Match the existing app food stickers: natural colors, clean thin white die-cut outline tracing the complete food silhouette. Individual asset only, not a sheet.\nComposition/framing: one compact recognizable food group centered on a square transparent canvas. Entire subject visible with around 10% clear padding on every side; fills about 75-80% of the canvas. It must read clearly at a small mobile icon size. For elongated vegetables use a diagonal arrangement.\nConstraints: actual transparent alpha background, not checkerboard or solid background. Only the named food and its own natural stems/peel/leaves; no decorative herbs, other foods, table, plate, bowl, packaging, shadows beyond the silhouette, text, labels, logo, watermark, face, anthropomorphic features, checkmark, badge or UI. White outline follows only the silhouette; no colored backing. Preserve truthful characteristic shapes and colors.",
+  "generator_output_path": "/Users/anastasia/.codex/generated_images/01a12f29-e518-7d93-b918-a24d32930940/exec-b58c89c6-5673-42fc-a0b4-433f86c9c16d.png",
+  "workspace_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_papaya.png",
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_papaya.png",
+  "sha256": "4a18f4a8b515aace66aeca657d5368f7815bb38b3fe4a160da15635bb7420f99",
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "alpha_min": 0,
+  "alpha_max": 255,
+  "corner_alpha": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "alpha_bbox": [
+    0,
+    45,
+    1206,
+    1238
+  ],
+  "bytes": 1581162,
+  "saved_at_utc": "2026-10-13T05:32:29.122878+00:00",
+  "visual_inspection": {
+    "status": "passed",
+    "notes": "Recognizable elongated yellow-orange papaya with orange flesh and central black seeds; complete diagonal composition, thin white silhouette outline and no other foods, text or UI."
+  }
+}

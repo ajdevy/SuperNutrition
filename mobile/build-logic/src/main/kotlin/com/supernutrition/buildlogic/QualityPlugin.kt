@@ -205,6 +205,16 @@ class QualityPlugin : Plugin<Project> {
         val analysisTasks = target.tasks.withType<Detekt>().matching {
             it.name != "detektFormat" && it.name != DETEKT_PLAIN_TASK
         }
+        // Compose regenerates these compiler resource accessors. Checking their
+        // emitted formatting produces findings outside the authored source tree.
+        // Restrict this to the plugin's exact output folder; other source inputs stay checked.
+        val composeResourceOutput = target.layout.buildDirectory.dir("generated/compose/resourceGenerator")
+        analysisTasks.configureEach {
+            exclude { element ->
+                element.file.toPath().toAbsolutePath().normalize()
+                    .startsWith(composeResourceOutput.get().asFile.toPath().toAbsolutePath().normalize())
+            }
+        }
         qualityCheckJvmAndroid.configure { dependsOn(analysisTasks) }
         qualityCheckApple.configure { dependsOn(analysisTasks) }
 

@@ -1,0 +1,33 @@
+{
+  "key": "blackberry",
+  "generator": "builtin image_gen.imagegen",
+  "transparent_background": true,
+  "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: a compact group of three ripe shiny nearly-black purple blackberries with distinct larger drupelets.\nStyle/medium: crisp photorealistic food product photograph with realistic texture and gentle white studio light. Match the existing app food stickers: natural colors, clean thin white die-cut outline tracing the complete food silhouette. Individual asset only, not a sheet.\nComposition/framing: one compact recognizable food group centered on a square transparent canvas. Entire subject visible with around 10% clear padding on every side; fills about 75-80% of the canvas. It must read clearly at a small mobile icon size. For elongated vegetables use a diagonal arrangement.\nConstraints: actual transparent alpha background, not checkerboard or solid background. Only the named food and its own natural stems/peel/leaves; no decorative herbs, other foods, table, plate, bowl, packaging, shadows beyond the silhouette, text, labels, logo, watermark, face, anthropomorphic features, checkmark, badge or UI. White outline follows only the silhouette; no colored backing. Preserve truthful characteristic shapes and colors.",
+  "generator_output_path": "/Users/anastasia/.codex/generated_images/01a12f29-e518-7d93-b918-a24d32930940/exec-51cbf49e-0fa6-425b-947b-7f266d55b663.png",
+  "workspace_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_blackberry.png",
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_blackberry.png",
+  "sha256": "9bb7e583dc1ea8ec8d98fcacf8534b7e66ece18237fa2ef433db5d39f23ad5de",
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "alpha_min": 0,
+  "alpha_max": 255,
+  "corner_alpha": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "alpha_bbox": [
+    33,
+    19,
+    1242,
+    1254
+  ],
+  "bytes": 1704714,
+  "saved_at_utc": "2026-10-12T08:34:27.455668+00:00",
+  "visual_inspection": {
+    "status": "passed",
+    "notes": "Three nearly-black purple blackberries with larger glossy drupelets and one natural calyx; visually distinct from raspberries, complete compact silhouette, white outline, no labels."
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "key": "nuts",
+  "generator": "built-in image_gen",
+  "generated_path": "/Users/anastasia/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-89f8c8e7-27f6-4c68-8c0f-930ab498b37e.png",
+  "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_nuts.png",
+  "intended_resource_name": "food_sticker_nuts.png",
+  "prompt_file": "broad-library-prompts.json",
+  "saved_at_utc": "2026-10-12T05:06:12.073269+00:00",
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "7d0a16ae5355d163a619f31a57d14aecce71059c833dd9f0b5b6a02d4520725a",
+  "bytes": 1972930,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 767221,
+    "opaque_pixels": 1057,
+    "partial_pixels": 804238,
+    "nontransparent_bounds": [
+      0,
+      65,
+      1224,
+      1254
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      34,
+      170,
+      1220,
+      1090
+    ],
+    "pixels_alpha_1_to_10": 11345
+  },
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_nuts.png",
+  "visually_inspected": true,
+  "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+}

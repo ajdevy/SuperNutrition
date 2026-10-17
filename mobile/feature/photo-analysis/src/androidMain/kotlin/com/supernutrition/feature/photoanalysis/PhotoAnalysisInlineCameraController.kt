@@ -13,12 +13,17 @@ import java.io.IOException
  * bound, so granting permission can continue the same screen without opening
  * another Activity.
  */
-internal class PhotoAnalysisInlineCameraController {
+internal class PhotoAnalysisInlineCameraController(
+    private val capturePort: InlineCameraCapturePort = InlineCameraCapturePort { camera, options, executor, callback ->
+        camera.takePicture(options, executor, callback)
+    },
+) {
     var onCaptureResult: ((String, Result<ByteArray>) -> Unit)? = null
 
     private var context: Context? = null
     private var imageCapture: ImageCapture? = null
     private var requestedOperationId: String? = null
+    private var activeOperationId: String? = null
     private var captureInFlight = false
     private var captureOutput: BoundedCaptureOutputStream? = null
 
@@ -36,28 +41,33 @@ internal class PhotoAnalysisInlineCameraController {
     }
 
     fun requestCapture(operationId: String) {
-        if (requestedOperationId != null || captureInFlight) return
+        if (activeOperationId != null) return
+        activeOperationId = operationId
         requestedOperationId = operationId
         startPendingCapture()
     }
 
     fun failPendingCapture() {
         val operationId = requestedOperationId ?: return
-        requestedOperationId = null
-        onCaptureResult?.invoke(
+        finishCapture(
             operationId,
             Result.failure(IllegalStateException("Inline camera capture is unavailable")),
         )
     }
 
     fun clear() {
-        requestedOperationId = null
-        captureOutput?.clear()
-        captureOutput = null
+        val operationId = activeOperationId
+        val callback = onCaptureResult
+        onCaptureResult = null
+        releaseCapture()
         imageCapture = null
         context = null
-        captureInFlight = false
-        onCaptureResult = null
+        if (operationId != null) {
+            callback?.invoke(
+                operationId,
+                Result.failure(IllegalStateException("Inline camera capture was interrupted")),
+            )
+        }
     }
 
     private fun startPendingCapture() {
@@ -72,7 +82,8 @@ internal class PhotoAnalysisInlineCameraController {
         captureOutput = output
         val executor = ContextCompat.getMainExecutor(context)
         try {
-            imageCapture.takePicture(
+            capturePort.takePicture(
+                imageCapture,
                 ImageCapture.OutputFileOptions.Builder(output).build(),
                 executor,
                 object : ImageCapture.OnImageSavedCallback {
@@ -99,10 +110,17 @@ internal class PhotoAnalysisInlineCameraController {
     }
 
     private fun finishCapture(operationId: String, result: Result<ByteArray>) {
+        if (activeOperationId != operationId) return
+        releaseCapture()
+        onCaptureResult?.invoke(operationId, result)
+    }
+
+    private fun releaseCapture() {
+        activeOperationId = null
+        requestedOperationId = null
         captureOutput?.clear()
         captureOutput = null
         captureInFlight = false
-        onCaptureResult?.invoke(operationId, result)
     }
 
     private class BoundedCaptureOutputStream(private val maxBytes: Int) :

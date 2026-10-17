@@ -1,10 +1,12 @@
 package com.supernutrition.platform.photoios
 
 import com.supernutrition.core.ui.UiAutomationIds
+import com.supernutrition.platform.photoios.captureinterop.SNConfigureCameraArtwork
 import com.supernutrition.platform.photoios.captureinterop.SNConfigureCaptureDevice
 import com.supernutrition.platform.photoios.captureinterop.SNCreateCaptureInput
 import com.supernutrition.platform.photoios.captureinterop.SNDefaultBackCamera
 import com.supernutrition.platform.photoios.captureinterop.SNFileDataRepresentation
+import com.supernutrition.platform.photoios.captureinterop.SNSetCameraArtworkFrame
 import com.supernutrition.platform.photoios.captureinterop.SNSetViewAccessibilityIdentifier
 import com.supernutrition.platform.photoios.permissioninterop.SNGetCameraAuthorizationStatus
 import com.supernutrition.platform.photoios.permissioninterop.SNRequestCameraAccess
@@ -39,7 +41,7 @@ import platform.PhotosUI.PHPickerViewControllerDelegateProtocol
 import platform.UIKit.UIButton
 import platform.UIKit.UIColor
 import platform.UIKit.UIControlEventTouchUpInside
-import platform.UIKit.UIControlStateNormal
+import platform.UIKit.UIModalPresentationFullScreen
 import platform.UIKit.UIViewController
 import platform.UniformTypeIdentifiers.UTTypeImage
 import platform.darwin.NSObject
@@ -117,11 +119,13 @@ class IosPhotoBridge :
             shutterLabel = shutterLabel,
             onResult = { data -> deliver(onResult, data) },
             onFailure = { failPresentation(onFailure) },
+            onImport = { presentPhotoPicker(from, onResult, onFailure) },
         ) { weakBridge.get()?.activeDelegate = null }
         if (!retain(controller)) {
             failPresentation(onFailure)
             return
         }
+        controller.modalPresentationStyle = UIModalPresentationFullScreen
         from.presentViewController(controller, animated = true, completion = null)
     }
 
@@ -183,6 +187,7 @@ class IosPhotoBridge :
 private class CameraCaptureViewController(
     private val cancelLabel: String,
     private val shutterLabel: String,
+    private val onImport: () -> Unit,
     private val onResult: (NSData?) -> Unit,
     private val onFailure: () -> Unit,
     private val clear: () -> Unit,
@@ -197,6 +202,7 @@ private class CameraCaptureViewController(
     private var previewLayer: AVCaptureVideoPreviewLayer? = null
     private var cancelButton: UIButton? = null
     private var shutterButton: UIButton? = null
+    private var galleryButton: UIButton? = null
     private var finished = false
 
     override fun viewDidLoad() {
@@ -217,10 +223,8 @@ private class CameraCaptureViewController(
         }
 
         cancelButton = UIButton().apply {
-            setTitle(cancelLabel, forState = UIControlStateNormal)
-            setTitleColor(UIColor.whiteColor, forState = UIControlStateNormal)
-            titleLabel?.numberOfLines = 0
-            titleLabel?.adjustsFontSizeToFitWidth = true
+            SNConfigureCameraArtwork(this, "capture_close", cancelLabel)
+            SNSetViewAccessibilityIdentifier(this, UiAutomationIds.CAPTURE_CLOSE.value)
             addTarget(
                 target = this@CameraCaptureViewController,
                 action = NSSelectorFromString("cancelCapture"),
@@ -230,10 +234,8 @@ private class CameraCaptureViewController(
         view.addSubview(checkNotNull(cancelButton))
 
         shutterButton = UIButton().apply {
-            setTitle(shutterLabel, forState = UIControlStateNormal)
-            setTitleColor(UIColor.whiteColor, forState = UIControlStateNormal)
-            titleLabel?.numberOfLines = 0
-            titleLabel?.adjustsFontSizeToFitWidth = true
+            SNConfigureCameraArtwork(this, "capture_shutter", shutterLabel)
+            SNSetViewAccessibilityIdentifier(this, UiAutomationIds.CAPTURE_SHUTTER.value)
             addTarget(
                 target = this@CameraCaptureViewController,
                 action = NSSelectorFromString("capturePhoto"),
@@ -241,6 +243,17 @@ private class CameraCaptureViewController(
             )
         }
         view.addSubview(checkNotNull(shutterButton))
+        galleryButton = UIButton().apply {
+            val label = NSBundle.mainBundle.localizedStringForKey("photo_analysis.capture.choose_photo", null, null)
+            SNConfigureCameraArtwork(this, "capture_gallery", label)
+            SNSetViewAccessibilityIdentifier(this, UiAutomationIds.CAPTURE_IMPORT.value)
+            addTarget(
+                target = this@CameraCaptureViewController,
+                action = NSSelectorFromString("importPhoto"),
+                forControlEvents = UIControlEventTouchUpInside,
+            )
+        }
+        view.addSubview(checkNotNull(galleryButton))
         dispatch_async(captureSessionQueue) {
             captureSession.startRunning()
         }
@@ -250,25 +263,24 @@ private class CameraCaptureViewController(
         super.viewDidLayoutSubviews()
         previewLayer?.frame = view.bounds
         val safeArea = view.safeAreaInsets.useContents { top to bottom }
-        val horizontalInset = minOf(24.0, CGRectGetWidth(view.bounds) / 12.0)
-        val availableWidth = maxOf(120.0, CGRectGetWidth(view.bounds) - horizontalInset * 2.0)
-        cancelButton?.setFrame(
-            platform.CoreGraphics.CGRectMake(
-                horizontalInset,
-                safeArea.first + 16.0,
-                minOf(availableWidth, 220.0),
-                56.0,
-            ),
-        )
-        val shutterWidth = minOf(availableWidth, 260.0)
-        shutterButton?.setFrame(
-            platform.CoreGraphics.CGRectMake(
-                (CGRectGetWidth(view.bounds) - shutterWidth) / 2.0,
-                CGRectGetHeight(view.bounds) - safeArea.second - 88.0,
-                shutterWidth,
-                72.0,
-            ),
-        )
+        cancelButton?.let {
+            SNSetCameraArtworkFrame(it, platform.CoreGraphics.CGRectMake(16.0, safeArea.first + 34.2, 41.4, 41.4))
+        }
+        val shutterCenterY = CGRectGetHeight(view.bounds) - safeArea.second - 68.3 - 44.1
+        shutterButton?.let {
+            SNSetCameraArtworkFrame(
+                it,
+                platform.CoreGraphics.CGRectMake(
+                    (CGRectGetWidth(view.bounds) - 109.0) / 2.0,
+                    shutterCenterY - 54.5,
+                    109.0,
+                    109.0,
+                ),
+            )
+        }
+        galleryButton?.let {
+            SNSetCameraArtworkFrame(it, platform.CoreGraphics.CGRectMake(16.15, shutterCenterY - 25.65, 51.3, 51.3))
+        }
     }
 
     override fun viewDidDisappear(animated: Boolean) {
@@ -284,6 +296,17 @@ private class CameraCaptureViewController(
     @ObjCAction
     private fun capturePhoto() {
         photoOutput.capturePhotoWithSettings(AVCapturePhotoSettings.photoSettings(), delegate = this)
+    }
+
+    @ObjCAction
+    private fun importPhoto() {
+        if (finished) return
+        finished = true
+        dispatch_async(captureSessionQueue) { captureSession.stopRunning() }
+        dismissOnMain(this) {
+            clear()
+            onImport()
+        }
     }
 
     @ObjCAction

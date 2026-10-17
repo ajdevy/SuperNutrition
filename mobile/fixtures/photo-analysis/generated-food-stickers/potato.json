@@ -1,0 +1,43 @@
+{
+  "key": "potato",
+  "generator": "built-in image_gen",
+  "generated_path": "/Users/anastasia/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-c9e65c6c-d578-4b4e-8ffa-c8f68469a425.png",
+  "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_potato.png",
+  "intended_resource_name": "food_sticker_potato.png",
+  "prompt_file": "broad-library-prompts.json",
+  "saved_at_utc": "2026-10-12T04:52:27.301725+00:00",
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "d5dc8a1039c31cbc6430ddba01168d0c8bb1a73af744a156ffd46a561d1b4663",
+  "bytes": 1710336,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 820113,
+    "opaque_pixels": 1252,
+    "partial_pixels": 751151,
+    "nontransparent_bounds": [
+      0,
+      55,
+      1240,
+      1254
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      66,
+      151,
+      1195,
+      1098
+    ],
+    "pixels_alpha_1_to_10": 12856
+  },
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_potato.png",
+  "visually_inspected": true,
+  "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+}

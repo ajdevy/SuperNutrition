@@ -10,3 +10,11 @@
   not close G-3: iOS energy evidence, tier/accuracy/rollback decisions, and
   owner signatures remain required.
 - Concrete local-runtime production wiring remains gated by G-3 and must not be invented in the adapter stories.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-home-rewards-spacing.md`
+  summary: Production iOS needs a separate Home/Rewards navigation integration before its acceptance-only Swift spacing can ship there.
+  evidence: SuperNutritionApp.swift already hosts only the photo-analysis controller; PhotoAnalysisHostSupport.swift contains the existing Home/Rewards surfaces in the UIAcceptance target. The frozen spacing scope preserves that architecture.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-review-state-recreation.md`
+  summary: Ignored ReplacePhoto or ScanAgain in Backgrounded also clears the retained live review cache.
+  evidence: Blind Hunter traced unchanged Backgrounded transition plus unconditional cache invalidation; follow-up authorized broad interaction fix is tracked as N-28 in spec-review-ignored-invalidation.md.

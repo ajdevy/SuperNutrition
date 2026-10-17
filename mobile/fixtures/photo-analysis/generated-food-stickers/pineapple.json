@@ -1,0 +1,43 @@
+{
+  "key": "pineapple",
+  "generator": "built-in image_gen",
+  "generated_path": "/Users/anastasia/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-8f3229fa-09c0-48e7-b431-d686ac92af1b.png",
+  "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_pineapple.png",
+  "intended_resource_name": "food_sticker_pineapple.png",
+  "prompt_file": "broad-library-prompts.json",
+  "saved_at_utc": "2026-10-12T05:05:27.912872+00:00",
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "227894d36b39f00486e199abc4db62de4a55f9303fd62fae0e3d3bee616e8c72",
+  "bytes": 1464232,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 1006227,
+    "opaque_pixels": 1355,
+    "partial_pixels": 564934,
+    "nontransparent_bounds": [
+      68,
+      62,
+      1218,
+      1203
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      302,
+      66,
+      978,
+      1196
+    ],
+    "pixels_alpha_1_to_10": 19881
+  },
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_pineapple.png",
+  "visually_inspected": true,
+  "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+}
