@@ -22,7 +22,7 @@ The enumerated source slice was committed as `47e57e6` (`feat: complete photo re
 
 Merging committed local main into the now clean source worktree exposed 22 conflicts: four documentation artifacts, Home/camera/review/navigation UI code, colocated UI tests and one feature review test. Exact index stages were archived under `mobile/build/main-merge-2026-10-17/conflict-sides/` with the file inventory in `merge-conflicts.json`, before resolving anything. Acceptance for resolution: preserve current verified gallery fitting, review retention/IME geometry, both floating-navigation overlays and end clearance; preserve main's committed brand-navigation behavior and main-only tests/assets. Preserve both sets of durable findings where they differ. Do not resolve whole trees by favoring a side blindly.
 
-Merge-resolution source verification and independent review are complete. Normal Git publication is the remaining step; its actual commit/ref result will be recorded after publication.
+Merge-resolution source verification and independent review are complete. Publication succeeded; the exact commit/ref verification is recorded below.
 
 ## First merged verification — findings before correction
 
@@ -47,3 +47,25 @@ Runtime triage is complete: all three unchanged production brand/navigation meth
 The installed production APK SHA-256 is `8a0036005de47648ff26871304a5e821606af1eb0e20790204d399e48c707e41`; its test APK SHA-256 is `cba95bc3ac24dd4501a8514ddf8709927ff98a705a96780b54be2d849effd205`. All 365 mobile source/policy hashes from the merged Gradle run remain unchanged. Primary main HEAD, exact staged/unstaged patches and all 26 separately staged file hashes were rechecked unchanged. No open PR is associated with this branch. Fresh remote main remains `5ee5de0`; its existing three GitHub coverage checks report failure, with no legacy status contexts. No hosted CI success or cause of those failures is claimed.
 
 `graphify update .` completed with exit 0 and refreshed the code graph: 20,912 nodes, 28,176 edges, 1,992 communities. Its stated limits remain: 253 JSON/asset files produced no AST nodes, two SQL files require the absent optional `tree_sitter_sql` parser, and HTML visualization is skipped because the graph exceeds 5,000 nodes. No semantic document/image extraction or full graph coverage is claimed. The source inventory confirms 305 original visual/model assets retain their SHA-256. `git diff --check` and the staged equivalent pass; the final mobile diff remains byte-identical to the independently reviewed patch. The updated production app is left open on Home in the retained emulator, with a fresh screenshot at `native-brand-triage/post-triage-home.png`.
+
+## Publication and handoff
+
+Normal `git push origin HEAD:refs/heads/main` succeeded, advancing GitHub main from `5ee5de077866feed70b418ee2760af24322b1d22` to merge commit **`fc02f6884672819a049bd619cef9ae80800e7f50`**. `git ls-remote origin refs/heads/main` and the updated `origin/main` ref both confirmed that exact SHA at `2026-10-17T14:35:12.119188+00:00`. The merge has parents `47e57e6074f80e622fbcc98033f41dc7839f98a1` (completed current-chat source) and `e1271c6c013806867bab94f3310e6eb2b335c840` (previously committed main); both previous remote main and committed local main are ancestors. No force-push, branch-protection override, unrelated PR merge or policy weakening was used.
+
+Post-commit validation checked the exact 365 previously verified source/policy hashes and `git diff --check`, without pretending another Gradle execution. All original 305 visual/model assets retain their inventoried SHA-256. The source worktree remains on `codex/figma-camera-flow`. The separate checkout at `/Users/REDACTED/workspace_ai/SuperNutrition` deliberately retains its local `main` at `e1271c6` and all 26 staged Rewards redesign files byte-for-byte; this unrelated uncommitted redesign was excluded under the stated scope default. Updating GitHub main did not rewrite that dirty checkout. The retained API 35 emulator stays open with the updated app; no physical-phone interaction occurred. The hourly follow-up remains paused.
+
+Hosted checks at the merge SHA were recorded in ignored `merge-hosted-checks.json`. The Android UI coverage, mobile unit coverage and iOS UI coverage checks were each **in progress**, with no conclusion; this is not a hosted success result. The unchanged expired native physical-evidence binding still causes the local full-root policy gate to fail. No fresh full Android suite or Xcode/device run is claimed. This closure documentation is a separate intended documentation commit, with its final normal push/ref verification recorded in `mobile/build/main-merge-2026-10-17/publication.json`.
+
+Reproducible command records: `verification-2/run.json` records the exact environment-independent Gradle arguments, while its helper applies the task-local Gradle/Android/Konan homes. The verified native command was:
+
+```text
+/Users/REDACTED/Library/Android/sdk/platform-tools/adb -P 5041 -s emulator-5554 shell am instrument -w -r -e class com.supernutrition.android.BrandNavigationVisualInstrumentationTest app.supernutrition.test/androidx.test.runner.AndroidJUnitRunner
+```
+
+The complete merged Gradle invocation, exit 1 solely for expired native policy, was:
+
+```sh
+./mobile/gradlew -p mobile qualityCheckJvmAndroid :feature:photo-analysis-ui:compileKotlinIosArm64 :feature:photo-analysis:compileKotlinIosArm64 :apps:androidApp:assembleProductionDebug :apps:androidApp:assembleProductionDebugAndroidTest --init-script /Users/REDACTED/.codex/worktrees/a704/SuperNutrition/mobile/build/agent-ui-runtime.gradle -Psupernutrition.enableIosDeviceTarget=true -Pkotlin.native.home=/Users/REDACTED/.codex/worktrees/a704/SuperNutrition/mobile/build/agent-konan/kotlin-native-prebuilt-macos-x86_64-2.4.10 -Pkotlin.compiler.execution.strategy=in-process '-Dorg.gradle.jvmargs=-Xms256m -Xmx2g -XX:MaxMetaspaceSize=1g -XX:+UseG1GC -Dfile.encoding=UTF-8' --max-workers=1 --dependency-verification strict --no-watch-fs --continue --no-configuration-cache --console=plain
+```
+
+Its task-local environment was `GRADLE_USER_HOME=mobile/build/agent-gradle-home`, `GRADLE_RO_DEP_CACHE=/Users/REDACTED/.gradle/caches`, `ANDROID_USER_HOME=mobile/build/agent-android-home`, and `KONAN_DATA_DIR=mobile/build/agent-konan`, with repository-local relative paths expanded to absolute paths by the helper.

@@ -2,7 +2,7 @@
 title: 'Integrate completed Super Nutrition work into main'
 type: 'chore'
 created: '2026-10-17'
-status: 'in-review'
+status: 'done'
 baseline_commit: '47e57e6'
 review_loop_iteration: 0
 context: []
@@ -42,8 +42,8 @@ Never force-push, reset a dirty checkout, remove required assertions, lower qual
 - [x] Resolve all 22 conflicts and inspect automatically merged host code without removing either branch's unique completed behavior.
 - [x] Run full relevant module tests, scoped/source quality and current Android build; compile changed Apple common/native sources explicitly if their final hashes change.
 - [x] Independently review introduced merge-resolution changes and verify diff/source/asset checks.
-- [ ] Refresh remote refs/checks, publish the integrated main commit, verify origin main and preserve the other checkout's staged files.
+- [x] Refresh remote refs/checks, publish the integrated main commit, verify origin main and preserve the other checkout's staged files.
 
 Exact run commands, source snapshots and resulting commits will be appended to the integration report. Existing quality policy expires required physical Android evidence after 30 days; it must remain unchanged and its actual gate result must be reported.
 
-Independent blind and edge reviews found no introduced merge defect. The disputed inherited native fixture candidate was refuted by a single three-method emulator runner invocation (3/0/0/0); no source/test correction was made for it. Current source checks and the separate expired physical-evidence gate outcome are recorded in `main-integration-2026-10-17.md`. Publication remains pending until normal push and remote-ref verification finish.
+Independent blind and edge reviews found no introduced merge defect. The disputed inherited native fixture candidate was refuted by a single three-method emulator runner invocation (3/0/0/0); no source/test correction was made for it. Current source checks and the separate expired physical-evidence gate outcome are recorded in `main-integration-2026-10-17.md`. Merge publication and remote-ref verification completed at `fc02f6884672819a049bd619cef9ae80800e7f50`; the final integration report records the exact ancestry, gate limitation and preserved separate main staging.
