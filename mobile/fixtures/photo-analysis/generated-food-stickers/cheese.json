@@ -1,0 +1,43 @@
+{
+  "key": "cheese",
+  "generator": "built-in image_gen",
+  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-6b4d463e-c6b1-4ce5-a2bd-b9a75d6bc3c0.png",
+  "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_cheese.png",
+  "intended_resource_name": "food_sticker_cheese.png",
+  "prompt_file": "broad-library-prompts.json",
+  "saved_at_utc": "2026-10-12T04:50:17.246231+00:00",
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "0f06e9edbcf93fad7921cb8c8208e7374a212f9cc06e4d534ce863e20e239945",
+  "bytes": 1188072,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 842527,
+    "opaque_pixels": 1325,
+    "partial_pixels": 728664,
+    "nontransparent_bounds": [
+      41,
+      23,
+      1206,
+      1254
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      63,
+      138,
+      1191,
+      1116
+    ],
+    "pixels_alpha_1_to_10": 9213
+  },
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_cheese.png",
+  "visually_inspected": true,
+  "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+}

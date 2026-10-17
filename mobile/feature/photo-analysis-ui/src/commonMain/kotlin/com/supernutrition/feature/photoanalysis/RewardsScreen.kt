@@ -1,94 +1,58 @@
 package com.supernutrition.feature.photoanalysis
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.Card
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.supernutrition.core.ui.UiAutomationIds
 
-/** Temporary list surface for the reward cards; the visual design can replace this later. */
+/** The recovered illustrated reward collection, backed by the current rewards snapshot. */
 @Composable
 fun RewardsScreen(model: RewardsPresenterModel, modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        Text(
-            text = model.title,
-            style = MaterialTheme.typography.headlineSmall,
-            modifier = Modifier
-                .padding(top = 16.dp)
-                .automationId(UiAutomationIds.REWARDS_TITLE),
-        )
+    BoxWithConstraints(modifier.fillMaxSize().background(RewardsPaper)) {
+        val columnCount = if (maxWidth < 320.dp || LocalDensity.current.fontScale > 1.2f) 1 else 2
         LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .automationId(UiAutomationIds.REWARDS_LIST),
-            contentPadding = PaddingValues(bottom = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.align(Alignment.TopCenter).widthIn(max = MainContentMaxWidth)
+                .fillMaxSize().padding(horizontal = MainScreenGutter).automationId(UiAutomationIds.REWARDS_LIST),
+            contentPadding = PaddingValues(bottom = 16.dp + LocalMainNavigationOverlap.current),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            itemsIndexed(
-                items = model.cards,
-                key = { _, card -> card.id.name },
-            ) { index, card ->
-                RewardsCard(index = index, card = card)
+            item(key = "rewards-header") {
+                Box(Modifier.padding(bottom = 2.dp)) { RewardsHeader(model) }
             }
-        }
-    }
-}
-
-@Composable
-private fun RewardsCard(index: Int, card: RewardsCardModel) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .automationId(UiAutomationIds.rewardsRow(index))
-            .semantics {
-                contentDescription = listOf(
-                    card.title,
-                    card.description,
-                    card.progressLabel,
-                    card.stateLabel,
-                ).joinToString(". ")
-                stateDescription = card.stateLabel
-            },
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Text(
-                text = card.title,
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.automationId(UiAutomationIds.rewardsRowTitle(index)),
-            )
-            Text(text = card.description, style = MaterialTheme.typography.bodyMedium)
-            Text(
-                text = card.progressLabel,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.automationId(UiAutomationIds.rewardsRowProgress(index)),
-            )
-            Text(
-                text = card.stateLabel,
-                style = MaterialTheme.typography.labelLarge,
-                modifier = Modifier.automationId(UiAutomationIds.rewardsRowState(index)),
-            )
+            itemsIndexed(
+                items = model.cards.chunked(columnCount),
+                key = { _, row -> row.first().id.name },
+            ) { rowIndex, row ->
+                Row(
+                    modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
+                    row.forEachIndexed { columnIndex, card ->
+                        RewardsCard(
+                            index = rowIndex * columnCount + columnIndex,
+                            card = card,
+                            modifier = Modifier.weight(1f).fillMaxHeight(),
+                        )
+                    }
+                }
+            }
         }
     }
 }

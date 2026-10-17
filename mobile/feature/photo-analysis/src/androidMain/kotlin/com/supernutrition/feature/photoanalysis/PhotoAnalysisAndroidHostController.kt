@@ -6,6 +6,7 @@ import com.supernutrition.core.ui.CameraAvailability
 import com.supernutrition.core.ui.CameraPermissionState
 import com.supernutrition.domain.photoanalysis.NormalizedPhotoInput
 import com.supernutrition.domain.photoanalysis.PhotoAnalysisEvent
+import com.supernutrition.domain.photoanalysis.PhotoAnalysisState
 import com.supernutrition.domain.photoanalysis.PhotoPreparationException
 import com.supernutrition.domain.photoanalysis.RecoveryReason
 import com.supernutrition.platform.photoandroid.AndroidPhotoBridgePort
@@ -78,11 +79,51 @@ class PhotoAnalysisAndroidHostController(
     fun onPermissionResult(granted: Boolean) {
         photoBridge.markCameraPermissionRequestCompleted()
         captureOperation.permissionRequestInFlight = false
-        if (granted) {
-            openCamera()
-        } else {
-            feature.dispatch(PhotoAnalysisEvent.PermissionDenied)
+        if (granted) refreshCameraPermission()
+    }
+
+    /** Contextual first request starts the viewfinder, never a photo operation. */
+    fun onCameraPreviewEntered(): CameraPermissionState {
+        if (feature.state != PhotoAnalysisState.Capture) return photoBridge.cameraPermissionState()
+        val permission = refreshCameraPermission()
+        if (permission == CameraPermissionState.NOT_DETERMINED &&
+            photoBridge.cameraAvailability() == CameraAvailability.AVAILABLE
+        ) {
+            requestPermission()
         }
+        return photoBridge.cameraPermissionState()
+    }
+
+    /** A retry is explicit after refusal; permanent refusal has an app Settings path. */
+    fun requestCameraPreviewAccess(): CameraPermissionState {
+        val permission = refreshCameraPermission()
+        if (photoBridge.cameraAvailability() == CameraAvailability.UNAVAILABLE) return permission
+        when (permission) {
+            CameraPermissionState.GRANTED -> Unit
+
+            CameraPermissionState.NOT_DETERMINED,
+            CameraPermissionState.DENIED,
+            -> requestPermission()
+
+            CameraPermissionState.RATIONALE -> showCameraPermissionRationale(::requestPermission)
+
+            CameraPermissionState.PERMANENTLY_DENIED,
+            CameraPermissionState.RESTRICTED,
+            -> launchSettings()
+        }
+        return photoBridge.cameraPermissionState()
+    }
+
+    /** Settings and one-time grants can change while the Activity is backgrounded. */
+    fun refreshCameraPermission(): CameraPermissionState {
+        val permission = photoBridge.cameraPermissionState()
+        val current = feature.currentWorkState()
+        if (permission == CameraPermissionState.GRANTED &&
+            current is PhotoAnalysisState.Recovery && current.reason == RecoveryReason.PERMISSION_DENIED
+        ) {
+            feature.dispatch(PhotoAnalysisEvent.ScanAgain)
+        }
+        return permission
     }
 
     fun onInlinePhotoResult(operationId: String, result: Result<ByteArray>) {
@@ -174,27 +215,17 @@ class PhotoAnalysisAndroidHostController(
     }
 
     private fun openCamera() {
-        when (photoBridge.cameraPermissionState()) {
-            CameraPermissionState.GRANTED -> if (photoBridge.cameraAvailability() == CameraAvailability.UNAVAILABLE) {
-                feature.dispatch(PhotoAnalysisEvent.PreparationFailed(RecoveryReason.CAMERA_UNAVAILABLE))
-            } else {
-                if (captureOperation.pendingOperationId == null) {
-                    UUID.randomUUID().toString().also { operationId ->
-                        captureOperation.pendingOperationId = operationId
-                        capturePhoto(operationId)
-                    }
-                }
+        if (photoBridge.cameraPermissionState() != CameraPermissionState.GRANTED) {
+            requestCameraPreviewAccess()
+            return
+        }
+        if (photoBridge.cameraAvailability() == CameraAvailability.UNAVAILABLE) {
+            feature.dispatch(PhotoAnalysisEvent.PreparationFailed(RecoveryReason.CAMERA_UNAVAILABLE))
+        } else if (captureOperation.pendingOperationId == null) {
+            UUID.randomUUID().toString().also { operationId ->
+                captureOperation.pendingOperationId = operationId
+                capturePhoto(operationId)
             }
-
-            CameraPermissionState.NOT_DETERMINED,
-            CameraPermissionState.DENIED,
-            -> requestPermission()
-
-            CameraPermissionState.RATIONALE -> showCameraPermissionRationale(::requestPermission)
-
-            CameraPermissionState.PERMANENTLY_DENIED,
-            CameraPermissionState.RESTRICTED,
-            -> feature.dispatch(PhotoAnalysisEvent.PermissionDenied)
         }
     }
 

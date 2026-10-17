@@ -14,10 +14,7 @@ internal fun AndroidRetainedPhotoBackdrop(preview: AndroidRetainedPhotoPreview) 
         Image(
             bitmap = preview.bitmap.asImageBitmap(),
             contentDescription = null,
-            // PreviewView.ScaleType.FILL_CENTER uses the same center-crop
-            // geometry while the camera is live, so capture does not jump when
-            // the bitmap replaces the preview in the stable photo slot.
-            contentScale = ContentScale.Crop,
+            contentScale = ContentScale.Fit,
             modifier = Modifier.fillMaxSize(),
         )
     }

@@ -1,0 +1,43 @@
+{
+  "key": "kiwi",
+  "generator": "built-in image_gen",
+  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-9c769299-e9d1-4085-8b2b-5f29479244ab.png",
+  "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_kiwi.png",
+  "intended_resource_name": "food_sticker_kiwi.png",
+  "prompt_file": "broad-library-prompts.json",
+  "saved_at_utc": "2026-10-12T05:06:12.077983+00:00",
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "467735bfc983234af4bcad612cf35e69cfc0e5fe7b2d9fff7f37fe7cdbaadec3",
+  "bytes": 2045610,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 852089,
+    "opaque_pixels": 416,
+    "partial_pixels": 720011,
+    "nontransparent_bounds": [
+      0,
+      18,
+      1230,
+      1223
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      71,
+      186,
+      1191,
+      1074
+    ],
+    "pixels_alpha_1_to_10": 13368
+  },
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_kiwi.png",
+  "visually_inspected": true,
+  "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+}

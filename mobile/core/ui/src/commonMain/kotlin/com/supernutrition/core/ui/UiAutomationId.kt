@@ -53,12 +53,15 @@ object UiAutomationIds {
     val PHOTO_ANALYSIS_COMPOSITION_HINTS = UiAutomationId("photo_analysis_composition_hints")
     val PHOTO_ANALYSIS_MANUAL_INGREDIENT_INPUT = UiAutomationId("photo_analysis_manual_ingredient_input")
     val PHOTO_ANALYSIS_MANUAL_INGREDIENT_ADD = UiAutomationId("photo_analysis_manual_ingredient_add")
+    val PHOTO_ANALYSIS_CUSTOM_MEAL = UiAutomationId("photo_analysis_custom_meal")
+    val PHOTO_ANALYSIS_ADD_TO_MEAL = UiAutomationId("photo_analysis_add_to_meal")
     val CAPTURE_SHUTTER = UiAutomationId("capture_shutter")
     val CAPTURE_IMPORT = UiAutomationId("capture_import")
     val CAPTURE_SCAN_AGAIN = UiAutomationId("capture_scan_again")
     val CAPTURE_CANCEL = UiAutomationId("capture_cancel")
     val CAPTURE_CLOSE = UiAutomationId("capture_close")
     val CAPTURE_OPEN_SETTINGS = UiAutomationId("capture_open_settings")
+    val CAPTURE_ALLOW_CAMERA = UiAutomationId("capture_allow_camera")
     val CAPTURE_NATIVE = UiAutomationId("capture_native")
     val MEAL_SEARCH_QUERY = UiAutomationId("meal_search_query")
     val MEAL_SEARCH_RESULTS = UiAutomationId("meal_search_results")
@@ -73,6 +76,11 @@ object UiAutomationIds {
     val HOME_TITLE = UiAutomationId("home_title")
     val HOME_GREETING = UiAutomationId("home_greeting")
     val HOME_SUMMARY = UiAutomationId("home_summary")
+    val HOME_NEXT_STEP = UiAutomationId("home_next_step")
+    val HOME_METRIC_FIBER = UiAutomationId("home_metric_fiber")
+    val HOME_METRIC_WATER = UiAutomationId("home_metric_water")
+    val HOME_METRIC_PROTEIN = UiAutomationId("home_metric_protein")
+    val HOME_METRIC_MOVEMENT = UiAutomationId("home_metric_movement")
     val HOME_EMPTY_TITLE = UiAutomationId("home_empty_title")
     val HOME_EMPTY_DESCRIPTION = UiAutomationId("home_empty_description")
     val HOME_ADD_FOOD = UiAutomationId("home_add_food")
@@ -100,6 +108,10 @@ object UiAutomationIds {
      */
     fun mealSearchRow(index: Int): UiAutomationId = UiAutomationId("meal_search_row_$index")
 
+    fun photoAnalysisDishChoice(rank: Int): UiAutomationId = UiAutomationId("photo_analysis_dish_choice_$rank")
+
+    fun photoAnalysisPantryChoice(id: String): UiAutomationId = UiAutomationId("photo_analysis_pantry_$id")
+
     fun mealSearchRowTitle(index: Int): UiAutomationId = UiAutomationId("meal_search_row_${index}_title")
 
     fun mealSearchRowDetail(index: Int): UiAutomationId = UiAutomationId("meal_search_row_${index}_detail")
@@ -125,12 +137,15 @@ object UiAutomationIds {
         PHOTO_ANALYSIS_COMPOSITION_HINTS,
         PHOTO_ANALYSIS_MANUAL_INGREDIENT_INPUT,
         PHOTO_ANALYSIS_MANUAL_INGREDIENT_ADD,
+        PHOTO_ANALYSIS_CUSTOM_MEAL,
+        PHOTO_ANALYSIS_ADD_TO_MEAL,
         CAPTURE_SHUTTER,
         CAPTURE_IMPORT,
         CAPTURE_SCAN_AGAIN,
         CAPTURE_CANCEL,
         CAPTURE_CLOSE,
         CAPTURE_OPEN_SETTINGS,
+        CAPTURE_ALLOW_CAMERA,
         CAPTURE_NATIVE,
         MEAL_SEARCH_QUERY,
         MEAL_SEARCH_RESULTS,
@@ -142,6 +157,11 @@ object UiAutomationIds {
         HOME_TITLE,
         HOME_GREETING,
         HOME_SUMMARY,
+        HOME_NEXT_STEP,
+        HOME_METRIC_FIBER,
+        HOME_METRIC_WATER,
+        HOME_METRIC_PROTEIN,
+        HOME_METRIC_MOVEMENT,
         HOME_EMPTY_TITLE,
         HOME_EMPTY_DESCRIPTION,
         HOME_ADD_FOOD,

@@ -3,6 +3,7 @@ package com.supernutrition.feature.photoanalysis
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.window.ComposeUIViewController
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.useContents
 import platform.UIKit.UIViewController
 
 /**
@@ -19,23 +20,48 @@ fun PhotoAnalysisViewController(
     feature: PhotoAnalysisFeature,
     copy: PhotoAnalysisPresenterCopy,
     retainedPhoto: () -> IosRetainedPhotoPreview?,
-    onNativeAction: (PhotoAnalysisNativeAction) -> Unit,
-    onCloseRequested: () -> Unit,
+    callbacks: PhotoAnalysisNativeCallbacks,
 ): UIViewController = ComposeUIViewController {
     // retainedPhoto is native state, so observe the shared state stream here
     // as well as inside the content to refresh the same-slot preview after a
     // photo is returned or native inference finishes.
     feature.stateFlow.collectAsState().value
+    val manual = feature.manualIngredientStateFlow.collectAsState().value
+    val mealReviewSelection = feature.mealReviewSelection.collectAsState().value
     val preview = retainedPhoto()
     PhotoAnalysisCaptureContent(
         stateFlow = feature.stateFlow,
-        onAction = { action -> feature.route(action, onNativeAction) },
+        onAction = { action ->
+            feature.route(action, callbacks.onNativeAction)
+            if (action == PhotoAnalysisPresenterAction.ScanAgain) {
+                callbacks.onNativeAction(PhotoAnalysisNativeAction.TakePhoto)
+            }
+        },
         surface = PhotoAnalysisCaptureSurface(
             presenterCopy = copy,
             closeLabel = "Close",
-            onCloseRequested = onCloseRequested,
+            onCloseRequested = callbacks.onCloseRequested,
             retainedPhoto = preview?.let { current -> { IosRetainedPhotoBackdrop(current) } },
+            retainedPhotoAspectRatio = preview?.image?.size?.useContents {
+                if (width > 0.0 && height > 0.0) (width / height).toFloat() else null
+            }?.takeIf { it.isFinite() && it > 0f },
             photoTextContrast = null,
+            manualIngredientInput = manual.query,
+            manualIngredients = manual.ingredients.map { ingredient ->
+                PhotoAnalysisManualIngredientModel(
+                    canonicalItemId = ingredient.canonicalItemId,
+                    label = ingredient.displayName,
+                    sourceDishName = ingredient.sourceDishName,
+                )
+            },
+            manualIngredientUnresolved = manual.unresolvedFragments,
+            onManualIngredientInputChanged = feature::updateManualIngredientQuery,
+            onManualIngredientAdded = feature::addManualIngredients,
+            mealReviewSelection = mealReviewSelection,
+            onMealReviewSelectionChanged = { feature.updateMealReviewSelection(it) },
+            onMealReviewConfirmed = { confirmation ->
+                if (feature.confirmMealReview(confirmation)) callbacks.onMealReviewCompleted()
+            },
         ),
     )
 }

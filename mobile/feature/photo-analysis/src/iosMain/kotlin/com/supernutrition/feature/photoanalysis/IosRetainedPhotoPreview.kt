@@ -21,7 +21,7 @@ internal fun IosRetainedPhotoBackdrop(preview: IosRetainedPhotoPreview) {
     UIKitView(
         factory = {
             UIImageView().apply {
-                contentMode = UIViewContentMode.UIViewContentModeScaleAspectFill
+                contentMode = UIViewContentMode.UIViewContentModeScaleAspectFit
                 clipsToBounds = true
             }
         },

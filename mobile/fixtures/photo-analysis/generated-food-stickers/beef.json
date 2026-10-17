@@ -1,0 +1,43 @@
+{
+  "key": "beef",
+  "generator": "built-in image_gen",
+  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-70443d1a-4c26-42dc-a7eb-2ba1ec52299c.png",
+  "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_beef.png",
+  "intended_resource_name": "food_sticker_beef.png",
+  "prompt_file": "broad-library-prompts.json",
+  "saved_at_utc": "2026-10-12T04:59:52.320245+00:00",
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "fe8253ccc69c3cfdbdbd6d805c14eedd362b4b4f842666e36eaa81c52e4809d6",
+  "bytes": 1815574,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 941185,
+    "opaque_pixels": 747,
+    "partial_pixels": 630584,
+    "nontransparent_bounds": [
+      0,
+      39,
+      1226,
+      1254
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      37,
+      232,
+      1221,
+      1042
+    ],
+    "pixels_alpha_1_to_10": 9033
+  },
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_beef.png",
+  "visually_inspected": true,
+  "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+}

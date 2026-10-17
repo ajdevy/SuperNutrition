@@ -1,0 +1,43 @@
+{
+  "key": "rice",
+  "generator": "built-in image_gen",
+  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-bb8e16f6-3e5d-41c0-b3a1-8906428c9955.png",
+  "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_rice.png",
+  "intended_resource_name": "food_sticker_rice.png",
+  "prompt_file": "broad-library-prompts.json",
+  "saved_at_utc": "2026-10-12T04:48:36.794014+00:00",
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "3a5bb5be4f937a0702ccf2b403fc161b0be63d649e5ada9d6cfe2da84613bc7c",
+  "bytes": 1194843,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 858735,
+    "opaque_pixels": 1182,
+    "partial_pixels": 712599,
+    "nontransparent_bounds": [
+      0,
+      38,
+      1225,
+      1239
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      39,
+      209,
+      1220,
+      1072
+    ],
+    "pixels_alpha_1_to_10": 11543
+  },
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_rice.png",
+  "visually_inspected": true,
+  "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+}

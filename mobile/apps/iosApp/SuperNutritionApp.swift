@@ -31,9 +31,18 @@ struct SuperNutritionApp: App {
 private struct ProductionPhotoAnalysisHost: View {
     let session: SharedKitPhotoAnalysisSession
     @Environment(\.scenePhase) private var scenePhase
+    @State private var showingReviewConfirmation = false
 
     var body: some View {
-        ProductionPhotoAnalysisComposeHost(session: session)
+        ProductionPhotoAnalysisComposeHost(
+            session: session,
+            onMealReviewCompleted: { showingReviewConfirmation = true },
+        )
+            .alert(String(localized: "photo_analysis.review.confirmed"), isPresented: $showingReviewConfirmation) {
+                Button(String(localized: "photo_analysis.review.confirmed_dismiss"), role: .cancel) {}
+            } message: {
+                Text(String(localized: "photo_analysis.review.confirmed_message"))
+            }
             .onChange(of: scenePhase) { phase in
                 switch phase {
                 case .background:
@@ -51,6 +60,7 @@ private struct ProductionPhotoAnalysisHost: View {
 
 private struct ProductionPhotoAnalysisComposeHost: UIViewControllerRepresentable {
     let session: SharedKitPhotoAnalysisSession
+    let onMealReviewCompleted: () -> Void
 
     func makeCoordinator() -> Coordinator {
         Coordinator(session: session)
@@ -65,6 +75,7 @@ private struct ProductionPhotoAnalysisComposeHost: UIViewControllerRepresentable
             onCloseRequested: {
                 session.captureCancelled()
             },
+            onMealReviewCompleted: onMealReviewCompleted,
         )
         context.coordinator.hostViewController = controller
         return controller

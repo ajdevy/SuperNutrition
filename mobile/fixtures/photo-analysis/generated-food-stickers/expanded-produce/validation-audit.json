@@ -1,0 +1,66 @@
+{
+  "validated_at_utc": "2026-10-13T06:10:11.181418+00:00",
+  "expected_count": 52,
+  "saved_count": 52,
+  "inspected_count": 52,
+  "missing_count": 0,
+  "unique_sha256_count": 52,
+  "dimensions": [
+    1254,
+    1254
+  ],
+  "mode": "RGBA",
+  "alpha_range": [
+    0,
+    255
+  ],
+  "total_png_bytes": 84963837,
+  "corner_fringe": [
+    {
+      "key": "grapefruit",
+      "alpha": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "key": "plum",
+      "alpha": [
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "key": "eggplant",
+      "alpha": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "key": "pumpkin",
+      "alpha": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "key": "rye",
+      "alpha": [
+        0,
+        0,
+        1,
+        0
+      ]
+    }
+  ],
+  "scope": "All52 byte hashes, native image properties, exact prompts, per-key metadata and manifest agree. This agent visually inspected its first32owned outputs; the other20 retain their workers exact passed visual audit records."
+}

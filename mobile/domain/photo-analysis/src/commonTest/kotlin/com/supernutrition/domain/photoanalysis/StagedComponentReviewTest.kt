@@ -152,6 +152,18 @@ class StagedComponentReviewTest {
         reducer.dispatch(PhotoAnalysisEvent.ReviewEvidenceAvailable(setup.requestId, draft))
 
         reducer.dispatch(PhotoAnalysisEvent.Backgrounded)
+        listOf(
+            PhotoAnalysisEvent.RestoreFromSnapshot(reducer.snapshotForPersistence()),
+            PhotoAnalysisEvent.ReplacePhoto(setup.ref),
+            PhotoAnalysisEvent.ScanAgain,
+        ).forEach { ignoredEvent ->
+            reducer.dispatch(ignoredEvent)
+            assertEquals(
+                PhotoAnalysisState.CandidateReview(setup.ref, setup.requestId, draft),
+                reducer.currentWorkState(),
+                "Ignored $ignoredEvent must retain the live review",
+            )
+        }
         reducer.dispatch(PhotoAnalysisEvent.Restored)
 
         assertEquals(

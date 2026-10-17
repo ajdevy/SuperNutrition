@@ -17,7 +17,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-/** The shared production screen is exercised through the Compose UI Test v2 API. */
+/** The explicit research renderer retains its diagnostic contract independently of the camera UI. */
 @OptIn(ExperimentalTestApi::class)
 class PhotoAnalysisCaptureScreenComposeTest {
     @Test
@@ -25,7 +25,7 @@ class PhotoAnalysisCaptureScreenComposeTest {
         val copy = PhotoAnalysisPresenterCopyFixtures.localized()
         var closeRequested = false
         setContent {
-            PhotoAnalysisCaptureScreen(
+            PhotoAnalysisResearchCaptureScreen(
                 model = PhotoAnalysisPresenterModel.from(
                     com.supernutrition.domain.photoanalysis.PhotoAnalysisState.Capture,
                     copy,
@@ -55,7 +55,7 @@ class PhotoAnalysisCaptureScreenComposeTest {
     fun `live camera occupies the photo slot before capture actions`() = runComposeUiTest {
         val copy = PhotoAnalysisPresenterCopyFixtures.localized()
         setContent {
-            PhotoAnalysisCaptureScreen(
+            PhotoAnalysisResearchCaptureScreen(
                 model = PhotoAnalysisPresenterModel.from(
                     com.supernutrition.domain.photoanalysis.PhotoAnalysisState.Capture,
                     copy,
@@ -78,7 +78,7 @@ class PhotoAnalysisCaptureScreenComposeTest {
         val copy = PhotoAnalysisPresenterCopyFixtures.localized()
         val selected = mutableListOf<Int>()
         setContent {
-            PhotoAnalysisCaptureScreen(
+            PhotoAnalysisResearchCaptureScreen(
                 model = PhotoAnalysisPresenterModel.from(
                     com.supernutrition.domain.photoanalysis.PhotoAnalysisState.Capture,
                     copy,
@@ -106,7 +106,7 @@ class PhotoAnalysisCaptureScreenComposeTest {
         val copy = PhotoAnalysisPresenterCopyFixtures.localized()
         var addClicks = 0
         setContent {
-            PhotoAnalysisCaptureScreen(
+            PhotoAnalysisResearchCaptureScreen(
                 model = PhotoAnalysisPresenterModel.from(
                     com.supernutrition.domain.photoanalysis.PhotoAnalysisState.Capture,
                     copy,
@@ -150,7 +150,7 @@ class PhotoAnalysisCaptureScreenComposeTest {
             actions = PhotoAnalysisPresenterAction.entries,
         )
         setContent {
-            PhotoAnalysisCaptureScreen(
+            PhotoAnalysisResearchCaptureScreen(
                 model = model,
                 onAction = clicked::add,
                 surface = PhotoAnalysisCaptureSurface(
@@ -184,7 +184,7 @@ class PhotoAnalysisCaptureScreenComposeTest {
     fun `screen remains a stable status surface when no action is available`() = runComposeUiTest {
         val copy = PhotoAnalysisPresenterCopyFixtures.localized()
         setContent {
-            PhotoAnalysisCaptureScreen(
+            PhotoAnalysisResearchCaptureScreen(
                 model = PhotoAnalysisPresenterModel(
                     statusLabel = copy.status.restoringPhotoAnalysis,
                     state = PhotoAnalysisPresenterState.BACKGROUNDED,
@@ -207,7 +207,7 @@ class PhotoAnalysisCaptureScreenComposeTest {
         val copy = PhotoAnalysisPresenterCopyFixtures.localized()
         val model = reviewModel(copy)
         setContent {
-            PhotoAnalysisCaptureScreen(
+            PhotoAnalysisResearchCaptureScreen(
                 model = model,
                 onAction = {},
                 surface = PhotoAnalysisCaptureSurface(presenterCopy = copy),
@@ -242,7 +242,7 @@ class PhotoAnalysisCaptureScreenComposeTest {
         )
 
         setContent {
-            PhotoAnalysisCaptureScreen(
+            PhotoAnalysisResearchCaptureScreen(
                 model = model,
                 onAction = {},
                 surface = PhotoAnalysisCaptureSurface(presenterCopy = copy),
@@ -271,7 +271,7 @@ class PhotoAnalysisCaptureScreenComposeTest {
         )
 
         setContent {
-            PhotoAnalysisCaptureScreen(
+            PhotoAnalysisResearchCaptureScreen(
                 model = model,
                 onAction = {},
                 surface = PhotoAnalysisCaptureSurface(presenterCopy = copy),
@@ -346,7 +346,7 @@ class PhotoAnalysisCaptureScreenComposeTest {
             com.supernutrition.domain.photoanalysis.LocalAnalysisStage.CHECKING_RESULTS,
         ).forEach { stage ->
             setContent {
-                PhotoAnalysisCaptureScreen(
+                PhotoAnalysisResearchCaptureScreen(
                     model = PhotoAnalysisPresenterModel.from(
                         com.supernutrition.domain.photoanalysis.PhotoAnalysisState.Analyzing(
                             ref,
@@ -379,7 +379,7 @@ class PhotoAnalysisCaptureScreenComposeTest {
         )
         val requestId = com.supernutrition.domain.photoanalysis.RequestId("compose-grid-request")
         setContent {
-            PhotoAnalysisCaptureScreen(
+            PhotoAnalysisResearchCaptureScreen(
                 model = PhotoAnalysisPresenterModel.from(
                     com.supernutrition.domain.photoanalysis.PhotoAnalysisState.Analyzing(
                         ref,

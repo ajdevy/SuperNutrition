@@ -1,0 +1,43 @@
+{
+  "key": "olives",
+  "generator": "built-in image_gen",
+  "prompt": "Use case: product-mockup\nAsset type: one food-selection sticker for the Super Nutrition mobile app.\nPrimary request: OLIVES only: a compact group of four glossy green olives and two dark purple-black olives, with recognizable smooth oval olive fruit silhouettes; one olive shows its natural pit opening. No olive leaves, olive oil, toothpicks, or garnish.\nStyle/medium: crisp photorealistic food cutout with natural texture and gentle soft studio lighting, matching the existing mixed-nuts, rice and peeled-banana stickers with a thin clean white die-cut outline around the food silhouette.\nComposition/framing: one coherent centered three-quarter food cluster on a square transparent canvas, complete food and outline visible inside the central 78 percent. Keep clear transparent padding on every edge.\nConstraints: genuine transparent alpha background, no scene or cast shadow. No plate, bowl, board, table, utensils, packaging, unrelated ingredients, green backing, text, letters, badges, checkmarks, faces, watermark or UI.\n",
+  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12ec2-311b-7691-96d6-9634b2fa56d6/exec-54026a77-2589-486b-bd1e-53ad3e9ed00f.png",
+  "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-staples/food_sticker_olives.png",
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_olives.png",
+  "saved_at_utc": "2026-10-12T08:37:19.514048+00:00",
+  "transparent_background": true,
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "46f663ea1b03b96b67c98a6ffae13443ffdb8b2686336fa1a9b8d20f2b0da472",
+  "bytes": 1116759,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 975568,
+    "opaque_pixels": 1419,
+    "partial_pixels": 595529,
+    "nontransparent_bounds": [
+      31,
+      75,
+      1200,
+      1254
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      85,
+      218,
+      1187,
+      1019
+    ],
+    "pixels_alpha_1_to_10": 7916
+  },
+  "visually_inspected": true,
+  "visual_result": "Visually inspected: compact group of three glossy green olives and two dark purple-black olives, one clear pit opening, recognizable smooth oval fruit texture, full thin white outline and no leaves or oil."
+}

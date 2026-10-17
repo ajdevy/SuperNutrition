@@ -10,10 +10,14 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -24,15 +28,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import com.supernutrition.core.ui.CameraPermissionState
+import com.supernutrition.core.ui.UiAutomationIds
 
 /** CameraX preview kept inside the stable photo slot owned by the shared UI. */
 @Composable
 internal fun PhotoAnalysisLiveCameraPreview(
-    cameraPermissionGranted: Boolean,
+    cameraAccess: PhotoAnalysisCameraAccess,
     permissionHint: String,
     unavailableHint: String,
     cameraController: PhotoAnalysisInlineCameraController,
@@ -43,9 +53,51 @@ internal fun PhotoAnalysisLiveCameraPreview(
     )
 
     when {
-        !cameraPermissionGranted -> PhotoAnalysisCameraFallback(permissionHint)
         !cameraAvailable -> PhotoAnalysisCameraFallback(unavailableHint)
+
+        cameraAccess.permissionState != CameraPermissionState.GRANTED ->
+            PhotoAnalysisCameraPermissionFallback(cameraAccess, permissionHint)
+
         else -> PhotoAnalysisCameraSurface(context, unavailableHint, cameraController)
+    }
+}
+
+@Composable
+private fun PhotoAnalysisCameraPermissionFallback(access: PhotoAnalysisCameraAccess, message: String) {
+    val settingsRequired = access.permissionState == CameraPermissionState.PERMANENTLY_DENIED ||
+        access.permissionState == CameraPermissionState.RESTRICTED
+    val label = stringResource(
+        if (settingsRequired) R.string.capture_open_settings else R.string.capture_allow_camera,
+    )
+    val actionId = if (settingsRequired) {
+        UiAutomationIds.CAPTURE_OPEN_SETTINGS
+    } else {
+        UiAutomationIds.CAPTURE_ALLOW_CAMERA
+    }
+    Box(
+        modifier = Modifier.fillMaxSize().background(Color(0xFF14181C)),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(
+            modifier = Modifier.padding(horizontal = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Text(text = message, color = Color.White, textAlign = TextAlign.Center)
+            if (access.actionVisible) {
+                Button(
+                    onClick = access.onAccessRequested,
+                    enabled = !access.requestInFlight,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF677712),
+                        contentColor = Color.White,
+                    ),
+                    modifier = Modifier.heightIn(min = 48.dp).testTag(actionId.value),
+                ) {
+                    Text(label)
+                }
+            }
+        }
     }
 }
 
@@ -57,7 +109,7 @@ private fun PhotoAnalysisCameraFallback(message: String) {
             .background(Color(0xFF14181C)),
         contentAlignment = Alignment.Center,
     ) {
-        Text(text = message, color = Color.White)
+        Text(text = message, color = Color.White, textAlign = TextAlign.Center, modifier = Modifier.padding(32.dp))
     }
 }
 
@@ -101,9 +153,7 @@ private fun PhotoAnalysisCameraSurface(
         } else {
             AndroidView(
                 factory = { previewContainer },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(4f / 3f),
+                modifier = Modifier.fillMaxSize(),
             )
         }
     }

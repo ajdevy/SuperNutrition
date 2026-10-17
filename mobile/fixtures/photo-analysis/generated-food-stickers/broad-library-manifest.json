@@ -1,0 +1,1169 @@
+{
+  "generator": "built-in image_gen",
+  "asset_count": 27,
+  "total_png_bytes": 41964256,
+  "transparency_note": "All PNGs have actual RGBA alpha spanning 0..255 and transparent backgrounds. Original generated alpha is preserved, including subvisible alpha1 fringe pixels; tomato lower-left corner is alpha1, other corners are0.",
+  "assets": [
+    {
+      "key": "tomato",
+      "generator": "built-in image_gen",
+      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-97531e76-066e-4d7f-889b-563041f73145.png",
+      "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_tomato.png",
+      "intended_resource_name": "food_sticker_tomato.png",
+      "prompt_file": "broad-library-prompts.json",
+      "saved_at_utc": "2026-10-12T04:52:27.304825+00:00",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "5187399a75249a40fc8dc20231b3c8ab45fe3da5ec1e598c285468839729bbc3",
+      "bytes": 1529761,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 838663,
+        "opaque_pixels": 1560,
+        "partial_pixels": 732293,
+        "nontransparent_bounds": [
+          0,
+          48,
+          1240,
+          1254
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          1,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          60,
+          137,
+          1205,
+          1094
+        ],
+        "pixels_alpha_1_to_10": 19462
+      },
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_tomato.png",
+      "visually_inspected": true,
+      "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+    },
+    {
+      "key": "potato",
+      "generator": "built-in image_gen",
+      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-c9e65c6c-d578-4b4e-8ffa-c8f68469a425.png",
+      "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_potato.png",
+      "intended_resource_name": "food_sticker_potato.png",
+      "prompt_file": "broad-library-prompts.json",
+      "saved_at_utc": "2026-10-12T04:52:27.301725+00:00",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "d5dc8a1039c31cbc6430ddba01168d0c8bb1a73af744a156ffd46a561d1b4663",
+      "bytes": 1710336,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 820113,
+        "opaque_pixels": 1252,
+        "partial_pixels": 751151,
+        "nontransparent_bounds": [
+          0,
+          55,
+          1240,
+          1254
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          66,
+          151,
+          1195,
+          1098
+        ],
+        "pixels_alpha_1_to_10": 12856
+      },
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_potato.png",
+      "visually_inspected": true,
+      "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+    },
+    {
+      "key": "rice",
+      "generator": "built-in image_gen",
+      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-bb8e16f6-3e5d-41c0-b3a1-8906428c9955.png",
+      "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_rice.png",
+      "intended_resource_name": "food_sticker_rice.png",
+      "prompt_file": "broad-library-prompts.json",
+      "saved_at_utc": "2026-10-12T04:48:36.794014+00:00",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "3a5bb5be4f937a0702ccf2b403fc161b0be63d649e5ada9d6cfe2da84613bc7c",
+      "bytes": 1194843,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 858735,
+        "opaque_pixels": 1182,
+        "partial_pixels": 712599,
+        "nontransparent_bounds": [
+          0,
+          38,
+          1225,
+          1239
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          39,
+          209,
+          1220,
+          1072
+        ],
+        "pixels_alpha_1_to_10": 11543
+      },
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_rice.png",
+      "visually_inspected": true,
+      "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+    },
+    {
+      "key": "chicken",
+      "generator": "built-in image_gen",
+      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-c4b1cbe9-a3d7-4cd1-8513-6b82da0084a3.png",
+      "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_chicken.png",
+      "intended_resource_name": "food_sticker_chicken.png",
+      "prompt_file": "broad-library-prompts.json",
+      "saved_at_utc": "2026-10-12T04:49:18.542472+00:00",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "e3765c4890d16342f076478d72a210a1abea3017d5e468d3a57579abe820fc88",
+      "bytes": 1535815,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 938137,
+        "opaque_pixels": 763,
+        "partial_pixels": 633616,
+        "nontransparent_bounds": [
+          0,
+          21,
+          1224,
+          1254
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          60,
+          216,
+          1197,
+          1042
+        ],
+        "pixels_alpha_1_to_10": 9002
+      },
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_chicken.png",
+      "visually_inspected": true,
+      "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+    },
+    {
+      "key": "egg",
+      "generator": "built-in image_gen",
+      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-30026fb6-9fb2-4dc5-a354-c0967268b824.png",
+      "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_egg.png",
+      "intended_resource_name": "food_sticker_egg.png",
+      "prompt_file": "broad-library-prompts.json",
+      "saved_at_utc": "2026-10-12T04:49:48.799547+00:00",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "9fedd19e970aef68cb4ed79afc13c756321ee2afb62d3a9fd40032aaa0d1a044",
+      "bytes": 1244549,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 771722,
+        "opaque_pixels": 1641,
+        "partial_pixels": 799153,
+        "nontransparent_bounds": [
+          0,
+          40,
+          1198,
+          1183
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          62,
+          118,
+          1193,
+          1140
+        ],
+        "pixels_alpha_1_to_10": 7567
+      },
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_egg.png",
+      "visually_inspected": true,
+      "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+    },
+    {
+      "key": "cheese",
+      "generator": "built-in image_gen",
+      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-6b4d463e-c6b1-4ce5-a2bd-b9a75d6bc3c0.png",
+      "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_cheese.png",
+      "intended_resource_name": "food_sticker_cheese.png",
+      "prompt_file": "broad-library-prompts.json",
+      "saved_at_utc": "2026-10-12T04:50:17.246231+00:00",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "0f06e9edbcf93fad7921cb8c8208e7374a212f9cc06e4d534ce863e20e239945",
+      "bytes": 1188072,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 842527,
+        "opaque_pixels": 1325,
+        "partial_pixels": 728664,
+        "nontransparent_bounds": [
+          41,
+          23,
+          1206,
+          1254
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          63,
+          138,
+          1191,
+          1116
+        ],
+        "pixels_alpha_1_to_10": 9213
+      },
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_cheese.png",
+      "visually_inspected": true,
+      "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+    },
+    {
+      "key": "yogurt",
+      "generator": "built-in image_gen",
+      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-e3358541-12ab-4f20-b54c-e0d47f4e8fa4.png",
+      "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_yogurt.png",
+      "intended_resource_name": "food_sticker_yogurt.png",
+      "prompt_file": "broad-library-prompts.json",
+      "saved_at_utc": "2026-10-12T04:50:57.544199+00:00",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "56a8d2de6fa4af1111066beee021ecd59714605a46b4ec611fda5c0b93c547bf",
+      "bytes": 1197649,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 838385,
+        "opaque_pixels": 1021,
+        "partial_pixels": 733110,
+        "nontransparent_bounds": [
+          31,
+          39,
+          1230,
+          1230
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          79,
+          199,
+          1175,
+          1064
+        ],
+        "pixels_alpha_1_to_10": 9076
+      },
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_yogurt.png",
+      "visually_inspected": true,
+      "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+    },
+    {
+      "key": "strawberry",
+      "generator": "built-in image_gen",
+      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-6f850997-6d00-441d-b27f-4d1f2fd3ddf2.png",
+      "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_strawberry.png",
+      "intended_resource_name": "food_sticker_strawberry.png",
+      "prompt_file": "broad-library-prompts.json",
+      "saved_at_utc": "2026-10-12T04:51:42.453539+00:00",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "6b703f88635d7f0a1e2422ac1ceca7f8c9304f5363980e4cf8fab35744d41800",
+      "bytes": 1641972,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 886324,
+        "opaque_pixels": 748,
+        "partial_pixels": 685444,
+        "nontransparent_bounds": [
+          49,
+          39,
+          1218,
+          1254
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          86,
+          141,
+          1171,
+          1091
+        ],
+        "pixels_alpha_1_to_10": 16865
+      },
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_strawberry.png",
+      "visually_inspected": true,
+      "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+    },
+    {
+      "key": "grapes",
+      "generator": "built-in image_gen",
+      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-3b3ecb27-9e1a-4d78-9d4b-961092a105fa.png",
+      "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_grapes.png",
+      "intended_resource_name": "food_sticker_grapes.png",
+      "prompt_file": "broad-library-prompts.json",
+      "saved_at_utc": "2026-10-12T04:52:27.330364+00:00",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "5c4c64ebbeb982e1447fa22ee3b6914d27d61203c5b0e958318ed1d69787c0c9",
+      "bytes": 1675155,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 883918,
+        "opaque_pixels": 796,
+        "partial_pixels": 687802,
+        "nontransparent_bounds": [
+          0,
+          31,
+          1198,
+          1244
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          96,
+          131,
+          1188,
+          1113
+        ],
+        "pixels_alpha_1_to_10": 16933
+      },
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_grapes.png",
+      "visually_inspected": true,
+      "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+    },
+    {
+      "key": "beans",
+      "generator": "built-in image_gen",
+      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-1aafedda-8f6c-4d56-aa40-99a595105519.png",
+      "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_beans.png",
+      "intended_resource_name": "food_sticker_beans.png",
+      "prompt_file": "broad-library-prompts.json",
+      "saved_at_utc": "2026-10-12T05:02:31.803631+00:00",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "65af53810b8d212bc08f38273d94a8272affe0c26889888cbb69fd16a1ddaff2",
+      "bytes": 1713107,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 820640,
+        "opaque_pixels": 619,
+        "partial_pixels": 751257,
+        "nontransparent_bounds": [
+          0,
+          53,
+          1218,
+          1254
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          59,
+          194,
+          1201,
+          1063
+        ],
+        "pixels_alpha_1_to_10": 12204
+      },
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_beans.png",
+      "visually_inspected": true,
+      "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+    },
+    {
+      "key": "mushroom",
+      "generator": "built-in image_gen",
+      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-35b65df0-d837-4649-bd99-32caf7618289.png",
+      "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_mushroom.png",
+      "intended_resource_name": "food_sticker_mushroom.png",
+      "prompt_file": "broad-library-prompts.json",
+      "saved_at_utc": "2026-10-12T05:02:31.807118+00:00",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "52354e8e6e1a0ed9a395028f597051d87061aa72df891a5fc433e15c51f3a193",
+      "bytes": 1513717,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 802569,
+        "opaque_pixels": 1014,
+        "partial_pixels": 768933,
+        "nontransparent_bounds": [
+          0,
+          81,
+          1240,
+          1139
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          54,
+          135,
+          1206,
+          1129
+        ],
+        "pixels_alpha_1_to_10": 14663
+      },
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_mushroom.png",
+      "visually_inspected": true,
+      "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+    },
+    {
+      "key": "bread",
+      "generator": "built-in image_gen",
+      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-f689d6b3-83e6-4c45-af3c-d7d66f0085ab.png",
+      "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_bread.png",
+      "intended_resource_name": "food_sticker_bread.png",
+      "prompt_file": "broad-library-prompts.json",
+      "saved_at_utc": "2026-10-12T04:58:31.387560+00:00",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "1568dc4582b504b22e1e6adb2bf10ef1e2835107c7847ae5da3df9e3d5f65209",
+      "bytes": 2626961,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 622443,
+        "opaque_pixels": 764,
+        "partial_pixels": 949309,
+        "nontransparent_bounds": [
+          0,
+          3,
+          1242,
+          1254
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          55,
+          115,
+          1213,
+          1177
+        ],
+        "pixels_alpha_1_to_10": 15230
+      },
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_bread.png",
+      "visually_inspected": true,
+      "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+    },
+    {
+      "key": "beef",
+      "generator": "built-in image_gen",
+      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-70443d1a-4c26-42dc-a7eb-2ba1ec52299c.png",
+      "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_beef.png",
+      "intended_resource_name": "food_sticker_beef.png",
+      "prompt_file": "broad-library-prompts.json",
+      "saved_at_utc": "2026-10-12T04:59:52.320245+00:00",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "fe8253ccc69c3cfdbdbd6d805c14eedd362b4b4f842666e36eaa81c52e4809d6",
+      "bytes": 1815574,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 941185,
+        "opaque_pixels": 747,
+        "partial_pixels": 630584,
+        "nontransparent_bounds": [
+          0,
+          39,
+          1226,
+          1254
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          37,
+          232,
+          1221,
+          1042
+        ],
+        "pixels_alpha_1_to_10": 9033
+      },
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_beef.png",
+      "visually_inspected": true,
+      "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+    },
+    {
+      "key": "lentils",
+      "generator": "built-in image_gen",
+      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-f12cc0ab-e9c6-4786-99e3-a813225237c5.png",
+      "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_lentils.png",
+      "intended_resource_name": "food_sticker_lentils.png",
+      "prompt_file": "broad-library-prompts.json",
+      "saved_at_utc": "2026-10-12T04:59:03.539077+00:00",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "73ca964c70634b2d70cbcb6f54437c6311d46c70fb0035e80140e1e8aace1bb3",
+      "bytes": 1664362,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 837433,
+        "opaque_pixels": 248,
+        "partial_pixels": 734835,
+        "nontransparent_bounds": [
+          0,
+          31,
+          1248,
+          1254
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          52,
+          208,
+          1208,
+          1062
+        ],
+        "pixels_alpha_1_to_10": 18625
+      },
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_lentils.png",
+      "visually_inspected": true,
+      "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+    },
+    {
+      "key": "pear",
+      "generator": "built-in image_gen",
+      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-96fcc9bd-b798-4c5a-8a0d-317d26c7fe41.png",
+      "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_pear.png",
+      "intended_resource_name": "food_sticker_pear.png",
+      "prompt_file": "broad-library-prompts.json",
+      "saved_at_utc": "2026-10-12T05:06:12.070126+00:00",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "f2eefffb407fbc5d202f9fbdbeaa19c650a0f0ea3b59a9b9b507f7afbeb4851b",
+      "bytes": 1211373,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 1019978,
+        "opaque_pixels": 977,
+        "partial_pixels": 551561,
+        "nontransparent_bounds": [
+          0,
+          72,
+          1178,
+          1228
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          242,
+          76,
+          1012,
+          1174
+        ],
+        "pixels_alpha_1_to_10": 7773
+      },
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_pear.png",
+      "visually_inspected": true,
+      "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+    },
+    {
+      "key": "oats",
+      "generator": "built-in image_gen",
+      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-661bfbd1-e6e5-4b2b-b72d-58a41a0a9bc7.png",
+      "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_oats.png",
+      "intended_resource_name": "food_sticker_oats.png",
+      "prompt_file": "broad-library-prompts.json",
+      "saved_at_utc": "2026-10-12T05:06:12.074986+00:00",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "7bd19cb901fa80c7f06c9d8e51e9a8d8039bd3271e8fb6274596bc5a05ba67b9",
+      "bytes": 1530367,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 900501,
+        "opaque_pixels": 1184,
+        "partial_pixels": 670831,
+        "nontransparent_bounds": [
+          0,
+          17,
+          1240,
+          1254
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          47,
+          219,
+          1209,
+          1037
+        ],
+        "pixels_alpha_1_to_10": 15086
+      },
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_oats.png",
+      "visually_inspected": true,
+      "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+    },
+    {
+      "key": "pasta",
+      "generator": "built-in image_gen",
+      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-d96c76ee-01bc-4ba0-933d-7cb70214d959.png",
+      "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_pasta.png",
+      "intended_resource_name": "food_sticker_pasta.png",
+      "prompt_file": "broad-library-prompts.json",
+      "saved_at_utc": "2026-10-12T05:06:12.075405+00:00",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "b53f57ad7492e5cac35a9d10e58bedfe9e77757b7b4d12606f7809e88edc0a31",
+      "bytes": 1176984,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 899319,
+        "opaque_pixels": 1820,
+        "partial_pixels": 671377,
+        "nontransparent_bounds": [
+          0,
+          38,
+          1230,
+          1254
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          66,
+          172,
+          1190,
+          1081
+        ],
+        "pixels_alpha_1_to_10": 15374
+      },
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_pasta.png",
+      "visually_inspected": true,
+      "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+    },
+    {
+      "key": "milk",
+      "generator": "built-in image_gen",
+      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-ee1e22cb-964b-4dba-aa56-894300f44f50.png",
+      "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_milk.png",
+      "intended_resource_name": "food_sticker_milk.png",
+      "prompt_file": "broad-library-prompts.json",
+      "saved_at_utc": "2026-10-12T05:02:31.796488+00:00",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "96b65e73bca1962e31aeb4b5faa7bf45456c34753bfbd3da38a06cea3fdad846",
+      "bytes": 993418,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 866274,
+        "opaque_pixels": 2165,
+        "partial_pixels": 704077,
+        "nontransparent_bounds": [
+          0,
+          91,
+          1242,
+          1162
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          236,
+          97,
+          1018,
+          1158
+        ],
+        "pixels_alpha_1_to_10": 8428
+      },
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_milk.png",
+      "visually_inspected": true,
+      "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+    },
+    {
+      "key": "watermelon",
+      "generator": "built-in image_gen",
+      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-160f3eea-4b04-4ab7-92a6-6ea1c86051df.png",
+      "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_watermelon.png",
+      "intended_resource_name": "food_sticker_watermelon.png",
+      "prompt_file": "broad-library-prompts.json",
+      "saved_at_utc": "2026-10-12T05:06:12.067282+00:00",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "c8c741922e0c96e9b65057164f79e3ebba3a027966edf9352a0a18795a6a906a",
+      "bytes": 2023536,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 795638,
+        "opaque_pixels": 369,
+        "partial_pixels": 776509,
+        "nontransparent_bounds": [
+          31,
+          22,
+          1250,
+          1254
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          38,
+          85,
+          1212,
+          1169
+        ],
+        "pixels_alpha_1_to_10": 18015
+      },
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_watermelon.png",
+      "visually_inspected": true,
+      "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+    },
+    {
+      "key": "lemon",
+      "generator": "built-in image_gen",
+      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-b382575a-ea47-43ed-9e6b-e66e278d83fd.png",
+      "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_lemon.png",
+      "intended_resource_name": "food_sticker_lemon.png",
+      "prompt_file": "broad-library-prompts.json",
+      "saved_at_utc": "2026-10-12T05:06:12.072959+00:00",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "d41bfb4257ff7b40af30028fa7f395d17a46e056d95d7ec18095c2f7431434a0",
+      "bytes": 1431462,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 836235,
+        "opaque_pixels": 769,
+        "partial_pixels": 735512,
+        "nontransparent_bounds": [
+          0,
+          33,
+          1209,
+          1232
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          52,
+          181,
+          1203,
+          1069
+        ],
+        "pixels_alpha_1_to_10": 10318
+      },
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_lemon.png",
+      "visually_inspected": true,
+      "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+    },
+    {
+      "key": "nuts",
+      "generator": "built-in image_gen",
+      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-89f8c8e7-27f6-4c68-8c0f-930ab498b37e.png",
+      "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_nuts.png",
+      "intended_resource_name": "food_sticker_nuts.png",
+      "prompt_file": "broad-library-prompts.json",
+      "saved_at_utc": "2026-10-12T05:06:12.073269+00:00",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "7d0a16ae5355d163a619f31a57d14aecce71059c833dd9f0b5b6a02d4520725a",
+      "bytes": 1972930,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 767221,
+        "opaque_pixels": 1057,
+        "partial_pixels": 804238,
+        "nontransparent_bounds": [
+          0,
+          65,
+          1224,
+          1254
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          34,
+          170,
+          1220,
+          1090
+        ],
+        "pixels_alpha_1_to_10": 11345
+      },
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_nuts.png",
+      "visually_inspected": true,
+      "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+    },
+    {
+      "key": "fish",
+      "generator": "built-in image_gen",
+      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-a4d942ba-2806-4845-8e13-3f08ab99d84c.png",
+      "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_fish.png",
+      "intended_resource_name": "food_sticker_fish.png",
+      "prompt_file": "broad-library-prompts.json",
+      "saved_at_utc": "2026-10-12T05:02:47.804499+00:00",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "a0d6664ff700607a6451934f23669082548aab3109eb37e78fd16b3d49698990",
+      "bytes": 1053633,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 1219562,
+        "opaque_pixels": 763,
+        "partial_pixels": 352191,
+        "nontransparent_bounds": [
+          0,
+          37,
+          1234,
+          1228
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          49,
+          317,
+          1221,
+          944
+        ],
+        "pixels_alpha_1_to_10": 11965
+      },
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_fish.png",
+      "visually_inspected": true,
+      "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+    },
+    {
+      "key": "onion",
+      "generator": "built-in image_gen",
+      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-66c1e245-ea0c-4bfa-8c58-df5143c29770.png",
+      "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_onion.png",
+      "intended_resource_name": "food_sticker_onion.png",
+      "prompt_file": "broad-library-prompts.json",
+      "saved_at_utc": "2026-10-12T05:03:31.325786+00:00",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "f94a34b598383b7ec26ed2fd7aef54ced428a0f95d11761a66ce1c2b242070be",
+      "bytes": 1511429,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 797090,
+        "opaque_pixels": 1011,
+        "partial_pixels": 774415,
+        "nontransparent_bounds": [
+          0,
+          83,
+          1240,
+          1254
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          68,
+          104,
+          1198,
+          1129
+        ],
+        "pixels_alpha_1_to_10": 14653
+      },
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_onion.png",
+      "visually_inspected": true,
+      "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+    },
+    {
+      "key": "peach",
+      "generator": "built-in image_gen",
+      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-1b0e840a-f5ab-4b15-a986-0bf2040a9616.png",
+      "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_peach.png",
+      "intended_resource_name": "food_sticker_peach.png",
+      "prompt_file": "broad-library-prompts.json",
+      "saved_at_utc": "2026-10-12T05:04:15.988648+00:00",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "19a76e9a0bf1ab8f9ca061ec7bc670cee191643f0dd8540cd5b92733600f5628",
+      "bytes": 1598448,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 883317,
+        "opaque_pixels": 942,
+        "partial_pixels": 688257,
+        "nontransparent_bounds": [
+          0,
+          25,
+          1240,
+          1254
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          64,
+          206,
+          1190,
+          1065
+        ],
+        "pixels_alpha_1_to_10": 10814
+      },
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_peach.png",
+      "visually_inspected": true,
+      "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+    },
+    {
+      "key": "mango",
+      "generator": "built-in image_gen",
+      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-9ca420c1-ab8d-44c8-b26f-f66ee60fe4d4.png",
+      "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_mango.png",
+      "intended_resource_name": "food_sticker_mango.png",
+      "prompt_file": "broad-library-prompts.json",
+      "saved_at_utc": "2026-10-12T05:04:47.768793+00:00",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "a24e4f8f607f92efa0f3804c00ca4c01e9c46b471de8991e53c2bd659b2892d0",
+      "bytes": 1698961,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 729675,
+        "opaque_pixels": 1453,
+        "partial_pixels": 841388,
+        "nontransparent_bounds": [
+          73,
+          51,
+          1234,
+          1215
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          86,
+          118,
+          1182,
+          1124
+        ],
+        "pixels_alpha_1_to_10": 9634
+      },
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_mango.png",
+      "visually_inspected": true,
+      "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+    },
+    {
+      "key": "pineapple",
+      "generator": "built-in image_gen",
+      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-8f3229fa-09c0-48e7-b431-d686ac92af1b.png",
+      "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_pineapple.png",
+      "intended_resource_name": "food_sticker_pineapple.png",
+      "prompt_file": "broad-library-prompts.json",
+      "saved_at_utc": "2026-10-12T05:05:27.912872+00:00",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "227894d36b39f00486e199abc4db62de4a55f9303fd62fae0e3d3bee616e8c72",
+      "bytes": 1464232,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 1006227,
+        "opaque_pixels": 1355,
+        "partial_pixels": 564934,
+        "nontransparent_bounds": [
+          68,
+          62,
+          1218,
+          1203
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          302,
+          66,
+          978,
+          1196
+        ],
+        "pixels_alpha_1_to_10": 19881
+      },
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_pineapple.png",
+      "visually_inspected": true,
+      "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+    },
+    {
+      "key": "kiwi",
+      "generator": "built-in image_gen",
+      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-9c769299-e9d1-4085-8b2b-5f29479244ab.png",
+      "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_kiwi.png",
+      "intended_resource_name": "food_sticker_kiwi.png",
+      "prompt_file": "broad-library-prompts.json",
+      "saved_at_utc": "2026-10-12T05:06:12.077983+00:00",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "sha256": "467735bfc983234af4bcad612cf35e69cfc0e5fe7b2d9fff7f37fe7cdbaadec3",
+      "bytes": 2045610,
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "transparent_pixels": 852089,
+        "opaque_pixels": 416,
+        "partial_pixels": 720011,
+        "nontransparent_bounds": [
+          0,
+          18,
+          1230,
+          1223
+        ],
+        "corner_alpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "visible_bounds_alpha_128": [
+          71,
+          186,
+          1191,
+          1074
+        ],
+        "pixels_alpha_1_to_10": 13368
+      },
+      "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_kiwi.png",
+      "visually_inspected": true,
+      "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+    }
+  ]
+}

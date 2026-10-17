@@ -1,0 +1,43 @@
+{
+  "key": "cod",
+  "generator": "built-in image_gen",
+  "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: COD fish only: one small whole fresh Atlantic cod, olive-brown speckled back, pale belly, characteristic three dorsal fins and tiny chin barbel. Whole head and tail visible in a compact diagonal silhouette.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-98da79ea-ea26-4a7d-83b1-c9608248c79f.png",
+  "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_cod.png",
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_cod.png",
+  "saved_at_utc": "2026-10-12T07:09:28.153336+00:00",
+  "transparent_background": true,
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "327f60ae453e1b24b0f6775b83e33c46a710edc88ecdbd87a81467af03242233",
+  "bytes": 1012565,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 1205006,
+    "opaque_pixels": 406,
+    "partial_pixels": 367104,
+    "nontransparent_bounds": [
+      0,
+      20,
+      1254,
+      1231
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      47,
+      278,
+      1241,
+      982
+    ],
+    "pixels_alpha_1_to_10": 18052
+  },
+  "visually_inspected": true,
+  "visual_result": "Visually inspected: whole mottled olive-brown cod with three dorsal fins, chin barbel and pale belly, thin white outline. Tail outline is close to the right canvas edge; fish silhouette remains visible."
+}

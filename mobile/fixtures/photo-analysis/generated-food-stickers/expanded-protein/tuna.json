@@ -1,0 +1,43 @@
+{
+  "key": "tuna",
+  "generator": "built-in image_gen",
+  "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app, matching a collection of photorealistic food cutouts with a clean thin white die-cut outline.\nPrimary request: TUNA only: one compact ruby-red fresh tuna steak with two thick slices in front, recognizable dense red fish flesh with fine pale muscle lines. No plate, no garnish.\nStyle/medium: crisp realistic product photograph, natural food texture, subtle soft studio lighting, simple appetizing presentation. Match the established salmon, cucumber and peeled banana cutout sticker visual direction.\nComposition/framing: centered three-quarter view on a square transparent canvas. Complete subject visible inside the central 78 percent of the square canvas. Keep at least 10 percent clear transparent padding on all four edges, absolutely no cropped food or outline. A single coherent food silhouette, not a sheet or collage.\nConstraints: genuinely transparent alpha background, thin white die-cut outline following the complete subject silhouette. No cast shadow or background slab, table, board, cutlery, packaging, unrelated ingredients, green backing, text, letters, faces, checkmarks, labels, badges, watermark or UI.",
+  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12ec1-e4b6-7bc3-832c-9850cbe19fcf/exec-9d2a78fa-8e99-4898-9807-4edf558e9e08.png",
+  "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-protein/food_sticker_tuna.png",
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_tuna.png",
+  "saved_at_utc": "2026-10-12T06:51:28.803906+00:00",
+  "transparent_background": true,
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "c9838c38839d332943d4f8c70fc85e82149f035cbe2a8f148fa7776c7d8e5319",
+  "bytes": 1760890,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 856291,
+    "opaque_pixels": 417,
+    "partial_pixels": 715808,
+    "nontransparent_bounds": [
+      0,
+      57,
+      1224,
+      1254
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      66,
+      178,
+      1203,
+      1077
+    ],
+    "pixels_alpha_1_to_10": 9960
+  },
+  "visually_inspected": true,
+  "visual_result": "Visually inspected: dense ruby-red tuna portion with two thick slices and fine pale muscle lines, realistic fish texture, full food silhouette and thin white cutout border."
+}

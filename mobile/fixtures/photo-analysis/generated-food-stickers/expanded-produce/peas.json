@@ -1,0 +1,33 @@
+{
+  "key": "peas",
+  "generator": "builtin image_gen.imagegen",
+  "transparent_background": true,
+  "prompt": "Use case: product-mockup\nAsset type: one transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: one opened small green pea pod containing round green peas, with three loose peas in front.\nStyle/medium: crisp photorealistic food product photograph with realistic texture and gentle white studio light. Match the existing app food stickers: natural colors, clean thin white die-cut outline tracing the complete food silhouette. Individual asset only, not a sheet.\nComposition/framing: one compact recognizable food group centered on a square transparent canvas. Entire subject visible with around 10% clear padding on every side; fills about 75-80% of the canvas. It must read clearly at a small mobile icon size. For elongated vegetables use a diagonal arrangement.\nConstraints: actual transparent alpha background, not checkerboard or solid background. Only the named food and its own natural stems/peel/leaves; no decorative herbs, other foods, table, plate, bowl, packaging, shadows beyond the silhouette, text, labels, logo, watermark, face, anthropomorphic features, checkmark, badge or UI. White outline follows only the silhouette; no colored backing. Preserve truthful characteristic shapes and colors.",
+  "generator_output_path": "/Users/REDACTED/.codex/generated_images/01a12f29-e518-7d93-b918-a24d32930940/exec-0774f8a6-3622-4f02-aec9-40f9ac0ad61b.png",
+  "workspace_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-produce/food_sticker_peas.png",
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_peas.png",
+  "sha256": "5ec42f6c5a77eec1fb031f0569080c31afe59cab596bead116d80b2709b50d81",
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "alpha_min": 0,
+  "alpha_max": 255,
+  "corner_alpha": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "alpha_bbox": [
+    37,
+    36,
+    1240,
+    1254
+  ],
+  "bytes": 1143119,
+  "saved_at_utc": "2026-10-13T06:00:48.543777+00:00",
+  "visual_inspection": {
+    "status": "passed",
+    "notes": "Recognizable opened green pea pod holding round peas and three loose peas in front; complete compact food silhouette, realistic natural textures and thin white outline, no other foods or labels."
+  }
+}

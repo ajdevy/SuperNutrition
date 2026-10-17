@@ -1,0 +1,43 @@
+{
+  "key": "watermelon",
+  "generator": "built-in image_gen",
+  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-160f3eea-4b04-4ab7-92a6-6ea1c86051df.png",
+  "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_watermelon.png",
+  "intended_resource_name": "food_sticker_watermelon.png",
+  "prompt_file": "broad-library-prompts.json",
+  "saved_at_utc": "2026-10-12T05:06:12.067282+00:00",
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "sha256": "c8c741922e0c96e9b65057164f79e3ebba3a027966edf9352a0a18795a6a906a",
+  "bytes": 2023536,
+  "alpha": {
+    "min": 0,
+    "max": 255,
+    "transparent_pixels": 795638,
+    "opaque_pixels": 369,
+    "partial_pixels": 776509,
+    "nontransparent_bounds": [
+      31,
+      22,
+      1250,
+      1254
+    ],
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bounds_alpha_128": [
+      38,
+      85,
+      1212,
+      1169
+    ],
+    "pixels_alpha_1_to_10": 18015
+  },
+  "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_watermelon.png",
+  "visually_inspected": true,
+  "visual_result": "Recognizable intended food, photorealistic texture, thin white cutout border, transparent background, no UI or text."
+}
