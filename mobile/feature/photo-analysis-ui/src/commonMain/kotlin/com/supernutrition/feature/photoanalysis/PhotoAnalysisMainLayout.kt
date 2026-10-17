@@ -19,6 +19,9 @@ import androidx.compose.ui.unit.dp
 internal val LocalMainBackdropProvided = staticCompositionLocalOf { false }
 internal val LocalMainNavigationOverlap = staticCompositionLocalOf { 0.dp }
 
+// Existing inset consumers use the same composition local.
+internal val LocalMainBottomBarInset = LocalMainNavigationOverlap
+
 /** Applies host insets once and overlays floating navigation on Home and Rewards. */
 @Composable
 fun PhotoAnalysisMainLayout(

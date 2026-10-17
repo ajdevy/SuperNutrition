@@ -1,0 +1,19 @@
+<journey name="Brand and floating navigation on physical Android">
+    <description>Verify the isolated correction on the installed production debug build without changing permission or reward data.</description>
+    <actions>
+        <action>Launch Super Nutrition from the newly built production debug APK.</action>
+        <action>Verify that Home and its selected Home tab are visible.</action>
+        <action>Verify that the green sprout replaces the first i dot in Super Nutrition.</action>
+        <action>Tap the Rewards tab.</action>
+        <action>Verify that Rewards is selected and Home is not selected.</action>
+        <action>Verify that tab label pixels retain their color while both icon tints change.</action>
+        <action>Verify that Rewards paper fills both sides of the floating navigation pill without an opaque full-width footer.</action>
+        <action>Hold the selected Rewards tab.</action>
+        <action>Verify that the held tab does not paint a rectangular background.</action>
+        <action>Release the held Rewards tab.</action>
+        <action>Scroll the Rewards list to its final card.</action>
+        <action>Verify that the complete final reward clears the camera action and navigation pill.</action>
+        <action>Tap the Home tab.</action>
+        <action>Verify that Home is selected and Rewards is not selected.</action>
+    </actions>
+</journey>

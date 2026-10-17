@@ -40,12 +40,14 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
 private val ActiveIcon = Color(0xFF8EA336)
-private val ActiveLabel = Color(0xFF3A6A05)
 private val InactiveIcon = Color(0xFF767B7D)
-private val InactiveLabel = Color(0xFF243740)
+private val TabLabel = Color(0xFF243740)
 private const val BAR_DESIGN_WIDTH = 375f
 private const val TAB_CENTER_DISTANCE = 95f
 internal val MainBottomBarCanvasHeight = 83.dp
+
+// Existing consumers share the same navigation height.
+internal val MainBottomBarHeight = MainBottomBarCanvasHeight
 
 /** A bounded, centered navigation shell with mirrored tab slots and a camera action. */
 @Composable
@@ -134,7 +136,8 @@ private fun PhotoAnalysisCameraButton(cameraLabel: String, onClick: () -> Unit, 
 @Composable
 private fun PhotoAnalysisBottomBarItem(item: BottomBarItem, onClick: () -> Unit, modifier: Modifier) {
     Column(
-        modifier = modifier.size(72.dp, 58.dp).clickable(onClick = onClick)
+        modifier = modifier.size(72.dp, 58.dp)
+            .clickable(interactionSource = null, indication = null, onClick = onClick)
             .semantics {
                 contentDescription = item.label
                 role = Role.Tab
@@ -153,7 +156,7 @@ private fun PhotoAnalysisBottomBarItem(item: BottomBarItem, onClick: () -> Unit,
         )
         Text(
             text = item.label,
-            color = if (item.selected) ActiveLabel else InactiveLabel,
+            color = TabLabel,
             fontFamily = nunitoFont(),
             fontSize = 9.sp,
             lineHeight = 12.sp,

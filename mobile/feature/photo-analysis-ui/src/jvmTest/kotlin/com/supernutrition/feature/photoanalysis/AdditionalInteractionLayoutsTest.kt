@@ -53,7 +53,8 @@ class AdditionalInteractionLayoutsTest {
         val layout = layouts.single()
         val lines = (0 until layout.lineCount).map {
             layout.layoutInput.text.text
-                .substring(layout.getLineStart(it), layout.getLineEnd(it, visibleEnd = true)).trim()
+                .substring(layout.getLineStart(it), layout.getLineEnd(it, visibleEnd = true))
+                .replace('\u0131', 'i').trim()
         }
         assertTrue(lines.all { it in listOf("Super", "Nutrition", "Super Nutrition") }, "Brand words split: $lines")
         onNodeWithTag(UiAutomationIds.HOME_PROFILE.value).assertIsDisplayed()
