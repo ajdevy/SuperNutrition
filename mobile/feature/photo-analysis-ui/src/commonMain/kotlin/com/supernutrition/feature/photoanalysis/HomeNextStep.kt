@@ -5,7 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,12 +20,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.supernutrition.core.ui.UiAutomationIds
@@ -37,32 +38,51 @@ import org.jetbrains.compose.resources.painterResource
 
 @Composable
 internal fun HomeNextStep(model: HomeScreenModel, onDoIt: () -> Unit) {
-    BoxWithConstraints(
+    Box(
         modifier = Modifier.fillMaxWidth().automationId(UiAutomationIds.HOME_NEXT_STEP)
             .clip(RoundedCornerShape(20.dp)).background(Color(0xFFFDF3DF))
             .border(1.5.dp, Color(0xFFF0DCA8), RoundedCornerShape(20.dp))
             .padding(12.dp),
     ) {
-        if (maxWidth < 270.dp || LocalDensity.current.fontScale > 1.2f) {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    HomeNextStepIllustration(model.saladDescription)
-                    HomeNextStepCopy(model, Modifier.weight(1f))
-                }
-                HomeNextStepAction(model.nextStepAction, onDoIt, Modifier.align(Alignment.End))
-            }
+        HomeNextStepLayout(model, onDoIt)
+    }
+}
+
+@Composable
+private fun HomeNextStepLayout(model: HomeScreenModel, onDoIt: () -> Unit) {
+    Layout(
+        modifier = Modifier.fillMaxWidth(),
+        content = {
+            HomeNextStepIllustration(model.saladDescription)
+            HomeNextStepCopy(model, Modifier)
+            HomeNextStepAction(model.nextStepAction, onDoIt)
+        },
+    ) { measurables, constraints ->
+        val naturalConstraints = constraints.copy(minWidth = 0, minHeight = 0, maxHeight = Constraints.Infinity)
+        val illustration = measurables[0].measure(naturalConstraints)
+        val action = measurables[2].measure(naturalConstraints)
+        val gap = 8.dp.roundToPx()
+        val rowCopyWidth = (constraints.maxWidth - illustration.width - action.width - gap * 2).coerceAtLeast(0)
+        val stackCopyWidth = (constraints.maxWidth - illustration.width - gap).coerceAtLeast(0)
+        val rowFitsWords = rowCopyWidth >= measurables[1].minIntrinsicWidth(Constraints.Infinity)
+        val rowHeight = if (rowFitsWords) {
+            maxOf(illustration.height, action.height, measurables[1].maxIntrinsicHeight(rowCopyWidth))
         } else {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                HomeNextStepIllustration(model.saladDescription)
-                HomeNextStepCopy(model, Modifier.weight(1f))
-                HomeNextStepAction(model.nextStepAction, onDoIt)
-            }
+            Constraints.Infinity
+        }
+        val stackHeight = maxOf(illustration.height, measurables[1].maxIntrinsicHeight(stackCopyWidth)) +
+            gap + action.height
+        val useRow = rowFitsWords && rowHeight <= stackHeight
+        val copyWidth = if (useRow) rowCopyWidth else stackCopyWidth
+        val copy = measurables[1].measure(naturalConstraints.copy(minWidth = copyWidth, maxWidth = copyWidth))
+        val copyRowHeight = maxOf(illustration.height, copy.height)
+        val height = if (useRow) maxOf(copyRowHeight, action.height) else copyRowHeight + gap + action.height
+        layout(constraints.maxWidth, height) {
+            val topRowHeight = if (useRow) height else copyRowHeight
+            illustration.placeRelative(0, (topRowHeight - illustration.height) / 2)
+            copy.placeRelative(illustration.width + gap, (topRowHeight - copy.height) / 2)
+            val actionY = if (useRow) (height - action.height) / 2 else copyRowHeight + gap
+            action.placeRelative(constraints.maxWidth - action.width, actionY)
         }
     }
 }

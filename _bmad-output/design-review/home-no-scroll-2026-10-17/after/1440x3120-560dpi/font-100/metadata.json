@@ -1,0 +1,292 @@
+{
+  "captured_at": "2026-10-18T02:14:18.113132+00:00",
+  "avd": "SuperNutrition_API_35_x86_64",
+  "serial": "emulator-5554",
+  "api": 35,
+  "abi": "x86_64",
+  "evidence_kind": "native emulator viewport override",
+  "device_equivalences": [
+    "Pixel 6 Pro",
+    "Pixel 7 Pro"
+  ],
+  "requested_geometry": {
+    "width_px": 1440,
+    "height_px": 3120,
+    "density_dpi": 560,
+    "width_dp": 411.43,
+    "height_dp": 891.43,
+    "devices": [
+      "Pixel 6 Pro",
+      "Pixel 7 Pro"
+    ]
+  },
+  "wm_size": "Physical size: 720x1560\nOverride size: 1440x3120",
+  "wm_density": "Physical density: 320\nOverride density: 560",
+  "font_scale": 1.0,
+  "apk_sha256": "7f7296bd7282a86dc63fe4feaad0d4a19706c8b4ca231c39607ff0e3abc1f26c",
+  "portrait_locked_app": true,
+  "foreground": [
+    "mCurrentFocus=Window{f04440e u0 app.supernutrition/com.supernutrition.feature.photoanalysis.PhotoAnalysisComposeActivity}"
+  ],
+  "controls_top_px": 2672,
+  "helpful_action_bounds": [
+    1093,
+    2304,
+    1314,
+    2472
+  ],
+  "helpful_card_bounds": [
+    84,
+    2262,
+    1356,
+    2514
+  ],
+  "missing_initial_text": [],
+  "native_scrollable": false,
+  "native_initial_fit": true,
+  "outcome": "initial-frame fit",
+  "note": "No text-size override or forced screenshot scaling. Native XML fit is combined with focused Compose complete-frame/readability evidence; it is not a physical-device test.",
+  "required_tag_bounds": {
+    "home_date": [
+      [
+        569,
+        482,
+        871,
+        535
+      ]
+    ],
+    "home_profile": [
+      [
+        1188,
+        300,
+        1356,
+        468
+      ]
+    ],
+    "home_add_food": [
+      [
+        300,
+        813,
+        706,
+        981
+      ]
+    ],
+    "home_view_goals": [
+      [
+        734,
+        813,
+        1140,
+        981
+      ]
+    ],
+    "home_summary": [
+      [
+        84,
+        1667,
+        1356,
+        2234
+      ]
+    ],
+    "home_metric_fiber": [
+      [
+        119,
+        1798,
+        706,
+        1988
+      ]
+    ],
+    "home_metric_water": [
+      [
+        734,
+        1798,
+        1321,
+        1988
+      ]
+    ],
+    "home_metric_protein": [
+      [
+        119,
+        2009,
+        706,
+        2199
+      ]
+    ],
+    "home_metric_movement": [
+      [
+        734,
+        2009,
+        1321,
+        2199
+      ]
+    ],
+    "home_next_step": [
+      [
+        84,
+        2262,
+        1356,
+        2514
+      ]
+    ]
+  },
+  "missing_initial_tags": [],
+  "unsafe_initial_frames": [],
+  "undersized_initial_actions": [],
+  "home_content_bounds": [
+    0,
+    272,
+    1440,
+    2952
+  ],
+  "mascot_bounds": [
+    84,
+    1030,
+    1356,
+    1667
+  ],
+  "capture_command_timings": [
+    {
+      "command": [
+        "/Users/REDACTED/Library/Android/sdk/platform-tools/adb",
+        "-P",
+        "5041",
+        "devices",
+        "-l"
+      ],
+      "seconds": 0.066
+    },
+    {
+      "command": [
+        "/Users/REDACTED/Library/Android/sdk/platform-tools/adb",
+        "-P",
+        "5041",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "sh -c 'set -e\ngetprop ro.kernel.qemu\ngetprop ro.build.version.sdk\ngetprop ro.product.cpu.abi'"
+      ],
+      "seconds": 0.465
+    },
+    {
+      "command": [
+        "/Users/REDACTED/Library/Android/sdk/platform-tools/adb",
+        "-P",
+        "5041",
+        "-s",
+        "emulator-5554",
+        "emu",
+        "avd",
+        "name"
+      ],
+      "seconds": 0.06
+    },
+    {
+      "command": [
+        "/Users/REDACTED/Library/Android/sdk/platform-tools/adb",
+        "-P",
+        "5041",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "sh -c 'set -e\nsettings put system screen_off_timeout 1800000\nsettings put system accelerometer_rotation 0\nsettings put system user_rotation 0\nwm size 1440x3120\nwm density 560\nsettings put system font_scale 1.0\ninput keyevent WAKEUP'"
+      ],
+      "seconds": 2.289
+    },
+    {
+      "command": [
+        "/Users/REDACTED/Library/Android/sdk/platform-tools/adb",
+        "-P",
+        "5041",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "am",
+        "start",
+        "-W",
+        "-f",
+        "0x10008000",
+        "-n",
+        "app.supernutrition/com.supernutrition.feature.photoanalysis.PhotoAnalysisComposeActivity"
+      ],
+      "seconds": 3.101
+    },
+    {
+      "command": [
+        "/Users/REDACTED/Library/Android/sdk/platform-tools/adb",
+        "-P",
+        "5041",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "dumpsys",
+        "window"
+      ],
+      "seconds": 0.75
+    },
+    {
+      "command": [
+        "/Users/REDACTED/Library/Android/sdk/platform-tools/adb",
+        "-P",
+        "5041",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "sh -c 'set -e\nuiautomator dump /sdcard/supernutrition-home-review.xml >/dev/null\ncat /sdcard/supernutrition-home-review.xml'"
+      ],
+      "seconds": 4.663
+    },
+    {
+      "command": [
+        "/Users/REDACTED/Library/Android/sdk/platform-tools/adb",
+        "-P",
+        "5041",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "dumpsys",
+        "window"
+      ],
+      "seconds": 0.268
+    },
+    {
+      "command": [
+        "/Users/REDACTED/Library/Android/sdk/platform-tools/adb",
+        "-P",
+        "5041",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "pm",
+        "path",
+        "app.supernutrition"
+      ],
+      "seconds": 0.248
+    },
+    {
+      "command": [
+        "/Users/REDACTED/Library/Android/sdk/platform-tools/adb",
+        "-P",
+        "5041",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "stat",
+        "-c",
+        "%s:%Y:%i",
+        "/data/app/~~URHSK4iI-xWjng4FIJtURA==/app.supernutrition-VOhtkmRj084sWV8R9TRi7Q==/base.apk"
+      ],
+      "seconds": 0.197
+    },
+    {
+      "command": [
+        "/Users/REDACTED/Library/Android/sdk/platform-tools/adb",
+        "-P",
+        "5041",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "sh -c 'set -e\nwm size\nwm density\nsettings get system font_scale'"
+      ],
+      "seconds": 0.592
+    }
+  ]
+}

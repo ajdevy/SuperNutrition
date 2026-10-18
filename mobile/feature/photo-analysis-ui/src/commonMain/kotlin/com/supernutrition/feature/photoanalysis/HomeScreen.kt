@@ -2,14 +2,11 @@ package com.supernutrition.feature.photoanalysis
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
@@ -28,7 +25,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.supernutrition.core.ui.UiAutomationIds
@@ -38,8 +34,6 @@ import com.supernutrition.feature.photoanalysis.resources.home_background
 import com.supernutrition.feature.photoanalysis.resources.home_bg_arch
 import org.jetbrains.compose.resources.painterResource
 
-// The original 182.8pt mascot overlaps the rhythm panel by 16.2pt.
-private const val MASCOT_PANEL_OVERLAP_FRACTION = 16.2f / 182.8f
 private const val MASCOT_WIDTH_FRACTION = 0.56f
 
 /** The Home design with naturally measured foreground content and a decorative backdrop. */
@@ -57,14 +51,22 @@ fun HomeScreen(
             .semantics { contentDescription = model.title },
     ) {
         if (!LocalMainBackdropProvided.current) HomeScreenBackground()
-        val compact = maxHeight - LocalMainNavigationOverlap.current < 700.dp && LocalDensity.current.fontScale <= 1.2f
+        val fontScale = LocalDensity.current.fontScale
+        val navigationOverlap = LocalMainNavigationOverlap.current
+        val compact = maxHeight - navigationOverlap < 700.dp && fontScale <= 1.2f
+        val contentMaxWidth = (MainContentMaxWidth - MainScreenGutter * 2) * maxOf(1f, fontScale) + MainScreenGutter * 2
         val mascotWidthFraction = if (compact) 0.53f else MASCOT_WIDTH_FRACTION
-        val mascotHeight = ((minOf(maxWidth, MainContentMaxWidth) - MainScreenGutter * 2) * mascotWidthFraction)
+        val mascotHeight = ((minOf(maxWidth, contentMaxWidth) - MainScreenGutter * 2) * mascotWidthFraction)
             .coerceIn(160.dp, 182.dp)
         HomeContent(
             model = model,
-            mascotHeight = mascotHeight,
-            compact = compact,
+            layout = HomeLayoutSettings(
+                viewportHeight = maxHeight,
+                navigationOverlap = navigationOverlap,
+                preferredMascotHeight = mascotHeight,
+                compact = compact,
+                contentMaxWidth = contentMaxWidth,
+            ),
             actions = HomeActions(
                 onAddFoodRequested = onAddFoodRequested,
                 onViewGoalsRequested = {
@@ -97,44 +99,25 @@ fun HomeScreenBackground(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun HomeContent(model: HomeScreenModel, mascotHeight: Dp, compact: Boolean, actions: HomeActions) {
-    val verticalPadding = if (compact) 8.dp else 16.dp
+private fun HomeContent(model: HomeScreenModel, layout: HomeLayoutSettings, actions: HomeActions) {
     Box(Modifier.fillMaxSize().automationId(UiAutomationIds.HOME_SCREEN)) {
-        Column(
-            modifier = Modifier.align(Alignment.TopCenter).widthIn(max = MainContentMaxWidth)
+        HomeMeasuredLayout(
+            modifier = Modifier.align(Alignment.TopCenter).widthIn(max = layout.contentMaxWidth)
                 .fillMaxWidth().fillMaxHeight().verticalScroll(rememberScrollState())
-                .padding(
-                    start = MainScreenGutter,
-                    top = verticalPadding,
-                    end = MainScreenGutter,
-                    bottom = verticalPadding + LocalMainNavigationOverlap.current,
-                ),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(if (compact) 8.dp else 12.dp),
+                .padding(horizontal = MainScreenGutter),
+            settings = layout,
         ) {
             HomeHeader(model, actions.onProfileRequested)
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                HomeCarePrompt(model, actions.onAddFoodRequested, actions.onViewGoalsRequested, compact)
-                HomeMascotAndRhythm(model, mascotHeight, compact)
-            }
+            HomeCarePrompt(model, actions.onAddFoodRequested, actions.onViewGoalsRequested, layout.compact)
+            Image(
+                painter = painterResource(Res.drawable.capybara),
+                contentDescription = model.mascotDescription,
+                contentScale = ContentScale.Fit,
+                modifier = Modifier.fillMaxWidth().zIndex(1f),
+            )
+            HomeRhythmCard(model, layout.compact)
             HomeNextStep(model, actions.onAddFoodRequested)
         }
-    }
-}
-
-@Composable
-private fun HomeMascotAndRhythm(model: HomeScreenModel, mascotHeight: Dp, compact: Boolean) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(-mascotHeight * MASCOT_PANEL_OVERLAP_FRACTION),
-    ) {
-        Image(
-            painter = painterResource(Res.drawable.capybara),
-            contentDescription = model.mascotDescription,
-            contentScale = ContentScale.Fit,
-            modifier = Modifier.fillMaxWidth().height(mascotHeight).zIndex(1f),
-        )
-        HomeRhythmCard(model, compact)
     }
 }
 

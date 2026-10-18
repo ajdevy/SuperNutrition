@@ -1,0 +1,130 @@
+{
+  "captured_at": "2026-10-18T00:07:01.208498+00:00",
+  "avd": "SuperNutrition_API_35_x86_64",
+  "serial": "emulator-5554",
+  "api": 35,
+  "abi": "x86_64",
+  "evidence_kind": "native emulator viewport override",
+  "device_equivalences": [
+    "Previous app check 320.0x568.0 dp"
+  ],
+  "requested_geometry": {
+    "width_px": 640,
+    "height_px": 1136,
+    "density_dpi": 320,
+    "width_dp": 320.0,
+    "height_dp": 568.0,
+    "devices": [
+      "Previous app check 320.0x568.0 dp"
+    ]
+  },
+  "wm_size": "Physical size: 720x1560\nOverride size: 640x1136",
+  "wm_density": "Physical density: 320",
+  "font_scale": 1.0,
+  "apk_sha256": "7f7296bd7282a86dc63fe4feaad0d4a19706c8b4ca231c39607ff0e3abc1f26c",
+  "portrait_locked_app": true,
+  "foreground": [
+    "mCurrentFocus=Window{2a36b2 u0 app.supernutrition/com.supernutrition.feature.photoanalysis.PhotoAnalysisComposeActivity}"
+  ],
+  "controls_top_px": 880,
+  "helpful_action_bounds": null,
+  "helpful_card_bounds": null,
+  "missing_initial_text": [
+    "1.2 / 2 L",
+    "Protein",
+    "72 / 90 g",
+    "Movement",
+    "32 / 45 min",
+    "Your next helpful step",
+    "Add one leafy green to dinner",
+    "Do it"
+  ],
+  "native_scrollable": true,
+  "native_initial_fit": false,
+  "outcome": "designer-required: readable content exceeds initial frame",
+  "note": "No text-size override or forced screenshot scaling. Native XML fit is combined with focused Compose complete-frame/readability evidence; it is not a physical-device test.",
+  "required_tag_bounds": {
+    "home_date": [
+      [
+        233,
+        219,
+        408,
+        249
+      ]
+    ],
+    "home_profile": [
+      [
+        496,
+        115,
+        592,
+        211
+      ]
+    ],
+    "home_add_food": [
+      [
+        80,
+        408,
+        312,
+        504
+      ]
+    ],
+    "home_view_goals": [
+      [
+        328,
+        408,
+        560,
+        504
+      ]
+    ],
+    "home_summary": [
+      [
+        48,
+        852,
+        592,
+        1040
+      ]
+    ],
+    "home_metric_fiber": [
+      [
+        68,
+        930,
+        312,
+        1038
+      ]
+    ],
+    "home_metric_water": [
+      [
+        328,
+        930,
+        572,
+        1038
+      ]
+    ],
+    "home_metric_protein": [],
+    "home_metric_movement": [],
+    "home_next_step": []
+  },
+  "missing_initial_tags": [
+    "home_metric_protein",
+    "home_metric_movement",
+    "home_next_step"
+  ],
+  "unsafe_initial_frames": [
+    "home_summary",
+    "home_metric_fiber",
+    "home_metric_water"
+  ],
+  "undersized_initial_actions": [],
+  "home_content_bounds": [
+    0,
+    99,
+    640,
+    1040
+  ],
+  "mascot_bounds": [
+    48,
+    532,
+    592,
+    852
+  ]
+}

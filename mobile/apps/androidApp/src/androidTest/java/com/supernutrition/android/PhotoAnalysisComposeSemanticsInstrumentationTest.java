@@ -208,6 +208,7 @@ public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
             }
             SystemClock.sleep(100L);
         }
+        NativeUiSemanticDiagnostics.dump(device, id);
         assertNotNull("missing Compose semantic id: " + id, device.findObject(By.res(id)));
         assertEquals("wrong label for Compose semantic id: " + id, label, text);
     }
@@ -221,6 +222,7 @@ public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
             }
             SystemClock.sleep(100L);
         }
+        NativeUiSemanticDiagnostics.dump(device, id);
         return null;
     }
 
@@ -244,6 +246,7 @@ public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
             }
             SystemClock.sleep(100L);
         }
+        NativeUiSemanticDiagnostics.dump(device, id);
         assertTrue(message, false);
     }
 

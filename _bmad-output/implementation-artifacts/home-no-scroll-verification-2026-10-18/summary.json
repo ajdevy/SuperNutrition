@@ -1,0 +1,73 @@
+{
+  "recorded_at": "2026-10-18T09:50:15.678116+00:00",
+  "source_baseline": "7ec615063ac166d69e7f4a81495e20098f25be3c",
+  "approved_rewards_parent": "7d5971c0d87e3a2c87b8ab35b86628f0ce7a17f9",
+  "production_apk_sha256": "7f7296bd7282a86dc63fe4feaad0d4a19706c8b4ca231c39607ff0e3abc1f26c",
+  "ui_jvm": {
+    "tests": 167,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "suites": 30
+  },
+  "presenter_jvm": {
+    "tests": 19,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "suites": 4
+  },
+  "android_native": {
+    "poc": {
+      "xml_files": [
+        "TEST-SN_Final_Verification_35_20261018(AVD) - 15-_apps_androidApp-poc.xml"
+      ],
+      "tests": 43,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "production": {
+      "xml_files": [
+        "TEST-SN_Final_Verification_35_20261018(AVD) - 15-_apps_androidApp-production.xml"
+      ],
+      "tests": 43,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "uiAcceptance": {
+      "xml_files": [
+        "TEST-SN_Final_Verification_35_20261018(AVD) - 15-_apps_androidApp-uiAcceptance.xml"
+      ],
+      "tests": 43,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "android_total": {
+    "tests": 129,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "native_is_emulator_only": true,
+  "source_hashes_verified": 83,
+  "whole_quality_gate": "red: expired bootstrap-android-host evidence; no policy TTL/date change",
+  "sharedKit_full_compile": "blocked by missing Xcode/cinterop prerequisites; actual final changed copy source compiles against real KLIBs",
+  "home_matrix": {
+    "final_cases": 100,
+    "fit": 40,
+    "designer_required": 60,
+    "geometries": 45,
+    "sdk_definitions": 71,
+    "extra_separate_avds": 3,
+    "deleted_matrix_avds": 3
+  },
+  "prototype_limits": [
+    "ten medals retained by human; levels/points/groupings remain mock presentation",
+    "Rewards See all remains a nonfunctional prototype label",
+    "UIKit navigation runtime unavailable"
+  ]
+}

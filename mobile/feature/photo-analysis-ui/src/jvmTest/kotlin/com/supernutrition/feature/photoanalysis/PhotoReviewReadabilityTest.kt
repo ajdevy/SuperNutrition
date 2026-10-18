@@ -74,7 +74,7 @@ class PhotoReviewReadabilityTest {
         setContent { RewardsScreen(layoutRewardsModel()) }
         assertReadable(
             captureToImage(),
-            onNodeWithTag(UiAutomationIds.rewardsRowProgress(0).value).fetchSemanticsNode().boundsInRoot,
+            onNodeWithTag(UiAutomationIds.rewardsRowProgress(4).value).fetchSemanticsNode().boundsInRoot,
         )
     }
 

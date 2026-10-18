@@ -1,0 +1,13 @@
+{
+  "verified_at": "2026-10-18T09:26:08.718308+00:00",
+  "browser": "Codex in-app browser",
+  "url": "http://127.0.0.1:7138/index.html",
+  "checks": [
+    "Header displays 100/100, 40 fit, 60 needs-designer and 0 pending/missing",
+    "Search 320x480 shows exactly 2 cases",
+    "Both 100 and 200 percent original PNG previews render side by side with need-designer labels and actual geometry captions",
+    "Search cleared; all 100 cases visible again",
+    "Gallery tab retained as deliverable"
+  ],
+  "scope": "Human-agent visual inspection of browser screenshot and accessibility tree; no new Android execution or native classification"
+}

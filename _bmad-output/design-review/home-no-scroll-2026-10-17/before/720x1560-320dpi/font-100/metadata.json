@@ -1,0 +1,36 @@
+{
+  "captured_at": "2026-10-17T15:02:39.568621+00:00",
+  "avd": "SuperNutrition_API_35_x86_64",
+  "serial": "emulator-5554",
+  "api": 35,
+  "abi": "x86_64",
+  "evidence_kind": "native emulator viewport override",
+  "device_equivalences": [
+    "Previous app check 360.0x780.0 dp"
+  ],
+  "requested_geometry": {
+    "width_px": 720,
+    "height_px": 1560,
+    "density_dpi": 320,
+    "width_dp": 360.0,
+    "height_dp": 780.0,
+    "devices": [
+      "Previous app check 360.0x780.0 dp"
+    ]
+  },
+  "wm_size": "Physical size: 720x1560",
+  "wm_density": "Physical density: 320",
+  "font_scale": 1.0,
+  "apk_sha256": "8a0036005de47648ff26871304a5e821606af1eb0e20790204d399e48c707e41",
+  "portrait_locked_app": true,
+  "foreground": [
+    "mCurrentFocus=Window{67f8e31 u0 app.supernutrition/com.supernutrition.feature.photoanalysis.PhotoAnalysisComposeActivity}"
+  ],
+  "controls_top_px": 1304,
+  "helpful_action_bounds": null,
+  "missing_initial_text": [],
+  "native_scrollable": true,
+  "native_initial_fit": false,
+  "outcome": "designer-required: readable content exceeds initial frame",
+  "note": "No text-size override or forced screenshot scaling. Native XML fit is combined with focused Compose complete-frame/readability evidence; it is not a physical-device test."
+}
