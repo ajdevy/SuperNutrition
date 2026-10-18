@@ -1,0 +1,28 @@
+{
+  "checked_at": "2026-10-18T09:30:02.215795+00:00",
+  "inputs": {
+    "full-final-scoped": {
+      "source_hashes": 71,
+      "changed_since_verified_run": []
+    },
+    "presenter-final": {
+      "source_hashes": 9,
+      "changed_since_verified_run": []
+    }
+  },
+  "presenter": {
+    "suites": 4,
+    "tests": 19,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "ui": {
+    "suites": 30,
+    "tests": 167,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "production_apk_sha256": "7f7296bd7282a86dc63fe4feaad0d4a19706c8b4ca231c39607ff0e3abc1f26c"
+}

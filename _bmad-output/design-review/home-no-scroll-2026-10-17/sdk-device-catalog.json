@@ -1,0 +1,1632 @@
+{
+  "sdk_jar": "/Users/anastasia/Library/Android/sdk/cmdline-tools/latest/lib/sdklib/tools.sdklib.jar",
+  "sdk_jar_sha256": "d0bbe0e03155a7bdd9bac03567b6b26797f81a778f55d5eadc3e71e7a0a27434",
+  "devices": [
+    {
+      "id": "Nexus One",
+      "name": "Nexus One",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 480,
+          "height_px": 800,
+          "density_dpi": 240,
+          "width_dp": 320.0,
+          "height_dp": 533.33
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "Nexus S",
+      "name": "Nexus S",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 480,
+          "height_px": 800,
+          "density_dpi": 240,
+          "width_dp": 320.0,
+          "height_dp": 533.33
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "Galaxy Nexus",
+      "name": "Galaxy Nexus",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 720,
+          "height_px": 1280,
+          "density_dpi": 320,
+          "width_dp": 360.0,
+          "height_dp": 640.0
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "Nexus 7",
+      "name": "Nexus 7 (2012)",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 800,
+          "height_px": 1280,
+          "density_dpi": 213,
+          "width_dp": 600.94,
+          "height_dp": 961.5
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "Nexus 4",
+      "name": "Nexus 4",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 768,
+          "height_px": 1280,
+          "density_dpi": 320,
+          "width_dp": 384.0,
+          "height_dp": 640.0
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "Nexus 10",
+      "name": "Nexus 10",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 2560,
+          "height_px": 1600,
+          "density_dpi": 320,
+          "width_dp": 1280.0,
+          "height_dp": 800.0
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "Nexus 7 2013",
+      "name": "Nexus 7",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 1200,
+          "height_px": 1920,
+          "density_dpi": 320,
+          "width_dp": 600.0,
+          "height_dp": 960.0
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "Nexus 5",
+      "name": "Nexus 5",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 1080,
+          "height_px": 1920,
+          "density_dpi": 480,
+          "width_dp": 360.0,
+          "height_dp": 640.0
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "Nexus 6",
+      "name": "Nexus 6",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 1440,
+          "height_px": 2560,
+          "density_dpi": 560,
+          "width_dp": 411.43,
+          "height_dp": 731.43
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "Nexus 9",
+      "name": "Nexus 9",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 2048,
+          "height_px": 1536,
+          "density_dpi": 320,
+          "width_dp": 1024.0,
+          "height_dp": 768.0
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "Nexus 5X",
+      "name": "Nexus 5X",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 1080,
+          "height_px": 1920,
+          "density_dpi": 420,
+          "width_dp": 411.43,
+          "height_dp": 731.43
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "Nexus 6P",
+      "name": "Nexus 6P",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 1440,
+          "height_px": 2560,
+          "density_dpi": 560,
+          "width_dp": 411.43,
+          "height_dp": 731.43
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "pixel_c",
+      "name": "Pixel C",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 2560,
+          "height_px": 1800,
+          "density_dpi": 320,
+          "width_dp": 1280.0,
+          "height_dp": 900.0
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "pixel",
+      "name": "Pixel",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 1080,
+          "height_px": 1920,
+          "density_dpi": 420,
+          "width_dp": 411.43,
+          "height_dp": 731.43
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "pixel_xl",
+      "name": "Pixel XL",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 1440,
+          "height_px": 2560,
+          "density_dpi": 560,
+          "width_dp": 411.43,
+          "height_dp": 731.43
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "pixel_2",
+      "name": "Pixel 2",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 1080,
+          "height_px": 1920,
+          "density_dpi": 420,
+          "width_dp": 411.43,
+          "height_dp": 731.43
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "pixel_2_xl",
+      "name": "Pixel 2 XL",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 1440,
+          "height_px": 2880,
+          "density_dpi": 560,
+          "width_dp": 411.43,
+          "height_dp": 822.86
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "pixel_3",
+      "name": "Pixel 3",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 1080,
+          "height_px": 2160,
+          "density_dpi": 440,
+          "width_dp": 392.73,
+          "height_dp": 785.45
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "pixel_3_xl",
+      "name": "Pixel 3 XL",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 1440,
+          "height_px": 2960,
+          "density_dpi": 560,
+          "width_dp": 411.43,
+          "height_dp": 845.71
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "pixel_3a",
+      "name": "Pixel 3a",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 1080,
+          "height_px": 2220,
+          "density_dpi": 440,
+          "width_dp": 392.73,
+          "height_dp": 807.27
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "pixel_3a_xl",
+      "name": "Pixel 3a XL",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 1080,
+          "height_px": 2160,
+          "density_dpi": 400,
+          "width_dp": 432.0,
+          "height_dp": 864.0
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "pixel_4",
+      "name": "Pixel 4",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 1080,
+          "height_px": 2280,
+          "density_dpi": 440,
+          "width_dp": 392.73,
+          "height_dp": 829.09
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "pixel_4_xl",
+      "name": "Pixel 4 XL",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 1440,
+          "height_px": 3040,
+          "density_dpi": 560,
+          "width_dp": 411.43,
+          "height_dp": 868.57
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "pixel_4a",
+      "name": "Pixel 4a",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 1080,
+          "height_px": 2340,
+          "density_dpi": 440,
+          "width_dp": 392.73,
+          "height_dp": 850.91
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "pixel_5",
+      "name": "Pixel 5",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 1080,
+          "height_px": 2340,
+          "density_dpi": 440,
+          "width_dp": 392.73,
+          "height_dp": 850.91
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "pixel_6",
+      "name": "Pixel 6",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 1080,
+          "height_px": 2400,
+          "density_dpi": 420,
+          "width_dp": 411.43,
+          "height_dp": 914.29
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "pixel_6_pro",
+      "name": "Pixel 6 Pro",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 1440,
+          "height_px": 3120,
+          "density_dpi": 560,
+          "width_dp": 411.43,
+          "height_dp": 891.43
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "pixel_6a",
+      "name": "Pixel 6a",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 1080,
+          "height_px": 2400,
+          "density_dpi": 420,
+          "width_dp": 411.43,
+          "height_dp": 914.29
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "pixel_7_pro",
+      "name": "Pixel 7 Pro",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 1440,
+          "height_px": 3120,
+          "density_dpi": 560,
+          "width_dp": 411.43,
+          "height_dp": 891.43
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "pixel_7",
+      "name": "Pixel 7",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 1080,
+          "height_px": 2400,
+          "density_dpi": 420,
+          "width_dp": 411.43,
+          "height_dp": 914.29
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "pixel_fold",
+      "name": "Pixel Fold",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 2208,
+          "height_px": 1840,
+          "density_dpi": 420,
+          "width_dp": 841.14,
+          "height_dp": 700.95
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "pixel_tablet",
+      "name": "Pixel Tablet",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 2560,
+          "height_px": 1600,
+          "density_dpi": 320,
+          "width_dp": 1280.0,
+          "height_dp": 800.0
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "pixel_7a",
+      "name": "Pixel 7a",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 1080,
+          "height_px": 2400,
+          "density_dpi": 420,
+          "width_dp": 411.43,
+          "height_dp": 914.29
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "pixel_8",
+      "name": "Pixel 8",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 1080,
+          "height_px": 2400,
+          "density_dpi": 420,
+          "width_dp": 411.43,
+          "height_dp": 914.29
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "pixel_8_pro",
+      "name": "Pixel 8 Pro",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 1344,
+          "height_px": 2992,
+          "density_dpi": 480,
+          "width_dp": 448.0,
+          "height_dp": 997.33
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "pixel_8a",
+      "name": "Pixel 8a",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 1080,
+          "height_px": 2400,
+          "density_dpi": 420,
+          "width_dp": 411.43,
+          "height_dp": 914.29
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "pixel_9",
+      "name": "Pixel 9",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 1080,
+          "height_px": 2424,
+          "density_dpi": 420,
+          "width_dp": 411.43,
+          "height_dp": 923.43
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "pixel_9a",
+      "name": "Pixel 9a",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 1080,
+          "height_px": 2424,
+          "density_dpi": 420,
+          "width_dp": 411.43,
+          "height_dp": 923.43
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "pixel_9_pro",
+      "name": "Pixel 9 Pro",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 1280,
+          "height_px": 2856,
+          "density_dpi": 480,
+          "width_dp": 426.67,
+          "height_dp": 952.0
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "pixel_9_pro_xl",
+      "name": "Pixel 9 Pro XL",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 1344,
+          "height_px": 2992,
+          "density_dpi": 480,
+          "width_dp": 448.0,
+          "height_dp": 997.33
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "pixel_9_pro_fold",
+      "name": "Pixel 9 Pro Fold",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 2076,
+          "height_px": 2152,
+          "density_dpi": 390,
+          "width_dp": 851.69,
+          "height_dp": 882.87
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "pixel_10",
+      "name": "Pixel 10",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 1080,
+          "height_px": 2424,
+          "density_dpi": 420,
+          "width_dp": 411.43,
+          "height_dp": 923.43
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "pixel_10a",
+      "name": "Pixel 10a",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 1080,
+          "height_px": 2424,
+          "density_dpi": 420,
+          "width_dp": 411.43,
+          "height_dp": 923.43
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "pixel_10_pro",
+      "name": "Pixel 10 Pro",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 1280,
+          "height_px": 2856,
+          "density_dpi": 480,
+          "width_dp": 426.67,
+          "height_dp": 952.0
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "pixel_10_pro_xl",
+      "name": "Pixel 10 Pro XL",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 1344,
+          "height_px": 2992,
+          "density_dpi": 480,
+          "width_dp": 448.0,
+          "height_dp": 997.33
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "pixel_10_pro_fold",
+      "name": "Pixel 10 Pro Fold",
+      "manufacturer": "Google",
+      "screens": [
+        {
+          "width_px": 2076,
+          "height_px": 2152,
+          "density_dpi": 390,
+          "width_dp": 851.69,
+          "height_dp": 882.87
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/nexus.xml"
+    },
+    {
+      "id": "resizable",
+      "name": "Resizable (Experimental)",
+      "manufacturer": "Generic",
+      "screens": [
+        {
+          "width_px": 1080,
+          "height_px": 2400,
+          "density_dpi": 420,
+          "width_dp": 411.43,
+          "height_dp": 914.29
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/devices.xml"
+    },
+    {
+      "id": "13.5in Freeform",
+      "name": "13.5\" Freeform",
+      "manufacturer": "Generic",
+      "screens": [
+        {
+          "width_px": 2560,
+          "height_px": 1440,
+          "density_dpi": 240,
+          "width_dp": 1706.67,
+          "height_dp": 960.0
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/devices.xml"
+    },
+    {
+      "id": "7.6in Foldable",
+      "name": "7.6\" Fold-in with outer display",
+      "manufacturer": "Generic",
+      "screens": [
+        {
+          "width_px": 1768,
+          "height_px": 2208,
+          "density_dpi": 420,
+          "width_dp": 673.52,
+          "height_dp": 841.14
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/devices.xml"
+    },
+    {
+      "id": "8in Foldable",
+      "name": "8\" Fold-out",
+      "manufacturer": "Generic",
+      "screens": [
+        {
+          "width_px": 2200,
+          "height_px": 2480,
+          "density_dpi": 420,
+          "width_dp": 838.1,
+          "height_dp": 944.76
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/devices.xml"
+    },
+    {
+      "id": "6.7in Foldable",
+      "name": "6.7\" Horizontal Fold-in",
+      "manufacturer": "Generic",
+      "screens": [
+        {
+          "width_px": 1080,
+          "height_px": 2636,
+          "density_dpi": 480,
+          "width_dp": 360.0,
+          "height_dp": 878.67
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/devices.xml"
+    },
+    {
+      "id": "7.4in Rollable",
+      "name": "7.4\" Rollable",
+      "manufacturer": "Generic",
+      "screens": [
+        {
+          "width_px": 1600,
+          "height_px": 2428,
+          "density_dpi": 420,
+          "width_dp": 609.52,
+          "height_dp": 924.95
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/devices.xml"
+    },
+    {
+      "id": "2.7in QVGA",
+      "name": "2.7\" QVGA",
+      "manufacturer": "\n            Generic\n        ",
+      "screens": [
+        {
+          "width_px": 240,
+          "height_px": 320,
+          "density_dpi": 120,
+          "width_dp": 320.0,
+          "height_dp": 426.67
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/devices.xml"
+    },
+    {
+      "id": "2.7in QVGA slider",
+      "name": "2.7\" QVGA slider",
+      "manufacturer": "\n            Generic\n        ",
+      "screens": [
+        {
+          "width_px": 240,
+          "height_px": 320,
+          "density_dpi": 120,
+          "width_dp": 320.0,
+          "height_dp": 426.67
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/devices.xml"
+    },
+    {
+      "id": "3.2in HVGA slider (ADP1)",
+      "name": "3.2\" HVGA slider (ADP1)",
+      "manufacturer": "\n            Generic\n        ",
+      "screens": [
+        {
+          "width_px": 320,
+          "height_px": 480,
+          "density_dpi": 160,
+          "width_dp": 320.0,
+          "height_dp": 480.0
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/devices.xml"
+    },
+    {
+      "id": "3.2in QVGA (ADP2)",
+      "name": "3.2\" QVGA (ADP2)",
+      "manufacturer": "\n            Generic\n        ",
+      "screens": [
+        {
+          "width_px": 320,
+          "height_px": 480,
+          "density_dpi": 160,
+          "width_dp": 320.0,
+          "height_dp": 480.0
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/devices.xml"
+    },
+    {
+      "id": "3.3in WQVGA",
+      "name": "3.3\" WQVGA",
+      "manufacturer": "\n            Generic\n        ",
+      "screens": [
+        {
+          "width_px": 240,
+          "height_px": 400,
+          "density_dpi": 120,
+          "width_dp": 320.0,
+          "height_dp": 533.33
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/devices.xml"
+    },
+    {
+      "id": "3.4in WQVGA",
+      "name": "3.4\" WQVGA",
+      "manufacturer": "\n            Generic\n        ",
+      "screens": [
+        {
+          "width_px": 240,
+          "height_px": 432,
+          "density_dpi": 120,
+          "width_dp": 320.0,
+          "height_dp": 576.0
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/devices.xml"
+    },
+    {
+      "id": "3.7in WVGA (Nexus One)",
+      "name": "3.7\" WVGA (Nexus One)",
+      "manufacturer": "\n            Generic\n        ",
+      "screens": [
+        {
+          "width_px": 480,
+          "height_px": 800,
+          "density_dpi": 240,
+          "width_dp": 320.0,
+          "height_dp": 533.33
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/devices.xml"
+    },
+    {
+      "id": "3.7 FWVGA slider",
+      "name": "3.7\" FWVGA slider",
+      "manufacturer": "\n            Generic\n        ",
+      "screens": [
+        {
+          "width_px": 480,
+          "height_px": 854,
+          "density_dpi": 240,
+          "width_dp": 320.0,
+          "height_dp": 569.33
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/devices.xml"
+    },
+    {
+      "id": "4in WVGA (Nexus S)",
+      "name": "4\" WVGA (Nexus S)",
+      "manufacturer": "\n            Generic\n        ",
+      "screens": [
+        {
+          "width_px": 480,
+          "height_px": 800,
+          "density_dpi": 240,
+          "width_dp": 320.0,
+          "height_dp": 533.33
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/devices.xml"
+    },
+    {
+      "id": "4.65in 720p (Galaxy Nexus)",
+      "name": "4.65\" 720p (Galaxy Nexus)",
+      "manufacturer": "\n            Generic\n        ",
+      "screens": [
+        {
+          "width_px": 720,
+          "height_px": 1280,
+          "density_dpi": 320,
+          "width_dp": 360.0,
+          "height_dp": 640.0
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/devices.xml"
+    },
+    {
+      "id": "4.7in WXGA",
+      "name": "4.7\" WXGA",
+      "manufacturer": "\n            Generic\n        ",
+      "screens": [
+        {
+          "width_px": 1280,
+          "height_px": 720,
+          "density_dpi": 320,
+          "width_dp": 640.0,
+          "height_dp": 360.0
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/devices.xml"
+    },
+    {
+      "id": "5.1in WVGA",
+      "name": "5.1\" WVGA",
+      "manufacturer": "\n            Generic\n        ",
+      "screens": [
+        {
+          "width_px": 480,
+          "height_px": 800,
+          "density_dpi": 160,
+          "width_dp": 480.0,
+          "height_dp": 800.0
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/devices.xml"
+    },
+    {
+      "id": "5.4in FWVGA",
+      "name": "5.4\" FWVGA",
+      "manufacturer": "\n            Generic\n        ",
+      "screens": [
+        {
+          "width_px": 480,
+          "height_px": 854,
+          "density_dpi": 160,
+          "width_dp": 480.0,
+          "height_dp": 854.0
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/devices.xml"
+    },
+    {
+      "id": "7in WSVGA (Tablet)",
+      "name": "7\" WSVGA (Tablet)",
+      "manufacturer": "\n            Generic\n        ",
+      "screens": [
+        {
+          "width_px": 1024,
+          "height_px": 600,
+          "density_dpi": 160,
+          "width_dp": 1024.0,
+          "height_dp": 600.0
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/devices.xml"
+    },
+    {
+      "id": "10.1in WXGA (Tablet)",
+      "name": "10.1\" WXGA (Tablet)",
+      "manufacturer": "\n            Generic\n        ",
+      "screens": [
+        {
+          "width_px": 1280,
+          "height_px": 800,
+          "density_dpi": 160,
+          "width_dp": 1280.0,
+          "height_dp": 800.0
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/devices.xml"
+    },
+    {
+      "id": "small_phone",
+      "name": "Small Phone",
+      "manufacturer": "Generic",
+      "screens": [
+        {
+          "width_px": 720,
+          "height_px": 1280,
+          "density_dpi": 320,
+          "width_dp": 360.0,
+          "height_dp": 640.0
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/devices.xml"
+    },
+    {
+      "id": "medium_phone",
+      "name": "Medium Phone",
+      "manufacturer": "Generic",
+      "screens": [
+        {
+          "width_px": 1080,
+          "height_px": 2400,
+          "density_dpi": 420,
+          "width_dp": 411.43,
+          "height_dp": 914.29
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/devices.xml"
+    },
+    {
+      "id": "small_tablet",
+      "name": "Small Tablet",
+      "manufacturer": "Generic",
+      "screens": [
+        {
+          "width_px": 1920,
+          "height_px": 1200,
+          "density_dpi": 320,
+          "width_dp": 960.0,
+          "height_dp": 600.0
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/devices.xml"
+    },
+    {
+      "id": "medium_tablet",
+      "name": "Medium Tablet",
+      "manufacturer": "Generic",
+      "screens": [
+        {
+          "width_px": 2560,
+          "height_px": 1600,
+          "density_dpi": 320,
+          "width_dp": 1280.0,
+          "height_dp": 800.0
+        }
+      ],
+      "boot_properties": {},
+      "sdk_resource": "com/android/sdklib/devices/devices.xml"
+    }
+  ],
+  "unique_geometries": {
+    "480x800-240dpi": {
+      "width_px": 480,
+      "height_px": 800,
+      "density_dpi": 240,
+      "width_dp": 320.0,
+      "height_dp": 533.33,
+      "devices": [
+        "Nexus One",
+        "Nexus S",
+        "3.7\" WVGA (Nexus One)",
+        "4\" WVGA (Nexus S)"
+      ]
+    },
+    "720x1280-320dpi": {
+      "width_px": 720,
+      "height_px": 1280,
+      "density_dpi": 320,
+      "width_dp": 360.0,
+      "height_dp": 640.0,
+      "devices": [
+        "Galaxy Nexus",
+        "4.65\" 720p (Galaxy Nexus)",
+        "Small Phone"
+      ]
+    },
+    "800x1280-213dpi": {
+      "width_px": 800,
+      "height_px": 1280,
+      "density_dpi": 213,
+      "width_dp": 600.94,
+      "height_dp": 961.5,
+      "devices": [
+        "Nexus 7 (2012)"
+      ]
+    },
+    "768x1280-320dpi": {
+      "width_px": 768,
+      "height_px": 1280,
+      "density_dpi": 320,
+      "width_dp": 384.0,
+      "height_dp": 640.0,
+      "devices": [
+        "Nexus 4"
+      ]
+    },
+    "2560x1600-320dpi": {
+      "width_px": 2560,
+      "height_px": 1600,
+      "density_dpi": 320,
+      "width_dp": 1280.0,
+      "height_dp": 800.0,
+      "devices": [
+        "Nexus 10",
+        "Pixel Tablet",
+        "Medium Tablet"
+      ]
+    },
+    "1200x1920-320dpi": {
+      "width_px": 1200,
+      "height_px": 1920,
+      "density_dpi": 320,
+      "width_dp": 600.0,
+      "height_dp": 960.0,
+      "devices": [
+        "Nexus 7",
+        "Previous app check 600.0x960.0 dp"
+      ]
+    },
+    "1080x1920-480dpi": {
+      "width_px": 1080,
+      "height_px": 1920,
+      "density_dpi": 480,
+      "width_dp": 360.0,
+      "height_dp": 640.0,
+      "devices": [
+        "Nexus 5"
+      ]
+    },
+    "1440x2560-560dpi": {
+      "width_px": 1440,
+      "height_px": 2560,
+      "density_dpi": 560,
+      "width_dp": 411.43,
+      "height_dp": 731.43,
+      "devices": [
+        "Nexus 6",
+        "Nexus 6P",
+        "Pixel XL"
+      ]
+    },
+    "2048x1536-320dpi": {
+      "width_px": 2048,
+      "height_px": 1536,
+      "density_dpi": 320,
+      "width_dp": 1024.0,
+      "height_dp": 768.0,
+      "devices": [
+        "Nexus 9"
+      ]
+    },
+    "1080x1920-420dpi": {
+      "width_px": 1080,
+      "height_px": 1920,
+      "density_dpi": 420,
+      "width_dp": 411.43,
+      "height_dp": 731.43,
+      "devices": [
+        "Nexus 5X",
+        "Pixel",
+        "Pixel 2"
+      ]
+    },
+    "2560x1800-320dpi": {
+      "width_px": 2560,
+      "height_px": 1800,
+      "density_dpi": 320,
+      "width_dp": 1280.0,
+      "height_dp": 900.0,
+      "devices": [
+        "Pixel C"
+      ]
+    },
+    "1440x2880-560dpi": {
+      "width_px": 1440,
+      "height_px": 2880,
+      "density_dpi": 560,
+      "width_dp": 411.43,
+      "height_dp": 822.86,
+      "devices": [
+        "Pixel 2 XL"
+      ]
+    },
+    "1080x2160-440dpi": {
+      "width_px": 1080,
+      "height_px": 2160,
+      "density_dpi": 440,
+      "width_dp": 392.73,
+      "height_dp": 785.45,
+      "devices": [
+        "Pixel 3"
+      ]
+    },
+    "1440x2960-560dpi": {
+      "width_px": 1440,
+      "height_px": 2960,
+      "density_dpi": 560,
+      "width_dp": 411.43,
+      "height_dp": 845.71,
+      "devices": [
+        "Pixel 3 XL"
+      ]
+    },
+    "1080x2220-440dpi": {
+      "width_px": 1080,
+      "height_px": 2220,
+      "density_dpi": 440,
+      "width_dp": 392.73,
+      "height_dp": 807.27,
+      "devices": [
+        "Pixel 3a"
+      ]
+    },
+    "1080x2160-400dpi": {
+      "width_px": 1080,
+      "height_px": 2160,
+      "density_dpi": 400,
+      "width_dp": 432.0,
+      "height_dp": 864.0,
+      "devices": [
+        "Pixel 3a XL"
+      ]
+    },
+    "1080x2280-440dpi": {
+      "width_px": 1080,
+      "height_px": 2280,
+      "density_dpi": 440,
+      "width_dp": 392.73,
+      "height_dp": 829.09,
+      "devices": [
+        "Pixel 4"
+      ]
+    },
+    "1440x3040-560dpi": {
+      "width_px": 1440,
+      "height_px": 3040,
+      "density_dpi": 560,
+      "width_dp": 411.43,
+      "height_dp": 868.57,
+      "devices": [
+        "Pixel 4 XL"
+      ]
+    },
+    "1080x2340-440dpi": {
+      "width_px": 1080,
+      "height_px": 2340,
+      "density_dpi": 440,
+      "width_dp": 392.73,
+      "height_dp": 850.91,
+      "devices": [
+        "Pixel 4a",
+        "Pixel 5"
+      ]
+    },
+    "1080x2400-420dpi": {
+      "width_px": 1080,
+      "height_px": 2400,
+      "density_dpi": 420,
+      "width_dp": 411.43,
+      "height_dp": 914.29,
+      "devices": [
+        "Pixel 6",
+        "Pixel 6a",
+        "Pixel 7",
+        "Pixel 7a",
+        "Pixel 8",
+        "Pixel 8a",
+        "Resizable (Experimental)",
+        "Medium Phone"
+      ]
+    },
+    "1440x3120-560dpi": {
+      "width_px": 1440,
+      "height_px": 3120,
+      "density_dpi": 560,
+      "width_dp": 411.43,
+      "height_dp": 891.43,
+      "devices": [
+        "Pixel 6 Pro",
+        "Pixel 7 Pro"
+      ]
+    },
+    "2208x1840-420dpi": {
+      "width_px": 2208,
+      "height_px": 1840,
+      "density_dpi": 420,
+      "width_dp": 841.14,
+      "height_dp": 700.95,
+      "devices": [
+        "Pixel Fold"
+      ]
+    },
+    "1344x2992-480dpi": {
+      "width_px": 1344,
+      "height_px": 2992,
+      "density_dpi": 480,
+      "width_dp": 448.0,
+      "height_dp": 997.33,
+      "devices": [
+        "Pixel 8 Pro",
+        "Pixel 9 Pro XL",
+        "Pixel 10 Pro XL"
+      ]
+    },
+    "1080x2424-420dpi": {
+      "width_px": 1080,
+      "height_px": 2424,
+      "density_dpi": 420,
+      "width_dp": 411.43,
+      "height_dp": 923.43,
+      "devices": [
+        "Pixel 9",
+        "Pixel 9a",
+        "Pixel 10",
+        "Pixel 10a"
+      ]
+    },
+    "1280x2856-480dpi": {
+      "width_px": 1280,
+      "height_px": 2856,
+      "density_dpi": 480,
+      "width_dp": 426.67,
+      "height_dp": 952.0,
+      "devices": [
+        "Pixel 9 Pro",
+        "Pixel 10 Pro"
+      ]
+    },
+    "2076x2152-390dpi": {
+      "width_px": 2076,
+      "height_px": 2152,
+      "density_dpi": 390,
+      "width_dp": 851.69,
+      "height_dp": 882.87,
+      "devices": [
+        "Pixel 9 Pro Fold",
+        "Pixel 10 Pro Fold"
+      ]
+    },
+    "2560x1440-240dpi": {
+      "width_px": 2560,
+      "height_px": 1440,
+      "density_dpi": 240,
+      "width_dp": 1706.67,
+      "height_dp": 960.0,
+      "devices": [
+        "13.5\" Freeform"
+      ]
+    },
+    "1768x2208-420dpi": {
+      "width_px": 1768,
+      "height_px": 2208,
+      "density_dpi": 420,
+      "width_dp": 673.52,
+      "height_dp": 841.14,
+      "devices": [
+        "7.6\" Fold-in with outer display"
+      ]
+    },
+    "2200x2480-420dpi": {
+      "width_px": 2200,
+      "height_px": 2480,
+      "density_dpi": 420,
+      "width_dp": 838.1,
+      "height_dp": 944.76,
+      "devices": [
+        "8\" Fold-out"
+      ]
+    },
+    "1080x2636-480dpi": {
+      "width_px": 1080,
+      "height_px": 2636,
+      "density_dpi": 480,
+      "width_dp": 360.0,
+      "height_dp": 878.67,
+      "devices": [
+        "6.7\" Horizontal Fold-in"
+      ]
+    },
+    "1600x2428-420dpi": {
+      "width_px": 1600,
+      "height_px": 2428,
+      "density_dpi": 420,
+      "width_dp": 609.52,
+      "height_dp": 924.95,
+      "devices": [
+        "7.4\" Rollable"
+      ]
+    },
+    "240x320-120dpi": {
+      "width_px": 240,
+      "height_px": 320,
+      "density_dpi": 120,
+      "width_dp": 320.0,
+      "height_dp": 426.67,
+      "devices": [
+        "2.7\" QVGA",
+        "2.7\" QVGA slider"
+      ]
+    },
+    "320x480-160dpi": {
+      "width_px": 320,
+      "height_px": 480,
+      "density_dpi": 160,
+      "width_dp": 320.0,
+      "height_dp": 480.0,
+      "devices": [
+        "3.2\" HVGA slider (ADP1)",
+        "3.2\" QVGA (ADP2)"
+      ]
+    },
+    "240x400-120dpi": {
+      "width_px": 240,
+      "height_px": 400,
+      "density_dpi": 120,
+      "width_dp": 320.0,
+      "height_dp": 533.33,
+      "devices": [
+        "3.3\" WQVGA"
+      ]
+    },
+    "240x432-120dpi": {
+      "width_px": 240,
+      "height_px": 432,
+      "density_dpi": 120,
+      "width_dp": 320.0,
+      "height_dp": 576.0,
+      "devices": [
+        "3.4\" WQVGA"
+      ]
+    },
+    "480x854-240dpi": {
+      "width_px": 480,
+      "height_px": 854,
+      "density_dpi": 240,
+      "width_dp": 320.0,
+      "height_dp": 569.33,
+      "devices": [
+        "3.7\" FWVGA slider"
+      ]
+    },
+    "1280x720-320dpi": {
+      "width_px": 1280,
+      "height_px": 720,
+      "density_dpi": 320,
+      "width_dp": 640.0,
+      "height_dp": 360.0,
+      "devices": [
+        "4.7\" WXGA"
+      ]
+    },
+    "480x800-160dpi": {
+      "width_px": 480,
+      "height_px": 800,
+      "density_dpi": 160,
+      "width_dp": 480.0,
+      "height_dp": 800.0,
+      "devices": [
+        "5.1\" WVGA"
+      ]
+    },
+    "480x854-160dpi": {
+      "width_px": 480,
+      "height_px": 854,
+      "density_dpi": 160,
+      "width_dp": 480.0,
+      "height_dp": 854.0,
+      "devices": [
+        "5.4\" FWVGA"
+      ]
+    },
+    "1024x600-160dpi": {
+      "width_px": 1024,
+      "height_px": 600,
+      "density_dpi": 160,
+      "width_dp": 1024.0,
+      "height_dp": 600.0,
+      "devices": [
+        "7\" WSVGA (Tablet)"
+      ]
+    },
+    "1280x800-160dpi": {
+      "width_px": 1280,
+      "height_px": 800,
+      "density_dpi": 160,
+      "width_dp": 1280.0,
+      "height_dp": 800.0,
+      "devices": [
+        "10.1\" WXGA (Tablet)"
+      ]
+    },
+    "1920x1200-320dpi": {
+      "width_px": 1920,
+      "height_px": 1200,
+      "density_dpi": 320,
+      "width_dp": 960.0,
+      "height_dp": 600.0,
+      "devices": [
+        "Small Tablet"
+      ]
+    },
+    "640x1136-320dpi": {
+      "width_px": 640,
+      "height_px": 1136,
+      "density_dpi": 320,
+      "width_dp": 320.0,
+      "height_dp": 568.0,
+      "devices": [
+        "Previous app check 320.0x568.0 dp"
+      ]
+    },
+    "720x1560-320dpi": {
+      "width_px": 720,
+      "height_px": 1560,
+      "density_dpi": 320,
+      "width_dp": 360.0,
+      "height_dp": 780.0,
+      "devices": [
+        "Previous app check 360.0x780.0 dp"
+      ]
+    },
+    "824x1830-320dpi": {
+      "width_px": 824,
+      "height_px": 1830,
+      "density_dpi": 320,
+      "width_dp": 412.0,
+      "height_dp": 915.0,
+      "devices": [
+        "Previous app check 412.0x915.0 dp"
+      ]
+    }
+  },
+  "not_mobile_resources": [
+    "automotive.xml",
+    "desktop.xml",
+    "tv.xml",
+    "wear.xml",
+    "xr.xml"
+  ],
+  "scope": "Every phone/tablet and generic mobile definition in the installed SDK plus previous app checkpoints; equivalent pixels/density share a screenshot. Viewport override evidence is labelled, not reported as running every device model. Closed foldable and non-default display postures are not inferred from base dimensions."
+}

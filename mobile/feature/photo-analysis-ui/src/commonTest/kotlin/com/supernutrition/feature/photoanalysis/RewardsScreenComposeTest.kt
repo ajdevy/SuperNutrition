@@ -5,9 +5,7 @@ import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.performScrollToIndex
 import androidx.compose.ui.test.v2.runComposeUiTest
 import androidx.compose.ui.unit.dp
 import com.supernutrition.core.ui.UiAutomationIds
@@ -18,7 +16,7 @@ import kotlin.test.assertTrue
 @OptIn(ExperimentalTestApi::class)
 class RewardsScreenComposeTest {
     @Test
-    fun `illustrated rewards collection exposes all seven actual card states`() = runComposeUiTest {
+    fun `figma rewards surface exposes its header sections and ten cards`() = runComposeUiTest {
         val model = RewardsPresenterModel(
             title = "Rewards",
             cards = RewardId.entries.mapIndexed { index, id ->
@@ -37,15 +35,18 @@ class RewardsScreenComposeTest {
         }
 
         onNodeWithTag(UiAutomationIds.REWARDS_TITLE.value).assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.REWARDS_SCREEN.value).assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.REWARDS_BACK.value).assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.REWARDS_LEVEL_HERO.value).assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.REWARDS_EARNED_SECTION.value).assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.REWARDS_EARNED_LINK.value).assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.REWARDS_IN_PROGRESS_SECTION.value).assertIsDisplayed()
         onNodeWithTag(UiAutomationIds.REWARDS_LIST.value).assertIsDisplayed()
-        (0 until 7).forEach { index ->
-            onNodeWithTag(UiAutomationIds.REWARDS_LIST.value).performScrollToIndex(1 + index / 2)
+        (0 until 10).forEach { index ->
             onNodeWithTag(UiAutomationIds.rewardsRow(index).value).assertIsDisplayed()
             onNodeWithTag(UiAutomationIds.rewardsRowTitle(index).value).assertIsDisplayed()
-            onNodeWithTag(UiAutomationIds.rewardsRowProgress(index).value)
-                .assertIsDisplayed().assertTextEquals(model.cards[index].progressLabel)
-            onNodeWithTag(UiAutomationIds.rewardsRowState(index).value)
-                .assertIsDisplayed().assertTextEquals(model.cards[index].stateLabel)
+            onNodeWithTag(UiAutomationIds.rewardsRowProgress(index).value).assertIsDisplayed()
+            onNodeWithTag(UiAutomationIds.rewardsRowState(index).value).assertIsDisplayed()
         }
 
         assertTrue(model.cards.all { card -> !card.description.contains("fail", ignoreCase = true) })

@@ -19,13 +19,13 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performScrollTo
-import androidx.compose.ui.test.performScrollToIndex
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.v2.runSkikoComposeUiTest
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import com.supernutrition.core.ui.UiAutomationIds
+import com.supernutrition.domain.nutrition.RewardId
 import org.jetbrains.skia.EncodedImageFormat
 import java.io.File
 import kotlin.math.abs
@@ -185,7 +185,7 @@ class PhotoAnalysisLayoutVisualTest {
     }
 
     @Test
-    fun `rewards cards and title share symmetric gutters`() = runSkikoComposeUiTest(
+    fun `rewards header and visual cards keep the figma grid geometry`() = runSkikoComposeUiTest(
         size = Size(375f, 812f),
         density = Density(1f),
     ) {
@@ -198,11 +198,13 @@ class PhotoAnalysisLayoutVisualTest {
             .fetchSemanticsNode().boundsInRoot
         val card = onNodeWithTag(UiAutomationIds.rewardsRow(0).value).fetchSemanticsNode().boundsInRoot
         val pairedCard = onNodeWithTag(UiAutomationIds.rewardsRow(1).value).fetchSemanticsNode().boundsInRoot
+        val section = onNodeWithTag(UiAutomationIds.REWARDS_EARNED_SECTION.value).fetchSemanticsNode().boundsInRoot
+        assertTrue(abs(title.center.x - 187.5f) <= 1f, "Rewards title is not centered: $title")
         assertTrue(abs(card.left - (375f - pairedCard.right)) <= 1f, "Rewards gutters were $card and $pairedCard")
         assertTrue(abs(card.width - pairedCard.width) <= 1f)
         assertTrue(abs(card.top - pairedCard.top) <= 1f && abs(card.bottom - pairedCard.bottom) <= 1f)
-        assertTrue(abs(card.left - title.left) <= 1f, "Title and card do not align: $title and $card")
-        assertTrue(abs(card.left - 24f) <= 1f, "Rewards differs from the Home gutter: $card")
+        assertTrue(abs(card.left - section.left) <= 1f, "Section and card do not align: $section and $card")
+        assertTrue(abs(card.left - 16f) <= 1f, "Rewards differs from the Figma gutter: $card")
         val rendered = captureToImage()
         val pixels = rendered.toPixelMap()
         assertEquals(
@@ -223,13 +225,14 @@ class PhotoAnalysisLayoutVisualTest {
                 RewardsScreen(layoutRewardsModel())
             }
         }
-        onNodeWithTag(UiAutomationIds.REWARDS_LIST.value).performScrollToIndex(4)
-        val finalCard = onNodeWithTag(UiAutomationIds.rewardsRow(6).value).assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.REWARDS_SCREEN.value).performRewardsScrollToEnd()
+        val finalCard = onNodeWithTag(UiAutomationIds.rewardsRow(9).value).assertIsDisplayed()
             .fetchSemanticsNode().boundsInRoot
         val camera = onNodeWithTag(UiAutomationIds.CAMERA_ACTION.value).fetchSemanticsNode().boundsInRoot
         assertTrue(finalCard.bottom < camera.top, "Final reward overlaps navigation: $finalCard and $camera")
-        assertTrue(abs(finalCard.left - (320f - finalCard.right)) <= 1f, "The final odd reward is not balanced")
-        onNodeWithTag(UiAutomationIds.rewardsRowState(6).value).assertIsDisplayed()
+        val pairedFinalCard = onNodeWithTag(UiAutomationIds.rewardsRow(8).value).fetchSemanticsNode().boundsInRoot
+        assertTrue(abs(finalCard.top - pairedFinalCard.top) <= 1f, "Final reward pair is not balanced")
+        onNodeWithTag(UiAutomationIds.rewardsRowState(9).value).assertIsDisplayed()
         writeLayoutScreenshot("rewards-short-scrolled", captureToImage().asSkiaBitmap())
     }
 
@@ -298,22 +301,36 @@ class PhotoAnalysisLayoutVisualTest {
                     UiAutomationIds.HOME_METRIC_PROTEIN,
                     UiAutomationIds.HOME_METRIC_MOVEMENT,
                 ).map { onNodeWithTag(it.value).fetchSemanticsNode().boundsInRoot }
-                onNodeWithText(longValue).assertIsDisplayed()
-                if (fontScale == 1f) {
-                    val layouts = mutableListOf<TextLayoutResult>()
-                    onNodeWithText(longValue).performSemanticsAction(SemanticsActions.GetTextLayoutResult) {
-                        it(layouts)
+                val value = onNodeWithText(longValue).assertIsDisplayed()
+                val layouts = mutableListOf<TextLayoutResult>()
+                value.performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
+                val text = layouts.single()
+                val valueBounds = value.fetchSemanticsNode().boundsInRoot
+                assertTrue(text.lineCount > 1, "The value must wrap to exercise row sizing")
+                assertTrue(text.multiParagraph.height <= text.size.height + 1f, "The wrapped value is clipped")
+                assertTrue(valueBounds.height >= text.size.height - 1f, "The visible value is clipped")
+                assertTrue(!text.multiParagraph.didExceedMaxLines, "The wrapped value loses lines")
+                assertEquals(longValue.length, text.getLineEnd(text.lineCount - 1), "The value is incomplete")
+                assertEquals(fontScale, text.layoutInput.density.fontScale, "The value overrides the text scale")
+                repeat(text.lineCount) { line ->
+                    assertTrue(!text.isLineEllipsized(line), "The wrapped value is truncated")
+                    assertTrue(text.getLineRight(line) - text.getLineLeft(line) <= text.size.width + 1f)
+                }
+                val columns = if (abs(bounds[0].top - bounds[1].top) <= 1f) 2 else 1
+                val rows = bounds.chunked(columns)
+                rows.forEach { row ->
+                    row.forEach { card ->
+                        assertTrue(abs(card.top - row.first().top) <= 1f)
+                        assertTrue(abs(card.bottom - row.first().bottom) <= 1f, "Metric row heights differ")
                     }
-                    assertTrue(layouts.single().lineCount > 1, "The value must wrap to exercise row sizing")
-                    bounds.chunked(2).forEach { (left, right) ->
-                        assertTrue(abs(left.top - right.top) <= 1f && abs(left.bottom - right.bottom) <= 1f)
+                    row.zipWithNext().forEach { (left, right) ->
                         assertTrue(left.right < right.left, "Metric cards overlap: $left $right")
                     }
-                } else {
-                    bounds.zipWithNext().forEach { (above, below) ->
-                        assertTrue(above.bottom < below.top, "Large-text metric cards overlap: $above $below")
-                        assertTrue(abs(above.left - below.left) <= 1f && abs(above.right - below.right) <= 1f)
-                    }
+                }
+                rows.zipWithNext().forEach { (above, below) ->
+                    assertTrue(above.maxOf { it.bottom } < below.minOf { it.top }, "Metric rows overlap")
+                    assertTrue(abs(above.first().left - below.first().left) <= 1f)
+                    assertTrue(abs(above.last().right - below.last().right) <= 1f)
                 }
                 writeLayoutScreenshot("home-metrics-aligned-$fontScale", captureToImage().asSkiaBitmap())
             }
@@ -346,11 +363,11 @@ class PhotoAnalysisLayoutVisualTest {
     ) {
         val model = layoutRewardsModel().let { rewards ->
             rewards.copy(
-                cards = rewards.cards.map { card ->
-                    card.copy(
+                visualCards = List(10) { index ->
+                    RewardsVisualCardCopy(
+                        rewardId = RewardId.entries[index % RewardId.entries.size],
                         title = "A little care for your daily rhythm",
-                        description = "Every helpful choice you record is another step " +
-                            "toward a routine that works for you.",
+                        subtitle = "Helpful choice ${index + 1}",
                     )
                 },
             )
@@ -360,16 +377,31 @@ class PhotoAnalysisLayoutVisualTest {
                 RewardsScreen(model)
             }
         }
-        onNodeWithTag(UiAutomationIds.REWARDS_LIST.value).performScrollToIndex(7)
-        val title = onNodeWithTag(UiAutomationIds.rewardsRowTitle(6).value).assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.REWARDS_SCREEN.value).performRewardsScrollToEnd()
+        val card = onNodeWithTag(UiAutomationIds.rewardsRow(9).value).assertIsDisplayed()
             .fetchSemanticsNode().boundsInRoot
-        val progress = onNodeWithTag(UiAutomationIds.rewardsRowProgress(6).value).assertIsDisplayed()
+        val title = onNodeWithTag(UiAutomationIds.rewardsRowTitle(9).value).assertIsDisplayed()
             .fetchSemanticsNode().boundsInRoot
-        val state = onNodeWithTag(UiAutomationIds.rewardsRowState(6).value).assertIsDisplayed()
+        val progress = onNodeWithTag(UiAutomationIds.rewardsRowProgress(9).value).assertIsDisplayed()
+            .fetchSemanticsNode().boundsInRoot
+        val state = onNodeWithTag(UiAutomationIds.rewardsRowState(9).value).assertIsDisplayed()
             .fetchSemanticsNode().boundsInRoot
         val camera = onNodeWithTag(UiAutomationIds.CAMERA_ACTION.value).fetchSemanticsNode().boundsInRoot
-        assertTrue(title.bottom < progress.top && progress.bottom < state.top)
-        assertTrue(state.bottom < camera.top)
+        assertTrue(
+            title.top >= card.top && title.bottom <= card.bottom,
+            "Title leaves its reward card: $title in $card",
+        )
+        assertTrue(
+            progress.top >= card.top && progress.bottom <= card.bottom,
+            "Progress leaves its reward card: $progress in $card",
+        )
+        assertTrue(
+            state.top >= card.top && state.bottom <= card.bottom,
+            "State leaves its reward card: $state in $card",
+        )
+        assertTrue(card.bottom < camera.top, "Scrolled reward overlaps navigation: $card and $camera")
+        onNodeWithTag(UiAutomationIds.rewardsRowTitle(9).value, useUnmergedTree = true)
+            .assertCompleteRewardsText(model.visualCards[9].title)
         writeLayoutScreenshot("rewards-large-text-scrolled", captureToImage().asSkiaBitmap())
     }
 

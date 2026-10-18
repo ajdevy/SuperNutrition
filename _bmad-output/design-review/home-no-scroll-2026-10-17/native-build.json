@@ -1,0 +1,19 @@
+{
+  "installed_at": "2026-10-17T23:58:57.734637+00:00",
+  "apk_sha256": "7f7296bd7282a86dc63fe4feaad0d4a19706c8b4ca231c39607ff0e3abc1f26c",
+  "apk_build_path": "/Users/anastasia/.codex/worktrees/a704/SuperNutrition/mobile/apps/androidApp/build/outputs/apk/production/debug/androidApp-production-debug.apk",
+  "source_head": "7ec615063ac166d69e7f4a81495e20098f25be3c",
+  "pending_rewards_merge": "7d5971c0d87e3a2c87b8ab35b86628f0ce7a17f9",
+  "home_source_hashes": {
+    "mobile/feature/photo-analysis-ui/src/commonMain/kotlin/com/supernutrition/feature/photoanalysis/HomeMeasuredLayout.kt": "fd4d8006fed168c449abe112d8d93a668f7ccf579e78f27fab18571045be5bd5",
+    "mobile/feature/photo-analysis-ui/src/commonMain/kotlin/com/supernutrition/feature/photoanalysis/HomeScreenModel.kt": "71319bc30faa383fb79682c4ab05347a180689ed144906b1b3402786cadafb91",
+    "mobile/feature/photo-analysis-ui/src/commonMain/kotlin/com/supernutrition/feature/photoanalysis/HomeRhythmCard.kt": "0338e4075489dace69df514b1636f3fd22a59dc78270bc1dee1fc5507110a3a7",
+    "mobile/feature/photo-analysis-ui/src/commonMain/kotlin/com/supernutrition/feature/photoanalysis/HomeBrand.kt": "ee0318799c05284c3f378dc3878974702c3d118bb0e9fb8b7355bfc094ce5439",
+    "mobile/feature/photo-analysis-ui/src/commonMain/kotlin/com/supernutrition/feature/photoanalysis/HomeScreen.kt": "7b1041e17ecef1a62c6dad41f43a7c554e32ab36750216075974630ac94ddbfa",
+    "mobile/feature/photo-analysis-ui/src/commonMain/kotlin/com/supernutrition/feature/photoanalysis/HomeScreenStyle.kt": "4c87dc7196316dc533e3da07dcfe5d28aebb3cea37e9607b5786963c2e609f8c",
+    "mobile/feature/photo-analysis-ui/src/commonMain/kotlin/com/supernutrition/feature/photoanalysis/HomeHeader.kt": "63778e611db85f651ee013bc0a44ba9752c496e408db47a612b973e14725f882",
+    "mobile/feature/photo-analysis-ui/src/commonMain/kotlin/com/supernutrition/feature/photoanalysis/HomeNextStep.kt": "70375ea6e59533d2bb952d14ed4b3a78cbb182c56bbb6323481fa487580aabcb",
+    "mobile/feature/photo-analysis-ui/src/commonMain/kotlin/com/supernutrition/feature/photoanalysis/HomeCarePrompt.kt": "8d7098a798f70f58610e1a77d1d2f6e5be4d9e9a96bc00c0060be2e796a05baf"
+  },
+  "evidence_scope": "Working source Android UI build; full167UI fresh0fail, source gate finaltest-format rerun pending. iOS-only callback compilation is separate and cannot affect these Home pixels."
+}

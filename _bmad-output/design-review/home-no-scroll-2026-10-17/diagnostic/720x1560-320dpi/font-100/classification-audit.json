@@ -1,0 +1,6 @@
+{
+  "audited_at": "2026-10-17T23:12:58.324239+00:00",
+  "native_initial_fit": true,
+  "outcome": "initial-frame fit",
+  "reason": "Captured original screen visibly fits. Do it is represented by a semantics child marked nonclickable inside a clickable parent with the exact same48dp frame. Old capture helper selected only clickable description nodes. Parent bounds521,1158,648,1254; next card48,1131,672,1281 clears control1304 by23px (11.5dp); native scrollable false. Helper now resolves clickable ancestor without dropping touch/clearance checks."
+}

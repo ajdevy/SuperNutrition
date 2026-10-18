@@ -5,11 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -24,13 +21,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.supernutrition.core.ui.UiAutomationId
@@ -64,23 +62,36 @@ internal fun HomeRhythmCard(model: HomeScreenModel, compact: Boolean = false) {
 
 @Composable
 private fun HomeRhythmGrid(model: HomeScreenModel, compact: Boolean) {
-    BoxWithConstraints(Modifier.fillMaxWidth()) {
-        val columnCount = if (maxWidth < 248.dp || LocalDensity.current.fontScale > 1.2f) 1 else 2
-        Column(verticalArrangement = Arrangement.spacedBy(if (compact) 6.dp else 8.dp)) {
-            homeRhythmItems(model).chunked(columnCount).forEach { row ->
-                Row(
-                    Modifier.fillMaxWidth().height(IntrinsicSize.Min),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    row.forEach { item ->
-                        HomeMetricCard(
-                            item.metric,
-                            item.appearance,
-                            Modifier.weight(1f).fillMaxHeight().automationId(item.automationId),
-                            compact,
-                        )
-                    }
-                }
+    Layout(
+        modifier = Modifier.fillMaxWidth(),
+        content = {
+            homeRhythmItems(model).forEach { item ->
+                HomeMetricCard(item.metric, item.appearance, Modifier.automationId(item.automationId), compact)
+            }
+        },
+    ) { measurables, constraints ->
+        val columnGap = 8.dp.roundToPx()
+        val rowGap = (if (compact) 6.dp else 8.dp).roundToPx()
+        val pairedWidth = ((constraints.maxWidth - columnGap) / 2).coerceAtLeast(0)
+        // Intrinsic widths preserve complete words while allowing values to wrap naturally.
+        val columnCount = if (measurables.all { it.minIntrinsicWidth(Constraints.Infinity) <= pairedWidth }) {
+            2
+        } else {
+            1
+        }
+        val columnWidth = (constraints.maxWidth - columnGap * (columnCount - 1)) / columnCount
+        val rowHeights = measurables.chunked(columnCount).map { row ->
+            row.maxOf { it.maxIntrinsicHeight(columnWidth) }
+        }
+        val cards = measurables.mapIndexed { index, measurable ->
+            measurable.measure(Constraints.fixed(columnWidth, rowHeights[index / columnCount]))
+        }
+        val height = rowHeights.sum() + rowGap * (rowHeights.size - 1)
+        layout(constraints.maxWidth, height) {
+            var y = 0
+            cards.chunked(columnCount).forEachIndexed { rowIndex, row ->
+                row.forEachIndexed { column, card -> card.placeRelative(column * (columnWidth + columnGap), y) }
+                y += rowHeights[rowIndex] + rowGap
             }
         }
     }

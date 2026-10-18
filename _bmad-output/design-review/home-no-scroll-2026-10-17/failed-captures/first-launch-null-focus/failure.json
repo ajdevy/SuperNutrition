@@ -1,0 +1,5 @@
+{
+  "failed_at": "2026-10-18T00:02:45.238609+00:00",
+  "cause": "mCurrentFocus=null immediately following Activity recreation, before screenshot/native metadata; capture classified as failed, not passed",
+  "fix": "Bounded30sec read-only focus wait for null transition; any actual foreign package still refuses further UI actions"
+}

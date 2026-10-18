@@ -86,20 +86,20 @@ public final class BrandNavigationVisualInstrumentationTest {
         float density = context().getResources().getDisplayMetrics().density;
         Bitmap initial = screenshot(device, "rewards_list", "device-rewards-backdrop");
         Rect camera = node(device, "camera_action").getVisibleBounds();
-        int paper = 0xFFFBFCF8;
+        int paper = 0xFFF7F3EF;
         assertEquals(paper, initial.getPixel(4, camera.centerY()));
         assertEquals(paper, initial.getPixel(initial.getWidth() - 5, camera.centerY()));
         initial.recycle();
         for (int attempt = 0; attempt < 6; attempt++) {
-            UiObject2 card = device.findObject(By.res("rewards_row_6"));
+            UiObject2 card = device.findObject(By.res("rewards_row_9"));
             if (card != null && card.getVisibleBounds().bottom < camera.top) break;
             Rect list = node(device, "rewards_list").getVisibleBounds();
             device.swipe(list.centerX(), list.bottom - Math.round(140 * density),
                     list.centerX(), list.top + Math.round(120 * density), 90);
             device.waitForIdle();
         }
-        Rect finalCard = node(device, "rewards_row_6").getVisibleBounds();
-        Rect finalState = node(device, "rewards_row_6_state").getVisibleBounds();
+        Rect finalCard = node(device, "rewards_row_9").getVisibleBounds();
+        Rect finalState = node(device, "rewards_row_9_state").getVisibleBounds();
         assertTrue("final reward is hidden under the camera", finalCard.bottom < camera.top);
         assertTrue("final reward state is clipped", finalState.height() > 0 && finalState.bottom <= finalCard.bottom);
         screenshot(device, "rewards_list", "device-rewards-final").recycle();
@@ -122,6 +122,7 @@ public final class BrandNavigationVisualInstrumentationTest {
 
     private static UiObject2 node(UiDevice device, String id) {
         UiObject2 node = device.wait(Until.findObject(By.res(id)), TIMEOUT_MS);
+        if (node == null) NativeUiSemanticDiagnostics.dump(device, id);
         assertNotNull("missing app resource " + id, node);
         return node;
     }

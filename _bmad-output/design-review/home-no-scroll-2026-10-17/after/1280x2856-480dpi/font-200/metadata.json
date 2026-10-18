@@ -1,0 +1,295 @@
+{
+  "captured_at": "2026-10-18T03:52:27.035725+00:00",
+  "avd": "SuperNutrition_API_35_x86_64",
+  "serial": "emulator-5554",
+  "api": 35,
+  "abi": "x86_64",
+  "evidence_kind": "native emulator viewport override",
+  "device_equivalences": [
+    "Pixel 9 Pro",
+    "Pixel 10 Pro"
+  ],
+  "requested_geometry": {
+    "width_px": 1280,
+    "height_px": 2856,
+    "density_dpi": 480,
+    "width_dp": 426.67,
+    "height_dp": 952.0,
+    "devices": [
+      "Pixel 9 Pro",
+      "Pixel 10 Pro"
+    ]
+  },
+  "wm_size": "Physical size: 720x1560\nOverride size: 1280x2856",
+  "wm_density": "Physical density: 320\nOverride density: 480",
+  "font_scale": 2.0,
+  "apk_sha256": "7f7296bd7282a86dc63fe4feaad0d4a19706c8b4ca231c39607ff0e3abc1f26c",
+  "portrait_locked_app": true,
+  "foreground": [
+    "mCurrentFocus=Window{6d3b594 u0 app.supernutrition/com.supernutrition.feature.photoanalysis.PhotoAnalysisComposeActivity}"
+  ],
+  "controls_top_px": 2472,
+  "helpful_action_bounds": null,
+  "helpful_card_bounds": [
+    72,
+    2625,
+    1208,
+    2712
+  ],
+  "missing_initial_text": [
+    "Add one leafy green to dinner",
+    "Do it"
+  ],
+  "native_scrollable": true,
+  "native_initial_fit": false,
+  "outcome": "designer-required: readable content exceeds initial frame",
+  "note": "No text-size override or forced screenshot scaling. Native XML fit is combined with focused Compose complete-frame/readability evidence; it is not a physical-device test.",
+  "required_tag_bounds": {
+    "home_date": [
+      [
+        378,
+        449,
+        902,
+        539
+      ]
+    ],
+    "home_profile": [
+      [
+        1064,
+        291,
+        1208,
+        435
+      ]
+    ],
+    "home_add_food": [
+      [
+        286,
+        931,
+        628,
+        1179
+      ]
+    ],
+    "home_view_goals": [
+      [
+        652,
+        931,
+        994,
+        1179
+      ]
+    ],
+    "home_summary": [
+      [
+        72,
+        1785,
+        1208,
+        2589
+      ]
+    ],
+    "home_metric_fiber": [
+      [
+        108,
+        1999,
+        628,
+        2264
+      ]
+    ],
+    "home_metric_water": [
+      [
+        652,
+        1999,
+        1172,
+        2264
+      ]
+    ],
+    "home_metric_protein": [
+      [
+        108,
+        2288,
+        628,
+        2553
+      ]
+    ],
+    "home_metric_movement": [
+      [
+        652,
+        2288,
+        1172,
+        2553
+      ]
+    ],
+    "home_next_step": [
+      [
+        72,
+        2625,
+        1208,
+        2712
+      ]
+    ]
+  },
+  "missing_initial_tags": [],
+  "unsafe_initial_frames": [
+    "home_summary",
+    "home_metric_protein",
+    "home_metric_movement",
+    "home_next_step"
+  ],
+  "undersized_initial_actions": [],
+  "home_content_bounds": [
+    0,
+    242,
+    1280,
+    2712
+  ],
+  "mascot_bounds": [
+    72,
+    1239,
+    1208,
+    1785
+  ],
+  "capture_command_timings": [
+    {
+      "command": [
+        "/Users/anastasia/Library/Android/sdk/platform-tools/adb",
+        "-P",
+        "5041",
+        "devices",
+        "-l"
+      ],
+      "seconds": 0.042
+    },
+    {
+      "command": [
+        "/Users/anastasia/Library/Android/sdk/platform-tools/adb",
+        "-P",
+        "5041",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "sh -c 'set -e\ngetprop ro.kernel.qemu\ngetprop ro.build.version.sdk\ngetprop ro.product.cpu.abi'"
+      ],
+      "seconds": 0.489
+    },
+    {
+      "command": [
+        "/Users/anastasia/Library/Android/sdk/platform-tools/adb",
+        "-P",
+        "5041",
+        "-s",
+        "emulator-5554",
+        "emu",
+        "avd",
+        "name"
+      ],
+      "seconds": 0.06
+    },
+    {
+      "command": [
+        "/Users/anastasia/Library/Android/sdk/platform-tools/adb",
+        "-P",
+        "5041",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "sh -c 'set -e\nsettings put system screen_off_timeout 1800000\nsettings put system accelerometer_rotation 0\nsettings put system user_rotation 0\nwm size 1280x2856\nwm density 480\nsettings put system font_scale 2.0\ninput keyevent WAKEUP'"
+      ],
+      "seconds": 1.911
+    },
+    {
+      "command": [
+        "/Users/anastasia/Library/Android/sdk/platform-tools/adb",
+        "-P",
+        "5041",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "am",
+        "start",
+        "-W",
+        "-f",
+        "0x10008000",
+        "-n",
+        "app.supernutrition/com.supernutrition.feature.photoanalysis.PhotoAnalysisComposeActivity"
+      ],
+      "seconds": 2.41
+    },
+    {
+      "command": [
+        "/Users/anastasia/Library/Android/sdk/platform-tools/adb",
+        "-P",
+        "5041",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "dumpsys",
+        "window"
+      ],
+      "seconds": 0.612
+    },
+    {
+      "command": [
+        "/Users/anastasia/Library/Android/sdk/platform-tools/adb",
+        "-P",
+        "5041",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "sh -c 'set -e\nuiautomator dump /sdcard/supernutrition-home-review.xml >/dev/null\ncat /sdcard/supernutrition-home-review.xml'"
+      ],
+      "seconds": 4.652
+    },
+    {
+      "command": [
+        "/Users/anastasia/Library/Android/sdk/platform-tools/adb",
+        "-P",
+        "5041",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "dumpsys",
+        "window"
+      ],
+      "seconds": 0.241
+    },
+    {
+      "command": [
+        "/Users/anastasia/Library/Android/sdk/platform-tools/adb",
+        "-P",
+        "5041",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "pm",
+        "path",
+        "app.supernutrition"
+      ],
+      "seconds": 0.232
+    },
+    {
+      "command": [
+        "/Users/anastasia/Library/Android/sdk/platform-tools/adb",
+        "-P",
+        "5041",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "stat",
+        "-c",
+        "%s:%Y:%i",
+        "/data/app/~~URHSK4iI-xWjng4FIJtURA==/app.supernutrition-VOhtkmRj084sWV8R9TRi7Q==/base.apk"
+      ],
+      "seconds": 0.19
+    },
+    {
+      "command": [
+        "/Users/anastasia/Library/Android/sdk/platform-tools/adb",
+        "-P",
+        "5041",
+        "-s",
+        "emulator-5554",
+        "shell",
+        "sh -c 'set -e\nwm size\nwm density\nsettings get system font_scale'"
+      ],
+      "seconds": 0.549
+    }
+  ]
+}

@@ -1,0 +1,144 @@
+{
+  "captured_at": "2026-10-18T00:03:26.516234+00:00",
+  "avd": "SuperNutrition_API_35_x86_64",
+  "serial": "emulator-5554",
+  "api": 35,
+  "abi": "x86_64",
+  "evidence_kind": "native emulator viewport override",
+  "device_equivalences": [
+    "Previous app check 360.0x780.0 dp"
+  ],
+  "requested_geometry": {
+    "width_px": 720,
+    "height_px": 1560,
+    "density_dpi": 320,
+    "width_dp": 360.0,
+    "height_dp": 780.0,
+    "devices": [
+      "Previous app check 360.0x780.0 dp"
+    ]
+  },
+  "wm_size": "Physical size: 720x1560",
+  "wm_density": "Physical density: 320",
+  "font_scale": 1.0,
+  "apk_sha256": "7f7296bd7282a86dc63fe4feaad0d4a19706c8b4ca231c39607ff0e3abc1f26c",
+  "portrait_locked_app": true,
+  "foreground": [
+    "mCurrentFocus=Window{889302 u0 app.supernutrition/com.supernutrition.feature.photoanalysis.PhotoAnalysisComposeActivity}"
+  ],
+  "controls_top_px": 1304,
+  "helpful_action_bounds": [
+    521,
+    1158,
+    648,
+    1254
+  ],
+  "helpful_card_bounds": [
+    48,
+    1131,
+    672,
+    1281
+  ],
+  "missing_initial_text": [],
+  "native_scrollable": false,
+  "native_initial_fit": true,
+  "outcome": "initial-frame fit",
+  "note": "No text-size override or forced screenshot scaling. Native XML fit is combined with focused Compose complete-frame/readability evidence; it is not a physical-device test.",
+  "required_tag_bounds": {
+    "home_date": [
+      [
+        273,
+        256,
+        448,
+        286
+      ]
+    ],
+    "home_profile": [
+      [
+        576,
+        152,
+        672,
+        248
+      ]
+    ],
+    "home_add_food": [
+      [
+        120,
+        429,
+        352,
+        525
+      ]
+    ],
+    "home_view_goals": [
+      [
+        368,
+        429,
+        600,
+        525
+      ]
+    ],
+    "home_summary": [
+      [
+        48,
+        799,
+        672,
+        1131
+      ]
+    ],
+    "home_metric_fiber": [
+      [
+        68,
+        883,
+        352,
+        991
+      ]
+    ],
+    "home_metric_water": [
+      [
+        368,
+        883,
+        652,
+        991
+      ]
+    ],
+    "home_metric_protein": [
+      [
+        68,
+        1003,
+        352,
+        1111
+      ]
+    ],
+    "home_metric_movement": [
+      [
+        368,
+        1003,
+        652,
+        1111
+      ]
+    ],
+    "home_next_step": [
+      [
+        48,
+        1131,
+        672,
+        1281
+      ]
+    ]
+  },
+  "missing_initial_tags": [],
+  "unsafe_initial_frames": [],
+  "undersized_initial_actions": [],
+  "home_content_bounds": [
+    0,
+    136,
+    720,
+    1464
+  ],
+  "mascot_bounds": [
+    48,
+    553,
+    672,
+    799
+  ]
+}

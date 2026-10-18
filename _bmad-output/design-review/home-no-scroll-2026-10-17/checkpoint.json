@@ -1,0 +1,15 @@
+{
+  "updated_at": "2026-10-18T09:45:14.890824+00:00",
+  "phase": "gallery complete; readable design stops documented; whole-app verification tracked separately",
+  "after_png": 94,
+  "separate_avd_png": 6,
+  "inspections": 106,
+  "source_apk_sha256": "7f7296bd7282a86dc63fe4feaad0d4a19706c8b4ca231c39607ff0e3abc1f26c",
+  "font_policy": "no font shrinking; infeasible cases are designer stops",
+  "physical_device_evidence": false,
+  "final_cases": 100,
+  "fit_cases": 40,
+  "designer_required_cases": 60,
+  "deleted_matrix_avds": 3,
+  "native_verification_report": "_bmad-output/implementation-artifacts/home-no-scroll-delivery-2026-10-18.md"
+}

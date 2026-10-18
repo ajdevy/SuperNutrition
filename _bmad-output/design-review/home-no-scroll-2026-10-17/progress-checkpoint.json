@@ -1,0 +1,23 @@
+{
+  "updated_at": "2026-10-18T01:42:55.768988+00:00",
+  "captured_native_cases": 20,
+  "planned_native_cases": 94,
+  "current_case": {
+    "index": 20,
+    "planned_cases": 94,
+    "geometry": "1080x2220-440dpi",
+    "font_scale": 1.0,
+    "png": "/Users/anastasia/.codex/worktrees/a704/SuperNutrition/_bmad-output/design-review/home-no-scroll-2026-10-17/after/1080x2220-440dpi/font-100/home.png"
+  },
+  "current_png_visually_inspected_by_parent": true,
+  "inspections_acknowledged_in_journal": 19,
+  "fit_count_so_far": 12,
+  "all_UI_tests": {
+    "tests": 167,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "scope_gate": "full-final-scoped exit1 only expired bootstrap-android-host policy. All relevant source lint and actual featureIosArm64 compilation passed. ProductionAndroidAPKunmodified and installed SHA7f7296bd7282a86dc63fe4feaad0d4a19706c8b4ca231c39607ff0e3abc1f26c. SharedKit full build still missing Xcode; final extractedcopy-source compile pending.",
+  "remaining": "Capture cases21..94 with immediate inspection; build designer gallery/report; sequential3AVDs +cleanup/restore; fresh relevantPresenter/nativeAndroidtest evidence; graphify/diffcheck/reviewclosure; resolve or document Rewards business question and SeeAll action; finishauthorizedmainmerge/push."
+}

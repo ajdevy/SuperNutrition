@@ -22,7 +22,6 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollToIndex
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.v2.runSkikoComposeUiTest
@@ -177,16 +176,17 @@ class BrandNavigationVisualTest {
                             contentPadding = PaddingValues(top = 24.dp, bottom = 20.dp),
                         ) { RewardsScreen(layoutRewardsModel()) }
                     }
-                    val list = onNodeWithTag(UiAutomationIds.REWARDS_LIST.value)
-                    val bounds = list.fetchSemanticsNode().boundsInRoot
+                    val screen = onNodeWithTag(UiAutomationIds.REWARDS_SCREEN.value)
+                    val bounds = screen.fetchSemanticsNode().boundsInRoot
                     val image = captureToImage()
                     writeScreenshot("rewards-floating-${viewport.width.toInt()}-$fontScale", image)
                     assertEquals(viewport.height - 20f, bounds.bottom, "Rewards ends at an opaque navigation strip")
                     assertEquals(24f, bounds.top, "Host top inset should be applied once")
                     assertEquals(RewardsPaper, image.toPixelMap()[4, viewport.height.toInt() - 24])
                     assertEquals(RewardsPaper, image.toPixelMap()[4, viewport.height.toInt() - 4])
-                    list.performScrollToIndex(if (fontScale > 1.2f) 7 else 4)
-                    val card = onNodeWithTag(UiAutomationIds.rewardsRow(6).value).assertIsDisplayed()
+                    val finalReward = onNodeWithTag(UiAutomationIds.rewardsRow(9).value)
+                    onNodeWithTag(UiAutomationIds.REWARDS_SCREEN.value).performRewardsScrollToEnd()
+                    val card = finalReward.assertIsDisplayed()
                         .fetchSemanticsNode().boundsInRoot
                     val camera = onNodeWithTag(UiAutomationIds.CAMERA_ACTION.value).fetchSemanticsNode().boundsInRoot
                     assertTrue(card.bottom < camera.top, "Final reward is hidden under navigation: $card and $camera")

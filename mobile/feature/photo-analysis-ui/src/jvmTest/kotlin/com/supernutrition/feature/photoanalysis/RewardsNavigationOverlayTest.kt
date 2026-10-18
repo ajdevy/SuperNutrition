@@ -9,7 +9,7 @@ import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.click
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.performScrollToIndex
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipe
 import androidx.compose.ui.test.v2.runSkikoComposeUiTest
@@ -62,20 +62,25 @@ class RewardsNavigationOverlayTest {
                 RewardsScreen(layoutRewardsModel())
             }
         }
-        val list = onNodeWithTag(UiAutomationIds.REWARDS_LIST.value).performScrollToIndex(1)
+        val screen = onNodeWithTag(UiAutomationIds.REWARDS_SCREEN.value)
+        onNodeWithTag(UiAutomationIds.rewardsRow(0).value).performScrollTo()
         val card = onNodeWithTag(UiAutomationIds.rewardsRow(0).value).fetchSemanticsNode().boundsInRoot
-        val bounds = list.fetchSemanticsNode().boundsInRoot
+        val bounds = screen.fetchSemanticsNode().boundsInRoot
         val pill = onNodeWithTag(UiAutomationIds.BOTTOM_BAR_PILL.value).fetchSemanticsNode().boundsInRoot
         assertTrue(card.left < pill.left, "There is no visible card beside the pill: $card and $pill")
         val x = (card.left + pill.left) / 2
         val pixels = captureToImage().toPixelMap()
-        assertEquals(Color.White, pixels[x.toInt(), 200], "The blank canvas hides reward $card in viewport $bounds")
-        val previous = list.fetchSemanticsNode().config[SemanticsProperties.VerticalScrollAxisRange].value()
-        list.performTouchInput {
+        assertEquals(
+            Color(0xFFFBF9F6),
+            pixels[(card.left + 4f).toInt(), card.center.y.toInt()],
+            "The blank canvas hides reward $card in viewport $bounds",
+        )
+        val previous = screen.fetchSemanticsNode().config[SemanticsProperties.VerticalScrollAxisRange].value()
+        screen.performTouchInput {
             val start = Offset(x - bounds.left, bounds.height - 12f)
             swipe(start, start - Offset(0f, 80f), 300)
         }
-        val current = list.fetchSemanticsNode().config[SemanticsProperties.VerticalScrollAxisRange].value()
+        val current = screen.fetchSemanticsNode().config[SemanticsProperties.VerticalScrollAxisRange].value()
         assertTrue(current > previous, "A swipe outside the floating pill cannot reach Rewards")
     }
 }

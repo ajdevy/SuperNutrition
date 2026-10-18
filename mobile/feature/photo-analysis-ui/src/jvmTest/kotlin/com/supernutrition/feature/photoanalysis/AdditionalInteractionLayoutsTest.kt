@@ -19,7 +19,6 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
-import androidx.compose.ui.test.performScrollToIndex
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTextReplacement
@@ -203,9 +202,12 @@ class AdditionalInteractionLayoutsTest {
                 RewardsScreen(layoutRewardsModel())
             }
         }
-        onNodeWithTag(UiAutomationIds.REWARDS_LIST.value).performScrollToIndex(7)
-        val reward = onNodeWithTag(UiAutomationIds.rewardsRowState(6).value)
+        onNodeWithTag(UiAutomationIds.REWARDS_SCREEN.value).performRewardsScrollToEnd()
+        val reward = onNodeWithTag(UiAutomationIds.rewardsRow(9).value)
             .assertIsDisplayed().fetchSemanticsNode().boundsInRoot
+        val rewardState = onNodeWithTag(UiAutomationIds.rewardsRowState(9).value)
+            .assertIsDisplayed().fetchSemanticsNode().boundsInRoot
+        assertTrue(rewardState.top >= reward.top && rewardState.bottom <= reward.bottom)
         assertTrue(reward.bottom < camera.top, "Last reward overlaps navigation: reward=$reward camera=$camera")
     }
 

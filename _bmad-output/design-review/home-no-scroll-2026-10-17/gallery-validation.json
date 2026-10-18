@@ -1,0 +1,120 @@
+{
+  "kind": "derived gallery consistency validation; no new device execution or visual inspection",
+  "validated_at": "2026-10-18T06:01:59.331332+00:00",
+  "main_summary": {
+    "fit": 38,
+    "needs-designer": 56,
+    "missing": 0,
+    "pending": 0,
+    "planned": 94,
+    "geometries": 45,
+    "captured": 94,
+    "inspected": 94,
+    "geometry_fit": 40,
+    "visual_issue_cases": 5,
+    "geometry_fit_with_visual_issues": 2
+  },
+  "additional_summary": {
+    "fit": 2,
+    "needs-designer": 4,
+    "missing": 0,
+    "pending": 0,
+    "planned": 6,
+    "geometries": 3,
+    "captured": 6,
+    "inspected": 6,
+    "geometry_fit": 2,
+    "visual_issue_cases": 0,
+    "geometry_fit_with_visual_issues": 0,
+    "presets": 3,
+    "deleted_presets": 3
+  },
+  "combined_summary": {
+    "fit": 40,
+    "needs-designer": 60,
+    "missing": 0,
+    "pending": 0,
+    "planned": 100,
+    "geometries": 45,
+    "captured": 100,
+    "inspected": 100,
+    "geometry_fit": 42,
+    "visual_issue_cases": 5,
+    "geometry_fit_with_visual_issues": 2
+  },
+  "csv_main_rows": 94,
+  "sdk_definitions_preserved": 71,
+  "local_links_checked": 509,
+  "original_png_links_checked": 106,
+  "original_png_hashes_checked": 106,
+  "original_native_metadata_preserved": 106,
+  "avd_pairs": {
+    "SN_Home_Compact_35_20261018": {
+      "font_percents": [
+        100,
+        200
+      ],
+      "paired_100_200": true,
+      "inspected": 2,
+      "ledger_status": "tested100/200 and deleted",
+      "deleted_at": "2026-10-18T04:59:12.201293+00:00"
+    },
+    "SN_Home_Large_35_20261018": {
+      "font_percents": [
+        100,
+        200
+      ],
+      "paired_100_200": true,
+      "inspected": 2,
+      "ledger_status": "tested100/200 and deleted",
+      "deleted_at": "2026-10-18T05:18:44.653665+00:00"
+    },
+    "SN_Home_Tablet_35_20261018": {
+      "font_percents": [
+        100,
+        200
+      ],
+      "paired_100_200": true,
+      "inspected": 2,
+      "ledger_status": "tested100/200 and deleted",
+      "deleted_at": "2026-10-18T05:32:27.948340+00:00"
+    }
+  },
+  "historical_pngs": 6,
+  "historical_journal_verified": 6,
+  "historical_summary": {
+    "fit": 1,
+    "needs-designer": 5,
+    "missing": 0,
+    "pending": 0,
+    "planned": 6,
+    "geometries": 4,
+    "captured": 6,
+    "inspected": 6,
+    "geometry_fit": 0,
+    "visual_issue_cases": 0,
+    "geometry_fit_with_visual_issues": 0
+  },
+  "diagnostic_verifier_corrections": [
+    {
+      "png": "diagnostic/720x1560-320dpi/font-100/home.png",
+      "original_native_initial_fit": false,
+      "corrected_initial_fit": true,
+      "audit_path": "diagnostic/720x1560-320dpi/font-100/classification-audit.json"
+    }
+  ],
+  "generator_sha256": "2d33c6f1e1967565c65991b11d9ce41793dd98f5c41ebf6bade11db6fde27a84",
+  "input_sha256": {
+    "matrix-plan.json": "8efd095446069d5e8f4eca81ebb49f827cea2a3bb6dd1d99fc01f0d2d09c4e0a",
+    "sdk-device-catalog.json": "7c007cb647464d2fb356581569f312c3e789df1401c6cb6671b74011af3d194a",
+    "visual-inspection.jsonl": "8dd28bc191bff59d4018bc4d36f7aba4addd7cd7949b605389d16df9864335a4",
+    "separate-avds/ledger.json": "0cbba1554ec50df633b7dc21717831b9ad10df455ae0276501d7e61c6f282391",
+    "diagnostic/720x1560-320dpi/font-100/classification-audit.json": "e5bce06c226e5e2f6e5b5699011232b6a442c2d715e7525820a1e1d0d9113650"
+  },
+  "output_sha256": {
+    "index.html": "60dd21b2acda69b034747a19f8131fa2de12c30c061a4c5b55e616810f2ac425",
+    "README.md": "f1221ea3a1d44800eea98c20c6f3ecceae1c3c0ffeafb9e486423bce757187fd",
+    "screen-matrix.csv": "5eb1f582bcc17e25bd26d5524c80566a0c0e0b944ac00787baac10ffa3a9159e",
+    "gallery-data.json": "74016d9b195b6f38c16a126516558193b91bd21f7853aa4837d596646f640856"
+  }
+}

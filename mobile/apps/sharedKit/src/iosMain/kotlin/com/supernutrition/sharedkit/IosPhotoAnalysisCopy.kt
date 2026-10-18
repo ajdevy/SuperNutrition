@@ -8,6 +8,7 @@ import com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterCopy
 import com.supernutrition.feature.photoanalysis.RecoveryCopy
 import com.supernutrition.feature.photoanalysis.RewardsCardCopy
 import com.supernutrition.feature.photoanalysis.RewardsPresenterCopy
+import com.supernutrition.feature.photoanalysis.RewardsVisualCardCopy
 import com.supernutrition.feature.photoanalysis.StatusCopy
 import platform.Foundation.NSBundle
 
@@ -119,35 +120,97 @@ internal fun localizedRewardsCopy(): RewardsPresenterCopy = RewardsPresenterCopy
     earnedLabel = localized("rewards.earned"),
     readyLabel = localized("rewards.ready"),
     progressTemplate = localized("rewards.progress_template"),
-    cards = mapOf(
-        RewardId.PROTEIN_ALL_DAY to RewardsCardCopy(
-            title = localized("rewards.protein.title"),
-            description = localized("rewards.protein.description"),
-        ),
-        RewardId.FATS_PRESENT to RewardsCardCopy(
-            title = localized("rewards.fats.title"),
-            description = localized("rewards.fats.description"),
-        ),
-        RewardId.FIBER_PRESENT to RewardsCardCopy(
-            title = localized("rewards.fiber.title"),
-            description = localized("rewards.fiber.description"),
-        ),
-        RewardId.COLORS_OF_DAY to RewardsCardCopy(
-            title = localized("rewards.colors.title"),
-            description = localized("rewards.colors.description"),
-        ),
-        RewardId.THIRTY_PRODUCTS to RewardsCardCopy(
-            title = localized("rewards.products.title"),
-            description = localized("rewards.products.description"),
-        ),
-        RewardId.FERMENTED_THREE_DAYS to RewardsCardCopy(
-            title = localized("rewards.fermented.title"),
-            description = localized("rewards.fermented.description"),
-        ),
-        RewardId.SEVEN_DAYS_RECORDED to RewardsCardCopy(
-            title = localized("rewards.seven_days.title"),
-            description = localized("rewards.seven_days.description"),
-        ),
+    levelTitle = localized("rewards.level.title"),
+    levelSummary = localized("rewards.level.summary"),
+    earnedSectionTitle = localized("rewards.earned_section"),
+    earnedSeeAllLabel = localized("rewards.earned_see_all"),
+    inProgressSectionTitle = localized("rewards.in_progress_section"),
+    backLabel = localized("rewards.back"),
+    cards = localizedRewardsCards(),
+    visualCards = localizedRewardsVisualCards(),
+)
+
+private fun localizedRewardsCards(): Map<RewardId, RewardsCardCopy> = mapOf(
+    RewardId.PROTEIN_ALL_DAY to RewardsCardCopy(
+        title = localized("rewards.protein.title"),
+        description = localized("rewards.protein.description"),
+    ),
+    RewardId.FATS_PRESENT to RewardsCardCopy(
+        title = localized("rewards.fats.title"),
+        description = localized("rewards.fats.description"),
+    ),
+    RewardId.FIBER_PRESENT to RewardsCardCopy(
+        title = localized("rewards.fiber.title"),
+        description = localized("rewards.fiber.description"),
+    ),
+    RewardId.COLORS_OF_DAY to RewardsCardCopy(
+        title = localized("rewards.colors.title"),
+        description = localized("rewards.colors.description"),
+    ),
+    RewardId.THIRTY_PRODUCTS to RewardsCardCopy(
+        title = localized("rewards.products.title"),
+        description = localized("rewards.products.description"),
+    ),
+    RewardId.FERMENTED_THREE_DAYS to RewardsCardCopy(
+        title = localized("rewards.fermented.title"),
+        description = localized("rewards.fermented.description"),
+    ),
+    RewardId.SEVEN_DAYS_RECORDED to RewardsCardCopy(
+        title = localized("rewards.seven_days.title"),
+        description = localized("rewards.seven_days.description"),
+    ),
+)
+
+private fun localizedRewardsVisualCards(): List<RewardsVisualCardCopy> = listOf(
+    RewardsVisualCardCopy(
+        rewardId = RewardId.FIBER_PRESENT,
+        title = localized("rewards.visual.fiber_friend.title"),
+        subtitle = localized("rewards.visual.fiber_friend.subtitle"),
+    ),
+    RewardsVisualCardCopy(
+        rewardId = RewardId.PROTEIN_ALL_DAY,
+        title = localized("rewards.visual.protein_pal.title"),
+        subtitle = localized("rewards.visual.protein_pal.subtitle"),
+    ),
+    RewardsVisualCardCopy(
+        rewardId = RewardId.SEVEN_DAYS_RECORDED,
+        title = localized("rewards.visual.rhythm_keeper.title"),
+        subtitle = localized("rewards.visual.rhythm_keeper.subtitle"),
+    ),
+    RewardsVisualCardCopy(
+        rewardId = RewardId.FATS_PRESENT,
+        title = localized("rewards.visual.good_fats.title"),
+        subtitle = localized("rewards.visual.good_fats.subtitle"),
+    ),
+    RewardsVisualCardCopy(
+        rewardId = RewardId.FERMENTED_THREE_DAYS,
+        title = localized("rewards.visual.culture_keeper.title"),
+        subtitle = localized("rewards.visual.culture_keeper.subtitle"),
+    ),
+    RewardsVisualCardCopy(
+        rewardId = RewardId.THIRTY_PRODUCTS,
+        title = localized("rewards.visual.veggie_explorer.title"),
+        subtitle = localized("rewards.visual.veggie_explorer.subtitle"),
+    ),
+    RewardsVisualCardCopy(
+        rewardId = RewardId.COLORS_OF_DAY,
+        title = localized("rewards.visual.rainbow_plate.title"),
+        subtitle = localized("rewards.visual.rainbow_plate.subtitle"),
+    ),
+    RewardsVisualCardCopy(
+        rewardId = RewardId.PROTEIN_ALL_DAY,
+        title = localized("rewards.visual.protein_pro.title"),
+        subtitle = localized("rewards.visual.protein_pro.subtitle"),
+    ),
+    RewardsVisualCardCopy(
+        rewardId = RewardId.SEVEN_DAYS_RECORDED,
+        title = localized("rewards.visual.rhythm_master.title"),
+        subtitle = localized("rewards.visual.rhythm_master.subtitle"),
+    ),
+    RewardsVisualCardCopy(
+        rewardId = RewardId.FIBER_PRESENT,
+        title = localized("rewards.visual.fiber_legend.title"),
+        subtitle = localized("rewards.visual.fiber_legend.subtitle"),
     ),
 )
 

@@ -1,0 +1,44 @@
+{
+  "started_at": "2026-10-18T09:39:28.398341+00:00",
+  "scope": "unchanged initialLaunchOpensHomeSurface assertion",
+  "evidence_kind": "API35 x86_64 emulator only; no physical-device proof",
+  "source_head": "7ec615063ac166d69e7f4a81495e20098f25be3c",
+  "adb_port": 5041,
+  "serial": "emulator-5590",
+  "avd": "SN_Final_Verification_35_20261018",
+  "command": [
+    "./mobile/gradlew",
+    "-p",
+    "mobile",
+    ":apps:androidApp:connectedProductionDebugAndroidTest",
+    "-Pandroid.testInstrumentationRunnerArguments.deviceSerial=emulator-5590",
+    "-Pkotlin.compiler.execution.strategy=in-process",
+    "-Dorg.gradle.jvmargs=-Xms256m -Xmx2g -XX:MaxMetaspaceSize=1g -XX:+UseG1GC -Dfile.encoding=UTF-8 -DANDROID_ADB_SERVER_PORT=5041",
+    "--max-workers=1",
+    "--dependency-verification",
+    "strict",
+    "--continue",
+    "--no-configuration-cache",
+    "--console=plain",
+    "--no-watch-fs",
+    "--no-daemon",
+    "-Pandroid.testInstrumentationRunnerArguments.class=com.supernutrition.android.PhotoAnalysisComposeSemanticsInstrumentationTest#initialLaunchOpensHomeSurface"
+  ],
+  "isolated_adb_devices": "List of devices attached\nemulator-5590          device product:sdk_phone64_x86_64 model:Android_SDK_built_for_x86_64 device:emu64x transport_id:2\n\n",
+  "focus_before": [
+    "mCurrentFocus=Window{8164b u0 com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher}"
+  ],
+  "exit_code": 0,
+  "fresh_xml": {
+    "production": {
+      "xml_files": [
+        "TEST-SN_Final_Verification_35_20261018(AVD) - 15-_apps_androidApp-production.xml"
+      ],
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "finished_at": "2026-10-18T09:41:10.132442+00:00"
+}

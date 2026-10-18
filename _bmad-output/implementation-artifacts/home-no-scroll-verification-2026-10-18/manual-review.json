@@ -1,0 +1,42 @@
+{
+  "recorded_at": "2026-10-18T09:56:32.614110+00:00",
+  "avd": "SN_Final_Verification_35_20261018",
+  "serial": "emulator-5590",
+  "adb_port": 5041,
+  "api": 35,
+  "abi": "x86_64",
+  "geometry": "720x1560-320dpi",
+  "requested_memory_mb": 2048,
+  "runtime_memory_mb": 2560,
+  "production_apk_sha256": "7f7296bd7282a86dc63fe4feaad0d4a19706c8b4ca231c39607ff0e3abc1f26c",
+  "foreground_at_completion": "app.supernutrition/com.supernutrition.feature.photoanalysis.PhotoAnalysisComposeActivity",
+  "screen_at_completion": "Home",
+  "visually_inspected": [
+    "home-ready.png",
+    "rewards.png"
+  ],
+  "notes": [
+    "Home: all cards visible at 100 percent text, mascot feet in front of panel, clear background outside floating navigation pill",
+    "Rewards: header and card text readable at normal text; no full-width navigation backing; ten medals and mock levels retained",
+    "These two final review screenshots are separate from the 100-case designer matrix"
+  ],
+  "files": {
+    "home-ready.png": {
+      "sha256": "9bc93af0387b801faffb324dfae51a6611a7b7cc823788990cf59d80c14be372",
+      "bytes": 1391519
+    },
+    "home-ready-hierarchy.xml": {
+      "sha256": "f8d84aab94df4f18139bfbd5efd23a5e0df82e202103a90d41878d3a852b3d6b",
+      "bytes": 32013
+    },
+    "rewards.png": {
+      "sha256": "2ef29d4c96d321c5660af7f90f624d948966aa64cda71fdae2c96c6dab9d235c",
+      "bytes": 571016
+    },
+    "rewards-hierarchy.xml": {
+      "sha256": "bb7bede335956df3aa88002adf0451bcc894ec72d50b71b6c125c9df15cb0e71",
+      "bytes": 37975
+    }
+  },
+  "cleanup": "Delete this task-owned AVD after user review; three matrix AVDs already deleted; existing baseline and unrelated AVD preserved"
+}

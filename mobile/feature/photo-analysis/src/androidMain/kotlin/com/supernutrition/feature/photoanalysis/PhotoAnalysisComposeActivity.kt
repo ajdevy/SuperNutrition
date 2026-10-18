@@ -42,6 +42,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.supernutrition.core.ui.CameraPermissionState
+import com.supernutrition.domain.nutrition.RewardId
 import com.supernutrition.domain.photoanalysis.AttemptId
 import com.supernutrition.domain.photoanalysis.PhotoAnalysisState
 import com.supernutrition.domain.photoanalysis.PhotoLeaseStore
@@ -161,6 +162,12 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
             earnedLabel = getString(R.string.rewards_earned),
             readyLabel = getString(R.string.rewards_ready),
             progressTemplate = getString(R.string.rewards_progress_template),
+            levelTitle = getString(R.string.rewards_level_title),
+            levelSummary = getString(R.string.rewards_level_summary),
+            earnedSectionTitle = getString(R.string.rewards_earned_section),
+            earnedSeeAllLabel = getString(R.string.rewards_earned_see_all),
+            inProgressSectionTitle = getString(R.string.rewards_in_progress_section),
+            backLabel = getString(R.string.rewards_back),
             cards = mapOf(
                 com.supernutrition.domain.nutrition.RewardId.PROTEIN_ALL_DAY to RewardsCardCopy(
                     title = getString(R.string.reward_protein_title),
@@ -189,6 +196,58 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
                 com.supernutrition.domain.nutrition.RewardId.SEVEN_DAYS_RECORDED to RewardsCardCopy(
                     title = getString(R.string.reward_seven_days_title),
                     description = getString(R.string.reward_seven_days_description),
+                ),
+            ),
+            visualCards = listOf(
+                RewardsVisualCardCopy(
+                    rewardId = RewardId.FIBER_PRESENT,
+                    title = getString(R.string.reward_visual_fiber_friend_title),
+                    subtitle = getString(R.string.reward_visual_fiber_friend_subtitle),
+                ),
+                RewardsVisualCardCopy(
+                    rewardId = RewardId.PROTEIN_ALL_DAY,
+                    title = getString(R.string.reward_visual_protein_pal_title),
+                    subtitle = getString(R.string.reward_visual_protein_pal_subtitle),
+                ),
+                RewardsVisualCardCopy(
+                    rewardId = RewardId.SEVEN_DAYS_RECORDED,
+                    title = getString(R.string.reward_visual_rhythm_keeper_title),
+                    subtitle = getString(R.string.reward_visual_rhythm_keeper_subtitle),
+                ),
+                RewardsVisualCardCopy(
+                    rewardId = RewardId.FATS_PRESENT,
+                    title = getString(R.string.reward_visual_good_fats_title),
+                    subtitle = getString(R.string.reward_visual_good_fats_subtitle),
+                ),
+                RewardsVisualCardCopy(
+                    rewardId = RewardId.FERMENTED_THREE_DAYS,
+                    title = getString(R.string.reward_visual_culture_keeper_title),
+                    subtitle = getString(R.string.reward_visual_culture_keeper_subtitle),
+                ),
+                RewardsVisualCardCopy(
+                    rewardId = RewardId.THIRTY_PRODUCTS,
+                    title = getString(R.string.reward_visual_veggie_explorer_title),
+                    subtitle = getString(R.string.reward_visual_veggie_explorer_subtitle),
+                ),
+                RewardsVisualCardCopy(
+                    rewardId = RewardId.COLORS_OF_DAY,
+                    title = getString(R.string.reward_visual_rainbow_plate_title),
+                    subtitle = getString(R.string.reward_visual_rainbow_plate_subtitle),
+                ),
+                RewardsVisualCardCopy(
+                    rewardId = RewardId.PROTEIN_ALL_DAY,
+                    title = getString(R.string.reward_visual_protein_pro_title),
+                    subtitle = getString(R.string.reward_visual_protein_pro_subtitle),
+                ),
+                RewardsVisualCardCopy(
+                    rewardId = RewardId.SEVEN_DAYS_RECORDED,
+                    title = getString(R.string.reward_visual_rhythm_master_title),
+                    subtitle = getString(R.string.reward_visual_rhythm_master_subtitle),
+                ),
+                RewardsVisualCardCopy(
+                    rewardId = RewardId.FIBER_PRESENT,
+                    title = getString(R.string.reward_visual_fiber_legend_title),
+                    subtitle = getString(R.string.reward_visual_fiber_legend_subtitle),
                 ),
             ),
         )
@@ -580,14 +639,24 @@ private fun PhotoAnalysisTabs(
                 ),
                 contentPadding = WindowInsets.safeDrawing.asPaddingValues(),
             ) {
-                PhotoAnalysisTabContent(shell, selectedTab, showCapture)
+                PhotoAnalysisTabContent(
+                    shell = shell,
+                    selectedTab = selectedTab,
+                    onAddFood = showCapture,
+                    onRewardsBack = { selectedTab = 0 },
+                )
             }
         }
     }
 }
 
 @Composable
-private fun PhotoAnalysisTabContent(shell: PhotoAnalysisTabShell, selectedTab: Int, onAddFood: () -> Unit) {
+private fun PhotoAnalysisTabContent(
+    shell: PhotoAnalysisTabShell,
+    selectedTab: Int,
+    onAddFood: () -> Unit,
+    onRewardsBack: () -> Unit,
+) {
     if (selectedTab == 0) {
         HomeScreen(
             model = shell.homeModel,
@@ -595,7 +664,7 @@ private fun PhotoAnalysisTabContent(shell: PhotoAnalysisTabShell, selectedTab: I
             onProfileRequested = shell.onProfileRequested,
         )
     } else {
-        RewardsScreen(shell.rewardsModel)
+        RewardsScreen(shell.rewardsModel, onBackRequested = onRewardsBack)
     }
 }
 

@@ -1,0 +1,13 @@
+{
+  "captured_at": "2026-10-18T05:04:36.432576+00:00",
+  "avd": "SN_Home_Large_35_20261018",
+  "serial": "emulator-5554",
+  "wm_size": "Physical size: 1344x2992",
+  "wm_density": "Physical density: 480",
+  "settings": {
+    "font_scale": "1.0",
+    "accelerometer_rotation": "1",
+    "user_rotation": "0",
+    "screen_off_timeout": "2147483647"
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "captured_at": "2026-10-17T15:22:41.348692+00:00",
+  "avd": "SuperNutrition_API_35_x86_64",
+  "serial": "emulator-5554",
+  "api": 35,
+  "abi": "x86_64",
+  "evidence_kind": "native emulator viewport override",
+  "device_equivalences": [
+    "2.7\" QVGA",
+    "2.7\" QVGA slider"
+  ],
+  "requested_geometry": {
+    "width_px": 240,
+    "height_px": 320,
+    "density_dpi": 120,
+    "width_dp": 320.0,
+    "height_dp": 426.67,
+    "devices": [
+      "2.7\" QVGA",
+      "2.7\" QVGA slider"
+    ]
+  },
+  "wm_size": "Physical size: 720x1560\nOverride size: 240x320",
+  "wm_density": "Physical density: 320\nOverride density: 120",
+  "font_scale": 1.0,
+  "apk_sha256": "8a0036005de47648ff26871304a5e821606af1eb0e20790204d399e48c707e41",
+  "portrait_locked_app": true,
+  "foreground": [
+    "mCurrentFocus=Window{30d9676 u0 app.supernutrition/com.supernutrition.feature.photoanalysis.PhotoAnalysisComposeActivity}"
+  ],
+  "controls_top_px": 224,
+  "helpful_action_bounds": null,
+  "missing_initial_text": [
+    "Today’s rhythm",
+    "You’re building a good day",
+    "Fiber",
+    "12 / 25 g",
+    "Water",
+    "1.2 / 2 L",
+    "Protein",
+    "72 / 90 g",
+    "Movement",
+    "32 / 45 min",
+    "Your next helpful step",
+    "Add one leafy green to dinner",
+    "Do it"
+  ],
+  "native_scrollable": true,
+  "native_initial_fit": false,
+  "outcome": "designer-required: readable content exceeds initial frame",
+  "note": "No text-size override or forced screenshot scaling. Native XML fit is combined with focused Compose complete-frame/readability evidence; it is not a physical-device test."
+}

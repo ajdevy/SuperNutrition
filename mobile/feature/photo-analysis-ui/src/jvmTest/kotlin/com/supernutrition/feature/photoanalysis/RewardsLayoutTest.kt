@@ -4,7 +4,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.v2.runSkikoComposeUiTest
 import androidx.compose.ui.unit.Density
 import com.supernutrition.core.ui.UiAutomationIds
@@ -26,10 +25,10 @@ class RewardsLayoutTest {
             )
         }
         setContent { RewardsScreen(original.copy(cards = cards)) }
-        val progress = (0..1).map {
+        val progress = (4..5).map {
             onNodeWithTag(UiAutomationIds.rewardsRowProgress(it).value).fetchSemanticsNode().boundsInRoot
         }
-        val states = (0..1).map {
+        val states = (4..5).map {
             onNodeWithTag(UiAutomationIds.rewardsRowState(it).value).fetchSemanticsNode().boundsInRoot
         }
         assertTrue(abs(progress[0].top - progress[1].top) <= 1f, "Progress does not align: $progress")
@@ -37,7 +36,7 @@ class RewardsLayoutTest {
     }
 
     @Test
-    fun `ordinary phone presents rewards in balanced equal height pairs`() = runSkikoComposeUiTest(
+    fun `ordinary phone presents rewards in figma balanced pairs`() = runSkikoComposeUiTest(
         size = Size(361f, 782f),
         density = Density(1f),
     ) {
@@ -53,11 +52,22 @@ class RewardsLayoutTest {
         }
         val first = onNodeWithTag(UiAutomationIds.rewardsRow(0).value).fetchSemanticsNode().boundsInRoot
         val second = onNodeWithTag(UiAutomationIds.rewardsRow(1).value).fetchSemanticsNode().boundsInRoot
+        val earnedSection = onNodeWithTag(UiAutomationIds.REWARDS_EARNED_SECTION.value)
+            .assertIsDisplayed()
+            .fetchSemanticsNode()
+            .boundsInRoot
+        val inProgressSection = onNodeWithTag(UiAutomationIds.REWARDS_IN_PROGRESS_SECTION.value)
+            .assertIsDisplayed()
+            .fetchSemanticsNode()
+            .boundsInRoot
         assertTrue(abs(first.top - second.top) <= 1f, "Rewards remain a vertical list: $first and $second")
         assertTrue(abs(first.width - second.width) <= 1f && abs(first.height - second.height) <= 1f)
         assertTrue(abs(first.left - (361f - second.right)) <= 1f)
-        assertTrue(second.left - first.right in 9f..11f, "Rewards pair has an uneven gap: $first and $second")
-        val summary = onNodeWithText("1 of 7").assertIsDisplayed().fetchSemanticsNode().boundsInRoot
-        assertTrue(summary.bottom < first.top, "Earned summary overlaps the reward grid: $summary and $first")
+        assertTrue(second.left - first.right in 10f..12f, "Rewards pair has an uneven gap: $first and $second")
+        assertTrue(
+            earnedSection.bottom < first.top,
+            "Earned section overlaps the reward grid: $earnedSection and $first",
+        )
+        assertTrue(inProgressSection.top > first.bottom, "In-progress section should follow earned rewards")
     }
 }

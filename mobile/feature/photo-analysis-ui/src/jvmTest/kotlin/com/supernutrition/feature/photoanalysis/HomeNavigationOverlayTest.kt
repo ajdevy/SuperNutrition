@@ -75,7 +75,8 @@ class HomeNavigationOverlayTest {
         val bounds = scroll.fetchSemanticsNode().boundsInRoot
         val pill = onNodeWithTag(UiAutomationIds.BOTTOM_BAR_PILL.value).fetchSemanticsNode().boundsInRoot
         assertTrue(card.left < pill.left, "There is no visible card beside the pill: $card and $pill")
-        val x = (card.left + pill.left) / 2
+        // Probe the rhythm panel's own padding, outside the independently painted metric cards.
+        val x = card.left + 4f
         val visibleTop = maxOf(card.top + 24f, pill.top)
         val visibleBottom = minOf(card.bottom - 24f, 240f - 12f)
         assertTrue(visibleTop < visibleBottom, "Blank canvas hides the Home card beside navigation: $card and $pill")
