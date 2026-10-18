@@ -1,0 +1,278 @@
+{
+  "started_at": "2026-10-18T10:54:19.850866+00:00",
+  "executor": "isolated ADB native witness of the actual Maestro command sequence; not a Maestro execution",
+  "flow": "mobile/.maestro/photo-analysis/photo-analysis-capture-recovery.yaml",
+  "package": "app.supernutrition.uiAcceptance",
+  "avd": "SN_Final_Verification_35_20261018",
+  "serial": "emulator-5590",
+  "adb_port": 5041,
+  "steps": [
+    {
+      "index": 3,
+      "action": "conditional Home entry",
+      "resource_id": "home_title",
+      "entered": true
+    },
+    {
+      "index": 4,
+      "action": "tapOn",
+      "resource_id": "camera_action",
+      "bounds": [
+        310,
+        1304,
+        410,
+        1404
+      ],
+      "passed": true
+    },
+    {
+      "index": 5,
+      "action": "assertVisible",
+      "resource_id": "photo_analysis_title",
+      "bounds": [
+        0,
+        0,
+        720,
+        1560
+      ],
+      "passed": true
+    },
+    {
+      "index": 6,
+      "action": "assertVisible",
+      "resource_id": "capture_close",
+      "bounds": [
+        26,
+        110,
+        122,
+        206
+      ],
+      "passed": true
+    },
+    {
+      "index": 7,
+      "action": "tapOn",
+      "resource_id": "capture_close",
+      "bounds": [
+        26,
+        110,
+        122,
+        206
+      ],
+      "passed": true
+    },
+    {
+      "index": 8,
+      "action": "assertVisible",
+      "resource_id": "home_title",
+      "bounds": [
+        0,
+        48,
+        720,
+        1464
+      ],
+      "passed": true
+    },
+    {
+      "index": 9,
+      "action": "tapOn",
+      "resource_id": "rewards_tab",
+      "bounds": [
+        470,
+        1339,
+        614,
+        1455
+      ],
+      "passed": true
+    },
+    {
+      "index": 10,
+      "action": "assertVisible",
+      "resource_id": "rewards_title",
+      "bounds": [
+        285,
+        172,
+        435,
+        225
+      ],
+      "passed": true
+    },
+    {
+      "index": 11,
+      "action": "tapOn",
+      "resource_id": "capture_tab",
+      "bounds": [
+        106,
+        1339,
+        250,
+        1455
+      ],
+      "passed": true
+    },
+    {
+      "index": 12,
+      "action": "assertVisible",
+      "resource_id": "home_title",
+      "bounds": [
+        0,
+        48,
+        720,
+        1464
+      ],
+      "passed": true
+    },
+    {
+      "index": 13,
+      "action": "tapOn",
+      "resource_id": "home_add_food",
+      "bounds": [
+        120,
+        346,
+        352,
+        442
+      ],
+      "passed": true
+    },
+    {
+      "index": 14,
+      "action": "assertVisible",
+      "resource_id": "photo_analysis_title",
+      "bounds": [
+        0,
+        0,
+        720,
+        1560
+      ],
+      "passed": true
+    },
+    {
+      "index": 15,
+      "action": "assertVisible",
+      "resource_id": "capture_close",
+      "bounds": [
+        26,
+        110,
+        122,
+        206
+      ],
+      "passed": true
+    },
+    {
+      "index": 16,
+      "action": "tapOn",
+      "resource_id": "capture_close",
+      "bounds": [
+        26,
+        110,
+        122,
+        206
+      ],
+      "passed": true
+    },
+    {
+      "index": 17,
+      "action": "assertVisible",
+      "resource_id": "home_title",
+      "bounds": [
+        0,
+        48,
+        720,
+        1464
+      ],
+      "passed": true
+    },
+    {
+      "index": 18,
+      "action": "tapOn",
+      "resource_id": "camera_action",
+      "bounds": [
+        310,
+        1304,
+        410,
+        1404
+      ],
+      "passed": true
+    },
+    {
+      "index": 19,
+      "action": "assertVisible",
+      "resource_id": "photo_analysis_title",
+      "bounds": [
+        0,
+        0,
+        720,
+        1560
+      ],
+      "passed": true
+    },
+    {
+      "index": 20,
+      "action": "assertVisible",
+      "resource_id": "capture_shutter",
+      "bounds": [
+        272,
+        1151,
+        448,
+        1327
+      ],
+      "passed": true
+    },
+    {
+      "index": 21,
+      "action": "assertVisible",
+      "resource_id": "capture_import",
+      "bounds": [
+        32,
+        1191,
+        135,
+        1294
+      ],
+      "passed": true
+    },
+    {
+      "index": 22,
+      "action": "assertVisible",
+      "resource_id": "capture_close",
+      "bounds": [
+        26,
+        110,
+        122,
+        206
+      ],
+      "passed": true
+    },
+    {
+      "index": 23,
+      "action": "tapOn",
+      "resource_id": "capture_close",
+      "bounds": [
+        26,
+        110,
+        122,
+        206
+      ],
+      "passed": true
+    },
+    {
+      "index": 24,
+      "action": "assertVisible",
+      "resource_id": "home_title",
+      "bounds": [
+        0,
+        48,
+        720,
+        1464
+      ],
+      "passed": true
+    }
+  ],
+  "exit_code": 0,
+  "assertions": 13,
+  "taps": 8,
+  "finished_at": "2026-10-18T10:56:15.014848+00:00",
+  "production_restored_at": "2026-10-18T10:59:25.826586+00:00",
+  "temporary_acceptance_package_removed": true,
+  "foreground_package": "app.supernutrition",
+  "permission_fixture": "fresh test install prompted CAMERA; While using the app granted by the native system dialog; production permission/data untouched",
+  "visibility_bound_seconds": 15
+}

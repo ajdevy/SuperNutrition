@@ -1,0 +1,45 @@
+{
+  "started_at": "2026-10-18T10:18:12.087291+00:00",
+  "command": [
+    "./mobile/gradlew",
+    "-p",
+    "mobile",
+    ":feature:photo-analysis:verifyLinuxPhotoAnalysisLock",
+    ":feature:photo-analysis:jvmTest",
+    "--rerun-tasks",
+    "--init-script",
+    "/Users/REDACTED/.codex/worktrees/a704/SuperNutrition/mobile/build/agent-ui-runtime.gradle",
+    "--init-script",
+    "/Users/REDACTED/.codex/worktrees/a704/SuperNutrition/mobile/build/home-no-scroll-2026-10-17/linux-lock/linux-lock-probe.gradle",
+    "-Pkotlin.compiler.execution.strategy=in-process",
+    "-Dorg.gradle.jvmargs=-Xms256m -Xmx2g -XX:MaxMetaspaceSize=1g -XX:+UseG1GC -Dfile.encoding=UTF-8",
+    "--max-workers=1",
+    "--dependency-verification",
+    "strict",
+    "--continue",
+    "--no-configuration-cache",
+    "--console=plain",
+    "--no-watch-fs",
+    "--no-daemon"
+  ],
+  "mode": "strict read-only Linux lock resolution plus forced complete feature JVM suite",
+  "lock_sha256": "d62567d90e7bb5d5db20c7a9fd500d098efced104665eb43aed55b7d2df97f82",
+  "host": "macOS x86_64; lock path only is overridden",
+  "exit_code": 0,
+  "finished_at": "2026-10-18T10:21:11.723154+00:00",
+  "feature_jvm": {
+    "tests": 25,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "fresh_suites": 6,
+  "xml_files": [
+    "TEST-com.supernutrition.feature.photoanalysis.PhotoAnalysisAnalysisCoordinatorTest.xml",
+    "TEST-com.supernutrition.feature.photoanalysis.PhotoAnalysisAnalysisLauncherTest.xml",
+    "TEST-com.supernutrition.feature.photoanalysis.PhotoAnalysisFeatureTest.xml",
+    "TEST-com.supernutrition.feature.photoanalysis.RewardsFeatureTest.xml",
+    "TEST-com.supernutrition.feature.photoanalysis.PhotoAnalysisMealReviewFeatureTest.xml",
+    "TEST-com.supernutrition.feature.photoanalysis.PhotoAnalysisCaptureRobotTest.xml"
+  ]
+}

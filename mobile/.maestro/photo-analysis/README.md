@@ -1,9 +1,10 @@
 # Photo-analysis acceptance flow
 
-This flow opens the Home surface, checks the Rewards tab, returns to Home,
+This flow enters capture from Home when Home is the launch surface, checks
+the capture title and close action, returns to Home, checks Rewards, and returns to Home. It then
 opens capture through Add a meal, closes it with the top-right close action,
 and opens capture through the centered camera action before closing it with
-Back. It uses deterministic IDs and contains no real photo, provider,
+the same close action. It uses deterministic IDs and contains no real photo, provider,
 credential, or remote-analysis fixture. Its parameterized
 `appId` header is separated from the command list with the required `---` YAML
 front matter marker and is syntax-checked before execution. The Intel `iosX64`

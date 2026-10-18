@@ -1,0 +1,50 @@
+{
+  "verified_at": "2026-10-18T10:26:09.370580+00:00",
+  "group": "org.jetbrains.compose.components",
+  "module": "components-resources-iosSimulatorArm64",
+  "version": "1.11.1",
+  "artifacts": [
+    {
+      "name": "components-resources-iosSimulatorArm64-1.11.1.module",
+      "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/components/components-resources-iosSimulatorArm64/1.11.1/components-resources-iosSimulatorArm64-1.11.1.module",
+      "sha256": "2af0353f516aaaaa3a3698bf923735ce09d61f9e2013ef23b460283c37bb784d",
+      "checksum_source": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/components/components-resources-iosSimulatorArm64/1.11.1/components-resources-iosSimulatorArm64-1.11.1.module.sha256",
+      "bytes": 6564
+    },
+    {
+      "name": "library-iosSimulatorArm64Main-1.11.1.klib",
+      "download_name": "components-resources-iosSimulatorArm64-1.11.1.klib",
+      "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/components/components-resources-iosSimulatorArm64/1.11.1/components-resources-iosSimulatorArm64-1.11.1.klib",
+      "sha256": "391cac60ccb0ef562c7e885bcbdf9267473d26fec24d538e3a3484e162b58b60",
+      "checksum_source": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/components/components-resources-iosSimulatorArm64/1.11.1/components-resources-iosSimulatorArm64-1.11.1.klib.sha256",
+      "bytes": 204563
+    },
+    {
+      "name": "library-iossimulatorarm64-1.11.1-sources.jar",
+      "download_name": "components-resources-iosSimulatorArm64-1.11.1-sources.jar",
+      "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/components/components-resources-iosSimulatorArm64/1.11.1/components-resources-iosSimulatorArm64-1.11.1-sources.jar",
+      "sha256": "f06c2c93c1120304c858b3225e6d37fe3daa2c2652abc03a52c1be2dfcd781e1",
+      "checksum_source": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/components/components-resources-iosSimulatorArm64/1.11.1/components-resources-iosSimulatorArm64-1.11.1-sources.jar.sha256",
+      "bytes": 40898
+    },
+    {
+      "name": "library-1.11.1.kotlin_resources.zip",
+      "download_name": "components-resources-iosSimulatorArm64-1.11.1-kotlin_resources.kotlin_resources.zip",
+      "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/components/components-resources-iosSimulatorArm64/1.11.1/components-resources-iosSimulatorArm64-1.11.1-kotlin_resources.kotlin_resources.zip",
+      "sha256": "8d1efd6ba7e6674cbf166ad8e14a202a56a41e63567b7b640cb7185161a155d0",
+      "checksum_source": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/components/components-resources-iosSimulatorArm64/1.11.1/components-resources-iosSimulatorArm64-1.11.1-kotlin_resources.kotlin_resources.zip.sha256",
+      "bytes": 344
+    },
+    {
+      "name": "library-iossimulatorarm64-1.11.1-metadata.jar",
+      "download_name": "components-resources-iosSimulatorArm64-1.11.1-metadata.jar",
+      "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/components/components-resources-iosSimulatorArm64/1.11.1/components-resources-iosSimulatorArm64-1.11.1-metadata.jar",
+      "sha256": "7274ae0c2e463248986403f784d6a468fc3d99188d8210610eb0712dee6f7e48",
+      "checksum_source": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/components/components-resources-iosSimulatorArm64/1.11.1/components-resources-iosSimulatorArm64-1.11.1-metadata.jar.sha256",
+      "bytes": 7022
+    }
+  ],
+  "method": "Each artifact hash matches its Maven Central .sha256 sidecar and hashes in the independently verified Gradle module publication",
+  "metadata_alias": "Native publication component refers to the root resources module; verified target attributes select ios_simulator_arm64",
+  "runtime_claim": false
+}
