@@ -1,0 +1,50 @@
+{
+  "recorded_at": "2026-10-18T11:03:17.697566+00:00",
+  "published_ui_commit": "b5f17d52f3053c0f42dcd3d956b07f7de443e641",
+  "changes": "Two Linux runtime lock entries, one checksum component with four independently verified artifacts, conditional Home-to-camera Maestro entry; no UI source or binary changes",
+  "feature_jvm": {
+    "tests": 25,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "fresh_suites": 6
+  },
+  "linux_lock_probe": "expected missing-lock red; Gradle generation; strict read-only green and full forced feature JVM tests",
+  "ios_publication_probe": "same strict Gradle resolver task fails before checksum fix, passes after fix; artifact resolution only, no simulator execution",
+  "hosted_android_uiAcceptance": {
+    "api": 36,
+    "tests": 43,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "run": 39117841853,
+    "overall_run": "failure in the subsequent old Maestro launch assertion"
+  },
+  "native_local_journey": {
+    "api": 35,
+    "assertions": 13,
+    "taps": 8,
+    "passed": true,
+    "executor": "isolated ADB native witness, not Maestro",
+    "visibility_bound_seconds": 15
+  },
+  "maestro_syntax": "pinned CLI 2.7.0 check-syntax passes",
+  "maestro_executor": "hosted rerun remains required; local pinned CLI cannot use isolated ADB port without disturbing default server",
+  "original_gallery_unchanged": {
+    "final_cases": 100,
+    "fit": 40,
+    "designer_required": 60
+  },
+  "source_hashes": {
+    "mobile/feature/photo-analysis/gradle-linux.lockfile": "d62567d90e7bb5d5db20c7a9fd500d098efced104665eb43aed55b7d2df97f82",
+    "mobile/gradle/verification-metadata.xml": "8da99ad9a2af9beb8ed6548a57882730f050c63e243b605aa89f56ee45a846de",
+    "mobile/.maestro/photo-analysis/photo-analysis-capture-recovery.yaml": "f5702cf1d1922756fb70cb26c8adf3fbd4ceeb2cf266113ca341e6f1a3b79012",
+    "mobile/.maestro/photo-analysis/README.md": "77b2b99b032d3f7cf467c818631771275f546983d90091f99e07f3d80dcb78a6"
+  },
+  "native_final_files": {
+    "camera-preview.png": "e7b03c75ddf9b3a5655d38e08c1ac03ab3e4e42faf075456f67adbd3729b3fe7",
+    "camera-permission-prompt.png": "095a762e7eb8283c60d52eec60bbfdcfa8fc81bd07ab7525457c7cd0b7f04bfc",
+    "production-home-ready.png": "b53c7190de58698229054c018af7745a990e18b1ece3c7ff70be578d88fed1a7"
+  },
+  "whole_quality_gate": "unchanged red: expired native policy evidence; no policy date or TTL changes"
+}

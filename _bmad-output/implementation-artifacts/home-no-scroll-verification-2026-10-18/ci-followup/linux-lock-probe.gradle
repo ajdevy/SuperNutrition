@@ -1,0 +1,13 @@
+gradle.projectsEvaluated {
+    def target = rootProject.findProject(":feature:photo-analysis")
+    if (target == null) return
+    target.dependencyLocking.lockFile = target.file("gradle-linux.lockfile")
+    target.tasks.register("verifyLinuxPhotoAnalysisLock") {
+        doLast {
+            ["jvmRuntimeClasspath", "jvmTestRuntimeClasspath"].each { name ->
+                def files = target.configurations.getByName(name).resolve()
+                println("Resolved Linux lock for ${target.path}:${name}: ${files.size()} files")
+            }
+        }
+    }
+}

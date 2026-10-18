@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="PhotoAnalysisAnalysisCoordinatorTest[jvm]" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-18T10:21:06.321Z" hostname="Anastasias-MacBook-Air.local" time="2.753">
+  <properties/>
+  <testcase name="stale request and cancellation cannot reopen review[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisAnalysisCoordinatorTest" time="2.013"/>
+  <testcase name="v2 abstention and failure become typed recovery without fabricating review evidence[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisAnalysisCoordinatorTest" time="0.348"/>
+  <testcase name="backgrounded analysis retains its completed review until the host restores[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisAnalysisCoordinatorTest" time="0.246"/>
+  <testcase name="coordinator sequences local stages and keeps v1 dishes separate from v2 evidence[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisAnalysisCoordinatorTest" time="0.058"/>
+  <testcase name="engine boundary rejects a result whose modality differs from the request[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisAnalysisCoordinatorTest" time="0.07"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

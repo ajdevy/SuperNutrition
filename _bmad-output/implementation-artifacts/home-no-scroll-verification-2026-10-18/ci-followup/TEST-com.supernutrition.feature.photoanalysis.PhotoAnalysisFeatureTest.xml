@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="PhotoAnalysisFeatureTest[jvm]" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-18T10:21:09.471Z" hostname="Anastasias-MacBook-Air.local" time="0.472">
+  <properties/>
+  <testcase name="native replacement routing clears the retained attempt before opening a picker[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisFeatureTest" time="0.063"/>
+  <testcase name="feature exposes state flow and injected stores[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisFeatureTest" time="0.124"/>
+  <testcase name="manual meal input expands dishes and keeps direct ingredients[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisFeatureTest" time="0.202"/>
+  <testcase name="native routing is typed and feature actions stay local[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisFeatureTest" time="0.041"/>
+  <testcase name="ignored events do not change the feature state stream[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisFeatureTest" time="0.04"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

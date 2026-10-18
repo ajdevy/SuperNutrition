@@ -1,0 +1,20 @@
+gradle.projectsEvaluated {
+    def target = rootProject.findProject(":feature:photo-analysis")
+    if (target == null) return
+    target.tasks.register("verifyIosResourcesPublication") {
+        doLast {
+            def template = target.configurations.getByName("iosArm64CompileKlibraries")
+            def dependency = target.dependencies.create("org.jetbrains.compose.components:components-resources:1.11.1")
+            dependency.transitive = false
+            def probe = target.configurations.detachedConfiguration(dependency)
+            template.attributes.keySet().each { key ->
+                probe.attributes.attribute(key, template.attributes.getAttribute(key))
+            }
+            def nativeKey = template.attributes.keySet().find { it.name == "org.jetbrains.kotlin.native.target" }
+            assert nativeKey != null
+            probe.attributes.attribute(nativeKey, "ios_simulator_arm64")
+            def files = probe.resolve()
+            println("Strict simulator publication resolution: ${files.collect { it.name }}")
+        }
+    }
+}

@@ -1,0 +1,24 @@
+{
+  "started_at": "2026-10-18T10:14:49.078003+00:00",
+  "command": [
+    "./mobile/gradlew",
+    "-p",
+    "mobile",
+    ":feature:photo-analysis:verifyLinuxPhotoAnalysisLock",
+    "--init-script",
+    "/Users/anastasia/.codex/worktrees/a704/SuperNutrition/mobile/build/home-no-scroll-2026-10-17/linux-lock/linux-lock-probe.gradle",
+    "-Pkotlin.compiler.execution.strategy=in-process",
+    "-Dorg.gradle.jvmargs=-Xms256m -Xmx2g -XX:MaxMetaspaceSize=1g -XX:+UseG1GC -Dfile.encoding=UTF-8",
+    "--max-workers=1",
+    "--dependency-verification",
+    "strict",
+    "--continue",
+    "--no-configuration-cache",
+    "--console=plain",
+    "--no-watch-fs",
+    "--no-daemon"
+  ],
+  "mode": "read-only expected red; skip included build-logic which has no target project",
+  "exit_code": 1,
+  "finished_at": "2026-10-18T10:15:18.617117+00:00"
+}

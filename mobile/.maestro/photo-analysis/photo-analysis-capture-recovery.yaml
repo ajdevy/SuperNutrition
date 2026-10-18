@@ -4,6 +4,13 @@ appId: ${APP_ID}
 - runScript:
     file: ./photo-analysis-locators.js
 - launchApp
+- runFlow:
+    when:
+      visible:
+        id: ${output.home_title}
+    commands:
+      - tapOn:
+          id: ${output.camera_action}
 - assertVisible:
     id: ${output.photo_analysis_title}
 - assertVisible:

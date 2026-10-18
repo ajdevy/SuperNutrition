@@ -1,0 +1,26 @@
+{
+  "started_at": "2026-10-18T10:26:09.371751+00:00",
+  "command": [
+    "./mobile/gradlew",
+    "-p",
+    "mobile",
+    ":feature:photo-analysis:verifyIosResourcesPublication",
+    "--init-script",
+    "/Users/anastasia/.codex/worktrees/a704/SuperNutrition/mobile/build/home-no-scroll-2026-10-17/ios-resource-verification/ios-resource-probe.gradle",
+    "-Psupernutrition.enableIosDeviceTarget=true",
+    "-Pkotlin.native.home=/Users/anastasia/.codex/worktrees/a704/SuperNutrition/mobile/build/agent-konan/kotlin-native-prebuilt-macos-x86_64-2.4.10",
+    "-Pkotlin.compiler.execution.strategy=in-process",
+    "-Dorg.gradle.jvmargs=-Xms256m -Xmx2g -XX:MaxMetaspaceSize=1g -XX:+UseG1GC -Dfile.encoding=UTF-8",
+    "--max-workers=1",
+    "--dependency-verification",
+    "strict",
+    "--continue",
+    "--no-configuration-cache",
+    "--console=plain",
+    "--no-watch-fs",
+    "--no-daemon"
+  ],
+  "mode": "strict publication resolution only; no simulator target registered or compiled",
+  "exit_code": 1,
+  "finished_at": "2026-10-18T10:26:42.409235+00:00"
+}
