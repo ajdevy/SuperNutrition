@@ -60,7 +60,8 @@ class MainScreenRefreshTest {
         onNodeWithText("Updated goals").assertIsDisplayed()
         onNodeWithText("Water 2 L").assertIsDisplayed()
         onNodeWithText("Close goals").performClick()
-        onNodeWithText("Friday, Aug 8").assertIsDisplayed()
+        onNodeWithText("Friday, Aug 8").assertDoesNotExist()
+        onNodeWithText("7 day rhythm").assertIsDisplayed()
         onNodeWithText("18 g").assertIsDisplayed()
         onNodeWithText("2 / 2 L").assertIsDisplayed()
         runOnIdle {
@@ -183,12 +184,13 @@ class MainScreenRefreshTest {
         }
         onNodeWithTag(UiAutomationIds.HOME_TAB.value).performClick().assertIsSelected()
         onNodeWithTag(UiAutomationIds.CAMERA_ACTION.value).performClick()
-        onNodeWithText("Super Nutrition").assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.HOME_TITLE.value).assertIsDisplayed()
+        onNodeWithText(layoutHomeModel().rhythmBadgeLabel).assertIsDisplayed()
         assertEquals(listOf("old camera", "new home", "new camera"), events)
     }
 
     private fun updatedHomeModel(model: HomeScreenModel) = model.copy(
-        dateLabel = "Friday, Aug 8", careQuestion = "Ready for lunch?",
+        dateLabel = "Friday, Aug 8", rhythmBadgeLabel = "7 day rhythm", careQuestion = "Ready for lunch?",
         fiber = HomeMetricModel("Fiber", "18 g"), water = HomeMetricModel("Water", "2 / 2 L"),
         goalsTitle = "Updated goals", goalsDescription = "Water 2 L", goalsDoneLabel = "Close goals",
         nextStepDescription = "Add a glass of water", nextStepAction = "Add water",

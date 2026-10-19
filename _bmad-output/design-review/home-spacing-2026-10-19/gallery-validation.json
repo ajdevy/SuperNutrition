@@ -1,0 +1,77 @@
+{
+  "validated_at": "2026-10-19T06:06:28.946476+00:00",
+  "kind": "Offline HTML/link/hash/geometry audit and actual inline JS in isolated Node VM; no browser visual claim",
+  "profiles": 9,
+  "cases": 18,
+  "summary": {
+    "fit": 12,
+    "needs-designer": 6
+  },
+  "matching_inspections": 18,
+  "preserved_historical_files": 542,
+  "measured_16dp_section_gaps": 52,
+  "local_links_checked": 84,
+  "images": 18,
+  "unique_ids": 14,
+  "settings_restored": true,
+  "apk_sha256": "81d6e595d545c8379d85f828cf2b1256c92a115b61a4d5b498a307aaca705012",
+  "filter_scenarios": [
+    {
+      "name": "all",
+      "count": 18
+    },
+    {
+      "name": "phones",
+      "count": 12
+    },
+    {
+      "name": "tablets",
+      "count": 6
+    },
+    {
+      "name": "fits",
+      "count": 12
+    },
+    {
+      "name": "design",
+      "count": 6
+    },
+    {
+      "name": "font100",
+      "count": 9
+    },
+    {
+      "name": "font200",
+      "count": 9
+    },
+    {
+      "name": "tablet200",
+      "count": 3
+    },
+    {
+      "name": "phone200fit",
+      "count": 0
+    },
+    {
+      "name": "phone200design",
+      "count": 6
+    },
+    {
+      "name": "search390",
+      "count": 2
+    },
+    {
+      "name": "search414fit100",
+      "count": 1
+    },
+    {
+      "name": "empty",
+      "count": 0
+    },
+    {
+      "name": "reset",
+      "count": 18
+    }
+  ],
+  "browser_limitation": "Local file navigation was rejected by browser security policy in the preceding gallery task; no alternate route or browser surface was used."
+}

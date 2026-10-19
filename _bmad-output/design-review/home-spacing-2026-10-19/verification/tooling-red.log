@@ -1,0 +1,59 @@
+F.FFFFF
+======================================================================
+FAIL: test_before_capture_accepts_fitting_legacy_layout_without_new_tags (test_home_review_contracts.BaselineCaptureContractTest.test_before_capture_accepts_fitting_legacy_layout_without_new_tags)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/REDACTED/.codex/worktrees/a704/SuperNutrition/scripts/tests/test_home_review_contracts.py", line 162, in test_before_capture_accepts_fitting_legacy_layout_without_new_tags
+    self.assertTrue(result['native_initial_fit'], result)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'captured_at': '2026-10-19T05:50:13.532144+00:00', 'avd': 'SN_Test', 'serial': 'emulator-5590', 'api': 35, 'abi': 'x86_64', 'evidence_kind': 'native emulator viewport override', 'device_equivalences': [], 'requested_geometry': {'key': '720x1560-320dpi', 'width_px': 720, 'height_px': 1560, 'density_dpi': 320, 'devices': []}, 'wm_size': 'Physical size: 720x1560', 'wm_density': 'Physical density: 320', 'font_scale': 1.0, 'apk_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'portrait_locked_app': True, 'foreground': ['mCurrentFocus=Window{app.supernutrition/Test}'], 'controls_top_px': 1380, 'helpful_action_bounds': [500, 1160, 620, 1256], 'helpful_card_bounds': [48, 1100, 672, 1300], 'missing_initial_text': [], 'native_scrollable': False, 'native_initial_fit': False, 'outcome': 'designer-required: readable content exceeds initial frame', 'note': 'No text-size override or forced screenshot scaling. Native XML fit is combined with focused Compose complete-frame/readability evidence; it is not a physical-device test.', 'required_tag_bounds': {'home_header': [], 'home_care_prompt': [], 'home_profile': [[576, 64, 672, 160]], 'home_add_food': [[48, 250, 312, 346]], 'home_view_goals': [[328, 250, 672, 346]], 'home_summary': [[48, 700, 672, 1100]], 'home_metric_fiber': [[60, 800, 310, 896]], 'home_metric_water': [[330, 800, 660, 896]], 'home_metric_protein': [[60, 920, 310, 1016]], 'home_metric_movement': [[330, 920, 660, 1016]], 'home_next_step': [[48, 1100, 672, 1300]]}, 'missing_initial_tags': ['home_header', 'home_care_prompt'], 'unsafe_initial_frames': [], 'undersized_initial_actions': [], 'home_content_bounds': [0, 48, 720, 1512], 'mascot_bounds': [210, 380, 510, 710], 'rhythm_to_next_step_gap_dp': 0.0, 'section_gaps_dp': {'header_to_care': None, 'care_to_mascot': None, 'rhythm_to_next_step': 0.0}, 'matching_card_edges': True, 'obsolete_header_visible': True, 'capture_command_timings': [{'command': ['/Users/REDACTED/Library/Android/sdk/platform-tools/adb', '-P', '5041', 'devices', '-l'], 'seconds': 0.0}, {'command': ['/Users/REDACTED/Library/Android/sdk/platform-tools/adb', '-P', '5041', '-s', 'emulator-5590', 'shell', "sh -c 'set -e\ngetprop ro.kernel.qemu\ngetprop ro.build.version.sdk\ngetprop ro.product.cpu.abi'"], 'seconds': 0.0}, {'command': ['/Users/REDACTED/Library/Android/sdk/platform-tools/adb', '-P', '5041', '-s', 'emulator-5590', 'emu', 'avd', 'name'], 'seconds': 0.0}, {'command': ['/Users/REDACTED/Library/Android/sdk/platform-tools/adb', '-P', '5041', '-s', 'emulator-5590', 'shell', "sh -c 'set -e\nsettings put system screen_off_timeout 1800000\nsettings put system accelerometer_rotation 0\nsettings put system user_rotation 0\nwm size 720x1560\nwm density 320\nsettings put system font_scale 1.0\ninput keyevent WAKEUP'"], 'seconds': 0.0}, {'command': ['/Users/REDACTED/Library/Android/sdk/platform-tools/adb', '-P', '5041', '-s', 'emulator-5590', 'shell', 'am', 'start', '-W', '-f', '0x10008000', '-n', 'app.supernutrition/com.supernutrition.feature.photoanalysis.PhotoAnalysisComposeActivity'], 'seconds': 0.0}, {'command': ['/Users/REDACTED/Library/Android/sdk/platform-tools/adb', '-P', '5041', '-s', 'emulator-5590', 'shell', 'dumpsys', 'window'], 'seconds': 0.0}, {'command': ['/Users/REDACTED/Library/Android/sdk/platform-tools/adb', '-P', '5041', '-s', 'emulator-5590', 'shell', "sh -c 'set -e\nuiautomator dump /sdcard/supernutrition-home-review.xml >/dev/null\ncat /sdcard/supernutrition-home-review.xml'"], 'seconds': 0.0}, {'command': ['/Users/REDACTED/Library/Android/sdk/platform-tools/adb', '-P', '5041', '-s', 'emulator-5590', 'shell', 'dumpsys', 'window'], 'seconds': 0.0}, {'command': ['/Users/REDACTED/Library/Android/sdk/platform-tools/adb', '-P', '5041', '-s', 'emulator-5590', 'shell', 'pm', 'path', 'app.supernutrition'], 'seconds': 0.0}, {'command': ['/Users/REDACTED/Library/Android/sdk/platform-tools/adb', '-P', '5041', '-s', 'emulator-5590', 'shell', 'stat', '-c', '%s:%Y:%i', '/data/app/fixture/base.apk'], 'seconds': 0.0}, {'command': ['/Users/REDACTED/Library/Android/sdk/platform-tools/adb', '-P', '5041', '-s', 'emulator-5590', 'shell', 'sha256sum', '/data/app/fixture/base.apk'], 'seconds': 0.0}, {'command': ['/Users/REDACTED/Library/Android/sdk/platform-tools/adb', '-P', '5041', '-s', 'emulator-5590', 'shell', "sh -c 'set -e\nwm size\nwm density\nsettings get system font_scale'"], 'seconds': 0.0}]}
+
+======================================================================
+FAIL: test_consistent_wrong_apk_is_rejected_against_expected_build (test_home_review_contracts.GalleryContractTest.test_consistent_wrong_apk_is_rejected_against_expected_build)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/REDACTED/.codex/worktrees/a704/SuperNutrition/scripts/tests/test_home_review_contracts.py", line 85, in test_consistent_wrong_apk_is_rejected_against_expected_build
+    with self.assertRaisesRegex(ValueError, 'APK|digest'):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_duplicate_geometry_cannot_claim_distinct_profiles (test_home_review_contracts.GalleryContractTest.test_duplicate_geometry_cannot_claim_distinct_profiles)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/REDACTED/.codex/worktrees/a704/SuperNutrition/scripts/tests/test_home_review_contracts.py", line 77, in test_duplicate_geometry_cannot_claim_distinct_profiles
+    with self.assertRaisesRegex(ValueError, 'distinct|unique'):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_missing_enlarged_scale_cannot_claim_complete (test_home_review_contracts.GalleryContractTest.test_missing_enlarged_scale_cannot_claim_complete)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/REDACTED/.codex/worktrees/a704/SuperNutrition/scripts/tests/test_home_review_contracts.py", line 73, in test_missing_enlarged_scale_cannot_claim_complete
+    with self.assertRaisesRegex(ValueError, '100|200|scale'):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_missing_profile_cannot_claim_complete (test_home_review_contracts.GalleryContractTest.test_missing_profile_cannot_claim_complete)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/REDACTED/.codex/worktrees/a704/SuperNutrition/scripts/tests/test_home_review_contracts.py", line 69, in test_missing_profile_cannot_claim_complete
+    with self.assertRaisesRegex(ValueError, 'nine|9'):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_mixed_apks_cannot_claim_complete (test_home_review_contracts.GalleryContractTest.test_mixed_apks_cannot_claim_complete)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/REDACTED/.codex/worktrees/a704/SuperNutrition/scripts/tests/test_home_review_contracts.py", line 81, in test_mixed_apks_cannot_claim_complete
+    with self.assertRaisesRegex(ValueError, 'APK|digest'):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.263s
+
+FAILED (failures=6)

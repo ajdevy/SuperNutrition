@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -44,19 +43,20 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-internal fun HomeCarePrompt(
-    model: HomeScreenModel,
-    onAddFood: () -> Unit,
-    onViewGoals: () -> Unit,
-    compact: Boolean = false,
-) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        val padding = if (compact) 10.dp else 12.dp
+internal fun HomeCarePrompt(model: HomeScreenModel, onAddFood: () -> Unit, onViewGoals: () -> Unit) {
+    Box(
+        modifier = Modifier.automationId(UiAutomationIds.HOME_CARE_PROMPT),
+    ) {
         Column(
-            modifier = Modifier.widthIn(max = 260.dp).fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
                 .shadow(10.dp, RoundedCornerShape(20.dp), spotColor = Color(0x2E594D3D))
                 .clip(RoundedCornerShape(20.dp)).background(Color.White)
-                .padding(start = padding, end = padding, top = padding, bottom = padding - 8.dp),
+                .padding(
+                    start = HomeCardPadding,
+                    end = HomeCardPadding,
+                    top = HomeCardPadding,
+                    bottom = HomeCardPadding - 8.dp,
+                ),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(0.dp),
         ) {
@@ -70,37 +70,44 @@ internal fun HomeCarePrompt(
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth(),
             )
-            Row(Modifier.fillMaxWidth().height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                HomeChip(
-                    label = model.addFoodLabel,
-                    appearance = HomeChipAppearance(
-                        Res.drawable.icon_salad_vector,
-                        ChipGreen,
-                        Color(0xFFCFDBCA),
-                        HomeInk,
-                    ),
-                    automationId = UiAutomationIds.HOME_ADD_FOOD,
-                    onClick = onAddFood,
-                    modifier = Modifier.weight(1f).fillMaxHeight(),
-                )
-                HomeChip(
-                    label = model.viewGoalsLabel,
-                    appearance = HomeChipAppearance(
-                        Res.drawable.icon_target_vector,
-                        ChipLilac,
-                        ChipLilacLine,
-                        Color(0xFF7A4FBF),
-                    ),
-                    automationId = UiAutomationIds.HOME_VIEW_GOALS,
-                    onClick = onViewGoals,
-                    modifier = Modifier.weight(1f).fillMaxHeight(),
-                )
-            }
+            HomeCareActions(model, onAddFood, onViewGoals)
         }
         Image(
             painter = painterResource(Res.drawable.bubble_tail_vector),
             contentDescription = null,
-            modifier = Modifier.offset(x = (-24).dp).size(17.dp, if (compact) 12.dp else 16.dp),
+            // The tail occupies the reserved section gap rather than adding a second gap.
+            modifier = Modifier.align(Alignment.BottomCenter).offset(x = (-24).dp, y = HomeSectionGap)
+                .size(17.dp, 16.dp),
+        )
+    }
+}
+
+@Composable
+private fun HomeCareActions(model: HomeScreenModel, onAddFood: () -> Unit, onViewGoals: () -> Unit) {
+    Row(Modifier.fillMaxWidth().height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        HomeChip(
+            label = model.addFoodLabel,
+            appearance = HomeChipAppearance(
+                Res.drawable.icon_salad_vector,
+                ChipGreen,
+                Color(0xFFCFDBCA),
+                HomeInk,
+            ),
+            automationId = UiAutomationIds.HOME_ADD_FOOD,
+            onClick = onAddFood,
+            modifier = Modifier.weight(1f).fillMaxHeight(),
+        )
+        HomeChip(
+            label = model.viewGoalsLabel,
+            appearance = HomeChipAppearance(
+                Res.drawable.icon_target_vector,
+                ChipLilac,
+                ChipLilacLine,
+                Color(0xFF7A4FBF),
+            ),
+            automationId = UiAutomationIds.HOME_VIEW_GOALS,
+            onClick = onViewGoals,
+            modifier = Modifier.weight(1f).fillMaxHeight(),
         )
     }
 }

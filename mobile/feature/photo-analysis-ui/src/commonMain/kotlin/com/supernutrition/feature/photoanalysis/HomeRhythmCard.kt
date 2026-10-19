@@ -46,32 +46,32 @@ import org.jetbrains.compose.resources.painterResource
 private const val DESIGN_METRIC_TRACK_WIDTH = 132.75f
 
 @Composable
-internal fun HomeRhythmCard(model: HomeScreenModel, compact: Boolean = false) {
+internal fun HomeRhythmCard(model: HomeScreenModel) {
     Column(
         modifier = Modifier.fillMaxWidth().automationId(UiAutomationIds.HOME_SUMMARY)
             .semantics { contentDescription = homeRhythmDescription(model) }
             .shadow(8.dp, RoundedCornerShape(24.dp), spotColor = Color(0x1F594D3D))
             .clip(RoundedCornerShape(24.dp)).background(HomeCream)
-            .padding(if (compact) 10.dp else 12.dp),
-        verticalArrangement = Arrangement.spacedBy(if (compact) 8.dp else 10.dp),
+            .padding(HomeCardPadding),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         HomeRhythmHeading(model)
-        HomeRhythmGrid(model, compact)
+        HomeRhythmGrid(model)
     }
 }
 
 @Composable
-private fun HomeRhythmGrid(model: HomeScreenModel, compact: Boolean) {
+private fun HomeRhythmGrid(model: HomeScreenModel) {
     Layout(
         modifier = Modifier.fillMaxWidth(),
         content = {
             homeRhythmItems(model).forEach { item ->
-                HomeMetricCard(item.metric, item.appearance, Modifier.automationId(item.automationId), compact)
+                HomeMetricCard(item.metric, item.appearance, Modifier.automationId(item.automationId))
             }
         },
     ) { measurables, constraints ->
-        val columnGap = 8.dp.roundToPx()
-        val rowGap = (if (compact) 6.dp else 8.dp).roundToPx()
+        val columnGap = HomeMetricGap.roundToPx()
+        val rowGap = HomeMetricGap.roundToPx()
         val pairedWidth = ((constraints.maxWidth - columnGap) / 2).coerceAtLeast(0)
         // Intrinsic widths preserve complete words while allowing values to wrap naturally.
         val columnCount = if (measurables.all { it.minIntrinsicWidth(Constraints.Infinity) <= pairedWidth }) {
@@ -181,21 +181,16 @@ private fun HomeRhythmHeading(model: HomeScreenModel) {
 }
 
 @Composable
-private fun HomeMetricCard(
-    metric: HomeMetricModel,
-    appearance: HomeMetricAppearance,
-    modifier: Modifier,
-    compact: Boolean,
-) {
+private fun HomeMetricCard(metric: HomeMetricModel, appearance: HomeMetricAppearance, modifier: Modifier) {
     Column(
-        modifier = modifier.heightIn(min = if (compact) 54.dp else 60.dp)
+        modifier = modifier.heightIn(min = 60.dp)
             .clip(RoundedCornerShape(14.dp)).background(HomeCard)
             .border(1.dp, HomeLine, RoundedCornerShape(14.dp))
-            .padding(if (compact) 8.dp else 9.dp),
+            .padding(9.dp),
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
         Row(
-            modifier = Modifier.padding(bottom = if (compact) 4.dp else 8.dp),
+            modifier = Modifier.padding(bottom = HomeMetricGap),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {

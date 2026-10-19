@@ -11,6 +11,10 @@ import org.jetbrains.compose.resources.Font
 
 internal val MainScreenGutter = 24.dp
 internal val MainContentMaxWidth = 430.dp
+internal val HomeSectionGap = 16.dp
+internal val HomePagePadding = 8.dp
+internal val HomeCardPadding = 12.dp
+internal val HomeMetricGap = 8.dp
 internal val HomeBackgroundColor = Color(0xFFF6F1EA)
 internal val HomeInk = Color(0xFF1E4A2E)
 internal val HomeBody = Color(0xFF33302C)

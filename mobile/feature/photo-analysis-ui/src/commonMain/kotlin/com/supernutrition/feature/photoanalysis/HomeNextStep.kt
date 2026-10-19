@@ -42,7 +42,7 @@ internal fun HomeNextStep(model: HomeScreenModel, onDoIt: () -> Unit) {
         modifier = Modifier.fillMaxWidth().automationId(UiAutomationIds.HOME_NEXT_STEP)
             .clip(RoundedCornerShape(20.dp)).background(Color(0xFFFDF3DF))
             .border(1.5.dp, Color(0xFFF0DCA8), RoundedCornerShape(20.dp))
-            .padding(12.dp),
+            .padding(HomeCardPadding),
     ) {
         HomeNextStepLayout(model, onDoIt)
     }

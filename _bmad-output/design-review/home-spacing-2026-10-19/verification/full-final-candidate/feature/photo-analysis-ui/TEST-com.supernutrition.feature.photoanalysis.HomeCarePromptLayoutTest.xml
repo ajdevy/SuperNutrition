@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="HomeCarePromptLayoutTest[jvm]" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-10-19T05:00:06.208Z" hostname="Anastasias-MacBook-Air.local" time="0.556">
+  <properties/>
+  <testcase name="care button icons and labels stay centered at regular and larger text sizes[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeCarePromptLayoutTest" time="0.411"/>
+  <testcase name="care tail remains painted in the section gap outside the measured panel[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeCarePromptLayoutTest" time="0.145"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

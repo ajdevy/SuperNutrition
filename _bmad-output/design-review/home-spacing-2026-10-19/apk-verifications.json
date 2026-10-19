@@ -1,0 +1,14 @@
+{
+  "SN_Final_Verification_35_20261018:/data/app/~~ORPD-DwPgfYum9r7klP9Tw==/app.supernutrition-qJmcxcv31q6Z8VIanj5wCA==/base.apk:478043489:1792316956:163843": {
+    "sha256": "7f7296bd7282a86dc63fe4feaad0d4a19706c8b4ca231c39607ff0e3abc1f26c",
+    "verified_at": "2026-10-19T04:28:55.997687+00:00",
+    "installed_path": "/data/app/~~ORPD-DwPgfYum9r7klP9Tw==/app.supernutrition-qJmcxcv31q6Z8VIanj5wCA==/base.apk",
+    "file_fingerprint": "478043489:1792316956:163843"
+  },
+  "SN_Final_Verification_35_20261018:/data/app/~~-hwgR9lgKFG8rY5yKrkA3g==/app.supernutrition-RI-p177JPsVUNIm5q0s4Tw==/base.apk:478036374:1792387365:163843": {
+    "sha256": "81d6e595d545c8379d85f828cf2b1256c92a115b61a4d5b498a307aaca705012",
+    "verified_at": "2026-10-19T05:23:43.347511+00:00",
+    "installed_path": "/data/app/~~-hwgR9lgKFG8rY5yKrkA3g==/app.supernutrition-RI-p177JPsVUNIm5q0s4Tw==/base.apk",
+    "file_fingerprint": "478036374:1792387365:163843"
+  }
+}

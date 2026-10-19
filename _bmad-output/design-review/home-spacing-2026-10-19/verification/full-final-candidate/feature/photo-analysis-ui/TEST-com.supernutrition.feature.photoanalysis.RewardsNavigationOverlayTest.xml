@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="RewardsNavigationOverlayTest[jvm]" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-10-19T05:01:02.724Z" hostname="Anastasias-MacBook-Air.local" time="0.701">
+  <properties/>
+  <testcase name="Rewards remains visible and scrollable beside navigation in a short wide viewport[jvm]" classname="com.supernutrition.feature.photoanalysis.RewardsNavigationOverlayTest" time="0.512"/>
+  <testcase name="Rewards fills the safe viewport beneath working floating controls[jvm]" classname="com.supernutrition.feature.photoanalysis.RewardsNavigationOverlayTest" time="0.189"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

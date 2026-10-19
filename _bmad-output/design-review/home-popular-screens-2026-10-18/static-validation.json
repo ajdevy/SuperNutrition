@@ -1,0 +1,12 @@
+{
+  "local_link_references": 74,
+  "original_images": 18,
+  "profiles": 9,
+  "cases": 18,
+  "summary": {
+    "fit": 12,
+    "needs-designer": 6
+  },
+  "apk_sha256": "7f7296bd7282a86dc63fe4feaad0d4a19706c8b4ca231c39607ff0e3abc1f26c",
+  "all_sha256_and_dimensions_match": true
+}

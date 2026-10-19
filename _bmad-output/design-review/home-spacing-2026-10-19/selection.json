@@ -1,0 +1,120 @@
+{
+  "created_at": "2026-10-18T17:07:34.856680+00:00",
+  "period": "2026-09",
+  "region": "worldwide",
+  "source": "StatCounter Global Stats",
+  "selection_rule": "Top six mobile observations and three leading distinct portrait tablet compositions; exclude duplicate landscape 1280x800",
+  "units": "Published web screen-resolution categories select logical composition sizes; replayed as native Android dp, not interpreted as hardware pixels or native installed-device shares",
+  "profiles": [
+    {
+      "id": "phone-414x896",
+      "kind": "phone",
+      "width": 414,
+      "height": 896,
+      "label": "Телефон 414 × 896",
+      "geometry": "828x1792-320dpi",
+      "share_percent": "13.35",
+      "source_rank": 1,
+      "source_url": "https://gs.statcounter.com/screen-resolution-stats/mobile/worldwide/#monthly-202609-202609-bar"
+    },
+    {
+      "id": "phone-360x800",
+      "kind": "phone",
+      "width": 360,
+      "height": 800,
+      "label": "Телефон 360 × 800",
+      "geometry": "720x1600-320dpi",
+      "share_percent": "7.54",
+      "source_rank": 2,
+      "source_url": "https://gs.statcounter.com/screen-resolution-stats/mobile/worldwide/#monthly-202609-202609-bar"
+    },
+    {
+      "id": "phone-384x832",
+      "kind": "phone",
+      "width": 384,
+      "height": 832,
+      "label": "Телефон 384 × 832",
+      "geometry": "768x1664-320dpi",
+      "share_percent": "7.10",
+      "source_rank": 3,
+      "source_url": "https://gs.statcounter.com/screen-resolution-stats/mobile/worldwide/#monthly-202609-202609-bar"
+    },
+    {
+      "id": "phone-390x844",
+      "kind": "phone",
+      "width": 390,
+      "height": 844,
+      "label": "Телефон 390 × 844",
+      "geometry": "780x1688-320dpi",
+      "share_percent": "6.05",
+      "source_rank": 4,
+      "source_url": "https://gs.statcounter.com/screen-resolution-stats/mobile/worldwide/#monthly-202609-202609-bar"
+    },
+    {
+      "id": "phone-393x873",
+      "kind": "phone",
+      "width": 393,
+      "height": 873,
+      "label": "Телефон 393 × 873",
+      "geometry": "786x1746-320dpi",
+      "share_percent": "4.18",
+      "source_rank": 5,
+      "source_url": "https://gs.statcounter.com/screen-resolution-stats/mobile/worldwide/#monthly-202609-202609-bar"
+    },
+    {
+      "id": "phone-360x780",
+      "kind": "phone",
+      "width": 360,
+      "height": 780,
+      "label": "Телефон 360 × 780",
+      "geometry": "720x1560-320dpi",
+      "share_percent": "3.39",
+      "source_rank": 6,
+      "source_url": "https://gs.statcounter.com/screen-resolution-stats/mobile/worldwide/#monthly-202609-202609-bar"
+    },
+    {
+      "id": "tablet-768x1024",
+      "kind": "tablet",
+      "width": 768,
+      "height": 1024,
+      "label": "Планшет 768 × 1024",
+      "geometry": "1536x2048-320dpi",
+      "share_percent": "8.09",
+      "source_rank": 1,
+      "source_url": "https://gs.statcounter.com/screen-resolution-stats/tablet/worldwide/#monthly-202609-202609-bar"
+    },
+    {
+      "id": "tablet-800x1280",
+      "kind": "tablet",
+      "width": 800,
+      "height": 1280,
+      "label": "Планшет 800 × 1280",
+      "geometry": "1600x2560-320dpi",
+      "share_percent": "7.86",
+      "source_rank": 2,
+      "source_url": "https://gs.statcounter.com/screen-resolution-stats/tablet/worldwide/#monthly-202609-202609-bar"
+    },
+    {
+      "id": "tablet-820x1180",
+      "kind": "tablet",
+      "width": 820,
+      "height": 1180,
+      "label": "Планшет 820 × 1180",
+      "geometry": "1640x2360-320dpi",
+      "share_percent": "5.06",
+      "source_rank": 4,
+      "source_url": "https://gs.statcounter.com/screen-resolution-stats/tablet/worldwide/#monthly-202609-202609-bar"
+    }
+  ],
+  "evidence": "Android API35 x86_64 emulator viewport overrides only; no iOS/model-specific runtime claim",
+  "font_scales": [
+    1.0,
+    2.0
+  ],
+  "source_retrieved_on": "2026-10-18",
+  "review_title_ru": "Home — компактный заголовок и ровные отступы",
+  "review_note_ru": "Заголовок Super Nutrition и дата убраны. Между основными блоками зарезервировано 16 dp; внешние поля симметричны. Шрифты не уменьшались.",
+  "before_png": "before/720x1560-320dpi/font-100/home.png",
+  "build_note_ru": "Использована обновлённая production-сборка с компактным заголовком и одинаковыми отступами 16 dp. Предыдущие галереи сохранены отдельно и показывают прежнюю сборку.",
+  "expected_apk_sha256": "81d6e595d545c8379d85f828cf2b1256c92a115b61a4d5b498a307aaca705012"
+}

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
@@ -39,11 +40,11 @@ class ComponentRefreshTest {
     ) {
         val header = mutableStateOf("Before refresh")
         val model = mutableStateOf(layoutHomeModel())
-        val compact = mutableStateOf(false)
+        val width = mutableStateOf(375.dp)
         setContent {
-            Column {
+            Column(Modifier.width(width.value)) {
                 Text(header.value)
-                HomeRhythmCard(model.value, compact.value)
+                HomeRhythmCard(model.value)
             }
         }
         onNodeWithText("12 / 25 g").assertIsDisplayed()
@@ -51,7 +52,7 @@ class ComponentRefreshTest {
         onNodeWithText("After refresh").assertIsDisplayed()
         onNodeWithText("12 / 25 g").assertIsDisplayed()
         onNodeWithText("1.2 / 2 L").assertIsDisplayed()
-        runOnIdle { compact.value = true }
+        runOnIdle { width.value = 320.dp }
         onNodeWithText("72 / 90 g").assertIsDisplayed()
     }
 
@@ -61,16 +62,16 @@ class ComponentRefreshTest {
         density = Density(1f),
     ) {
         val home = mutableStateOf(layoutHomeModel())
-        val compact = mutableStateOf(false)
+        val width = mutableStateOf(375.dp)
         val rewards = mutableStateOf(layoutRewardsModel().copy(earnedSummary = "1 of 7", earnedSummaryLabel = "Earned"))
         setContent {
-            Column {
-                HomeRhythmCard(home.value, compact.value)
+            Column(Modifier.width(width.value)) {
+                HomeRhythmCard(home.value)
                 RewardsHeader(rewards.value)
             }
         }
         onNodeWithText("1 of 7").assertIsDisplayed()
-        runOnIdle { compact.value = true }
+        runOnIdle { width.value = 320.dp }
         onNodeWithText("12 / 25 g").assertIsDisplayed()
         runOnIdle {
             home.value = home.value.copy(rhythmSubtitle = "Updated day", fiber = HomeMetricModel("Fiber", "25 g"))

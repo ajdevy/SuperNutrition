@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="CameraScreenRefreshTest[jvm]" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-19T04:59:59.332Z" hostname="Anastasias-MacBook-Air.local" time="2.186">
+  <properties/>
+  <testcase name="camera transitions preserve the correct preview and dispatch current recovery actions[jvm]" classname="com.supernutrition.feature.photoanalysis.CameraScreenRefreshTest" time="0.864"/>
+  <testcase name="backgrounded preview stays hidden and recapture drops retained pixels[jvm]" classname="com.supernutrition.feature.photoanalysis.CameraScreenRefreshTest" time="0.297"/>
+  <testcase name="state flow refreshes capture permission recovery without replacing its composition[jvm]" classname="com.supernutrition.feature.photoanalysis.CameraScreenRefreshTest" time="0.418"/>
+  <testcase name="review refreshes host selections and confirms only the latest evidence and note[jvm]" classname="com.supernutrition.feature.photoanalysis.CameraScreenRefreshTest" time="0.605"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

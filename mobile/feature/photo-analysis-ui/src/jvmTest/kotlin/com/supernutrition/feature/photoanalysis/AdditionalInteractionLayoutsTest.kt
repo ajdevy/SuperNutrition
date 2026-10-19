@@ -41,22 +41,18 @@ import org.jetbrains.skia.Image as SkiaImage
 @OptIn(ExperimentalTestApi::class)
 class AdditionalInteractionLayoutsTest {
     @Test
-    fun `large Home brand keeps complete words beside the profile action`() = runSkikoComposeUiTest(
+    fun `large Home badge wraps completely beside the profile action`() = runSkikoComposeUiTest(
         size = Size(320f, 568f),
         density = Density(1f, 2f),
     ) {
-        setContent { HomeScreen(layoutHomeModel()) }
-        val layouts = mutableListOf<TextLayoutResult>()
-        onNodeWithText("Super Nutrition", useUnmergedTree = true)
-            .performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
-        val layout = layouts.single()
-        val lines = (0 until layout.lineCount).map {
-            layout.layoutInput.text.text
-                .substring(layout.getLineStart(it), layout.getLineEnd(it, visibleEnd = true))
-                .replace('\u0131', 'i').trim()
-        }
-        assertTrue(lines.all { it in listOf("Super", "Nutrition", "Super Nutrition") }, "Brand words split: $lines")
-        onNodeWithTag(UiAutomationIds.HOME_PROFILE.value).assertIsDisplayed()
+        val badge = "A steady rhythm built over twelve days"
+        setContent { HomeScreen(layoutHomeModel().copy(rhythmBadgeLabel = badge)) }
+        val label = onNodeWithText(badge, useUnmergedTree = true)
+        val layout = label.assertIsDisplayed().assertReadableHomeText(2f)
+        assertTrue(layout.lineCount > 1, "Long badge must exercise enlarged-text wrapping")
+        val profile = onNodeWithTag(UiAutomationIds.HOME_PROFILE.value).assertIsDisplayed()
+            .assertHeightIsAtLeast(48.dp).fetchSemanticsNode().boundsInRoot
+        assertTrue(label.fetchSemanticsNode().boundsInRoot.right + 16f <= profile.left, "Badge overlaps profile")
     }
 
     @Test

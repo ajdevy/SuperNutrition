@@ -26,7 +26,9 @@ PARSER.add_argument('--geometry', default='720x1560-320dpi')
 PARSER.add_argument('--font', type=float, default=1.0)
 PARSER.add_argument('--serial', default='emulator-5554')
 PARSER.add_argument('--avd', default='SuperNutrition_API_35_x86_64')
+PARSER.add_argument('--output', type=Path, default=OUTPUT)
 ARGS = PARSER.parse_args()
+OUTPUT = ARGS.output.resolve()
 TIMINGS = []
 
 
@@ -151,15 +153,21 @@ else:
     action = bounds(action_element.get('bounds', '')) if action_element is not None else None
     card_nodes = [node for node in nodes if node.get('resource-id') == 'home_next_step']
     next_card = bounds(card_nodes[0]['bounds']) if len(card_nodes) == 1 else None
-    required = ['Super Nutrition', '6 day rhythm', 'What kind of care do you need today?', 'Add a meal', 'View goals', 'Today’s rhythm', 'You’re building a good day', 'Fiber', '12 / 25 g', 'Water', '1.2 / 2 L', 'Protein', '72 / 90 g', 'Movement', '32 / 45 min', 'Your next helpful step', 'Add one leafy green to dinner', 'Do it']
+    required = ['6 day rhythm', 'What kind of care do you need today?', 'Add a meal', 'View goals', 'Today’s rhythm', 'You’re building a good day', 'Fiber', '12 / 25 g', 'Water', '1.2 / 2 L', 'Protein', '72 / 90 g', 'Movement', '32 / 45 min', 'Your next helpful step', 'Add one leafy green to dinner', 'Do it']
     text = {node.get('text', '') for node in nodes}
     descriptions = {node.get('content-desc', '') for node in nodes}
     missing = [value for value in required if value not in text and value not in descriptions]
     scroll_nodes = [node for node in nodes if node.get('scrollable') == 'true']
     density = geometry['density_dpi'] / 160
-    required_tags = ['home_date', 'home_profile', 'home_add_food', 'home_view_goals',
+    obsolete_header = [node for node in nodes if node.get('resource-id') == 'home_date'
+                       or node.get('text') == 'Super Nutrition']
+    if ARGS.phase != 'before':
+        assert not obsolete_header, 'The removed Home wordmark or date is still visible; check the installed APK'
+    required_tags = ['home_profile', 'home_add_food', 'home_view_goals',
                      'home_summary', 'home_metric_fiber', 'home_metric_water',
                      'home_metric_protein', 'home_metric_movement', 'home_next_step']
+    if ARGS.phase != 'before':
+        required_tags = ['home_header', 'home_care_prompt', *required_tags]
     tagged_bounds = {tag: [bounds(node['bounds']) for node in nodes if node.get('resource-id') == tag]
                      for tag in required_tags}
     missing_tags = [tag for tag, frames in tagged_bounds.items() if len(frames) != 1]
@@ -173,12 +181,30 @@ else:
                           if len(tagged_bounds[tag]) == 1
                           and (tagged_bounds[tag][0][2] - tagged_bounds[tag][0][0] < 48 * density - 1
                                or tagged_bounds[tag][0][3] - tagged_bounds[tag][0][1] < 48 * density - 1)]
+    summary_frames = tagged_bounds['home_summary']
+    section_gap = (next_card[1] - summary_frames[0][3]) / density if next_card and len(summary_frames) == 1 else None
+    header_frames = tagged_bounds.get('home_header', [])
+    care_frames = tagged_bounds.get('home_care_prompt', [])
+    section_gaps = {
+        'header_to_care': (care_frames[0][1] - header_frames[0][3]) / density
+        if len(header_frames) == len(care_frames) == 1 else None,
+        'care_to_mascot': (mascot_frame[1] - care_frames[0][3]) / density
+        if mascot_frame and len(care_frames) == 1 else None,
+        'rhythm_to_next_step': section_gap,
+    }
+    matching_card_edges = bool(next_card and len(summary_frames) == 1 and
+                               all(abs(next_card[i] - summary_frames[0][i]) <= 1 for i in (0, 2)))
+    updated_sections_fit = ARGS.phase == 'before' or (
+        all(gap is not None and abs(gap - 16) <= 1 / density for gap in section_gaps.values())
+        and matching_card_edges
+    )
     fits = (
         not missing and not scroll_nodes and action is not None and next_card is not None
         and next_card[3] + 8 * density <= controls_top
         and action[3] - action[1] >= 48 * density - 1
         and not missing_tags and not unsafe_frames and not undersized_actions
         and mascot_frame is not None and mascot_frame[3] - mascot_frame[1] >= 120 * density - 1
+        and updated_sections_fit
     )
     package_path = adb('shell', 'pm', 'path', PACKAGE).removeprefix('package:')
     assert package_path.startswith('/data/app/') and '\n' not in package_path
@@ -203,6 +229,9 @@ else:
     metadata.update({'required_tag_bounds': tagged_bounds, 'missing_initial_tags': missing_tags,
                      'unsafe_initial_frames': unsafe_frames, 'undersized_initial_actions': undersized_actions,
                      'home_content_bounds': content_frame, 'mascot_bounds': mascot_frame,
+                     'rhythm_to_next_step_gap_dp': section_gap,
+                     'section_gaps_dp': section_gaps, 'matching_card_edges': matching_card_edges,
+                     'obsolete_header_visible': bool(obsolete_header),
                      'capture_command_timings': TIMINGS})
     (leaf / 'metadata.json').write_text(json.dumps(metadata, indent=2, ensure_ascii=False) + '\n')
     print(json.dumps({'png': str(leaf / 'home.png'), 'metadata': str(leaf / 'metadata.json'), 'outcome': metadata['outcome'], 'font_scale': ARGS.font, 'geometry': ARGS.geometry}, ensure_ascii=False), flush=True)

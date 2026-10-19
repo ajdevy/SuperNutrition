@@ -6,7 +6,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -25,7 +24,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,52 +35,22 @@ import org.jetbrains.compose.resources.painterResource
 
 @Composable
 internal fun HomeHeader(model: HomeScreenModel, onProfileRequested: () -> Unit) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-    ) {
-        HomeBrandAndProfile(model.profileActionLabel, onProfileRequested)
-        Text(
-            text = model.dateLabel,
-            color = HomeInk,
-            fontFamily = frauncesFont(),
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 11.5.sp,
-            lineHeight = 15.sp,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.automationId(UiAutomationIds.HOME_DATE),
-        )
-        HomeRhythmBadge(model.rhythmBadgeLabel)
-    }
-}
-
-@Composable
-private fun HomeBrandAndProfile(profileLabel: String, onProfileRequested: () -> Unit) {
     Layout(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().automationId(UiAutomationIds.HOME_HEADER),
         content = {
-            HomeBrand(Modifier.fillMaxWidth())
-            HomeProfile(profileLabel, onProfileRequested)
+            HomeRhythmBadge(model.rhythmBadgeLabel)
+            HomeProfile(model.profileActionLabel, onProfileRequested)
         },
     ) { measurables, constraints ->
         val naturalConstraints = constraints.copy(minWidth = 0, minHeight = 0, maxHeight = Constraints.Infinity)
         val profile = measurables[1].measure(naturalConstraints)
-        val besideWidth = (constraints.maxWidth - profile.width * 2).coerceAtLeast(0)
-        // Read the rendered brand's own typography; there is no second font or wordmark definition.
-        val besideProfile = measurables[0].maxIntrinsicWidth(Constraints.Infinity) <= besideWidth
-        val brandWidth = if (besideProfile) besideWidth else constraints.maxWidth
-        val brand = measurables[0].measure(naturalConstraints.copy(minWidth = brandWidth, maxWidth = brandWidth))
-        val gap = 4.dp.roundToPx()
-        val height = if (besideProfile) maxOf(brand.height, profile.height) else profile.height + gap + brand.height
+        // Reserve the profile touch target before allowing the badge to wrap at the current text scale.
+        val badgeWidth = (constraints.maxWidth - profile.width - HomeSectionGap.roundToPx()).coerceAtLeast(0)
+        val badge = measurables[0].measure(naturalConstraints.copy(maxWidth = badgeWidth))
+        val height = maxOf(badge.height, profile.height)
         layout(constraints.maxWidth, height) {
-            if (besideProfile) {
-                brand.placeRelative(profile.width, (height - brand.height) / 2)
-                profile.placeRelative(constraints.maxWidth - profile.width, (height - profile.height) / 2)
-            } else {
-                profile.placeRelative(constraints.maxWidth - profile.width, 0)
-                brand.placeRelative(0, profile.height + gap)
-            }
+            badge.placeRelative(0, (height - badge.height) / 2)
+            profile.placeRelative(constraints.maxWidth - profile.width, (height - profile.height) / 2)
         }
     }
 }

@@ -1,0 +1,33 @@
+{
+  "changed_core_ui_lines": {
+    "77": {
+      "nr": "77",
+      "mi": "0",
+      "ci": "6",
+      "mb": "0",
+      "cb": "0"
+    },
+    "78": {
+      "nr": "78",
+      "mi": "0",
+      "ci": "6",
+      "mb": "0",
+      "cb": "0"
+    },
+    "166": {
+      "nr": "166",
+      "mi": "0",
+      "ci": "4",
+      "mb": "0",
+      "cb": "0"
+    },
+    "167": {
+      "nr": "167",
+      "mi": "0",
+      "ci": "4",
+      "mb": "0",
+      "cb": "0"
+    }
+  },
+  "all_executable_changed_lines_and_branch_outcomes_covered": true
+}

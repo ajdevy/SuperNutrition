@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="NativePhoneHomeLayoutTest[jvm]" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-19T05:00:25.496Z" hostname="Anastasias-MacBook-Air.local" time="0.4">
+  <properties/>
+  <testcase name="next step card is complete in the first ordinary phone frame[jvm]" classname="com.supernutrition.feature.photoanalysis.NativePhoneHomeLayoutTest" time="0.134"/>
+  <testcase name="ordinary phone keeps a substantial mascot with native insets[jvm]" classname="com.supernutrition.feature.photoanalysis.NativePhoneHomeLayoutTest" time="0.155"/>
+  <testcase name="visible navigation pill stays close to the bottom safe edge[jvm]" classname="com.supernutrition.feature.photoanalysis.NativePhoneHomeLayoutTest" time="0.109"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

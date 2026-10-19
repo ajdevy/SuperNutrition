@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="HomeNavigationOverlayTest[jvm]" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-19T05:00:08.179Z" hostname="Anastasias-MacBook-Air.local" time="7.04">
+  <properties/>
+  <testcase name="Home fills the safe viewport beneath working floating controls[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeNavigationOverlayTest" time="0.272"/>
+  <testcase name="Home keeps the previous compact content geometry when navigation becomes an overlay[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeNavigationOverlayTest" time="0.172"/>
+  <testcase name="Home remains visible and scrollable beside navigation in a short wide viewport[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeNavigationOverlayTest" time="0.619"/>
+  <testcase name="whole final Home card and its action clear controls across screen sizes and font scales[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeNavigationOverlayTest" time="5.976"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

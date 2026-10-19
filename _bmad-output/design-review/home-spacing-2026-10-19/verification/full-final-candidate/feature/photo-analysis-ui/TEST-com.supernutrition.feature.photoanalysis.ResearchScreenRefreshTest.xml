@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ResearchScreenRefreshTest[jvm]" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-19T05:01:00.673Z" hostname="Anastasias-MacBook-Air.local" time="1.185">
+  <properties/>
+  <testcase name="manual research input keeps current callback and text source after results arrive[jvm]" classname="com.supernutrition.feature.photoanalysis.ResearchScreenRefreshTest" time="0.329"/>
+  <testcase name="research recovery drops old callbacks and ignores grid actions in the capture toolbar[jvm]" classname="com.supernutrition.feature.photoanalysis.ResearchScreenRefreshTest" time="0.256"/>
+  <testcase name="research grid follows photo and evidence refresh and clears its selection on recapture[jvm]" classname="com.supernutrition.feature.photoanalysis.ResearchScreenRefreshTest" time="0.6"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="PhotoReviewCompactViewportTest[jvm]" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-10-19T05:00:55.112Z" hostname="Anastasias-MacBook-Air.local" time="2.445">
+  <properties/>
+  <testcase name="tiny positive viewport keeps the focused note and actions reachable[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoReviewCompactViewportTest" time="0.341"/>
+  <testcase name="extremely short review keeps choices and actions reachable[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoReviewCompactViewportTest" time="0.46"/>
+  <testcase name="keyboard resize reveals the focused review footer[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoReviewCompactViewportTest" time="0.27"/>
+  <testcase name="large text keyboard keeps the complete note below Close[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoReviewCompactViewportTest" time="0.272"/>
+  <testcase name="fractional density preserves the minimum action viewport in pixels[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoReviewCompactViewportTest" time="0.235"/>
+  <testcase name="oversized footer reveals the focused note and keeps actions scroll reachable[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoReviewCompactViewportTest" time="0.21"/>
+  <testcase name="resizing a focused review preserves the manual field and text[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoReviewCompactViewportTest" time="0.167"/>
+  <testcase name="short viewport reveals the entire note frame[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoReviewCompactViewportTest" time="0.172"/>
+  <testcase name="short review viewport keeps manual input and footer actions fully visible[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoReviewCompactViewportTest" time="0.318"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
