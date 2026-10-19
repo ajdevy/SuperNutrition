@@ -2,7 +2,10 @@
 # the generated Excel-compatible CSV deliberately uses CRLF. Source checks
 # retain their normal whitespace rules.
 _bmad-output/design-review/home-no-scroll-2026-10-17/**/window*.txt -text whitespace=-blank-at-eol,blank-at-eof,space-before-tab
+_bmad-output/design-review/home-popular-screens-2026-10-18/**/window*.txt -text whitespace=-blank-at-eol,blank-at-eof,space-before-tab
+_bmad-output/design-review/home-spacing-2026-10-19/**/window*.txt -text whitespace=-blank-at-eol,blank-at-eof,space-before-tab
 _bmad-output/design-review/home-no-scroll-2026-10-17/screen-matrix.csv -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 # Preserve the original CRLF produced by the Android JUnit XML reporter.
 _bmad-output/implementation-artifacts/home-no-scroll-verification-2026-10-18/android-*.xml -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+_bmad-output/design-review/home-spacing-2026-10-19/verification/android-final/**/*.xml -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 _bmad-output/implementation-artifacts/home-no-scroll-verification-2026-10-18/ci-followup/android-uiAcceptance-api36.xml -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

@@ -35,6 +35,10 @@ class UiAutomationIdTest {
         assertEquals("bootstrap_shell_launch_di", UiAutomationIds.BOOTSTRAP_LAUNCH_DI.value)
         assertEquals("capture_shutter", UiAutomationIds.CAPTURE_SHUTTER.value)
         assertEquals("capture_import", UiAutomationIds.CAPTURE_IMPORT.value)
+        assertEquals("home_header", UiAutomationIds.HOME_HEADER.value)
+        assertEquals("home_care_prompt", UiAutomationIds.HOME_CARE_PROMPT.value)
+        assertTrue(UiAutomationIds.HOME_HEADER in UiAutomationIds.all)
+        assertTrue(UiAutomationIds.HOME_CARE_PROMPT in UiAutomationIds.all)
     }
 
     @Test

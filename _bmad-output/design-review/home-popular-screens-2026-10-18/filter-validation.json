@@ -1,0 +1,108 @@
+{
+  "checked_at": "2026-10-19T00:02:11.794Z",
+  "method": "Execute the actual generated inline script in an isolated Node VM against parsed gallery controls and cards; no browser or network",
+  "cases": [
+    {
+      "filters": {},
+      "expected": 18,
+      "actual": 18
+    },
+    {
+      "filters": {
+        "kind": "phone"
+      },
+      "expected": 12,
+      "actual": 12
+    },
+    {
+      "filters": {
+        "kind": "tablet"
+      },
+      "expected": 6,
+      "actual": 6
+    },
+    {
+      "filters": {
+        "status": "fit"
+      },
+      "expected": 12,
+      "actual": 12
+    },
+    {
+      "filters": {
+        "status": "needs-designer"
+      },
+      "expected": 6,
+      "actual": 6
+    },
+    {
+      "filters": {
+        "font": "200"
+      },
+      "expected": 9,
+      "actual": 9
+    },
+    {
+      "filters": {
+        "font": "100"
+      },
+      "expected": 9,
+      "actual": 9
+    },
+    {
+      "filters": {
+        "kind": "tablet",
+        "font": "200"
+      },
+      "expected": 3,
+      "actual": 3
+    },
+    {
+      "filters": {
+        "kind": "phone",
+        "font": "200",
+        "status": "fit"
+      },
+      "expected": 0,
+      "actual": 0
+    },
+    {
+      "filters": {
+        "kind": "phone",
+        "font": "200",
+        "status": "needs-designer"
+      },
+      "expected": 6,
+      "actual": 6
+    },
+    {
+      "filters": {
+        "search": "390"
+      },
+      "expected": 2,
+      "actual": 2
+    },
+    {
+      "filters": {
+        "search": "414",
+        "font": "100",
+        "status": "fit"
+      },
+      "expected": 1,
+      "actual": 1
+    },
+    {
+      "filters": {
+        "search": "нет такого размера"
+      },
+      "expected": 0,
+      "actual": 0
+    },
+    {
+      "filters": {},
+      "expected": 18,
+      "actual": 18
+    }
+  ],
+  "browser_visual_check": "Not performed: browser security policy rejected local file URL; no alternate browser surface used"
+}

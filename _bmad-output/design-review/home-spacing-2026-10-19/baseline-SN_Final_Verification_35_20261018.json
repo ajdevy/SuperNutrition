@@ -1,0 +1,13 @@
+{
+  "captured_at": "2026-10-19T04:28:27.093192+00:00",
+  "avd": "SN_Final_Verification_35_20261018",
+  "serial": "emulator-5590",
+  "wm_size": "Physical size: 720x1560",
+  "wm_density": "Physical density: 320",
+  "settings": {
+    "font_scale": "1.0",
+    "accelerometer_rotation": "1",
+    "user_rotation": "0",
+    "screen_off_timeout": "2147483647"
+  }
+}

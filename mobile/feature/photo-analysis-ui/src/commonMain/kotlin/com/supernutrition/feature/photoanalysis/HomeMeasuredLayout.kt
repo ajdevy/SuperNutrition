@@ -24,11 +24,10 @@ internal data class HomeLayoutSettings(
     val viewportHeight: Dp,
     val navigationOverlap: Dp,
     val preferredMascotHeight: Dp,
-    val compact: Boolean,
     val contentMaxWidth: Dp,
 )
 
-/** Measures the shared content once, reserving natural text and control heights before decorative space. */
+/** Reserves natural controls and fixed section spacing before assigning decorative mascot height. */
 @Composable
 internal fun HomeMeasuredLayout(modifier: Modifier, settings: HomeLayoutSettings, content: @Composable () -> Unit) {
     Layout(content = content, modifier = modifier) { measurables, constraints ->
@@ -48,7 +47,7 @@ internal fun HomeMeasuredLayout(modifier: Modifier, settings: HomeLayoutSettings
             header.placeRelative((width - header.width) / 2, y)
             y += header.height + plan.itemGap
             care.placeRelative((width - care.width) / 2, y)
-            y += care.height
+            y += care.height + plan.itemGap
             mascot.placeRelative(0, y)
             y += mascot.height - plan.mascotOverlap
             rhythm.placeRelative((width - rhythm.width) / 2, y)
@@ -61,12 +60,12 @@ internal fun HomeMeasuredLayout(modifier: Modifier, settings: HomeLayoutSettings
 private fun MeasureScope.homeVerticalPlan(fixedHeight: Int, settings: HomeLayoutSettings): HomeVerticalPlan {
     val viewport = settings.viewportHeight.roundToPx()
     val navigation = settings.navigationOverlap.roundToPx()
-    val preferredPadding = (if (settings.compact) 8.dp else 16.dp).roundToPx()
-    val preferredGap = (if (settings.compact) 8.dp else 12.dp).roundToPx()
-    val minimumPadding = 8.dp.roundToPx()
+    val padding = HomePagePadding.roundToPx()
+    val gap = HomeSectionGap.roundToPx()
     val minimumMascot = 120.dp.roundToPx()
     val preferredMascot = settings.preferredMascotHeight.roundToPx()
-    val mascotBudget = viewport - navigation - fixedHeight - minimumPadding * 2
+    val reservedHeight = navigation + fixedHeight + padding * 2 + gap * 3
+    val mascotBudget = viewport - reservedHeight
     val fits = mascotBudget >= minimumMascot - mascotOverlap(minimumMascot)
     // A no-fit viewport keeps the preceding readable composition rather than squeezing information.
     val mascot = if (fits) {
@@ -75,14 +74,7 @@ private fun MeasureScope.homeVerticalPlan(fixedHeight: Int, settings: HomeLayout
         preferredMascot
     }
     val overlap = mascotOverlap(mascot)
-    val spacingBudget = viewport - navigation - fixedHeight - mascot + overlap
-    val gap = if (fits) ((spacingBudget - minimumPadding * 2) / 2).coerceIn(0, preferredGap) else preferredGap
-    val padding = if (fits) {
-        ((spacingBudget - gap * 2) / 2).coerceIn(minimumPadding, preferredPadding)
-    } else {
-        preferredPadding
-    }
-    val naturalHeight = fixedHeight + mascot - overlap + gap * 2 + padding * 2 + navigation
+    val naturalHeight = reservedHeight + mascot - overlap
     return HomeVerticalPlan(mascot, overlap, padding, gap, maxOf(viewport, naturalHeight))
 }
 

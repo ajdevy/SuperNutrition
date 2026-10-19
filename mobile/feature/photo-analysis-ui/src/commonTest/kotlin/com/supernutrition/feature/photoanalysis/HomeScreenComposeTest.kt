@@ -31,8 +31,10 @@ class HomeScreenComposeTest {
 
         onNodeWithTag(UiAutomationIds.HOME_TITLE.value).assertIsDisplayed()
         onNodeWithTag(UiAutomationIds.HOME_SCREEN.value).assertHeightIsEqualTo(812.dp)
-        onNodeWithText("Super Nutrition").assertIsDisplayed()
-        onNodeWithText("Thursday, Aug 7").assertIsDisplayed()
+        onNodeWithText("Super Nutrition").assertDoesNotExist()
+        onNodeWithText(model.dateLabel).assertDoesNotExist()
+        onNodeWithTag(UiAutomationIds.HOME_DATE.value).assertDoesNotExist()
+        onNodeWithText(model.rhythmBadgeLabel).assertIsDisplayed()
         onNodeWithTag(UiAutomationIds.HOME_SUMMARY.value).assertIsDisplayed()
         onNodeWithText("Today’s rhythm").assertIsDisplayed()
         onNodeWithText("Fiber").assertIsDisplayed()

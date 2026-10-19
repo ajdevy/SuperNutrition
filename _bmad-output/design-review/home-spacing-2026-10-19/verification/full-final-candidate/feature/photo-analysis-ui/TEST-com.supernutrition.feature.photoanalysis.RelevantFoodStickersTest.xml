@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="RelevantFoodStickersTest[jvm]" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-10-19T05:00:59.697Z" hostname="Anastasias-MacBook-Air.local" time="0.972">
+  <properties/>
+  <testcase name="banana review shows only actual photo choices and respects supplied selection[jvm]" classname="com.supernutrition.feature.photoanalysis.RelevantFoodStickersTest" time="0.12"/>
+  <testcase name="selected original artwork has an explicit visible checkmark in addition to its outline[jvm]" classname="com.supernutrition.feature.photoanalysis.RelevantFoodStickersTest" time="0.152"/>
+  <testcase name="all shipped local visible food labels have truthful matching illustrations[jvm]" classname="com.supernutrition.feature.photoanalysis.RelevantFoodStickersTest" time="0.001"/>
+  <testcase name="only supported dish suggestions show while a selected low confidence dish remains correctable[jvm]" classname="com.supernutrition.feature.photoanalysis.RelevantFoodStickersTest" time="0.098"/>
+  <testcase name="food illustration lookup requires the complete identity in English and Russian[jvm]" classname="com.supernutrition.feature.photoanalysis.RelevantFoodStickersTest" time="0.001"/>
+  <testcase name="selected banana confirms as photo evidence without selecting a dish or custom meal[jvm]" classname="com.supernutrition.feature.photoanalysis.RelevantFoodStickersTest" time="0.161"/>
+  <testcase name="standalone reanalysis clears stale photo selections before showing different evidence[jvm]" classname="com.supernutrition.feature.photoanalysis.RelevantFoodStickersTest" time="0.255"/>
+  <testcase name="unknown detected food retains an adequate selectable text target[jvm]" classname="com.supernutrition.feature.photoanalysis.RelevantFoodStickersTest" time="0.182"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

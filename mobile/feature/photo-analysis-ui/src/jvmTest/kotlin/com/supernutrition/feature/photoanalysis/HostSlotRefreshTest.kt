@@ -3,6 +3,7 @@ package com.supernutrition.feature.photoanalysis
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -108,7 +109,7 @@ class HostSlotRefreshTest {
         density = Density(1f),
     ) {
         val home = mutableStateOf(layoutHomeModel())
-        val compact = mutableStateOf(false)
+        val width = mutableStateOf(375.dp)
         val loading = mutableStateOf(
             PhotoAnalysisPresenterModel("Working", PhotoAnalysisPresenterState.ANALYZING, emptyList()),
         )
@@ -116,8 +117,8 @@ class HostSlotRefreshTest {
         val add = mutableStateOf<() -> Unit>({ events.add("old add") })
         val goals = mutableStateOf<() -> Unit>({ events.add("old goals") })
         setContent {
-            Column {
-                HomeCarePrompt(home.value, add.value, goals.value, compact.value)
+            Column(Modifier.width(width.value)) {
+                HomeCarePrompt(home.value, add.value, goals.value)
                 PhotoAnalysisLoadingOverlay(loading.value)
             }
         }
@@ -126,7 +127,7 @@ class HostSlotRefreshTest {
         onNodeWithTag(UiAutomationIds.HOME_VIEW_GOALS.value).performClick()
         runOnIdle { add.value = { events.add("new add") } }
         onNodeWithTag(UiAutomationIds.HOME_ADD_FOOD.value).performClick()
-        runOnIdle { compact.value = true }
+        runOnIdle { width.value = 320.dp }
         runOnIdle { home.value = home.value.copy(careQuestion = "Updated question", addFoodLabel = "Add lunch") }
         onNodeWithText("Updated question").assertIsDisplayed()
         onNodeWithText("Add lunch").assertIsDisplayed()

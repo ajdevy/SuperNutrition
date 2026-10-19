@@ -1,0 +1,7 @@
+{
+  "recorded_at": "2026-10-18T22:41:08.822225+00:00",
+  "failure": "Unexpected foreground: Application Not Responding: com.android.systemui",
+  "scope": "Cold-boot emulator system dialog before PNG capture; not an application test result",
+  "retained_directory": "/Users/anastasia/.codex/worktrees/a704/SuperNutrition/mobile/build/popular-screen-review-2026-10-18/failed-capture-720x1600-font100-systemui-anr",
+  "next_action": "Inspect emulator dialog and recover the task-owned guest; retry exact viewport without reusing incomplete evidence"
+}

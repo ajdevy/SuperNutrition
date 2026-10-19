@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.sp
 import com.supernutrition.core.ui.UiAutomationIds
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 @OptIn(ExperimentalTestApi::class)
@@ -132,7 +131,7 @@ class HomeNoScrollLayoutTest {
 
     private fun SemanticsNodeInteraction.assertInitialText(fontScale: Float, content: Rect, controlsTop: Float) {
         val bounds = fetchSemanticsNode().boundsInRoot
-        val layout = assertReadableText(fontScale)
+        val layout = assertReadableHomeText(fontScale)
         val label = layout.layoutInput.text
         assertTrue(
             bounds.top >= content.top && bounds.bottom <= controlsTop - 8f,
@@ -159,7 +158,7 @@ class HomeNoScrollLayoutTest {
         assertTrue(range.maxValue() > 0f, "A no-fit Home was squeezed into a false pass at $viewport/$fontScale")
         assertEquals(0f, range.value(), 1f, "Readable overflow must start at the original top")
         requiredHomeText(model).forEach { label ->
-            onNodeWithText(label, useUnmergedTree = true).assertReadableText(fontScale)
+            onNodeWithText(label, useUnmergedTree = true).assertReadableHomeText(fontScale)
         }
         val careLayouts = mutableListOf<TextLayoutResult>()
         onNodeWithText(model.careQuestion, useUnmergedTree = true)
@@ -177,40 +176,7 @@ class HomeNoScrollLayoutTest {
         assertEquals(1, addFoodRequests)
     }
 
-    private fun SemanticsNodeInteraction.assertReadableText(fontScale: Float): TextLayoutResult {
-        val layouts = mutableListOf<TextLayoutResult>()
-        performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
-        return layouts.single().also {
-            val measurement = "text='${it.layoutInput.text}', scale=${it.layoutInput.density.fontScale}, " +
-                "overflowHeight=${it.didOverflowHeight}, overflowWidth=${it.didOverflowWidth}, " +
-                "size=${it.size}, paragraphWidth=${it.multiParagraph.width}, " +
-                "paragraphHeight=${it.multiParagraph.height}, " +
-                "lineLeft=${it.getLineLeft(0)}, lineRight=${it.getLineRight(0)}, " +
-                "lineBottom=${it.getLineBottom(it.lineCount - 1)}, lineCount=${it.lineCount}, " +
-                "constraints=${it.layoutInput.constraints}, font=${it.layoutInput.style.fontSize}, " +
-                "lineHeight=${it.layoutInput.style.lineHeight}"
-            if (it.hasVisualOverflow) println("HOME_TEXT_MEASUREMENT: $measurement")
-            // Centered text can retain the available paragraph canvas but report an intrinsic ink-sized frame.
-            // Compare actual line spans with the integer frame; the canvas alone does not prove clipping.
-            assertTrue(it.multiParagraph.height <= it.size.height + 1f, "Home text exceeds its height: $measurement")
-            assertFalse(it.multiParagraph.didExceedMaxLines, "Home text loses lines: $measurement")
-            assertEquals(fontScale, it.layoutInput.density.fontScale, "Home overrides the system text scale")
-            repeat(it.lineCount) { line ->
-                assertFalse(it.isLineEllipsized(line), "Home text is truncated")
-                val lineWidth = it.getLineRight(line) - it.getLineLeft(line)
-                assertTrue(lineWidth <= it.size.width + 1f, "Home text exceeds its line width: $measurement")
-                assertTrue(
-                    it.getLineBottom(line) <= it.size.height + 1f,
-                    "Home text crosses its bottom edge: $measurement",
-                )
-            }
-            assertEquals(it.layoutInput.text.length, it.getLineEnd(it.lineCount - 1), "Home drops part of its text")
-        }
-    }
-
     private fun requiredHomeText(model: HomeScreenModel) = listOf(
-        "Super Nutrition",
-        model.dateLabel,
         model.rhythmBadgeLabel,
         model.careQuestion,
         model.addFoodLabel,

@@ -64,7 +64,6 @@ fun HomeScreen(
                 viewportHeight = maxHeight,
                 navigationOverlap = navigationOverlap,
                 preferredMascotHeight = mascotHeight,
-                compact = compact,
                 contentMaxWidth = contentMaxWidth,
             ),
             actions = HomeActions(
@@ -108,14 +107,14 @@ private fun HomeContent(model: HomeScreenModel, layout: HomeLayoutSettings, acti
             settings = layout,
         ) {
             HomeHeader(model, actions.onProfileRequested)
-            HomeCarePrompt(model, actions.onAddFoodRequested, actions.onViewGoalsRequested, layout.compact)
+            HomeCarePrompt(model, actions.onAddFoodRequested, actions.onViewGoalsRequested)
             Image(
                 painter = painterResource(Res.drawable.capybara),
                 contentDescription = model.mascotDescription,
                 contentScale = ContentScale.Fit,
                 modifier = Modifier.fillMaxWidth().zIndex(1f),
             )
-            HomeRhythmCard(model, layout.compact)
+            HomeRhythmCard(model)
             HomeNextStep(model, actions.onAddFoodRequested)
         }
     }

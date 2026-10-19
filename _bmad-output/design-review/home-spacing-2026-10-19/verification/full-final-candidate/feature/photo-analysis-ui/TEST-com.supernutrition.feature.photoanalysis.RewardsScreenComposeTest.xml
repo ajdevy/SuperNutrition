@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="RewardsScreenComposeTest[jvm]" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-10-19T05:01:03.430Z" hostname="Anastasias-MacBook-Air.local" time="0.163">
+  <properties/>
+  <testcase name="figma rewards surface exposes its header sections and ten cards[jvm]" classname="com.supernutrition.feature.photoanalysis.RewardsScreenComposeTest" time="0.163"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

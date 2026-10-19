@@ -1,0 +1,205 @@
+{
+  "origin": "Explicit popular logical viewports; not an SDK hardware-device inventory",
+  "unique_geometries": {
+    "828x1792-320dpi": {
+      "key": "828x1792-320dpi",
+      "width_px": 828,
+      "height_px": 1792,
+      "density_dpi": 320,
+      "width_dp": 414,
+      "height_dp": 896,
+      "devices": [
+        "Телефон 414 × 896 dp; выбран по статистике размеров, без привязки к модели"
+      ]
+    },
+    "720x1600-320dpi": {
+      "key": "720x1600-320dpi",
+      "width_px": 720,
+      "height_px": 1600,
+      "density_dpi": 320,
+      "width_dp": 360,
+      "height_dp": 800,
+      "devices": [
+        "Телефон 360 × 800 dp; выбран по статистике размеров, без привязки к модели"
+      ]
+    },
+    "768x1664-320dpi": {
+      "key": "768x1664-320dpi",
+      "width_px": 768,
+      "height_px": 1664,
+      "density_dpi": 320,
+      "width_dp": 384,
+      "height_dp": 832,
+      "devices": [
+        "Телефон 384 × 832 dp; выбран по статистике размеров, без привязки к модели"
+      ]
+    },
+    "780x1688-320dpi": {
+      "key": "780x1688-320dpi",
+      "width_px": 780,
+      "height_px": 1688,
+      "density_dpi": 320,
+      "width_dp": 390,
+      "height_dp": 844,
+      "devices": [
+        "Телефон 390 × 844 dp; выбран по статистике размеров, без привязки к модели"
+      ]
+    },
+    "786x1746-320dpi": {
+      "key": "786x1746-320dpi",
+      "width_px": 786,
+      "height_px": 1746,
+      "density_dpi": 320,
+      "width_dp": 393,
+      "height_dp": 873,
+      "devices": [
+        "Телефон 393 × 873 dp; выбран по статистике размеров, без привязки к модели"
+      ]
+    },
+    "720x1560-320dpi": {
+      "key": "720x1560-320dpi",
+      "width_px": 720,
+      "height_px": 1560,
+      "density_dpi": 320,
+      "width_dp": 360,
+      "height_dp": 780,
+      "devices": [
+        "Телефон 360 × 780 dp; выбран по статистике размеров, без привязки к модели"
+      ]
+    },
+    "1536x2048-320dpi": {
+      "key": "1536x2048-320dpi",
+      "width_px": 1536,
+      "height_px": 2048,
+      "density_dpi": 320,
+      "width_dp": 768,
+      "height_dp": 1024,
+      "devices": [
+        "Планшет 768 × 1024 dp; выбран по статистике размеров, без привязки к модели"
+      ]
+    },
+    "1600x2560-320dpi": {
+      "key": "1600x2560-320dpi",
+      "width_px": 1600,
+      "height_px": 2560,
+      "density_dpi": 320,
+      "width_dp": 800,
+      "height_dp": 1280,
+      "devices": [
+        "Планшет 800 × 1280 dp; выбран по статистике размеров, без привязки к модели"
+      ]
+    },
+    "1640x2360-320dpi": {
+      "key": "1640x2360-320dpi",
+      "width_px": 1640,
+      "height_px": 2360,
+      "density_dpi": 320,
+      "width_dp": 820,
+      "height_dp": 1180,
+      "devices": [
+        "Планшет 820 × 1180 dp; выбран по статистике размеров, без привязки к модели"
+      ]
+    }
+  },
+  "devices": [
+    {
+      "id": "phone-414x896",
+      "kind": "phone",
+      "width": 414,
+      "height": 896,
+      "label": "Телефон 414 × 896",
+      "geometry": "828x1792-320dpi",
+      "share_percent": "13.35",
+      "source_rank": 1,
+      "source_url": "https://gs.statcounter.com/screen-resolution-stats/mobile/worldwide/#monthly-202609-202609-bar"
+    },
+    {
+      "id": "phone-360x800",
+      "kind": "phone",
+      "width": 360,
+      "height": 800,
+      "label": "Телефон 360 × 800",
+      "geometry": "720x1600-320dpi",
+      "share_percent": "7.54",
+      "source_rank": 2,
+      "source_url": "https://gs.statcounter.com/screen-resolution-stats/mobile/worldwide/#monthly-202609-202609-bar"
+    },
+    {
+      "id": "phone-384x832",
+      "kind": "phone",
+      "width": 384,
+      "height": 832,
+      "label": "Телефон 384 × 832",
+      "geometry": "768x1664-320dpi",
+      "share_percent": "7.10",
+      "source_rank": 3,
+      "source_url": "https://gs.statcounter.com/screen-resolution-stats/mobile/worldwide/#monthly-202609-202609-bar"
+    },
+    {
+      "id": "phone-390x844",
+      "kind": "phone",
+      "width": 390,
+      "height": 844,
+      "label": "Телефон 390 × 844",
+      "geometry": "780x1688-320dpi",
+      "share_percent": "6.05",
+      "source_rank": 4,
+      "source_url": "https://gs.statcounter.com/screen-resolution-stats/mobile/worldwide/#monthly-202609-202609-bar"
+    },
+    {
+      "id": "phone-393x873",
+      "kind": "phone",
+      "width": 393,
+      "height": 873,
+      "label": "Телефон 393 × 873",
+      "geometry": "786x1746-320dpi",
+      "share_percent": "4.18",
+      "source_rank": 5,
+      "source_url": "https://gs.statcounter.com/screen-resolution-stats/mobile/worldwide/#monthly-202609-202609-bar"
+    },
+    {
+      "id": "phone-360x780",
+      "kind": "phone",
+      "width": 360,
+      "height": 780,
+      "label": "Телефон 360 × 780",
+      "geometry": "720x1560-320dpi",
+      "share_percent": "3.39",
+      "source_rank": 6,
+      "source_url": "https://gs.statcounter.com/screen-resolution-stats/mobile/worldwide/#monthly-202609-202609-bar"
+    },
+    {
+      "id": "tablet-768x1024",
+      "kind": "tablet",
+      "width": 768,
+      "height": 1024,
+      "label": "Планшет 768 × 1024",
+      "geometry": "1536x2048-320dpi",
+      "share_percent": "8.09",
+      "source_rank": 1,
+      "source_url": "https://gs.statcounter.com/screen-resolution-stats/tablet/worldwide/#monthly-202609-202609-bar"
+    },
+    {
+      "id": "tablet-800x1280",
+      "kind": "tablet",
+      "width": 800,
+      "height": 1280,
+      "label": "Планшет 800 × 1280",
+      "geometry": "1600x2560-320dpi",
+      "share_percent": "7.86",
+      "source_rank": 2,
+      "source_url": "https://gs.statcounter.com/screen-resolution-stats/tablet/worldwide/#monthly-202609-202609-bar"
+    },
+    {
+      "id": "tablet-820x1180",
+      "kind": "tablet",
+      "width": 820,
+      "height": 1180,
+      "label": "Планшет 820 × 1180",
+      "geometry": "1640x2360-320dpi",
+      "share_percent": "5.06",
+      "source_rank": 4,
+      "source_url": "https://gs.statcounter.com/screen-resolution-stats/tablet/worldwide/#monthly-202609-202609-bar"
+    }
+  ]
+}

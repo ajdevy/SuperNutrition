@@ -14,25 +14,22 @@ import androidx.compose.ui.graphics.asSkiaBitmap
 import androidx.compose.ui.graphics.toPixelMap
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsSelected
-import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.assertWidthIsAtLeast
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.v2.runSkikoComposeUiTest
-import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.supernutrition.core.ui.UiAutomationIds
 import org.jetbrains.skia.EncodedImageFormat
 import java.io.File
-import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.test.Test
@@ -43,7 +40,7 @@ import org.jetbrains.skia.Image as SkiaImage
 @OptIn(ExperimentalTestApi::class)
 class BrandNavigationVisualTest {
     @Test
-    fun `sprout replaces the first i dot across header widths and font scales`() {
+    fun `compact header keeps its badge and reachable profile across widths and text scales`() {
         listOf(Size(375f, 812f) to 1f, Size(320f, 568f) to 1.5f, Size(600f, 800f) to 1f)
             .forEach { (viewport, fontScale) ->
                 runSkikoComposeUiTest(size = viewport, density = Density(1f, fontScale)) {
@@ -52,60 +49,84 @@ class BrandNavigationVisualTest {
                             HomeScreen(layoutHomeModel())
                         }
                     }
-                    onNodeWithContentDescription("Super Nutrition").assertIsDisplayed()
-                    val text = onNodeWithText("Super Nutrition", useUnmergedTree = true)
-                    val layouts = mutableListOf<TextLayoutResult>()
-                    text.performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
-                    val layout = layouts.single()
+                    val model = layoutHomeModel()
+                    onNodeWithText("Super Nutrition", useUnmergedTree = true).assertDoesNotExist()
+                    onNodeWithText(model.dateLabel, useUnmergedTree = true).assertDoesNotExist()
+                    val text = onNodeWithText(model.rhythmBadgeLabel, useUnmergedTree = true).assertIsDisplayed()
+                    text.assertReadableHomeText(fontScale)
+                    val header = onNodeWithTag(UiAutomationIds.HOME_HEADER.value).fetchSemanticsNode().boundsInRoot
+                    val profile = onNodeWithTag(UiAutomationIds.HOME_PROFILE.value).assertIsDisplayed()
+                        .assertHeightIsAtLeast(48.dp).assertWidthIsAtLeast(48.dp)
+                        .fetchSemanticsNode().boundsInRoot
+                    assertEquals(header.right, profile.right, 1f, "Profile is not aligned to the header end")
+                    assertTrue(text.fetchSemanticsNode().boundsInRoot.right + 16f <= profile.left)
                     val image = captureToImage()
-                    writeScreenshot("brand-${viewport.width.toInt()}-$fontScale", image)
-                    assertSprout(image, layout, text.fetchSemanticsNode().boundsInRoot, fontScale)
+                    writeScreenshot("header-${viewport.width.toInt()}-$fontScale", image)
                 }
             }
     }
 
     @Test
-    fun `brand follows live font changes and survives a header refresh`() = runSkikoComposeUiTest(
+    fun `compact header follows live badge and font changes without restoring the date`() = runSkikoComposeUiTest(
         size = Size(375f, 180f),
         density = Density(1f),
     ) {
         val fontScale = mutableStateOf(1f)
         val model = mutableStateOf(layoutHomeModel())
+        val events = mutableListOf<String>()
+        val profile = mutableStateOf<() -> Unit>({ events.add("old profile") })
         setContent {
             CompositionLocalProvider(LocalDensity provides Density(1f, fontScale.value)) {
-                Box(Modifier.fillMaxSize().background(HomeBackgroundColor)) { HomeHeader(model.value) {} }
+                Box(Modifier.fillMaxSize().background(HomeBackgroundColor)) {
+                    HomeHeader(model.value, profile.value)
+                }
             }
         }
         repeat(3) { stage ->
-            val text = onNodeWithText("Super Nutrition", useUnmergedTree = true)
-            val layouts = mutableListOf<TextLayoutResult>()
-            text.performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
-            assertSprout(captureToImage(), layouts.single(), text.fetchSemanticsNode().boundsInRoot, fontScale.value)
+            val text = onNodeWithText(model.value.rhythmBadgeLabel, useUnmergedTree = true).assertIsDisplayed()
+            text.assertReadableHomeText(fontScale.value)
+            onNodeWithTag(UiAutomationIds.HOME_PROFILE.value).performClick()
             when (stage) {
-                0 -> runOnIdle { model.value = model.value.copy(dateLabel = "Friday, Aug 8") }
-                1 -> runOnIdle { fontScale.value = 1.5f }
+                0 -> runOnIdle {
+                    model.value = model.value.copy(dateLabel = "Friday, Aug 8", rhythmBadgeLabel = "7 day rhythm")
+                }
+
+                1 -> runOnIdle {
+                    fontScale.value = 1.5f
+                    profile.value = { events.add("new profile") }
+                }
             }
         }
-        onNodeWithText("Friday, Aug 8").assertIsDisplayed()
-        writeScreenshot("brand-live-font-change", captureToImage())
+        onNodeWithText("Friday, Aug 8").assertDoesNotExist()
+        onNodeWithTag(UiAutomationIds.HOME_DATE.value).assertDoesNotExist()
+        assertEquals(listOf("old profile", "old profile", "new profile"), events)
+        writeScreenshot("header-live-font-change", captureToImage())
     }
 
     @Test
-    fun `sprout stays over the first i in an RTL host`() = runSkikoComposeUiTest(
+    fun `compact header mirrors badge and profile in an RTL host`() = runSkikoComposeUiTest(
         size = Size(375f, 110f),
         density = Density(1f),
     ) {
+        var profileRequests = 0
         setContent {
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
-                Box(Modifier.fillMaxSize().background(HomeBackgroundColor)) { HomeHeader(layoutHomeModel()) {} }
+                Box(Modifier.fillMaxSize().background(HomeBackgroundColor)) {
+                    HomeHeader(layoutHomeModel()) { profileRequests++ }
+                }
             }
         }
-        val text = onNodeWithText("Super Nutrition", useUnmergedTree = true)
-        val layouts = mutableListOf<TextLayoutResult>()
-        text.performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
+        val text = onNodeWithText(layoutHomeModel().rhythmBadgeLabel, useUnmergedTree = true).assertIsDisplayed()
+        text.assertReadableHomeText(1f)
+        val header = onNodeWithTag(UiAutomationIds.HOME_HEADER.value).fetchSemanticsNode().boundsInRoot
+        val profile = onNodeWithTag(UiAutomationIds.HOME_PROFILE.value).assertIsDisplayed()
+        val profileBounds = profile.fetchSemanticsNode().boundsInRoot
+        assertEquals(header.left, profileBounds.left, 1f, "RTL profile is not at the trailing edge")
+        assertTrue(text.fetchSemanticsNode().boundsInRoot.left >= profileBounds.right + 16f)
+        profile.performClick()
+        assertEquals(1, profileRequests)
         val image = captureToImage()
-        writeScreenshot("brand-rtl", image)
-        assertSprout(image, layouts.single(), text.fetchSemanticsNode().boundsInRoot, 1f)
+        writeScreenshot("header-rtl", image)
     }
 
     @Test
@@ -193,32 +214,6 @@ class BrandNavigationVisualTest {
                     writeScreenshot("rewards-final-${viewport.width.toInt()}-$fontScale", captureToImage())
                 }
             }
-    }
-
-    private fun assertSprout(image: ImageBitmap, layout: TextLayoutResult, bounds: Rect, fontScale: Float) {
-        assertEquals('\u0131', layout.layoutInput.text.text[10], "The ordinary first-i dot remains")
-        assertEquals('i', layout.layoutInput.text.text[12], "The second i should retain its dot")
-        val glyph = layout.getBoundingBox(10).translate(bounds.topLeft)
-        val pixels = image.toPixelMap()
-        val accent = buildList {
-            val top = floor(glyph.top).toInt().coerceAtLeast(0)
-            val bottom = ceil(glyph.bottom).toInt().coerceAtMost(pixels.height)
-            val left = floor(glyph.left - 6f).toInt().coerceAtLeast(0)
-            val right = ceil(glyph.right + 6f).toInt().coerceAtMost(pixels.width)
-            for (y in top until bottom) {
-                for (x in left until right) {
-                    val color = pixels[x, y]
-                    if (color.red in 0.2f..0.3f && color.green in 0.36f..0.48f && color.blue < 0.1f) {
-                        add(x.toFloat())
-                    }
-                }
-            }
-        }
-        assertTrue(accent.isNotEmpty(), "No sprout rendered above the first i: $glyph/$fontScale")
-        assertTrue(
-            abs(accent.average().toFloat() - glyph.center.x) <= 3f * fontScale,
-            "Sprout is beside the first i: glyph=$glyph accent=$accent fontScale=$fontScale",
-        )
     }
 
     private fun changedPixels(before: ImageBitmap, after: ImageBitmap, bounds: Rect): Int {

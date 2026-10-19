@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="HomeHeaderSpacingTest[jvm]" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-10-19T05:00:06.775Z" hostname="Anastasias-MacBook-Air.local" time="1.398">
+  <properties/>
+  <testcase name="ordinary Home keeps a sixteen dp gap between the rhythm and next step[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeHeaderSpacingTest" time="0.152"/>
+  <testcase name="large Home keeps a sixteen dp gap between the rhythm and next step[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeHeaderSpacingTest" time="0.13"/>
+  <testcase name="tablet with double text keeps the same rhythm and next step spacing[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeHeaderSpacingTest" time="0.173"/>
+  <testcase name="Home does not display the redundant wordmark[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeHeaderSpacingTest" time="0.115"/>
+  <testcase name="Home does not display the weekday or date[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeHeaderSpacingTest" time="0.134"/>
+  <testcase name="double text keeps the same gap when Home needs readable overflow[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeHeaderSpacingTest" time="0.17"/>
+  <testcase name="compact Home keeps a sixteen dp gap between the rhythm and next step[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeHeaderSpacingTest" time="0.142"/>
+  <testcase name="enlarged text keeps the same gap between the rhythm and next step[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeHeaderSpacingTest" time="0.147"/>
+  <testcase name="Home retains screen identity rhythm badge and profile action[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeHeaderSpacingTest" time="0.235"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

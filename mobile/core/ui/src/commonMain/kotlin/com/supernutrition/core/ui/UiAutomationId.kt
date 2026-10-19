@@ -74,6 +74,8 @@ object UiAutomationIds {
     val CAMERA_ACTION = UiAutomationId("camera_action")
     val BOTTOM_BAR_PILL = UiAutomationId("bottom_bar_pill")
     val HOME_TITLE = UiAutomationId("home_title")
+    val HOME_HEADER = UiAutomationId("home_header")
+    val HOME_CARE_PROMPT = UiAutomationId("home_care_prompt")
     val HOME_GREETING = UiAutomationId("home_greeting")
     val HOME_SUMMARY = UiAutomationId("home_summary")
     val HOME_NEXT_STEP = UiAutomationId("home_next_step")
@@ -161,6 +163,8 @@ object UiAutomationIds {
         CAMERA_ACTION,
         BOTTOM_BAR_PILL,
         HOME_TITLE,
+        HOME_HEADER,
+        HOME_CARE_PROMPT,
         HOME_GREETING,
         HOME_SUMMARY,
         HOME_NEXT_STEP,

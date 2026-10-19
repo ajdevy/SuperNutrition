@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="RewardsTextReadabilityTest[jvm]" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-10-19T05:01:03.599Z" hostname="Anastasias-MacBook-Air.local" time="4.949">
+  <properties/>
+  <testcase name="normal Rewards header displays its complete name[jvm]" classname="com.supernutrition.feature.photoanalysis.RewardsTextReadabilityTest" time="0.116"/>
+  <testcase name="default Rewards subtitles stay complete on a compact phone at double text size[jvm]" classname="com.supernutrition.feature.photoanalysis.RewardsTextReadabilityTest" time="0.397"/>
+  <testcase name="normal Back retains a full touch target and working action[jvm]" classname="com.supernutrition.feature.photoanalysis.RewardsTextReadabilityTest" time="0.157"/>
+  <testcase name="See all text has readable contrast on the actual Rewards backdrop[jvm]" classname="com.supernutrition.feature.photoanalysis.RewardsTextReadabilityTest" time="0.103"/>
+  <testcase name="default Rewards titles stay complete on an ordinary phone at double text size[jvm]" classname="com.supernutrition.feature.photoanalysis.RewardsTextReadabilityTest" time="1.283"/>
+  <testcase name="normal long visual titles remain complete inside their cards[jvm]" classname="com.supernutrition.feature.photoanalysis.RewardsTextReadabilityTest" time="1.172"/>
+  <testcase name="default Rewards titles stay complete on a compact phone at double text size[jvm]" classname="com.supernutrition.feature.photoanalysis.RewardsTextReadabilityTest" time="1.4"/>
+  <testcase name="default Rewards subtitles stay complete on an ordinary phone at double text size[jvm]" classname="com.supernutrition.feature.photoanalysis.RewardsTextReadabilityTest" time="0.319"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

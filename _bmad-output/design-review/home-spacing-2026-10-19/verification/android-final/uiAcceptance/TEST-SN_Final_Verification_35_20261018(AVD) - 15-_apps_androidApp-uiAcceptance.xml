@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuites tests="43" failures="0" errors="0" skipped="0" time="133.282" timestamp="2026-10-19T05:22:13" hostname="localhost">
+  <testsuite name="com.supernutrition.android.AndroidImageNormalizerFixtureTest" tests="3" failures="0" errors="0" skipped="0" time="0.169" timestamp="2026-10-19T05:22:13" hostname="localhost">
+    <properties>
+      <property name="device" value="SN_Final_Verification_35_20261018(AVD) - 15" />
+      <property name="flavor" value="uiAcceptance" />
+      <property name="project" value=":apps:androidApp" />
+    </properties>
+    <testcase name="callerSuppliedOrientationIsApplied" classname="com.supernutrition.android.AndroidImageNormalizerFixtureTest" time="0.126" />
+    <testcase name="exifGpsFixtureNormalizesToBoundedMetadataFreePixels" classname="com.supernutrition.android.AndroidImageNormalizerFixtureTest" time="0.007" />
+    <testcase name="extremeBoundNeverCreatesZeroDimensionBitmap" classname="com.supernutrition.android.AndroidImageNormalizerFixtureTest" time="0.036" />
+  </testsuite>
+  <testsuite name="com.supernutrition.android.AndroidPhotoBridgeBytesInstrumentationTest" tests="2" failures="0" errors="0" skipped="0" time="0.081" timestamp="2026-10-19T05:22:13" hostname="localhost">
+    <properties>
+      <property name="device" value="SN_Final_Verification_35_20261018(AVD) - 15" />
+      <property name="flavor" value="uiAcceptance" />
+      <property name="project" value=":apps:androidApp" />
+    </properties>
+    <testcase name="photoPickerRequestsSelectedPersistableReadGrant" classname="com.supernutrition.android.AndroidPhotoBridgeBytesInstrumentationTest" time="0.039" />
+    <testcase name="cameraThumbnailResultBecomesJpegBytes" classname="com.supernutrition.android.AndroidPhotoBridgeBytesInstrumentationTest" time="0.042" />
+  </testsuite>
+  <testsuite name="com.supernutrition.android.AndroidPhotoCaptureFilesInstrumentationTest" tests="4" failures="0" errors="0" skipped="0" time="0.089" timestamp="2026-10-19T05:22:13" hostname="localhost">
+    <properties>
+      <property name="device" value="SN_Final_Verification_35_20261018(AVD) - 15" />
+      <property name="flavor" value="uiAcceptance" />
+      <property name="project" value=":apps:androidApp" />
+    </properties>
+    <testcase name="cameraIntentTargetsThePrivateCameraXActivity" classname="com.supernutrition.android.AndroidPhotoCaptureFilesInstrumentationTest" time="0.038" />
+    <testcase name="ownedResultBytesAreConsumedAndDeleted" classname="com.supernutrition.android.AndroidPhotoCaptureFilesInstrumentationTest" time="0.041" />
+    <testcase name="cameraBytesResultUsesOneShotOpaqueTokenWithoutAFileUri" classname="com.supernutrition.android.AndroidPhotoCaptureFilesInstrumentationTest" time="0.005" />
+    <testcase name="staleCleanupRemovesOnlyOwnedCaptureFiles" classname="com.supernutrition.android.AndroidPhotoCaptureFilesInstrumentationTest" time="0.005" />
+  </testsuite>
+  <testsuite name="com.supernutrition.android.BootstrapHostInstrumentationTest" tests="1" failures="0" errors="0" skipped="0" time="0.005" timestamp="2026-10-19T05:22:13" hostname="localhost">
+    <properties>
+      <property name="device" value="SN_Final_Verification_35_20261018(AVD) - 15" />
+      <property name="flavor" value="uiAcceptance" />
+      <property name="project" value=":apps:androidApp" />
+    </properties>
+    <testcase name="testApplicationStartsKoinBeforeTheHostIsUsed" classname="com.supernutrition.android.BootstrapHostInstrumentationTest" time="0.005" />
+  </testsuite>
+  <testsuite name="com.supernutrition.android.BrandNavigationVisualInstrumentationTest" tests="3" failures="0" errors="0" skipped="0" time="42.293" timestamp="2026-10-19T05:22:13" hostname="localhost">
+    <properties>
+      <property name="device" value="SN_Final_Verification_35_20261018(AVD) - 15" />
+      <property name="flavor" value="uiAcceptance" />
+      <property name="project" value=":apps:androidApp" />
+    </properties>
+    <testcase name="rewardsBackdropAndFinalCardClearFloatingNavigation" classname="com.supernutrition.android.BrandNavigationVisualInstrumentationTest" time="25.987" />
+    <testcase name="heldTabKeepsItsTouchSurfaceTransparent" classname="com.supernutrition.android.BrandNavigationVisualInstrumentationTest" time="8.998" />
+    <testcase name="selectionChangesIconsAndKeepsLabels" classname="com.supernutrition.android.BrandNavigationVisualInstrumentationTest" time="7.308" />
+  </testsuite>
+  <testsuite name="com.supernutrition.android.PhotoAnalysisCameraPermissionInstrumentationTest" tests="15" failures="0" errors="0" skipped="0" time="2.448" timestamp="2026-10-19T05:22:13" hostname="localhost">
+    <properties>
+      <property name="device" value="SN_Final_Verification_35_20261018(AVD) - 15" />
+      <property name="flavor" value="uiAcceptance" />
+      <property name="project" value=":apps:androidApp" />
+    </properties>
+    <testcase name="explicitRetryAfterDenialRequestsPermissionWithoutCapture" classname="com.supernutrition.android.PhotoAnalysisCameraPermissionInstrumentationTest" time="2.203" />
+    <testcase name="cameraEntryWithoutHardwareDoesNotRequestUnusedPermission" classname="com.supernutrition.android.PhotoAnalysisCameraPermissionInstrumentationTest" time="0.004" />
+    <testcase name="settingsGrantClearsPermissionRecoveryWithoutCapture" classname="com.supernutrition.android.PhotoAnalysisCameraPermissionInstrumentationTest" time="0.006" />
+    <testcase name="permissionRefreshPreservesEveryOtherRecoveryReason" classname="com.supernutrition.android.PhotoAnalysisCameraPermissionInstrumentationTest" time="0.006" />
+    <testcase name="backgroundedCaptureDoesNotAutomaticallyRequestCameraPermission" classname="com.supernutrition.android.PhotoAnalysisCameraPermissionInstrumentationTest" time="0.07" />
+    <testcase name="decliningPreviewPermissionKeepsCaptureControlsAvailable" classname="com.supernutrition.android.PhotoAnalysisCameraPermissionInstrumentationTest" time="0.041" />
+    <testcase name="permanentRefusalOpensSettingsOnlyAfterExplicitAction" classname="com.supernutrition.android.PhotoAnalysisCameraPermissionInstrumentationTest" time="0.006" />
+    <testcase name="alreadyGrantedCameraEntryDoesNotRequestOrCapture" classname="com.supernutrition.android.PhotoAnalysisCameraPermissionInstrumentationTest" time="0.005" />
+    <testcase name="firstCameraEntryRequestsPreviewPermissionOnlyOnce" classname="com.supernutrition.android.PhotoAnalysisCameraPermissionInstrumentationTest" time="0.04" />
+    <testcase name="restoredReviewRecoveryDoesNotAutomaticallyRequestCameraPermission" classname="com.supernutrition.android.PhotoAnalysisCameraPermissionInstrumentationTest" time="0.005" />
+    <testcase name="previousRefusalDoesNotReopenPermissionOnCameraEntry" classname="com.supernutrition.android.PhotoAnalysisCameraPermissionInstrumentationTest" time="0.038" />
+    <testcase name="grantingCameraPermissionDoesNotCapturePhoto" classname="com.supernutrition.android.PhotoAnalysisCameraPermissionInstrumentationTest" time="0.005" />
+    <testcase name="returningFromSettingsWithoutGrantPreservesPermissionRecovery" classname="com.supernutrition.android.PhotoAnalysisCameraPermissionInstrumentationTest" time="0.008" />
+    <testcase name="explicitRetryWaitsForRationaleAndSharesRequestGuard" classname="com.supernutrition.android.PhotoAnalysisCameraPermissionInstrumentationTest" time="0.005" />
+    <testcase name="permissionRefreshPreservesAnExistingPhoto" classname="com.supernutrition.android.PhotoAnalysisCameraPermissionInstrumentationTest" time="0.006" />
+  </testsuite>
+  <testsuite name="com.supernutrition.android.PhotoAnalysisComposeSemanticsInstrumentationTest" tests="6" failures="0" errors="0" skipped="0" time="58.803" timestamp="2026-10-19T05:22:13" hostname="localhost">
+    <properties>
+      <property name="device" value="SN_Final_Verification_35_20261018(AVD) - 15" />
+      <property name="flavor" value="uiAcceptance" />
+      <property name="project" value=":apps:androidApp" />
+    </properties>
+    <testcase name="backFromCaptureReturnsToHomeWithoutBottomBarInCapture" classname="com.supernutrition.android.PhotoAnalysisComposeSemanticsInstrumentationTest" time="15.925" />
+    <testcase name="homeAddMealActionOpensCaptureSurface" classname="com.supernutrition.android.PhotoAnalysisComposeSemanticsInstrumentationTest" time="7.569" />
+    <testcase name="firstTabOpensHomeAfterRewardsSelection" classname="com.supernutrition.android.PhotoAnalysisComposeSemanticsInstrumentationTest" time="9.098" />
+    <testcase name="profileLinkOpensProfileSurface" classname="com.supernutrition.android.PhotoAnalysisComposeSemanticsInstrumentationTest" time="6.617" />
+    <testcase name="initialLaunchOpensHomeSurface" classname="com.supernutrition.android.PhotoAnalysisComposeSemanticsInstrumentationTest" time="6.013" />
+    <testcase name="centerCameraActionKeepsCaptureSurfaceAvailable" classname="com.supernutrition.android.PhotoAnalysisComposeSemanticsInstrumentationTest" time="13.581" />
+  </testsuite>
+  <testsuite name="com.supernutrition.android.PhotoAnalysisInlineCameraLifecycleInstrumentationTest" tests="4" failures="0" errors="0" skipped="0" time="5.098" timestamp="2026-10-19T05:22:13" hostname="localhost">
+    <properties>
+      <property name="device" value="SN_Final_Verification_35_20261018(AVD) - 15" />
+      <property name="flavor" value="uiAcceptance" />
+      <property name="project" value=":apps:androidApp" />
+    </properties>
+    <testcase name="restoredBundleDoesNotResurrectAnUnownedShutterOperation" classname="com.supernutrition.android.PhotoAnalysisInlineCameraLifecycleInstrumentationTest" time="4.884" />
+    <testcase name="clearingStartedCaptureIgnoresItsLateCameraXResult" classname="com.supernutrition.android.PhotoAnalysisInlineCameraLifecycleInstrumentationTest" time="0.173" />
+    <testcase name="clearingWithoutCaptureDoesNotInventAnOperation" classname="com.supernutrition.android.PhotoAnalysisInlineCameraLifecycleInstrumentationTest" time="0.004" />
+    <testcase name="clearingQueuedCaptureDeliversOneFailureBeforeDetachingItsCallback" classname="com.supernutrition.android.PhotoAnalysisInlineCameraLifecycleInstrumentationTest" time="0.037" />
+  </testsuite>
+  <testsuite name="com.supernutrition.android.PhotoAnalysisSnapshotBundleCodecInstrumentationTest" tests="4" failures="0" errors="0" skipped="0" time="0.165" timestamp="2026-10-19T05:22:13" hostname="localhost">
+    <properties>
+      <property name="device" value="SN_Final_Verification_35_20261018(AVD) - 15" />
+      <property name="flavor" value="uiAcceptance" />
+      <property name="project" value=":apps:androidApp" />
+    </properties>
+    <testcase name="everySnapshotVariantRoundTripsWithoutPhotoPayload" classname="com.supernutrition.android.PhotoAnalysisSnapshotBundleCodecInstrumentationTest" time="0.045" />
+    <testcase name="malformedRequestIdIsRejectedWithoutThrowing" classname="com.supernutrition.android.PhotoAnalysisSnapshotBundleCodecInstrumentationTest" time="0.006" />
+    <testcase name="wrongBundleTypesAreRejectedWithoutThrowing" classname="com.supernutrition.android.PhotoAnalysisSnapshotBundleCodecInstrumentationTest" time="0.074" />
+    <testcase name="snapshotFromAnotherAttemptIsRejected" classname="com.supernutrition.android.PhotoAnalysisSnapshotBundleCodecInstrumentationTest" time="0.04" />
+  </testsuite>
+  <testsuite name="com.supernutrition.android.ScaffoldDependencyProbeInstrumentationTest" tests="1" failures="0" errors="0" skipped="0" time="0.043" timestamp="2026-10-19T05:22:13" hostname="localhost">
+    <properties>
+      <property name="device" value="SN_Final_Verification_35_20261018(AVD) - 15" />
+      <property name="flavor" value="uiAcceptance" />
+      <property name="project" value=":apps:androidApp" />
+    </properties>
+    <testcase name="pinnedSubstrateMarkersArePresentOnAndroid" classname="com.supernutrition.android.ScaffoldDependencyProbeInstrumentationTest" time="0.043" />
+  </testsuite>
+</testsuites>

@@ -1,0 +1,76 @@
+{
+  "cases": [
+    {
+      "geometry": "828x1792-320dpi",
+      "font_scale": 1.0
+    },
+    {
+      "geometry": "828x1792-320dpi",
+      "font_scale": 2.0
+    },
+    {
+      "geometry": "720x1600-320dpi",
+      "font_scale": 1.0
+    },
+    {
+      "geometry": "720x1600-320dpi",
+      "font_scale": 2.0
+    },
+    {
+      "geometry": "768x1664-320dpi",
+      "font_scale": 1.0
+    },
+    {
+      "geometry": "768x1664-320dpi",
+      "font_scale": 2.0
+    },
+    {
+      "geometry": "780x1688-320dpi",
+      "font_scale": 1.0
+    },
+    {
+      "geometry": "780x1688-320dpi",
+      "font_scale": 2.0
+    },
+    {
+      "geometry": "786x1746-320dpi",
+      "font_scale": 1.0
+    },
+    {
+      "geometry": "786x1746-320dpi",
+      "font_scale": 2.0
+    },
+    {
+      "geometry": "720x1560-320dpi",
+      "font_scale": 1.0
+    },
+    {
+      "geometry": "720x1560-320dpi",
+      "font_scale": 2.0
+    },
+    {
+      "geometry": "1536x2048-320dpi",
+      "font_scale": 1.0
+    },
+    {
+      "geometry": "1536x2048-320dpi",
+      "font_scale": 2.0
+    },
+    {
+      "geometry": "1600x2560-320dpi",
+      "font_scale": 1.0
+    },
+    {
+      "geometry": "1600x2560-320dpi",
+      "font_scale": 2.0
+    },
+    {
+      "geometry": "1640x2360-320dpi",
+      "font_scale": 1.0
+    },
+    {
+      "geometry": "1640x2360-320dpi",
+      "font_scale": 2.0
+    }
+  ]
+}

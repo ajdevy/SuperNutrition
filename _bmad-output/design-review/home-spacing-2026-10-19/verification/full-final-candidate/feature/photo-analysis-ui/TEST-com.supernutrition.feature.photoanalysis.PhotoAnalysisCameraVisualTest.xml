@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="PhotoAnalysisCameraVisualTest[jvm]" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-19T05:00:28.482Z" hostname="Anastasias-MacBook-Air.local" time="7.432">
+  <properties/>
+  <testcase name="custom meal uses only a centered plus at regular and larger text sizes[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisCameraVisualTest" time="5.495"/>
+  <testcase name="review uses individually selectable artwork over the retained photo[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisCameraVisualTest" time="1.283"/>
+  <testcase name="capture fills the Figma viewport and places its controls[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisCameraVisualTest" time="0.653"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
