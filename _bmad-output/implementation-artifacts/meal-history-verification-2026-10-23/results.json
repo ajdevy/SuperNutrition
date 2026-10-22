@@ -1,0 +1,389 @@
+{
+  "captured_at": "2026-10-23T02:24:37.217984+03:00",
+  "host": "macOS-15.8.1-x86_64-i386-64bit-Mach-O",
+  "architecture": "x86_64",
+  "baseline": "527e08d08d5cfa35cde0529e3412812d3a5ca7f9",
+  "ui": {
+    "suites": [
+      {
+        "suite": "AdditionalInteractionLayoutsTest[jvm]",
+        "timestamp": "2026-10-22T23:19:37.005Z",
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "BrandNavigationVisualTest[jvm]",
+        "timestamp": "2026-10-22T23:19:59.854Z",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "CameraScreenRefreshTest[jvm]",
+        "timestamp": "2026-10-22T23:20:05.079Z",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "ComponentRefreshTest[jvm]",
+        "timestamp": "2026-10-22T23:20:06.480Z",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "EmbeddedScreenRefreshTest[jvm]",
+        "timestamp": "2026-10-22T23:20:07.548Z",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "ExpandedFoodStickerCatalogTest[jvm]",
+        "timestamp": "2026-10-22T23:20:08.568Z",
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "GalleryPhotoFitTest[jvm]",
+        "timestamp": "2026-10-22T23:20:08.639Z",
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "HomeCarePromptLayoutTest[jvm]",
+        "timestamp": "2026-10-22T23:20:09.929Z",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "HomeHeaderSpacingTest[jvm]",
+        "timestamp": "2026-10-22T23:20:10.313Z",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "HomeNavigationOverlayTest[jvm]",
+        "timestamp": "2026-10-22T23:20:11.657Z",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "HomeNoScrollLayoutTest[jvm]",
+        "timestamp": "2026-10-22T23:20:17.580Z",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "HomeScreenComposeTest[jvm]",
+        "timestamp": "2026-10-22T23:20:19.375Z",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "HostSlotRefreshTest[jvm]",
+        "timestamp": "2026-10-22T23:20:20.747Z",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "MainScreenRefreshTest[jvm]",
+        "timestamp": "2026-10-22T23:20:21.857Z",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "MealHistoryCalendarCrossCheckTest[jvm]",
+        "timestamp": "2026-10-22T23:20:24.963Z",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "MealHistoryComposeTest[jvm]",
+        "timestamp": "2026-10-22T23:20:25.003Z",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "MealHistoryLayoutTest[jvm]",
+        "timestamp": "2026-10-22T23:20:26.387Z",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "MealHistoryModelsTest[jvm]",
+        "timestamp": "2026-10-22T23:20:28.718Z",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "NativePhoneHomeLayoutTest[jvm]",
+        "timestamp": "2026-10-22T23:20:28.728Z",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "PhotoAnalysisCameraEdgeCasesTest[jvm]",
+        "timestamp": "2026-10-22T23:20:29.021Z",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "PhotoAnalysisCameraScreenTest[jvm]",
+        "timestamp": "2026-10-22T23:20:30.192Z",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "PhotoAnalysisCameraVisualTest[jvm]",
+        "timestamp": "2026-10-22T23:20:31.307Z",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "PhotoAnalysisCaptureScreenComposeTest[jvm]",
+        "timestamp": "2026-10-22T23:20:37.179Z",
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "PhotoAnalysisLayoutVisualTest[jvm]",
+        "timestamp": "2026-10-22T23:20:38.579Z",
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "PhotoAnalysisMainBottomBarComposeTest[jvm]",
+        "timestamp": "2026-10-22T23:20:53.395Z",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "PhotoAnalysisReviewEvidenceTest[jvm]",
+        "timestamp": "2026-10-22T23:20:53.477Z",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "PhotoReviewCompactViewportTest[jvm]",
+        "timestamp": "2026-10-22T23:20:53.744Z",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "PhotoReviewReadabilityTest[jvm]",
+        "timestamp": "2026-10-22T23:20:55.717Z",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "ProfileHistoryTest[jvm]",
+        "timestamp": "2026-10-22T23:20:58.405Z",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "ProfileLayoutTest[jvm]",
+        "timestamp": "2026-10-22T23:20:58.714Z",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "ProfileScreenComposeTest[jvm]",
+        "timestamp": "2026-10-22T23:20:59.669Z",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "RelevantFoodStickersTest[jvm]",
+        "timestamp": "2026-10-22T23:21:03.360Z",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "ResearchScreenRefreshTest[jvm]",
+        "timestamp": "2026-10-22T23:21:04.651Z",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "ReviewBoundaryTest[jvm]",
+        "timestamp": "2026-10-22T23:21:05.843Z",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "RewardsLayoutTest[jvm]",
+        "timestamp": "2026-10-22T23:21:06.711Z",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "RewardsNavigationOverlayTest[jvm]",
+        "timestamp": "2026-10-22T23:21:06.972Z",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "RewardsScreenComposeTest[jvm]",
+        "timestamp": "2026-10-22T23:21:07.578Z",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "RewardsTextReadabilityTest[jvm]",
+        "timestamp": "2026-10-22T23:21:07.696Z",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ],
+    "totals": {
+      "tests": 205,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "android_full": {
+    "poc": {
+      "suite": null,
+      "timestamp": "2026-10-22T22:49:09",
+      "tests": 45,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "production": {
+      "suite": null,
+      "timestamp": "2026-10-22T22:52:15",
+      "tests": 45,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "uiAcceptance": {
+      "suite": null,
+      "timestamp": "2026-10-22T22:55:03",
+      "tests": 45,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "android_final_navigation": {
+    "poc": {
+      "suite": null,
+      "timestamp": "2026-10-22T23:16:00",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "uiAcceptance": {
+      "suite": null,
+      "timestamp": "2026-10-22T23:17:44",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "production": {
+      "suite": null,
+      "timestamp": "2026-10-22T23:16:57",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "production_apk": {
+    "path": "mobile/apps/androidApp/build/outputs/apk/production/debug/androidApp-production-debug.apk",
+    "sha256": "ff7cdcbcb3f622fcce9e37740f13a7712365102a26c9530db6718e8f02b925a2",
+    "bytes": 477700118
+  },
+  "device": {
+    "serial": "emulator-5554",
+    "api": 35,
+    "abi": "x86_64",
+    "pixels": [
+      720,
+      1560
+    ],
+    "density_dpi": 320,
+    "physical": false,
+    "font_scale_restored": "1.0"
+  }
+}

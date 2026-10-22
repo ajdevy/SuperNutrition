@@ -90,6 +90,38 @@ public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
     }
 
     @Test
+    public void profileOpensMealHistoryAndBackPreservesProfile() throws RemoteException {
+        UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        device.wakeUp();
+        Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        Intent launchIntent = targetContext.getPackageManager()
+                .getLaunchIntentForPackage(targetContext.getPackageName());
+        assertNotNull(launchIntent);
+        launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        android.app.Activity activity = InstrumentationRegistry.getInstrumentation().startActivitySync(launchIntent);
+        ensureHomeSurface(device);
+        waitForNode(device, UiAutomationIds.INSTANCE.getHOME_PROFILE().getValue()).click();
+        waitForNode(device, UiAutomationIds.INSTANCE.getPROFILE_HISTORY().getValue()).click();
+        assertNotNull("Meal history must be a dedicated screen with search",
+                waitForNode(device, UiAutomationIds.INSTANCE.getMEAL_HISTORY_SEARCH().getValue()));
+        assertNotNull("An empty ledger must have an honest empty state",
+                waitForNode(device, UiAutomationIds.INSTANCE.getMEAL_HISTORY_EMPTY().getValue()));
+        assertNull("History hides the bottom navigation",
+                device.findObject(By.res(UiAutomationIds.INSTANCE.getCAMERA_ACTION().getValue())));
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(activity::recreate);
+        assertNotNull("History survives Activity recreation", waitForNode(device, UiAutomationIds.INSTANCE.getMEAL_HISTORY_SEARCH().getValue()));
+        device.pressBack();
+        assertNotNull("System Back returns to Profile", waitForNode(device,
+                UiAutomationIds.INSTANCE.getPROFILE_HISTORY().getValue()));
+        waitForNode(device, UiAutomationIds.INSTANCE.getPROFILE_HISTORY().getValue()).click();
+        waitForNode(device, UiAutomationIds.INSTANCE.getMEAL_HISTORY_CLOSE().getValue()).click();
+        assertNotNull("Header Back returns to Profile", waitForNode(device,
+                UiAutomationIds.INSTANCE.getPROFILE_HISTORY().getValue()));
+        device.pressBack();
+        ensureHomeSurface(device);
+    }
+
+    @Test
     public void profileLinkOpensProfileSurface() throws RemoteException {
         UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         device.wakeUp();

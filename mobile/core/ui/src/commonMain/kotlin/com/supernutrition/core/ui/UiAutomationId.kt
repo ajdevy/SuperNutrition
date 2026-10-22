@@ -107,6 +107,16 @@ object UiAutomationIds {
     val PROFILE_PRIVACY = UiAutomationId("profile_privacy")
     val PROFILE_TERMS = UiAutomationId("profile_terms")
     val PROFILE_CRASH_REPORTS = UiAutomationId("profile_crash_reports")
+    val MEAL_HISTORY_SCREEN = UiAutomationId("meal_history_screen")
+    val MEAL_HISTORY_TITLE = UiAutomationId("meal_history_title")
+    val MEAL_HISTORY_CLOSE = UiAutomationId("meal_history_close")
+    val MEAL_HISTORY_SEARCH = UiAutomationId("meal_history_search")
+    val MEAL_HISTORY_LIST = UiAutomationId("meal_history_list")
+    val MEAL_HISTORY_EMPTY = UiAutomationId("meal_history_empty")
+    val MEAL_HISTORY_NO_RESULTS = UiAutomationId("meal_history_no_results")
+    val MEAL_HISTORY_SUMMARY = UiAutomationId("meal_history_summary")
+
+    fun mealHistoryRow(index: Int): UiAutomationId = UiAutomationId("meal_history_row_$index")
 
     /**
      * Per-row identifiers, by position rather than by canonical record id.
@@ -202,5 +212,13 @@ object UiAutomationIds {
         PROFILE_PRIVACY,
         PROFILE_TERMS,
         PROFILE_CRASH_REPORTS,
+        MEAL_HISTORY_SCREEN,
+        MEAL_HISTORY_TITLE,
+        MEAL_HISTORY_CLOSE,
+        MEAL_HISTORY_SEARCH,
+        MEAL_HISTORY_LIST,
+        MEAL_HISTORY_EMPTY,
+        MEAL_HISTORY_NO_RESULTS,
+        MEAL_HISTORY_SUMMARY,
     )
 }

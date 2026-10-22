@@ -2,9 +2,6 @@ package com.supernutrition.feature.photoanalysis
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -14,23 +11,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.supernutrition.domain.nutrition.ConfirmedConsumedFood
 
 @Composable
 internal fun ProfileDialogs(
     dialog: ProfileDialog?,
     displayName: String,
-    confirmedFoods: List<ConfirmedConsumedFood>,
     copy: ProfileScreenCopy,
     actions: ProfileDialogActions,
 ) {
     when (dialog) {
         ProfileDialog.NAME -> ProfileNameDialog(displayName, copy, actions.onNameChanged, actions.onDismiss)
-
-        ProfileDialog.HISTORY -> ProfileHistoryDialog(confirmedFoods, copy, actions.onDismiss)
 
         ProfileDialog.PRIVACY ->
             ProfileInformationDialog(copy.privacy, copy.privacyUnavailable, copy.done, actions.onDismiss)
@@ -76,31 +67,6 @@ private fun ProfileNameDialog(
             ) { Text(copy.save, fontFamily = nunitoFont()) }
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text(copy.cancel, fontFamily = nunitoFont()) } },
-    )
-}
-
-@Composable
-private fun ProfileHistoryDialog(foods: List<ConfirmedConsumedFood>, copy: ProfileScreenCopy, onDismiss: () -> Unit) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(copy.history, fontFamily = frauncesFont()) },
-        text = {
-            Column(
-                modifier = Modifier.heightIn(max = 320.dp).verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                if (foods.isEmpty()) Text(copy.emptyHistory, fontFamily = nunitoFont())
-                foods.groupBy { it.mealId }.values.forEach { meal ->
-                    Text(
-                        meal.joinToString(", ") { it.displayName },
-                        color = ProfileBody,
-                        fontFamily = nunitoFont(),
-                        fontWeight = FontWeight.SemiBold,
-                    )
-                }
-            }
-        },
-        confirmButton = { TextButton(onClick = onDismiss) { Text(copy.done, fontFamily = nunitoFont()) } },
     )
 }
 

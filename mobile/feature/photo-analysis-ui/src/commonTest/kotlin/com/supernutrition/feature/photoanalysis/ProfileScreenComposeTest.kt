@@ -28,7 +28,9 @@ class ProfileScreenComposeTest {
     @Test
     fun `unknown identity and empty history never invent user data`() = runComposeUiTest {
         var backRequested = false
-        setContent { ProfileScreen("", emptyList(), ProfileScreenActions({}, { backRequested = true })) }
+        setContent {
+            ProfileFlow(rememberProfileFlowState(), "", emptyList(), ProfileScreenActions({}, { backRequested = true }))
+        }
 
         onNodeWithText("?").assertIsDisplayed()
         onNodeWithTag(UiAutomationIds.PROFILE_NAME.value).assertIsDisplayed()
@@ -36,8 +38,8 @@ class ProfileScreenComposeTest {
         onNodeWithText("0 meals saved").assertIsDisplayed()
         onNodeWithText("Anastasia").assertDoesNotExist()
         onNodeWithTag(UiAutomationIds.PROFILE_HISTORY.value).performClick()
-        onNodeWithText(copy.emptyHistory).assertIsDisplayed()
-        onNodeWithText(copy.done).performClick()
+        onNodeWithText(MealHistoryCopy().emptyTitle).assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.MEAL_HISTORY_CLOSE.value).performClick()
         onNodeWithTag(UiAutomationIds.PROFILE_CLOSE.value).performClick()
         assertTrue(backRequested)
     }
