@@ -1,0 +1,19 @@
+topic: Mascot and character direction for SuperNutrition
+time_range: Current as of 2026-08-08, with historical evidence where needed
+items:
+  - name: Consumer nutrition and wellness mascot landscape
+    category: Brand and product landscape
+    description: Investigate current nutrition, fitness, wellness, habit, and health apps or brands that use a mascot or recurring character. Identify the animal or archetype, role in the product, visual/personality cues, public popularity signals, and any evidence of why users respond positively or negatively.
+  - name: Animal associations with food and healthy living
+    category: Animal symbolism and cultural meaning
+    description: Research evidence from consumer psychology, semiotics, food branding, and cross-cultural studies about animals associated with nourishment, vitality, balance, care, trust, playfulness, and healthy lifestyle. Compare likely candidates and identify cultural, dietary, body-image, or ethical pitfalls.
+  - name: Lovable digital characters, trust, and behavior change
+    category: Character design and behavioral science
+    description: Research how anthropomorphism, warmth, competence, expressiveness, non-judgmental language, and character agency affect trust, engagement, perceived coaching, and willingness to interact in health or behavior-change products. Include accessibility and eating-disorder/body-image safety implications where evidence exists.
+  - name: Mascot patterns in successful health and habit products
+    category: Product pattern analysis
+    description: Investigate recurring design patterns from successful health, habit, mindfulness, and wellbeing products with characters or mascots. Focus on roles, moments of appearance, tone, reward systems, visual scalability, localization, and what should be avoided for a nutrition app that promises honest uncertainty and user control.
+execution:
+  batch_size: 4
+  items_per_agent: 1
+  output_dir: ./mascot-research/results
