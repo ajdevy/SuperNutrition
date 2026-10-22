@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuites tests="1" failures="1" errors="0" skipped="0" time="31.19" timestamp="2026-10-22T20:51:16" hostname="localhost">
+  <testsuite name="com.supernutrition.android.PhotoAnalysisComposeSemanticsInstrumentationTest" tests="1" failures="1" errors="0" skipped="0" time="25.758" timestamp="2026-10-22T20:51:16" hostname="localhost">
+    <properties>
+      <property name="device" value="SN_Final_Verification_35_20261018(AVD) - 15" />
+      <property name="flavor" value="production" />
+      <property name="project" value=":apps:androidApp" />
+    </properties>
+    <testcase name="homeAvatarOpensDesignedProfileAndBackReturnsHome" classname="com.supernutrition.android.PhotoAnalysisComposeSemanticsInstrumentationTest" time="25.758">
+      <failure>java.lang.AssertionError: Home must open the designed Profile with meal history
+at org.junit.Assert.fail(Assert.java:89)
+at org.junit.Assert.assertTrue(Assert.java:42)
+at org.junit.Assert.assertNotNull(Assert.java:713)
+at com.supernutrition.android.PhotoAnalysisComposeSemanticsInstrumentationTest.homeAvatarOpensDesignedProfileAndBackReturnsHome(PhotoAnalysisComposeSemanticsInstrumentationTest.java:64)
+</failure>
+    </testcase>
+  </testsuite>
+</testsuites>

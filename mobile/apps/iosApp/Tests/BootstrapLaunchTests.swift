@@ -151,6 +151,34 @@ final class BootstrapLaunchTests: XCTestCase {
         XCTAssertTrue(captureSurfaceIsReady(in: app, timeout: 15))
     }
 
+    func testHomeAvatarOpensProfileAndBackReturnsHome() {
+        let app = XCUIApplication()
+        app.launch()
+
+        closeInitialCapture(from: app)
+        XCTAssertTrue(homeSurfaceIsReady(in: app, timeout: 15))
+        let avatar = app.buttons[SharedKitAutomationIds.shared.homeProfile]
+        XCTAssertTrue(avatar.waitForExistence(timeout: 10))
+        avatar.tap()
+
+        let title = app.staticTexts[SharedKitAutomationIds.shared.profileTitle]
+        XCTAssertTrue(title.waitForExistence(timeout: 15))
+        XCTAssertFalse(app.buttons[SharedKitAutomationIds.shared.cameraAction].exists)
+        XCTAssertFalse(app.buttons[SharedKitAutomationIds.shared.rewardsTab].exists)
+        XCTAssertFalse(app.buttons[SharedKitAutomationIds.shared.homeAddFood].exists)
+        let back = app.buttons[SharedKitAutomationIds.shared.profileClose]
+        XCTAssertTrue(back.waitForExistence(timeout: 10))
+        back.tap()
+
+        XCTAssertTrue(homeSurfaceIsReady(in: app, timeout: 10))
+        XCTAssertFalse(title.exists)
+        XCTAssertTrue(app.buttons[SharedKitAutomationIds.shared.cameraAction].exists)
+        avatar.tap()
+        XCTAssertTrue(title.waitForExistence(timeout: 15))
+        app.buttons[SharedKitAutomationIds.shared.profileClose].tap()
+        XCTAssertTrue(homeSurfaceIsReady(in: app, timeout: 10))
+    }
+
     private func nativeCameraControlIsVisible(in app: XCUIApplication) -> Bool {
         let capture = app.descendants(matching: .any)[SharedKitAutomationIds.shared.captureNative]
         return capture.waitForExistence(timeout: 10)

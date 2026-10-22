@@ -11,6 +11,7 @@ import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.StaleObjectException;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject2;
+import androidx.test.uiautomator.Until;
 
 import com.supernutrition.core.ui.UiAutomationIds;
 import com.supernutrition.feature.photoanalysis.R;
@@ -47,6 +48,45 @@ public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
                 targetContext.getString(R.string.home_title));
         assertNotNull("missing Home camera action semantic id",
                 waitForNode(device, UiAutomationIds.INSTANCE.getCAMERA_ACTION().getValue()));
+    }
+
+    @Test
+    public void homeAvatarOpensDesignedProfileAndBackReturnsHome() throws RemoteException {
+        UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        device.wakeUp();
+        Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        Intent launchIntent = targetContext.getPackageManager()
+                .getLaunchIntentForPackage(targetContext.getPackageName());
+        assertNotNull(launchIntent);
+        launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        android.app.Activity activity = InstrumentationRegistry.getInstrumentation().startActivitySync(launchIntent);
+        ensureHomeSurface(device);
+        waitForNode(device, UiAutomationIds.INSTANCE.getHOME_PROFILE().getValue()).click();
+        assertNotNull("Home must open the designed Profile with meal history",
+                waitForNode(device, UiAutomationIds.INSTANCE.getPROFILE_HISTORY().getValue()));
+        assertNull("Profile must hide the bottom navigation",
+                device.findObject(By.res(UiAutomationIds.INSTANCE.getCAMERA_ACTION().getValue())));
+        waitForNode(device, UiAutomationIds.INSTANCE.getPROFILE_EDIT_NAME().getValue()).click();
+        UiObject2 nameInput = device.wait(Until.findObject(By.clazz("android.widget.EditText")),
+                SEMANTICS_TIMEOUT_MS);
+        assertNotNull("Profile must offer a name editor", nameInput);
+        nameInput.setText("Profile QA");
+        UiObject2 saveName = device.wait(Until.findObject(By.text("Save")), SEMANTICS_TIMEOUT_MS);
+        assertNotNull("Profile name editor must offer Save", saveName);
+        saveName.click();
+        assertSemantic(device, UiAutomationIds.INSTANCE.getPROFILE_NAME().getValue(), "Profile QA");
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(activity::recreate);
+        device.waitForIdle();
+        assertNotNull("Profile route must survive Activity recreation",
+                waitForNode(device, UiAutomationIds.INSTANCE.getPROFILE_HISTORY().getValue()));
+        assertSemantic(device, UiAutomationIds.INSTANCE.getPROFILE_NAME().getValue(), "Profile QA");
+        waitForNode(device, UiAutomationIds.INSTANCE.getPROFILE_CLOSE().getValue()).click();
+        ensureHomeSurface(device);
+        waitForNode(device, UiAutomationIds.INSTANCE.getHOME_PROFILE().getValue()).click();
+        assertNotNull(waitForNode(device, UiAutomationIds.INSTANCE.getPROFILE_HISTORY().getValue()));
+        assertSemantic(device, UiAutomationIds.INSTANCE.getPROFILE_NAME().getValue(), "Profile QA");
+        device.pressBack();
+        ensureHomeSurface(device);
     }
 
     @Test
