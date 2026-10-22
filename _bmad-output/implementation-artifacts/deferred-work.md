@@ -18,3 +18,7 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-review-state-recreation.md`
   summary: Ignored ReplacePhoto or ScanAgain in Backgrounded also clears the retained live review cache.
   evidence: Blind Hunter traced unchanged Backgrounded transition plus unconditional cache invalidation; follow-up authorized broad interaction fix is tracked as N-28 in spec-review-ignored-invalidation.md.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-profile-meal-history.md`
+  summary: Configure typed Detekt KMP analysis to distinguish common expect declarations from platform actuals.
+  evidence: The unchanged analyzer setup combines commonMain and jvmMain into one analysis module; diagnostic detektMainJvm reports three expect/actual module errors for currentHistoryReferenceDay, while real JVM/Android/iOS-arm64 compilation and executable tests pass. See meal-history-verification-2026-10-23/detekt-diagnostic.gradle and the verification report. No rule, baseline, task, or source-set exclusion was added.

@@ -27,12 +27,14 @@ class ProfileHistoryTest {
             profileConfirmedFood("entry-2", "breakfast", "Toast"),
             profileConfirmedFood("entry-3", "lunch", "Lentils"),
         )
-        setContent { ProfileScreen("Alex", foods, ProfileScreenActions({}, {})) }
+        setContent {
+            ProfileFlow(rememberProfileFlowState(), "Alex", foods, ProfileScreenActions({}, {}))
+        }
         onNodeWithText("2 meals saved").assertIsDisplayed()
         onNodeWithText("3 meals saved").assertDoesNotExist()
         onNodeWithTag(UiAutomationIds.PROFILE_HISTORY.value).performClick()
         onNodeWithText("Egg, Toast").assertIsDisplayed()
-        onNodeWithText("Lentils").assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.mealHistoryRow(1).value).assertIsDisplayed()
     }
 
     @Test
@@ -48,7 +50,12 @@ class ProfileHistoryTest {
     }
 }
 
-internal fun profileConfirmedFood(entryId: String, mealId: String, name: String): ConfirmedConsumedFood {
+internal fun profileConfirmedFood(
+    entryId: String,
+    mealId: String,
+    name: String,
+    localDay: Int = 10,
+): ConfirmedConsumedFood {
     val digest = "a".repeat(64)
     val nutrients = CatalogNutrientProfile(100.0, 5.0, 10.0, 2.0, 2.0, 20.0)
     val record = NutritionCatalogRecord(
@@ -61,7 +68,7 @@ internal fun profileConfirmedFood(entryId: String, mealId: String, name: String)
     )
     return ConfirmedConsumedFood.fromGroundedResult(
         entryId = entryId,
-        localDay = 10,
+        localDay = localDay,
         mealId = mealId,
         grounded = GroundedNutritionResult(
             catalogSnapshot = NutritionCatalogSnapshot(NutritionCatalogIdentity("test", "1"), "US", digest),

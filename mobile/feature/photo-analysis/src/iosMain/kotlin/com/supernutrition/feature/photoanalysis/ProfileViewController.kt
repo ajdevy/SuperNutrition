@@ -16,7 +16,8 @@ fun profileViewController(
     onCloseRequested: () -> Unit,
 ): UIViewController = ComposeUIViewController {
     val uriHandler = LocalUriHandler.current
-    ProfileScreen(
+    ProfileFlow(
+        state = rememberProfileFlowState(),
         displayName = displayName.collectAsState().value,
         confirmedFoods = feature.confirmedFoods.collectAsState().value,
         actions = ProfileScreenActions(

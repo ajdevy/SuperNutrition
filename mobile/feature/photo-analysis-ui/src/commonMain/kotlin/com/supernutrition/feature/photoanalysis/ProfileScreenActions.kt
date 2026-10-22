@@ -6,4 +6,5 @@ data class ProfileScreenActions(
     val onBackRequested: () -> Unit,
     val onPrivacyPolicyRequested: (() -> Unit)? = null,
     val onTermsRequested: (() -> Unit)? = null,
+    val onHistoryRequested: () -> Unit = {},
 )

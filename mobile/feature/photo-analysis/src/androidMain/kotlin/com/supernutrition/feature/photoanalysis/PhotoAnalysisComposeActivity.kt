@@ -616,7 +616,10 @@ private fun LinkedProfileScreen(profileId: String, onCloseRequested: () -> Unit)
 @Composable
 private fun HomeProfileDestination(shell: PhotoAnalysisTabShell, onBackRequested: () -> Unit) {
     val uriHandler = LocalUriHandler.current
-    ProfileScreen(
+    val profileFlow = rememberProfileFlowState()
+    BackHandler(enabled = profileFlow.historyVisible, onBack = profileFlow::showProfile)
+    ProfileFlow(
+        state = profileFlow,
         displayName = shell.profileName,
         confirmedFoods = shell.confirmedFoods,
         actions = ProfileScreenActions(

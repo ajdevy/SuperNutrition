@@ -63,9 +63,7 @@ fun ProfileScreen(
             Spacer(Modifier.height(11.dp))
             ProfileIdentity(displayName, copy) { dialog = ProfileDialog.NAME }
             Spacer(Modifier.height(22.dp))
-            ProfileHistoryCard(confirmedFoods.map { it.mealId }.distinct().size, copy) {
-                dialog = ProfileDialog.HISTORY
-            }
+            ProfileHistoryCard(confirmedMealHistory(confirmedFoods).size, copy, actions.onHistoryRequested)
             Spacer(Modifier.height(14.dp))
             ProfileSettings(
                 copy = copy,
@@ -82,13 +80,12 @@ fun ProfileScreen(
     ProfileDialogs(
         dialog,
         displayName,
-        confirmedFoods,
         copy,
         ProfileDialogActions(actions.onNameChanged) { dialog = null },
     )
 }
 
-internal enum class ProfileDialog { NAME, HISTORY, PRIVACY, TERMS, CRASH_REPORTS }
+internal enum class ProfileDialog { NAME, PRIVACY, TERMS, CRASH_REPORTS }
 
 private fun openProfileDocument(action: (() -> Unit)?, onUnavailable: () -> Unit) {
     if (action == null) {
