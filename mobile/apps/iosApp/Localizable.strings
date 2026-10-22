@@ -135,3 +135,20 @@
 "photo_analysis.pantry.salt" = "Salt";
 "photo_analysis.pantry.blueberries" = "Blueberries";
 "photo_analysis.pantry.sweet_potato" = "Sweet potato";
+
+"profile.open" = "Open profile";
+"profile.title" = "Profile";
+"profile.back" = "Back";
+"profile.name.title" = "Your name";
+"profile.name.placeholder" = "Your name";
+"profile.name.save" = "Save name";
+"profile.name.session" = "Your name is kept only for this session.";
+"profile.history.title" = "Meal history";
+"profile.history.unavailable" = "Meal history is unavailable on this device.";
+"profile.privacy" = "Privacy Policy";
+"profile.terms" = "Terms of Use";
+"profile.diagnostics" = "Share anonymous diagnostics";
+"profile.off" = "Off";
+"profile.unavailable.title" = "Currently unavailable";
+"profile.unavailable.message" = "Crash reporting is unavailable in this build. No crash reports are sent.";
+"profile.dismiss" = "OK";

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="MealSearchPresenterTest[jvm]" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-22T22:09:20.171Z" hostname="Anastasias-MacBook-Air.local" time="0.737">
+  <properties/>
+  <testcase name="an untouched search box is not a failed search[jvm]" classname="com.supernutrition.feature.mealsearch.MealSearchPresenterTest" time="0.253"/>
+  <testcase name="market preference reaches the rows[jvm]" classname="com.supernutrition.feature.mealsearch.MealSearchPresenterTest" time="0.339"/>
+  <testcase name="a query that finds nothing does say so[jvm]" classname="com.supernutrition.feature.mealsearch.MealSearchPresenterTest" time="0.012"/>
+  <testcase name="an unhonoured preparation is on the row, not behind a tap[jvm]" classname="com.supernutrition.feature.mealsearch.MealSearchPresenterTest" time="0.05"/>
+  <testcase name="a dish row says how many items a tap will add[jvm]" classname="com.supernutrition.feature.mealsearch.MealSearchPresenterTest" time="0.009"/>
+  <testcase name="the query is echoed back so the field and the results cannot disagree[jvm]" classname="com.supernutrition.feature.mealsearch.MealSearchPresenterTest" time="0.005"/>
+  <testcase name="a food row shows the catalog's own name[jvm]" classname="com.supernutrition.feature.mealsearch.MealSearchPresenterTest" time="0.004"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

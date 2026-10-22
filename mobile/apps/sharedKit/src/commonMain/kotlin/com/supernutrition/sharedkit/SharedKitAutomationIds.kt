@@ -46,4 +46,10 @@ public object SharedKitAutomationIds {
         get() = UiAutomationIds.REWARDS_TITLE.value
     public val rewardsList: String
         get() = UiAutomationIds.REWARDS_LIST.value
+    public val homeProfile: String
+        get() = UiAutomationIds.HOME_PROFILE.value
+    public val profileTitle: String
+        get() = UiAutomationIds.PROFILE_TITLE.value
+    public val profileClose: String
+        get() = UiAutomationIds.PROFILE_CLOSE.value
 }

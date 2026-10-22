@@ -101,6 +101,12 @@ object UiAutomationIds {
     val PROFILE_TITLE = UiAutomationId("profile_title")
     val PROFILE_ID = UiAutomationId("profile_id")
     val PROFILE_CLOSE = UiAutomationId("profile_close")
+    val PROFILE_NAME = UiAutomationId("profile_name")
+    val PROFILE_EDIT_NAME = UiAutomationId("profile_edit_name")
+    val PROFILE_HISTORY = UiAutomationId("profile_history")
+    val PROFILE_PRIVACY = UiAutomationId("profile_privacy")
+    val PROFILE_TERMS = UiAutomationId("profile_terms")
+    val PROFILE_CRASH_REPORTS = UiAutomationId("profile_crash_reports")
 
     /**
      * Per-row identifiers, by position rather than by canonical record id.
@@ -190,5 +196,11 @@ object UiAutomationIds {
         PROFILE_TITLE,
         PROFILE_ID,
         PROFILE_CLOSE,
+        PROFILE_NAME,
+        PROFILE_EDIT_NAME,
+        PROFILE_HISTORY,
+        PROFILE_PRIVACY,
+        PROFILE_TERMS,
+        PROFILE_CRASH_REPORTS,
     )
 }

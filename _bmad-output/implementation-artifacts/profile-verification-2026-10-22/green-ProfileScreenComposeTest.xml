@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ProfileScreenComposeTest[jvm]" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-22T21:38:15.395Z" hostname="Anastasias-MacBook-Air.local" time="18.388">
+  <properties/>
+  <testcase name="name editing rejects blank input and sends a trimmed name to its session owner[jvm]" classname="com.supernutrition.feature.photoanalysis.ProfileScreenComposeTest" time="15.377"/>
+  <testcase name="avatar initials support blank names unicode and emoji[jvm]" classname="com.supernutrition.feature.photoanalysis.ProfileScreenComposeTest" time="0.003"/>
+  <testcase name="unknown identity and empty history never invent user data[jvm]" classname="com.supernutrition.feature.photoanalysis.ProfileScreenComposeTest" time="0.733"/>
+  <testcase name="missing browser explains document unavailability without crashing[jvm]" classname="com.supernutrition.feature.photoanalysis.ProfileScreenComposeTest" time="0.939"/>
+  <testcase name="avatar preserves combining marks flags and joined emoji[jvm]" classname="com.supernutrition.feature.photoanalysis.ProfileScreenComposeTest" time="0.001"/>
+  <testcase name="unavailable documents and crash reports explain their state[jvm]" classname="com.supernutrition.feature.photoanalysis.ProfileScreenComposeTest" time="1.13"/>
+  <testcase name="approved document actions are delegated to the host[jvm]" classname="com.supernutrition.feature.photoanalysis.ProfileScreenComposeTest" time="0.189"/>
+  <system-out><![CDATA[Suspicious! waitForIdle has not finished after 2 seconds.
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

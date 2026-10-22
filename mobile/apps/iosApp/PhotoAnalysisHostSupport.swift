@@ -24,20 +24,38 @@ enum PhotoAnalysisAppBootstrap {
 
 struct PhotoAnalysisAppRootView: View {
     let session: SharedKitPhotoAnalysisSession
-    private let rewardsSession: SharedKitRewardsSession
+    @State private var rewardsSession: SharedKitRewardsSession
+    @State private var profileSession: SharedKitProfileSession
     @State private var selectedTab = 0
     @State private var showingCapture = true
+    @State private var showingProfile = false
     @StateObject private var cameraAction: PhotoAnalysisCameraAction
 
     init(session: SharedKitPhotoAnalysisSession) {
         self.session = session
-        rewardsSession = SharedKitRewardsSession()
+        let rewards = SharedKitRewardsSession()
+        _rewardsSession = State(initialValue: rewards)
+        _profileSession = State(initialValue: SharedKitProfileSession(rewardsSession: rewards))
         _cameraAction = StateObject(wrappedValue: PhotoAnalysisCameraAction())
     }
 
     var body: some View {
         Group {
-            if selectedTab == 0 {
+            if showingProfile {
+                Group {
+                #if arch(x86_64)
+                    ProfileIntelCompatibilityView(
+                        session: profileSession,
+                        onCloseRequested: { showingProfile = false },
+                    )
+                #else
+                    ProfileComposeHost(
+                        session: profileSession,
+                        onCloseRequested: { showingProfile = false },
+                    )
+                #endif
+                }
+            } else if selectedTab == 0 {
                 if showingCapture {
                     Group {
                     #if arch(x86_64)
@@ -56,7 +74,10 @@ struct PhotoAnalysisAppRootView: View {
                     }
                     .accessibilityIdentifier(SharedKitAutomationIds.shared.captureTab)
                 } else {
-                    PhotoAnalysisHomeView(onAddFoodRequested: showCaptureSurface)
+                    PhotoAnalysisHomeView(
+                        onAddFoodRequested: showCaptureSurface,
+                        onProfileRequested: { showingProfile = true },
+                    )
                         .accessibilityIdentifier(SharedKitAutomationIds.shared.homeTab)
                 }
             } else {
@@ -72,7 +93,7 @@ struct PhotoAnalysisAppRootView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .safeAreaInset(edge: .bottom, spacing: 0) {
-            if !showingCapture {
+            if !showingCapture && !showingProfile {
                 PhotoAnalysisBottomBar(
                     selectedTab: $selectedTab,
                     onHomeSelected: {
@@ -100,17 +121,29 @@ struct PhotoAnalysisAppRootView: View {
 
 private struct PhotoAnalysisHomeView: View {
     let onAddFoodRequested: () -> Void
+    let onProfileRequested: () -> Void
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Home")
-                        .font(.title2.weight(.semibold))
-                        .accessibilityIdentifier(SharedKitAutomationIds.shared.homeTitle)
-                    Text("Welcome back")
-                        .font(.body)
-                        .accessibilityIdentifier(SharedKitAutomationIds.shared.homeGreeting)
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Home")
+                            .font(.title2.weight(.semibold))
+                            .accessibilityIdentifier(SharedKitAutomationIds.shared.homeTitle)
+                        Text("Welcome back")
+                            .font(.body)
+                            .accessibilityIdentifier(SharedKitAutomationIds.shared.homeGreeting)
+                    }
+                    Spacer()
+                    Button(action: onProfileRequested) {
+                        Image(systemName: "person.crop.circle")
+                            .font(.title)
+                            .frame(minWidth: 48, minHeight: 48)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityIdentifier(SharedKitAutomationIds.shared.homeProfile)
+                    .accessibilityLabel(String(localized: "profile.open"))
                 }
 
                 VStack(alignment: .leading, spacing: 8) {
@@ -299,6 +332,20 @@ struct RewardsComposeHost: UIViewControllerRepresentable {
 
     func makeUIViewController(context: Context) -> UIViewController {
         SharedKitRewards.shared.viewController(session: session)
+    }
+
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+}
+
+struct ProfileComposeHost: UIViewControllerRepresentable {
+    let session: SharedKitProfileSession
+    let onCloseRequested: () -> Void
+
+    func makeUIViewController(context: Context) -> UIViewController {
+        SharedKitProfile.shared.viewController(
+            session: session,
+            onCloseRequested: onCloseRequested,
+        )
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
@@ -497,6 +544,84 @@ final class PhotoAnalysisPresentationCoordinator {
 }
 
 #if arch(x86_64)
+/// Minimal native fallback; the designed Profile is rendered by shared Compose on supported targets.
+private struct ProfileIntelCompatibilityView: View {
+    let session: SharedKitProfileSession
+    let onCloseRequested: () -> Void
+    @State private var nameDraft: String
+    @State private var showingUnavailableNotice = false
+    @Environment(\.openURL) private var openURL
+
+    init(session: SharedKitProfileSession, onCloseRequested: @escaping () -> Void) {
+        self.session = session
+        self.onCloseRequested = onCloseRequested
+        _nameDraft = State(initialValue: session.displayName)
+    }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Button(action: onCloseRequested) {
+                    Label(String(localized: "profile.back"), systemImage: "chevron.left")
+                        .frame(minWidth: 48, minHeight: 48)
+                }
+                .accessibilityIdentifier(SharedKitAutomationIds.shared.profileClose)
+                Spacer()
+                Text(String(localized: "profile.title"))
+                    .font(.title2.weight(.semibold))
+                    .accessibilityIdentifier(SharedKitAutomationIds.shared.profileTitle)
+            }
+            .padding(.horizontal)
+
+            Form {
+                Section {
+                    TextField(String(localized: "profile.name.placeholder"), text: $nameDraft)
+                        .textContentType(.nickname)
+                        .textInputAutocapitalization(.words)
+                    Button(String(localized: "profile.name.save")) {
+                        _ = session.updateDisplayName(value: nameDraft)
+                        nameDraft = session.displayName
+                    }
+                    .disabled(nameDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                } header: {
+                    Text(String(localized: "profile.name.title"))
+                } footer: {
+                    Text(String(localized: "profile.name.session"))
+                }
+
+                Section(String(localized: "profile.history.title")) {
+                    Text(String(localized: "profile.history.unavailable"))
+                }
+
+                Section {
+                    Button(String(localized: "profile.privacy")) {
+                        if let url = URL(string: session.privacyPolicyUrl) { openURL(url) }
+                    }
+                    Button(String(localized: "profile.terms")) {
+                        if let url = URL(string: session.termsUrl) { openURL(url) }
+                    }
+                    Button {
+                        showingUnavailableNotice = true
+                    } label: {
+                        HStack {
+                            Text(String(localized: "profile.diagnostics"))
+                            Spacer()
+                            Text(String(localized: "profile.off"))
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .accessibilityValue(String(localized: "profile.off"))
+                }
+            }
+        }
+        .alert(String(localized: "profile.unavailable.title"), isPresented: $showingUnavailableNotice) {
+            Button(String(localized: "profile.dismiss"), role: .cancel) {}
+        } message: {
+            Text(String(localized: "profile.unavailable.message"))
+        }
+    }
+}
+
 /// Compatibility renderer for Intel hosts whose pinned Compose graph has no iosX64 publication.
 struct PhotoAnalysisIntelCompatibilityView: View {
     let session: SharedKitPhotoAnalysisSession

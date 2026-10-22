@@ -1,0 +1,170 @@
+{
+  "status": "read-only XML observation; aggregate quality gate blocked by stale physical evidence",
+  "modules": [
+    {
+      "module": "mobile/domain/inference",
+      "report": "mobile/domain/inference/build/reports/kover/reportJvm.xml",
+      "mtime": 1792702488.790227,
+      "counters": {
+        "LINE": {
+          "missed": 2,
+          "covered": 1215,
+          "percent": 99.83566146261299
+        },
+        "BRANCH": {
+          "missed": 123,
+          "covered": 709,
+          "percent": 85.21634615384616
+        }
+      }
+    },
+    {
+      "module": "mobile/core/config",
+      "report": "mobile/core/config/build/reports/kover/reportJvm.xml",
+      "mtime": 1792702486.3340666,
+      "counters": {
+        "LINE": {
+          "missed": 7,
+          "covered": 369,
+          "percent": 98.13829787234043
+        },
+        "BRANCH": {
+          "missed": 21,
+          "covered": 247,
+          "percent": 92.16417910447761
+        }
+      }
+    },
+    {
+      "module": "mobile/domain/photo-analysis",
+      "report": "mobile/domain/photo-analysis/build/reports/kover/reportJvm.xml",
+      "mtime": 1792702492.2220585,
+      "counters": {
+        "LINE": {
+          "missed": 23,
+          "covered": 1142,
+          "percent": 98.02575107296137
+        },
+        "BRANCH": {
+          "missed": 114,
+          "covered": 700,
+          "percent": 85.995085995086
+        }
+      }
+    },
+    {
+      "module": "mobile/inference/local-android",
+      "report": "mobile/inference/local-android/build/reports/kover/reportJvm.xml",
+      "mtime": 1792702492.9431875,
+      "counters": {
+        "LINE": {
+          "missed": 1,
+          "covered": 16,
+          "percent": 94.11764705882354
+        },
+        "BRANCH": {
+          "missed": 0,
+          "covered": 0,
+          "percent": null
+        }
+      }
+    },
+    {
+      "module": "mobile/inference/local-ios",
+      "report": "mobile/inference/local-ios/build/reports/kover/reportJvm.xml",
+      "mtime": 1792702493.4260526,
+      "counters": {
+        "LINE": {
+          "missed": 2,
+          "covered": 15,
+          "percent": 88.23529411764706
+        },
+        "BRANCH": {
+          "missed": 0,
+          "covered": 0,
+          "percent": null
+        }
+      }
+    },
+    {
+      "module": "mobile/inference/local-shared",
+      "report": "mobile/inference/local-shared/build/reports/kover/reportJvm.xml",
+      "mtime": 1792702494.0409665,
+      "counters": {
+        "LINE": {
+          "missed": 11,
+          "covered": 329,
+          "percent": 96.76470588235294
+        },
+        "BRANCH": {
+          "missed": 13,
+          "covered": 119,
+          "percent": 90.15151515151516
+        }
+      }
+    },
+    {
+      "module": "mobile/core/ui",
+      "report": "mobile/core/ui/build/reports/kover/reportJvm.xml",
+      "mtime": 1792702487.001541,
+      "counters": {
+        "LINE": {
+          "missed": 9,
+          "covered": 154,
+          "percent": 94.47852760736197
+        },
+        "BRANCH": {
+          "missed": 3,
+          "covered": 25,
+          "percent": 89.28571428571429
+        }
+      }
+    },
+    {
+      "module": "mobile/feature/photo-analysis-presenter",
+      "report": "mobile/feature/photo-analysis-presenter/build/reports/kover/reportJvm.xml",
+      "mtime": 1792702493.2173705,
+      "counters": {
+        "LINE": {
+          "missed": 15,
+          "covered": 407,
+          "percent": 96.44549763033176
+        },
+        "BRANCH": {
+          "missed": 20,
+          "covered": 125,
+          "percent": 86.20689655172414
+        }
+      }
+    },
+    {
+      "module": "mobile/domain/nutrition",
+      "report": "mobile/domain/nutrition/build/reports/kover/reportJvm.xml",
+      "mtime": 1792702490.9368844,
+      "counters": {
+        "LINE": {
+          "missed": 1,
+          "covered": 12017,
+          "percent": 99.99167914794475
+        },
+        "BRANCH": {
+          "missed": 0,
+          "covered": 456,
+          "percent": 100.0
+        }
+      }
+    }
+  ],
+  "aggregate": {
+    "LINE": {
+      "missed": 71,
+      "covered": 15664,
+      "percent": 99.54877661264696
+    },
+    "BRANCH": {
+      "missed": 294,
+      "covered": 2381,
+      "percent": 89.00934579439253
+    }
+  }
+}
