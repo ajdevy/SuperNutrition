@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A research-led decision deck for choosing and testing a SuperNutrition mascot.">
+  <title>SuperNutrition — Mascot direction</title>
+  <style>
+    :root {
+      --ink: #17382b;
+      --ink-soft: #426253;
+      --paper: #f6f5ef;
+      --paper-deep: #e9efe8;
+      --mint: #bfe7d1;
+      --green: #6db18d;
+      --green-dark: #4d8b65;
+      --yellow: #f6c85f;
+      --peach: #f6b0a3;
+      --lavender: #d9c8ff;
+      --white: #fffdf7;
+      --shadow: 0 24px 60px rgba(23, 56, 43, .12);
+      --radius: 30px;
+      color-scheme: light;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.45;
+    }
+    a { color: var(--green-dark); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+    a:hover { color: var(--ink); }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button:focus-visible, a:focus-visible { outline: 4px solid var(--yellow); outline-offset: 4px; }
+    .topbar {
+      position: fixed;
+      z-index: 20;
+      inset: 0 0 auto 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 20px 4vw;
+      background: color-mix(in srgb, var(--paper) 88%, transparent);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(23, 56, 43, .1);
+    }
+    .brand { font-size: .84rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .progress { display: flex; align-items: center; gap: 12px; color: var(--ink-soft); font-size: .82rem; font-variant-numeric: tabular-nums; }
+    .progress-bar { width: 110px; height: 5px; overflow: hidden; border-radius: 999px; background: var(--paper-deep); }
+    .progress-fill { width: 12.5%; height: 100%; border-radius: inherit; background: var(--green-dark); transition: width .25s ease; }
+    main { counter-reset: slide; }
+    .js .slide { display: none; }
+    .js .slide.active { display: grid; }
+    .slide {
+      min-height: 100svh;
+      padding: 13vh 7vw 9vh;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(360px, .9fr);
+      align-items: center;
+      gap: clamp(36px, 7vw, 110px);
+      position: relative;
+      overflow: hidden;
+    }
+    .slide::after {
+      counter-increment: slide;
+      content: counter(slide, decimal-leading-zero);
+      position: absolute;
+      right: 7vw;
+      bottom: 5vh;
+      color: rgba(23, 56, 43, .22);
+      font-size: .8rem;
+      font-weight: 800;
+      letter-spacing: .1em;
+    }
+    .slide:nth-child(even) { background: var(--paper-deep); }
+    .slide:nth-child(1) { background: var(--ink); color: var(--white); }
+    .slide:nth-child(1) { padding-top: 11vh; padding-bottom: 6vh; }
+    .slide:nth-child(1) h1 { font-size: clamp(3rem, 6.1vw, 6.2rem); }
+    .slide:nth-child(1) .lede { margin-top: 22px; font-size: clamp(1rem, 1.55vw, 1.25rem); }
+    .slide:nth-child(1) .kicker { margin-top: 24px; }
+    .slide:nth-child(1) a { color: var(--mint); }
+    .slide:nth-child(1)::after { color: rgba(255,253,247,.45); }
+    .slide:nth-child(3), .slide:nth-child(7) { grid-template-columns: 1fr; }
+    .slide:nth-child(3) .content, .slide:nth-child(7) .content { max-width: 900px; }
+    .slide:nth-child(3) .visual, .slide:nth-child(7) .visual { width: min(100%, 980px); justify-self: center; }
+    .eyebrow { margin: 0 0 18px; color: var(--green-dark); font-size: .78rem; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+    .slide:nth-child(1) .eyebrow { color: var(--yellow); }
+    h1, h2 { margin: 0; max-width: 780px; font-weight: 800; letter-spacing: -.055em; line-height: .98; }
+    h1 { font-size: clamp(3.2rem, 7.2vw, 7.6rem); }
+    h2 { font-size: clamp(2.55rem, 5vw, 5.4rem); }
+    .lede { max-width: 660px; margin: 28px 0 0; color: var(--ink-soft); font-size: clamp(1.05rem, 1.8vw, 1.45rem); }
+    .slide:nth-child(1) .lede { color: rgba(255,253,247,.74); }
+    .kicker { display: inline-flex; margin-top: 34px; padding: 10px 14px; border-radius: 999px; background: rgba(246, 200, 95, .16); color: var(--yellow); font-size: .85rem; font-weight: 750; }
+    .visual { position: relative; min-height: 360px; display: grid; place-items: center; }
+    .visual img { display: block; max-width: 100%; max-height: 52vh; filter: drop-shadow(0 30px 24px rgba(23,56,43,.14)); }
+    .hero-art { width: min(32vw, 420px); min-width: 260px; }
+    .orbit { position: absolute; inset: 7% 2%; border: 1px solid rgba(191,231,209,.25); border-radius: 48% 52% 44% 56%; transform: rotate(-8deg); }
+    .orbit::after { content: ""; position: absolute; top: 8%; right: 16%; width: 12px; height: 12px; border-radius: 50%; background: var(--yellow); box-shadow: 0 0 0 10px rgba(246,200,95,.14); }
+    .source-note { margin-top: 30px; color: var(--ink-soft); font-size: .82rem; }
+    .slide:nth-child(1) .source-note { color: rgba(255,253,247,.58); }
+    .source-note a { margin-right: 10px; }
+    .photo-card { width: min(100%, 520px); padding: 18px; border-radius: var(--radius); background: var(--white); box-shadow: var(--shadow); transform: rotate(2deg); }
+    .photo-window { height: 210px; display: grid; place-items: center; border-radius: 20px; background: radial-gradient(circle at 32% 30%, #f6c85f 0 11%, transparent 12%), radial-gradient(circle at 64% 35%, #f6b0a3 0 14%, transparent 15%), radial-gradient(circle at 47% 66%, #7fb693 0 19%, transparent 20%), linear-gradient(135deg,#dcebdd,#fff0dd); position: relative; overflow: hidden; }
+    .photo-window::after { content: ""; position: absolute; inset: 16px; border: 2px solid rgba(23,56,43,.3); border-radius: 15px; }
+    .uncertainty-bubble { width: min(100%, 380px); margin: -35px 0 0 -60px; padding: 22px 24px; border-radius: 22px; background: var(--ink); color: var(--white); box-shadow: var(--shadow); transform: rotate(-3deg); }
+    .uncertainty-bubble strong { display: block; color: var(--yellow); font-size: 1.15rem; }
+    .uncertainty-bubble p { margin: 6px 0 0; color: rgba(255,253,247,.78); }
+    .stack { display: grid; gap: 16px; width: min(100%, 620px); }
+    .loop { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; align-items: stretch; }
+    .loop-step { min-height: 190px; padding: 22px; border-radius: 24px; background: var(--white); box-shadow: 0 15px 40px rgba(23,56,43,.08); display: flex; flex-direction: column; justify-content: space-between; }
+    .loop-step strong { font-size: 1.18rem; }
+    .loop-step p { margin: 24px 0 0; color: var(--ink-soft); font-size: .98rem; }
+    .loop-step:nth-child(1) { border-top: 8px solid var(--green); }
+    .loop-step:nth-child(2) { border-top: 8px solid var(--yellow); }
+    .loop-step:nth-child(3) { border-top: 8px solid var(--lavender); }
+    .loop-arrow { display: none; }
+    .evidence-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; width: min(100%, 720px); }
+    .evidence-card { padding: 26px; border-radius: var(--radius); background: var(--white); box-shadow: 0 15px 40px rgba(23,56,43,.08); }
+    .evidence-card .label { color: var(--green-dark); font-size: .75rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    .evidence-card h3 { margin: 10px 0 8px; font-size: clamp(1.6rem, 3vw, 2.4rem); letter-spacing: -.04em; }
+    .evidence-card p { margin: 0; color: var(--ink-soft); }
+    .evidence-card.warmth { background: #f1e9ff; }
+    .evidence-card.warmth .label { color: #7658b4; }
+    .evidence-card.competence { background: #e5f2e8; }
+    .evidence-card.competence .label { color: var(--green-dark); }
+    .candidate-stage { width: min(100%, 860px); display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; align-items: end; }
+    .candidate { min-height: 330px; padding: 20px; border-radius: var(--radius); background: var(--white); box-shadow: 0 20px 46px rgba(23,56,43,.1); display: flex; flex-direction: column; align-items: center; text-align: center; }
+    .candidate.lead { outline: 3px solid var(--yellow); outline-offset: 5px; }
+    .candidate img { width: 150px; height: 150px; margin: 8px 0 18px; }
+    .candidate h3 { margin: 0; font-size: 1.3rem; letter-spacing: -.03em; }
+    .candidate p { margin: 9px 0 0; color: var(--ink-soft); font-size: .9rem; }
+    .candidate .tag { margin-top: auto; padding: 7px 10px; border-radius: 999px; background: var(--paper-deep); color: var(--green-dark); font-size: .72rem; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
+    .candidate.lead .tag { background: var(--yellow); color: var(--ink); }
+    .flow-wrap { width: min(100%, 1000px); }
+    .flow-wrap img { width: 100%; height: auto; }
+    .flow-caption { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 18px; }
+    .flow-caption span { color: var(--ink-soft); font-size: .8rem; text-align: center; }
+    .guardrails { width: min(100%, 820px); display: grid; gap: 12px; }
+    .slide:nth-child(7) .guardrails { grid-template-columns: repeat(2, minmax(0, 1fr)); width: min(100%, 900px); }
+    .guardrail { display: grid; grid-template-columns: 32px 1fr; align-items: start; gap: 14px; padding: 18px 20px; border-radius: 20px; background: var(--white); box-shadow: 0 12px 30px rgba(23,56,43,.07); }
+    .guardrail .icon { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--peach); color: #873c2f; font-weight: 900; }
+    .guardrail strong { display: block; margin-bottom: 2px; }
+    .guardrail span { color: var(--ink-soft); font-size: .93rem; }
+    .test-plan { width: min(100%, 900px); display: grid; grid-template-columns: 1.1fr .9fr; gap: 18px; }
+    .test-card { padding: 26px; border-radius: var(--radius); background: var(--white); box-shadow: var(--shadow); }
+    .test-card h3 { margin: 0 0 15px; font-size: 1.55rem; letter-spacing: -.035em; }
+    .test-card ul { margin: 0; padding-left: 20px; color: var(--ink-soft); }
+    .test-card li + li { margin-top: 9px; }
+    .done { background: var(--ink); color: var(--white); }
+    .done p, .done li { color: rgba(255,253,247,.75); }
+    .done strong { color: var(--yellow); }
+    .nav { position: fixed; z-index: 30; right: 4vw; bottom: 22px; display: flex; align-items: center; gap: 8px; }
+    .nav button { min-width: 46px; min-height: 44px; border: 1px solid rgba(23,56,43,.18); border-radius: 999px; background: rgba(255,253,247,.9); color: var(--ink); cursor: pointer; font: inherit; font-weight: 800; box-shadow: 0 8px 24px rgba(23,56,43,.1); }
+    .nav button:hover { background: var(--yellow); }
+    .dots { position: fixed; z-index: 30; left: 4vw; bottom: 30px; display: flex; gap: 7px; }
+    .dots button { width: 9px; height: 9px; padding: 0; border: 0; border-radius: 50%; background: rgba(23,56,43,.25); cursor: pointer; }
+    .dots button[aria-current="true"] { background: var(--green-dark); transform: scale(1.35); }
+    .no-js .slide { display: grid; }
+    .no-js .nav, .no-js .dots { display: none; }
+    @media (min-width: 900px) {
+      .no-js .slide { min-height: 100vh; }
+    }
+    @media (max-width: 820px) {
+      .topbar { padding: 16px 20px; }
+      .slide, .slide:nth-child(3), .slide:nth-child(7) { grid-template-columns: 1fr; min-height: 100svh; padding: 110px 24px 132px; gap: 28px; }
+      .slide:not(:first-child) { display: none; }
+      .js .slide.active { display: grid; }
+      .visual { min-height: 260px; }
+      .hero-art { width: min(60vw, 330px); }
+      .loop, .evidence-grid, .candidate-stage, .test-plan { grid-template-columns: 1fr; }
+      .slide:nth-child(7) .guardrails { grid-template-columns: 1fr; }
+      .loop-step { min-height: 130px; }
+      .candidate { min-height: 0; }
+      .candidate img { width: 110px; height: 110px; }
+      .flow-caption { display: none; }
+      .source-note { margin-top: 18px; }
+      h1 { font-size: clamp(3rem, 16vw, 5.5rem); }
+      h2 { font-size: clamp(2.6rem, 13vw, 4.8rem); }
+      .progress-bar { width: 62px; }
+      .brand { font-size: .72rem; }
+      .nav { top: 74px; right: 16px; bottom: auto; }
+      .dots { left: 24px; bottom: 18px; }
+    }
+    @media print {
+      @page { size: landscape; margin: 0; }
+      body { background: white; }
+      .topbar, .nav, .dots { display: none !important; }
+      .slide, .slide:nth-child(3), .slide:nth-child(7) { display: grid !important; min-height: 0; height: 100vh; break-after: page; page-break-after: always; padding: 54px 68px; grid-template-columns: minmax(0, 1fr) minmax(300px, .9fr); gap: 38px; overflow: hidden; }
+      .slide:last-child { break-after: auto; page-break-after: auto; }
+      .slide:nth-child(1) { color: var(--ink); background: white; }
+      .slide:nth-child(1) .lede, .slide:nth-child(1) .source-note { color: var(--ink-soft); }
+      h1, h2 { font-size: 48px; }
+      .slide:nth-child(1) h1 { font-size: 56px; }
+      .lede { margin-top: 18px; font-size: 16px; }
+      .kicker { margin-top: 20px; padding: 8px 11px; font-size: 12px; }
+      .source-note { margin-top: 16px; font-size: 10px; }
+      .visual { min-height: 0; }
+      a { color: var(--ink); }
+      .visual img { max-height: 300px; }
+      .candidate { min-height: 250px; padding: 14px; }
+      .candidate img { width: 110px; height: 110px; }
+      .candidate p { font-size: 12px; }
+      .candidate .tag { padding: 5px 8px; font-size: 9px; }
+      .guardrail { padding: 12px 14px; }
+      .guardrail span { font-size: 12px; }
+      .guardrail strong { font-size: 13px; }
+      .test-card { padding: 18px; }
+      .test-card h3 { font-size: 20px; }
+      .test-card li, .test-card p { font-size: 12px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body class="no-js">
+  <header class="topbar" aria-label="Presentation controls">
+    <div class="brand">SuperNutrition / mascot direction</div>
+    <div class="progress" aria-live="polite"><span id="progressText">01 / 08</span><span class="progress-bar" aria-hidden="true"><span class="progress-fill" id="progressFill"></span></span></div>
+  </header>
+
+  <main id="deck" aria-label="SuperNutrition mascot direction presentation">
+    <section class="slide" id="start" aria-labelledby="title-1">
+      <div class="content">
+        <p class="eyebrow">Research-led decision deck · 08 Aug 2026</p>
+        <h1 id="title-1" tabindex="-1">Choose a companion that makes uncertainty feel safe.</h1>
+        <p class="lede">The mascot should make SuperNutrition warmer and easier to use — without becoming a calorie judge, a doctor, or a reason to upload.</p>
+        <span class="kicker">Recommendation: prototype a warm field-guide companion</span>
+        <p class="source-note">Audience: product and design stakeholders · Decision: which direction to prototype next</p>
+      </div>
+      <div class="visual" aria-label="Field-guide companion concept illustration">
+        <div class="orbit" aria-hidden="true"></div>
+        <img class="hero-art" src="assets/field-guide.svg" alt="A rounded, curious green field-guide companion holding a warm yellow lens">
+      </div>
+    </section>
+
+    <section class="slide" id="situation" aria-labelledby="title-2">
+      <div class="content">
+        <p class="eyebrow">01 · Situation</p>
+        <h2 id="title-2" tabindex="-1">Users don’t need another food judge.</h2>
+        <p class="lede">They need a fast answer they can correct: what the photo suggests, what remains uncertain, and what they can decide next.</p>
+        <p class="source-note">This follows SuperNutrition’s product contract: models propose; the user confirms; the catalog supplies the numbers.</p>
+      </div>
+      <div class="visual" aria-label="Illustration of a meal photo leading to an uncertain nutrition result">
+        <div class="stack">
+          <div class="photo-card"><div class="photo-window" aria-hidden="true"></div><strong>One meal photo</strong></div>
+          <div class="uncertainty-bubble"><strong>“I see two plausible matches.”</strong><p>Ask, edit, search manually, or continue without upload.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="evidence" aria-labelledby="title-3">
+      <div class="content">
+        <p class="eyebrow">02 · Evidence</p>
+        <h2 id="title-3" tabindex="-1">People return for the loop, not the animal.</h2>
+        <p class="lede">The recurring pattern across Finch, Waterllama, Plant Nanny, Wysa, and habit products is small action → understandable feedback → user-controlled progress.</p>
+        <p class="source-note"><a href="https://help.finchcare.com/hc/en-us/articles/37935669335309-Our-Approach-to-Self-Care">Finch’s product rationale</a> · Store ratings and company claims are directional, not mascot-specific causal evidence.</p>
+      </div>
+      <div class="visual">
+        <div class="loop" role="img" aria-label="Three-step loop: small action, understandable feedback, user-controlled progress">
+          <div class="loop-step"><strong>Small action</strong><p>Take a photo. Correct a candidate. Choose a serving.</p></div>
+          <div class="loop-step"><strong>Understandable feedback</strong><p>Show what was noticed, assumed, and still unknown.</p></div>
+          <div class="loop-step"><strong>User-controlled progress</strong><p>Confirm, retry, search manually, or stop without guilt.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="trust" aria-labelledby="title-4">
+      <div class="content">
+        <p class="eyebrow">03 · Trust</p>
+        <h2 id="title-4" tabindex="-1">Warmth opens the door. Evidence earns trust.</h2>
+        <p class="lede">Anthropomorphic health agents can increase social presence and trust — which also makes overconfidence a product risk.</p>
+        <p class="source-note"><a href="https://pubmed.ncbi.nlm.nih.gov/37561567/">Health-agent experiment</a> · <a href="https://link.springer.com/article/10.1007/s00146-024-01878-3">Cross-cultural avatar study</a></p>
+      </div>
+      <div class="visual">
+        <div class="evidence-grid">
+          <article class="evidence-card warmth"><span class="label">Character carries</span><h3>Warmth</h3><p>Patience, curiosity, respect, and a calm response when the photo is ambiguous.</p></article>
+          <article class="evidence-card competence"><span class="label">Interface carries</span><h3>Competence</h3><p>Source, confidence, assumptions, serving basis, consent, and editability.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="shortlist" aria-labelledby="title-5">
+      <div class="content">
+        <p class="eyebrow">04 · Shortlist</p>
+        <h2 id="title-5" tabindex="-1">Test three directions before choosing a species.</h2>
+        <p class="lede">The research is stronger on character behavior than on any universal “healthy animal.”</p>
+        <p class="source-note">Lead direction: a small, clearly non-human field-guide companion. The species remains a hypothesis.</p>
+      </div>
+      <div class="visual">
+        <div class="candidate-stage">
+          <article class="candidate lead"><img src="assets/field-guide.svg" alt="Soft species-ambiguous field-guide creature concept"><h3>Field guide</h3><p>Curious, warm, ownable, and explicit about uncertainty.</p><span class="tag">Lead to prototype</span></article>
+          <article class="candidate"><img src="assets/bird.svg" alt="Small bird companion concept"><h3>Small bird</h3><p>Light, observant, and companionable; strong Finch precedent.</p><span class="tag">Companion benchmark</span></article>
+          <article class="candidate"><img src="assets/sprout.svg" alt="Abstract sprout and seed companion concept"><h3>Sprout / seed</h3><p>Growth and nourishment without one animal or diet stereotype.</p><span class="tag">Neutral baseline</span></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="change" aria-labelledby="title-6">
+      <div class="content">
+        <p class="eyebrow">05 · Change</p>
+        <h2 id="title-6" tabindex="-1">Let the mascot guide the flow — not own the answer.</h2>
+        <p class="lede">Place it beside the high-friction moments: capture, ambiguity, correction, recovery, and the grounded result.</p>
+        <p class="source-note">Keep the factual layer in text and structured UI. The character can point to evidence; it cannot become evidence.</p>
+      </div>
+      <div class="visual">
+        <div class="flow-wrap">
+          <img src="assets/meal-flow.svg" alt="Five-step flow from capture through notice, clarify, confirm, and source-backed result">
+          <div class="flow-caption" aria-hidden="true"><span>Photo stays in focus</span><span>Uncertainty is visible</span><span>User answers</span><span>Assumptions are editable</span><span>Numbers show provenance</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="guardrails" aria-labelledby="title-7">
+      <div class="content">
+        <p class="eyebrow">06 · Guardrails</p>
+        <h2 id="title-7" tabindex="-1">Never turn nutrition into emotional debt.</h2>
+        <p class="lede">A lovable character becomes unsafe when missed meals, uncertain results, or privacy choices trigger guilt or dependency.</p>
+        <p class="source-note"><a href="https://pubmed.ncbi.nlm.nih.gov/39671845/">Systematic review of diet and fitness apps</a> · <a href="https://healthyeatingresearch.org/wp-content/uploads/2016/03/her_mascot_3-22_FINAL-1.pdf">Mascot and food-marketing evidence</a> · <a href="https://www.w3.org/WAI/WCAG22/Understanding/animation-from-interactions">W3C motion guidance</a></p>
+      </div>
+      <div class="visual">
+        <div class="guardrails">
+          <div class="guardrail"><span class="icon" aria-hidden="true">×</span><div><strong>No food morality</strong><span>Never “good,” “bad,” “cheat,” “earned,” or “burned.”</span></div></div>
+          <div class="guardrail"><span class="icon" aria-hidden="true">×</span><div><strong>No emotional blackmail</strong><span>No sad pet, broken streak, dying plant, or “you let me down.”</span></div></div>
+          <div class="guardrail"><span class="icon" aria-hidden="true">×</span><div><strong>No false authority</strong><span>Never diagnose, infer allergies, choose a serving, or authorize upload.</span></div></div>
+          <div class="guardrail"><span class="icon" aria-hidden="true">×</span><div><strong>No inaccessible motion</strong><span>Provide static, reduced-motion, screen-reader, and character-free paths.</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="action" aria-labelledby="title-8">
+      <div class="content">
+        <p class="eyebrow">07 · Action</p>
+        <h2 id="title-8" tabindex="-1">Prototype it before we name it.</h2>
+        <p class="lede">Build three matched flows. Keep the no-mascot version honest enough to win.</p>
+        <p class="source-note">Success is calibrated trust and easier correction — not more agreement with a wrong candidate.</p>
+      </div>
+      <div class="visual">
+        <div class="test-plan">
+          <article class="test-card"><h3>Test three matched flows</h3><ul><li>Field-guide companion</li><li>Small bird companion</li><li>No-mascot control</li><li>Same ambiguous meal, sauce, consent, correction, and result</li></ul></article>
+          <article class="test-card done"><h3>Done when…</h3><ul><li>Users understand what is known vs assumed.</li><li>Correction and consent are no worse than control.</li><li>Warmth improves comfort without shame or pressure.</li><li>Users can hide the mascot without losing the task.</li></ul><p><strong>Next:</strong> safety-reviewed formative study with ~15–20 users.</p></article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="dots" aria-label="Presentation sections"></nav>
+  <div class="nav" aria-label="Presentation navigation"><button type="button" id="prev" aria-label="Previous section">←</button><button type="button" id="next" aria-label="Next section">→</button></div>
+
+  <script>
+    (() => {
+      const body = document.body;
+      body.classList.remove('no-js');
+      body.classList.add('js');
+      const slides = [...document.querySelectorAll('.slide')];
+      const dots = document.querySelector('.dots');
+      const progressText = document.getElementById('progressText');
+      const progressFill = document.getElementById('progressFill');
+      let index = 0;
+      slides.forEach((slide, i) => {
+        slide.setAttribute('aria-roledescription', 'slide');
+        slide.setAttribute('aria-label', `${i + 1} of ${slides.length}`);
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.setAttribute('aria-label', `Go to section ${i + 1}`);
+        dot.addEventListener('click', () => go(i));
+        dots.appendChild(dot);
+      });
+      const dotButtons = [...dots.querySelectorAll('button')];
+      function go(nextIndex, focus = false) {
+        index = Math.max(0, Math.min(slides.length - 1, nextIndex));
+        slides.forEach((slide, i) => {
+          slide.classList.toggle('active', i === index);
+          slide.setAttribute('aria-hidden', i === index ? 'false' : 'true');
+        });
+        dotButtons.forEach((dot, i) => dot.setAttribute('aria-current', i === index ? 'true' : 'false'));
+        progressText.textContent = `${String(index + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
+        progressFill.style.width = `${((index + 1) / slides.length) * 100}%`;
+        history.replaceState(null, '', `#${slides[index].id || `section-${index + 1}`}`);
+        if (focus) slides[index].querySelector('h1, h2')?.focus({preventScroll: true});
+      }
+      document.getElementById('prev').addEventListener('click', () => go(index - 1, true));
+      document.getElementById('next').addEventListener('click', () => go(index + 1, true));
+      document.addEventListener('keydown', event => {
+        if (['ArrowRight', 'PageDown', ' '].includes(event.key)) { event.preventDefault(); go(index + 1, true); }
+        if (['ArrowLeft', 'PageUp'].includes(event.key)) { event.preventDefault(); go(index - 1, true); }
+        if (event.key === 'Home') { event.preventDefault(); go(0, true); }
+        if (event.key === 'End') { event.preventDefault(); go(slides.length - 1, true); }
+      });
+      const hashIndex = slides.findIndex(slide => `#${slide.id}` === location.hash);
+      go(hashIndex >= 0 ? hashIndex : 0);
+    })();
+  </script>
+</body>
+</html>
