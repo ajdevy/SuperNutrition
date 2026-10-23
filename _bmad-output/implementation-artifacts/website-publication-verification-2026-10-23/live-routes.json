@@ -1,0 +1,67 @@
+{
+  "checked_at": "2026-10-23T09:32:25.589268+00:00",
+  "expected_commit": "e4d6d73a8503ecc768d1db07bfb0ef4b421c13e9",
+  "routes": [
+    {
+      "route": "/version.json",
+      "status": 200,
+      "bytes": 195,
+      "sha256": "e0517e4d1b583acda084e223ab5e1216b5a32c26e0396cb8d379ce47973f3b30",
+      "version": {
+        "repository": "https://github.com/flexsent-labs/supernutrition.app",
+        "commit": "e4d6d73a8503ecc768d1db07bfb0ef4b421c13e9",
+        "node": "22.23.3",
+        "npm": "10.9.9",
+        "wrangler": "4.103.0"
+      }
+    },
+    {
+      "route": "/privacy-policy/",
+      "status": 200,
+      "bytes": 21075,
+      "sha256": "f88c3e3bafc95bbb6067dfd1d1d67413c0583a8a0b64141504057d8b5b187c29",
+      "operator_present": true,
+      "title": "Privacy Policy | SuperNutrition"
+    },
+    {
+      "route": "/ru/privacy-policy/",
+      "status": 200,
+      "bytes": 29307,
+      "sha256": "4f2d96f5e2dbc207151d0979b128ec8304ddf3fd2203ac7c467df80e4608c882",
+      "operator_present": true,
+      "title": "Политика конфиденциальности | SuperNutrition"
+    },
+    {
+      "route": "/es/privacy-policy/",
+      "status": 200,
+      "bytes": 21912,
+      "sha256": "ed4b969e905747d7c705565c2e489b099bdc33145b30582c9ea4533d00f32f31",
+      "operator_present": true,
+      "title": "Política de privacidad | SuperNutrition"
+    },
+    {
+      "route": "/terms/",
+      "status": 200,
+      "bytes": 16982,
+      "sha256": "c9c3edb70ca4fdb75200942ca6399ce14f9c6d842389b16607e110ef4968bed7",
+      "operator_present": true,
+      "title": "Terms & Conditions | SuperNutrition"
+    },
+    {
+      "route": "/ru/terms/",
+      "status": 200,
+      "bytes": 22790,
+      "sha256": "804f57b069a74976be62a4a9f8c8aa0931b554a518acb9f5c824ecc1ecff1914",
+      "operator_present": true,
+      "title": "Условия использования | SuperNutrition"
+    },
+    {
+      "route": "/es/terms/",
+      "status": 200,
+      "bytes": 17728,
+      "sha256": "d35399f6777981d7b40c0f01564feab8df26e600e530e0e373d3d12558f6dfaa",
+      "operator_present": true,
+      "title": "Términos y condiciones | SuperNutrition"
+    }
+  ]
+}
