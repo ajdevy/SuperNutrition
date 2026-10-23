@@ -1,0 +1,126 @@
+{
+  "run": 40005129387,
+  "head": "10a7e045fcf527e5f3b03e5c2619248ac708ebac",
+  "url": "https://github.com/flexsent-labs/SuperNutrition/actions/runs/40005129387",
+  "conclusion": "failure",
+  "failed_steps": [
+    "Run mobile JVM coverage and generate reports"
+  ],
+  "modules": [
+    {
+      "module": "core:config",
+      "task": "jvmTest",
+      "tests": 32,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report_files": 4
+    },
+    {
+      "module": "core:ui",
+      "task": "jvmTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report_files": 1
+    },
+    {
+      "module": "domain:inference",
+      "task": "jvmTest",
+      "tests": 126,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report_files": 16
+    },
+    {
+      "module": "domain:nutrition",
+      "task": "jvmTest",
+      "tests": 257,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report_files": 34
+    },
+    {
+      "module": "domain:photo-analysis",
+      "task": "jvmTest",
+      "tests": 115,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report_files": 11
+    },
+    {
+      "module": "feature:photo-analysis",
+      "task": "jvmTest",
+      "tests": 25,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report_files": 6
+    },
+    {
+      "module": "feature:photo-analysis-presenter",
+      "task": "jvmTest",
+      "tests": 19,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report_files": 4
+    },
+    {
+      "module": "feature:photo-analysis-ui",
+      "task": "jvmTest",
+      "tests": 237,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report_files": 48
+    },
+    {
+      "module": "inference:local-android",
+      "task": "jvmTest",
+      "tests": 25,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report_files": 2
+    },
+    {
+      "module": "inference:local-android-poc",
+      "task": "testDebugUnitTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report_files": 3
+    },
+    {
+      "module": "inference:local-ios",
+      "task": "jvmTest",
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report_files": 2
+    },
+    {
+      "module": "inference:local-shared",
+      "task": "jvmTest",
+      "tests": 25,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report_files": 2
+    }
+  ],
+  "totals": {
+    "tests": 892,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "policy_failure": "Native-gap evidence is stale: bootstrap-android-host"
+}
