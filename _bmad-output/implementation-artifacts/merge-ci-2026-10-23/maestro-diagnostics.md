@@ -31,3 +31,25 @@ No flow assertion, native startup guard, evidence timestamp, mobile production s
 ## Independent review
 
 Fresh Blind Hunter and Edge Case Hunter reviewed the full diagnostic slice independently. Both reported no concrete defect. Blind Hunter additionally checked the installed 2.7.0 bytecode: initial logging precedes device sessions, and flattening writes directly beneath the supplied directory. The four focused tests passed during review. This review covers diagnostic retention; hosted reproduction and final CI completion remain separate acceptance conditions.
+
+## Reproduction with detailed diagnostics, before transport changes
+
+[Candidate Android 40021687118](https://github.com/flexsent-labs/SuperNutrition/actions/runs/40021687118), commit `2f9a844d7a365ef9e4b7e3b00e42945482274117`, passed 50/50 instrumentation tests and reproduced the Maestro failure in six seconds. Both the initial `maestro.log` and per-flow logs, manifest, and `commands.json` are now present in the uploaded artifact.
+
+The completed steps are variable definition, apply configuration, and the shared locator script. `launchApp` fails before starting the application: `Command failed (host:transport:emulator-5554): device offline`. The subsequent hierarchy/screenshot diagnostics fail with `DeviceServerDiedException` and gRPC `UNAVAILABLE`, caused by the same ADB offline transport. Logcat ends at 21:00:09.449 UTC; Maestro reports the failing transport at 21:00:12.274 UTC. Cleanup can still obtain the launcher hierarchy, so this is an interruption of the host/device connection rather than evidence that the application crashed. The exact trigger for the disconnect still needs to be established before selecting a transport fix.
+
+[Candidate JVM 40021717907](https://github.com/flexsent-labs/SuperNutrition/actions/runs/40021717907) completed with 892 tests and zero failures/errors/skips. Every other check, including the new script regression and README snapshot, passed. Its sole failed task remains `:verifyMobilePolicy` with expired `bootstrap-android-host`.
+
+## Bounded permission-discovery change, planned before implementation
+
+The per-flow device log captures the missing native interval: adbd's `host-17` connection reports `write failed` at 21:00:11.382 and reconnects as `host-18` at 21:00:11.949. The pinned driver implicitly grants `all` permissions by pulling the entire acceptance APK and parsing its manifest in `setAllPermissions`; a broad upstream `runCatching` discards errors from that extraction. This runs between the completed locator script and the logged `stopApp` operation. A transfer-related disconnect is a hypothesis grounded in that interval, not yet a proven cause.
+
+Declare `camera: allow` on the shared `launchApp` command. The pinned Android driver then maps directly to one `pm grant android.permission.CAMERA` without APK extraction; the pinned iOS driver explicitly supports the same camera declaration. The journey's actions and assertions remain identical, including camera entry and cancellation. Record ADB server transport logs from first startup so any recurring disconnect can be diagnosed without another lost native interval. Do not restart a running shared ADB server, reconnect/retry failed journeys, or change native readiness criteria.
+
+## Follow-up review finding, before correction
+
+Fresh Blind Hunter identified that the additional script regression and diagnostics change the tracked source line count, while README still contains the previous 325,804-line snapshot. Regenerate it before pushing; acceptance is the same dashboard generator and `update_readme_metrics.py --check` used by CI returning zero on the final candidate. This is a mechanical integration fix, with no coverage denominator or threshold change.
+
+Correction: the exact CI generators now produce 1,040 source files / 325,882 code lines, and README `--check` passes. Fresh Edge Case Hunter found no supported defect; Blind Hunter found only this corrected README drift. Both reran the seven focused diagnostics tests successfully.
+
+Follow-up local evidence: the new ADB diagnostic regression ran red before implementation (four existing cases passed, three new cases exposed missing diagnostics), then 7/7 passed. The full script suite now passes 67/67, zero failures/errors/skips, 47.848 seconds. The actual pinned Maestro `check-syntax` accepts the explicit camera map. Shell syntax and whitespace checks pass. The build-logic conformance suite is running separately; hosted Android/iOS validation of the updated shared flow remains pending.
