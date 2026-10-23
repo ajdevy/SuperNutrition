@@ -146,6 +146,18 @@ test -f "$avd_config" || {
   printf 'Android AVD config was not created at %s\n' "$avd_config" >&2
   exit 1
 }
+# Preserve the original 1080x2400/420dpi viewport while rendering 55.56% fewer pixels.
+display_width=720
+display_height=1600
+display_density=280
+python3 - "$script_dir" "$avd_config" "$display_width" "$display_height" "$display_density" <<'DISPLAY'
+import sys
+sys.path.insert(0, sys.argv[1])
+from android_boot_health import configure_avd_display
+configure_avd_display(sys.argv[2], *(int(value) for value in sys.argv[3:]))
+DISPLAY
+printf 'Android AVD physical display: %sx%s at %sdpi\n' "$display_width" "$display_height" "$display_density"
+
 data_partition_size="${SUPERNUTRITION_ANDROID_DATA_PARTITION_SIZE:-4096M}"
 if grep -q '^disk\.dataPartition\.size=' "$avd_config"; then
   sed -i.bak "s/^disk\.dataPartition\.size=.*/disk.dataPartition.size=$data_partition_size/" "$avd_config"
@@ -187,6 +199,7 @@ fi
 
 "$adb_bin" start-server >/dev/null
 "$emulator_bin" -avd "$avd_name" \
+  -skin "${display_width}x${display_height}" \
   -no-window \
   -no-audio \
   -no-boot-anim \

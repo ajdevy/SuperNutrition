@@ -4,6 +4,7 @@ import subprocess
 import tempfile
 import unittest
 from pathlib import Path
+from fractions import Fraction
 
 ROOT = Path(__file__).resolve().parents[2]
 SPEC = importlib.util.spec_from_file_location('android_boot_health', ROOT / 'scripts/android_boot_health.py')
@@ -21,6 +22,7 @@ class FakeAndroid:
         self.calls = []
         self.boot_states = [('1', 'stopped', 'RUNNING_UNLOCKED')]
         self.boot_index = -1
+        self.no_boot_animation = ""
         self.home_started = False
         self.broadcast_timeout = False
         self.events = ''
@@ -48,6 +50,8 @@ class FakeAndroid:
             output = self.boot_states[self.boot_index][0]
         elif args == ['shell', 'getprop', 'init.svc.bootanim']:
             output = self.boot_states[self.boot_index][1]
+        elif args == ['shell', 'getprop', 'debug.sf.nobootanimation']:
+            output = self.no_boot_animation
         elif args == ['shell', 'am', 'get-started-user-state', '0']:
             if self.boot_states[self.boot_index][0] != '1':
                 raise subprocess.CalledProcessError(20, words, output="cmd: Can't find service: activity")
@@ -198,11 +202,61 @@ class AndroidBootHealthTest(unittest.TestCase):
                 with self.assertRaisesRegex(HEALTH.BootHealthError, 'IME'):
                     self.check()
 
+    def test_disabled_animation_native_mode_can_finish_without_a_bootanim_service(self):
+        for flag in ['1', '2']:
+            with self.subTest(flag=flag):
+                self.android = FakeAndroid()
+                self.android.boot_states = [('1', '', 'RUNNING_UNLOCKED')]
+                self.android.no_boot_animation = flag
+                self.check(timeout=3)
+                self.assertTrue(self.android.home_started)
+
+    def test_absent_bootanim_service_needs_valid_native_disabled_proof(self):
+        for flag in ['', '0', '-1', 'false', 'true', '1garbage', '2147483648']:
+            with self.subTest(flag=flag):
+                self.android = FakeAndroid()
+                self.android.boot_states = [('1', '', 'RUNNING_UNLOCKED')]
+                self.android.no_boot_animation = flag
+                with self.assertRaisesRegex(HEALTH.BootHealthError, 'deadline|timed out'):
+                    self.check(timeout=3)
+                self.assertFalse(self.android.home_started)
+
+    def test_running_boot_animation_is_not_ready_even_with_a_disabled_flag(self):
+        self.android.boot_states = [('1', 'running', 'RUNNING_UNLOCKED')]
+        self.android.no_boot_animation = '1'
+        with self.assertRaisesRegex(HEALTH.BootHealthError, 'deadline|timed out'):
+            self.check(timeout=3)
+        self.assertFalse(self.android.home_started)
+
     def test_boot_never_unlocks_fails_closed_without_launching_home(self):
         self.android.boot_states = [('1', 'stopped', 'RUNNING_LOCKED')]
         with self.assertRaisesRegex(HEALTH.BootHealthError, 'deadline|timed out'):
             self.check(timeout=3)
         self.assertFalse(self.android.home_started)
+
+
+class AndroidDisplayConfigurationTest(unittest.TestCase):
+    def test_display_override_preserves_dp_viewport_and_other_hardware_budgets(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            config = Path(temporary) / 'config.ini'
+            config.write_text('hw.lcd.width = 1080\nhw.lcd.height=2400\nhw.lcd.density=420\n'
+                              'skin.name=pixel_6\nskin.path=/sdk/skins/pixel_6\n'
+                              'skin.path.backup=/sdk/skins/pixel_6\nshowDeviceFrame=yes\n'
+                              'hw.ramSize=2560\nvm.heapSize=576\nhw.cpu.ncore=2\nhw.gpu.mode=swiftshader\n')
+            HEALTH.configure_avd_display(config, 720, 1600, 280)
+            values = dict(line.split('=', 1) for line in config.read_text().splitlines())
+            self.assertEqual(Fraction(int(values['hw.lcd.width']) * 160, int(values['hw.lcd.density'])),
+                             Fraction(1080 * 160, 420))
+            self.assertEqual(Fraction(int(values['hw.lcd.height']) * 160, int(values['hw.lcd.density'])),
+                             Fraction(2400 * 160, 420))
+            self.assertEqual(int(values['hw.lcd.width']) * int(values['hw.lcd.height']), 720 * 1600)
+            for key, value in {'hw.ramSize': '2560', 'vm.heapSize': '576', 'hw.cpu.ncore': '2',
+                               'hw.gpu.mode': 'swiftshader', 'showDeviceFrame': 'no'}.items():
+                self.assertEqual(values[key], value)
+            self.assertFalse({'skin.name', 'skin.path', 'skin.path.backup'} & values.keys())
+            configured = config.read_text()
+            HEALTH.configure_avd_display(config, 720, 1600, 280)
+            self.assertEqual(config.read_text(), configured)
 
 
 if __name__ == '__main__':
