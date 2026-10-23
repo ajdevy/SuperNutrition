@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="HomeGardenGeometryTest[jvm]" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-23T15:04:11.419Z" hostname="Anastasias-MacBook-Air.local" time="0.004">
+  <properties/>
+  <testcase name="ordinary tall wide and enlarged text slots have floor clearance without uncovered canvas[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeGardenGeometryTest" time="0.002"/>
+  <testcase name="missing or invalid mascot bounds fall back to a centered covered garden[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeGardenGeometryTest" time="0.001"/>
+  <testcase name="invalid canvas sizes produce an empty finite scene[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeGardenGeometryTest" time="0.0"/>
+  <testcase name="offscreen mascot contacts clamp before scaling instead of exposing canvas[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeGardenGeometryTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

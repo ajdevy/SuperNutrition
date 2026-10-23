@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="RewardsTextReadabilityTest[jvm]" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-10-23T15:05:03.453Z" hostname="Anastasias-MacBook-Air.local" time="3.879">
+  <properties/>
+  <testcase name="normal Rewards header displays its complete name[jvm]" classname="com.supernutrition.feature.photoanalysis.RewardsTextReadabilityTest" time="0.068"/>
+  <testcase name="actual Rewards titles remain complete on compact phone at double text[jvm]" classname="com.supernutrition.feature.photoanalysis.RewardsTextReadabilityTest" time="0.903"/>
+  <testcase name="actual Rewards titles remain complete on ordinary phone at double text[jvm]" classname="com.supernutrition.feature.photoanalysis.RewardsTextReadabilityTest" time="0.684"/>
+  <testcase name="actual Rewards descriptions remain complete on compact phone at double text[jvm]" classname="com.supernutrition.feature.photoanalysis.RewardsTextReadabilityTest" time="0.746"/>
+  <testcase name="native Back callback remains exposed as an accessibility action[jvm]" classname="com.supernutrition.feature.photoanalysis.RewardsTextReadabilityTest" time="0.069"/>
+  <testcase name="normal long actual titles remain complete inside their cards[jvm]" classname="com.supernutrition.feature.photoanalysis.RewardsTextReadabilityTest" time="0.471"/>
+  <testcase name="actual Rewards descriptions remain complete on ordinary phone at double text[jvm]" classname="com.supernutrition.feature.photoanalysis.RewardsTextReadabilityTest" time="0.866"/>
+  <testcase name="Daily label has readable contrast on the actual Rewards backdrop[jvm]" classname="com.supernutrition.feature.photoanalysis.RewardsTextReadabilityTest" time="0.071"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

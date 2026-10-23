@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="HostSlotRefreshTest[jvm]" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-10-23T15:04:22.881Z" hostname="Anastasias-MacBook-Air.local" time="1.085">
+  <properties/>
+  <testcase name="reward card keeps progress and semantics paired when its row index changes[jvm]" classname="com.supernutrition.feature.photoanalysis.HostSlotRefreshTest" time="0.122"/>
+  <testcase name="grid text contrast retains theme defaults and provides both photo contrast variants[jvm]" classname="com.supernutrition.feature.photoanalysis.HostSlotRefreshTest" time="0.0"/>
+  <testcase name="unrelated host header refresh preserves an embedded meal choice[jvm]" classname="com.supernutrition.feature.photoanalysis.HostSlotRefreshTest" time="0.139"/>
+  <testcase name="care buttons and loading status update independently within a native host[jvm]" classname="com.supernutrition.feature.photoanalysis.HostSlotRefreshTest" time="0.206"/>
+  <testcase name="main shell replaces host content while preserving the selected navigation tab[jvm]" classname="com.supernutrition.feature.photoanalysis.HostSlotRefreshTest" time="0.078"/>
+  <testcase name="replacement state flow stops the old session from changing the capture screen[jvm]" classname="com.supernutrition.feature.photoanalysis.HostSlotRefreshTest" time="0.097"/>
+  <testcase name="host header refresh preserves main shell and action layout without recreating callbacks[jvm]" classname="com.supernutrition.feature.photoanalysis.HostSlotRefreshTest" time="0.116"/>
+  <testcase name="research host replaces its callbacks copy and bounds without keeping old actions[jvm]" classname="com.supernutrition.feature.photoanalysis.HostSlotRefreshTest" time="0.247"/>
+  <testcase name="manual evidence rows replace a source without keeping stale accessibility copy[jvm]" classname="com.supernutrition.feature.photoanalysis.HostSlotRefreshTest" time="0.079"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

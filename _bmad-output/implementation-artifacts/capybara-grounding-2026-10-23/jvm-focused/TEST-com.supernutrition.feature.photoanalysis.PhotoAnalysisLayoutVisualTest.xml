@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="PhotoAnalysisLayoutVisualTest[jvm]" tests="15" skipped="0" failures="0" errors="0" timestamp="2026-10-23T14:21:50.857Z" hostname="Anastasias-MacBook-Air.local" time="14.887">
+  <properties/>
+  <testcase name="system padding reserves content while the backdrop fills the viewport[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisLayoutVisualTest" time="0.684"/>
+  <testcase name="metric cards stay aligned with wrapped values and larger text[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisLayoutVisualTest" time="1.929"/>
+  <testcase name="larger Home text flows without hiding actions[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisLayoutVisualTest" time="2.373"/>
+  <testcase name="metric rows retain equal card heights when values wrap[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisLayoutVisualTest" time="0.815"/>
+  <testcase name="wide layout centers content and navigation[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisLayoutVisualTest" time="1.264"/>
+  <testcase name="home mascot stays visible and separated from the metrics across viewport sizes[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisLayoutVisualTest" time="3.3"/>
+  <testcase name="home keeps equal card gutters on a tall phone[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisLayoutVisualTest" time="0.901"/>
+  <testcase name="navigation tabs mirror each other around the camera[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisLayoutVisualTest" time="0.072"/>
+  <testcase name="long reward copy remains readable with larger text[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisLayoutVisualTest" time="0.74"/>
+  <testcase name="final reward clears navigation on a short phone[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisLayoutVisualTest" time="0.452"/>
+  <testcase name="home lower content is scrollable on a short phone[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisLayoutVisualTest" time="0.917"/>
+  <testcase name="navigation labels keep clearance inside the pill with larger text[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisLayoutVisualTest" time="0.103"/>
+  <testcase name="rewards header and actual cards keep the figma carousel geometry[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisLayoutVisualTest" time="0.394"/>
+  <testcase name="metric bars retain their relative fill when the viewport narrows[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisLayoutVisualTest" time="0.183"/>
+  <testcase name="regular home keeps its metrics above navigation with aligned gutters[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisLayoutVisualTest" time="0.758"/>
+  <system-out><![CDATA[Suspicious! waitForIdle has not finished after 1 seconds.
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

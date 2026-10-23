@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="PhotoReviewReadabilityTest[jvm]" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-23T15:04:52.514Z" hostname="Anastasias-MacBook-Air.local" time="2.188">
+  <properties/>
+  <testcase name="small reward title is readable on its white card[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoReviewReadabilityTest" time="0.302"/>
+  <testcase name="progress text stays readable over a white camera preview[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoReviewReadabilityTest" time="0.176"/>
+  <testcase name="small review text and the note placeholder stay readable over a white photo[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoReviewReadabilityTest" time="0.478"/>
+  <testcase name="home guidance and metric labels stay readable on their surfaces[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoReviewReadabilityTest" time="0.894"/>
+  <testcase name="home metric target and unit are readable without relying on the darker value[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoReviewReadabilityTest" time="0.337"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

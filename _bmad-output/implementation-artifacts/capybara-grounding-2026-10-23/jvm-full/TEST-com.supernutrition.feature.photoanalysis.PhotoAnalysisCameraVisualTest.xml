@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="PhotoAnalysisCameraVisualTest[jvm]" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-23T15:04:33.265Z" hostname="Anastasias-MacBook-Air.local" time="5.437">
+  <properties/>
+  <testcase name="review uses individually selectable artwork over the retained photo[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisCameraVisualTest" time="1.02"/>
+  <testcase name="capture fills the Figma viewport and places its controls[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisCameraVisualTest" time="0.472"/>
+  <testcase name="custom meal shows its current label and preserves selection at larger text sizes[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisCameraVisualTest" time="3.945"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

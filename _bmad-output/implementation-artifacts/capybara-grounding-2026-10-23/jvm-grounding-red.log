@@ -1,0 +1,124 @@
+> Task :build-logic:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :build-logic:compileKotlin UP-TO-DATE
+> Task :build-logic:compileJava NO-SOURCE
+> Task :build-logic:pluginDescriptors UP-TO-DATE
+> Task :build-logic:processResources UP-TO-DATE
+> Task :build-logic:classes UP-TO-DATE
+> Task :build-logic:jar UP-TO-DATE
+
+> Configure project :platform:photo-android
+w: ⚠️ Unused Kotlin Source Sets
+The Kotlin source set commonTest was configured but not added to any Kotlin compilation.
+Solution: You can add a source set to a target's compilation by connecting it with the compilation's default source set using 'dependsOn'.
+See https://kotl.in/connecting-source-sets
+
+
+> Task :core:ui:kmpPartiallyResolvedDependenciesChecker
+> Task :domain:inference:kmpPartiallyResolvedDependenciesChecker
+> Task :domain:nutrition:kmpPartiallyResolvedDependenciesChecker
+> Task :core:ui:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :domain:inference:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :domain:nutrition:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :core:config:kmpPartiallyResolvedDependenciesChecker
+> Task :core:config:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :domain:nutrition:jvmProcessResources UP-TO-DATE
+> Task :domain:nutrition:processJvmMainResources SKIPPED
+> Task :domain:photo-analysis:kmpPartiallyResolvedDependenciesChecker
+> Task :domain:photo-analysis:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :domain:photo-analysis:jvmProcessResources NO-SOURCE
+> Task :domain:photo-analysis:processJvmMainResources SKIPPED
+> Task :feature:photo-analysis-presenter:kmpPartiallyResolvedDependenciesChecker
+> Task :feature:photo-analysis-presenter:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :feature:photo-analysis-presenter:jvmProcessResources NO-SOURCE
+> Task :feature:photo-analysis-presenter:processJvmMainResources SKIPPED
+> Task :core:ui:compileKotlinJvm UP-TO-DATE
+> Task :core:config:compileKotlinJvm UP-TO-DATE
+> Task :core:config:compileJvmMainJava NO-SOURCE
+> Task :core:ui:compileJvmMainJava NO-SOURCE
+> Task :core:config:jvmProcessResources NO-SOURCE
+> Task :core:ui:jvmProcessResources NO-SOURCE
+> Task :core:config:processJvmMainResources SKIPPED
+> Task :core:ui:processJvmMainResources SKIPPED
+> Task :core:config:jvmMainClasses UP-TO-DATE
+> Task :core:ui:jvmMainClasses UP-TO-DATE
+> Task :core:ui:jvmJar UP-TO-DATE
+> Task :core:config:jvmJar UP-TO-DATE
+> Task :domain:inference:compileKotlinJvm UP-TO-DATE
+> Task :domain:inference:compileJvmMainJava NO-SOURCE
+> Task :domain:inference:jvmProcessResources NO-SOURCE
+> Task :domain:inference:processJvmMainResources SKIPPED
+> Task :domain:inference:jvmMainClasses UP-TO-DATE
+> Task :domain:inference:jvmJar UP-TO-DATE
+> Task :domain:photo-analysis:compileKotlinJvm UP-TO-DATE
+> Task :domain:nutrition:compileKotlinJvm UP-TO-DATE
+> Task :domain:photo-analysis:compileJvmMainJava NO-SOURCE
+> Task :domain:nutrition:compileJvmMainJava NO-SOURCE
+> Task :domain:photo-analysis:jvmMainClasses UP-TO-DATE
+> Task :domain:nutrition:jvmMainClasses UP-TO-DATE
+> Task :domain:nutrition:jvmJar UP-TO-DATE
+> Task :domain:photo-analysis:jvmJar UP-TO-DATE
+> Task :feature:photo-analysis-presenter:compileKotlinJvm UP-TO-DATE
+> Task :feature:photo-analysis-presenter:compileJvmMainJava NO-SOURCE
+> Task :feature:photo-analysis-presenter:jvmMainClasses UP-TO-DATE
+> Task :feature:photo-analysis-presenter:jvmJar UP-TO-DATE
+> Task :feature:photo-analysis-ui:checkJvmMainComposeLibrariesCompatibility
+> Task :feature:photo-analysis-ui:kmpPartiallyResolvedDependenciesChecker
+> Task :feature:photo-analysis-ui:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :feature:photo-analysis-ui:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :feature:photo-analysis-ui:copyNonXmlValueResourcesForCommonMain UP-TO-DATE
+> Task :feature:photo-analysis-ui:prepareComposeResourcesTaskForCommonMain UP-TO-DATE
+> Task :feature:photo-analysis-ui:generateResourceAccessorsForCommonMain UP-TO-DATE
+> Task :feature:photo-analysis-ui:convertXmlValueResourcesForJvmMain NO-SOURCE
+> Task :feature:photo-analysis-ui:copyNonXmlValueResourcesForJvmMain NO-SOURCE
+> Task :feature:photo-analysis-ui:prepareComposeResourcesTaskForJvmMain NO-SOURCE
+> Task :feature:photo-analysis-ui:generateResourceAccessorsForJvmMain NO-SOURCE
+> Task :feature:photo-analysis-ui:generateActualResourceCollectorsForJvmMain UP-TO-DATE
+> Task :feature:photo-analysis-ui:generateComposeResClass UP-TO-DATE
+> Task :feature:photo-analysis-ui:generateExpectResourceCollectorsForCommonMain UP-TO-DATE
+> Task :feature:photo-analysis-ui:compileKotlinJvm UP-TO-DATE
+> Task :feature:photo-analysis-ui:compileJvmMainJava NO-SOURCE
+> Task :feature:photo-analysis-ui:checkJvmTestComposeLibrariesCompatibility
+> Task :feature:photo-analysis-ui:convertXmlValueResourcesForCommonTest NO-SOURCE
+> Task :feature:photo-analysis-ui:copyNonXmlValueResourcesForCommonTest NO-SOURCE
+> Task :feature:photo-analysis-ui:prepareComposeResourcesTaskForCommonTest NO-SOURCE
+> Task :feature:photo-analysis-ui:generateResourceAccessorsForCommonTest NO-SOURCE
+> Task :feature:photo-analysis-ui:convertXmlValueResourcesForJvmTest NO-SOURCE
+> Task :feature:photo-analysis-ui:copyNonXmlValueResourcesForJvmTest NO-SOURCE
+> Task :feature:photo-analysis-ui:prepareComposeResourcesTaskForJvmTest NO-SOURCE
+> Task :feature:photo-analysis-ui:generateResourceAccessorsForJvmTest NO-SOURCE
+> Task :feature:photo-analysis-ui:assembleJvmMainResources UP-TO-DATE
+> Task :feature:photo-analysis-ui:jvmProcessResources UP-TO-DATE
+> Task :feature:photo-analysis-ui:processJvmMainResources SKIPPED
+> Task :feature:photo-analysis-ui:jvmMainClasses UP-TO-DATE
+> Task :feature:photo-analysis-ui:jvmJar UP-TO-DATE
+> Task :feature:photo-analysis-ui:assembleJvmTestResources UP-TO-DATE
+> Task :feature:photo-analysis-ui:jvmTestProcessResources UP-TO-DATE
+> Task :feature:photo-analysis-ui:processJvmTestResources SKIPPED
+> Task :feature:photo-analysis-ui:koverFindJar UP-TO-DATE
+> Task :feature:photo-analysis-ui:compileTestKotlinJvm
+> Task :feature:photo-analysis-ui:compileJvmTestJava NO-SOURCE
+> Task :feature:photo-analysis-ui:jvmTestClasses
+
+> Task :feature:photo-analysis-ui:jvmTest
+
+HomeGardenGroundingTest[jvm] > tall native phone has sand beside the paws instead of distant sky[jvm] FAILED
+    java.lang.AssertionError at Assert.java:89
+        Caused by: java.lang.AssertionError at HomeGardenGroundingTest.kt:18
+
+1 test completed, 1 failed
+
+> Task :feature:photo-analysis-ui:jvmTest FAILED
+
+[Incubating] Problems report is available at: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':feature:photo-analysis-ui:jvmTest'.
+> There were failing tests. See the report at: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/feature/photo-analysis-ui/build/reports/tests/jvmTest/index.html
+
+* Try:
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+
+BUILD FAILED in 34s
+41 actionable tasks: 11 executed, 30 up-to-date

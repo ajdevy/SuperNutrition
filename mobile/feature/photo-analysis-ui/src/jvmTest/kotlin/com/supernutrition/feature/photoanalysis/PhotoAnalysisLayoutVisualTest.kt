@@ -3,6 +3,7 @@ package com.supernutrition.feature.photoanalysis
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
@@ -50,11 +51,12 @@ class PhotoAnalysisLayoutVisualTest {
             Size(600f, 800f) to 1f,
         ).forEach { (viewport, fontScale) ->
             runSkikoComposeUiTest(size = viewport, density = Density(1f, fontScale)) {
-                setContent { HomeScreenBackground() }
-                val backdrop = captureToImage()
+                val backdropState = HomeBackdropState()
                 setContent {
-                    PhotoAnalysisMainLayout(layoutBottomBarState(), layoutBottomBarActions()) {
-                        HomeScreen(layoutHomeModel())
+                    CompositionLocalProvider(LocalHomeBackdrop provides backdropState) {
+                        PhotoAnalysisMainLayout(layoutBottomBarState(), layoutBottomBarActions()) {
+                            HomeScreen(layoutHomeModel())
+                        }
                     }
                 }
                 val mascotNode = onNodeWithContentDescription("Capybara mascot").performScrollTo()
@@ -68,8 +70,14 @@ class PhotoAnalysisLayoutVisualTest {
                     abs(panel.top.value - mascot.bottom.value - 18.5f) <= 1f,
                     "Mascot and metrics lose the design spacing at $viewport/$fontScale: mascot=$mascot panel=$panel",
                 )
+                val mascotBounds = mascotNode.fetchSemanticsNode().boundsInRoot
                 val rendered = captureToImage()
-                assertMascotVisible(rendered, backdrop, mascotNode.fetchSemanticsNode().boundsInRoot)
+                // Preserve the measured scene, so garden movement cannot impersonate sprite pixels.
+                setContent {
+                    CompositionLocalProvider(LocalHomeBackdrop provides backdropState) { HomeScreenBackground() }
+                }
+                val backdrop = captureToImage()
+                assertMascotVisible(rendered, backdrop, mascotBounds)
                 writeLayoutScreenshot(
                     "home-mascot-${viewport.width.toInt()}x${viewport.height.toInt()}-$fontScale",
                     rendered.asSkiaBitmap(),
@@ -81,8 +89,16 @@ class PhotoAnalysisLayoutVisualTest {
     private fun assertMascotVisible(image: ImageBitmap, backdrop: ImageBitmap, mascot: Rect) {
         val pixels = image.toPixelMap()
         val background = backdrop.toPixelMap()
-        val changed = (ceil(mascot.top).toInt() until floor(mascot.bottom).toInt()).sumOf { row ->
-            (ceil(mascot.left).toInt() until floor(mascot.right).toInt()).count { column ->
+        // Sample the opaque head/torso center; the contact shadow is below this region.
+        val spriteWidth = mascot.height * 241f / 325f
+        val body = Rect(
+            mascot.center.x - spriteWidth * 0.2f,
+            mascot.top + mascot.height * 0.2f,
+            mascot.center.x + spriteWidth * 0.2f,
+            mascot.top + mascot.height * 0.75f,
+        )
+        val changed = (ceil(body.top).toInt() until floor(body.bottom).toInt()).sumOf { row ->
+            (ceil(body.left).toInt() until floor(body.right).toInt()).count { column ->
                 pixels[column, row] != background[column, row]
             }
         }
@@ -414,15 +430,16 @@ class PhotoAnalysisLayoutVisualTest {
         size = Size(375f, 812f),
         density = Density(1f),
     ) {
-        setContent { HomeScreenBackground() }
-        val reference = captureToImage().toPixelMap()
+        val backdrop = HomeBackdropState()
         setContent {
-            PhotoAnalysisMainLayout(
-                state = layoutBottomBarState(),
-                actions = layoutBottomBarActions(),
-                contentPadding = PaddingValues(top = 24.dp, bottom = 20.dp),
-            ) {
-                HomeScreen(layoutHomeModel())
+            CompositionLocalProvider(LocalHomeBackdrop provides backdrop) {
+                PhotoAnalysisMainLayout(
+                    state = layoutBottomBarState(),
+                    actions = layoutBottomBarActions(),
+                    contentPadding = PaddingValues(top = 24.dp, bottom = 20.dp),
+                ) {
+                    HomeScreen(layoutHomeModel())
+                }
             }
         }
         val content = onNodeWithTag(UiAutomationIds.HOME_SCREEN.value).fetchSemanticsNode().boundsInRoot
@@ -436,6 +453,11 @@ class PhotoAnalysisLayoutVisualTest {
         val finalMetric = onNodeWithTag(UiAutomationIds.HOME_METRIC_FATS.value).fetchSemanticsNode().boundsInRoot
         assertTrue(finalMetric.bottom < camera.top)
         val rendered = captureToImage()
+        // Keep the measured mascot anchor: a standalone unanchored garden is a different scene.
+        setContent {
+            CompositionLocalProvider(LocalHomeBackdrop provides backdrop) { HomeScreenBackground() }
+        }
+        val reference = captureToImage().toPixelMap()
         assertBackdropColorNear(reference[187, 8], rendered.toPixelMap()[187, 8])
         assertBackdropColorNear(reference[187, 805], rendered.toPixelMap()[187, 805])
         writeLayoutScreenshot("home-with-insets", rendered.asSkiaBitmap())

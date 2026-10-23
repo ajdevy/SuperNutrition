@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="PhotoAnalysisCameraEdgeCasesTest[jvm]" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-10-23T15:04:30.693Z" hostname="Anastasias-MacBook-Air.local" time="1.541">
+  <properties/>
+  <testcase name="saveable restoration preserves explicit review selections[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisCameraEdgeCasesTest" time="0.176"/>
+  <testcase name="backgrounding preserves explicit review selections[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisCameraEdgeCasesTest" time="0.179"/>
+  <testcase name="all unfamiliar evidence remains reachable on a regular phone[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisCameraEdgeCasesTest" time="0.225"/>
+  <testcase name="camera close keeps an adequate touch target around its artwork[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisCameraEdgeCasesTest" time="0.053"/>
+  <testcase name="dish labels grow without clipping with larger text[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisCameraEdgeCasesTest" time="0.099"/>
+  <testcase name="pointer on visible broccoli selects only its actual photo component[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisCameraEdgeCasesTest" time="0.108"/>
+  <testcase name="recovery actions remain reachable on a short viewport with larger text[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisCameraEdgeCasesTest" time="0.102"/>
+  <testcase name="dragging from a visible sticker scrolls without selecting it[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisCameraEdgeCasesTest" time="0.598"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

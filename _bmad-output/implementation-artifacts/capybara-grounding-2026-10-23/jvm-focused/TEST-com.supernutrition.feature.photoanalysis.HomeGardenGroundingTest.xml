@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="HomeGardenGroundingTest[jvm]" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-10-23T14:21:31.922Z" hostname="Anastasias-MacBook-Air.local" time="13.014">
+  <properties/>
+  <testcase name="glass shows the same anchored garden coordinates as the full blurred scene[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeGardenGroundingTest" time="9.586"/>
+  <testcase name="tall native phone has sand beside the paws instead of distant sky[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeGardenGroundingTest" time="3.428"/>
+  <system-out><![CDATA[Suspicious! waitForIdle has not finished after 1 seconds.
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

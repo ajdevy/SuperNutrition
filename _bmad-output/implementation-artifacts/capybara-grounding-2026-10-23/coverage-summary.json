@@ -1,0 +1,49 @@
+{
+  "fresh_report": true,
+  "after_review_strengthening": true,
+  "module_counters": [
+    {
+      "type": "INSTRUCTION",
+      "missed": "8720",
+      "covered": "47389"
+    },
+    {
+      "type": "BRANCH",
+      "missed": "649",
+      "covered": "1274"
+    },
+    {
+      "type": "LINE",
+      "missed": "722",
+      "covered": "4635"
+    },
+    {
+      "type": "METHOD",
+      "missed": "90",
+      "covered": "860"
+    },
+    {
+      "type": "CLASS",
+      "missed": "18",
+      "covered": "93"
+    }
+  ],
+  "new_geometry_counters": [
+    {
+      "type": "INSTRUCTION",
+      "missed": "0",
+      "covered": "226"
+    },
+    {
+      "type": "BRANCH",
+      "missed": "0",
+      "covered": "24"
+    },
+    {
+      "type": "LINE",
+      "missed": "0",
+      "covered": "19"
+    }
+  ],
+  "full_quality_gate_claim": false
+}

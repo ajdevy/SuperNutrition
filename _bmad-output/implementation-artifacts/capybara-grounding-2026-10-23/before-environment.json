@@ -1,0 +1,23 @@
+{
+  "recorded_at_utc": "2026-10-23T14:16:45.065226+00:00",
+  "baseline_commit": "465f1933f36f4b8631fa923c8d299f693b2da1a7",
+  "apk_sha256": "7a7984fa1ef5eed14919e861210d4f232db2da7d16b3d80868970993b81a2a33",
+  "avd": "SN_Screenshots_20261023",
+  "serial": "emulator-5554",
+  "api": 35,
+  "abi": "x86_64",
+  "density": 320,
+  "font_scale": 1,
+  "baseline_captures": {
+    "native-before-360x780.png": [
+      720,
+      1560
+    ],
+    "native-before-412x915.png": [
+      824,
+      1830
+    ]
+  },
+  "physical_device": false,
+  "display_size_override_will_be_reset": true
+}
