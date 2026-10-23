@@ -3,7 +3,6 @@ package com.supernutrition.feature.photoanalysis
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.asSkiaBitmap
 import androidx.compose.ui.graphics.toComposeImageBitmap
@@ -13,9 +12,6 @@ import androidx.compose.ui.test.assertContentDescriptionEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
-import androidx.compose.ui.test.hasAnyAncestor
-import androidx.compose.ui.test.hasTestTag
-import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -95,7 +91,7 @@ class PhotoAnalysisCameraVisualTest {
     ).toComposeImageBitmap()
 
     @Test
-    fun `custom meal uses only a centered plus at regular and larger text sizes`() {
+    fun `custom meal shows its current label and preserves selection at larger text sizes`() {
         val photo = fixturePhoto()
         listOf(Size(375f, 812f) to 1f, Size(320f, 568f) to 1f, Size(320f, 568f) to 1.5f)
             .forEach { (viewport, fontScale) ->
@@ -117,13 +113,14 @@ class PhotoAnalysisCameraVisualTest {
                         val customMeal = onNodeWithTag(customId).performScrollTo().assertIsDisplayed()
                             .assertContentDescriptionEquals("Custom meal")
                         if (selected) customMeal.assertIsSelected() else customMeal.assertIsNotSelected()
-                        onNodeWithText("Custom meal", useUnmergedTree = true).assertDoesNotExist()
+                        onNodeWithText("Custom meal", useUnmergedTree = true).assertIsDisplayed()
                         val card = customMeal.fetchSemanticsNode().boundsInRoot
-                        val marker = onNode(
-                            hasText("+") and hasAnyAncestor(hasTestTag(customId)),
+                        val label = onNodeWithText(
+                            "Custom meal",
                             useUnmergedTree = true,
                         ).fetchSemanticsNode().boundsInRoot
-                        assertCustomMealPlusCentered(card, marker)
+                        assertTrue(label.top >= card.top && label.bottom <= card.bottom)
+                        assertTrue(abs(label.center.x - card.center.x) <= 1f)
                         val variant = if (selected) "selected" else "unselected"
                         writeScreenshot(
                             "custom-meal-plus-$variant-${viewport.width.toInt()}x${viewport.height.toInt()}-$fontScale",
@@ -133,13 +130,6 @@ class PhotoAnalysisCameraVisualTest {
                     }
                 }
             }
-    }
-
-    private fun assertCustomMealPlusCentered(card: Rect, marker: Rect) {
-        assertTrue(abs(marker.center.y - card.center.y) <= 1f, "The plus is off center vertically")
-        assertTrue(marker.bottom <= card.bottom - 4f, "The symbol touches the bottom edge")
-        assertTrue(marker.top >= card.top + 4f, "The symbol touches the top edge")
-        assertTrue(abs(marker.center.x - card.center.x) <= 1f, "The plus is off center horizontally")
     }
 
     private fun writeScreenshot(name: String, bitmap: org.jetbrains.skia.Bitmap) {

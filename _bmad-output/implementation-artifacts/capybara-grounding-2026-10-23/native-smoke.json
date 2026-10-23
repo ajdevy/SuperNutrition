@@ -1,0 +1,42 @@
+{
+  "verified_at_utc": "2026-10-23T14:45:54.506959+00:00",
+  "avd": "SN_Screenshots_20261023",
+  "serial": "emulator-5554",
+  "api": "35",
+  "abi": "x86_64",
+  "physical_device": false,
+  "viewport_dp_cases": [
+    [
+      360,
+      780
+    ],
+    [
+      412,
+      915
+    ]
+  ],
+  "density_dpi": 320,
+  "font_scale_cases": [
+    1,
+    2
+  ],
+  "font_scale_restored": "1.0",
+  "wm_size_restored": "Physical size: 720x1560",
+  "checks": {
+    "native_sand_under_paws_regular": true,
+    "native_sand_under_paws_tall": true,
+    "native_shadow_under_paws": true,
+    "profile_opens_and_back_returns_home": true,
+    "font200_grounded_before_and_during_scroll": true
+  },
+  "fresh_instrumentation_suite_run": false,
+  "limitation": "Manual native visual/navigation checks; this run does not renew required physical Android policy evidence or claim iOS execution.",
+  "production_source_sha256": {
+    "mobile/feature/photo-analysis-ui/src/commonMain/kotlin/com/supernutrition/feature/photoanalysis/HomeAnimatedMascot.kt": "b2e416ac96bcb2737e570cd8c977cbe95e64fed8da54fc77ed4b95726edf8648",
+    "mobile/feature/photo-analysis-ui/src/commonMain/kotlin/com/supernutrition/feature/photoanalysis/HomeBackdrop.kt": "c40080f661e1596a467a8fb0f7c578d628476f5854fab419f634bcf6331d7b32",
+    "mobile/feature/photo-analysis-ui/src/commonMain/kotlin/com/supernutrition/feature/photoanalysis/HomeBackdropState.kt": "dcdebea567ff6f812e6566bca059d9dee58643e9a558c0e2c4cd34b17f5940c5",
+    "mobile/feature/photo-analysis-ui/src/commonMain/kotlin/com/supernutrition/feature/photoanalysis/HomeGardenGeometry.kt": "5b1aed50df8c85a529e4bcf41318d5a9f4dd4bc356ff4d8c744198304e7cf93d"
+  },
+  "task_owned_emulator_stop_requested": true,
+  "task_owned_emulator_stopped_confirmed": true
+}

@@ -1,0 +1,122 @@
+Drop box contents: 14 entries
+Max entries: 1000
+Low priority rate limit period: 2000 ms
+Low priority tags: {data_app_wtf, keymaster, system_server_wtf, system_app_strictmode, system_app_wtf, system_server_strictmode, data_app_strictmode, netstats}
+Searching for: data_app_anr
+
+========================================
+2026-10-23 03:15:24 data_app_anr (compressed text, 22989 bytes)
+SystemUptimeMs: 41241602
+Process: app.supernutrition
+PID: 14952
+UID: 10181
+Frozen: false
+Timestamp: 2026-10-23 03:14:58.356+0300
+Flags: 0x20a8be46
+Package: app.supernutrition v1 (0.0.0-scaffold)
+Foreground: Yes
+Process-Runtime: 293768
+Activity: app.supernutrition/com.supernutrition.feature.photoanalysis.PhotoAnalysisComposeActivity
+ErrorId: 68cf5498-226f-4293-856c-7c6817a8a02b
+Build: Android/sdk_phone64_x86_64/emu64x:15/AE3A.240806.019/12368160:userdebug/test-keys
+Loading-Progress: 1.0
+Dropped-Count: 0
+
+----- Output from /proc/pressure/memory -----
+some avg10=0.02 avg60=0.03 avg300=0.02 total=8253761
+full avg10=0.00 avg60=0.01 avg300=0.00 total=2877198
+----- End output from /proc/pressure/memory -----
+----- Output from /proc/pressure/cpu -----
+some avg10=5.53 avg60=5.41 avg300=7.04 total=1896735669
+full avg10=0.00 avg60=0.00 avg300=0.00 total=0
+----- End output from /proc/pressure/cpu -----
+----- Output from /proc/pressure/io -----
+some avg10=0.02 avg60=0.03 avg300=0.00 total=37367684
+full avg10=0.00 avg60=0.01 avg300=0.00 total=10838800
+----- End output from /proc/pressure/io -----
+
+CPU usage from 2ms to 24795ms later (2026-10-23 03:14:58.380 to 2026-10-23 03:15:23.172):
+  60% 14952/app.supernutrition: 31% user + 28% kernel / faults: 8351 minor 24 major
+  0.2% 375/android.hardware.camera.provider@2.7-service-google: 0% user + 0.1% kernel / faults: 235 minor
+  36% 4508/system_server: 15% user + 21% kernel / faults: 2730 minor 15 major
+  32% 382/android.hardware.sensors-service.multihal: 14% user + 17% kernel
+  27% 430/surfaceflinger: 10% user + 17% kernel / faults: 6 minor
+  18% 391/android.hardware.graphics.composer3-service.ranchu: 7.5% user + 11% kernel
+  18% 4439/cameraserver: 8.4% user + 10% kernel / faults: 183 minor
+  16% 4772/com.android.systemui: 7.8% user + 9% kernel / faults: 2569 minor
+  7.2% 11764/kworker/u8:3-events_unbound: 0% user + 7.2% kernel
+  4.1% 5179/com.android.phone: 1.7% user + 2.4% kernel / faults: 817 minor 1 major
+91% TOTAL: 33% user + 39% kernel + 0.1% iowait + 15% irq + 2.6% softirq
+Data File: /data/anr/anr_2026-10-23-03-14-58-411
+Subject: Input dispatching timed out (c2b9d48 app.supernutrition/com.supernutrition.feature.photoanalysis.PhotoAnalysisComposeActivity (server) is not responding. Waited 5006ms for FocusEvent(hasFocus=true)).
+RssHwmKb: 337576
+RssKb: 286740
+RssAnonKb: 171632
+RssShmemKb: 24320
+VmSwapKb: 0
+
+
+--- CriticalEventLog ---
+capacity: 20
+timestamp_ms: 1792714498390
+window_ms: 300000
+
+----- dumping pid: 14952 at 41216302
+
+----- pid 14952 at 2026-10-23 03:14:58.423496348+0300 -----
+Cmd line: app.supernutrition
+Build fingerprint: 'Android/sdk_phone64_x86_64/emu64x:15/AE3A.240806.019/12368160:userdebug/test-keys'
+ABI: 'x86_64'
+Build type: optimized
+Debug Store: 1,0,41216362::
+suspend all histogram:	Sum: 5.353ms 99% C.I. 4us-1871.040us Avg: 232.739us Max: 1936us
+DALVIK THREADS (54):
+"main" prio=5 tid=1 Waiting
+  | group="main" sCount=1 ucsCount=0 flags=1 obj=0x7263eb28 self=0x7d15305cbbe0
+  | sysTid=14952 nice=-10 cgrp=top-app sched=0/0 handle=0x7d163f93fd18
+  | state=S schedstat=( 37257965109 8447142574 9940 ) utm=2604 stm=1121 core=0 HZ=100
+  | stack=0x7ffe5abe1000-0x7ffe5abe3000 stackSize=8188KB
+  | held mutexes=
+  at jdk.internal.misc.Unsafe.park(Native method)
+  - waiting on an unknown object
+  at java.util.concurrent.locks.LockSupport.park(LockSupport.java:211)
+  at androidx.concurrent.futures.AbstractResolvableFuture.get(AbstractResolvableFuture.java:485)
+  at androidx.concurrent.futures.CallbackToFutureAdapter$SafeFuture.get(CallbackToFutureAdapter.java:199)
+  at androidx.camera.core.impl.utils.futures.ChainingListenableFuture.get(ChainingListenableFuture.java:84)
+  at com.supernutrition.feature.photoanalysis.PhotoAnalysisLiveCameraPreviewKt.PhotoAnalysisCameraBinding$lambda$0$0$bindPreview(PhotoAnalysisLiveCameraPreview.kt:195)
+  at com.supernutrition.feature.photoanalysis.PhotoAnalysisLiveCameraPreviewKt.PhotoAnalysisCameraBinding$lambda$0$0$3(PhotoAnalysisLiveCameraPreview.kt:216)
+  at com.supernutrition.feature.photoanalysis.PhotoAnalysisLiveCameraPreviewKt.$r8$lambda$zvtl3kxudJvx8dEr_M3Nz6UBpvY(unavailable:0)
+  at com.supernutrition.feature.photoanalysis.PhotoAnalysisLiveCameraPreviewKt$$ExternalSyntheticLambda5.onStateChanged(D8$$SyntheticClass:0)
+  at androidx.lifecycle.LifecycleRegistry$ObserverWithState.dispatchEvent(LifecycleRegistry.jvm.kt:313)
+  at androidx.lifecycle.LifecycleRegistry.addObserver(LifecycleRegistry.jvm.kt:191)
+  at com.supernutrition.feature.photoanalysis.PhotoAnalysisLiveCameraPreviewKt.PhotoAnalysisCameraBinding$lambda$0$0(PhotoAnalysisLiveCameraPreview.kt:221)
+  at com.supernutrition.feature.photoanalysis.PhotoAnalysisLiveCameraPreviewKt.$r8$lambda$lNraGYd1SW3hMY_feuzYtoGsMTk(unavailable:0)
+  at com.supernutrition.feature.photoanalysis.PhotoAnalysisLiveCameraPreviewKt$$ExternalSyntheticLambda7.invoke(D8$$SyntheticClass:0)
+  at androidx.compose.runtime.DisposableEffectImpl.onRemembered(Effects.kt:87)
+  at androidx.compose.runtime.internal.RememberEventDispatcher.dispatchRememberList(RememberEventDispatcher.kt:268)
+  at androidx.compose.runtime.internal.RememberEventDispatcher.dispatchRememberObservers(RememberEventDispatcher.kt:240)
+  at androidx.compose.runtime.CompositionImpl.applyChangesInLocked(Composition.kt:1209)
+  at androidx.compose.runtime.CompositionImpl.applyChanges(Composition.kt:1236)
+  - locked <@addr=0x148b7ba8> (a java.lang.Object)
+  at androidx.compose.runtime.Recomposer$runRecomposeAndApplyChanges$2.invokeSuspend$lambda$2(Recomposer.kt:733)
+  at androidx.compose.runtime.Recomposer$runRecomposeAndApplyChanges$2$$ExternalSyntheticLambda0.invoke(D8$$SyntheticClass:0)
+  at androidx.compose.ui.platform.AndroidUiFrameClock$withFrameNanos$2$callback$1.doFrame(AndroidUiFrameClock.android.kt:39)
+  at androidx.compose.ui.platform.AndroidUiDispatcher.performFrameDispatch(AndroidUiDispatcher.android.kt:108)
+  at androidx.compose.ui.platform.AndroidUiDispatcher.access$performFrameDispatch(AndroidUiDispatcher.android.kt:41)
+  at androidx.compose.ui.platform.AndroidUiDispatcher$dispatchCallback$1.doFrame(AndroidUiDispatcher.android.kt:69)
+  at android.view.Choreographer$CallbackRecord.run(Choreographer.java:1404)
+  at android.view.Choreographer$CallbackRecord.run(Choreographer.java:1415)
+  at android.view.Choreographer.doCallbacks(Choreographer.java:1015)
+  at android.view.Choreographer.doFrame(Choreographer.java:941)
+  at android.view.Choreographer$FrameDisplayEventReceiver.run(Choreographer.java:1389)
+  at android.os.Handler.handleCallback(Handler.java:959)
+  at android.os.Handler.dispatchMessage(Handler.java:100)
+  at android.os.Looper.loopOnce(Looper.java:232)
+  at android.os.Looper.loop(Looper.java:317)
+  at android.app.ActivityThread.main(ActivityThread.java:8705)
+  at java.lang.reflect.Method.invoke(Native method)
+  at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:580)
+  at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:886)
+DumpLatencyMs: 67.3811
+
+"ReferenceQueueDaemon" daemon prio=5 tid=7 Waiting

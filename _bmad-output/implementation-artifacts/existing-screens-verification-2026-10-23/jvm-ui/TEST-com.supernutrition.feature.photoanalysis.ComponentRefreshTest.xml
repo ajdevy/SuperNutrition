@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ComponentRefreshTest[jvm]" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-10-23T05:17:28.782Z" hostname="Anastasias-MacBook-Air.local" time="2.291">
+  <properties/>
+  <testcase name="rhythm and reward summary refresh independently of their screen containers[jvm]" classname="com.supernutrition.feature.photoanalysis.ComponentRefreshTest" time="0.569"/>
+  <testcase name="native camera surface follows preview and callback replacements[jvm]" classname="com.supernutrition.feature.photoanalysis.ComponentRefreshTest" time="0.218"/>
+  <testcase name="host header refresh preserves unchanged rhythm metrics[jvm]" classname="com.supernutrition.feature.photoanalysis.ComponentRefreshTest" time="0.288"/>
+  <testcase name="grid redraws a changed prompt and current region labels over the same photo[jvm]" classname="com.supernutrition.feature.photoanalysis.ComponentRefreshTest" time="0.65"/>
+  <testcase name="review action labels grow equally and dispatch replacement callbacks[jvm]" classname="com.supernutrition.feature.photoanalysis.ComponentRefreshTest" time="0.194"/>
+  <testcase name="photo palette replaces evidence and callbacks without keeping old selectable foods[jvm]" classname="com.supernutrition.feature.photoanalysis.ComponentRefreshTest" time="0.371"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

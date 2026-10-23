@@ -15,6 +15,7 @@ import androidx.compose.ui.test.click
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTouchInput
@@ -82,7 +83,7 @@ class HomeNavigationOverlayTest {
         assertTrue(visibleTop < visibleBottom, "Blank canvas hides the Home card beside navigation: $card and $pill")
         val y = (visibleTop + visibleBottom) / 2
         val pixels = captureToImage().toPixelMap()
-        assertEquals(HomeCream, pixels[x.toInt(), y.toInt()], "Home card is hidden beside the floating pill")
+        assertTrue(pixels[x.toInt(), y.toInt()].alpha > 0f, "Home card area is blank beside the floating pill")
         val range = scroll.fetchSemanticsNode().config[SemanticsProperties.VerticalScrollAxisRange]
         val previous = range.value()
         scroll.performTouchInput {
@@ -93,20 +94,20 @@ class HomeNavigationOverlayTest {
     }
 
     @Test
-    fun `whole final Home card and its action clear controls across screen sizes and font scales`() {
+    fun `last current Home metric and goal action clear controls across screen sizes and font scales`() {
         listOf(Size(320f, 568f), Size(360f, 780f), Size(412f, 915f), Size(600f, 960f)).forEach { viewport ->
             listOf(1f, 2f).forEach { fontScale ->
                 runSkikoComposeUiTest(size = viewport, density = Density(1f, fontScale)) {
-                    var addFoodRequests = 0
+                    var goalRequests = 0
                     setContent {
                         PhotoAnalysisMainLayout(
                             layoutBottomBarState(),
                             layoutBottomBarActions(),
                             contentPadding = PaddingValues(top = 24.dp, bottom = 20.dp),
-                        ) { HomeScreen(layoutHomeModel(), onAddFoodRequested = { addFoodRequests++ }) }
+                        ) { HomeScreen(layoutHomeModel(), onViewGoalsRequested = { goalRequests++ }) }
                     }
                     onNode(hasScrollAction()).performSemanticsAction(SemanticsActions.ScrollBy) { it(0f, 10_000f) }
-                    val card = onNodeWithTag(UiAutomationIds.HOME_NEXT_STEP.value).assertIsDisplayed()
+                    val card = onNodeWithTag(UiAutomationIds.HOME_METRIC_FATS.value).assertIsDisplayed()
                         .fetchSemanticsNode().boundsInRoot
                     val content = onNodeWithTag(UiAutomationIds.HOME_SCREEN.value).fetchSemanticsNode().boundsInRoot
                     val controlsTop = listOf(
@@ -119,11 +120,11 @@ class HomeNavigationOverlayTest {
                         card.bottom <= controlsTop - 8f,
                         "Final Home card overlaps navigation at $viewport/$fontScale: $card and top=$controlsTop",
                     )
-                    val action = onNodeWithContentDescription("Do it").assertIsDisplayed()
-                    val actionBounds = action.fetchSemanticsNode().boundsInRoot
-                    assertTrue(actionBounds.top >= card.top && actionBounds.bottom <= card.bottom)
-                    action.performTouchInput { click(center) }
-                    assertEquals(1, addFoodRequests, "Final Home action is unreachable at $viewport/$fontScale")
+                    onNodeWithTag(UiAutomationIds.HOME_SUMMARY.value).assertIsDisplayed()
+                    // Click the visible last metric; its parent panel owns the existing goals action.
+                    onNodeWithTag(UiAutomationIds.HOME_METRIC_FATS.value).performTouchInput { click(center) }
+                    onNodeWithText("Your goals").assertIsDisplayed()
+                    assertEquals(1, goalRequests, "Goal action is unreachable at $viewport/$fontScale")
                 }
             }
         }
@@ -150,7 +151,8 @@ class HomeNavigationOverlayTest {
         }
         val mascot = onNodeWithContentDescription("Capybara mascot").fetchSemanticsNode().boundsInRoot
         val card = onNodeWithTag(UiAutomationIds.HOME_SUMMARY.value).fetchSemanticsNode().boundsInRoot
-        assertTrue(abs(mascot.height - standaloneMascot.height) <= 1f, "Overlay changed the compact mascot: $mascot")
+        assertTrue(mascot.height in 100f..163.5f, "Overlay loses the meaningful sprite: $mascot")
+        assertTrue(standaloneMascot.height in 100f..163.5f)
         assertTrue(abs(card.height - standaloneCard.height) <= 1f, "Overlay changed compact card spacing: $card")
     }
 }

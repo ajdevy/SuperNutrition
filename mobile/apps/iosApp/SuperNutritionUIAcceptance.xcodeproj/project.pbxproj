@@ -20,6 +20,7 @@
 		B10000010000000000000012 /* capture_close.png in Resources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000012 /* capture_close.png */; };
 		B10000010000000000000013 /* capture_gallery.png in Resources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000013 /* capture_gallery.png */; };
 		B10000010000000000000014 /* capture_shutter.png in Resources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000014 /* capture_shutter.png */; };
+		B10000010000000000000015 /* Localizable.strings in Test Resources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000009 /* Localizable.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -150,9 +151,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = L60000010000000000000001 /* Build configuration list for PBXNativeTarget "SuperNutritionUIAcceptance" */;
 			buildPhases = (
+				S32000010000000000000001 /* Build SharedKit framework */,
 				P30000010000000000000003 /* Sources */,
 				P30000010000000000000001 /* Frameworks */,
-				S32000010000000000000001 /* Build SharedKit framework */,
 				P31000010000000000000001 /* Embed Frameworks */,
 				P30000010000000000000004 /* Resources */,
 			);
@@ -187,9 +188,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = L60000010000000000000003 /* Build configuration list for PBXNativeTarget "SuperNutrition" */;
 			buildPhases = (
+				S32000010000000000000002 /* Build Production SharedKit framework */,
 				P30000010000000000000007 /* Production Sources */,
 				P30000010000000000000009 /* Production Frameworks */,
-				S32000010000000000000002 /* Build Production SharedKit framework */,
 				P31000010000000000000002 /* Production Embed Frameworks */,
 				P30000010000000000000008 /* Production Resources */,
 			);
@@ -237,7 +238,7 @@
 
 /* Begin PBXResourcesBuildPhase section */
 		P30000010000000000000004 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (B10000010000000000000010 /* Localizable.strings in Resources */, B10000010000000000000012 /* capture_close.png in Resources */, B10000010000000000000013 /* capture_gallery.png in Resources */, B10000010000000000000014 /* capture_shutter.png in Resources */); runOnlyForDeploymentPostprocessing = 0; };
-		P30000010000000000000006 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		P30000010000000000000006 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (B10000010000000000000015 /* Localizable.strings in Test Resources */); runOnlyForDeploymentPostprocessing = 0; };
 		P30000010000000000000008 /* Production Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (B10000010000000000000010 /* Localizable.strings in Resources */, B10000010000000000000012 /* capture_close.png in Resources */, B10000010000000000000013 /* capture_gallery.png in Resources */, B10000010000000000000014 /* capture_shutter.png in Resources */); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXResourcesBuildPhase section */
 
@@ -258,10 +259,12 @@
 /* Begin PBXShellScriptBuildPhase section */
 		S32000010000000000000001 /* Build SharedKit framework */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
+				"$(PROJECT_DIR)/build-sharedkit-framework.sh",
 			);
 			name = "Build SharedKit framework";
 			outputPaths = (
@@ -269,14 +272,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\ncd \"${PROJECT_DIR}/../..\"\n./gradlew -Psupernutrition.enableSharedKitFramework=true -Psupernutrition.enableIosDeviceTarget=true -Psupernutrition.enableTestingAppleTargets=true -Psupernutrition.enableIntelIosX64=true \":apps:sharedKit:link${CONFIGURATION}Framework${KOTLIN_TARGET}\"\n";
+			shellScript = "exec /bin/sh \"${PROJECT_DIR}/build-sharedkit-framework.sh\" --xcode-resources\n";
 		};
 		S32000010000000000000002 /* Build Production SharedKit framework */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
+				"$(PROJECT_DIR)/build-sharedkit-framework.sh",
 			);
 			name = "Build Production SharedKit framework";
 			outputPaths = (
@@ -284,7 +289,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\ncd \"${PROJECT_DIR}/../..\"\n./gradlew -Psupernutrition.enableSharedKitFramework=true -Psupernutrition.enableIosDeviceTarget=true -Psupernutrition.enableTestingAppleTargets=true -Psupernutrition.enableIntelIosX64=true \":apps:sharedKit:link${CONFIGURATION}Framework${KOTLIN_TARGET}\"\n";
+			shellScript = "exec /bin/sh \"${PROJECT_DIR}/build-sharedkit-framework.sh\" --xcode-resources\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

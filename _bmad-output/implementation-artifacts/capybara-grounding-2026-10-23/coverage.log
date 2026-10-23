@@ -1,0 +1,135 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.5.0/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build
+> Task :build-logic:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :build-logic:compileKotlin UP-TO-DATE
+> Task :build-logic:compileJava NO-SOURCE
+> Task :build-logic:pluginDescriptors UP-TO-DATE
+> Task :build-logic:processResources UP-TO-DATE
+> Task :build-logic:classes UP-TO-DATE
+> Task :build-logic:jar UP-TO-DATE
+
+> Configure project :apps:sharedKit
+w: ⚠️ Deprecated Kotlin/Native Host
+The current host platform 'macos_x64' is deprecated and will be removed in a future Kotlin release. The Kotlin/Native compiler will no longer be distributed for this host.
+Solution: Migrate your build to a non-deprecated supported host platform for Kotlin/Native.
+Learn more about Kotlin/Native target support and migration: https://kotl.in/native-targets-tiers
+
+w: ⚠️ Default Kotlin Hierarchy Template Not Applied Correctly
+The Default Kotlin Hierarchy Template was not applied to 'project ':apps:sharedKit'':
+Explicit .dependsOn() edges were configured for the following source sets:
+[iosArm64Main, iosMain]
+
+Consider removing dependsOn-calls or disabling the default template by adding
+    'kotlin.mpp.applyDefaultHierarchyTemplate=false'
+to your gradle.properties
+Solution: Please remove the dependsOn-calls or disable the default template.
+Learn more about hierarchy templates: https://kotl.in/hierarchy-template
+
+
+> Configure project :platform:photo-android
+w: ⚠️ Unused Kotlin Source Sets
+The Kotlin source set commonTest was configured but not added to any Kotlin compilation.
+Solution: You can add a source set to a target's compilation by connecting it with the compilation's default source set using 'dependsOn'.
+See https://kotl.in/connecting-source-sets
+
+
+> Task :core:ui:kmpPartiallyResolvedDependenciesChecker
+> Task :core:config:kmpPartiallyResolvedDependenciesChecker
+> Task :core:ui:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :core:config:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :core:ui:compileKotlinJvm UP-TO-DATE
+> Task :core:config:compileKotlinJvm UP-TO-DATE
+> Task :core:ui:compileJvmMainJava NO-SOURCE
+> Task :core:config:compileJvmMainJava NO-SOURCE
+> Task :core:ui:jvmProcessResources NO-SOURCE
+> Task :core:config:jvmProcessResources NO-SOURCE
+> Task :core:ui:processJvmMainResources SKIPPED
+> Task :core:config:processJvmMainResources SKIPPED
+> Task :core:ui:jvmMainClasses UP-TO-DATE
+> Task :core:config:jvmMainClasses UP-TO-DATE
+> Task :core:ui:jvmJar UP-TO-DATE
+> Task :core:config:jvmJar UP-TO-DATE
+> Task :domain:inference:kmpPartiallyResolvedDependenciesChecker
+> Task :domain:nutrition:kmpPartiallyResolvedDependenciesChecker
+> Task :domain:nutrition:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :domain:inference:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :domain:nutrition:jvmProcessResources UP-TO-DATE
+> Task :domain:nutrition:processJvmMainResources SKIPPED
+> Task :domain:photo-analysis:kmpPartiallyResolvedDependenciesChecker
+> Task :domain:photo-analysis:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :domain:photo-analysis:jvmProcessResources NO-SOURCE
+> Task :domain:photo-analysis:processJvmMainResources SKIPPED
+> Task :feature:photo-analysis-presenter:kmpPartiallyResolvedDependenciesChecker
+> Task :feature:photo-analysis-presenter:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :feature:photo-analysis-presenter:jvmProcessResources NO-SOURCE
+> Task :feature:photo-analysis-presenter:processJvmMainResources SKIPPED
+> Task :domain:inference:compileKotlinJvm UP-TO-DATE
+> Task :domain:inference:compileJvmMainJava NO-SOURCE
+> Task :domain:inference:jvmProcessResources NO-SOURCE
+> Task :domain:inference:processJvmMainResources SKIPPED
+> Task :domain:inference:jvmMainClasses UP-TO-DATE
+> Task :domain:inference:jvmJar UP-TO-DATE
+> Task :feature:photo-analysis-ui:checkJvmDevComposeLibrariesCompatibility
+> Task :domain:nutrition:compileKotlinJvm UP-TO-DATE
+> Task :domain:nutrition:compileJvmMainJava NO-SOURCE
+> Task :domain:nutrition:jvmMainClasses UP-TO-DATE
+> Task :domain:nutrition:jvmJar UP-TO-DATE
+> Task :feature:photo-analysis-ui:kmpPartiallyResolvedDependenciesChecker
+> Task :feature:photo-analysis-ui:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :feature:photo-analysis-ui:checkJvmMainComposeLibrariesCompatibility
+> Task :domain:photo-analysis:compileKotlinJvm UP-TO-DATE
+> Task :domain:photo-analysis:compileJvmMainJava NO-SOURCE
+> Task :domain:photo-analysis:jvmMainClasses UP-TO-DATE
+> Task :domain:photo-analysis:jvmJar UP-TO-DATE
+> Task :feature:photo-analysis-ui:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :feature:photo-analysis-presenter:compileKotlinJvm UP-TO-DATE
+> Task :feature:photo-analysis-presenter:compileJvmMainJava NO-SOURCE
+> Task :feature:photo-analysis-presenter:jvmMainClasses UP-TO-DATE
+> Task :feature:photo-analysis-presenter:jvmJar UP-TO-DATE
+> Task :feature:photo-analysis-ui:copyNonXmlValueResourcesForCommonMain UP-TO-DATE
+> Task :feature:photo-analysis-ui:prepareComposeResourcesTaskForCommonMain UP-TO-DATE
+> Task :feature:photo-analysis-ui:generateResourceAccessorsForCommonMain UP-TO-DATE
+> Task :feature:photo-analysis-ui:convertXmlValueResourcesForJvmMain NO-SOURCE
+> Task :feature:photo-analysis-ui:copyNonXmlValueResourcesForJvmMain NO-SOURCE
+> Task :feature:photo-analysis-ui:prepareComposeResourcesTaskForJvmMain NO-SOURCE
+> Task :feature:photo-analysis-ui:generateResourceAccessorsForJvmMain NO-SOURCE
+> Task :feature:photo-analysis-ui:generateActualResourceCollectorsForJvmMain UP-TO-DATE
+> Task :feature:photo-analysis-ui:generateComposeResClass UP-TO-DATE
+> Task :feature:photo-analysis-ui:generateExpectResourceCollectorsForCommonMain UP-TO-DATE
+> Task :feature:photo-analysis-ui:compileKotlinJvm UP-TO-DATE
+> Task :feature:photo-analysis-ui:compileJvmMainJava NO-SOURCE
+> Task :feature:photo-analysis-ui:convertXmlValueResourcesForJvmDev NO-SOURCE
+> Task :feature:photo-analysis-ui:copyNonXmlValueResourcesForJvmDev NO-SOURCE
+> Task :feature:photo-analysis-ui:prepareComposeResourcesTaskForJvmDev NO-SOURCE
+> Task :feature:photo-analysis-ui:generateResourceAccessorsForJvmDev NO-SOURCE
+> Task :feature:photo-analysis-ui:assembleJvmMainResources UP-TO-DATE
+> Task :feature:photo-analysis-ui:jvmProcessResources UP-TO-DATE
+> Task :feature:photo-analysis-ui:processJvmMainResources SKIPPED
+> Task :feature:photo-analysis-ui:jvmMainClasses UP-TO-DATE
+> Task :feature:photo-analysis-ui:jvmJar UP-TO-DATE
+> Task :feature:photo-analysis-ui:compileDevKotlinJvm NO-SOURCE
+> Task :feature:photo-analysis-ui:compileJvmDevJava NO-SOURCE
+> Task :feature:photo-analysis-ui:checkJvmTestComposeLibrariesCompatibility
+> Task :feature:photo-analysis-ui:convertXmlValueResourcesForCommonTest NO-SOURCE
+> Task :feature:photo-analysis-ui:copyNonXmlValueResourcesForCommonTest NO-SOURCE
+> Task :feature:photo-analysis-ui:prepareComposeResourcesTaskForCommonTest NO-SOURCE
+> Task :feature:photo-analysis-ui:generateResourceAccessorsForCommonTest NO-SOURCE
+> Task :feature:photo-analysis-ui:convertXmlValueResourcesForJvmTest NO-SOURCE
+> Task :feature:photo-analysis-ui:copyNonXmlValueResourcesForJvmTest NO-SOURCE
+> Task :feature:photo-analysis-ui:prepareComposeResourcesTaskForJvmTest NO-SOURCE
+> Task :feature:photo-analysis-ui:generateResourceAccessorsForJvmTest NO-SOURCE
+> Task :feature:photo-analysis-ui:compileTestKotlinJvm UP-TO-DATE
+> Task :feature:photo-analysis-ui:compileJvmTestJava NO-SOURCE
+> Task :feature:photo-analysis-ui:assembleJvmTestResources UP-TO-DATE
+> Task :feature:photo-analysis-ui:jvmTestProcessResources UP-TO-DATE
+> Task :feature:photo-analysis-ui:processJvmTestResources SKIPPED
+> Task :feature:photo-analysis-ui:jvmTestClasses UP-TO-DATE
+> Task :feature:photo-analysis-ui:koverFindJar UP-TO-DATE
+> Task :feature:photo-analysis-ui:jvmTest UP-TO-DATE
+> Task :feature:photo-analysis-ui:koverGenerateArtifactJvm
+> Task :feature:photo-analysis-ui:koverXmlReportJvm
+
+[Incubating] Problems report is available at: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/build/reports/problems/problems-report.html
+
+BUILD SUCCESSFUL in 1m 8s
+44 actionable tasks: 12 executed, 32 up-to-date

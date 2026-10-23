@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="UiAutomationIdTest[jvm]" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-23T00:51:21.847Z" hostname="Anastasias-MacBook-Air.local" time="4.603">
+  <properties/>
+  <testcase name="automation identifiers reject malformed values[jvm]" classname="com.supernutrition.core.ui.UiAutomationIdTest" time="3.797"/>
+  <testcase name="registry is unique and locale neutral[jvm]" classname="com.supernutrition.core.ui.UiAutomationIdTest" time="0.015"/>
+  <testcase name="visible component identifiers are stable and encode opaque punctuation[jvm]" classname="com.supernutrition.core.ui.UiAutomationIdTest" time="0.64"/>
+  <testcase name="camera capture contract exposes every permission and availability state[jvm]" classname="com.supernutrition.core.ui.UiAutomationIdTest" time="0.099"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

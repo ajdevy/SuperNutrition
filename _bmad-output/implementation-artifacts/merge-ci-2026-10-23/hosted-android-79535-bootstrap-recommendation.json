@@ -1,0 +1,45 @@
+{
+  "run_id": "39994995975",
+  "head": "79535a2dfd3a4c3cb67c73bb6e26ba8421c1cf74",
+  "runner_constraint_from_root": {
+    "available_cpu_cores": 2,
+    "memory_gib": 8,
+    "source": "Root verified official GitHub private ubuntu-24.04 runner documentation"
+  },
+  "recommended_resources": {
+    "guest_cpu_cores": 2,
+    "gpu": "keep explicit swiftshader",
+    "ram": "pin measured2560MiB initially; increasing to4096MiB is not justified on8GiB host alongside Gradle",
+    "dalvik_heap_mib": 576,
+    "connected_gradle_max_workers": 1
+  },
+  "recommended_behavior": [
+    "Remove force-stop loop for launcher/GMS/IME, which native bootstrap immediately restarts.",
+    "Retain startup logs from first device connection; do not clear after boot mutations.",
+    "Wait with host command deadline for native broadcast idle, user unlocked, then actual resolved launcher interaction/idle and no error windows.",
+    "Fail closed on system/appANR or crash; do not dismiss errors, retry assertions, or relax timeouts.",
+    "Repeat genuine native instrumentation to prove repaired bootstrap and all test assertions."
+  ],
+  "supersedes": "Earlier four-core/four-GB-guest proposal is withdrawn: private runner has2CPU/8GiB.",
+  "verified_android16_commands": {
+    "broadcast_idle": {
+      "command": "am wait-for-broadcast-idle --flush-broadcast-loopers",
+      "source_file": "am-ActivityManagerShellCommand.java",
+      "lines": "3691-3705",
+      "host_timeout_required": true
+    },
+    "user_state": {
+      "command": "am get-started-user-state 0",
+      "source_file": "am-ActivityManagerShellCommand.java",
+      "lines": "2780-2789"
+    },
+    "enabled_ime": {
+      "command": "ime list -s --user 0",
+      "source_file": "inputmethod-InputMethodManagerService.java",
+      "lines": "6449-6493"
+    },
+    "default_ime": "settings --user 0 get secure default_input_method",
+    "invalid_command_to_avoid": "cmd user is-user-unlocked is not implemented in Android16 UserManagerServiceShellCommand"
+  },
+  "scope": "Native bootstrap repair only; preserve API36, UI assertions, complete suites and failure for any app/systemANR/crash."
+}

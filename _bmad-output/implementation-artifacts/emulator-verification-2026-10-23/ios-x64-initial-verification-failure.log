@@ -1,0 +1,62 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.5.0/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build
+> Task :build-logic:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :build-logic:compileKotlin UP-TO-DATE
+> Task :build-logic:compileJava NO-SOURCE
+> Task :build-logic:pluginDescriptors UP-TO-DATE
+> Task :build-logic:processResources UP-TO-DATE
+> Task :build-logic:classes UP-TO-DATE
+> Task :build-logic:jar UP-TO-DATE
+
+> Configure project :apps:sharedKit
+w: ⚠️ Deprecated Kotlin/Native Host
+The current host platform 'macos_x64' is deprecated and will be removed in a future Kotlin release. The Kotlin/Native compiler will no longer be distributed for this host.
+Solution: Migrate your build to a non-deprecated supported host platform for Kotlin/Native.
+Learn more about Kotlin/Native target support and migration: https://kotl.in/native-targets-tiers
+
+
+> Configure project :platform:photo-android
+w: ⚠️ Unused Kotlin Source Sets
+The Kotlin source set commonTest was configured but not added to any Kotlin compilation.
+Solution: You can add a source set to a target's compilation by connecting it with the compilation's default source set using 'dependsOn'.
+See https://kotl.in/connecting-source-sets
+
+
+> Task :core:config:kmpPartiallyResolvedDependenciesChecker
+> Task :core:config:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :core:config:downloadKotlinNativeDistribution UP-TO-DATE
+> Task :core:config:compileKotlinIosX64
+> Task :core:config:exportCrossCompilationMetadataForIosX64ApiElements
+> Task :core:ui:kmpPartiallyResolvedDependenciesChecker
+> Task :core:ui:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :core:ui:downloadKotlinNativeDistribution FAILED
+> Task :apps:sharedKit:kmpPartiallyResolvedDependenciesChecker
+
+[Incubating] Problems report is available at: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':core:ui:downloadKotlinNativeDistribution' (registered by plugin 'com.supernutrition.kmp-apple-targets').
+> Error while evaluating property 'kotlinNativeProvider$kotlin_gradle_plugin_common.kotlinNativeBundleVersion$kotlin_gradle_plugin_common' of task ':core:ui:downloadKotlinNativeDistribution'.
+   > Could not isolate value org.jetbrains.kotlin.gradle.targets.native.toolchain.NativeVersionValueSource$Params_Decorated@75c9e300 of type NativeVersionValueSource.Params
+      > Dependency verification failed for configuration ':core:ui:kotlinNativeBundleConfiguration'
+        6 artifacts failed verification:
+          - animation-core-uikitx64-1.9.1.module (org.jetbrains.compose.animation:animation-core-uikitx64:1.9.1) from repository MavenRepo
+          - atomicfu-iosx64-0.26.1.module (org.jetbrains.kotlinx:atomicfu-iosx64:0.26.1) from repository MavenRepo
+          - foundation-layout-uikitx64-1.9.1.module (org.jetbrains.compose.foundation:foundation-layout-uikitx64:1.9.1) from repository MavenRepo
+          - material-ripple-uikitx64-1.9.1.module (org.jetbrains.compose.material:material-ripple-uikitx64:1.9.1) from repository MavenRepo
+          - material3-uikitx64-1.9.0.module (org.jetbrains.compose.material3:material3-uikitx64:1.9.0) from repository MavenRepo
+          - ui-util-1.9.1.module (org.jetbrains.compose.ui:ui-util:1.9.1) from repository MavenRepo
+        If the artifacts are trustworthy, you will need to update the gradle/verification-metadata.xml file. For more on how to do this, please refer to https://docs.gradle.org/9.5.0/userguide/dependency_verification.html#sec:troubleshooting-verification in the Gradle documentation.
+
+        Open this report for more details: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/build/reports/dependency-verification/at-1792757905559/dependency-verification-report.html
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 3m 28s
+11 actionable tasks: 6 executed, 5 up-to-date

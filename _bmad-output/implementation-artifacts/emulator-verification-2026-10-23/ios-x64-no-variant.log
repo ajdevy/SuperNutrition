@@ -1,0 +1,1152 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.5.0/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build
+> Task :build-logic:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :build-logic:compileKotlin UP-TO-DATE
+> Task :build-logic:compileJava NO-SOURCE
+> Task :build-logic:pluginDescriptors UP-TO-DATE
+> Task :build-logic:processResources UP-TO-DATE
+> Task :build-logic:classes UP-TO-DATE
+> Task :build-logic:jar UP-TO-DATE
+
+> Configure project :apps:sharedKit
+w: ⚠️ Deprecated Kotlin/Native Host
+The current host platform 'macos_x64' is deprecated and will be removed in a future Kotlin release. The Kotlin/Native compiler will no longer be distributed for this host.
+Solution: Migrate your build to a non-deprecated supported host platform for Kotlin/Native.
+Learn more about Kotlin/Native target support and migration: https://kotl.in/native-targets-tiers
+
+w: ⚠️ Default Kotlin Hierarchy Template Not Applied Correctly
+The Default Kotlin Hierarchy Template was not applied to 'project ':apps:sharedKit'':
+Explicit .dependsOn() edges were configured for the following source sets:
+[iosArm64Main, iosMain, iosX64Main]
+
+Consider removing dependsOn-calls or disabling the default template by adding
+    'kotlin.mpp.applyDefaultHierarchyTemplate=false'
+to your gradle.properties
+Solution: Please remove the dependsOn-calls or disable the default template.
+Learn more about hierarchy templates: https://kotl.in/hierarchy-template
+
+
+> Configure project :feature:photo-analysis
+w: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/feature/photo-analysis/build.gradle.kts:56:36: 'val runtime: String' is deprecated. Specify dependency directly.
+w: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/feature/photo-analysis/build.gradle.kts:78:36: 'val runtime: String' is deprecated. Specify dependency directly.
+w: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/feature/photo-analysis/build.gradle.kts:79:36: 'val foundation: String' is deprecated. Specify dependency directly.
+w: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/feature/photo-analysis/build.gradle.kts:80:36: 'val material3: String' is deprecated. Specify dependency directly.
+w: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/feature/photo-analysis/build.gradle.kts:81:36: 'val ui: String' is deprecated. Specify dependency directly.
+
+> Configure project :platform:photo-android
+w: ⚠️ Unused Kotlin Source Sets
+The Kotlin source set commonTest was configured but not added to any Kotlin compilation.
+Solution: You can add a source set to a target's compilation by connecting it with the compilation's default source set using 'dependsOn'.
+See https://kotl.in/connecting-source-sets
+
+
+> Configure project :platform:photo-ios
+w: ⚠️ CInterop Commonization Disabled
+The project is using Kotlin Multiplatform with hierarchical structure and disabled 'cinterop commonization'
+
+'cinterop commonization' can be enabled in your 'gradle.properties'
+kotlin.mpp.enableCInteropCommonization=true
+
+To hide this message, add to your 'gradle.properties'
+kotlin.mpp.enableCInteropCommonization.nowarn=true
+
+The following source sets are affected:
+[appleMain, commonMain, iosMain, nativeMain]
+
+The following cinterops are affected:
+[cinterop:compilation/compileKotlinIosArm64/commonCrypto, cinterop:compilation/compileKotlinIosArm64/photoCapture, cinterop:compilation/compileKotlinIosArm64/photoFixture, cinterop:compilation/compileKotlinIosArm64/photoPermission, cinterop:compilation/compileKotlinIosX64/commonCrypto, cinterop:compilation/compileKotlinIosX64/photoCapture, cinterop:compilation/compileKotlinIosX64/photoFixture, cinterop:compilation/compileKotlinIosX64/photoPermission]
+Solution: Please enable 'cinterop commonization' in your 'gradle.properties'
+See: https://kotlinlang.org/docs/mpp-share-on-platforms.html#use-native-libraries-in-the-hierarchical-structure
+
+
+> Task :core:config:kmpPartiallyResolvedDependenciesChecker
+> Task :core:config:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :core:config:downloadKotlinNativeDistribution UP-TO-DATE
+> Task :apps:sharedKit:kmpPartiallyResolvedDependenciesChecker
+> Task :apps:sharedKit:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :apps:sharedKit:downloadKotlinNativeDistribution UP-TO-DATE
+> Task :core:ui:kmpPartiallyResolvedDependenciesChecker
+> Task :core:ui:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :core:ui:downloadKotlinNativeDistribution UP-TO-DATE
+> Task :core:config:compileKotlinIosX64 UP-TO-DATE
+> Task :core:ui:compileKotlinIosX64 UP-TO-DATE
+> Task :core:config:exportCrossCompilationMetadataForIosX64ApiElements UP-TO-DATE
+> Task :core:ui:exportCrossCompilationMetadataForIosX64ApiElements UP-TO-DATE
+> Task :domain:nutrition:kmpPartiallyResolvedDependenciesChecker
+> Task :domain:inference:kmpPartiallyResolvedDependenciesChecker
+> Task :domain:nutrition:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :domain:inference:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :domain:nutrition:downloadKotlinNativeDistribution UP-TO-DATE
+> Task :domain:inference:downloadKotlinNativeDistribution UP-TO-DATE
+> Task :domain:nutrition:exportCrossCompilationMetadataForIosX64ApiElements UP-TO-DATE
+> Task :domain:photo-analysis:kmpPartiallyResolvedDependenciesChecker
+> Task :domain:photo-analysis:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :domain:photo-analysis:downloadKotlinNativeDistribution UP-TO-DATE
+> Task :domain:photo-analysis:exportCrossCompilationMetadataForIosX64ApiElements UP-TO-DATE
+> Task :feature:photo-analysis:checkIosX64MainComposeLibrariesCompatibility
+> Task :feature:photo-analysis:kmpPartiallyResolvedDependenciesChecker
+> Task :feature:photo-analysis:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :feature:photo-analysis:downloadKotlinNativeDistribution UP-TO-DATE
+> Task :feature:photo-analysis:convertXmlValueResourcesForAppleMain NO-SOURCE
+> Task :feature:photo-analysis:copyNonXmlValueResourcesForAppleMain NO-SOURCE
+> Task :feature:photo-analysis:prepareComposeResourcesTaskForAppleMain NO-SOURCE
+> Task :feature:photo-analysis:generateResourceAccessorsForAppleMain SKIPPED
+> Task :feature:photo-analysis:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :feature:photo-analysis:copyNonXmlValueResourcesForCommonMain NO-SOURCE
+> Task :feature:photo-analysis:prepareComposeResourcesTaskForCommonMain NO-SOURCE
+> Task :feature:photo-analysis:generateResourceAccessorsForCommonMain SKIPPED
+> Task :feature:photo-analysis:convertXmlValueResourcesForIosMain NO-SOURCE
+> Task :feature:photo-analysis:copyNonXmlValueResourcesForIosMain NO-SOURCE
+> Task :feature:photo-analysis:prepareComposeResourcesTaskForIosMain NO-SOURCE
+> Task :feature:photo-analysis:generateResourceAccessorsForIosMain SKIPPED
+> Task :feature:photo-analysis:convertXmlValueResourcesForIosX64Main NO-SOURCE
+> Task :feature:photo-analysis:copyNonXmlValueResourcesForIosX64Main NO-SOURCE
+> Task :feature:photo-analysis:prepareComposeResourcesTaskForIosX64Main NO-SOURCE
+> Task :feature:photo-analysis:generateResourceAccessorsForIosX64Main SKIPPED
+> Task :feature:photo-analysis:convertXmlValueResourcesForNativeMain NO-SOURCE
+> Task :feature:photo-analysis:copyNonXmlValueResourcesForNativeMain NO-SOURCE
+> Task :feature:photo-analysis:prepareComposeResourcesTaskForNativeMain NO-SOURCE
+> Task :feature:photo-analysis:generateResourceAccessorsForNativeMain SKIPPED
+> Task :feature:photo-analysis:generateActualResourceCollectorsForIosX64Main SKIPPED
+> Task :feature:photo-analysis:generateComposeResClass SKIPPED
+> Task :feature:photo-analysis:generateExpectResourceCollectorsForCommonMain SKIPPED
+> Task :feature:photo-analysis-presenter:kmpPartiallyResolvedDependenciesChecker
+> Task :feature:photo-analysis-presenter:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :feature:photo-analysis-presenter:downloadKotlinNativeDistribution UP-TO-DATE
+> Task :feature:photo-analysis-presenter:exportCrossCompilationMetadataForIosX64ApiElements UP-TO-DATE
+> Task :feature:photo-analysis-ui:checkIosX64MainComposeLibrariesCompatibility
+> Task :feature:photo-analysis-ui:kmpPartiallyResolvedDependenciesChecker
+> Task :feature:photo-analysis-ui:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :feature:photo-analysis-ui:downloadKotlinNativeDistribution UP-TO-DATE
+> Task :feature:photo-analysis-ui:convertXmlValueResourcesForAppleMain NO-SOURCE
+> Task :feature:photo-analysis-ui:copyNonXmlValueResourcesForAppleMain NO-SOURCE
+> Task :feature:photo-analysis-ui:prepareComposeResourcesTaskForAppleMain NO-SOURCE
+> Task :feature:photo-analysis-ui:generateResourceAccessorsForAppleMain NO-SOURCE
+> Task :feature:photo-analysis-ui:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :feature:photo-analysis-ui:copyNonXmlValueResourcesForCommonMain UP-TO-DATE
+> Task :feature:photo-analysis-ui:prepareComposeResourcesTaskForCommonMain UP-TO-DATE
+> Task :feature:photo-analysis-ui:generateResourceAccessorsForCommonMain UP-TO-DATE
+> Task :feature:photo-analysis-ui:convertXmlValueResourcesForIosMain NO-SOURCE
+> Task :feature:photo-analysis-ui:copyNonXmlValueResourcesForIosMain NO-SOURCE
+> Task :feature:photo-analysis-ui:prepareComposeResourcesTaskForIosMain NO-SOURCE
+> Task :feature:photo-analysis-ui:generateResourceAccessorsForIosMain NO-SOURCE
+> Task :feature:photo-analysis-ui:convertXmlValueResourcesForIosX64Main NO-SOURCE
+> Task :feature:photo-analysis-ui:copyNonXmlValueResourcesForIosX64Main NO-SOURCE
+> Task :feature:photo-analysis-ui:prepareComposeResourcesTaskForIosX64Main NO-SOURCE
+> Task :feature:photo-analysis-ui:generateResourceAccessorsForIosX64Main NO-SOURCE
+> Task :feature:photo-analysis-ui:convertXmlValueResourcesForNativeMain NO-SOURCE
+> Task :feature:photo-analysis-ui:copyNonXmlValueResourcesForNativeMain NO-SOURCE
+> Task :feature:photo-analysis-ui:prepareComposeResourcesTaskForNativeMain NO-SOURCE
+> Task :feature:photo-analysis-ui:generateResourceAccessorsForNativeMain NO-SOURCE
+> Task :feature:photo-analysis-ui:generateActualResourceCollectorsForIosX64Main UP-TO-DATE
+> Task :feature:photo-analysis-ui:generateComposeResClass UP-TO-DATE
+> Task :feature:photo-analysis-ui:generateExpectResourceCollectorsForCommonMain UP-TO-DATE
+> Task :feature:photo-analysis-ui:exportCrossCompilationMetadataForIosX64ApiElements UP-TO-DATE
+> Task :feature:photo-analysis:exportCrossCompilationMetadataForIosX64ApiElements UP-TO-DATE
+> Task :platform:photo-ios:cinteropCommonCryptoIosX64
+> Task :domain:inference:compileKotlinIosX64
+> Task :domain:inference:exportCrossCompilationMetadataForIosX64ApiElements UP-TO-DATE
+> Task :platform:photo-ios:cinteropPhotoCaptureIosX64
+> Task :domain:photo-analysis:compileKotlinIosX64
+> Task :domain:nutrition:compileKotlinIosX64
+> Task :feature:photo-analysis-presenter:compileKotlinIosX64
+> Task :feature:photo-analysis-ui:compileKotlinIosX64 FAILED
+> Task :platform:photo-ios:kmpPartiallyResolvedDependenciesChecker
+> Task :platform:photo-ios:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :platform:photo-ios:downloadKotlinNativeDistribution UP-TO-DATE
+> Task :platform:photo-ios:exportCrossCompilationMetadataForIosX64ApiElements UP-TO-DATE
+> Task :platform:photo-ios:cinteropPhotoFixtureIosX64
+> Task :platform:photo-ios:cinteropPhotoPermissionIosX64
+> Task :platform:photo-ios:compileKotlinIosX64
+
+[Incubating] Problems report is available at: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':feature:photo-analysis-ui:compileKotlinIosX64' (registered by plugin 'com.supernutrition.kmp-apple-targets').
+> Could not resolve all files for configuration ':feature:photo-analysis-ui:iosX64CompileKlibraries'.
+   > Could not resolve org.jetbrains.compose.runtime:runtime:1.11.1.
+     Required by:
+         project ':feature:photo-analysis-ui'
+      > No matching variant of org.jetbrains.compose.runtime:runtime:1.11.1 was found. The consumer was configured to find a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.klib.packaging' with value 'non-packed', attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64', attribute 'org.jetbrains.kotlin.platform.type' with value 'native' but:
+          - Variant 'androidApiElements-published' declares a library for use during compile-time, preferably optimized for Android:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'androidRuntimeElements-published' declares a library for use during runtime, preferably optimized for Android:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'androidSourcesElements-published' declares a component for use during runtime, preferably optimized for Android:
+              - Incompatible because this component declares documentation, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a library, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'desktopApiElements-published' declares a library for use during compile-time, preferably optimized for standard JVMs:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'desktopRuntimeElements-published' declares a library for use during runtime, preferably optimized for standard JVMs:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'desktopSourcesElements-published' declares a component for use during runtime, preferably optimized for standard JVMs:
+              - Incompatible because this component declares documentation, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a library, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'iosArm64ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_arm64' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosArm64MetadataElements-published' declares a library, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_arm64' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosArm64SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_arm64' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosSimulatorArm64ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_simulator_arm64' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosSimulatorArm64MetadataElements-published' declares a library, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_simulator_arm64' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosSimulatorArm64SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_simulator_arm64' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'jsApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'js' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'jsRuntimeElements-published' declares a library, preferably optimized for non-jvm:
+              - Incompatible because this component declares a component for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'js' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'jsSourcesElements-published' declares a component, preferably optimized for non-jvm:
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'js' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'linuxArm64ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'linux_arm64' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'linuxArm64SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'linux_arm64' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'linuxX64ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'linux_x64' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'linuxX64SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'linux_x64' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'macosArm64ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'macos_arm64' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'macosArm64MetadataElements-published' declares a library, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'macos_arm64' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'macosArm64SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'macos_arm64' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'metadataApiElements' declares a library, preferably optimized for non-jvm:
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'common' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'metadataSourcesElements' declares a component, preferably optimized for non-jvm:
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'common' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'mingwX64ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'mingw_x64' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'mingwX64SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'mingw_x64' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'tvosArm64ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'tvos_arm64' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'tvosArm64MetadataElements-published' declares a library, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'tvos_arm64' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'tvosArm64SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'tvos_arm64' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'tvosSimulatorArm64ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'tvos_simulator_arm64' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'tvosSimulatorArm64MetadataElements-published' declares a library, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'tvos_simulator_arm64' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'tvosSimulatorArm64SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'tvos_simulator_arm64' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'wasmJsApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'wasm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'wasmJsRuntimeElements-published' declares a library, preferably optimized for non-jvm:
+              - Incompatible because this component declares a component for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'wasm' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'wasmJsSourcesElements-published' declares a component, preferably optimized for non-jvm:
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'wasm' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'watchosArm32ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'watchos_arm32' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'watchosArm32MetadataElements-published' declares a library, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'watchos_arm32' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'watchosArm32SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'watchos_arm32' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'watchosArm64ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'watchos_arm64' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'watchosArm64MetadataElements-published' declares a library, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'watchos_arm64' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'watchosArm64SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'watchos_arm64' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'watchosSimulatorArm64ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'watchos_simulator_arm64' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'watchosSimulatorArm64MetadataElements-published' declares a library, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'watchos_simulator_arm64' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'watchosSimulatorArm64SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'watchos_simulator_arm64' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+   > Could not resolve org.jetbrains.compose.foundation:foundation:1.11.1.
+     Required by:
+         project ':feature:photo-analysis-ui'
+      > No matching variant of org.jetbrains.compose.foundation:foundation:1.11.1 was found. The consumer was configured to find a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.klib.packaging' with value 'non-packed', attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64', attribute 'org.jetbrains.kotlin.platform.type' with value 'native' but:
+          - Variant 'androidApiElements-published' declares a library for use during compile-time, preferably optimized for Android:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'androidRuntimeElements-published' declares a library for use during runtime, preferably optimized for Android:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'androidSourcesElements-published' declares a component for use during runtime, preferably optimized for Android:
+              - Incompatible because this component declares documentation, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a library, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'desktopApiElements-published' declares a library for use during compile-time, preferably optimized for standard JVMs:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'desktopRuntimeElements-published' declares a library for use during runtime, preferably optimized for standard JVMs:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'desktopSourcesElements-published' declares a component for use during runtime, preferably optimized for standard JVMs:
+              - Incompatible because this component declares documentation, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a library, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'iosArm64ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_arm64' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosArm64MetadataElements-published' declares a library, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_arm64' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosArm64SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_arm64' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosSimulatorArm64ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_simulator_arm64' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosSimulatorArm64MetadataElements-published' declares a library, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_simulator_arm64' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosSimulatorArm64SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_simulator_arm64' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'jsApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'js' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'jsRuntimeElements-published' declares a library, preferably optimized for non-jvm:
+              - Incompatible because this component declares a component for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'js' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'jsSourcesElements-published' declares a component, preferably optimized for non-jvm:
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'js' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'macosArm64ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'macos_arm64' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'macosArm64MetadataElements-published' declares a library, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'macos_arm64' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'macosArm64SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'macos_arm64' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'metadataApiElements' declares a library, preferably optimized for non-jvm:
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'common' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'metadataSourcesElements' declares a component, preferably optimized for non-jvm:
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'common' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'wasmJsApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'wasm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'wasmJsRuntimeElements-published' declares a library, preferably optimized for non-jvm:
+              - Incompatible because this component declares a component for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'wasm' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'wasmJsSourcesElements-published' declares a component, preferably optimized for non-jvm:
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'wasm' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+   > Could not resolve org.jetbrains.compose.ui:ui:1.11.1.
+     Required by:
+         project ':feature:photo-analysis-ui'
+      > No matching variant of org.jetbrains.compose.ui:ui:1.11.1 was found. The consumer was configured to find a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.klib.packaging' with value 'non-packed', attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64', attribute 'org.jetbrains.kotlin.platform.type' with value 'native' but:
+          - Variant 'androidApiElements-published' declares a library for use during compile-time, preferably optimized for Android:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'androidRuntimeElements-published' declares a library for use during runtime, preferably optimized for Android:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'androidSourcesElements-published' declares a component for use during runtime, preferably optimized for Android:
+              - Incompatible because this component declares documentation, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a library, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'desktopApiElements-published' declares a library for use during compile-time, preferably optimized for standard JVMs:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'desktopRuntimeElements-published' declares a library for use during runtime, preferably optimized for standard JVMs:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'desktopSourcesElements-published' declares a component for use during runtime, preferably optimized for standard JVMs:
+              - Incompatible because this component declares documentation, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a library, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'iosArm64ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_arm64' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosArm64MetadataElements-published' declares a library, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_arm64' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosArm64SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_arm64' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosSimulatorArm64ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_simulator_arm64' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosSimulatorArm64MetadataElements-published' declares a library, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_simulator_arm64' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosSimulatorArm64SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_simulator_arm64' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'jsApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'js' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'jsRuntimeElements-published' declares a library, preferably optimized for non-jvm:
+              - Incompatible because this component declares a component for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'js' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'jsSourcesElements-published' declares a component, preferably optimized for non-jvm:
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'js' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'macosArm64ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'macos_arm64' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'macosArm64MetadataElements-published' declares a library, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'macos_arm64' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'macosArm64SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'macos_arm64' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'metadataApiElements' declares a library, preferably optimized for non-jvm:
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'common' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'metadataSourcesElements' declares a component, preferably optimized for non-jvm:
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'common' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'wasmJsApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'wasm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'wasmJsRuntimeElements-published' declares a library, preferably optimized for non-jvm:
+              - Incompatible because this component declares a component for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'wasm' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'wasmJsSourcesElements-published' declares a component, preferably optimized for non-jvm:
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'wasm' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+   > Could not resolve org.jetbrains.compose.components:components-resources:1.11.1.
+     Required by:
+         project ':feature:photo-analysis-ui'
+      > No matching variant of org.jetbrains.compose.components:components-resources:1.11.1 was found. The consumer was configured to find a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.klib.packaging' with value 'non-packed', attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64', attribute 'org.jetbrains.kotlin.platform.type' with value 'native' but:
+          - Variant 'desktopApiElements-published' declares a library for use during compile-time, preferably optimized for standard JVMs:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'desktopRuntimeElements-published' declares a library for use during runtime, preferably optimized for standard JVMs:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'desktopSourcesElements-published' declares a component for use during runtime, preferably optimized for standard JVMs:
+              - Incompatible because this component declares documentation, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a library, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'iosArm64ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_arm64' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosArm64MetadataElements-published' declares a library, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_arm64' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosArm64ResourcesElements-published' declares a library, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component for use during 'kotlin-multiplatformresources', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_arm64' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosArm64SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_arm64' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosSimulatorArm64ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_simulator_arm64' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosSimulatorArm64MetadataElements-published' declares a library, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_simulator_arm64' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosSimulatorArm64ResourcesElements-published' declares a library, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component for use during 'kotlin-multiplatformresources', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_simulator_arm64' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosSimulatorArm64SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_simulator_arm64' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'jsApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'js' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'jsResourcesElements-published' declares a library, preferably optimized for non-jvm:
+              - Incompatible because this component declares a component for use during 'kotlin-multiplatformresourcesjs', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'js' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'jsRuntimeElements-published' declares a library, preferably optimized for non-jvm:
+              - Incompatible because this component declares a component for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'js' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'jsSourcesElements-published' declares a component, preferably optimized for non-jvm:
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'js' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'macosArm64ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'macos_arm64' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'macosArm64MetadataElements-published' declares a library, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'macos_arm64' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'macosArm64ResourcesElements-published' declares a library, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component for use during 'kotlin-multiplatformresources', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'macos_arm64' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'macosArm64SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'macos_arm64' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'metadataApiElements' declares a library, preferably optimized for non-jvm:
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'common' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'metadataSourcesElements' declares a component, preferably optimized for non-jvm:
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'common' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'releaseApiElements-published' declares a library for use during compile-time, preferably optimized for Android:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'androidJvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'releaseRuntimeElements-published' declares a library for use during runtime, preferably optimized for Android:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'androidJvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'releaseSourcesElements-published' declares a component for use during runtime, preferably optimized for Android:
+              - Incompatible because this component declares documentation, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'androidJvm' and the consumer needed a library, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'wasmJsApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'wasm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'wasmJsResourcesElements-published' declares a library, preferably optimized for non-jvm:
+              - Incompatible because this component declares a component for use during 'kotlin-multiplatformresourcesjs', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'wasm' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'wasmJsRuntimeElements-published' declares a library, preferably optimized for non-jvm:
+              - Incompatible because this component declares a component for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'wasm' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'wasmJsSourcesElements-published' declares a component, preferably optimized for non-jvm:
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'wasm' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+   > Could not resolve org.jetbrains.compose.foundation:foundation:1.9.1.
+     Required by:
+         project ':feature:photo-analysis-ui' > org.jetbrains.compose.material3:material3:1.9.0 > org.jetbrains.compose.material3:material3-uikitx64:1.9.0
+         project ':feature:photo-analysis-ui' > org.jetbrains.compose.material3:material3:1.9.0 > org.jetbrains.compose.material3:material3-uikitx64:1.9.0 > org.jetbrains.compose.material:material-ripple:1.9.1 > org.jetbrains.compose.material:material-ripple-uikitx64:1.9.1
+      > No matching variant of org.jetbrains.compose.foundation:foundation:1.11.1 was found. The consumer was configured to find a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.klib.packaging' with value 'non-packed', attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64', attribute 'org.jetbrains.kotlin.platform.type' with value 'native' but:
+          - Variant 'androidApiElements-published' declares a library for use during compile-time, preferably optimized for Android:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'androidRuntimeElements-published' declares a library for use during runtime, preferably optimized for Android:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'androidSourcesElements-published' declares a component for use during runtime, preferably optimized for Android:
+              - Incompatible because this component declares documentation, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a library, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'desktopApiElements-published' declares a library for use during compile-time, preferably optimized for standard JVMs:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'desktopRuntimeElements-published' declares a library for use during runtime, preferably optimized for standard JVMs:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'desktopSourcesElements-published' declares a component for use during runtime, preferably optimized for standard JVMs:
+              - Incompatible because this component declares documentation, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a library, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'iosArm64ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_arm64' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosArm64MetadataElements-published' declares a library, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_arm64' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosArm64SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_arm64' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosSimulatorArm64ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_simulator_arm64' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosSimulatorArm64MetadataElements-published' declares a library, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_simulator_arm64' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosSimulatorArm64SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_simulator_arm64' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'jsApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'js' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'jsRuntimeElements-published' declares a library, preferably optimized for non-jvm:
+              - Incompatible because this component declares a component for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'js' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'jsSourcesElements-published' declares a component, preferably optimized for non-jvm:
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'js' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'macosArm64ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'macos_arm64' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'macosArm64MetadataElements-published' declares a library, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'macos_arm64' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'macosArm64SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'macos_arm64' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'metadataApiElements' declares a library, preferably optimized for non-jvm:
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'common' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'metadataSourcesElements' declares a component, preferably optimized for non-jvm:
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'common' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'wasmJsApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'wasm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'wasmJsRuntimeElements-published' declares a library, preferably optimized for non-jvm:
+              - Incompatible because this component declares a component for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'wasm' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'wasmJsSourcesElements-published' declares a component, preferably optimized for non-jvm:
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'wasm' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+   > Could not resolve org.jetbrains.compose.runtime:runtime:1.9.1.
+     Required by:
+         project ':feature:photo-analysis-ui' > org.jetbrains.compose.material3:material3:1.9.0 > org.jetbrains.compose.material3:material3-uikitx64:1.9.0
+         project ':feature:photo-analysis-ui' > org.jetbrains.compose.material3:material3:1.9.0 > org.jetbrains.compose.material3:material3-uikitx64:1.9.0 > org.jetbrains.compose.animation:animation-core:1.9.1 > org.jetbrains.compose.animation:animation-core-uikitx64:1.9.1
+         project ':feature:photo-analysis-ui' > org.jetbrains.compose.material3:material3:1.9.0 > org.jetbrains.compose.material3:material3-uikitx64:1.9.0 > org.jetbrains.compose.foundation:foundation-layout:1.9.1 > org.jetbrains.compose.foundation:foundation-layout-uikitx64:1.9.1
+         project ':feature:photo-analysis-ui' > org.jetbrains.compose.material3:material3:1.9.0 > org.jetbrains.compose.material3:material3-uikitx64:1.9.0 > org.jetbrains.compose.material:material-ripple:1.9.1 > org.jetbrains.compose.material:material-ripple-uikitx64:1.9.1
+         project ':feature:photo-analysis-ui' > org.jetbrains.compose.material3:material3:1.9.0 > org.jetbrains.compose.material3:material3-uikitx64:1.9.0 > org.jetbrains.compose.ui:ui-backhandler:1.9.1 > org.jetbrains.compose.ui:ui-backhandler-uikitx64:1.9.1
+         project ':feature:photo-analysis-ui' > org.jetbrains.compose.material3:material3:1.9.0 > org.jetbrains.compose.material3:material3-uikitx64:1.9.0 > org.jetbrains.compose.ui:ui-graphics:1.9.1 > org.jetbrains.compose.ui:ui-graphics-uikitx64:1.9.1
+         project ':feature:photo-analysis-ui' > org.jetbrains.compose.material3:material3:1.9.0 > org.jetbrains.compose.material3:material3-uikitx64:1.9.0 > org.jetbrains.compose.ui:ui-text:1.9.1 > org.jetbrains.compose.ui:ui-text-uikitx64:1.9.1
+         project ':feature:photo-analysis-ui' > org.jetbrains.compose.material3:material3:1.9.0 > org.jetbrains.compose.material3:material3-uikitx64:1.9.0 > org.jetbrains.compose.animation:animation-core:1.9.1 > org.jetbrains.compose.animation:animation-core-uikitx64:1.9.1 > org.jetbrains.compose.ui:ui-unit:1.9.1 > org.jetbrains.compose.ui:ui-unit-uikitx64:1.9.1
+         project ':feature:photo-analysis-ui' > org.jetbrains.compose.material3:material3:1.9.0 > org.jetbrains.compose.material3:material3-uikitx64:1.9.0 > org.jetbrains.compose.material:material-ripple:1.9.1 > org.jetbrains.compose.material:material-ripple-uikitx64:1.9.1 > org.jetbrains.compose.animation:animation:1.9.1 > org.jetbrains.compose.animation:animation-uikitx64:1.9.1
+         project ':feature:photo-analysis-ui' > org.jetbrains.compose.material3:material3:1.9.0 > org.jetbrains.compose.material3:material3-uikitx64:1.9.0 > org.jetbrains.compose.ui:ui-backhandler:1.9.1 > org.jetbrains.compose.ui:ui-backhandler-uikitx64:1.9.1 > org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose:2.9.5 > org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose-uikitx64:2.9.5
+         project ':feature:photo-analysis-ui' > org.jetbrains.compose.material3:material3:1.9.0 > org.jetbrains.compose.material3:material3-uikitx64:1.9.0 > org.jetbrains.compose.ui:ui-graphics:1.9.1 > org.jetbrains.compose.ui:ui-graphics-uikitx64:1.9.1 > org.jetbrains.compose.ui:ui-geometry:1.9.1 > org.jetbrains.compose.ui:ui-geometry-uikitx64:1.9.1
+      > No matching variant of org.jetbrains.compose.runtime:runtime:1.11.1 was found. The consumer was configured to find a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.klib.packaging' with value 'non-packed', attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64', attribute 'org.jetbrains.kotlin.platform.type' with value 'native' but:
+          - Variant 'androidApiElements-published' declares a library for use during compile-time, preferably optimized for Android:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'androidRuntimeElements-published' declares a library for use during runtime, preferably optimized for Android:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'androidSourcesElements-published' declares a component for use during runtime, preferably optimized for Android:
+              - Incompatible because this component declares documentation, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a library, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'desktopApiElements-published' declares a library for use during compile-time, preferably optimized for standard JVMs:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'desktopRuntimeElements-published' declares a library for use during runtime, preferably optimized for standard JVMs:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'desktopSourcesElements-published' declares a component for use during runtime, preferably optimized for standard JVMs:
+              - Incompatible because this component declares documentation, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a library, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'iosArm64ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_arm64' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosArm64MetadataElements-published' declares a library, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_arm64' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosArm64SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_arm64' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosSimulatorArm64ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_simulator_arm64' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosSimulatorArm64MetadataElements-published' declares a library, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_simulator_arm64' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosSimulatorArm64SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_simulator_arm64' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'jsApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'js' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'jsRuntimeElements-published' declares a library, preferably optimized for non-jvm:
+              - Incompatible because this component declares a component for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'js' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'jsSourcesElements-published' declares a component, preferably optimized for non-jvm:
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'js' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'linuxArm64ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'linux_arm64' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'linuxArm64SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'linux_arm64' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'linuxX64ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'linux_x64' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'linuxX64SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'linux_x64' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'macosArm64ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'macos_arm64' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'macosArm64MetadataElements-published' declares a library, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'macos_arm64' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'macosArm64SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'macos_arm64' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'metadataApiElements' declares a library, preferably optimized for non-jvm:
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'common' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'metadataSourcesElements' declares a component, preferably optimized for non-jvm:
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'common' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'mingwX64ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'mingw_x64' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'mingwX64SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'mingw_x64' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'tvosArm64ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'tvos_arm64' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'tvosArm64MetadataElements-published' declares a library, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'tvos_arm64' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'tvosArm64SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'tvos_arm64' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'tvosSimulatorArm64ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'tvos_simulator_arm64' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'tvosSimulatorArm64MetadataElements-published' declares a library, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'tvos_simulator_arm64' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'tvosSimulatorArm64SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'tvos_simulator_arm64' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'wasmJsApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'wasm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'wasmJsRuntimeElements-published' declares a library, preferably optimized for non-jvm:
+              - Incompatible because this component declares a component for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'wasm' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'wasmJsSourcesElements-published' declares a component, preferably optimized for non-jvm:
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'wasm' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'watchosArm32ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'watchos_arm32' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'watchosArm32MetadataElements-published' declares a library, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'watchos_arm32' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'watchosArm32SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'watchos_arm32' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'watchosArm64ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'watchos_arm64' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'watchosArm64MetadataElements-published' declares a library, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'watchos_arm64' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'watchosArm64SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'watchos_arm64' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'watchosSimulatorArm64ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'watchos_simulator_arm64' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'watchosSimulatorArm64MetadataElements-published' declares a library, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'watchos_simulator_arm64' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'watchosSimulatorArm64SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'watchos_simulator_arm64' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+   > Could not resolve org.jetbrains.compose.ui:ui:1.9.1.
+     Required by:
+         project ':feature:photo-analysis-ui' > org.jetbrains.compose.material3:material3:1.9.0 > org.jetbrains.compose.material3:material3-uikitx64:1.9.0 > org.jetbrains.compose.animation:animation-core:1.9.1 > org.jetbrains.compose.animation:animation-core-uikitx64:1.9.1
+         project ':feature:photo-analysis-ui' > org.jetbrains.compose.material3:material3:1.9.0 > org.jetbrains.compose.material3:material3-uikitx64:1.9.0 > org.jetbrains.compose.foundation:foundation-layout:1.9.1 > org.jetbrains.compose.foundation:foundation-layout-uikitx64:1.9.1
+         project ':feature:photo-analysis-ui' > org.jetbrains.compose.material3:material3:1.9.0 > org.jetbrains.compose.material3:material3-uikitx64:1.9.0 > org.jetbrains.compose.material:material-ripple:1.9.1 > org.jetbrains.compose.material:material-ripple-uikitx64:1.9.1 > org.jetbrains.compose.animation:animation:1.9.1 > org.jetbrains.compose.animation:animation-uikitx64:1.9.1
+      > No matching variant of org.jetbrains.compose.ui:ui:1.11.1 was found. The consumer was configured to find a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.klib.packaging' with value 'non-packed', attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64', attribute 'org.jetbrains.kotlin.platform.type' with value 'native' but:
+          - Variant 'androidApiElements-published' declares a library for use during compile-time, preferably optimized for Android:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'androidRuntimeElements-published' declares a library for use during runtime, preferably optimized for Android:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'androidSourcesElements-published' declares a component for use during runtime, preferably optimized for Android:
+              - Incompatible because this component declares documentation, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a library, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'desktopApiElements-published' declares a library for use during compile-time, preferably optimized for standard JVMs:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'desktopRuntimeElements-published' declares a library for use during runtime, preferably optimized for standard JVMs:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'desktopSourcesElements-published' declares a component for use during runtime, preferably optimized for standard JVMs:
+              - Incompatible because this component declares documentation, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm' and the consumer needed a library, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'iosArm64ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_arm64' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosArm64MetadataElements-published' declares a library, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_arm64' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosArm64SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_arm64' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosSimulatorArm64ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_simulator_arm64' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosSimulatorArm64MetadataElements-published' declares a library, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_simulator_arm64' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'iosSimulatorArm64SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_simulator_arm64' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'jsApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'js' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'jsRuntimeElements-published' declares a library, preferably optimized for non-jvm:
+              - Incompatible because this component declares a component for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'js' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'jsSourcesElements-published' declares a component, preferably optimized for non-jvm:
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'js' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'macosArm64ApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'macos_arm64' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'macosArm64MetadataElements-published' declares a library, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'macos_arm64' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'macosArm64SourcesElements-published' declares a component, preferably optimized for non-jvm, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native':
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'macos_arm64' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.native.target' with value 'ios_x64'
+              - Other compatible attribute:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+          - Variant 'metadataApiElements' declares a library, preferably optimized for non-jvm:
+              - Incompatible because this component declares a component for use during 'kotlin-metadata', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'common' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'metadataSourcesElements' declares a component, preferably optimized for non-jvm:
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'common' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'wasmJsApiElements-published' declares a library for use during 'kotlin-api', preferably optimized for non-jvm:
+              - Incompatible because this component declares a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'wasm' and the consumer needed a component, as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'wasmJsRuntimeElements-published' declares a library, preferably optimized for non-jvm:
+              - Incompatible because this component declares a component for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'wasm' and the consumer needed a component for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+          - Variant 'wasmJsSourcesElements-published' declares a component, preferably optimized for non-jvm:
+              - Incompatible because this component declares documentation for use during 'kotlin-runtime', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'wasm' and the consumer needed a library for use during 'kotlin-api', as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'native'
+              - Other compatible attributes:
+                  - Doesn't say anything about org.jetbrains.kotlin.klib.packaging (required 'non-packed')
+                  - Doesn't say anything about org.jetbrains.kotlin.native.target (required 'ios_x64')
+
+* Try:
+> No matching variant errors are explained in more detail at https://docs.gradle.org/9.5.0/userguide/variant_model.html#sub:variant-no-match.
+> Review the variant matching algorithm at https://docs.gradle.org/9.5.0/userguide/variant_attributes.html#sec:abm_algorithm.
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 3m 24s
+53 actionable tasks: 22 executed, 31 up-to-date

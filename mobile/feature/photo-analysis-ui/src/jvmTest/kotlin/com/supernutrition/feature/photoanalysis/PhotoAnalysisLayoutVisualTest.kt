@@ -3,6 +3,7 @@ package com.supernutrition.feature.photoanalysis
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
@@ -14,10 +15,12 @@ import androidx.compose.ui.graphics.toPixelMap
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.v2.runSkikoComposeUiTest
@@ -33,14 +36,13 @@ import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 import org.jetbrains.skia.Image as SkiaImage
 
 @OptIn(ExperimentalTestApi::class)
 class PhotoAnalysisLayoutVisualTest {
     @Test
-    fun `home mascot feet stay in front of the rhythm panel across viewport sizes`() {
+    fun `home mascot stays visible and separated from the metrics across viewport sizes`() {
         listOf(
             Size(375f, 812f) to 1f,
             Size(375f, 932f) to 1f,
@@ -49,25 +51,33 @@ class PhotoAnalysisLayoutVisualTest {
             Size(600f, 800f) to 1f,
         ).forEach { (viewport, fontScale) ->
             runSkikoComposeUiTest(size = viewport, density = Density(1f, fontScale)) {
+                val backdropState = HomeBackdropState()
                 setContent {
-                    PhotoAnalysisMainLayout(layoutBottomBarState(), layoutBottomBarActions()) {
-                        HomeScreen(layoutHomeModel())
+                    CompositionLocalProvider(LocalHomeBackdrop provides backdropState) {
+                        PhotoAnalysisMainLayout(layoutBottomBarState(), layoutBottomBarActions()) {
+                            HomeScreen(layoutHomeModel())
+                        }
                     }
                 }
-                val mascot = onNodeWithContentDescription("Capybara mascot")
-                    .performScrollTo()
-                    .fetchSemanticsNode().boundsInRoot
+                val mascotNode = onNodeWithContentDescription("Capybara mascot").performScrollTo()
+                val mascot = mascotNode.getUnclippedBoundsInRoot()
                 val panel = onNodeWithTag(UiAutomationIds.HOME_SUMMARY.value)
-                    .fetchSemanticsNode().boundsInRoot
-                // Preserve the measured overlap while keeping the feet in front.
-                val designOverlap = mascot.height * 16.2f / 182.8f
-                assertTrue(abs(mascot.center.x - panel.center.x) <= 1f)
+                    .getUnclippedBoundsInRoot()
                 assertTrue(
-                    abs(mascot.bottom - panel.top - designOverlap) <= 1f,
-                    "Mascot floats above its panel at $viewport/$fontScale: mascot=$mascot panel=$panel",
+                    abs((mascot.left.value + mascot.right.value - panel.left.value - panel.right.value) / 2f) <= 1f,
                 )
+                assertTrue(
+                    abs(panel.top.value - mascot.bottom.value - 18.5f) <= 1f,
+                    "Mascot and metrics lose the design spacing at $viewport/$fontScale: mascot=$mascot panel=$panel",
+                )
+                val mascotBounds = mascotNode.fetchSemanticsNode().boundsInRoot
                 val rendered = captureToImage()
-                assertFeetInFront(rendered, mascot, panel)
+                // Preserve the measured scene, so garden movement cannot impersonate sprite pixels.
+                setContent {
+                    CompositionLocalProvider(LocalHomeBackdrop provides backdropState) { HomeScreenBackground() }
+                }
+                val backdrop = captureToImage()
+                assertMascotVisible(rendered, backdrop, mascotBounds)
                 writeLayoutScreenshot(
                     "home-mascot-${viewport.width.toInt()}x${viewport.height.toInt()}-$fontScale",
                     rendered.asSkiaBitmap(),
@@ -76,19 +86,23 @@ class PhotoAnalysisLayoutVisualTest {
         }
     }
 
-    private fun assertFeetInFront(image: ImageBitmap, mascot: Rect, panel: Rect) {
+    private fun assertMascotVisible(image: ImageBitmap, backdrop: ImageBitmap, mascot: Rect) {
         val pixels = image.toPixelMap()
-        // Opaque paw pixels near x=430/830, y=1151 in the original 1254px asset.
-        val row = floor(mascot.top + mascot.height * 1151f / 1254f).toInt()
-        assertTrue(row >= ceil(panel.top).toInt(), "Paw probes must hang over the panel edge")
-        listOf(430f, 830f).forEach { sourceX ->
-            val column = (mascot.center.x + mascot.height * (sourceX / 1254f - 0.5f)).toInt()
-            assertNotEquals(
-                Color(0xFFFAF6F4),
-                pixels[column, row],
-                "The rhythm panel cuts off the paw at ($column, $row)",
-            )
+        val background = backdrop.toPixelMap()
+        // Sample the opaque head/torso center; the contact shadow is below this region.
+        val spriteWidth = mascot.height * 241f / 325f
+        val body = Rect(
+            mascot.center.x - spriteWidth * 0.2f,
+            mascot.top + mascot.height * 0.2f,
+            mascot.center.x + spriteWidth * 0.2f,
+            mascot.top + mascot.height * 0.75f,
+        )
+        val changed = (ceil(body.top).toInt() until floor(body.bottom).toInt()).sumOf { row ->
+            (ceil(body.left).toInt() until floor(body.right).toInt()).count { column ->
+                pixels[column, row] != background[column, row]
+            }
         }
+        assertTrue(changed > 100, "Mascot artwork is missing from its measured slot: $mascot")
     }
 
     @Test
@@ -103,7 +117,7 @@ class PhotoAnalysisLayoutVisualTest {
         }
         val card = onNodeWithTag(UiAutomationIds.HOME_SUMMARY.value).fetchSemanticsNode().boundsInRoot
         assertTrue(abs(card.left - (375f - card.right)) <= 1f, "Home card gutters were $card")
-        assertTrue(card.left >= 20f, "Home card was cropped: $card")
+        assertTrue(abs(card.left - 16f) <= 1f, "Home card differs from the 16dp Figma gutter: $card")
         writeLayoutScreenshot("home-tall", captureToImage().asSkiaBitmap())
     }
 
@@ -118,13 +132,13 @@ class PhotoAnalysisLayoutVisualTest {
             }
         }
         onNode(hasScrollAction()).performSemanticsAction(SemanticsActions.ScrollBy) { it(0f, 10_000f) }
-        onNodeWithTag(UiAutomationIds.HOME_NEXT_STEP.value).assertIsDisplayed()
-        onNodeWithText("Do it").assertIsDisplayed()
-        onNodeWithText("Add one leafy green to dinner").assertIsDisplayed()
-        val action = onNodeWithText("Do it").fetchSemanticsNode().boundsInRoot
+        val metric = onNodeWithTag(UiAutomationIds.HOME_METRIC_FATS.value).assertIsDisplayed()
+        val action = metric.fetchSemanticsNode().boundsInRoot
         val camera = onNodeWithTag(UiAutomationIds.CAMERA_ACTION.value).fetchSemanticsNode().boundsInRoot
         assertTrue(action.bottom < camera.top, "Home action overlaps navigation: $action and $camera")
         writeLayoutScreenshot("home-short-scrolled", captureToImage().asSkiaBitmap())
+        metric.performClick()
+        onNodeWithText("Your goals").assertIsDisplayed()
     }
 
     @Test
@@ -151,9 +165,8 @@ class PhotoAnalysisLayoutVisualTest {
     ) {
         setContent { PhotoAnalysisMainBottomBar(layoutBottomBarState(), layoutBottomBarActions()) }
         val pill = onNodeWithTag(UiAutomationIds.BOTTOM_BAR_PILL.value).fetchSemanticsNode().boundsInRoot
-        // The 1388x344 export's flat pill fill spans rows 45..266 at both tab centers.
-        val bodyTop = pill.top + pill.height * 45f / 344f
-        val bodyBottom = pill.top + pill.height * 267f / 344f
+        val bodyTop = pill.top
+        val bodyBottom = pill.bottom
         listOf("Home", "Rewards").forEach { label ->
             val bounds = onNodeWithText(label, useUnmergedTree = true).fetchSemanticsNode().boundsInRoot
             assertTrue(
@@ -165,7 +178,7 @@ class PhotoAnalysisLayoutVisualTest {
     }
 
     @Test
-    fun `regular home keeps its next step above navigation`() = runSkikoComposeUiTest(
+    fun `regular home keeps its metrics above navigation with aligned gutters`() = runSkikoComposeUiTest(
         size = Size(375f, 812f),
         density = Density(1f),
     ) {
@@ -174,18 +187,20 @@ class PhotoAnalysisLayoutVisualTest {
                 HomeScreen(layoutHomeModel())
             }
         }
-        onNodeWithText("Add one leafy green to dinner").assertIsDisplayed()
-        val action = onNodeWithText("Do it").assertIsDisplayed().fetchSemanticsNode().boundsInRoot
+        val action = onNodeWithTag(
+            UiAutomationIds.HOME_METRIC_FATS.value,
+        ).assertIsDisplayed().fetchSemanticsNode().boundsInRoot
         val camera = onNodeWithTag(UiAutomationIds.CAMERA_ACTION.value).fetchSemanticsNode().boundsInRoot
         assertTrue(action.bottom < camera.top, "Home action overlaps navigation: $action and $camera")
         val rhythm = onNodeWithTag(UiAutomationIds.HOME_SUMMARY.value).fetchSemanticsNode().boundsInRoot
-        val nextStep = onNodeWithTag(UiAutomationIds.HOME_NEXT_STEP.value).fetchSemanticsNode().boundsInRoot
-        assertTrue(abs(rhythm.left - nextStep.left) <= 1f && abs(rhythm.right - nextStep.right) <= 1f)
+        val header = onNodeWithTag(UiAutomationIds.HOME_HEADER.value).fetchSemanticsNode().boundsInRoot
+        assertTrue(abs(rhythm.left - header.left) <= 1f && abs(rhythm.right - header.right) <= 1f)
+        onNodeWithTag(UiAutomationIds.HOME_NEXT_STEP.value).assertDoesNotExist()
         writeLayoutScreenshot("home", captureToImage().asSkiaBitmap())
     }
 
     @Test
-    fun `rewards header and visual cards keep the figma grid geometry`() = runSkikoComposeUiTest(
+    fun `rewards header and actual cards keep the figma carousel geometry`() = runSkikoComposeUiTest(
         size = Size(375f, 812f),
         density = Density(1f),
     ) {
@@ -200,8 +215,9 @@ class PhotoAnalysisLayoutVisualTest {
         val pairedCard = onNodeWithTag(UiAutomationIds.rewardsRow(1).value).fetchSemanticsNode().boundsInRoot
         val section = onNodeWithTag(UiAutomationIds.REWARDS_EARNED_SECTION.value).fetchSemanticsNode().boundsInRoot
         assertTrue(abs(title.center.x - 187.5f) <= 1f, "Rewards title is not centered: $title")
-        assertTrue(abs(card.left - (375f - pairedCard.right)) <= 1f, "Rewards gutters were $card and $pairedCard")
+        assertTrue(abs(pairedCard.left - card.right - 10f) <= 1f, "Rewards card spacing was $card and $pairedCard")
         assertTrue(abs(card.width - pairedCard.width) <= 1f)
+        assertTrue(abs(card.width - 150f) <= 1f, "Rewards card differs from the 150dp Figma width: $card")
         assertTrue(abs(card.top - pairedCard.top) <= 1f && abs(card.bottom - pairedCard.bottom) <= 1f)
         assertTrue(abs(card.left - section.left) <= 1f, "Section and card do not align: $section and $card")
         assertTrue(abs(card.left - 16f) <= 1f, "Rewards differs from the Figma gutter: $card")
@@ -225,14 +241,15 @@ class PhotoAnalysisLayoutVisualTest {
                 RewardsScreen(layoutRewardsModel())
             }
         }
+        onNodeWithTag(UiAutomationIds.rewardsRow(6).value).performScrollTo()
         onNodeWithTag(UiAutomationIds.REWARDS_SCREEN.value).performRewardsScrollToEnd()
-        val finalCard = onNodeWithTag(UiAutomationIds.rewardsRow(9).value).assertIsDisplayed()
+        val finalCard = onNodeWithTag(UiAutomationIds.rewardsRow(6).value).assertIsDisplayed()
             .fetchSemanticsNode().boundsInRoot
         val camera = onNodeWithTag(UiAutomationIds.CAMERA_ACTION.value).fetchSemanticsNode().boundsInRoot
         assertTrue(finalCard.bottom < camera.top, "Final reward overlaps navigation: $finalCard and $camera")
-        val pairedFinalCard = onNodeWithTag(UiAutomationIds.rewardsRow(8).value).fetchSemanticsNode().boundsInRoot
-        assertTrue(abs(finalCard.top - pairedFinalCard.top) <= 1f, "Final reward pair is not balanced")
-        onNodeWithTag(UiAutomationIds.rewardsRowState(9).value).assertIsDisplayed()
+        val pairedFinalCard = onNodeWithTag(UiAutomationIds.rewardsRow(5).value).getUnclippedBoundsInRoot()
+        assertTrue(abs(finalCard.top - pairedFinalCard.top.value) <= 1f, "Weekly reward carousel is not aligned")
+        onNodeWithTag(UiAutomationIds.rewardsRowState(6).value).assertIsDisplayed()
         writeLayoutScreenshot("rewards-short-scrolled", captureToImage().asSkiaBitmap())
     }
 
@@ -246,15 +263,17 @@ class PhotoAnalysisLayoutVisualTest {
                 HomeScreen(layoutHomeModel())
             }
         }
-        onNodeWithTag(UiAutomationIds.HOME_VIEW_GOALS.value).assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.HOME_ADD_FOOD.value).assertIsDisplayed()
+        onNodeWithText(layoutHomeModel().careQuestion, useUnmergedTree = true).assertReadableHomeText(1.5f)
         writeLayoutScreenshot("home-large-text", captureToImage().asSkiaBitmap())
         onNode(hasScrollAction()).performSemanticsAction(SemanticsActions.ScrollBy) { it(0f, 10_000f) }
-        onNodeWithText("Your next helpful step").assertIsDisplayed()
-        onNodeWithText("Add one leafy green to dinner").assertIsDisplayed()
-        val action = onNodeWithText("Do it").assertIsDisplayed().fetchSemanticsNode().boundsInRoot
+        val metric = onNodeWithTag(UiAutomationIds.HOME_METRIC_FATS.value).assertIsDisplayed()
+        val action = metric.fetchSemanticsNode().boundsInRoot
         val camera = onNodeWithTag(UiAutomationIds.CAMERA_ACTION.value).fetchSemanticsNode().boundsInRoot
         assertTrue(action.bottom < camera.top)
         writeLayoutScreenshot("home-large-text-scrolled", captureToImage().asSkiaBitmap())
+        metric.performClick()
+        onNodeWithText("Your goals").assertIsDisplayed()
     }
 
     @Test
@@ -262,46 +281,47 @@ class PhotoAnalysisLayoutVisualTest {
         size = Size(320f, 568f),
         density = Density(1f),
     ) {
-        val movementValue = "32 / 45 minutes of movement today"
+        val fatsValue = "32 / 45 grams of healthy fats today"
         setContent {
             PhotoAnalysisMainLayout(layoutBottomBarState(), layoutBottomBarActions()) {
-                HomeScreen(layoutHomeModel().copy(movement = HomeMetricModel("Movement", movementValue)))
+                HomeScreen(layoutHomeModel().copy(fats = HomeMetricModel("Fats", fatsValue)))
             }
         }
         onNodeWithTag(UiAutomationIds.HOME_SUMMARY.value).performScrollTo()
         val fiber = onNodeWithTag(UiAutomationIds.HOME_METRIC_FIBER.value).fetchSemanticsNode().boundsInRoot
-        val water = onNodeWithTag(UiAutomationIds.HOME_METRIC_WATER.value).fetchSemanticsNode().boundsInRoot
+        val colors = onNodeWithTag(UiAutomationIds.HOME_METRIC_COLORS.value).fetchSemanticsNode().boundsInRoot
         val protein = onNodeWithTag(UiAutomationIds.HOME_METRIC_PROTEIN.value).fetchSemanticsNode().boundsInRoot
-        val movement = onNodeWithTag(UiAutomationIds.HOME_METRIC_MOVEMENT.value).fetchSemanticsNode().boundsInRoot
+        val fats = onNodeWithTag(UiAutomationIds.HOME_METRIC_FATS.value).fetchSemanticsNode().boundsInRoot
         val layouts = mutableListOf<TextLayoutResult>()
-        onNodeWithText(movementValue).performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
+        onNodeWithText(fatsValue, useUnmergedTree = true)
+            .performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
         assertTrue(layouts.single().lineCount > 1, "The value must wrap to exercise equal row heights")
         writeLayoutScreenshot("home-metrics-wrapped-row", captureToImage().asSkiaBitmap())
-        assertTrue(abs(fiber.top - water.top) <= 1f && abs(fiber.bottom - water.bottom) <= 1f)
+        assertTrue(abs(fiber.top - colors.top) <= 1f && abs(fiber.bottom - colors.bottom) <= 1f)
         assertTrue(
-            abs(protein.top - movement.top) <= 1f && abs(protein.bottom - movement.bottom) <= 1f,
-            "Wrapped metric cards have different heights: protein=$protein movement=$movement",
+            abs(protein.top - fats.top) <= 1f && abs(protein.bottom - fats.bottom) <= 1f,
+            "Wrapped metric cards have different heights: protein=$protein fats=$fats",
         )
     }
 
     @Test
     fun `metric cards stay aligned with wrapped values and larger text`() {
-        val longValue = "32 / 45 minutes of movement today"
+        val longValue = "32 / 45 grams of healthy fats today"
         listOf(1f, 1.5f).forEach { fontScale ->
             runSkikoComposeUiTest(size = Size(320f, 720f), density = Density(1f, fontScale)) {
                 setContent {
                     PhotoAnalysisMainLayout(layoutBottomBarState(), layoutBottomBarActions()) {
-                        HomeScreen(layoutHomeModel().copy(movement = HomeMetricModel("Movement", longValue)))
+                        HomeScreen(layoutHomeModel().copy(fats = HomeMetricModel("Fats", longValue)))
                     }
                 }
                 onNodeWithTag(UiAutomationIds.HOME_SUMMARY.value).performScrollTo()
                 val bounds = listOf(
                     UiAutomationIds.HOME_METRIC_FIBER,
-                    UiAutomationIds.HOME_METRIC_WATER,
+                    UiAutomationIds.HOME_METRIC_COLORS,
                     UiAutomationIds.HOME_METRIC_PROTEIN,
-                    UiAutomationIds.HOME_METRIC_MOVEMENT,
+                    UiAutomationIds.HOME_METRIC_FATS,
                 ).map { onNodeWithTag(it.value).fetchSemanticsNode().boundsInRoot }
-                val value = onNodeWithText(longValue).assertIsDisplayed()
+                val value = onNodeWithText(longValue, useUnmergedTree = true).assertIsDisplayed()
                 val layouts = mutableListOf<TextLayoutResult>()
                 value.performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
                 val text = layouts.single()
@@ -363,11 +383,10 @@ class PhotoAnalysisLayoutVisualTest {
     ) {
         val model = layoutRewardsModel().let { rewards ->
             rewards.copy(
-                visualCards = List(10) { index ->
-                    RewardsVisualCardCopy(
-                        rewardId = RewardId.entries[index % RewardId.entries.size],
+                cards = rewards.cards.mapIndexed { index, card ->
+                    card.copy(
                         title = "A little care for your daily rhythm",
-                        subtitle = "Helpful choice ${index + 1}",
+                        description = "Helpful choice ${index + 1}",
                     )
                 },
             )
@@ -377,14 +396,15 @@ class PhotoAnalysisLayoutVisualTest {
                 RewardsScreen(model)
             }
         }
+        onNodeWithTag(UiAutomationIds.rewardsRow(6).value).performScrollTo()
         onNodeWithTag(UiAutomationIds.REWARDS_SCREEN.value).performRewardsScrollToEnd()
-        val card = onNodeWithTag(UiAutomationIds.rewardsRow(9).value).assertIsDisplayed()
+        val card = onNodeWithTag(UiAutomationIds.rewardsRow(6).value).assertIsDisplayed()
             .fetchSemanticsNode().boundsInRoot
-        val title = onNodeWithTag(UiAutomationIds.rewardsRowTitle(9).value).assertIsDisplayed()
+        val title = onNodeWithTag(UiAutomationIds.rewardsRowTitle(6).value).assertIsDisplayed()
             .fetchSemanticsNode().boundsInRoot
-        val progress = onNodeWithTag(UiAutomationIds.rewardsRowProgress(9).value).assertIsDisplayed()
+        val progress = onNodeWithTag(UiAutomationIds.rewardsRowProgress(6).value).assertIsDisplayed()
             .fetchSemanticsNode().boundsInRoot
-        val state = onNodeWithTag(UiAutomationIds.rewardsRowState(9).value).assertIsDisplayed()
+        val state = onNodeWithTag(UiAutomationIds.rewardsRowState(6).value).assertIsDisplayed()
             .fetchSemanticsNode().boundsInRoot
         val camera = onNodeWithTag(UiAutomationIds.CAMERA_ACTION.value).fetchSemanticsNode().boundsInRoot
         assertTrue(
@@ -400,8 +420,8 @@ class PhotoAnalysisLayoutVisualTest {
             "State leaves its reward card: $state in $card",
         )
         assertTrue(card.bottom < camera.top, "Scrolled reward overlaps navigation: $card and $camera")
-        onNodeWithTag(UiAutomationIds.rewardsRowTitle(9).value, useUnmergedTree = true)
-            .assertCompleteRewardsText(model.visualCards[9].title)
+        onNodeWithTag(UiAutomationIds.rewardsRowTitle(6).value, useUnmergedTree = true)
+            .assertCompleteRewardsText(model.cards.first { it.id == RewardId.FERMENTED_THREE_DAYS }.title)
         writeLayoutScreenshot("rewards-large-text-scrolled", captureToImage().asSkiaBitmap())
     }
 
@@ -410,15 +430,16 @@ class PhotoAnalysisLayoutVisualTest {
         size = Size(375f, 812f),
         density = Density(1f),
     ) {
-        setContent { HomeScreenBackground() }
-        val reference = captureToImage().toPixelMap()
+        val backdrop = HomeBackdropState()
         setContent {
-            PhotoAnalysisMainLayout(
-                state = layoutBottomBarState(),
-                actions = layoutBottomBarActions(),
-                contentPadding = PaddingValues(top = 24.dp, bottom = 20.dp),
-            ) {
-                HomeScreen(layoutHomeModel())
+            CompositionLocalProvider(LocalHomeBackdrop provides backdrop) {
+                PhotoAnalysisMainLayout(
+                    state = layoutBottomBarState(),
+                    actions = layoutBottomBarActions(),
+                    contentPadding = PaddingValues(top = 24.dp, bottom = 20.dp),
+                ) {
+                    HomeScreen(layoutHomeModel())
+                }
             }
         }
         val content = onNodeWithTag(UiAutomationIds.HOME_SCREEN.value).fetchSemanticsNode().boundsInRoot
@@ -428,12 +449,17 @@ class PhotoAnalysisLayoutVisualTest {
             abs(content.bottom - 792f) <= 1f,
             "Home content must reach the bottom safe edge beneath navigation: $content and $camera",
         )
-        onNodeWithTag(UiAutomationIds.HOME_NEXT_STEP.value).performScrollTo()
-        val nextStep = onNodeWithTag(UiAutomationIds.HOME_NEXT_STEP.value).fetchSemanticsNode().boundsInRoot
-        assertTrue(nextStep.bottom < camera.top)
+        onNodeWithTag(UiAutomationIds.HOME_METRIC_FATS.value).performScrollTo()
+        val finalMetric = onNodeWithTag(UiAutomationIds.HOME_METRIC_FATS.value).fetchSemanticsNode().boundsInRoot
+        assertTrue(finalMetric.bottom < camera.top)
         val rendered = captureToImage()
-        assertEquals(reference[187, 8], rendered.toPixelMap()[187, 8])
-        assertEquals(reference[187, 805], rendered.toPixelMap()[187, 805])
+        // Keep the measured mascot anchor: a standalone unanchored garden is a different scene.
+        setContent {
+            CompositionLocalProvider(LocalHomeBackdrop provides backdrop) { HomeScreenBackground() }
+        }
+        val reference = captureToImage().toPixelMap()
+        assertBackdropColorNear(reference[187, 8], rendered.toPixelMap()[187, 8])
+        assertBackdropColorNear(reference[187, 805], rendered.toPixelMap()[187, 805])
         writeLayoutScreenshot("home-with-insets", rendered.asSkiaBitmap())
     }
 
@@ -442,16 +468,17 @@ class PhotoAnalysisLayoutVisualTest {
         size = Size(375f, 812f),
         density = Density(1f),
     ) {
-        setContent { HomeScreen(layoutHomeModel()) }
+        val model = layoutHomeModel().copy(fiber = HomeMetricModel("Fiber", "12 / 25 g", 12f / 25f))
+        setContent { HomeScreen(model) }
         val regularCard = onNodeWithTag(UiAutomationIds.HOME_METRIC_FIBER.value)
             .fetchSemanticsNode().boundsInRoot
-        val regularFill = progressFill(captureToImage(), regularCard, Color(0xFF7CB342))
+        val regularFill = progressFill(captureToImage(), regularCard, Color(0xFF7AB462))
         setContent {
-            Box(Modifier.requiredSize(320.dp, 812.dp)) { HomeScreen(layoutHomeModel()) }
+            Box(Modifier.requiredSize(320.dp, 812.dp)) { HomeScreen(model) }
         }
         val narrowCard = onNodeWithTag(UiAutomationIds.HOME_METRIC_FIBER.value)
             .fetchSemanticsNode().boundsInRoot
-        val narrowFill = progressFill(captureToImage(), narrowCard, Color(0xFF7CB342))
+        val narrowFill = progressFill(captureToImage(), narrowCard, Color(0xFF7AB462))
         assertTrue(
             abs(regularFill - narrowFill) <= 0.03f,
             "Same metric changes its visible progress with width: regular=$regularFill narrow=$narrowFill",
@@ -469,6 +496,20 @@ class PhotoAnalysisLayoutVisualTest {
             if (filled + remaining > card.width / 2f) return filled.toFloat() / (filled + remaining)
         }
         error("No progress track rendered inside $card")
+    }
+
+    private fun assertBackdropColorNear(expected: Color, actual: Color) {
+        val expectedArgb = expected.toArgb()
+        val actualArgb = actual.toArgb()
+        // A re-encoded image can interpolate by one 8-bit level at a scaled edge.
+        listOf(0, 8, 16, 24).forEach { shift ->
+            val expectedChannel = (expectedArgb ushr shift) and 0xFF
+            val actualChannel = (actualArgb ushr shift) and 0xFF
+            assertTrue(
+                abs(expectedChannel - actualChannel) <= 2,
+                "Backdrop changed beyond 2/255 per channel: expected=$expected actual=$actual",
+            )
+        }
     }
 
     private fun writeLayoutScreenshot(name: String, bitmap: org.jetbrains.skia.Bitmap) {

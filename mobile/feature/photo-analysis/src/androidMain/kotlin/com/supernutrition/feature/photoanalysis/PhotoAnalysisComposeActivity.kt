@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -28,9 +29,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
@@ -42,6 +45,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.supernutrition.core.ui.CameraPermissionState
+import com.supernutrition.domain.nutrition.ConfirmedConsumedFood
 import com.supernutrition.domain.nutrition.RewardId
 import com.supernutrition.domain.photoanalysis.AttemptId
 import com.supernutrition.domain.photoanalysis.PhotoAnalysisState
@@ -383,11 +387,26 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         }
     }
 
+    private fun tabShell(rewardsModel: RewardsPresenterModel, confirmedFoods: List<ConfirmedConsumedFood>) =
+        PhotoAnalysisTabShell(
+            homeModel = homeScreenModel(),
+            rewardsModel = rewardsModel,
+            rewardsScreenCopy = rewardsScreenCopy(),
+            homeLabel = getString(R.string.capture_tab),
+            rewardsLabel = getString(R.string.rewards_tab),
+            cameraLabel = getString(R.string.capture_shutter),
+            confirmedFoods = confirmedFoods,
+            profileName = retainedState.profileDisplayName,
+            onProfileNameChanged = { retainedState.profileDisplayName = it },
+            onSystemBarAppearanceChanged = ::updateSystemBarAppearance,
+        )
+
     private fun renderContent() {
         setContent {
             val preview by retainedState.previewStore.preview.collectAsState()
             val manualIngredientState by feature.manualIngredientStateFlow.collectAsState()
             val rewardsSnapshot by retainedState.rewardsFeature.snapshot.collectAsState()
+            val confirmedFoods by retainedState.rewardsFeature.confirmedFoods.collectAsState()
             val openedProfileId = profileId
             Box(
                 modifier = Modifier
@@ -396,21 +415,13 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
             ) {
                 if (openedProfileId != null) {
                     SideEffect { updateSystemBarAppearance(darkIcons = true) }
-                    ProfileScreen(
+                    LinkedProfileScreen(
                         profileId = openedProfileId,
                         onCloseRequested = { profileId = null },
                     )
                 } else {
                     PhotoAnalysisTabs(
-                        shell = PhotoAnalysisTabShell(
-                            homeModel = homeScreenModel(),
-                            rewardsModel = RewardsPresenterModel.from(rewardsSnapshot, rewardsCopy),
-                            homeLabel = getString(R.string.capture_tab),
-                            rewardsLabel = getString(R.string.rewards_tab),
-                            cameraLabel = getString(R.string.capture_shutter),
-                            onProfileRequested = { profileId = "me" },
-                            onSystemBarAppearanceChanged = ::updateSystemBarAppearance,
-                        ),
+                        shell = tabShell(RewardsPresenterModel.from(rewardsSnapshot, rewardsCopy), confirmedFoods),
                         captureContent = { onCloseRequested ->
                             PhotoAnalysisCaptureTab(
                                 state = PhotoAnalysisCaptureTabState(
@@ -456,32 +467,62 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         rhythmTitle = getString(R.string.home_rhythm_title),
         rhythmSubtitle = getString(R.string.home_rhythm_subtitle),
         rhythmBadgeLabel = getString(R.string.home_rhythm_badge),
-        fiber = HomeMetricModel(
-            label = getString(R.string.home_fiber_label),
-            value = getString(R.string.home_fiber_value),
+        fiber = homeMetricModel(
+            R.string.home_fiber_label,
+            R.string.home_fiber_value,
+            R.integer.home_fiber_amount,
+            R.integer.home_fiber_target,
         ),
         water = HomeMetricModel(
             label = getString(R.string.home_water_label),
             value = getString(R.string.home_water_value),
         ),
-        protein = HomeMetricModel(
-            label = getString(R.string.home_protein_label),
-            value = getString(R.string.home_protein_value),
+        protein = homeMetricModel(
+            R.string.home_protein_label,
+            R.string.home_protein_value,
+            R.integer.home_protein_amount,
+            R.integer.home_protein_target,
         ),
         movement = HomeMetricModel(
             label = getString(R.string.home_movement_label),
             value = getString(R.string.home_movement_value),
+        ),
+        colors = HomeMetricModel(
+            label = getString(R.string.home_colors_label),
+            value = getString(R.string.home_metric_unavailable),
+        ),
+        fats = HomeMetricModel(
+            label = getString(R.string.home_fats_label),
+            value = getString(R.string.home_metric_unavailable),
         ),
         nextStepTitle = getString(R.string.home_next_step_title),
         nextStepDescription = getString(R.string.home_next_step_description),
         nextStepAction = getString(R.string.home_next_step_action),
         viewGoalsLabel = getString(R.string.home_view_goals),
         goalsTitle = getString(R.string.home_goals_title),
-        goalsDescription = getString(R.string.home_goals_description),
+        goalsDescription = getString(
+            R.string.home_goals_description,
+            resources.getInteger(R.integer.home_fiber_target),
+            resources.getInteger(R.integer.home_protein_target),
+        ),
         goalsDoneLabel = getString(R.string.home_goals_done),
         profileActionLabel = getString(R.string.home_profile_action),
         mascotDescription = getString(R.string.home_mascot_description),
         saladDescription = getString(R.string.home_salad_description),
+    )
+
+    private fun homeMetricModel(labelRes: Int, valueRes: Int, amountRes: Int, targetRes: Int): HomeMetricModel {
+        val amount = resources.getInteger(amountRes)
+        val target = resources.getInteger(targetRes)
+        return HomeMetricModel(getString(labelRes), getString(valueRes, amount, target), amount.toFloat() / target)
+    }
+
+    private fun rewardsScreenCopy() = RewardsScreenCopy(
+        daily = getString(R.string.rewards_daily),
+        weekly = getString(R.string.rewards_weekly),
+        countTemplate = getString(R.string.rewards_count_template),
+        todaySummaryTemplate = getString(R.string.rewards_today_summary),
+        weekSummaryTemplate = getString(R.string.rewards_week_summary),
     )
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -538,6 +579,7 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
     }
 
     class RetainedState : ViewModel() {
+        internal var profileDisplayName by mutableStateOf("")
         internal val leases = PhotoLeaseStore()
         internal val sessions = PhotoSessionStore()
         internal val previewStore = AndroidRetainedPhotoPreviewStore()
@@ -565,7 +607,7 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
 }
 
 @Composable
-private fun ProfileScreen(profileId: String, onCloseRequested: () -> Unit) {
+private fun LinkedProfileScreen(profileId: String, onCloseRequested: () -> Unit) {
     BackHandler(onBack = onCloseRequested)
     Scaffold { contentPadding ->
         Column(
@@ -604,6 +646,26 @@ private fun ProfileScreen(profileId: String, onCloseRequested: () -> Unit) {
 }
 
 @Composable
+private fun HomeProfileDestination(shell: PhotoAnalysisTabShell, onBackRequested: () -> Unit) {
+    val uriHandler = LocalUriHandler.current
+    val profileFlow = rememberProfileFlowState()
+    BackHandler(enabled = profileFlow.historyVisible, onBack = profileFlow::showProfile)
+    BackHandler(enabled = profileFlow.nameEditing, onBack = profileFlow::cancelNameEdit)
+    ProfileFlow(
+        state = profileFlow,
+        displayName = shell.profileName,
+        confirmedFoods = shell.confirmedFoods,
+        actions = ProfileScreenActions(
+            onNameChanged = shell.onProfileNameChanged,
+            onBackRequested = onBackRequested,
+            onPrivacyPolicyRequested = { uriHandler.openUri(ProfileLegalLinks.PRIVACY_POLICY) },
+            onTermsRequested = { uriHandler.openUri(ProfileLegalLinks.TERMS) },
+        ),
+        modifier = Modifier.safeDrawingPadding(),
+    )
+}
+
+@Composable
 private fun PhotoAnalysisTabs(
     shell: PhotoAnalysisTabShell,
     captureContent: @Composable (onCloseRequested: () -> Unit) -> Unit,
@@ -611,6 +673,8 @@ private fun PhotoAnalysisTabs(
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
     var captureVisible by rememberSaveable { mutableStateOf(false) }
     var captureReturnTab by rememberSaveable { mutableIntStateOf(0) }
+    var profileVisible by rememberSaveable { mutableStateOf(false) }
+    val mainState = rememberSaveableStateHolder()
     val closeCapture: () -> Unit = {
         captureVisible = false
         selectedTab = captureReturnTab
@@ -619,32 +683,39 @@ private fun PhotoAnalysisTabs(
         captureReturnTab = selectedTab
         captureVisible = true
     }
-    SideEffect { shell.onSystemBarAppearanceChanged(!captureVisible && selectedTab != 0) }
+    val darkSystemBarIcons = profileVisible || (!captureVisible && selectedTab != 0)
+    SideEffect { shell.onSystemBarAppearanceChanged(darkSystemBarIcons) }
+    BackHandler(enabled = profileVisible, onBack = { profileVisible = false })
     BackHandler(enabled = captureVisible, onBack = closeCapture)
     Box(Modifier.fillMaxSize().semantics { testTagsAsResourceId = true }) {
-        if (captureVisible) {
+        if (profileVisible) {
+            HomeProfileDestination(shell) { profileVisible = false }
+        } else if (captureVisible) {
             captureContent(closeCapture)
         } else {
-            PhotoAnalysisMainLayout(
-                state = PhotoAnalysisMainBottomBarState(
-                    selectedTab = selectedTab,
-                    homeLabel = shell.homeLabel,
-                    rewardsLabel = shell.rewardsLabel,
-                    cameraLabel = shell.cameraLabel,
-                ),
-                actions = PhotoAnalysisMainBottomBarActions(
-                    onHomeSelected = { selectedTab = 0 },
-                    onRewardsSelected = { selectedTab = 1 },
-                    onCameraRequested = showCapture,
-                ),
-                contentPadding = WindowInsets.safeDrawing.asPaddingValues(),
-            ) {
-                PhotoAnalysisTabContent(
-                    shell = shell,
-                    selectedTab = selectedTab,
-                    onAddFood = showCapture,
-                    onRewardsBack = { selectedTab = 0 },
-                )
+            mainState.SaveableStateProvider("main-tabs") {
+                PhotoAnalysisMainLayout(
+                    state = PhotoAnalysisMainBottomBarState(
+                        selectedTab = selectedTab,
+                        homeLabel = shell.homeLabel,
+                        rewardsLabel = shell.rewardsLabel,
+                        cameraLabel = shell.cameraLabel,
+                    ),
+                    actions = PhotoAnalysisMainBottomBarActions(
+                        onHomeSelected = { selectedTab = 0 },
+                        onRewardsSelected = { selectedTab = 1 },
+                        onCameraRequested = showCapture,
+                    ),
+                    contentPadding = WindowInsets.safeDrawing.asPaddingValues(),
+                ) {
+                    PhotoAnalysisTabContent(
+                        shell = shell,
+                        selectedTab = selectedTab,
+                        onAddFood = showCapture,
+                        onRewardsBack = { selectedTab = 0 },
+                        onProfileRequested = { profileVisible = true },
+                    )
+                }
             }
         }
     }
@@ -656,25 +727,29 @@ private fun PhotoAnalysisTabContent(
     selectedTab: Int,
     onAddFood: () -> Unit,
     onRewardsBack: () -> Unit,
+    onProfileRequested: () -> Unit,
 ) {
     if (selectedTab == 0) {
         HomeScreen(
             model = shell.homeModel,
             onAddFoodRequested = onAddFood,
-            onProfileRequested = shell.onProfileRequested,
+            onProfileRequested = onProfileRequested,
         )
     } else {
-        RewardsScreen(shell.rewardsModel, onBackRequested = onRewardsBack)
+        RewardsScreen(shell.rewardsModel, onBackRequested = onRewardsBack, copy = shell.rewardsScreenCopy)
     }
 }
 
 private data class PhotoAnalysisTabShell(
     val homeModel: HomeScreenModel,
     val rewardsModel: RewardsPresenterModel,
+    val rewardsScreenCopy: RewardsScreenCopy,
     val homeLabel: String,
     val rewardsLabel: String,
     val cameraLabel: String,
-    val onProfileRequested: () -> Unit,
+    val confirmedFoods: List<ConfirmedConsumedFood>,
+    val profileName: String,
+    val onProfileNameChanged: (String) -> Unit,
     val onSystemBarAppearanceChanged: (darkIcons: Boolean) -> Unit,
 )
 

@@ -1,0 +1,25 @@
+{
+  "normalization": "Trailing whitespace and surplus final blank lines removed only; log events and ordering preserved.",
+  "files": [
+    {
+      "file": "ios-incremental-green.log",
+      "original_sha256": "b43ddfb59bcbfb9cfc56beade6ff20512cc94e30f91d97e4ab166aefccea35b6",
+      "stored_sha256": "da23937e99954281109d9ecca40f45adc3466a85ac496df6163decc92dba9744"
+    },
+    {
+      "file": "ios-production-target-first-pass.log",
+      "original_sha256": "3dc680ae66ac71ae70f96a0f8027f61f5c7d88e747dc0a3569920b98ff5f4cf8",
+      "stored_sha256": "e62c3d49200cda1330112913dcb82e47347821797de0d40b2e684b8a4e4bd77e"
+    },
+    {
+      "file": "ios-incremental-red.log",
+      "original_sha256": "5f7d913a6697ea435b3107a50793703164d17e279ef09b10a49aed0befcac10e",
+      "stored_sha256": "7a22d9af2cd793483194b0a243680ca272c53c5c0b8db3da8e6a87b15f917291"
+    },
+    {
+      "file": "ios-production-target-build.log",
+      "original_sha256": "e62b0f43490e0ab60ba0908fc3c0447d4940af970da045a6d7b984a00384933c",
+      "stored_sha256": "f5dc0c295d8bceb1e79597a28f0ccba8b95e847f12047bdb4e8b2298803ae830"
+    }
+  ]
+}

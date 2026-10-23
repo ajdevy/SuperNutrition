@@ -38,6 +38,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.supernutrition.core.ui.CameraPermissionState
 import com.supernutrition.core.ui.UiAutomationIds
+import java.util.concurrent.Future
 
 /** CameraX preview kept inside the stable photo slot owned by the shared UI. */
 @Composable
@@ -192,7 +193,7 @@ private fun PhotoAnalysisCameraBinding(
                 return
             }
             runCatching {
-                val provider = providerFuture.get()
+                val provider = readyCameraProvider(providerFuture) ?: return
                 preview.setSurfaceProvider(previewView.surfaceProvider)
                 provider.bindToLifecycle(
                     lifecycleOwner,
@@ -229,5 +230,8 @@ private fun PhotoAnalysisCameraBinding(
         }
     }
 }
+
+/** Reading provider initialization must never wait on the UI thread. */
+internal fun <T> readyCameraProvider(future: Future<T>): T? = if (future.isDone) future.get() else null
 
 private const val TAG = "PhotoAnalysisLiveCamera"

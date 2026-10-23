@@ -1,0 +1,9 @@
+gradle.projectsEvaluated {
+    def ui = rootProject.findProject(':feature:photo-analysis-ui')
+    if (ui != null) {
+        ui.tasks.named('detektMainJvm').configure {
+            debug.set(true)
+            outputs.upToDateWhen { false }
+        }
+    }
+}

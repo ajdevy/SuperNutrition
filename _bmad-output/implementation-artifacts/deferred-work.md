@@ -18,3 +18,15 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-review-state-recreation.md`
   summary: Ignored ReplacePhoto or ScanAgain in Backgrounded also clears the retained live review cache.
   evidence: Blind Hunter traced unchanged Backgrounded transition plus unconditional cache invalidation; follow-up authorized broad interaction fix is tracked as N-28 in spec-review-ignored-invalidation.md.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-profile-meal-history.md`
+  summary: Configure typed Detekt KMP analysis to distinguish common expect declarations from platform actuals.
+  evidence: The unchanged analyzer setup combines commonMain and jvmMain into one analysis module; diagnostic detektMainJvm reports three expect/actual module errors for currentHistoryReferenceDay, while real JVM/Android/iOS-arm64 compilation and executable tests pass. See meal-history-verification-2026-10-23/detekt-diagnostic.gradle and the verification report. No rule, baseline, task, or source-set exclusion was added.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-ios-host-target-selection.md`
+  summary: Package shared Compose resources into the iOS host and verify Home/Profile/Rewards on a supported runtime.
+  evidence: The fresh unsigned arm64 app contains nine files and no Compose resource directory or Fraunces/Nunito fonts; see emulator-verification-2026-10-23/ios-app-package.json and IOS-PACKAGE-1.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-home-capybara-grounding.md`
+  summary: Diagnostic raw UI branch coverage is66.25%; its earlier classification as a declared JVM gate failure was corrected on2026-10-23.
+  evidence: REPORT-COVERAGE-1 confirms the pre-existing UI denominator is native-equivalent. The raw report has1274/1923 covered branches; new garden geometry is24/24. Full policy remains blocked by expired mandatory physical Android evidence, not this numerical observation. No policy or threshold changed.

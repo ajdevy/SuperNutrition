@@ -1,0 +1,191 @@
+{
+  "status": "interrupted",
+  "commit": "3d54a716730858a313ac54ba943675251d10852a",
+  "variant": "poc",
+  "completed": 36,
+  "passed": 29,
+  "failed_or_error": 7,
+  "results": [
+    {
+      "class": "com.supernutrition.android.AndroidImageNormalizerFixtureTest",
+      "test": "callerSuppliedOrientationIsApplied",
+      "code": 0
+    },
+    {
+      "class": "com.supernutrition.android.AndroidImageNormalizerFixtureTest",
+      "test": "exifGpsFixtureNormalizesToBoundedMetadataFreePixels",
+      "code": 0
+    },
+    {
+      "class": "com.supernutrition.android.AndroidImageNormalizerFixtureTest",
+      "test": "extremeBoundNeverCreatesZeroDimensionBitmap",
+      "code": 0
+    },
+    {
+      "class": "com.supernutrition.android.AndroidPhotoBridgeBytesInstrumentationTest",
+      "test": "photoPickerRequestsSelectedPersistableReadGrant",
+      "code": 0
+    },
+    {
+      "class": "com.supernutrition.android.AndroidPhotoBridgeBytesInstrumentationTest",
+      "test": "cameraThumbnailResultBecomesJpegBytes",
+      "code": 0
+    },
+    {
+      "class": "com.supernutrition.android.AndroidPhotoCaptureFilesInstrumentationTest",
+      "test": "cameraIntentTargetsThePrivateCameraXActivity",
+      "code": 0
+    },
+    {
+      "class": "com.supernutrition.android.AndroidPhotoCaptureFilesInstrumentationTest",
+      "test": "ownedResultBytesAreConsumedAndDeleted",
+      "code": 0
+    },
+    {
+      "class": "com.supernutrition.android.AndroidPhotoCaptureFilesInstrumentationTest",
+      "test": "cameraBytesResultUsesOneShotOpaqueTokenWithoutAFileUri",
+      "code": 0
+    },
+    {
+      "class": "com.supernutrition.android.AndroidPhotoCaptureFilesInstrumentationTest",
+      "test": "staleCleanupRemovesOnlyOwnedCaptureFiles",
+      "code": 0
+    },
+    {
+      "class": "com.supernutrition.android.BootstrapHostInstrumentationTest",
+      "test": "testApplicationStartsKoinBeforeTheHostIsUsed",
+      "code": 0
+    },
+    {
+      "class": "com.supernutrition.android.BrandNavigationVisualInstrumentationTest",
+      "test": "rewardsBackdropAndFinalCardClearFloatingNavigation",
+      "code": -2
+    },
+    {
+      "class": "com.supernutrition.android.BrandNavigationVisualInstrumentationTest",
+      "test": "heldTabKeepsItsTouchSurfaceTransparent",
+      "code": -2
+    },
+    {
+      "class": "com.supernutrition.android.BrandNavigationVisualInstrumentationTest",
+      "test": "selectionChangesIconsAndKeepsLabels",
+      "code": -2
+    },
+    {
+      "class": "com.supernutrition.android.PhotoAnalysisCameraPermissionInstrumentationTest",
+      "test": "explicitRetryAfterDenialRequestsPermissionWithoutCapture",
+      "code": 0
+    },
+    {
+      "class": "com.supernutrition.android.PhotoAnalysisCameraPermissionInstrumentationTest",
+      "test": "cameraEntryWithoutHardwareDoesNotRequestUnusedPermission",
+      "code": 0
+    },
+    {
+      "class": "com.supernutrition.android.PhotoAnalysisCameraPermissionInstrumentationTest",
+      "test": "settingsGrantClearsPermissionRecoveryWithoutCapture",
+      "code": 0
+    },
+    {
+      "class": "com.supernutrition.android.PhotoAnalysisCameraPermissionInstrumentationTest",
+      "test": "permissionRefreshPreservesEveryOtherRecoveryReason",
+      "code": 0
+    },
+    {
+      "class": "com.supernutrition.android.PhotoAnalysisCameraPermissionInstrumentationTest",
+      "test": "backgroundedCaptureDoesNotAutomaticallyRequestCameraPermission",
+      "code": 0
+    },
+    {
+      "class": "com.supernutrition.android.PhotoAnalysisCameraPermissionInstrumentationTest",
+      "test": "decliningPreviewPermissionKeepsCaptureControlsAvailable",
+      "code": 0
+    },
+    {
+      "class": "com.supernutrition.android.PhotoAnalysisCameraPermissionInstrumentationTest",
+      "test": "permanentRefusalOpensSettingsOnlyAfterExplicitAction",
+      "code": 0
+    },
+    {
+      "class": "com.supernutrition.android.PhotoAnalysisCameraPermissionInstrumentationTest",
+      "test": "alreadyGrantedCameraEntryDoesNotRequestOrCapture",
+      "code": 0
+    },
+    {
+      "class": "com.supernutrition.android.PhotoAnalysisCameraPermissionInstrumentationTest",
+      "test": "firstCameraEntryRequestsPreviewPermissionOnlyOnce",
+      "code": 0
+    },
+    {
+      "class": "com.supernutrition.android.PhotoAnalysisCameraPermissionInstrumentationTest",
+      "test": "restoredReviewRecoveryDoesNotAutomaticallyRequestCameraPermission",
+      "code": 0
+    },
+    {
+      "class": "com.supernutrition.android.PhotoAnalysisCameraPermissionInstrumentationTest",
+      "test": "previousRefusalDoesNotReopenPermissionOnCameraEntry",
+      "code": 0
+    },
+    {
+      "class": "com.supernutrition.android.PhotoAnalysisCameraPermissionInstrumentationTest",
+      "test": "grantingCameraPermissionDoesNotCapturePhoto",
+      "code": 0
+    },
+    {
+      "class": "com.supernutrition.android.PhotoAnalysisCameraPermissionInstrumentationTest",
+      "test": "returningFromSettingsWithoutGrantPreservesPermissionRecovery",
+      "code": 0
+    },
+    {
+      "class": "com.supernutrition.android.PhotoAnalysisCameraPermissionInstrumentationTest",
+      "test": "explicitRetryWaitsForRationaleAndSharesRequestGuard",
+      "code": 0
+    },
+    {
+      "class": "com.supernutrition.android.PhotoAnalysisCameraPermissionInstrumentationTest",
+      "test": "permissionRefreshPreservesAnExistingPhoto",
+      "code": 0
+    },
+    {
+      "class": "com.supernutrition.android.PhotoAnalysisCameraProviderReadinessInstrumentationTest",
+      "test": "completedFailureReachesTheExistingRecoveryPath",
+      "code": 0
+    },
+    {
+      "class": "com.supernutrition.android.PhotoAnalysisCameraProviderReadinessInstrumentationTest",
+      "test": "cancelledInitializationReachesTheExistingRecoveryPath",
+      "code": 0
+    },
+    {
+      "class": "com.supernutrition.android.PhotoAnalysisCameraProviderReadinessInstrumentationTest",
+      "test": "completedInitializationReturnsTheProvider",
+      "code": 0
+    },
+    {
+      "class": "com.supernutrition.android.PhotoAnalysisCameraProviderReadinessInstrumentationTest",
+      "test": "pendingInitializationDoesNotReadTheFuture",
+      "code": 0
+    },
+    {
+      "class": "com.supernutrition.android.PhotoAnalysisComposeSemanticsInstrumentationTest",
+      "test": "backFromCaptureReturnsToHomeWithoutBottomBarInCapture",
+      "code": -2
+    },
+    {
+      "class": "com.supernutrition.android.PhotoAnalysisComposeSemanticsInstrumentationTest",
+      "test": "profileOpensMealHistoryAndBackPreservesProfile",
+      "code": -2
+    },
+    {
+      "class": "com.supernutrition.android.PhotoAnalysisComposeSemanticsInstrumentationTest",
+      "test": "homeAddMealActionOpensCaptureSurface",
+      "code": -2
+    },
+    {
+      "class": "com.supernutrition.android.PhotoAnalysisComposeSemanticsInstrumentationTest",
+      "test": "firstTabOpensHomeAfterRewardsSelection",
+      "code": -2
+    }
+  ],
+  "note": "Partial instrumentation-status records, not complete suite XML; Production/UI Acceptance not reached."
+}

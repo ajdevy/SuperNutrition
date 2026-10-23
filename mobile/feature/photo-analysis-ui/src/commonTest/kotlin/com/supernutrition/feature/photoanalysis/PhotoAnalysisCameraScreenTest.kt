@@ -74,7 +74,7 @@ class PhotoAnalysisCameraScreenTest {
             val salmon = onNodeWithTag(photoAnalysisVisibleComponentId("photo-salmon").value)
             salmon.performScrollTo().assertIsNotSelected().performClick().assertIsSelected()
             salmon.performClick().assertIsNotSelected().performClick().assertIsSelected()
-            onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_MANUAL_INGREDIENT_ADD.value).performScrollTo().performClick()
+            onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_MANUAL_INGREDIENT_ADD.value).assertIsDisplayed().performClick()
             onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_MANUAL_INGREDIENT_INPUT.value).performTextInput("Carrot")
             onNodeWithTag(
                 UiAutomationIds.PHOTO_ANALYSIS_ADD_TO_MEAL.value,

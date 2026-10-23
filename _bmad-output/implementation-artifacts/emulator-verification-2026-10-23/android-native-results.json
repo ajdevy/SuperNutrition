@@ -1,0 +1,48 @@
+{
+  "command_exit": 0,
+  "started_utc": "2026-10-23T12:56:15.428315+00:00",
+  "source_commit": "3d54a716730858a313ac54ba943675251d10852a",
+  "head": "779fc327405b19f6301874edc79d5f5c6536b15e",
+  "device": "emulator-5554",
+  "avd": "SN_Screenshots_20261023",
+  "rows": [
+    {
+      "variant": "poc",
+      "tests": 50,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report": "/Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/androidApp/build/outputs/androidTest-results/connected/debug/flavors/poc/TEST-SN_Screenshots_20261023(AVD) - 15-_apps_androidApp-poc.xml"
+    },
+    {
+      "variant": "production",
+      "tests": 50,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report": "/Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/androidApp/build/outputs/androidTest-results/connected/debug/flavors/production/TEST-SN_Screenshots_20261023(AVD) - 15-_apps_androidApp-production.xml"
+    },
+    {
+      "variant": "uiAcceptance",
+      "tests": 50,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report": "/Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/androidApp/build/outputs/androidTest-results/connected/debug/flavors/uiAcceptance/TEST-SN_Screenshots_20261023(AVD) - 15-_apps_androidApp-uiAcceptance.xml"
+    }
+  ],
+  "total_tests": 150,
+  "elapsed": "8m 3s",
+  "physical_device": false,
+  "original_trust_assembly": {
+    "exit_code": 0,
+    "elapsed": "49s",
+    "production_apk_sha256_unchanged": true,
+    "original_verification_metadata_restored": true
+  },
+  "runtime_cleanup": {
+    "production_apk_reinstalled": true,
+    "font_scale_restored": 1,
+    "task_emulator_stopped": true
+  }
+}

@@ -1,0 +1,6 @@
+{"boot": "", "package": "Service package: not found", "animation": "running", "utc": "2026-10-23T08:50:24Z"}
+{"boot": "", "package": "Service package: not found", "animation": "running", "utc": "2026-10-23T08:50:37Z"}
+{"boot": "", "package": "Service package: found", "animation": "running", "utc": "2026-10-23T08:50:49Z"}
+{"boot": "", "package": "Service package: found", "animation": "running", "utc": "2026-10-23T08:51:02Z"}
+{"boot": "", "package": "Service package: found", "animation": "running", "utc": "2026-10-23T08:51:15Z"}
+{"boot": "1", "package": "Service package: found", "animation": "stopped", "utc": "2026-10-23T08:51:30Z"}

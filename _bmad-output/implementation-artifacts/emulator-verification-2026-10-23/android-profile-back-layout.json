@@ -1,0 +1,145 @@
+[
+  {
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "center": "[80,110]",
+    "resource-id": "profile_close",
+    "key": 3506402
+  },
+  {
+    "text": "Profile",
+    "center": "[360,110]",
+    "resource-id": "profile_title",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "center": "[640,228]",
+    "resource-id": "profile_name_save",
+    "key": 3506402
+  },
+  {
+    "text": "Your name is optional and stays in this app session.",
+    "center": "[458,322]",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "center": "[360,475]",
+    "resource-id": "profile_history",
+    "key": 3506402
+  },
+  {
+    "content-desc": "Back to Home",
+    "center": "[80,110]",
+    "key": 3506402
+  },
+  {
+    "text": "?",
+    "center": "[112,269]",
+    "key": 3506402
+  },
+  {
+    "text": "Alex",
+    "interactions": [
+      "clickable",
+      "focusable",
+      "long-clickable"
+    ],
+    "state": [
+      "focused"
+    ],
+    "center": "[370,228]",
+    "resource-id": "profile_name_input",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "center": "[528,228]",
+    "resource-id": "profile_name_clear",
+    "key": 3506402
+  },
+  {
+    "content-desc": "Save",
+    "center": "[640,228]",
+    "key": 3506402
+  },
+  {
+    "text": "Meal history",
+    "center": "[269,454]",
+    "key": 3506402
+  },
+  {
+    "text": "0 meals saved",
+    "center": "[265,499]",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "center": "[360,647]",
+    "resource-id": "profile_privacy",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "center": "[360,765]",
+    "resource-id": "profile_terms",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "center": "[360,909]",
+    "resource-id": "profile_crash_reports",
+    "key": 3506402
+  },
+  {
+    "content-desc": "Your name. Your name is optional and stays in this app session.",
+    "center": "[370,228]",
+    "key": 3506402
+  },
+  {
+    "content-desc": "Clear name",
+    "center": "[528,228]",
+    "key": 3506402
+  },
+  {
+    "text": "Privacy Policy",
+    "center": "[269,647]",
+    "key": 3506402
+  },
+  {
+    "text": "Terms \u0026 Conditions",
+    "center": "[310,765]",
+    "key": 3506402
+  },
+  {
+    "text": "Send crash reports",
+    "center": "[304,871]",
+    "key": 3506402
+  },
+  {
+    "text": "Share diagnostic data to help fix crashes",
+    "center": "[344,933]",
+    "key": 3506402
+  }
+]

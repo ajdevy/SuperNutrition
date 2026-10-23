@@ -1,0 +1,65 @@
+{
+  "observed_at": "2026-10-23T16:30:31.856381+00:00",
+  "source_sha256": {
+    "mobile/config/quality/native-gaps.toml": "be0602ead0350fa9e317701b2f6d6e6ea852e5543979a7f7ebddafa7189cce0e",
+    "mobile/config/quality/evidence-bindings.toml": "f9be98dfdaa2f3abe4afb95c10ecef9695e8d5e4739fd68db895687523fcde70"
+  },
+  "required_success_records": [
+    {
+      "id": "bootstrap-android-host",
+      "executed_at": "2026-09-12T08:04:52Z",
+      "max_age_days": 30,
+      "expires_at": "2026-10-12T08:04:52+00:00",
+      "expired": true,
+      "required_capability": null,
+      "evidence_task": "connectedUiAcceptanceDebugAndroidTest"
+    },
+    {
+      "id": "photo-android-camera-picker",
+      "executed_at": "2026-09-12T08:04:52Z",
+      "max_age_days": 30,
+      "expires_at": "2026-10-12T08:04:52+00:00",
+      "expired": true,
+      "required_capability": "physical-android-device",
+      "evidence_task": "connectedUiAcceptanceDebugAndroidTest"
+    },
+    {
+      "id": "photo-android-normalization",
+      "executed_at": "2026-09-12T08:04:52Z",
+      "max_age_days": 30,
+      "expires_at": "2026-10-12T08:04:52+00:00",
+      "expired": true,
+      "required_capability": "physical-android-device",
+      "evidence_task": "connectedUiAcceptanceDebugAndroidTest"
+    },
+    {
+      "id": "photo-android-lifecycle",
+      "executed_at": "2026-09-12T08:04:52Z",
+      "max_age_days": 30,
+      "expires_at": "2026-10-12T08:04:52+00:00",
+      "expired": true,
+      "required_capability": "physical-android-device",
+      "evidence_task": "connectedUiAcceptanceDebugAndroidTest"
+    },
+    {
+      "id": "photo-android-accessibility",
+      "executed_at": "2026-09-12T08:04:52Z",
+      "max_age_days": 30,
+      "expires_at": "2026-10-12T08:04:52+00:00",
+      "expired": true,
+      "required_capability": "physical-android-device",
+      "evidence_task": "connectedUiAcceptanceDebugAndroidTest"
+    },
+    {
+      "id": "photo-android-inference-poc",
+      "executed_at": "2026-09-12T08:04:52Z",
+      "max_age_days": 30,
+      "expires_at": "2026-10-12T08:04:52+00:00",
+      "expired": true,
+      "required_capability": "physical-android-device",
+      "evidence_task": "connectedAndroidTest"
+    }
+  ],
+  "physical_android_available": false,
+  "emulator_is_not_physical_evidence": true
+}

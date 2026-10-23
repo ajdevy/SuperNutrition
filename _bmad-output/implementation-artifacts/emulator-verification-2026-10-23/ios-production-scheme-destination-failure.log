@@ -1,0 +1,16 @@
+Command line invocation:
+    /Applications/Xcode-26.6.0.app/Contents/Developer/usr/bin/xcodebuild build -project mobile/apps/iosApp/SuperNutritionUIAcceptance.xcodeproj -scheme SuperNutrition -configuration Debug -destination generic/platform=iOS -derivedDataPath /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-production-20261023-_pw8h9kt -jobs 2 SHARED_KIT_FRAMEWORK_DIR=/Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/sharedKit/build/bin/iosArm64/debugFramework ARCHS=arm64 ONLY_ACTIVE_ARCH=YES CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+
+Build settings from command line:
+    ARCHS = arm64
+    CODE_SIGNING_ALLOWED = NO
+    CODE_SIGNING_REQUIRED = NO
+    ONLY_ACTIVE_ARCH = YES
+    SHARED_KIT_FRAMEWORK_DIR = /Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/sharedKit/build/bin/iosArm64/debugFramework
+
+2026-10-23 16:30:32.366 xcodebuild[940:5166575] Writing error result bundle to /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/ResultBundle_2026-23-10_16-30-0032.xcresult
+xcodebuild: error: Unable to find a destination matching the provided destination specifier:
+		{ generic:1, platform:iOS }
+
+	Ineligible destinations for the "SuperNutrition" scheme:
+		{ platform:iOS, id:dvtdevice-DVTiPhonePlaceholder-iphoneos:placeholder, name:Any iOS Device, error:iOS 26.5 is not installed. Please download and install the platform from Xcode > Settings > Components. }

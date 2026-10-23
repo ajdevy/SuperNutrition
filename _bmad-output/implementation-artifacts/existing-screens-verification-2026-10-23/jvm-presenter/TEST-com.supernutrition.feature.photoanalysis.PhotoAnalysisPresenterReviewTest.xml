@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="PhotoAnalysisPresenterReviewTest[jvm]" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-23T00:51:22.977Z" hostname="Anastasias-MacBook-Air.local" time="4.476">
+  <properties/>
+  <testcase name="evidence copy requires an estimated-mass template[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterReviewTest" time="3.818"/>
+  <testcase name="presenter retains ingredient and mass evidence for remote results[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterReviewTest" time="0.517"/>
+  <testcase name="presenter preserves factual evidence variants without inventing a mass[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterReviewTest" time="0.083"/>
+  <testcase name="presenter maps every factual local stage without a time estimate[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterReviewTest" time="0.018"/>
+  <testcase name="dish confidence bands survive identical localized confidence labels[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterReviewTest" time="0.03"/>
+  <testcase name="presenter displays each ingredient label once across evidence lanes[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterReviewTest" time="0.004"/>
+  <testcase name="presenter keeps local visible-food evidence separate without ingredient or mass claims[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterReviewTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

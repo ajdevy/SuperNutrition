@@ -1,0 +1,8 @@
+App loaded: app.supernutrition
+Debuggable: true
+Multiple candidates found, picking the only launcher activity: com.supernutrition.feature.photoanalysis.PhotoAnalysisComposeActivity
+Selected component: com.supernutrition.feature.photoanalysis.PhotoAnalysisComposeActivity
+Installing APKs: /Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/androidApp/build/outputs/apk/production/debug/androidApp-production-debug.apk
+Installation completed successfully
+Executing: Launching Activity for app.supernutrition
+Activation completed successfully

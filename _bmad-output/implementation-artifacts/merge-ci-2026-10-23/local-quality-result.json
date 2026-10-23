@@ -1,0 +1,41 @@
+{
+  "argv": [
+    "./mobile/gradlew",
+    "-p",
+    "mobile",
+    "qualityCheckJvmAndroid",
+    "mobileUnitCoverage",
+    "mobileCoverageReports",
+    ":apps:androidApp:assemblePocDebug",
+    ":apps:androidApp:assemblePocDebugAndroidTest",
+    ":apps:androidApp:assembleProductionDebug",
+    ":apps:androidApp:assembleProductionDebugAndroidTest",
+    ":apps:androidApp:assembleUiAcceptanceDebug",
+    ":apps:androidApp:assembleUiAcceptanceDebugAndroidTest",
+    "-Psupernutrition.runJvmCoverage=true",
+    "--dependency-verification=strict",
+    "--no-daemon",
+    "--configuration-cache",
+    "--max-workers=1",
+    "--continue",
+    "--console=plain"
+  ],
+  "started_at": "2026-10-23T17:28:41.940848+00:00",
+  "finished_at": "2026-10-23T17:57:15.928836+00:00",
+  "duration_seconds": 1713.97,
+  "exit_code": 1,
+  "emulator_stopped": true,
+  "source_commit": "79535a2dfd3a4c3cb67c73bb6e26ba8421c1cf74",
+  "failed_task_markers": [
+    "> Task :verifyMobilePolicy FAILED"
+  ],
+  "analysis_accuracy_warnings": [
+    "There were 18 compiler errors found during analysis. This affects accuracy of reporting.",
+    "There were 3 compiler errors found during analysis. This affects accuracy of reporting.",
+    "There were 3 compiler errors found during analysis. This affects accuracy of reporting."
+  ],
+  "task_summary": [
+    "617 actionable tasks: 322 executed, 43 from cache, 252 up-to-date"
+  ],
+  "mobile_sources_changed_during_run": false
+}

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ExistingScreensRefreshTest[jvm]" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-10-23T15:04:09.426Z" hostname="Anastasias-MacBook-Air.local" time="0.234">
+  <properties/>
+  <testcase name="Home never relabels water or movement as new nutrition metrics[jvm]" classname="com.supernutrition.feature.photoanalysis.ExistingScreensRefreshTest" time="0.123"/>
+  <testcase name="Rewards keeps actual card titles instead of decorative duplicate rewards[jvm]" classname="com.supernutrition.feature.photoanalysis.ExistingScreensRefreshTest" time="0.11"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -51,7 +51,7 @@ class ComponentRefreshTest {
         runOnIdle { header.value = "After refresh" }
         onNodeWithText("After refresh").assertIsDisplayed()
         onNodeWithText("12 / 25 g").assertIsDisplayed()
-        onNodeWithText("1.2 / 2 L").assertIsDisplayed()
+        onNodeWithText(layoutHomeModel().colors.value).assertIsDisplayed()
         runOnIdle { width.value = 320.dp }
         onNodeWithText("72 / 90 g").assertIsDisplayed()
     }
@@ -200,7 +200,6 @@ class ComponentRefreshTest {
         val choices = mutableStateOf(MealReviewChoices())
         val surface = mutableStateOf(PhotoAnalysisCaptureSurface(copy))
         val added = mutableListOf<String>()
-        val onAdd = mutableStateOf<() -> Unit>({ added.add("old add") })
         val onChoices = mutableStateOf<(MealReviewChoices) -> Unit>({ choices.value = it })
         setContent {
             PhotoAnalysisFoodPalette(
@@ -208,10 +207,8 @@ class ComponentRefreshTest {
                 surface.value,
                 choices.value,
                 onChoices.value,
-                onAdd.value,
             )
         }
-        onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_MANUAL_INGREDIENT_ADD.value).performClick()
         runOnIdle {
             review.value = PhotoAnalysisReviewModel(
                 emptyList(),
@@ -235,11 +232,9 @@ class ComponentRefreshTest {
                     "new selection",
                 )
             }
-            onAdd.value = { added.add("new add") }
         }
         onNodeWithTag(photoAnalysisVisibleComponentId("unknown").value).performClick().assertIsSelected()
-        onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_MANUAL_INGREDIENT_ADD.value).performClick()
         assertTrue("unknown" in choices.value.componentIds)
-        assertEquals(listOf("old add", "new selection", "new add"), added)
+        assertEquals(listOf("new selection"), added)
     }
 }

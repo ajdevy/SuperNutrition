@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuites tests="5" failures="1" errors="0" skipped="0" time="20.473" timestamp="2026-10-23T00:53:31" hostname="localhost">
+  <testsuite name="com.supernutrition.android.PhotoAnalysisCameraProviderReadinessInstrumentationTest" tests="4" failures="0" errors="0" skipped="0" time="0.071" timestamp="2026-10-23T00:53:31" hostname="localhost">
+    <properties>
+      <property name="device" value="SN_Final_Verification_35_20261018(AVD) - 15" />
+      <property name="flavor" value="production" />
+      <property name="project" value=":apps:androidApp" />
+    </properties>
+    <testcase name="completedFailureReachesTheExistingRecoveryPath" classname="com.supernutrition.android.PhotoAnalysisCameraProviderReadinessInstrumentationTest" time="0.059" />
+    <testcase name="cancelledInitializationReachesTheExistingRecoveryPath" classname="com.supernutrition.android.PhotoAnalysisCameraProviderReadinessInstrumentationTest" time="0.004" />
+    <testcase name="completedInitializationReturnsTheProvider" classname="com.supernutrition.android.PhotoAnalysisCameraProviderReadinessInstrumentationTest" time="0.004" />
+    <testcase name="pendingInitializationDoesNotReadTheFuture" classname="com.supernutrition.android.PhotoAnalysisCameraProviderReadinessInstrumentationTest" time="0.004" />
+  </testsuite>
+  <testsuite name="com.supernutrition.android.ProfileNameEditingInstrumentationTest" tests="1" failures="1" errors="0" skipped="0" time="14.785" timestamp="2026-10-23T00:53:31" hostname="localhost">
+    <properties>
+      <property name="device" value="SN_Final_Verification_35_20261018(AVD) - 15" />
+      <property name="flavor" value="production" />
+      <property name="project" value=":apps:androidApp" />
+    </properties>
+    <testcase name="systemBackCancelsNameEditingAndPreservesProfile" classname="com.supernutrition.android.ProfileNameEditingInstrumentationTest" time="14.785">
+      <failure>java.lang.AssertionError: Back must cancel editing without leaving Profile expected null, but was:&lt;androidx.test.uiautomator.UiObject2&#64;99e5&gt;
+at org.junit.Assert.fail(Assert.java:89)
+at org.junit.Assert.failNotNull(Assert.java:756)
+at org.junit.Assert.assertNull(Assert.java:738)
+at com.supernutrition.android.ProfileNameEditingInstrumentationTest.systemBackCancelsNameEditingAndPreservesProfile(ProfileNameEditingInstrumentationTest.java:47)
+</failure>
+    </testcase>
+  </testsuite>
+</testsuites>

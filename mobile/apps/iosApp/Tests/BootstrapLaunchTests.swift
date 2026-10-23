@@ -21,7 +21,10 @@ final class BootstrapLaunchTests: XCTestCase {
         XCTAssertTrue(homeSurfaceIsReady(in: app, timeout: 10))
         app.buttons[SharedKitAutomationIds.shared.cameraAction].tap()
         XCTAssertTrue(captureSurfaceIsReady(in: app, timeout: 15))
-        XCTAssertTrue(app.descendants(matching: .any)[SharedKitAutomationIds.shared.photoAnalysisStatus].exists)
+        XCTAssertEqual(
+            app.descendants(matching: .any)[SharedKitAutomationIds.shared.photoAnalysisStage].value as? String,
+            readyToCaptureStatus,
+        )
         XCTAssertTrue(app.buttons[SharedKitAutomationIds.shared.captureShutter].waitForExistence(timeout: 15))
         XCTAssertTrue(app.buttons[SharedKitAutomationIds.shared.captureImport].exists)
         XCTAssertTrue(app.buttons[SharedKitAutomationIds.shared.captureClose].exists)
@@ -151,6 +154,34 @@ final class BootstrapLaunchTests: XCTestCase {
         XCTAssertTrue(captureSurfaceIsReady(in: app, timeout: 15))
     }
 
+    func testHomeAvatarOpensProfileAndBackReturnsHome() {
+        let app = XCUIApplication()
+        app.launch()
+
+        closeInitialCapture(from: app)
+        XCTAssertTrue(homeSurfaceIsReady(in: app, timeout: 15))
+        let avatar = app.buttons[SharedKitAutomationIds.shared.homeProfile]
+        XCTAssertTrue(avatar.waitForExistence(timeout: 10))
+        avatar.tap()
+
+        let title = app.staticTexts[SharedKitAutomationIds.shared.profileTitle]
+        XCTAssertTrue(title.waitForExistence(timeout: 15))
+        XCTAssertFalse(app.buttons[SharedKitAutomationIds.shared.cameraAction].exists)
+        XCTAssertFalse(app.buttons[SharedKitAutomationIds.shared.rewardsTab].exists)
+        XCTAssertFalse(app.buttons[SharedKitAutomationIds.shared.homeAddFood].exists)
+        let back = app.buttons[SharedKitAutomationIds.shared.profileClose]
+        XCTAssertTrue(back.waitForExistence(timeout: 10))
+        back.tap()
+
+        XCTAssertTrue(homeSurfaceIsReady(in: app, timeout: 10))
+        XCTAssertFalse(title.exists)
+        XCTAssertTrue(app.buttons[SharedKitAutomationIds.shared.cameraAction].exists)
+        avatar.tap()
+        XCTAssertTrue(title.waitForExistence(timeout: 15))
+        app.buttons[SharedKitAutomationIds.shared.profileClose].tap()
+        XCTAssertTrue(homeSurfaceIsReady(in: app, timeout: 10))
+    }
+
     private func nativeCameraControlIsVisible(in app: XCUIApplication) -> Bool {
         let capture = app.descendants(matching: .any)[SharedKitAutomationIds.shared.captureNative]
         return capture.waitForExistence(timeout: 10)
@@ -161,12 +192,29 @@ final class BootstrapLaunchTests: XCTestCase {
     }
 
     private func captureSurfaceIsReady(in app: XCUIApplication, timeout: TimeInterval) -> Bool {
-        let status = app.descendants(matching: .any)[SharedKitAutomationIds.shared.photoAnalysisStatus]
+        let stage = app.descendants(matching: .any)[SharedKitAutomationIds.shared.photoAnalysisStage]
         let shutter = app.buttons[SharedKitAutomationIds.shared.captureShutter]
         let importButton = app.buttons[SharedKitAutomationIds.shared.captureImport]
-        return status.waitForExistence(timeout: timeout)
+        let close = app.buttons[SharedKitAutomationIds.shared.captureClose]
+        guard stage.waitForExistence(timeout: timeout) else { return false }
+        // Compose maps the stage's stateDescription to UIKit accessibilityValue.
+        // Capture has no separate status Text; that belongs to progress/recovery.
+        let readyStatus = XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "value == %@", readyToCaptureStatus),
+            object: stage,
+        )
+        return XCTWaiter.wait(for: [readyStatus], timeout: timeout) == .completed
             && shutter.waitForExistence(timeout: timeout)
             && importButton.waitForExistence(timeout: timeout)
+            && close.waitForExistence(timeout: timeout)
+    }
+
+    private var readyToCaptureStatus: String {
+        let key = "photo_analysis.status.ready_to_capture"
+        let status = Bundle(for: BootstrapLaunchTests.self).localizedString(forKey: key, value: nil, table: nil)
+        XCTAssertFalse(status.isEmpty, "Ready status copy must be bundled with the UI tests")
+        XCTAssertNotEqual(status, key, "Ready status copy must resolve from the product localization")
+        return status
     }
 
     private func homeSurfaceIsReady(in app: XCUIApplication, timeout: TimeInterval) -> Bool {

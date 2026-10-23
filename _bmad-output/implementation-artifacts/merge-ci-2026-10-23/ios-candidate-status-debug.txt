@@ -1,0 +1,4 @@
+Query chain:
+ →Find: Target Application 'com.supernutrition.ios.uiacceptance'
+  ↪︎Find: Descendants matching type Any
+    ↪︎Find: Elements matching predicate '"photo_analysis_status" IN identifiers'

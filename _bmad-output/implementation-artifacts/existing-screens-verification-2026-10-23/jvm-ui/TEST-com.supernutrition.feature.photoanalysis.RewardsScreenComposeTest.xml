@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="RewardsScreenComposeTest[jvm]" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-10-23T05:20:17.854Z" hostname="Anastasias-MacBook-Air.local" time="2.051">
+  <properties/>
+  <testcase name="standalone rewards exposes Back Daily Weekly and exactly seven actual identities[jvm]" classname="com.supernutrition.feature.photoanalysis.RewardsScreenComposeTest" time="2.05"/>
+  <system-out><![CDATA[Suspicious! waitForIdle has not finished after 1 seconds.
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

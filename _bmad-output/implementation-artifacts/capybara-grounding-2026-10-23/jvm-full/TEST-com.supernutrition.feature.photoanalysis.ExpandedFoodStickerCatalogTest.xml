@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ExpandedFoodStickerCatalogTest[jvm]" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-10-23T15:04:09.665Z" hostname="Anastasias-MacBook-Air.local" time="0.037">
+  <properties/>
+  <testcase name="dairy foods retain their own complete English and Russian identities[jvm]" classname="com.supernutrition.feature.photoanalysis.ExpandedFoodStickerCatalogTest" time="0.013"/>
+  <testcase name="common nuts olives and brown rice have their own complete identities[jvm]" classname="com.supernutrition.feature.photoanalysis.ExpandedFoodStickerCatalogTest" time="0.003"/>
+  <testcase name="mixed dishes and ambiguous generic labels never receive a constituent illustration[jvm]" classname="com.supernutrition.feature.photoanalysis.ExpandedFoodStickerCatalogTest" time="0.001"/>
+  <testcase name="the finite catalog preserves every old identity and has unique normalized aliases[jvm]" classname="com.supernutrition.feature.photoanalysis.ExpandedFoodStickerCatalogTest" time="0.003"/>
+  <testcase name="common grains have distinct complete English and Russian identities[jvm]" classname="com.supernutrition.feature.photoanalysis.ExpandedFoodStickerCatalogTest" time="0.002"/>
+  <testcase name="plant foods and four plant milks retain their own complete identities[jvm]" classname="com.supernutrition.feature.photoanalysis.ExpandedFoodStickerCatalogTest" time="0.003"/>
+  <testcase name="common fish and seafood have distinct complete English and Russian identities[jvm]" classname="com.supernutrition.feature.photoanalysis.ExpandedFoodStickerCatalogTest" time="0.002"/>
+  <testcase name="popular fruits and berries have distinct complete English and Russian identities[jvm]" classname="com.supernutrition.feature.photoanalysis.ExpandedFoodStickerCatalogTest" time="0.003"/>
+  <testcase name="popular vegetables have distinct complete English and Russian identities[jvm]" classname="com.supernutrition.feature.photoanalysis.ExpandedFoodStickerCatalogTest" time="0.003"/>
+  <testcase name="common meats have distinct complete English and Russian identities[jvm]" classname="com.supernutrition.feature.photoanalysis.ExpandedFoodStickerCatalogTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

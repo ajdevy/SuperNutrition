@@ -1,0 +1,186 @@
+{
+  "source_commit": "79535a2dfd3a4c3cb67c73bb6e26ba8421c1cf74",
+  "started_at": "2026-10-23T17:28:41.940848+00:00",
+  "modules": [
+    {
+      "task": ":core:config:jvmTest",
+      "state": "EXECUTED",
+      "tests": 32,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_files": 4,
+      "reports_regenerated_during_run": true
+    },
+    {
+      "task": ":core:ui:jvmTest",
+      "state": "EXECUTED",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_files": 1,
+      "reports_regenerated_during_run": true
+    },
+    {
+      "task": ":domain:inference:jvmTest",
+      "state": "EXECUTED",
+      "tests": 126,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_files": 16,
+      "reports_regenerated_during_run": true
+    },
+    {
+      "task": ":domain:nutrition:jvmTest",
+      "state": "EXECUTED",
+      "tests": 257,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_files": 34,
+      "reports_regenerated_during_run": true
+    },
+    {
+      "task": ":domain:photo-analysis:jvmTest",
+      "state": "EXECUTED",
+      "tests": 115,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_files": 11,
+      "reports_regenerated_during_run": true
+    },
+    {
+      "task": ":feature:photo-analysis:jvmTest",
+      "state": "EXECUTED",
+      "tests": 25,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_files": 6,
+      "reports_regenerated_during_run": true
+    },
+    {
+      "task": ":feature:photo-analysis-presenter:jvmTest",
+      "state": "EXECUTED",
+      "tests": 19,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_files": 4,
+      "reports_regenerated_during_run": true
+    },
+    {
+      "task": ":feature:photo-analysis-ui:jvmTest",
+      "state": "EXECUTED",
+      "tests": 237,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_files": 48,
+      "reports_regenerated_during_run": true
+    },
+    {
+      "task": ":inference:local-android:jvmTest",
+      "state": "EXECUTED",
+      "tests": 25,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_files": 2,
+      "reports_regenerated_during_run": true
+    },
+    {
+      "task": ":inference:local-android-poc:testDebugUnitTest",
+      "state": "EXECUTED",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_files": 3,
+      "reports_regenerated_during_run": true
+    },
+    {
+      "task": ":inference:local-ios:jvmTest",
+      "state": "EXECUTED",
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_files": 2,
+      "reports_regenerated_during_run": true
+    },
+    {
+      "task": ":inference:local-shared:jvmTest",
+      "state": "EXECUTED",
+      "tests": 25,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_files": 2,
+      "reports_regenerated_during_run": true
+    },
+    {
+      "task": ":platform:photo-ios:jvmTest",
+      "state": "EXECUTED",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_files": 1,
+      "reports_regenerated_during_run": true
+    },
+    {
+      "task": ":apps:sharedKit:jvmTest",
+      "state": "EXECUTED",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_files": 1,
+      "reports_regenerated_during_run": true
+    },
+    {
+      "task": ":feature:meal-search-presenter:jvmTest",
+      "state": "EXECUTED",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_files": 1,
+      "reports_regenerated_during_run": true
+    },
+    {
+      "task": ":feature:meal-search-ui:jvmTest",
+      "state": "EXECUTED",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_files": 1,
+      "reports_regenerated_during_run": true
+    },
+    {
+      "task": ":testing:compose-support:jvmTest",
+      "state": "EXECUTED",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_files": 1,
+      "reports_regenerated_during_run": true
+    },
+    {
+      "task": ":testing:scaffold-probe:jvmTest",
+      "state": "EXECUTED",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_files": 2,
+      "reports_regenerated_during_run": true
+    }
+  ]
+}

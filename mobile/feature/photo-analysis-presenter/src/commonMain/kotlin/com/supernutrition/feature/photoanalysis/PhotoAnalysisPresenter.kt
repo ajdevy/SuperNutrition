@@ -66,11 +66,11 @@ data class PhotoAnalysisPresenterCopy(
 
 data class MealReviewCopy(
     val title: String = "Let’s make it accurate",
-    val subtitle: String = "Pick the foods in your photo. Uncheck the rest.",
+    val subtitle: String = "Tap to add or remove",
     val customMeal: String = "Custom meal",
-    val anythingElse: String = "Anything else?",
+    val anythingElse: String = "Add a note about this meal",
     val retake: String = "Retake",
-    val addToMeal: String = "Add to meal",
+    val addToMeal: String = "Confirm meal",
     val pantryIngredientLabels: Map<String, String> = emptyMap(),
 ) {
     val values: List<String>

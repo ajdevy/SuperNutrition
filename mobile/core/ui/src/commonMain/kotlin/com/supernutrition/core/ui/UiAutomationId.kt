@@ -83,6 +83,8 @@ object UiAutomationIds {
     val HOME_METRIC_WATER = UiAutomationId("home_metric_water")
     val HOME_METRIC_PROTEIN = UiAutomationId("home_metric_protein")
     val HOME_METRIC_MOVEMENT = UiAutomationId("home_metric_movement")
+    val HOME_METRIC_COLORS = UiAutomationId("home_metric_colors")
+    val HOME_METRIC_FATS = UiAutomationId("home_metric_fats")
     val HOME_EMPTY_TITLE = UiAutomationId("home_empty_title")
     val HOME_EMPTY_DESCRIPTION = UiAutomationId("home_empty_description")
     val HOME_ADD_FOOD = UiAutomationId("home_add_food")
@@ -101,6 +103,25 @@ object UiAutomationIds {
     val PROFILE_TITLE = UiAutomationId("profile_title")
     val PROFILE_ID = UiAutomationId("profile_id")
     val PROFILE_CLOSE = UiAutomationId("profile_close")
+    val PROFILE_NAME = UiAutomationId("profile_name")
+    val PROFILE_EDIT_NAME = UiAutomationId("profile_edit_name")
+    val PROFILE_NAME_INPUT = UiAutomationId("profile_name_input")
+    val PROFILE_NAME_CLEAR = UiAutomationId("profile_name_clear")
+    val PROFILE_NAME_SAVE = UiAutomationId("profile_name_save")
+    val PROFILE_HISTORY = UiAutomationId("profile_history")
+    val PROFILE_PRIVACY = UiAutomationId("profile_privacy")
+    val PROFILE_TERMS = UiAutomationId("profile_terms")
+    val PROFILE_CRASH_REPORTS = UiAutomationId("profile_crash_reports")
+    val MEAL_HISTORY_SCREEN = UiAutomationId("meal_history_screen")
+    val MEAL_HISTORY_TITLE = UiAutomationId("meal_history_title")
+    val MEAL_HISTORY_CLOSE = UiAutomationId("meal_history_close")
+    val MEAL_HISTORY_SEARCH = UiAutomationId("meal_history_search")
+    val MEAL_HISTORY_LIST = UiAutomationId("meal_history_list")
+    val MEAL_HISTORY_EMPTY = UiAutomationId("meal_history_empty")
+    val MEAL_HISTORY_NO_RESULTS = UiAutomationId("meal_history_no_results")
+    val MEAL_HISTORY_SUMMARY = UiAutomationId("meal_history_summary")
+
+    fun mealHistoryRow(index: Int): UiAutomationId = UiAutomationId("meal_history_row_$index")
 
     /**
      * Per-row identifiers, by position rather than by canonical record id.
@@ -172,6 +193,8 @@ object UiAutomationIds {
         HOME_METRIC_WATER,
         HOME_METRIC_PROTEIN,
         HOME_METRIC_MOVEMENT,
+        HOME_METRIC_COLORS,
+        HOME_METRIC_FATS,
         HOME_EMPTY_TITLE,
         HOME_EMPTY_DESCRIPTION,
         HOME_ADD_FOOD,
@@ -190,5 +213,22 @@ object UiAutomationIds {
         PROFILE_TITLE,
         PROFILE_ID,
         PROFILE_CLOSE,
+        PROFILE_NAME,
+        PROFILE_EDIT_NAME,
+        PROFILE_NAME_INPUT,
+        PROFILE_NAME_CLEAR,
+        PROFILE_NAME_SAVE,
+        PROFILE_HISTORY,
+        PROFILE_PRIVACY,
+        PROFILE_TERMS,
+        PROFILE_CRASH_REPORTS,
+        MEAL_HISTORY_SCREEN,
+        MEAL_HISTORY_TITLE,
+        MEAL_HISTORY_CLOSE,
+        MEAL_HISTORY_SEARCH,
+        MEAL_HISTORY_LIST,
+        MEAL_HISTORY_EMPTY,
+        MEAL_HISTORY_NO_RESULTS,
+        MEAL_HISTORY_SUMMARY,
     )
 }
