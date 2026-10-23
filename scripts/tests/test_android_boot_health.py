@@ -29,6 +29,8 @@ class FakeAndroid:
         self.events_after_home = ''
         self.hierarchy = HEALTHY_XML
         self.focused = True
+        self.window_dump_footer = ""
+        self.activity_dump_footer = ""
         self.enabled_ime = IME
         self.focus_states = []
         self.dump_outputs = []
@@ -66,10 +68,15 @@ class FakeAndroid:
             self.home_started = True
             output = 'Status: ok\nActivity: ' + HOME
         elif args == ['shell', 'dumpsys', 'window', 'windows']:
+            # Android16's windows-only section enumerates windows, omitting display focus.
+            output = 'WINDOW MANAGER WINDOWS (dumpsys window windows)\n  Window #0 Window{123 u0 ' + HOME + '}'
+        elif args == ['shell', 'dumpsys', 'window', 'displays']:
             focused = self.focus_states.pop(0) if self.focus_states else self.focused
-            output = 'mCurrentFocus=Window{123 u0 ' + (HOME if focused else 'android/BlockingWindow') + '}'
+            output = 'mCurrentFocus=null' if focused is None else (
+                'mCurrentFocus=Window{123 u0 ' + (HOME if focused else 'android/BlockingWindow') + '}')
+            output += '\n' + self.window_dump_footer
         elif args == ['shell', 'dumpsys', 'activity', 'activities']:
-            output = 'mResumedActivity: ActivityRecord{456 u0 ' + HOME + '}'
+            output = 'mResumedActivity: ActivityRecord{456 u0 ' + HOME + '}\n' + self.activity_dump_footer
         elif args == ['shell', 'ime', 'list', '-s', '--user', '0']:
             output = self.enabled_ime
         elif args == ['shell', 'settings', '--user', '0', 'get', 'secure', 'default_input_method']:
@@ -119,6 +126,47 @@ class AndroidBootHealthTest(unittest.TestCase):
         self.assertEqual(len(starts), 1)
         self.assertLess(commands.index(wait), commands.index(starts[0]))
         self.assertTrue((Path(self.directory.name) / 'hierarchy.xml').is_file())
+
+    def test_display_section_exposes_focus_missing_from_windows_section(self):
+        self.check(timeout=3)
+        self.assertIn(['shell', 'dumpsys', 'window', 'displays'], self.commands())
+        self.assertNotIn(['shell', 'dumpsys', 'window', 'windows'], self.commands())
+
+    def test_window_focus_prefix_cannot_hide_a_partial_dump_timeout_or_native_error(self):
+        for footer in ["*** SERVICE 'window' DUMP TIMEOUT (10000ms) EXPIRED ***",
+                       'Error dumping service info: (Broken pipe) window']:
+            with self.subTest(footer=footer):
+                self.android = FakeAndroid()
+                self.android.window_dump_footer = footer
+                with self.assertRaisesRegex(HEALTH.BootHealthError, 'WindowManager'):
+                    self.check()
+
+    def test_resumed_activity_prefix_cannot_hide_a_partial_dump_timeout_or_native_error(self):
+        for footer in ["*** SERVICE 'activity' DUMP TIMEOUT (10000ms) EXPIRED ***",
+                       'Error dumping service info: (Broken pipe) activity']:
+            with self.subTest(footer=footer):
+                self.android = FakeAndroid()
+                self.android.activity_dump_footer = footer
+                with self.assertRaisesRegex(HEALTH.BootHealthError, 'ActivityManager'):
+                    self.check()
+
+    def test_valid_service_prefix_cannot_hide_a_binder_dump_exception(self):
+        exception = 'Exception occurred while dumping:\njava.lang.IllegalStateException: interrupted dump'
+        for service, field in [('WindowManager', 'window_dump_footer'),
+                               ('ActivityManager', 'activity_dump_footer'),
+                               ('IME', 'input_method_dump')]:
+            with self.subTest(service=service):
+                self.android = FakeAndroid()
+                prefix = getattr(self.android, field)
+                setattr(self.android, field, prefix + '\n' + exception)
+                with self.assertRaisesRegex(HEALTH.BootHealthError, service):
+                    self.check()
+
+    def test_absent_current_window_focus_cannot_claim_a_healthy_launcher(self):
+        self.android.focused = None
+        with self.assertRaisesRegex(HEALTH.BootHealthError, 'deadline|timed out'):
+            self.check(timeout=3)
+        self.assertEqual(len([c for c in self.commands() if c[:4] == ['shell', 'am', 'start', '-W']]), 1)
 
     def test_first_adb_connection_can_precede_activity_service_publication(self):
         self.android.boot_states = [('0', 'running', 'BOOTING'),

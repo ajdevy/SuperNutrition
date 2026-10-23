@@ -15,6 +15,16 @@ class BootHealthError(RuntimeError):
     """The emulator cannot safely run UI assertions."""
 
 
+def require_complete_service_dump(output, service):
+    """dumpsys can exit zero with a valid prefix followed by native failure output."""
+    failed = re.search(
+        r'^\s*(?:\*{3}\s+SERVICE\b[^\n]*\bDUMP TIMEOUT\b|Error dumping service info:'
+        r'|Can.t find service:|Exception occurred while dumping:)',
+        output, re.M | re.I)
+    if failed:
+        raise BootHealthError(f'Android {service} service dump is incomplete: {output}')
+
+
 def configure_avd_display(config, width, height, density):
     """Set the owned AVD framebuffer while removing named skins that can override it."""
     if any(not isinstance(value, int) or value <= 0 for value in (width, height, density)):
@@ -148,8 +158,11 @@ class _BootProbe:
             raise BootHealthError(f'Android could not start HOME: {launch}')
         while True:
             self.check_crashes()
-            windows = self.read('windows', 'shell', 'dumpsys', 'window', 'windows')
+            # DisplayContent prints current focus in displays; windows only enumerates WindowStates.
+            windows = self.read('windows', 'shell', 'dumpsys', 'window', 'displays')
+            require_complete_service_dump(windows, 'WindowManager')
             activities = self.read('activities', 'shell', 'dumpsys', 'activity', 'activities')
+            require_complete_service_dump(activities, 'ActivityManager')
             hierarchy = self.hierarchy()
             focused = any('mCurrentFocus=' in line and package + '/' in line for line in windows.splitlines())
             resumed = any(('mResumedActivity' in line or 'topResumedActivity' in line)
@@ -163,10 +176,8 @@ class _BootProbe:
                              'default_input_method')
         ime_state = self.read('input-method', 'shell', 'dumpsys', 'input_method')
         readiness = re.findall(r'^\s*mSystemReady=(\S+)\s*$', ime_state, re.M)
-        dump_failed = re.search(
-            r'^\s*(?:\*{3}\s+SERVICE\b[^\n]*\bDUMP TIMEOUT\b|Error dumping service info:|Can.t find service:)',
-            ime_state, re.M | re.I)
-        if dump_failed or 'Input Method Manager Service state:' not in ime_state.splitlines() or readiness != ['true']:
+        require_complete_service_dump(ime_state, 'IME')
+        if 'Input Method Manager Service state:' not in ime_state.splitlines() or readiness != ['true']:
             raise BootHealthError(f'Android IME service is not demonstrably ready: {ime_state}')
         if not selected or selected == 'null' or selected not in enabled:
             raise BootHealthError(f'Android selected IME is not enabled: {selected}; enabled={enabled}')

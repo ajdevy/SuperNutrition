@@ -1,0 +1,53 @@
+{
+  "run": 40008326652,
+  "head": "c15cdee27fe59825b87463f5906d46801c1ad9f7",
+  "url": "https://github.com/flexsent-labs/SuperNutrition/actions/runs/40008326652",
+  "conclusion": "success",
+  "xctest": {
+    "devicesAndConfigurations": [
+      {
+        "device": {
+          "architecture": "arm64",
+          "deviceId": "737080A5-3129-4A08-9A22-761EFE8865BA",
+          "deviceName": "SuperNutrition iPhone 17 Pro",
+          "modelName": "iPhone 17 Pro",
+          "osBuildNumber": "23E254a",
+          "osVersion": "26.4.1",
+          "platform": "iOS Simulator"
+        },
+        "expectedFailures": 0,
+        "failedTests": 0,
+        "passedTests": 8,
+        "skippedTests": 0,
+        "testPlanConfiguration": {
+          "configurationId": "1",
+          "configurationName": "Test Scheme Action"
+        }
+      }
+    ],
+    "environmentDescription": "SuperNutritionUIAcceptance \u00b7 Built with macOS 26.6.2",
+    "expectedFailures": 0,
+    "failedTests": 0,
+    "finishTime": 1792782600.901,
+    "passedTests": 8,
+    "result": "Passed",
+    "skippedTests": 0,
+    "startTime": 1792782600.248,
+    "statistics": [],
+    "testFailures": [],
+    "title": "Test - SuperNutritionUIAcceptance",
+    "topInsights": [],
+    "totalTestCount": 8
+  },
+  "maestro": [
+    {
+      "name": "Test Suite",
+      "device": "SuperNutrition iPhone 17 Pro - iOS 26.4 - 737080A5-3129-4A08-9A22-761EFE8865BA",
+      "tests": 1,
+      "failures": 0,
+      "time": "23.0",
+      "errors": 0,
+      "skipped": 0
+    }
+  ]
+}

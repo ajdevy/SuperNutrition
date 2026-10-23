@@ -57,7 +57,8 @@ context: []
 - [x] Android rendering/disabled-animation follow-up — preserve exact dp viewport at720×1600/280dpi and validate actual disabled-animation proof. Both fresh source reviews,16 focused and55 total script tests pass.
 - [x] Merge Android display follow-up PR56 as10a7e045; actual main iOS8/8+1/1 and JVM892tests pass, unchanged stale-evidence failure remains. Android still fails native boot before app tests, recorded with exact evidence.
 - [x] Full AOSP36 image selection — retain full native UI and all existing guards while avoiding failing Google preload; package/path/owned AVD share one tag. Both fresh reviewers and all55 script tests pass.
-- [ ] Merge the full-AOSP runner follow-up and inspect actual native boot, instrumentation and Maestro; record final policy/hardware blockers.
+- [x] Merge full-AOSP follow-up PR57 as c15cdee2; preserved native logs contain no ANR/crash/FATAL and healthy launcher is observed, but helper has a false deadline because it queried focus from the wrong WindowManager section. Actual main iOS8/8+1/1 and JVM892tests pass with unchanged evidence-policy failure.
+- [ ] Merge correct WindowManager focus-query/partial-dump guard and confirm actual native boot, instrumentation and Maestro; record final policy/hardware blockers.
 
 **Acceptance Criteria:**
 - Given the missing-resource crash in archived XCTest, when the fixed host builds and runs on supported hosted arm64 iOS, then resources are found and genuine tests/journeys execute; any additional product failures are fixed and rechecked.

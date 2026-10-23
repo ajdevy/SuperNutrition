@@ -66,3 +66,21 @@ The same hosted startup report has `sys.boot_completed=1`, user `RUNNING_UNLOCKE
 Main10a7e045 run40005129380 applied720×1600/280dpi and actual KVM acceleration. It still ran0app tests: native Keyguard/SystemUI ANR at18:51:57.991, followed by Google Services/AiAi startup ANRs and a NexusLauncher SurfaceControl NPE. CPUpressure86.74%, totalCPU99–100%; lowmemorykiller later reclaimed printspooler105080kB due a lowwatermark. The health guard correctly rejects these events after native broadcasts finish. Rendering reduction alone did not establish a healthy environment.
 
 Acceptance: use the official full Android36 AOSP `default;x86_64` image to avoid the failing Google background preload, retaining SystemUI, launcher, Settings, native IME, camera/media/picker capabilities, API36 and all app/fatal-event assertions. SDK inventory confirms revision2 is available. Do not use ATD, which removes platform UI/rendering under test; do not disable packages or discard ANR logs. Recreate/select an image-specific owned AVD so an existing Google AVD cannot be mistaken for AOSP. Verify with real native boot, all instrumentation and Maestro; image replacement remains a remediation candidate until that execution passes.
+
+## BOOT-WM-SCOPE — native focus queried from a section that omits it
+
+Mainc15cdee2 Android40008326772 uses the full AOSP36 image and records no ANR/crash events. Boot completed70768ms, unlocked/disabled-animation proof and native broadcast-idle pass; HOME launches successfully. Fresh hierarchy contains the real launcher and ActivityManager reports the launcher resumed and focused. Nevertheless helper times out360s because `dumpsys window windows` enumerates windows without `mCurrentFocus`, while its predicate requires that exact marker. Artifact `activities.txt` line80 contains actual launcher focus; `windows.txt` has none. Fake command output incorrectly placed the marker in the windows-only section.
+
+Acceptance: query the real WindowManager section containing current focus, keep independent resumed activity/fresh launcher hierarchy/IMMS/fatal guards and existing absolute deadline. Before patch, reproduce the healthy actual windows-only omission as a failing fake regression; then prove the correct native query and retain absent/wrong focus rejection. Follow with real API36 boot/instrumentation/Maestro.
+
+### BOOT-WM-PARTIAL — valid focus prefix can hide a partial native dump
+
+Fresh Edge reviewer reproduced healthy=True for displays output containing the real HOME focus marker followed by native `*** SERVICE 'window' DUMP TIMEOUT (10000ms) EXPIRED ***` or `Error dumping service info: (Broken pipe) window`, both with exit0. Android16 dumpsys native source explicitly returns0 after printing its timeout. Acceptance: reject native partial-dump/error footers before trusting WMS focus, sharing the existing IMMS dump-error validator instead of duplicating it; retain all readiness, deadline and fatal guards. Reproduce both prefix-plus-failure variants red before patch; rerun focused/full script checks and bounded independent re-review.
+
+### BOOT-AM-PARTIAL — ActivityManager readiness must share complete-dump validation
+
+Implementation review identifies the same native zero-exit partial-output risk in `dumpsys activity activities`: a valid resumed-HOME prefix followed by a native timeout/error can otherwise pass the independent resumed predicate. Acceptance: reproduce that prefix-plus-failure case before patch, and route all three readiness dumps (WindowManager, ActivityManager, IMMS) through the same complete-dump validator. Preserve each service's independent semantic checks; do not synchronize copied regex implementations.
+
+### BOOT-BINDER-EXCEPTION — caught native dump exception also returns zero
+
+Bounded Blind re-review reproduced healthy=True for each readiness service when a valid focus/resumed/IMMS prefix is followed by standard `Exception occurred while dumping:` plus stack trace. Android16 Binder.doDump catches Throwable, prints this marker and returns without rethrowing (Binder.java1068–1084). Acceptance: add this native exception marker to the single shared dump-error parser and regress WMS/AM/IMMS prefix-plus-exception variants red before patch. Retain all prior timeout/error cases and semantic guards.
