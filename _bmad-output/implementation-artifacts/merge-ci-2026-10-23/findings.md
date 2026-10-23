@@ -50,3 +50,13 @@ Bounded re-review reproduced a partial-dump variant still accepted after the ini
 Hosted Android run39994995975 on79535a2d executed50tests with12failures,0errors and0skips. Independent artifact diagnosis found the final UI hierarchy contains Android's `System UI isn’t responding` dialog, with `android:id/aerr_close` and `aerr_wait`; no application surface is reachable. Logcat records `com.android.systemui` ANR at17:38:34.951 (line4185) and its dialog at17:38:50.039 (line5733), before instrumentation starts at17:41:03. GoogleAS/GMS/phone/IME also suffer system ANRs; the app's Activity is displayed repeatedly, without an app FATAL/ANR in the examined log. These are actual blocked test failures, not a passing UI run.
 
 Acceptance: establish a healthy API36 emulator before instrumentation without weakening app assertions, hiding app ANRs, blindly retrying native tests or replacing physical-device evidence. Diagnose and correct startup resource/readiness prerequisites, then repeat the complete hosted Android suite and Maestro. Source review alone cannot close this finding.
+
+## ANDROID-RENDER-BUDGET — native boot still saturates the private runner
+
+Main663b4212 run40000963150 executed0 instrumentation cases: the health guard correctly rejected a real Phone/SafetySourceReceiver ANR at18:20:49.194, followed by SystemUI/KeyguardService ANR at18:20:57.813. No UI hierarchy is available, so no visually observed dialog is claimed for this run. CPU pressure85.48%, totalCPU100%, SurfaceFlinger34%CPU (33%kernel), Launcher12%, IOpressure33.29%. The native display is1080×2400 at420dpi on2CPU/2560MiB/SwiftShader.
+
+Acceptance: reduce physical rendering work before boot to720×1600 at280dpi, preserving the exact411.43×914.29dp viewport and all application assertions/API36/ANR rejection. This cuts framebuffer pixels55.56%; it is a measured remediation candidate, not a proven native pass. Re-run actual hosted boot, instrumentation and Maestro. Preserve the private2CPU/8GB capacity rather than requesting nonexistent extra cores.
+
+## BOOT-DISABLED-ANIMATION — configured no-animation mode has no service state
+
+The same hosted startup report has `sys.boot_completed=1`, user `RUNNING_UNLOCKED` and empty `init.svc.bootanim` with the explicit `-no-boot-anim` option. Requiring only literal `stopped` will reject this valid mode even after the ANR is corrected. Android16 BootAnimationUtil reads `debug.sf.nobootanimation>0` as disabled. Acceptance: permit empty service state only with actual native proof of that configured disabled mode, retain stopped as normal success, reject absent/false/malformed flags and running animation, and preserve all other boot/user/queue/HOME/IME/fatal-event gates. Regress the observed native state red before patching.
