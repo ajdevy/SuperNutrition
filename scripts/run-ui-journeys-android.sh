@@ -156,7 +156,16 @@ rm -f "$avd_config.bak"
 printf 'Android AVD userdata size: '
 grep '^disk\.dataPartition\.size=' "$avd_config"
 
-cpu_cores="${SUPERNUTRITION_ANDROID_CPU_CORES:-2}"
+cpu_cores="$(python3 - "${SUPERNUTRITION_ANDROID_CPU_CORES:-2}" <<'CPU'
+import os
+import sys
+requested = int(sys.argv[1])
+if requested < 1:
+    raise SystemExit("Android CPU count must be positive")
+available = len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else (os.cpu_count() or 1)
+print(min(requested, available))
+CPU
+)"
 if grep -q '^hw\.cpu\.ncore=' "$avd_config"; then
   sed -i.bak "s/^hw\.cpu\.ncore=.*/hw.cpu.ncore=$cpu_cores/" "$avd_config"
 else
@@ -189,8 +198,18 @@ dump_ui_hierarchy() {
   test -n "${device_serial:-}" || return 0
   local remote_path=/sdcard/supernutrition-window.xml
   local local_path="$temp_root/ui-hierarchy.xml"
-  "$adb_bin" -s "$device_serial" shell uiautomator dump "$remote_path" >/dev/null 2>&1 || return 0
-  "$adb_bin" -s "$device_serial" pull "$remote_path" "$local_path" >/dev/null 2>&1 || true
+  python3 - "$adb_bin" "$device_serial" "$remote_path" "$local_path" <<'PY'
+import subprocess
+import sys
+adb, serial, remote, local = sys.argv[1:]
+try:
+    subprocess.run([adb, "-s", serial, "shell", "uiautomator", "dump", remote],
+                   check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=10)
+    subprocess.run([adb, "-s", serial, "pull", remote, local],
+                   check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=5)
+except (subprocess.SubprocessError, OSError):
+    pass
+PY
 }
 cleanup() {
   dump_ui_hierarchy
@@ -203,72 +222,50 @@ cleanup() {
 trap cleanup EXIT
 
 device_serial=""
+logcat_path="$temp_root/logcat.log"
 for _ in $(seq 1 "$boot_wait_iterations"); do
   if ! kill -0 "$emulator_pid" 2>/dev/null; then
-    printf 'Android emulator exited before boot completed\n' >&2
+    printf 'Android emulator exited before connecting\n' >&2
     tail -n 80 "$temp_root/emulator.log" >&2 || true
     exit 1
   fi
   device_serial="$("$adb_bin" devices | awk 'NR > 1 && $1 ~ /^emulator-/ && $2 == "device" {print $1; exit}')"
   if test -n "$device_serial"; then
-    boot_completed="$("$adb_bin" -s "$device_serial" shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')"
-    if test "$boot_completed" = "1"; then
-      break
-    fi
+    # Preserve startup chronology and system failures from the first connection.
+    "$adb_bin" -s "$device_serial" logcat -b all -v threadtime >"$logcat_path" 2>&1 &
+    logcat_pid=$!
+    break
   fi
   sleep 2
 done
-test -n "$device_serial" &&
-  test "$("$adb_bin" -s "$device_serial" shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" = "1" || {
-  printf 'Android emulator did not finish booting\n' >&2
+test -n "$device_serial" || {
+  printf 'Android emulator did not connect\n' >&2
   tail -n 80 "$temp_root/emulator.log" >&2 || true
   exit 1
 }
 
 service_wait_iterations="${SUPERNUTRITION_ANDROID_SERVICE_WAIT_ITERATIONS:-90}"
-services_ready=false
-for _ in $(seq 1 "$service_wait_iterations"); do
-  activity_service="$("$adb_bin" -s "$device_serial" shell service check activity 2>/dev/null || true)"
-  package_service="$("$adb_bin" -s "$device_serial" shell service check package 2>/dev/null || true)"
-  if [[ "$activity_service" == *"found"* && "$package_service" == *"found"* ]]; then
-    services_ready=true
-    break
-  fi
-  sleep 2
-done
-if test "$services_ready" != true; then
-  printf 'Android framework services did not become ready after boot\n' >&2
-  printf 'activity: %s\npackage: %s\n' "$activity_service" "$package_service" >&2
-  tail -n 80 "$temp_root/emulator.log" >&2 || true
-  exit 1
-fi
-printf 'Android framework services are ready: activity and package\n'
+boot_health_timeout="${SUPERNUTRITION_ANDROID_BOOT_HEALTH_TIMEOUT_SECONDS:-$((boot_wait_iterations * 2 + service_wait_iterations * 2))}"
+python3 "$script_dir/android_boot_health.py" \
+  --adb "$adb_bin" \
+  --serial "$device_serial" \
+  --timeout-seconds "$boot_health_timeout" \
+  --report "$report_root/startup-health"
 
 for animation_scale in window_animation_scale transition_animation_scale animator_duration_scale; do
-  "$adb_bin" -s "$device_serial" shell settings put global "$animation_scale" 0 || true
+  "$adb_bin" -s "$device_serial" shell settings put global "$animation_scale" 0
 done
-for background_package in \
-  com.google.android.apps.nexuslauncher \
-  com.google.android.googlequicksearchbox \
-  com.google.android.gms \
-  com.google.android.inputmethod.latin; do
-  "$adb_bin" -s "$device_serial" shell am force-stop "$background_package" || true
-done
-printf 'Android UI animations disabled and nonessential background packages stopped\n'
+printf 'Android native startup is healthy and UI animations are disabled\n'
 
 export ANDROID_SERIAL="$device_serial"
-
-logcat_path="$temp_root/logcat.log"
-"$adb_bin" -s "$device_serial" logcat -c || true
-"$adb_bin" -s "$device_serial" logcat -v threadtime >"$logcat_path" 2>&1 &
-logcat_pid=$!
 
 "$repo_root/mobile/gradlew" -p "$repo_root/mobile" \
   :apps:androidApp:connectedUiAcceptanceDebugAndroidTest \
   -Pandroid.testInstrumentationRunnerArguments.deviceSerial="$device_serial" \
   --dependency-verification=strict \
   --no-daemon \
-  --no-configuration-cache
+  --no-configuration-cache \
+  --max-workers=1
 
 find "$repo_root/mobile/apps/androidApp/build" -type f \
   \( -path '*/androidTest-results/*' -o -path '*/reports/androidTests/*' \) \

@@ -1,0 +1,114 @@
+{
+  "run": 39994937686,
+  "head": "79535a2dfd3a4c3cb67c73bb6e26ba8421c1cf74",
+  "modules": [
+    {
+      "module": "domain:photo-analysis",
+      "task": "jvmTest",
+      "tests": 115,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "files": 11
+    },
+    {
+      "module": "domain:nutrition",
+      "task": "jvmTest",
+      "tests": 257,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "files": 34
+    },
+    {
+      "module": "domain:inference",
+      "task": "jvmTest",
+      "tests": 126,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "files": 16
+    },
+    {
+      "module": "feature:photo-analysis",
+      "task": "jvmTest",
+      "tests": 25,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "files": 6
+    },
+    {
+      "module": "feature:photo-analysis-presenter",
+      "task": "jvmTest",
+      "tests": 19,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "files": 4
+    },
+    {
+      "module": "feature:photo-analysis-ui",
+      "task": "jvmTest",
+      "tests": 237,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "files": 48
+    },
+    {
+      "module": "inference:local-shared",
+      "task": "jvmTest",
+      "tests": 25,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "files": 2
+    },
+    {
+      "module": "inference:local-android",
+      "task": "jvmTest",
+      "tests": 25,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "files": 2
+    },
+    {
+      "module": "inference:local-ios",
+      "task": "jvmTest",
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "files": 2
+    },
+    {
+      "module": "inference:local-android-poc",
+      "task": "testDebugUnitTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "files": 3
+    },
+    {
+      "module": "core:config",
+      "task": "jvmTest",
+      "tests": 32,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "files": 4
+    },
+    {
+      "module": "core:ui",
+      "task": "jvmTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "files": 1
+    }
+  ]
+}
