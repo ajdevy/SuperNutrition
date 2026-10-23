@@ -15,6 +15,28 @@ class BootHealthError(RuntimeError):
     """The emulator cannot safely run UI assertions."""
 
 
+def configure_avd_display(config, width, height, density):
+    """Set the owned AVD framebuffer while removing named skins that can override it."""
+    if any(not isinstance(value, int) or value <= 0 for value in (width, height, density)):
+        raise ValueError('AVD display dimensions and density must be positive integers')
+    remaining = {'hw.lcd.width': str(width), 'hw.lcd.height': str(height),
+                 'hw.lcd.density': str(density), 'skin.dynamic': 'yes', 'showDeviceFrame': 'no'}
+    replaced = set(remaining)
+    removed = {'skin.name', 'skin.path', 'skin.path.backup'}
+    lines = []
+    for line in Path(config).read_text().splitlines():
+        key = line.partition('=')[0].strip()
+        if key in removed:
+            continue
+        if key in replaced:
+            if key in remaining:
+                lines.append(f'{key}={remaining.pop(key)}')
+        else:
+            lines.append(line)
+    lines.extend(f'{key}={value}' for key, value in remaining.items())
+    Path(config).write_text('\n'.join(lines) + '\n')
+
+
 class _BootProbe:
     def __init__(self, adb, serial, report, timeout, run, clock, sleep):
         self.adb, self.serial, self.report = adb, serial, report
@@ -103,8 +125,12 @@ class _BootProbe:
             self.check_crashes()
             boot = self.read('boot-completed', 'shell', 'getprop', 'sys.boot_completed')
             animation = self.read('boot-animation', 'shell', 'getprop', 'init.svc.bootanim')
+            animation_ready = animation == 'stopped'
+            if not animation:
+                disabled = self.read('boot-animation-disabled', 'shell', 'getprop', 'debug.sf.nobootanimation')
+                animation_ready = re.fullmatch(r'[0-9]+', disabled) is not None and 0 < int(disabled) <= 2147483647
             user = self.read('user-state', 'shell', 'am', 'get-started-user-state', '0') if boot == '1' else ''
-            if boot == '1' and animation == 'stopped' and user == 'RUNNING_UNLOCKED':
+            if boot == '1' and animation_ready and user == 'RUNNING_UNLOCKED':
                 break
             self.pause()
         # Android 16 has no command timeout option. The host bounds this native queue wait.
