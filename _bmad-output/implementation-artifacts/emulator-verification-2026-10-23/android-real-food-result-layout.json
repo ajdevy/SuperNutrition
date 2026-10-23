@@ -1,0 +1,260 @@
+[
+  {
+    "content-desc": "Super Nutrition",
+    "center": "[360,780]",
+    "resource-id": "photo_analysis_title",
+    "key": 3506402
+  },
+  {
+    "content-desc": "Close",
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "center": "[74,102]",
+    "resource-id": "capture_close",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "center": "[360,1221]",
+    "resource-id": "photo_analysis_manual_ingredient_add",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "center": "[183,1354]",
+    "resource-id": "capture_scan_again",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "clickable"
+    ],
+    "center": "[521,1354]",
+    "resource-id": "photo_analysis_add_to_meal",
+    "key": 3506402
+  },
+  {
+    "text": "Let’s make it accurate",
+    "center": "[360,134]",
+    "resource-id": "photo_analysis_status",
+    "key": 3506402
+  },
+  {
+    "text": "Tap to add or remove",
+    "center": "[360,187]",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "clickable",
+      "focusable",
+      "long-clickable"
+    ],
+    "center": "[390,1222]",
+    "resource-id": "photo_analysis_manual_ingredient_input",
+    "key": 3506402
+  },
+  {
+    "text": "Retake",
+    "center": "[183,1354]",
+    "key": 3506402
+  },
+  {
+    "text": "Confirm meal",
+    "center": "[521,1354]",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "checkable",
+      "clickable",
+      "focusable"
+    ],
+    "center": "[291,308]",
+    "resource-id": "photo_analysis_dish_choice_1",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "checkable",
+      "clickable",
+      "focusable"
+    ],
+    "center": "[625,308]",
+    "resource-id": "photo_analysis_custom_meal",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "checkable",
+      "clickable",
+      "focusable"
+    ],
+    "center": "[136,613]",
+    "resource-id": "photo_analysis_component_l72_l65_l67_l69_l6f_l6e_x2d_d31_x2d_l63_l61_l72_l72_l6f_l74",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "checkable",
+      "clickable",
+      "focusable"
+    ],
+    "center": "[360,613]",
+    "resource-id": "photo_analysis_component_l72_l65_l67_l69_l6f_l6e_x2d_d32_x2d_l63_l61_l72_l72_l6f_l74",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "checkable",
+      "clickable",
+      "focusable"
+    ],
+    "center": "[584,613]",
+    "resource-id": "photo_analysis_component_l72_l65_l67_l69_l6f_l6e_x2d_d33_x2d_l62_l72_l6f_l63_l63_l6f_l6c_l69",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "checkable",
+      "clickable",
+      "focusable"
+    ],
+    "center": "[136,837]",
+    "resource-id": "photo_analysis_component_l72_l65_l67_l69_l6f_l6e_x2d_d34_x2d_l6f_l72_l61_l6e_l67_l65",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "checkable",
+      "clickable",
+      "focusable"
+    ],
+    "center": "[360,837]",
+    "resource-id": "photo_analysis_component_l72_l65_l67_l69_l6f_l6e_x2d_d35_x2d_l63_l61_l72_l72_l6f_l74",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "checkable",
+      "clickable",
+      "focusable"
+    ],
+    "center": "[584,837]",
+    "resource-id": "photo_analysis_component_l72_l65_l67_l69_l6f_l6e_x2d_d36_x2d_l62_l72_l6f_l63_l63_l6f_l6c_l69",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "checkable",
+      "clickable",
+      "focusable"
+    ],
+    "center": "[136,1061]",
+    "resource-id": "photo_analysis_component_l72_l65_l67_l69_l6f_l6e_x2d_d37_x2d_l6f_l72_l61_l6e_l67_l65",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "checkable",
+      "clickable",
+      "focusable"
+    ],
+    "center": "[360,1061]",
+    "resource-id": "photo_analysis_component_l72_l65_l67_l69_l6f_l6e_x2d_d38_x2d_l62_l72_l6f_l63_l63_l6f_l6c_l69",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "checkable",
+      "clickable",
+      "focusable"
+    ],
+    "center": "[584,1061]",
+    "resource-id": "photo_analysis_component_l72_l65_l67_l69_l6f_l6e_x2d_d39_x2d_l63_l61_l72_l72_l6f_l74",
+    "key": 3506402
+  },
+  {
+    "content-desc": "Add a note about this meal",
+    "center": "[390,1221]",
+    "key": 3506402
+  },
+  {
+    "text": "Add a note about this meal",
+    "center": "[307,1221]",
+    "key": 3506402
+  },
+  {
+    "content-desc": "pork_chop, Medium confidence, On-device analysis",
+    "center": "[291,308]",
+    "key": 3506402
+  },
+  {
+    "text": "pork chop",
+    "center": "[291,309]",
+    "key": 3506402
+  },
+  {
+    "content-desc": "Custom meal",
+    "center": "[625,308]",
+    "key": 3506402
+  },
+  {
+    "text": "Custom meal",
+    "center": "[625,329]",
+    "key": 3506402
+  },
+  {
+    "content-desc": "carrot, From this photo, Low confidence, Identity clear, Fully visible, Photo region available, On-device analysis",
+    "center": "[136,613]",
+    "key": 3506402
+  },
+  {
+    "content-desc": "carrot, From this photo, Low confidence, Identity clear, Fully visible, Photo region available, On-device analysis",
+    "center": "[360,613]",
+    "key": 3506402
+  },
+  {
+    "content-desc": "broccoli, From this photo, Low confidence, Identity clear, Fully visible, Photo region available, On-device analysis",
+    "center": "[584,613]",
+    "key": 3506402
+  },
+  {
+    "content-desc": "orange, From this photo, Low confidence, Identity clear, Fully visible, Photo region available, On-device analysis",
+    "center": "[136,837]",
+    "key": 3506402
+  },
+  {
+    "content-desc": "carrot, From this photo, Low confidence, Identity clear, Fully visible, Photo region available, On-device analysis",
+    "center": "[360,837]",
+    "key": 3506402
+  },
+  {
+    "content-desc": "broccoli, From this photo, Low confidence, Identity clear, Fully visible, Photo region available, On-device analysis",
+    "center": "[584,837]",
+    "key": 3506402
+  },
+  {
+    "content-desc": "orange, From this photo, Low confidence, Identity clear, Fully visible, Photo region available, On-device analysis",
+    "center": "[136,1061]",
+    "key": 3506402
+  },
+  {
+    "content-desc": "broccoli, From this photo, Low confidence, Identity clear, Fully visible, Photo region available, On-device analysis",
+    "center": "[360,1061]",
+    "key": 3506402
+  },
+  {
+    "content-desc": "carrot, From this photo, Low confidence, Identity clear, Fully visible, Photo region available, On-device analysis",
+    "center": "[584,1061]",
+    "key": 3506402
+  }
+]

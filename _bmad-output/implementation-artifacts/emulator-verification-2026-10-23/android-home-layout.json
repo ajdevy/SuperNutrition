@@ -1,0 +1,183 @@
+[
+  {
+    "content-desc": "Home",
+    "center": "[360,756]",
+    "resource-id": "home_title",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "focusable"
+    ],
+    "state": [
+      "selected"
+    ],
+    "center": "[188,1400]",
+    "resource-id": "capture_tab",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "center": "[360,1400]",
+    "resource-id": "camera_action",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "center": "[532,1400]",
+    "resource-id": "rewards_tab",
+    "key": 3506402
+  },
+  {
+    "content-desc": "Home",
+    "center": "[188,1400]",
+    "key": 3506402
+  },
+  {
+    "text": "Home",
+    "center": "[188,1426]",
+    "key": 3506402
+  },
+  {
+    "content-desc": "Take photo",
+    "center": "[360,1400]",
+    "key": 3506402
+  },
+  {
+    "content-desc": "Rewards",
+    "center": "[532,1400]",
+    "key": 3506402
+  },
+  {
+    "text": "Rewards",
+    "center": "[532,1426]",
+    "key": 3506402
+  },
+  {
+    "content-desc": "Capybara mascot",
+    "center": "[360,553]",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "center": "[640,132]",
+    "resource-id": "home_profile",
+    "key": 3506402
+  },
+  {
+    "text": "Add a portion of greens\nfor the next meal",
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "center": "[368,312]",
+    "resource-id": "home_add_food",
+    "key": 3506402
+  },
+  {
+    "content-desc": "Daily essentials. Your progress today",
+    "center": "[360,1008]",
+    "resource-id": "home_summary",
+    "key": 3506402
+  },
+  {
+    "content-desc": "Open profile",
+    "center": "[640,132]",
+    "key": 3506402
+  },
+  {
+    "text": "Daily essentials",
+    "center": "[210,774]",
+    "key": 3506402
+  },
+  {
+    "text": "Your progress today",
+    "center": "[243,822]",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "center": "[200,962]",
+    "resource-id": "home_metric_fiber",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "center": "[520,962]",
+    "resource-id": "home_metric_colors",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "center": "[200,1174]",
+    "resource-id": "home_metric_protein",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "center": "[520,1174]",
+    "resource-id": "home_metric_fats",
+    "key": 3506402
+  },
+  {
+    "text": "Fiber",
+    "center": "[246,906]",
+    "key": 3506402
+  },
+  {
+    "text": "12 / 25 g",
+    "center": "[228,956]",
+    "key": 3506402
+  },
+  {
+    "text": "Colors",
+    "center": "[566,906]",
+    "key": 3506402
+  },
+  {
+    "text": "—",
+    "center": "[505,956]",
+    "key": 3506402
+  },
+  {
+    "text": "Protein",
+    "center": "[246,1118]",
+    "key": 3506402
+  },
+  {
+    "text": "72 / 90 g",
+    "center": "[229,1168]",
+    "key": 3506402
+  },
+  {
+    "text": "Fats",
+    "center": "[566,1118]",
+    "key": 3506402
+  },
+  {
+    "text": "—",
+    "center": "[505,1168]",
+    "key": 3506402
+  }
+]

@@ -3,7 +3,7 @@
 Worktree: `/Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition`
 Branch: `codex/home-profile`
 Baseline: `7a141facbd0ec0b4fc86efce4948fdfd3b2ce660`
-Status: implementation and shared-UI verification complete; final native verification incomplete after an interrupted run and system-component ANRs.
+Status: implementation, shared UI and fresh final-source Android native verification passed. Required physical policy evidence remains unavailable. iOS runtime is unavailable on this Intel host.
 
 [Current-frame audit and retained constraints](../existing-screens-figma-audit-2026-10-23.md) · [Specification and review trail](../spec-existing-screens-figma-refresh.md) · [Machine-readable counts](results.json)
 
@@ -12,6 +12,12 @@ Status: implementation and shared-UI verification complete; final native verific
 Existing Home, Rewards, shared navigation, capture/review and inline Profile name editing now use the current Figma artwork, Fraunces/Nunito, spacing and controls. Home → Profile → Meal history remains available. All seven real rewards retain their actual earned state, counts and progress; unavailable Colors/Fats stay unavailable. Session-only name editing and meal confirmation remain honest about their lifetime. No new meal storage, provider routing, privacy contract, Add-by-text, reward details, onboarding or barcode implementation is introduced.
 
 The camera circle is minimally darker than Figma for white-icon contrast; Review retains accessible leaf text buttons, stronger photo scrim and its functional Close action. At200% text, naturally sized content remains scrollable rather than clipped. Home fits the inspected normal360×780dp native viewport without scrolling; no no-scroll claim is made at200%.
+
+## Fresh final-source Android follow-up
+
+A new isolated AVD `SN_Screenshots_20261023` (API35 x86_64, host OpenGL, 360×780dp) completed the unchanged full `connectedAndroidTest` command with strict dependency verification in8m3s. Fresh XML reports show50/50 each for Production, POC and UI Acceptance:150 total,0 failures/errors/skipped. This run includes the final signature/SAM cleanup on source commit `3d54a716`. The installed APK SHA-256 matches the current511675995-byte production build. Home → Profile → Meal history, native IME, draft cancellation, Rewards, camera permission/capture and native picker → Review were exercised. Home was inspected at normal and200% text; at200% the lower cards are reachable by scrolling, and font scale was restored to1.0. See [current runtime screenshots and exact evidence](../emulator-verification-2026-10-23/README.md).
+
+The older failed attempts below remain diagnostic history; they no longer describe the current Android verification result. No physical-device proof or full policy-gate success is claimed. The iOS Intel framework attempt reached an upstream Compose1.11.1 `ios_x64` variant failure; the user accepted that runtime limitation.
 
 ## Completed verification
 
@@ -59,7 +65,7 @@ Two fresh-context source reviews are retained in [Blind Hunter](review-blind.md)
 
 `native-initial-*.png` are the earlier actual emulator visual pass **before independent review corrections**; they document normal/200% geometry, inline keyboard and Profile/history routing. They are not final acceptance screenshots. `red-camera-anr.png` documents the original app camera deadlock, whose blocked future read was subsequently fixed and whose readiness tests passed. `environment-quickstep-anr.png`/`environment-system-ui.json` describe later Android system-component failures during cold-start setup, separately from the app defect.
 
-A post-cleanup native rerun was guarded on `sys.boot_completed`; the guard exited before starting Gradle. It is a missing execution prerequisite, not failing/passing product evidence. After ADB transport failure, repeated cold starts stalled before full Android readiness and showed Launcher/System UI ANRs; host load average reached390.56. The task emulator was stopped; no user applications were terminated. The final post-cleanup production assembly and48 affected-module unit tests passed (`production-assembly-and-unit.log`). The APK was rebuilt from the final sources; its SHA-256 is recorded in results.json, without an installed-APK comparison. Fresh final native screenshots, installed-APK hash comparison, and camera permission/capture smoke remain pending a healthy emulator. Font scale was restored to1.0 during the earlier completed visual pass.
+A post-cleanup native rerun was guarded on `sys.boot_completed`; the guard exited before starting Gradle. It is a missing execution prerequisite, not failing/passing product evidence. After ADB transport failure, repeated cold starts stalled before full Android readiness and showed Launcher/System UI ANRs; host load average reached390.56. The task emulator was stopped; no user applications were terminated. The final post-cleanup production assembly and48 affected-module unit tests passed (`production-assembly-and-unit.log`). The APK was rebuilt from the final sources; its SHA-256 is recorded in results.json, without an installed-APK comparison. At that point, final native screenshots, installed-APK hash comparison and camera smoke were pending; the clean-AVD follow-up above has now completed all three. Font scale was restored to1.0 during the earlier completed visual pass.
 
 The later final-source attempt described above reached Android boot completion but did not yield a completed passing native run. `environment-resume-system-ui-anr.png` and `environment-headless-quickstep-anr.png` are system-failure diagnostics, not app acceptance images. The task emulator and its isolated Gradle invocation were stopped; no verification jobs were left running. Required physical-device evidence remains unavailable by the user's accepted emulator-only constraint.
 
@@ -67,6 +73,6 @@ The later final-source attempt described above reached Android boot completion b
 
 Current production-debug APK: `mobile/apps/androidApp/build/outputs/apk/production/debug/androidApp-production-debug.apk`
 SHA-256: `7a7984fa1ef5eed14919e861210d4f232db2da7d16b3d80868970993b81a2a33`
-Size: 511675995 bytes. The final assembly passed in7m59s; no final installed-hash claim is made.
+Size: 511675995 bytes. The final assembly passed in7m59s. The clean-AVD follow-up confirmed the same SHA-256 on the installed APK; see the current runtime evidence linked above.
 
 Stored XML copies use LF line endings; their parsed records were compared before and after normalization and are unchanged. Stored console-log copies trim trailing whitespace. Original build reports and raw logs remain untouched.

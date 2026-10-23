@@ -1,0 +1,30 @@
+{
+  "started_at": "2026-10-23T13:30:29.821558+00:00",
+  "argv": [
+    "/Applications/Xcode-26.6.0.app/Contents/Developer/usr/bin/xcodebuild",
+    "build",
+    "-project",
+    "mobile/apps/iosApp/SuperNutritionUIAcceptance.xcodeproj",
+    "-scheme",
+    "SuperNutrition",
+    "-configuration",
+    "Debug",
+    "-destination",
+    "generic/platform=iOS",
+    "-derivedDataPath",
+    "/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-production-20261023-_pw8h9kt",
+    "-jobs",
+    "2",
+    "SHARED_KIT_FRAMEWORK_DIR=/Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/sharedKit/build/bin/iosArm64/debugFramework",
+    "ARCHS=arm64",
+    "ONLY_ACTIVE_ARCH=YES",
+    "CODE_SIGNING_ALLOWED=NO",
+    "CODE_SIGNING_REQUIRED=NO"
+  ],
+  "derived_data": "/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-production-20261023-_pw8h9kt",
+  "signing_allowed": false,
+  "runtime_execution": false,
+  "status": "failed",
+  "exit_code": 70,
+  "finished_at": "2026-10-23T13:30:32.633584+00:00"
+}

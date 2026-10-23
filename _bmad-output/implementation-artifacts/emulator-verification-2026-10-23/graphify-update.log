@@ -1,0 +1,15 @@
+Re-extracting code files in . (no LLM needed)...
+  AST extraction: 100/735 uncached files (13%) [8 workers]
+  AST extraction: 200/735 uncached files (27%) [8 workers]
+  AST extraction: 300/735 uncached files (40%) [8 workers]
+  AST extraction: 400/735 uncached files (54%) [8 workers]
+  AST extraction: 500/735 uncached files (68%) [8 workers]
+  AST extraction: 600/735 uncached files (81%) [8 workers]
+  AST extraction: 700/735 uncached files (95%) [8 workers]
+  AST extraction: 735/735 uncached files (100%) [8 workers]
+  warning: 488 source file(s) produced zero nodes and are absent from the graph: brain-icons.json, bmad-manifest.json, settings.json, hooks.json, metadata.json (+483 more). A re-run will retry them (empties are no longer cached); if it persists, please report the file(s) (#1666).
+  warning: 2 .sql file(s) contributed nothing to the graph because a dependency is missing: tree_sitter_sql not installed. Install it with: pip install "graphifyy[sql]" (#1745)
+[graphify watch] Rebuilt (no clustering): 21660 nodes, 31260 edges
+[graphify watch] graph.json updated in graphify-out
+Code graph updated. For doc/paper/image changes run /graphify --update in your AI assistant.
+Tip: set GEMINI_API_KEY or GOOGLE_API_KEY to use Gemini for semantic extraction.
