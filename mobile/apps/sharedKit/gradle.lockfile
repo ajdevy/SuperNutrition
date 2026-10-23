@@ -131,6 +131,7 @@ org.jetbrains.kotlin:kotlin-compiler-embeddable:2.4.10=kotlinBuildToolsApiClassp
 org.jetbrains.kotlin:kotlin-compiler-runner:2.4.0=kotlinAbiValidationCompatClasspath
 org.jetbrains.kotlin:kotlin-compiler-runner:2.4.10=kotlinBuildToolsApiClasspath,kotlinCompilerClasspath
 org.jetbrains.kotlin:kotlin-compiler:2.4.0=detekt
+org.jetbrains.kotlin:kotlin-compose-compiler-plugin-embeddable:2.4.10=kotlinCompilerPluginClasspathJvmMain,kotlinCompilerPluginClasspathJvmTest,kotlinCompilerPluginClasspathMetadataMain
 org.jetbrains.kotlin:kotlin-daemon-client:2.4.0=kotlinAbiValidationCompatClasspath
 org.jetbrains.kotlin:kotlin-daemon-client:2.4.10=kotlinBuildToolsApiClasspath,kotlinCompilerClasspath
 org.jetbrains.kotlin:kotlin-daemon-embeddable:2.4.0=kotlinAbiValidationCompatClasspath

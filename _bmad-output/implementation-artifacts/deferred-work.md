@@ -28,5 +28,5 @@
   evidence: The fresh unsigned arm64 app contains nine files and no Compose resource directory or Fraunces/Nunito fonts; see emulator-verification-2026-10-23/ios-app-package.json and IOS-PACKAGE-1.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-home-capybara-grounding.md`
-  summary: Close or accurately reconcile the photo-analysis UI module branch coverage gap without weakening the85% policy floor.
-  evidence: The final fresh report has1274/1923 covered branches (66.25%); the new garden geometry is24/24. See capybara-grounding-2026-10-23/coverage-jvm.xml and HOME-COVERAGE-1.
+  summary: Diagnostic raw UI branch coverage is66.25%; its earlier classification as a declared JVM gate failure was corrected on2026-10-23.
+  evidence: REPORT-COVERAGE-1 confirms the pre-existing UI denominator is native-equivalent. The raw report has1274/1923 covered branches; new garden geometry is24/24. Full policy remains blocked by expired mandatory physical Android evidence, not this numerical observation. No policy or threshold changed.

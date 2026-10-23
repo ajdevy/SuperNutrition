@@ -1,0 +1,91 @@
+{
+  "devicesAndConfigurations": [
+    {
+      "device": {
+        "architecture": "arm64",
+        "deviceId": "C2230D24-4B10-47F8-BB96-F7F15488C903",
+        "deviceName": "SuperNutrition iPhone 17 Pro",
+        "modelName": "iPhone 17 Pro",
+        "osBuildNumber": "23E254a",
+        "osVersion": "26.4.1",
+        "platform": "iOS Simulator"
+      },
+      "expectedFailures": 0,
+      "failedTests": 6,
+      "passedTests": 1,
+      "skippedTests": 0,
+      "testPlanConfiguration": {
+        "configurationId": "1",
+        "configurationName": "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription": "SuperNutritionUIAcceptance \u00b7 Built with macOS 26.6.2",
+  "expectedFailures": 0,
+  "failedTests": 6,
+  "finishTime": 1792707888.629,
+  "passedTests": 1,
+  "result": "Failed",
+  "skippedTests": 0,
+  "startTime": 1792707887.777,
+  "statistics": [],
+  "testFailures": [
+    {
+      "failureText": "XCTAssertTrue failed",
+      "targetName": "SuperNutritionUIAcceptanceTests",
+      "testIdentifier": 1,
+      "testIdentifierString": "BootstrapLaunchTests/testCameraActionUsesNativeSourceOrRecovery()",
+      "testIdentifierURL": "test://com.apple.xcode/SuperNutritionUIAcceptance/SuperNutritionUIAcceptanceTests/BootstrapLaunchTests/testCameraActionUsesNativeSourceOrRecovery",
+      "testName": "testCameraActionUsesNativeSourceOrRecovery()"
+    },
+    {
+      "failureText": "com.supernutrition.ios.uiacceptance crashed in (anonymous namespace)::terminateWithUnhandledException(ObjHeader*)::$_0::operator()() const",
+      "targetName": "SuperNutritionUIAcceptanceTests",
+      "testIdentifier": 2,
+      "testIdentifierString": "BootstrapLaunchTests/testFirstTabReturnsToHomeFromRewards()",
+      "testIdentifierURL": "test://com.apple.xcode/SuperNutritionUIAcceptance/SuperNutritionUIAcceptanceTests/BootstrapLaunchTests/testFirstTabReturnsToHomeFromRewards",
+      "testName": "testFirstTabReturnsToHomeFromRewards()"
+    },
+    {
+      "failureText": "com.supernutrition.ios.uiacceptance crashed in (anonymous namespace)::terminateWithUnhandledException(ObjHeader*)::$_0::operator()() const",
+      "targetName": "SuperNutritionUIAcceptanceTests",
+      "testIdentifier": 3,
+      "testIdentifierString": "BootstrapLaunchTests/testHomeAddMealOpensCaptureSurface()",
+      "testIdentifierURL": "test://com.apple.xcode/SuperNutritionUIAcceptance/SuperNutritionUIAcceptanceTests/BootstrapLaunchTests/testHomeAddMealOpensCaptureSurface",
+      "testName": "testHomeAddMealOpensCaptureSurface()"
+    },
+    {
+      "failureText": "com.supernutrition.ios.uiacceptance crashed in (anonymous namespace)::terminateWithUnhandledException(ObjHeader*)::$_0::operator()() const",
+      "targetName": "SuperNutritionUIAcceptanceTests",
+      "testIdentifier": 4,
+      "testIdentifierString": "BootstrapLaunchTests/testInitialLaunchShowsCaptureSurfaceAndCloseReturnsHome()",
+      "testIdentifierURL": "test://com.apple.xcode/SuperNutritionUIAcceptance/SuperNutritionUIAcceptanceTests/BootstrapLaunchTests/testInitialLaunchShowsCaptureSurfaceAndCloseReturnsHome",
+      "testName": "testInitialLaunchShowsCaptureSurfaceAndCloseReturnsHome()"
+    },
+    {
+      "failureText": "com.supernutrition.ios.uiacceptance crashed in (anonymous namespace)::terminateWithUnhandledException(ObjHeader*)::$_0::operator()() const",
+      "targetName": "SuperNutritionUIAcceptanceTests",
+      "testIdentifier": 5,
+      "testIdentifierString": "BootstrapLaunchTests/testPhotoPickerOpensAndCanBeCancelled()",
+      "testIdentifierURL": "test://com.apple.xcode/SuperNutritionUIAcceptance/SuperNutritionUIAcceptanceTests/BootstrapLaunchTests/testPhotoPickerOpensAndCanBeCancelled",
+      "testName": "testPhotoPickerOpensAndCanBeCancelled()"
+    },
+    {
+      "failureText": "com.supernutrition.ios.uiacceptance crashed in (anonymous namespace)::terminateWithUnhandledException(ObjHeader*)::$_0::operator()() const",
+      "targetName": "SuperNutritionUIAcceptanceTests",
+      "testIdentifier": 7,
+      "testIdentifierString": "BootstrapLaunchTests/testSurfaceRestoresAfterBackgroundForeground()",
+      "testIdentifierURL": "test://com.apple.xcode/SuperNutritionUIAcceptance/SuperNutritionUIAcceptanceTests/BootstrapLaunchTests/testSurfaceRestoresAfterBackgroundForeground",
+      "testName": "testSurfaceRestoresAfterBackgroundForeground()"
+    }
+  ],
+  "title": "Test - SuperNutritionUIAcceptance",
+  "topInsights": [
+    {
+      "category": "Common Failures",
+      "impact": "100% of failures",
+      "text": "6 runs of 6 tests failed with com.supernutrition.ios.uiacceptance crashed in (anonymous namespace)::terminateWithUnhandledException(ObjHeader*)::$_0::operator()() const"
+    }
+  ],
+  "totalTestCount": 7
+}

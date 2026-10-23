@@ -16,7 +16,7 @@ concurrency:
 jobs:
   mobile-unit-coverage:
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
@@ -73,9 +73,12 @@ jobs:
           --no-daemon
           --configuration-cache
           --max-workers=1
+          --continue
       - name: Build static coverage dashboard
+        if: ${{ !cancelled() }}
         run: python3 scripts/build_coverage_site.py --output-dir _site
       - name: Verify README coverage snapshot
+        if: ${{ !cancelled() }}
         run: >-
           python3 scripts/update_readme_metrics.py
           --readme README.md
@@ -88,6 +91,8 @@ jobs:
           name: mobile-quality-reports-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             mobile/**/build/reports/kover/**
+            mobile/build/reports/problems/**
+            mobile/**/build/test-results/**
             _site/**
           if-no-files-found: error
           retention-days: 14

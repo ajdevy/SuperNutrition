@@ -1,0 +1,1574 @@
+{
+  "framework_build_exit": 0,
+  "build_seconds": 339,
+  "resource_root": "/tmp/supernutrition-ci-ios-bundle/SuperNutrition.app/compose-resources/composeResources/com.supernutrition.feature.photoanalysis.resources",
+  "files": [
+    {
+      "path": "drawable/bubble_tail.png",
+      "source_sha256": "623d4aeb6e7121f80911ab30cfe4f569a7a93817fb569825a91a81e1f7c207fc",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/bubble_tail_vector.png",
+      "source_sha256": "f86e7a4533a9bcbec830163f80ae6feba95ae13d2ba424fb9518e03d3f22ec19",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/camera_fab.png",
+      "source_sha256": "3e3c43987d380266d1132c05e6dfbb03ac3ca26045897e8a00b7102d6580e045",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/camera_fab_vector.png",
+      "source_sha256": "1333f4aef02b464ef2e210f7868caab28c38a5fd5b44b014ab41959d9b8941e2",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/capture_close.png",
+      "source_sha256": "0750bbd9e730133e528533531f54e67f4c928524bbf484d857eaac530b2f74b2",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/capture_gallery.png",
+      "source_sha256": "25535db0022bc98847d1c6233531ae7f531b0bb1a1e0ebdad5aec3010ac10d8d",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/capture_shutter.png",
+      "source_sha256": "472c9664b3ee8241e1484a8584383062c52388875b7682f700b00fefb8eea23e",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/capybara.png",
+      "source_sha256": "8baf1617d3d64067ba4043c86f489c352eb25b23b2982f872752ac1b438873e4",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_almond_milk.png",
+      "source_sha256": "66ed28ad81d27e8dbbad1767f4f03c8b410a2441ce79205c3beec37254541dee",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_almonds.png",
+      "source_sha256": "7141d657c55029d1102f05a3f9d29b3db26a71e66ad0313eaccff09e1b1e1c4a",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_apple.png",
+      "source_sha256": "354bbb59d38d6e92e9ce7950f1eaaa0a7f954f49f74c3e7374172d7842e82054",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_apricot.png",
+      "source_sha256": "8d485fffea169a6366b9f03a4d6b685e41660732e962a1741a381ec7a5180511",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_artichoke.png",
+      "source_sha256": "15cc4bd70ea514c9904dede20b3fd1e58762adc716ffc7b1d586e0b607f76e0a",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_asparagus.png",
+      "source_sha256": "87e102bd83c54e73a57bdcf0058698351ee68d7f23318b4319848bceb135d374",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_avocado.png",
+      "source_sha256": "362e9767ea094dfeeb719fbc1b9038aa399f14cd3d17a9d90d4920c8f402c2ab",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_avocado_selected.png",
+      "source_sha256": "8062c1eac426b2530d8983cc0d693da716abd113a8c4d8dba80ef6e1a5bd4e4e",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_bacon.png",
+      "source_sha256": "9f40ea26b29b5f969533200f34f1ddb6c5e066afe0f13a0b20ea728fea901871",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_banana.png",
+      "source_sha256": "56aa7cd76183d83ebf5a7727c5dbb92b1a9c37e2b390ea6d317708a28a1702ba",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_barley.png",
+      "source_sha256": "1a4af04c1a30b89011633c30fc14481e9850d2dabde13ea5bf3f761700329dc7",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_beans.png",
+      "source_sha256": "65af53810b8d212bc08f38273d94a8272affe0c26889888cbb69fd16a1ddaff2",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_beef.png",
+      "source_sha256": "fe8253ccc69c3cfdbdbd6d805c14eedd362b4b4f842666e36eaa81c52e4809d6",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_beet.png",
+      "source_sha256": "6fa3c1c56576ef730632742e36be408457646bbf7b628183074164a6030d09d1",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_blackberry.png",
+      "source_sha256": "9bb7e583dc1ea8ec8d98fcacf8534b7e66ece18237fa2ef433db5d39f23ad5de",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_blackcurrant.png",
+      "source_sha256": "c4c23a604b0b5c5fe931fe94b7cff3bba0336bbdee2eda537bdf2e1f31fe3b16",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_blueberries.png",
+      "source_sha256": "04addc409f46226c29ce7f75e046e0679860d3039ab80c63487f98170d8f71fc",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_bread.png",
+      "source_sha256": "1568dc4582b504b22e1e6adb2bf10ef1e2835107c7847ae5da3df9e3d5f65209",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_broccoli.png",
+      "source_sha256": "21383b07f6fa16b2c39264ff35b0fa1910d286c0301a5ca521958820cc8e0b81",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_broccoli_selected.png",
+      "source_sha256": "71c7e7d44648c588212f0364cd9c7469f480638944173aa9605374ce145c66db",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_brown_rice.png",
+      "source_sha256": "a6faa74f3f86967ceeb3fe9cdc03b12528113179db09983df2d5b42e7d3dc44b",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_brussels_sprouts.png",
+      "source_sha256": "509fa3d3eceb4f3f795247b88468bddbfc38a731fdc39b511907e1df635096ac",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_buckwheat.png",
+      "source_sha256": "e6a43873675947fc33edc95260df7092ff9302df473a8405c32d7f7deed129f6",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_bulgur.png",
+      "source_sha256": "b34e66816cee14c6abd50350b5b1410d49e9bd286a19d96c6472f30656dd665c",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_butter.png",
+      "source_sha256": "c7a273110611dcc586e0e4e40d508e8fa4234bbb46a8b6acc5ac8a8ba33941f7",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_cabbage.png",
+      "source_sha256": "7cd8aca907b5bfa8e75e0e374086e73436cc6cb4f51d95e5bbfa7eec8cf09299",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_carrot.png",
+      "source_sha256": "68f5fe488fc9df08571a6593cd1e0d6bc681565f0a20319c25625a12e8c45ca1",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_cashews.png",
+      "source_sha256": "486dd53bcb6e78172278f1b075e14011d6afe313d000c7d02bf8f7d835cd369e",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_cauliflower.png",
+      "source_sha256": "7d7f02653e42ecead9c22939668735d67bd9b0932f5c027157cd098ad4d930d1",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_celery.png",
+      "source_sha256": "914879ce044f91267044f3bf9fe5fc4d136887958d4706f004b1e622dbe2f8be",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_cheese.png",
+      "source_sha256": "0f06e9edbcf93fad7921cb8c8208e7374a212f9cc06e4d534ce863e20e239945",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_cherry.png",
+      "source_sha256": "6f875386c86846bbd8d155e5c3df88329a511d3ab5ed701c3d053436957f62bb",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_chia_seeds.png",
+      "source_sha256": "5570407cf7d152a0321fdc24934d035477f6ab0ccf9f26ae700e7fcf29e990dd",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_chicken.png",
+      "source_sha256": "e3765c4890d16342f076478d72a210a1abea3017d5e468d3a57579abe820fc88",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_chickpeas.png",
+      "source_sha256": "cf17e7190893cb3f3622ead3c626b9e4fe4a1738f9ad66abd8410f1225726e65",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_coconut.png",
+      "source_sha256": "7b633e92ff0f975495a1b74f24880deb215546918a0b151b1cfb5fd7330b3f9e",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_coconut_milk.png",
+      "source_sha256": "c1bfd4db1ed0275ac6e52c16c58ee637cec919e92662fe803cc8069e2f7a0bfd",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_cod.png",
+      "source_sha256": "327f60ae453e1b24b0f6775b83e33c46a710edc88ecdbd87a81467af03242233",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_corn.png",
+      "source_sha256": "d33ba6a1c4192a1e56f3eb2ce390f2e5e3ca4d335114ddfb1af6a8379d131701",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_cornmeal.png",
+      "source_sha256": "ad0853abfe0bd322ae86f6f588e43cdd23ebae1661f8e833ecd7a9ce356a74f5",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_cottage_cheese.png",
+      "source_sha256": "30f81fca747c9d2b92f5c47b3c7fff029e4aa8333df44106583bb2c2483b1cc8",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_couscous.png",
+      "source_sha256": "6a23d146797c8e5fe29fdc85ba9a7dbb2f6a1b19b2ff6960c53bf2d41239015a",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_crab.png",
+      "source_sha256": "2aa45b20dc58a3381732f746abfd2f96d12c871266e74e92d512f30bf87f4986",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_cranberry.png",
+      "source_sha256": "4ff887aec8757e8634f4d07a595a0a808edf38699338cfaff68a6d22484d79e6",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_cream.png",
+      "source_sha256": "fd431043886d64876fffcd685664a53360c41c78f8495b4a03cfd0ee569847ea",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_cream_cheese.png",
+      "source_sha256": "58503525da89a4102bdb43597c9f6a6ea6b5bc79fcc043ff80f69b8325ca4c8c",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_cucumber.png",
+      "source_sha256": "53f4673d1893066470084c730e20dc3ff2ca194a4368b0f1c77e20b7fccb4bf1",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_dates.png",
+      "source_sha256": "dead0b9644a10773657c73cc8b12259f3089dab70ec784e0eee8277b21dfee17",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_duck.png",
+      "source_sha256": "01b27f772cabf252400ff48a9755813ff118bdcb8fa65b880f13bebf6d554090",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_edamame.png",
+      "source_sha256": "b692003b4fbe74ce59ab6c10897692b15750e05ce73a97868b25bf3202dcd4b8",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_egg.png",
+      "source_sha256": "9fedd19e970aef68cb4ed79afc13c756321ee2afb62d3a9fd40032aaa0d1a044",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_eggplant.png",
+      "source_sha256": "10a6b70d127b54ff4cc431f056b608397686315b53ca480283db91a9621c9973",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_fennel.png",
+      "source_sha256": "99e16f4894d725bfde06bff80e5adc0774ddbf9cfa20b6a5a297992199d2c066",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_feta.png",
+      "source_sha256": "3f5ac786687f9a5a74386a5ba976e4d8a9f0b0b2538f1603e96c5930d0c404ba",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_fig.png",
+      "source_sha256": "6b1c9b4babc223e8d7590211a3c8cb1d9df5002a7df6176704502384931862a8",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_fish.png",
+      "source_sha256": "a0d6664ff700607a6451934f23669082548aab3109eb37e78fd16b3d49698990",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_flax_seeds.png",
+      "source_sha256": "b8783d83bf846de459a25f89c1ca902f061e275e526a59a01bd09f2829b91fc2",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_garlic.png",
+      "source_sha256": "c3c5137ad698fb1ff111c848b52a1f95a43857d48918dece55d0cc77181f1e60",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_grapefruit.png",
+      "source_sha256": "d14c20f3bc13b358e8471596f440306867c6e35aa48b9bd0593a81c3035a806c",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_grapes.png",
+      "source_sha256": "5c4c64ebbeb982e1447fa22ee3b6914d27d61203c5b0e958318ed1d69787c0c9",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_green_beans.png",
+      "source_sha256": "367970b54f625b89894409d487223fb60d51b944f917f19b89df96244ba8281d",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_green_bell_pepper.png",
+      "source_sha256": "b8236561c8292f70d19b31b320fcacf7dccd2ca974bcda0927b271791dfca871",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_guava.png",
+      "source_sha256": "d55f7b62a751c6121217c8deb94b5d524fb83ddf86c09d6bbb234d5b44767fa5",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_ham.png",
+      "source_sha256": "f221134634e74be64efaf56b5cac0562e4e1a5577a176cecffe21c964e3b8d13",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_hazelnuts.png",
+      "source_sha256": "00b275584f3aed7af015f8af1b87ef03904a28893e8bcb7d89f418589906cafb",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_herring.png",
+      "source_sha256": "661d8e03f589bac7c7c2fe92726cce54235adae8e755f6d2b7871bf26ea1a3cb",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_hummus.png",
+      "source_sha256": "071269c3b8ab70354ee05c0063dccaa15687721bdfe2e727ca08da8b5fbbe3a1",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_kale.png",
+      "source_sha256": "111b67dbb698fd411ee806ef46af8fe460eb3c90f9d9ea0752678c47528af28d",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_kefir.png",
+      "source_sha256": "10039cd18ac6c28bdfb9dca9d03996ae4245e78406a2d4372032da054135eb8d",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_kiwi.png",
+      "source_sha256": "467735bfc983234af4bcad612cf35e69cfc0e5fe7b2d9fff7f37fe7cdbaadec3",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_lamb.png",
+      "source_sha256": "f75fdcd47a50f6e453d096dfdc3e674786855de4dabfd47e89cccaadcf6274ce",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_leafy_greens.png",
+      "source_sha256": "e6249db8a70e47365aa9fe6a2e29ff849bd9c1f9fa6eaf123d595927ed7e0767",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_leafy_greens_selected.png",
+      "source_sha256": "d9a7d719171b086c550a17f8e06d0e7fc462108d55356b3ea2cc12d4f0a6d9b3",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_leek.png",
+      "source_sha256": "0a8dd80f0ae017460dcd88583d6cf7eff12009270e6f44c6550c083e79e26fea",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_lemon.png",
+      "source_sha256": "d41bfb4257ff7b40af30028fa7f395d17a46e056d95d7ec18095c2f7431434a0",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_lentils.png",
+      "source_sha256": "73ca964c70634b2d70cbcb6f54437c6311d46c70fb0035e80140e1e8aace1bb3",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_lettuce.png",
+      "source_sha256": "45aeb8ed4549a055a3a1119414c9b0ae38ba121c9739fd2932b4ce5636b7d09c",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_lime.png",
+      "source_sha256": "eb2f58c0957c4dbad87f51d44b1c81a33873fed7a48ebf510431c123f238e702",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_liver.png",
+      "source_sha256": "d02e698cc8f6cf9b397167ef288c72b97f088fb05f2af95f019896db6a746b7b",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_lychee.png",
+      "source_sha256": "332ba7ca40b150d6e516df11d00a0c2601518947bdb48dbe772bdf63baa790df",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_mackerel.png",
+      "source_sha256": "a80dc88fba70d0a6c941dc1f85b46b481f796a61b8cc543e49be5c945a72f866",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_mandarin.png",
+      "source_sha256": "b993dd1f5a15b868980de8ab8f3dab6eb78ebe4359ed3535841b1f2e04cb9836",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_mango.png",
+      "source_sha256": "a24e4f8f607f92efa0f3804c00ca4c01e9c46b471de8991e53c2bd659b2892d0",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_melon.png",
+      "source_sha256": "6c81c0d063d68b1678c80474157fc47a9cb87292ce8e9fbce56b096f00fcbba1",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_milk.png",
+      "source_sha256": "96b65e73bca1962e31aeb4b5faa7bf45456c34753bfbd3da38a06cea3fdad846",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_millet.png",
+      "source_sha256": "9f8208992ea3ed68c6afaa972a62286c7d812f3e99e071b5907f7ad421444d8b",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_mozzarella.png",
+      "source_sha256": "2db965d1284eb07b58f267471a9ac8439c30891cd7f34c170b2c8a9d0da50c41",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_mushroom.png",
+      "source_sha256": "52354e8e6e1a0ed9a395028f597051d87061aa72df891a5fc433e15c51f3a193",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_mussels.png",
+      "source_sha256": "8464d00f04fd0c6444163aeea69b4598eec1b3a0ab4621167e5c91560c863e2d",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_nectarine.png",
+      "source_sha256": "324bda04bf79161740cbcb9cd00fbf6ef8de69de384659d21883b070d52d40bd",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_nuts.png",
+      "source_sha256": "7d0a16ae5355d163a619f31a57d14aecce71059c833dd9f0b5b6a02d4520725a",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_oat_milk.png",
+      "source_sha256": "73a30e7e579df3c156e3d0765f3bb493f8d4936c7567d7ef2284f0847de28a24",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_oats.png",
+      "source_sha256": "7bd19cb901fa80c7f06c9d8e51e9a8d8039bd3271e8fb6274596bc5a05ba67b9",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_olive_oil.png",
+      "source_sha256": "3264b1bdb8a90a6246cedf83b9e9100a7bf419e9555e977010a4346ee3a34af2",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_olives.png",
+      "source_sha256": "46f663ea1b03b96b67c98a6ffae13443ffdb8b2686336fa1a9b8d20f2b0da472",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_onion.png",
+      "source_sha256": "f94a34b598383b7ec26ed2fd7aef54ced428a0f95d11761a66ce1c2b242070be",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_orange.png",
+      "source_sha256": "03b66b893722a82c97f06b04f3b7b77976f35e241b5f057f04f3c37d6de1a866",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_oysters.png",
+      "source_sha256": "0f071fd968abc561ba2a59a15a47641d83e474923e5738e4b06bbc0ddd24d63f",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_papaya.png",
+      "source_sha256": "4a18f4a8b515aace66aeca657d5368f7815bb38b3fe4a160da15635bb7420f99",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_parmesan.png",
+      "source_sha256": "34e88a28a7886c8c72d4427c4ffa6bd433f80748800b343d6b06d0ee1664c3ca",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_passion_fruit.png",
+      "source_sha256": "f67a3f9691e50360a468a00fe50a673dc3a8ee4a10ef4fe3b9767cd3ebdccb3b",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_pasta.png",
+      "source_sha256": "b53f57ad7492e5cac35a9d10e58bedfe9e77757b7b4d12606f7809e88edc0a31",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_peach.png",
+      "source_sha256": "19a76e9a0bf1ab8f9ca061ec7bc670cee191643f0dd8540cd5b92733600f5628",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_peanut_butter.png",
+      "source_sha256": "05bceee474174435628273a0e3551c8d6de46d8dd4a7d857dbd4fcab50541d4d",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_peanuts.png",
+      "source_sha256": "a4c7bf73a8835b13bb7c63cab68b5be965b26381e69264283a508ca2ddab6792",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_pear.png",
+      "source_sha256": "f2eefffb407fbc5d202f9fbdbeaa19c650a0f0ea3b59a9b9b507f7afbeb4851b",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_peas.png",
+      "source_sha256": "5ec42f6c5a77eec1fb031f0569080c31afe59cab596bead116d80b2709b50d81",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_persimmon.png",
+      "source_sha256": "62854abfb5c9d3c82b9fb7ce2d6d54fe8324ae27293b58f44679023bd57b26aa",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_pineapple.png",
+      "source_sha256": "227894d36b39f00486e199abc4db62de4a55f9303fd62fae0e3d3bee616e8c72",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_pistachios.png",
+      "source_sha256": "1e02f4981f5943732aea3f3cde18121dd0c887972884f0f3616f4c062f72d3ee",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_plum.png",
+      "source_sha256": "354fbe08bda2f86f3af7dbde5ea19609d0d732cfc119f1d4c8b69059e3d241fa",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_pollock.png",
+      "source_sha256": "581088f66cec57a9709e65f8a3767de43b3dd8f2bfb18fd7fa05ed4d153a0b63",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_pomegranate.png",
+      "source_sha256": "29aba16da4f887273ce28e91a081cc8b9b6fec99d711e4118f47cff5e388bd36",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_pork.png",
+      "source_sha256": "32030ce8c18c30eac6ae505d2900190e7549ec2fb4ec446a0ea9cc3b0127217a",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_potato.png",
+      "source_sha256": "d5dc8a1039c31cbc6430ddba01168d0c8bb1a73af744a156ffd46a561d1b4663",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_pumpkin.png",
+      "source_sha256": "1154e63eb50df9431ebfbb2b6683e16c348cb679b498b908036ce93d57a9e391",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_pumpkin_seeds.png",
+      "source_sha256": "9c8a7623a76c5a48c4233ff6ddaf41c8d78e0ae62b8b420edb27a1c128dee1c8",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_quinoa.png",
+      "source_sha256": "1caf38772fb2f2ef93b780d0720c7aa164253b8e82301753d0c456be327b5a86",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_rabbit.png",
+      "source_sha256": "ed294e04921dca84e2e1c41106950e9107336567d447ae075ac023e67b421c58",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_radish.png",
+      "source_sha256": "05de9aad4f9d9fa92372e832ced75cb0e526ed73ec48ea62a44ff41cb98c0323",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_raspberry.png",
+      "source_sha256": "372a1c49a4e5999f753155857d7daf0c6d99eeb74d3ce2a7d7e8898311e6555c",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_red_bell_pepper.png",
+      "source_sha256": "958cbc953b7eaced2d8152a83c5260c8e33769fe978baa237e4280a68206c11f",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_red_cabbage.png",
+      "source_sha256": "70d717a2a8e4e8f71d34509568f2c40f3c15c9a49649156df7eb3a5c93e8938a",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_rice.png",
+      "source_sha256": "3a5bb5be4f937a0702ccf2b403fc161b0be63d649e5ada9d6cfe2da84613bc7c",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_rye.png",
+      "source_sha256": "e73cc146da08d96ab92bc34136980755f55d25c256b5264f1f4140af7df4633d",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_salmon.png",
+      "source_sha256": "889d80abcbf814f9c464eaf83ef3c8ef23bdd1da7592781aefc7188747366fac",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_salmon_selected.png",
+      "source_sha256": "da5fe21b0a08e9831a21f6aeb9effbe599f2c8edfd03e005ba969f6df9486e3b",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_salt.png",
+      "source_sha256": "55c713f3dd733233cb0906b18d847acf3990125175c02a8a611554e9e948522c",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_sardines.png",
+      "source_sha256": "ebe78efde803dfe215958019c067b77e2f9c9375be16b4f49cf84b6b153efce3",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_sausage.png",
+      "source_sha256": "8282af9853f4126408b8ed6ad7afe73dc683495491c23cf2839ee08466b05e7e",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_seitan.png",
+      "source_sha256": "49fb935cbe1f8d6f9a1c2c2b4133dcd303b6a188f485b96f46d2fe054d8f9049",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_semolina.png",
+      "source_sha256": "8e6672ff90f6ec43ae13adb0228dd2aac8dd2a6fee1ec946288adfe4f5f90d60",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_shrimp.png",
+      "source_sha256": "fc28b1d2667e18544f1309457ab6e984aee532017b17671724cb1a689f8d3d0f",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_sour_cream.png",
+      "source_sha256": "2d6ca58d3c9fc27b3dfebe4bf413650129361d67576dfb2b246d9889e4036d7f",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_soy_milk.png",
+      "source_sha256": "0eb49277f76c8c5783c70706289ad5a27a2ac3b48b156bd48737954a87c530ed",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_soy_sauce.png",
+      "source_sha256": "8eae3019745550f35441eaedcb4db04dd7a95d67f12c686f835877e08b364e2d",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_spinach.png",
+      "source_sha256": "ada6212de2bcbe07f91eed796d64173b7429d33c4e9c0fb82068a617d3855b40",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_squid.png",
+      "source_sha256": "a8f183c0911cf7794f889af8ac14fac600ad724c1088abaaa8f524670ce3177d",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_strawberry.png",
+      "source_sha256": "6b703f88635d7f0a1e2422ac1ceca7f8c9304f5363980e4cf8fab35744d41800",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_sunflower_seeds.png",
+      "source_sha256": "f1718bc310593233372ae464539d75178121eed7d6b88076ae424a398d4ccadb",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_sweet_potato.png",
+      "source_sha256": "8339f553521d84815c1acede1d126a7389ba94ac3c704beb525c9e4a54d17cce",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_tahini.png",
+      "source_sha256": "c76e9e8eff480d1172010b3fced749868b2a8e939763ace171f85d57120756b9",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_tempeh.png",
+      "source_sha256": "2ec1bd13d5847fe29795dfded43dd1494f9130649e7d33d06812271a5b7f8ca6",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_tilapia.png",
+      "source_sha256": "850e51ab1bd49ea600e3e090d1d45a3f4c7ed9d0a1d4329ea26f55d8c6c5d431",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_tofu.png",
+      "source_sha256": "497ae89c71645e209fde4c68103c5c2ff09f464056e0f40331a2f91857d70663",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_tomato.png",
+      "source_sha256": "5187399a75249a40fc8dc20231b3c8ab45fe3da5ec1e598c285468839729bbc3",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_trout.png",
+      "source_sha256": "d79f345eeccc0515e8248971a0b3ac8bce0a946066784587207ac0087f26f089",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_tuna.png",
+      "source_sha256": "c9838c38839d332943d4f8c70fc85e82149f035cbe2a8f148fa7776c7d8e5319",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_turkey.png",
+      "source_sha256": "5ec317bc9fd3436944afc6af57b7f04b2fadf69997adf8ab1d8c7bfaeab06bd7",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_turnip.png",
+      "source_sha256": "b0e63f984c55a94a327f97a954f54203d9aaac1f388ad1ce2910f0e83c002ed5",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_walnuts.png",
+      "source_sha256": "d39e3de4ef6abbb943ccc53299cd1cff1fa47d23a8b612f5146c13578a0442c5",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_watermelon.png",
+      "source_sha256": "c8c741922e0c96e9b65057164f79e3ebba3a027966edf9352a0a18795a6a906a",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_wheat.png",
+      "source_sha256": "db66f85f0f8d30e34ee5ee8ee8866be225427b0a79082b35ea46630014527fa2",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_yellow_bell_pepper.png",
+      "source_sha256": "55440ce52b1512b7565e1d8666803a6716c6ec74a93cd0e5f8af66b640e9fc70",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_yogurt.png",
+      "source_sha256": "56a8d2de6fa4af1111066beee021ecd59714605a46b4ec611fda5c0b93c547bf",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/food_sticker_zucchini.png",
+      "source_sha256": "344c9cfed34473868d02a93a17ced5fbe67c96bdd40d5834e6a2db6e3b592714",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/history_chevron.png",
+      "source_sha256": "53e0ccc4fd234d29da0b8d46f53e17c5ead491decdfe9f1f31011860aaa5196e",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/history_clock.png",
+      "source_sha256": "dcfb446a953b1ce665b5da46c1bf9ef7a1d694db08b85a5a19da17d35520c4f0",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/history_placeholder.png",
+      "source_sha256": "8e177761e0e1f5b7febd35484f906fd5019c396e559493d38812f204c11f16ea",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/history_search.png",
+      "source_sha256": "5f612bfa89d565c764f0541a02d40d82ef82f3a1e83a6ef2f1437192aed90bda",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/home_background.png",
+      "source_sha256": "e0309771257d485f71b10497c301ff7303e39338c7635152e1bd05adf68f7636",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/home_bg_arch.png",
+      "source_sha256": "d3595fc25d263bac2114227cc8fc0eed07cb85dd87a9776743400536bc9d2811",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/icon_badge_check.png",
+      "source_sha256": "b4c4e7a52168594d4b0fbe90b22b385f1acc4fefcbb01cb52d6e1d5cbb9076ae",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/icon_bean.png",
+      "source_sha256": "61c8e5f2a6e9eabbb28beaf40faa6f3bb2aa182476a24401e222ce169f71e567",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/icon_bean_vector.png",
+      "source_sha256": "cf160100a84e04162b74fa9876e419cd47340c74e3b7cf984c8b439238162ac8",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/icon_chevron_left.png",
+      "source_sha256": "f93cc02d98b623ffb27ea79823fc035039dcd406ea590fb16d9266d4a25d909f",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/icon_chevron_right.png",
+      "source_sha256": "40ed085fb05c349d3896d54c6b9551fef301773095b83950a0011be03534956b",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/icon_chevron_right_vector.png",
+      "source_sha256": "635b184ba6144e044a86af16221e34cb4483065e2bce459d47e43ebff2028d0f",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/icon_droplet.png",
+      "source_sha256": "e132dd485e36708bc11fb65611920736213ef654be4c015a39c3a1336a3f2060",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/icon_droplet_vector.png",
+      "source_sha256": "3f813d38b67d594d3eadcfd1072d4b5adfdf3a701a8e75b2dd044f258c13555e",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/icon_footprints.png",
+      "source_sha256": "48cd319e56a7cf0ec3354275a737ce9a963d53944ff0167447db4b70f8839c9b",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/icon_footprints_vector.png",
+      "source_sha256": "96074f1e249b35907ba4ea5553e17b6509ce2deec8a108f6e357dbd04a8ee901",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/icon_home_fill.png",
+      "source_sha256": "27329c06201f55faf5331da1f66f9ea19a61bf81b8c9b69db3b0f44414064aeb",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/icon_home_fill_vector.png",
+      "source_sha256": "3be9eb169aa74ea8f25c82206885f689f2e4bb479b0fc411e5c59f0e162b4357",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/icon_leaf.png",
+      "source_sha256": "0933b85ae19ed47dfbbb7f0738861c5fcb42f94d28cf2ca706d1f4dad3cbb38e",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/icon_leaf_today.png",
+      "source_sha256": "b82014936982f75f9e83832b7a1341909f536eb5271b58275e61bb7195fde067",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/icon_leaf_today_vector.png",
+      "source_sha256": "90d290f8eb14df8703cd946eba699046722450eb2615cfdbde8d26e217bf93c4",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/icon_leaf_vector.png",
+      "source_sha256": "d2e015e034059978a0aa9504dad4f41859e136ed31617cf1a40642eebec39604",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/icon_lock.png",
+      "source_sha256": "186e0d6db5b67ceec75ea0b51174fc556eba4817053890d29a985e2aa825af8e",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/icon_salad.png",
+      "source_sha256": "f871bf45aa772c2810ea4bc221840a4bb880227cf7516b7a1408241c9b8f8ade",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/icon_salad_vector.png",
+      "source_sha256": "990bbe43db249dc7accf047e3731c3d15768afc6fa0e2e72ff18f37841b6f482",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/icon_sun_vector.png",
+      "source_sha256": "4b37f29aae7c3911b4e7df859c2103f5a6009ec65b9e46325a3dbdb0febb6322",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/icon_target.png",
+      "source_sha256": "b643d90b5747f4fa2361ee738d03cef087aa1ec2c752e97ee1120ee622531009",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/icon_target_vector.png",
+      "source_sha256": "e42e45c9472a2cd3bd636c66d983569909b4de7f83baf7f85b67949982c35537",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/icon_trophy_fill.png",
+      "source_sha256": "5da0b671f5f51e7f4339b518dbac1e9364d8a99621a40923c7166ca09b61d44c",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/icon_trophy_fill_vector.png",
+      "source_sha256": "61f5f531f7e28c4b4e0d74d288fdeb92968e5c6322ea60aa9fc18f0da7c549d7",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/logo.png",
+      "source_sha256": "048229daed28e50f2adb20283b653dcdc84969bf56f43bf57b906085b796380a",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/logo_sprout_vector.png",
+      "source_sha256": "476ec2ac52e33775d0db80cd1f96787db36d8294c5b4bda9d9b73be1ec7e4311",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/nav_pill.png",
+      "source_sha256": "0ed1ab8d751051a7fc02f9e0615312527d16f0a01a54f9fdf6dc901330119190",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/nav_pill_vector.png",
+      "source_sha256": "8d5712b9cb370fd2a0dbb072e2c5931c2f048eca70cafd41d8220b31c2206002",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/profile_back.png",
+      "source_sha256": "6bf24c87e32e1ae3bfe988f5160ece12dc5c0c442e33ca915fdda0c73f43a061",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/profile_button.png",
+      "source_sha256": "982b71299d5519c11e491770bd2301c47b86cf08702500eb5b6d2a67d0f1a66f",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/profile_button_vector.png",
+      "source_sha256": "a8111ba3254d711cfabaa4682de8a79d1fe55ed4dc9364ee7ccabe2fde5cbf8f",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/profile_chevron.png",
+      "source_sha256": "90cc3cd622179d299ea3154d2c474973e613f9aba504711a0c724f2a9116b636",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/profile_diagnostics.png",
+      "source_sha256": "3d46c0398c5915ad7348f41bffaddb5ae37bf7a4f58c92d57ead4ac38c78b114",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/profile_diagnostics_off.png",
+      "source_sha256": "1abb73c2a4e0f4bf4c509d18f315b79456fe60f7622f859d4ff262a9d8ea44a7",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/profile_edit.png",
+      "source_sha256": "8b79f60f886e74a005759793cbc34c8870af2ea8d60062b63a9e70dd9f5858c5",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/profile_history.png",
+      "source_sha256": "f53585a2ffcc09f6e0e60a62d8fa35a6caa21ab212ecbdacd65782112cbeefeb",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/profile_privacy.png",
+      "source_sha256": "68d8f40e88e465d4d5ebbf13d7363f166625d76df2f6e1969d5c52f026938278",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/profile_terms.png",
+      "source_sha256": "8e0e1b8991ef20d7f6409971db7ee94c141adb8232de54fbb63252c0cff62325",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/refresh_bubble_tail.png",
+      "source_sha256": "f86e7a4533a9bcbec830163f80ae6feba95ae13d2ba424fb9518e03d3f22ec19",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/refresh_camera.png",
+      "source_sha256": "7daee0f5c1d3c09810d06c23a796dc99c6b3354df948f688a140cf4a62070844",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/refresh_choice_check.png",
+      "source_sha256": "9629911e79ca157db91c86c24ac2ecad3d7ec629b35574aed3ef75a963ae7652",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/refresh_choice_plus.png",
+      "source_sha256": "1902b35e4ec62416ccdc462937eca1175f25db2bd3561a0609cbba56bc8074b4",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/refresh_colors.png",
+      "source_sha256": "bbcbab245b8c7a23cb3488010a2e9823ec916a1a42f8fb4047c9cdb7ab2d3385",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/refresh_fats.png",
+      "source_sha256": "f2b6a4b4be7e4fa7c436f5fd3e27cd26343d3ed6ce013eb60112f0c9c155b813",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/refresh_fiber.png",
+      "source_sha256": "cb0934b8dd027370e035fe5e112d43c1d98796a03436f93f65a208b7c40c7e50",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/refresh_home_active.png",
+      "source_sha256": "42df8533e5636124ad8116e53c65c74618260c41375d9ec9766f10c49b8c96c8",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/refresh_home_garden.png",
+      "source_sha256": "3c97eda2ce2baef3ae94a202a9e9fb07f8124b2719c84455faeca4c4f458126f",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/refresh_home_inactive.png",
+      "source_sha256": "40b4bfe952044a4b9efba45396a69cd7f4c91753dcf8efa126b005d9155bc305",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/refresh_home_sprite.png",
+      "source_sha256": "787aac54c5a8dbcd1d824d4477651151fa4b8c73cc6dd8a93f91c2533d5f7a36",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/refresh_logo.png",
+      "source_sha256": "3fa889b3f0035977b911fb3c32db1547708b4b7442b7ed677c2ab9e054cef51e",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/refresh_name_clear.png",
+      "source_sha256": "b361916ec32f4fad27b45ae3f80b4d773f62a2726d698be70567e84112c0d970",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/refresh_name_save.png",
+      "source_sha256": "a54790949630e815b484ab84e60437c3979c0b024ee7cc2aac0b363e1a17b246",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/refresh_protein.png",
+      "source_sha256": "74a11782a6e5a40de16d5c3d32d5b7b36a40751e38c1be296a25807ae3706e6f",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/refresh_review_check.png",
+      "source_sha256": "0dd06dc1e80f27b5ddc59cb79d20242f1f9a521c793a5cb9b67ec591d75aa2df",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/refresh_review_pencil.png",
+      "source_sha256": "06dec737f432c252475a6f289a8842cd23ee12a9cf9cac0a94097f3a70b496f6",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/refresh_reward_check.png",
+      "source_sha256": "0dd06dc1e80f27b5ddc59cb79d20242f1f9a521c793a5cb9b67ec591d75aa2df",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/refresh_reward_colors.png",
+      "source_sha256": "58e422f42d8f3e4304911f5f7440d56746b699639d025d6400cd60cffb0e4e3a",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/refresh_reward_fats.png",
+      "source_sha256": "db1a24cc1e86ceeb9f74e73d318b1e0cd825f6e715b8b727c9f394b1a5f73154",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/refresh_reward_fermented.png",
+      "source_sha256": "386cf4b9d9f081449ee9acf015dc1ba5911212c1302e73152bc10ccb7d18f065",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/refresh_reward_fiber.png",
+      "source_sha256": "c0df69260403686a63e7dae87799b80a8fa5c4785c374f0d14695dbd49625c00",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/refresh_reward_foods.png",
+      "source_sha256": "a70be978fefc58d9113d26658b096ef79c7ab64a62ad611167bd28ec258acdba",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/refresh_reward_protein.png",
+      "source_sha256": "a6093a89b847cad0d255772b73f96368f8b9bd608d50fce0eddb8665021fd034",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/refresh_reward_rhythm.png",
+      "source_sha256": "380f0d47339e4882abbef7f88a2e9310895118befa4346012b8d63db695310a7",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/refresh_rewards_active.png",
+      "source_sha256": "2e4e460bb49f8609fd62e4b98ee4030fe91fcdd9fa50d65bce04d57b9392c188",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/refresh_rewards_background.png",
+      "source_sha256": "0168f4ccd8bc12cd3b6d5fda26406d369f696bfe6032e22827e8a369d8047429",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/refresh_rewards_capybara.png",
+      "source_sha256": "5c77db12ffe6c2d39ebc316cc9004b0a514c5f99106da0834bcd352b788014de",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/refresh_rewards_inactive.png",
+      "source_sha256": "61f5f531f7e28c4b4e0d74d288fdeb92968e5c6322ea60aa9fc18f0da7c549d7",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/refresh_sun.png",
+      "source_sha256": "be9d099bc617e7bb8f9ff37358748a8872f64f95607c7e38089547cf780f48cc",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/refresh_user.png",
+      "source_sha256": "f8f1c0e650cacc32c841f0f18f14e42ca8aca968222d6fe1a372ff7c7603750e",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/review_add_item.png",
+      "source_sha256": "28ab113c3b5c0de75861fe5fd95edd8c6caf4d89228470afa61dd8355a2c00ff",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/review_pencil.png",
+      "source_sha256": "99311fa067b9e7678a6ebff36a7d6ac82b0c6d36ddb8ddf456951727c6574b8c",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/review_selected_badge.png",
+      "source_sha256": "8c14998eb84468739a028a99763160ed87099443a88498bb6c920cd0fca9e130",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/reward_30_foods.png",
+      "source_sha256": "65f54171cdd8daa763bf8805ed81283195398f3fcbaba1e6662d54d08f9b9412",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/reward_7_day_rhythm.png",
+      "source_sha256": "c3d269fa5710b249fcc68cdc6bbf2ce938bf1cab828bad9a9a8a6755e6ad088d",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/reward_colors.png",
+      "source_sha256": "3a2d95edef1c4541542d6cb26f23f9309c08b1b833897a6841461149681406dd",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/reward_culture_keeper.png",
+      "source_sha256": "cde314e48f2047b150a02bc1583cfa3df2db0d817d9018f5961f6844931a5d3d",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/reward_fiber.png",
+      "source_sha256": "1a9d731e8ceb8fb38ba578da446f5ea8b29aedb9468dea50d309380926202546",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/reward_healthy_fats.png",
+      "source_sha256": "e96b2c1ac58605100055159472e5e715ec6de17e512a4130d333e6072e519125",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/reward_medal_culture_keeper.png",
+      "source_sha256": "cde314e48f2047b150a02bc1583cfa3df2db0d817d9018f5961f6844931a5d3d",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/reward_medal_fiber_friend.png",
+      "source_sha256": "1a9d731e8ceb8fb38ba578da446f5ea8b29aedb9468dea50d309380926202546",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/reward_medal_good_fats.png",
+      "source_sha256": "e96b2c1ac58605100055159472e5e715ec6de17e512a4130d333e6072e519125",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/reward_medal_protein_pal.png",
+      "source_sha256": "f5fed753d20487cdfbb94044d8245f5257c7cec0374ec5e3f63add8e87aac3bc",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/reward_medal_rainbow_plate.png",
+      "source_sha256": "3a2d95edef1c4541542d6cb26f23f9309c08b1b833897a6841461149681406dd",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/reward_medal_rhythm_keeper.png",
+      "source_sha256": "c3d269fa5710b249fcc68cdc6bbf2ce938bf1cab828bad9a9a8a6755e6ad088d",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/reward_medal_veggie_explorer.png",
+      "source_sha256": "65f54171cdd8daa763bf8805ed81283195398f3fcbaba1e6662d54d08f9b9412",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/reward_protein.png",
+      "source_sha256": "f5fed753d20487cdfbb94044d8245f5257c7cec0374ec5e3f63add8e87aac3bc",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/rewards_background.png",
+      "source_sha256": "ff8c876b76e5be6ab27f9841c8fda645b82eab4913899ff1e71ab9d698ffd56b",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/rewards_hero_background.png",
+      "source_sha256": "ff8c876b76e5be6ab27f9841c8fda645b82eab4913899ff1e71ab9d698ffd56b",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "drawable/salad.png",
+      "source_sha256": "0e09ade7b684c1de41b0e0261ae80b4de60e07ba95a8240d4ef8b8109dc6a04a",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "font/fraunces.ttf",
+      "source_sha256": "177ff6c0f14e5550a3c624247cd1189611d4eb65d000b14944c63d967958abbb",
+      "bundled": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "font/nunito.ttf",
+      "source_sha256": "bb55a5ca5c2042335b3991af27c4d0705d0ef41cac6164ac737fd8f2a1e85207",
+      "bundled": true,
+      "bytes_equal": true
+    }
+  ],
+  "all_source_resources_packaged_unchanged": true
+}
