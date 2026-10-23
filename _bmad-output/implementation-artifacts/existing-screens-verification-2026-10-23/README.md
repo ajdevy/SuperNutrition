@@ -3,7 +3,7 @@
 Worktree: `/Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition`
 Branch: `codex/home-profile`
 Baseline: `7a141facbd0ec0b4fc86efce4948fdfd3b2ce660`
-Status: implementation and shared-UI verification complete; final device rerun pending host readiness.
+Status: implementation and shared-UI verification complete; final native verification incomplete after an interrupted run and system-component ANRs.
 
 [Current-frame audit and retained constraints](../existing-screens-figma-audit-2026-10-23.md) · [Specification and review trail](../spec-existing-screens-figma-refresh.md) · [Machine-readable counts](results.json)
 
@@ -26,6 +26,8 @@ The camera circle is minimally darker than Figma for white-icon contrast; Review
 | Android UI Acceptance, before signature/SAM cleanup |50|0 /0 /0|`android-uiAcceptance.xml`|
 
 The150-test full native run includes the nonblocking CameraX readiness boundary, native Profile Back cancellation, resource-ID name controls, IME, navigation selection and system-bar appearance. It passed **before** the final shape-only Profile parameter grouping/SaverScope lambda correction. That correction changes no layout, state or IME logic; it restores the original public five-argument ProfileScreen API. The final230-test UI run and explicit iOS compile include that correction. Earlier native XML is not presented as a fresh post-cleanup run.
+
+A follow-up on final source commit `3d54a716` started the unchanged full instrumentation command. It was interrupted after36 completed POC runner records:29 passed and7 failed with Activity launch timeouts. Production and UI Acceptance were not reached; these are partial status records, not final suite XML. The saved logs also show system renderer stalls, and an independent system screenshot timed out. A bounded headless SwiftShader restart then displayed a Quickstep ANR on Launcher before the app was launched, so no second instrumentation run began. A production-code root cause has not been established. See [follow-up diagnostics](resume-native-diagnostics.md), `native-final-attempt1-partial.json` and `native-final-attempt1-interrupted.log`.
 
 Explicit `:feature:photo-analysis:compileKotlinIosArm64 -Psupernutrition.enableIosDeviceTarget=true` passed on Intel with the full Xcode developer directory, including the changed shared UI. `apple-compile.log` is compilation evidence; no Apple device/simulator execution is claimed. Existing iOS production reachability remains camera/review plus the standalone Rewards factory; the acceptance Home placeholder is not production Home evidence.
 
@@ -58,6 +60,8 @@ Two fresh-context source reviews are retained in [Blind Hunter](review-blind.md)
 `native-initial-*.png` are the earlier actual emulator visual pass **before independent review corrections**; they document normal/200% geometry, inline keyboard and Profile/history routing. They are not final acceptance screenshots. `red-camera-anr.png` documents the original app camera deadlock, whose blocked future read was subsequently fixed and whose readiness tests passed. `environment-quickstep-anr.png`/`environment-system-ui.json` describe later Android system-component failures during cold-start setup, separately from the app defect.
 
 A post-cleanup native rerun was guarded on `sys.boot_completed`; the guard exited before starting Gradle. It is a missing execution prerequisite, not failing/passing product evidence. After ADB transport failure, repeated cold starts stalled before full Android readiness and showed Launcher/System UI ANRs; host load average reached390.56. The task emulator was stopped; no user applications were terminated. The final post-cleanup production assembly and48 affected-module unit tests passed (`production-assembly-and-unit.log`). The APK was rebuilt from the final sources; its SHA-256 is recorded in results.json, without an installed-APK comparison. Fresh final native screenshots, installed-APK hash comparison, and camera permission/capture smoke remain pending a healthy emulator. Font scale was restored to1.0 during the earlier completed visual pass.
+
+The later final-source attempt described above reached Android boot completion but did not yield a completed passing native run. `environment-resume-system-ui-anr.png` and `environment-headless-quickstep-anr.png` are system-failure diagnostics, not app acceptance images. The task emulator and its isolated Gradle invocation were stopped; no verification jobs were left running. Required physical-device evidence remains unavailable by the user's accepted emulator-only constraint.
 
 ## Final APK
 
