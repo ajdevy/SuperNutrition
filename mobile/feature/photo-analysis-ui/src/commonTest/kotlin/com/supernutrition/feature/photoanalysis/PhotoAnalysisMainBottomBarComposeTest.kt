@@ -42,8 +42,8 @@ class PhotoAnalysisMainBottomBarComposeTest {
         }
 
         onNodeWithTag(UiAutomationIds.BOTTOM_BAR_PILL.value, useUnmergedTree = true)
-            .assertWidthIsEqualTo(347.dp)
-            .assertHeightIsEqualTo(86.dp)
+            .assertWidthIsEqualTo(343.dp)
+            .assertHeightIsEqualTo(64.dp)
         onNodeWithTag(UiAutomationIds.CAPTURE_TAB.value)
             .assertIsDisplayed()
             .assertIsSelected()

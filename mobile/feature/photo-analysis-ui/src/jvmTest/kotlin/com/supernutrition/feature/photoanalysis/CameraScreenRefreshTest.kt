@@ -155,7 +155,7 @@ class CameraScreenRefreshTest {
                 manualIngredients = listOf(PhotoAnalysisManualIngredientModel("carrot", "Carrot", "Lunch")),
             )
         }
-        onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_MANUAL_INGREDIENT_ADD.value).performScrollTo().performClick()
+        onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_MANUAL_INGREDIENT_ADD.value).assertIsDisplayed().performClick()
         onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_MANUAL_INGREDIENT_INPUT.value).assertIsFocused()
             .performTextReplacement("  no salt  ")
         onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_MANUAL_INGREDIENT_INPUT.value).performImeAction()

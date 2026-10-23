@@ -11,7 +11,7 @@ import com.supernutrition.feature.photoanalysis.resources.reward_fiber
 import com.supernutrition.feature.photoanalysis.resources.reward_healthy_fats
 import com.supernutrition.feature.photoanalysis.resources.reward_protein
 
-internal val RewardsPaper = Color(0xFFF7F3EF)
+internal val RewardsPaper = Color(0xFFF6F7F5)
 internal val RewardsInk = Color(0xFF27322C)
 internal val RewardsMuted = Color(0xFF68766E)
 internal val RewardsLine = Color(0xFFE5EAE2)

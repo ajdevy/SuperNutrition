@@ -1,0 +1,91 @@
+Reusing configuration cache.
+> Task :core:ui:kmpPartiallyResolvedDependenciesChecker
+> Task :core:config:kmpPartiallyResolvedDependenciesChecker
+> Task :core:ui:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :core:config:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :core:config:jvmProcessResources NO-SOURCE
+> Task :core:ui:jvmProcessResources NO-SOURCE
+> Task :core:config:processJvmMainResources SKIPPED
+> Task :core:ui:processJvmMainResources SKIPPED
+> Task :domain:inference:kmpPartiallyResolvedDependenciesChecker
+> Task :domain:inference:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :domain:inference:jvmProcessResources NO-SOURCE
+> Task :domain:inference:processJvmMainResources SKIPPED
+> Task :domain:nutrition:kmpPartiallyResolvedDependenciesChecker
+> Task :domain:nutrition:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :domain:nutrition:jvmProcessResources UP-TO-DATE
+> Task :domain:nutrition:processJvmMainResources SKIPPED
+> Task :domain:photo-analysis:kmpPartiallyResolvedDependenciesChecker
+> Task :domain:photo-analysis:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :domain:photo-analysis:jvmProcessResources NO-SOURCE
+> Task :domain:photo-analysis:processJvmMainResources SKIPPED
+> Task :feature:photo-analysis-presenter:kmpPartiallyResolvedDependenciesChecker
+> Task :feature:photo-analysis-presenter:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :feature:photo-analysis-presenter:jvmProcessResources NO-SOURCE
+> Task :feature:photo-analysis-presenter:processJvmMainResources SKIPPED
+> Task :feature:photo-analysis-ui:checkJvmMainComposeLibrariesCompatibility
+> Task :feature:photo-analysis-ui:kmpPartiallyResolvedDependenciesChecker
+> Task :feature:photo-analysis-ui:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :feature:photo-analysis-ui:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :domain:inference:compileKotlinJvm UP-TO-DATE
+> Task :core:ui:compileKotlinJvm UP-TO-DATE
+> Task :core:config:compileKotlinJvm UP-TO-DATE
+> Task :domain:inference:compileJvmMainJava NO-SOURCE
+> Task :core:config:compileJvmMainJava NO-SOURCE
+> Task :domain:inference:jvmMainClasses UP-TO-DATE
+> Task :core:config:jvmMainClasses UP-TO-DATE
+> Task :core:ui:compileJvmMainJava NO-SOURCE
+> Task :core:ui:jvmMainClasses UP-TO-DATE
+> Task :domain:inference:jvmJar UP-TO-DATE
+> Task :core:ui:jvmJar UP-TO-DATE
+> Task :core:config:jvmJar UP-TO-DATE
+> Task :feature:photo-analysis-ui:convertXmlValueResourcesForJvmMain NO-SOURCE
+> Task :feature:photo-analysis-ui:copyNonXmlValueResourcesForJvmMain NO-SOURCE
+> Task :feature:photo-analysis-ui:prepareComposeResourcesTaskForJvmMain NO-SOURCE
+> Task :feature:photo-analysis-ui:generateResourceAccessorsForJvmMain NO-SOURCE
+> Task :feature:photo-analysis-ui:generateComposeResClass UP-TO-DATE
+> Task :feature:photo-analysis-ui:generateExpectResourceCollectorsForCommonMain UP-TO-DATE
+> Task :feature:photo-analysis-ui:checkJvmTestComposeLibrariesCompatibility
+> Task :feature:photo-analysis-ui:convertXmlValueResourcesForCommonTest NO-SOURCE
+> Task :feature:photo-analysis-ui:copyNonXmlValueResourcesForCommonTest NO-SOURCE
+> Task :domain:nutrition:compileKotlinJvm UP-TO-DATE
+> Task :domain:photo-analysis:compileKotlinJvm UP-TO-DATE
+> Task :feature:photo-analysis-ui:prepareComposeResourcesTaskForCommonTest NO-SOURCE
+> Task :feature:photo-analysis-ui:copyNonXmlValueResourcesForCommonMain UP-TO-DATE
+> Task :domain:nutrition:compileJvmMainJava NO-SOURCE
+> Task :feature:photo-analysis-ui:generateResourceAccessorsForCommonTest NO-SOURCE
+> Task :domain:nutrition:jvmMainClasses UP-TO-DATE
+> Task :feature:photo-analysis-ui:convertXmlValueResourcesForJvmTest NO-SOURCE
+> Task :domain:nutrition:jvmJar UP-TO-DATE
+> Task :domain:photo-analysis:compileJvmMainJava NO-SOURCE
+> Task :feature:photo-analysis-ui:copyNonXmlValueResourcesForJvmTest NO-SOURCE
+> Task :domain:photo-analysis:jvmMainClasses UP-TO-DATE
+> Task :feature:photo-analysis-ui:prepareComposeResourcesTaskForJvmTest NO-SOURCE
+> Task :feature:photo-analysis-ui:generateResourceAccessorsForJvmTest NO-SOURCE
+> Task :feature:photo-analysis-ui:prepareComposeResourcesTaskForCommonMain UP-TO-DATE
+> Task :feature:photo-analysis-ui:koverFindJar UP-TO-DATE
+> Task :domain:photo-analysis:jvmJar UP-TO-DATE
+> Task :feature:photo-analysis-ui:generateResourceAccessorsForCommonMain UP-TO-DATE
+> Task :feature:photo-analysis-ui:assembleJvmTestResources UP-TO-DATE
+> Task :feature:photo-analysis-ui:generateActualResourceCollectorsForJvmMain UP-TO-DATE
+> Task :feature:photo-analysis-ui:jvmTestProcessResources UP-TO-DATE
+> Task :feature:photo-analysis-ui:processJvmTestResources SKIPPED
+> Task :feature:photo-analysis-ui:assembleJvmMainResources UP-TO-DATE
+> Task :feature:photo-analysis-presenter:compileKotlinJvm UP-TO-DATE
+> Task :feature:photo-analysis-presenter:compileJvmMainJava NO-SOURCE
+> Task :feature:photo-analysis-presenter:jvmMainClasses UP-TO-DATE
+> Task :feature:photo-analysis-presenter:jvmJar UP-TO-DATE
+> Task :feature:photo-analysis-ui:jvmProcessResources UP-TO-DATE
+> Task :feature:photo-analysis-ui:processJvmMainResources SKIPPED
+> Task :feature:photo-analysis-ui:compileKotlinJvm
+> Task :feature:photo-analysis-ui:compileJvmMainJava NO-SOURCE
+> Task :feature:photo-analysis-ui:jvmMainClasses
+> Task :feature:photo-analysis-ui:jvmJar
+> Task :feature:photo-analysis-ui:compileTestKotlinJvm
+> Task :feature:photo-analysis-ui:compileJvmTestJava NO-SOURCE
+> Task :feature:photo-analysis-ui:jvmTestClasses
+> Task :feature:photo-analysis-ui:jvmTest
+
+BUILD SUCCESSFUL in 12m 4s
+37 actionable tasks: 13 executed, 24 up-to-date
+Configuration cache entry reused.

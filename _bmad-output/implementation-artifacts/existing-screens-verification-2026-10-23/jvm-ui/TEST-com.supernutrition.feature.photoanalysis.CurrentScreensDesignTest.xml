@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="CurrentScreensDesignTest[jvm]" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-10-23T05:17:31.080Z" hostname="Anastasias-MacBook-Air.local" time="2.171">
+  <properties/>
+  <testcase name="Home reference fixture matches current 375 by 812 composition[jvm]" classname="com.supernutrition.feature.photoanalysis.CurrentScreensDesignTest" time="1.519"/>
+  <testcase name="Rewards reference fixture uses current seven-card visual composition[jvm]" classname="com.supernutrition.feature.photoanalysis.CurrentScreensDesignTest" time="0.652"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

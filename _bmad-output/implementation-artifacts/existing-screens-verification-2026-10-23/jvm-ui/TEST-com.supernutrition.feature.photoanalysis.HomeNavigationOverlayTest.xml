@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="HomeNavigationOverlayTest[jvm]" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-23T05:17:43.127Z" hostname="Anastasias-MacBook-Air.local" time="21.841">
+  <properties/>
+  <testcase name="Home fills the safe viewport beneath working floating controls[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeNavigationOverlayTest" time="0.485"/>
+  <testcase name="Home keeps the previous compact content geometry when navigation becomes an overlay[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeNavigationOverlayTest" time="0.425"/>
+  <testcase name="last current Home metric and goal action clear controls across screen sizes and font scales[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeNavigationOverlayTest" time="19.474"/>
+  <testcase name="Home remains visible and scrollable beside navigation in a short wide viewport[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeNavigationOverlayTest" time="1.454"/>
+  <system-out><![CDATA[Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

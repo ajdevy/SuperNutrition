@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="RewardsLayoutTest[jvm]" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-10-23T05:20:05.604Z" hostname="Anastasias-MacBook-Air.local" time="6.73">
+  <properties/>
+  <testcase name="carousel cards align progress despite different description lengths[jvm]" classname="com.supernutrition.feature.photoanalysis.RewardsLayoutTest" time="0.636"/>
+  <testcase name="ordinary phone presents four daily and three weekly cards in horizontal carousels[jvm]" classname="com.supernutrition.feature.photoanalysis.RewardsLayoutTest" time="6.093"/>
+  <system-out><![CDATA[Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 2 seconds.
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

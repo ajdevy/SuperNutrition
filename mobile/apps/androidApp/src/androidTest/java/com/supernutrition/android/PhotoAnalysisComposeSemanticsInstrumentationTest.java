@@ -1,6 +1,7 @@
 package com.supernutrition.android;
 
 import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.RemoteException;
@@ -20,13 +21,14 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-/** Physical-device semantic contract for the Compose photo-analysis shell. */
+/** Native semantic contract for the packaged Compose photo-analysis shell. */
 public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
     private static final long SEMANTICS_TIMEOUT_MS = 15_000L;
 
@@ -67,11 +69,11 @@ public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
         assertNull("Profile must hide the bottom navigation",
                 device.findObject(By.res(UiAutomationIds.INSTANCE.getCAMERA_ACTION().getValue())));
         waitForNode(device, UiAutomationIds.INSTANCE.getPROFILE_EDIT_NAME().getValue()).click();
-        UiObject2 nameInput = device.wait(Until.findObject(By.clazz("android.widget.EditText")),
+        UiObject2 nameInput = device.wait(Until.findObject(By.res(UiAutomationIds.INSTANCE.getPROFILE_NAME_INPUT().getValue())),
                 SEMANTICS_TIMEOUT_MS);
         assertNotNull("Profile must offer a name editor", nameInput);
         nameInput.setText("Profile QA");
-        UiObject2 saveName = device.wait(Until.findObject(By.text("Save")), SEMANTICS_TIMEOUT_MS);
+        UiObject2 saveName = device.wait(Until.findObject(By.res(UiAutomationIds.INSTANCE.getPROFILE_NAME_SAVE().getValue())), SEMANTICS_TIMEOUT_MS);
         assertNotNull("Profile name editor must offer Save", saveName);
         saveName.click();
         assertSemantic(device, UiAutomationIds.INSTANCE.getPROFILE_NAME().getValue(), "Profile QA");
@@ -155,7 +157,7 @@ public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
                 .getLaunchIntentForPackage(targetContext.getPackageName());
         assertNotNull("the acceptance app must expose a launcher activity", launchIntent);
         launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        InstrumentationRegistry.getInstrumentation().startActivitySync(launchIntent);
+        Activity activity = InstrumentationRegistry.getInstrumentation().startActivitySync(launchIntent);
 
         ensureHomeSurface(device);
 
@@ -166,6 +168,7 @@ public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
                 "Rewards tab must be selected after tapping it");
         assertSemantic(device, UiAutomationIds.INSTANCE.getREWARDS_TITLE().getValue(),
                 targetContext.getString(R.string.rewards_title));
+        assertStatusBarIcons(activity, true);
 
         UiObject2 homeTab = waitForNode(device, UiAutomationIds.INSTANCE.getHOME_TAB().getValue());
         assertNotNull("missing Home tab semantic id", homeTab);
@@ -174,6 +177,21 @@ public final class PhotoAnalysisComposeSemanticsInstrumentationTest {
                 "Home tab must be selected after tapping it");
         assertSemantic(device, UiAutomationIds.INSTANCE.getHOME_TITLE().getValue(),
                 targetContext.getString(R.string.home_title));
+        assertStatusBarIcons(activity, false);
+    }
+
+    private static void assertStatusBarIcons(Activity activity, boolean darkIcons) {
+        AtomicBoolean actual = new AtomicBoolean();
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+            if (android.os.Build.VERSION.SDK_INT >= 30) {
+                actual.set((activity.getWindow().getInsetsController().getSystemBarsAppearance()
+                        & android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS) != 0);
+            } else {
+                actual.set((activity.getWindow().getDecorView().getSystemUiVisibility()
+                        & android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR) != 0);
+            }
+        });
+        assertEquals("status icons must follow the selected surface", darkIcons, actual.get());
     }
 
     @Test

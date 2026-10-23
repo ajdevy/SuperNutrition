@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ReviewAcceptanceRegressionTest[jvm]" tests="11" skipped="0" failures="0" errors="0" timestamp="2026-10-23T05:19:51.238Z" hostname="Anastasias-MacBook-Air.local" time="6.243">
+  <properties/>
+  <testcase name="inline name editing visibly explains its session scope[jvm]" classname="com.supernutrition.feature.photoanalysis.ReviewAcceptanceRegressionTest" time="0.273"/>
+  <testcase name="standalone Rewards has a visible working Back target[jvm]" classname="com.supernutrition.feature.photoanalysis.ReviewAcceptanceRegressionTest" time="0.254"/>
+  <testcase name="RTL summary reserves the logical start for its actual mascot[jvm]" classname="com.supernutrition.feature.photoanalysis.ReviewAcceptanceRegressionTest" time="0.283"/>
+  <testcase name="RTL summary reserves its mascot side at double text[jvm]" classname="com.supernutrition.feature.photoanalysis.ReviewAcceptanceRegressionTest" time="0.22"/>
+  <testcase name="inline session scope explanation wraps completely at double text[jvm]" classname="com.supernutrition.feature.photoanalysis.ReviewAcceptanceRegressionTest" time="0.284"/>
+  <testcase name="inline name controls expose stable native automation targets[jvm]" classname="com.supernutrition.feature.photoanalysis.ReviewAcceptanceRegressionTest" time="0.234"/>
+  <testcase name="Rewards tab preserves the Figma header without a standalone Back target[jvm]" classname="com.supernutrition.feature.photoanalysis.ReviewAcceptanceRegressionTest" time="0.21"/>
+  <testcase name="standalone localized title at double text clears Back and remains complete[jvm]" classname="com.supernutrition.feature.photoanalysis.ReviewAcceptanceRegressionTest" time="0.212"/>
+  <testcase name="summary uses complete localized templates and their supplied word order[jvm]" classname="com.supernutrition.feature.photoanalysis.ReviewAcceptanceRegressionTest" time="0.247"/>
+  <testcase name="actual card progress counts are visible and complete[jvm]" classname="com.supernutrition.feature.photoanalysis.ReviewAcceptanceRegressionTest" time="0.864"/>
+  <testcase name="actual card progress counts remain complete at double text[jvm]" classname="com.supernutrition.feature.photoanalysis.ReviewAcceptanceRegressionTest" time="3.161"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

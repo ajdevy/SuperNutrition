@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="MainScreenRefreshTest[jvm]" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-23T05:18:15.127Z" hostname="Anastasias-MacBook-Air.local" time="8.615">
+  <properties/>
+  <testcase name="tab navigation and host insets update in place without stale labels or callbacks[jvm]" classname="com.supernutrition.feature.photoanalysis.MainScreenRefreshTest" time="1.155"/>
+  <testcase name="Rewards updates earned state and remains reachable after live text and size changes[jvm]" classname="com.supernutrition.feature.photoanalysis.MainScreenRefreshTest" time="1.833"/>
+  <testcase name="Home refreshes metrics and dialog copy and uses the current action callbacks[jvm]" classname="com.supernutrition.feature.photoanalysis.MainScreenRefreshTest" time="5.625"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

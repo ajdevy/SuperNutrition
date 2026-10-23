@@ -44,7 +44,7 @@ import org.jetbrains.compose.resources.painterResource
 import kotlin.math.roundToInt
 
 internal val CameraBackground = Color(0xFF141310)
-internal val ReviewGreen = Color(0xFF677712)
+internal val ReviewGreen = Color(0xFF4A7D3B)
 internal val ReviewWhite = Color(0xFFF9F9F9)
 internal val CameraMinimumTouchSize = 48.dp
 internal val ReviewCloseTopPadding = 6.dp

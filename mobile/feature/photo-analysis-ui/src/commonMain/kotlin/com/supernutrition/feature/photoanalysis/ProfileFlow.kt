@@ -31,11 +31,11 @@ fun ProfileFlow(
                 referenceDay = state.referenceDay,
             )
         } else {
-            ProfileScreen(
-                displayName,
-                confirmedFoods,
-                actions.copy(onHistoryRequested = state::showHistory),
-                modifier,
+            ControlledProfileScreen(
+                identity = ProfileScreenIdentity(displayName, confirmedFoods),
+                actions = actions.copy(onHistoryRequested = state::showHistory),
+                flowState = state,
+                modifier = modifier,
             )
         }
     }

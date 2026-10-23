@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="BrandNavigationVisualTest[jvm]" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-10-23T05:17:16.068Z" hostname="Anastasias-MacBook-Air.local" time="9.455">
+  <properties/>
+  <testcase name="Rewards fills behind the floating bar and final card clears navigation[jvm]" classname="com.supernutrition.feature.photoanalysis.BrandNavigationVisualTest" time="4.579"/>
+  <testcase name="compact header mirrors its logo area and profile in an RTL host[jvm]" classname="com.supernutrition.feature.photoanalysis.BrandNavigationVisualTest" time="0.156"/>
+  <testcase name="tab selection changes icons and label colors while retaining their positions[jvm]" classname="com.supernutrition.feature.photoanalysis.BrandNavigationVisualTest" time="0.318"/>
+  <testcase name="tab touch surface remains transparent while pressed[jvm]" classname="com.supernutrition.feature.photoanalysis.BrandNavigationVisualTest" time="0.204"/>
+  <testcase name="compact header follows live profile and font changes without restoring legacy copy[jvm]" classname="com.supernutrition.feature.photoanalysis.BrandNavigationVisualTest" time="0.19"/>
+  <testcase name="compact header keeps its profile reachable without the legacy badge across widths and text scales[jvm]" classname="com.supernutrition.feature.photoanalysis.BrandNavigationVisualTest" time="4.007"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="MealHistoryComposeTest[jvm]" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-23T05:18:23.830Z" hostname="Anastasias-MacBook-Air.local" time="2.963">
+  <properties/>
+  <testcase name="empty history has a dedicated screen and returns to profile[jvm]" classname="com.supernutrition.feature.photoanalysis.MealHistoryComposeTest" time="1.226"/>
+  <testcase name="search filters actual names and clears to the original entries[jvm]" classname="com.supernutrition.feature.photoanalysis.MealHistoryComposeTest" time="0.57"/>
+  <testcase name="history callback is delegated by standalone profile[jvm]" classname="com.supernutrition.feature.photoanalysis.MealHistoryComposeTest" time="0.208"/>
+  <testcase name="card opens a read only summary and does not invent time photo or nutrients[jvm]" classname="com.supernutrition.feature.photoanalysis.MealHistoryComposeTest" time="0.959"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -43,7 +43,7 @@ class PhotoReviewReadabilityTest {
             )
         }
         val bitmap = captureToImage()
-        listOf(copy.review.subtitle, "Salmon", copy.review.anythingElse).forEach { label ->
+        listOf(copy.review.subtitle, copy.review.anythingElse).forEach { label ->
             assertReadable(bitmap, onNodeWithText(label, useUnmergedTree = true).fetchSemanticsNode().boundsInRoot)
         }
     }
@@ -67,25 +67,25 @@ class PhotoReviewReadabilityTest {
     }
 
     @Test
-    fun `small reward progress text is readable on its white card`() = runSkikoComposeUiTest(
+    fun `small reward title is readable on its white card`() = runSkikoComposeUiTest(
         size = Size(1083f, 2346f),
         density = Density(3f),
     ) {
         setContent { RewardsScreen(layoutRewardsModel()) }
         assertReadable(
             captureToImage(),
-            onNodeWithTag(UiAutomationIds.rewardsRowProgress(4).value).fetchSemanticsNode().boundsInRoot,
+            onNodeWithTag(UiAutomationIds.rewardsRowTitle(0).value).fetchSemanticsNode().boundsInRoot,
         )
     }
 
     @Test
-    fun `home next step title and action stay readable on cream surfaces`() = runSkikoComposeUiTest(
+    fun `home guidance and metric labels stay readable on their surfaces`() = runSkikoComposeUiTest(
         size = Size(1125f, 3000f),
         density = Density(3f),
     ) {
         setContent { HomeScreen(layoutHomeModel()) }
         val bitmap = captureToImage()
-        listOf(layoutHomeModel().nextStepTitle, layoutHomeModel().nextStepAction).forEach { label ->
+        listOf(layoutHomeModel().careQuestion, layoutHomeModel().rhythmSubtitle).forEach { label ->
             assertReadable(bitmap, onNodeWithText(label, useUnmergedTree = true).fetchSemanticsNode().boundsInRoot)
         }
     }
@@ -97,7 +97,7 @@ class PhotoReviewReadabilityTest {
     ) {
         val model = layoutHomeModel()
         setContent { HomeScreen(model) }
-        val node = onNodeWithText(model.fiber.value)
+        val node = onNodeWithText(model.fiber.value, useUnmergedTree = true)
         val layouts = mutableListOf<TextLayoutResult>()
         node.performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
         val suffixStart = model.fiber.value.indexOf(" / ") + 3

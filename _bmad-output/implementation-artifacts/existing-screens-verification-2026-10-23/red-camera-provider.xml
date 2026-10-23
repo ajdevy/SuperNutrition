@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuites tests="4" failures="1" errors="0" skipped="0" time="3.223" timestamp="2026-10-23T00:23:12" hostname="localhost">
+  <testsuite name="com.supernutrition.android.PhotoAnalysisCameraProviderReadinessInstrumentationTest" tests="4" failures="1" errors="0" skipped="0" time="0.119" timestamp="2026-10-23T00:23:12" hostname="localhost">
+    <properties>
+      <property name="device" value="SN_Final_Verification_35_20261018(AVD) - 15" />
+      <property name="flavor" value="production" />
+      <property name="project" value=":apps:androidApp" />
+    </properties>
+    <testcase name="completedFailureReachesTheExistingRecoveryPath" classname="com.supernutrition.android.PhotoAnalysisCameraProviderReadinessInstrumentationTest" time="0.089" />
+    <testcase name="cancelledInitializationReachesTheExistingRecoveryPath" classname="com.supernutrition.android.PhotoAnalysisCameraProviderReadinessInstrumentationTest" time="0.01" />
+    <testcase name="completedInitializationReturnsTheProvider" classname="com.supernutrition.android.PhotoAnalysisCameraProviderReadinessInstrumentationTest" time="0.005" />
+    <testcase name="pendingInitializationDoesNotReadTheFuture" classname="com.supernutrition.android.PhotoAnalysisCameraProviderReadinessInstrumentationTest" time="0.015">
+      <failure>java.lang.AssertionError: attempted blocking read while provider initialization is pending
+at com.supernutrition.android.PhotoAnalysisCameraProviderReadinessInstrumentationTest$RecordingFuture.get(PhotoAnalysisCameraProviderReadinessInstrumentationTest.java:60)
+at com.supernutrition.android.PhotoAnalysisCameraProviderReadinessInstrumentationTest$RecordingFuture.get(PhotoAnalysisCameraProviderReadinessInstrumentationTest.java:41)
+at com.supernutrition.feature.photoanalysis.PhotoAnalysisLiveCameraPreviewKt.readyCameraProvider(PhotoAnalysisLiveCameraPreview.kt:235)
+at com.supernutrition.android.PhotoAnalysisCameraProviderReadinessInstrumentationTest.pendingInitializationDoesNotReadTheFuture(PhotoAnalysisCameraProviderReadinessInstrumentationTest.java:20)
+</failure>
+    </testcase>
+  </testsuite>
+</testsuites>

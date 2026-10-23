@@ -1,0 +1,28 @@
+[
+  {
+    "text": "System UI isn\u0027t responding",
+    "center": "[360,703]",
+    "resource-id": "alertTitle",
+    "key": 3506402
+  },
+  {
+    "text": "Close app",
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "center": "[360,808]",
+    "resource-id": "aerr_close",
+    "key": 3506402
+  },
+  {
+    "text": "Wait",
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "center": "[360,904]",
+    "resource-id": "aerr_wait",
+    "key": 3506402
+  }
+]

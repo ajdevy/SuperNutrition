@@ -9,7 +9,6 @@ import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.click
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipe
 import androidx.compose.ui.test.v2.runSkikoComposeUiTest
@@ -40,7 +39,7 @@ class RewardsNavigationOverlayTest {
                 contentPadding = PaddingValues(top = 24.dp, bottom = 20.dp),
             ) { RewardsScreen(layoutRewardsModel()) }
         }
-        val list = onNodeWithTag(UiAutomationIds.REWARDS_LIST.value).fetchSemanticsNode().boundsInRoot
+        val list = onNodeWithTag(UiAutomationIds.REWARDS_SCREEN.value).fetchSemanticsNode().boundsInRoot
         assertTrue(abs(list.top - 24f) <= 1f, "Top safe inset applied twice: $list")
         assertTrue(abs(list.bottom - 792f) <= 1f, "Empty canvas still covers Rewards: $list")
         listOf(UiAutomationIds.HOME_TAB, UiAutomationIds.REWARDS_TAB, UiAutomationIds.CAMERA_ACTION).forEach {
@@ -62,8 +61,8 @@ class RewardsNavigationOverlayTest {
                 RewardsScreen(layoutRewardsModel())
             }
         }
-        val screen = onNodeWithTag(UiAutomationIds.REWARDS_SCREEN.value)
-        onNodeWithTag(UiAutomationIds.rewardsRow(0).value).performScrollTo()
+        val screen = onNodeWithTag(UiAutomationIds.REWARDS_LIST.value)
+        screen.revealRewardText(onNodeWithTag(UiAutomationIds.rewardsRowTitle(0).value, useUnmergedTree = true))
         val card = onNodeWithTag(UiAutomationIds.rewardsRow(0).value).fetchSemanticsNode().boundsInRoot
         val bounds = screen.fetchSemanticsNode().boundsInRoot
         val pill = onNodeWithTag(UiAutomationIds.BOTTOM_BAR_PILL.value).fetchSemanticsNode().boundsInRoot
@@ -71,8 +70,14 @@ class RewardsNavigationOverlayTest {
         val x = (card.left + pill.left) / 2
         val pixels = captureToImage().toPixelMap()
         assertEquals(
-            Color(0xFFFBF9F6),
-            pixels[(card.left + 4f).toInt(), card.center.y.toInt()],
+            Color.White,
+            pixels[
+                (card.left + 4f).toInt(), onNodeWithTag(
+                    UiAutomationIds.rewardsRowTitle(0).value,
+                    useUnmergedTree = true,
+                )
+                    .fetchSemanticsNode().boundsInRoot.center.y.toInt(),
+            ],
             "The blank canvas hides reward $card in viewport $bounds",
         )
         val previous = screen.fetchSemanticsNode().config[SemanticsProperties.VerticalScrollAxisRange].value()
