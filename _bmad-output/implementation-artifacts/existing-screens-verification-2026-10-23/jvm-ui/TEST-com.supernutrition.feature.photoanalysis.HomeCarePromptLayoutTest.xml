@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="HomeCarePromptLayoutTest[jvm]" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-10-23T05:17:39.424Z" hostname="Anastasias-MacBook-Air.local" time="0.952">
+  <properties/>
+  <testcase name="guidance stays centered readable and actionable at regular and larger text sizes[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeCarePromptLayoutTest" time="0.816"/>
+  <testcase name="care tail remains painted below the speech body and within its measured section[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeCarePromptLayoutTest" time="0.135"/>
+  <system-out><![CDATA[HOME_TEXT_MEASUREMENT: text='Add a portion of greens
+for the next meal', scale=1.0, overflowHeight=false, overflowWidth=true, hasVisualOverflow=true, size=159 x 36, paragraphWidth=216.0, paragraphHeight=36.0, didExceedMaxLines=false, lineCount=2, lines=[0[left=31.155052, right=184.84494, bottom=17.0, end=23, ellipsized=false], 1[left=52.4672, right=163.5328, bottom=35.0, end=41, ellipsized=false]], constraints=Constraints(minWidth = 0, maxWidth = 216, minHeight = 0, maxHeight = Infinity), font=14.0.sp, lineHeight=18.0.sp
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -390,6 +391,7 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         PhotoAnalysisTabShell(
             homeModel = homeScreenModel(),
             rewardsModel = rewardsModel,
+            rewardsScreenCopy = rewardsScreenCopy(),
             homeLabel = getString(R.string.capture_tab),
             rewardsLabel = getString(R.string.rewards_tab),
             cameraLabel = getString(R.string.capture_shutter),
@@ -465,32 +467,62 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         rhythmTitle = getString(R.string.home_rhythm_title),
         rhythmSubtitle = getString(R.string.home_rhythm_subtitle),
         rhythmBadgeLabel = getString(R.string.home_rhythm_badge),
-        fiber = HomeMetricModel(
-            label = getString(R.string.home_fiber_label),
-            value = getString(R.string.home_fiber_value),
+        fiber = homeMetricModel(
+            R.string.home_fiber_label,
+            R.string.home_fiber_value,
+            R.integer.home_fiber_amount,
+            R.integer.home_fiber_target,
         ),
         water = HomeMetricModel(
             label = getString(R.string.home_water_label),
             value = getString(R.string.home_water_value),
         ),
-        protein = HomeMetricModel(
-            label = getString(R.string.home_protein_label),
-            value = getString(R.string.home_protein_value),
+        protein = homeMetricModel(
+            R.string.home_protein_label,
+            R.string.home_protein_value,
+            R.integer.home_protein_amount,
+            R.integer.home_protein_target,
         ),
         movement = HomeMetricModel(
             label = getString(R.string.home_movement_label),
             value = getString(R.string.home_movement_value),
+        ),
+        colors = HomeMetricModel(
+            label = getString(R.string.home_colors_label),
+            value = getString(R.string.home_metric_unavailable),
+        ),
+        fats = HomeMetricModel(
+            label = getString(R.string.home_fats_label),
+            value = getString(R.string.home_metric_unavailable),
         ),
         nextStepTitle = getString(R.string.home_next_step_title),
         nextStepDescription = getString(R.string.home_next_step_description),
         nextStepAction = getString(R.string.home_next_step_action),
         viewGoalsLabel = getString(R.string.home_view_goals),
         goalsTitle = getString(R.string.home_goals_title),
-        goalsDescription = getString(R.string.home_goals_description),
+        goalsDescription = getString(
+            R.string.home_goals_description,
+            resources.getInteger(R.integer.home_fiber_target),
+            resources.getInteger(R.integer.home_protein_target),
+        ),
         goalsDoneLabel = getString(R.string.home_goals_done),
         profileActionLabel = getString(R.string.home_profile_action),
         mascotDescription = getString(R.string.home_mascot_description),
         saladDescription = getString(R.string.home_salad_description),
+    )
+
+    private fun homeMetricModel(labelRes: Int, valueRes: Int, amountRes: Int, targetRes: Int): HomeMetricModel {
+        val amount = resources.getInteger(amountRes)
+        val target = resources.getInteger(targetRes)
+        return HomeMetricModel(getString(labelRes), getString(valueRes, amount, target), amount.toFloat() / target)
+    }
+
+    private fun rewardsScreenCopy() = RewardsScreenCopy(
+        daily = getString(R.string.rewards_daily),
+        weekly = getString(R.string.rewards_weekly),
+        countTemplate = getString(R.string.rewards_count_template),
+        todaySummaryTemplate = getString(R.string.rewards_today_summary),
+        weekSummaryTemplate = getString(R.string.rewards_week_summary),
     )
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -618,6 +650,7 @@ private fun HomeProfileDestination(shell: PhotoAnalysisTabShell, onBackRequested
     val uriHandler = LocalUriHandler.current
     val profileFlow = rememberProfileFlowState()
     BackHandler(enabled = profileFlow.historyVisible, onBack = profileFlow::showProfile)
+    BackHandler(enabled = profileFlow.nameEditing, onBack = profileFlow::cancelNameEdit)
     ProfileFlow(
         state = profileFlow,
         displayName = shell.profileName,
@@ -628,7 +661,7 @@ private fun HomeProfileDestination(shell: PhotoAnalysisTabShell, onBackRequested
             onPrivacyPolicyRequested = { uriHandler.openUri(ProfileLegalLinks.PRIVACY_POLICY) },
             onTermsRequested = { uriHandler.openUri(ProfileLegalLinks.TERMS) },
         ),
-        modifier = Modifier.padding(WindowInsets.safeDrawing.asPaddingValues()),
+        modifier = Modifier.safeDrawingPadding(),
     )
 }
 
@@ -650,7 +683,8 @@ private fun PhotoAnalysisTabs(
         captureReturnTab = selectedTab
         captureVisible = true
     }
-    SideEffect { shell.onSystemBarAppearanceChanged(profileVisible || (!captureVisible && selectedTab != 0)) }
+    val darkSystemBarIcons = profileVisible || (!captureVisible && selectedTab != 0)
+    SideEffect { shell.onSystemBarAppearanceChanged(darkSystemBarIcons) }
     BackHandler(enabled = profileVisible, onBack = { profileVisible = false })
     BackHandler(enabled = captureVisible, onBack = closeCapture)
     Box(Modifier.fillMaxSize().semantics { testTagsAsResourceId = true }) {
@@ -702,13 +736,14 @@ private fun PhotoAnalysisTabContent(
             onProfileRequested = onProfileRequested,
         )
     } else {
-        RewardsScreen(shell.rewardsModel, onBackRequested = onRewardsBack)
+        RewardsScreen(shell.rewardsModel, onBackRequested = onRewardsBack, copy = shell.rewardsScreenCopy)
     }
 }
 
 private data class PhotoAnalysisTabShell(
     val homeModel: HomeScreenModel,
     val rewardsModel: RewardsPresenterModel,
+    val rewardsScreenCopy: RewardsScreenCopy,
     val homeLabel: String,
     val rewardsLabel: String,
     val cameraLabel: String,

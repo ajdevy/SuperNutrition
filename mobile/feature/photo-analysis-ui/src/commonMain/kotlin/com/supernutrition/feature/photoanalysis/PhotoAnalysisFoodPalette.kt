@@ -20,7 +20,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.BlurredEdgeTreatment
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -32,8 +35,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.supernutrition.core.ui.photoAnalysisVisibleComponentId
 import com.supernutrition.feature.photoanalysis.resources.Res
-import com.supernutrition.feature.photoanalysis.resources.review_add_item
-import com.supernutrition.feature.photoanalysis.resources.review_selected_badge
+import com.supernutrition.feature.photoanalysis.resources.refresh_review_check
 import org.jetbrains.compose.resources.painterResource
 
 /** Only the active photo's immutable evidence is offered; manual additions have their own explicit control. */
@@ -43,7 +45,6 @@ internal fun PhotoAnalysisFoodPalette(
     surface: PhotoAnalysisCaptureSurface,
     choices: MealReviewChoices,
     onChoicesChanged: (MealReviewChoices) -> Unit,
-    onAddRequested: () -> Unit,
 ) {
     Column(
         Modifier.fillMaxWidth().padding(horizontal = 16.dp).automationId(surface.automationIds.componentEvidence),
@@ -67,12 +68,6 @@ internal fun PhotoAnalysisFoodPalette(
                 }
             }
         }
-        CameraArtworkButton(
-            artwork = CameraArtwork(Res.drawable.review_add_item, 48.dp),
-            label = surface.presenterCopy.capture.manualIngredientAdd,
-            id = surface.automationIds.manualIngredientAdd,
-            onClick = onAddRequested,
-        )
     }
 }
 
@@ -117,14 +112,16 @@ private fun PhotoFoodChoice(
                 surface.presenterCopy.evidence.selected,
             )
         }
-        Text(
-            component.label.replace('_', ' '),
-            style = reviewTextStyle(13f),
-            textAlign = TextAlign.Center,
-        )
+        if (sticker == null) {
+            Text(
+                component.label.replace('_', ' '),
+                style = reviewTextStyle(13f),
+                textAlign = TextAlign.Center,
+            )
+        }
         if (sticker == null && isSelected) {
             Image(
-                painterResource(Res.drawable.review_selected_badge),
+                painterResource(Res.drawable.refresh_review_check),
                 surface.presenterCopy.evidence.selected,
                 Modifier.size(22.5.dp),
             )
@@ -135,14 +132,30 @@ private fun PhotoFoodChoice(
 @Composable
 private fun FoodStickerArtwork(sticker: FoodSticker, isSelected: Boolean, size: Dp, selectedLabel: String) {
     Box(Modifier.size(size), contentAlignment = Alignment.Center) {
+        if (isSelected) {
+            Image(
+                painterResource(sticker.artwork),
+                null,
+                Modifier.size(size)
+                    .blur(7.dp, BlurredEdgeTreatment.Unbounded),
+                colorFilter = ColorFilter.tint(Color(0xA67AB462)),
+            )
+            Image(
+                painterResource(sticker.artwork),
+                null,
+                Modifier.size(size)
+                    .blur(3.5.dp, BlurredEdgeTreatment.Unbounded),
+                colorFilter = ColorFilter.tint(Color(0xFF7AB462)),
+            )
+        }
         Image(
-            painterResource(if (isSelected) sticker.selectedArtwork else sticker.artwork),
+            painterResource(sticker.artwork),
             null,
             Modifier.size(size),
         )
         if (isSelected) {
             Image(
-                painterResource(Res.drawable.review_selected_badge),
+                painterResource(Res.drawable.refresh_review_check),
                 selectedLabel,
                 Modifier.align(Alignment.TopEnd).size(22.5.dp),
             )

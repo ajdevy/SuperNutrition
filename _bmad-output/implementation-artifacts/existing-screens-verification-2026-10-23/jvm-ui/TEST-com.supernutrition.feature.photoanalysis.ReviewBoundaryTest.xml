@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ReviewBoundaryTest[jvm]" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-23T05:19:57.485Z" hostname="Anastasias-MacBook-Air.local" time="6.857">
+  <properties/>
+  <testcase name="translated review footer grows for large text without clipping its labels[jvm]" classname="com.supernutrition.feature.photoanalysis.ReviewBoundaryTest" time="0.639"/>
+  <testcase name="capture actions remain disjoint in a short window with safe area padding[jvm]" classname="com.supernutrition.feature.photoanalysis.ReviewBoundaryTest" time="0.407"/>
+  <testcase name="unknown photo food shows a checkmark only while selected[jvm]" classname="com.supernutrition.feature.photoanalysis.ReviewBoundaryTest" time="1.104"/>
+  <testcase name="unselected review has a visible close that invokes only its host callback[jvm]" classname="com.supernutrition.feature.photoanalysis.ReviewBoundaryTest" time="1.334"/>
+  <testcase name="earned rewards remain scrollable in a very short window[jvm]" classname="com.supernutrition.feature.photoanalysis.ReviewBoundaryTest" time="3.372"/>
+  <system-out><![CDATA[Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

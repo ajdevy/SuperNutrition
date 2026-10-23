@@ -45,7 +45,12 @@ private const val LOW_SURROGATE_BASE = 0xDC00
 private const val SURROGATE_PAYLOAD_BITS = 10
 
 @Composable
-internal fun ProfileIdentity(displayName: String, copy: ProfileScreenCopy, onEditRequested: () -> Unit) {
+internal fun ProfileIdentity(
+    displayName: String,
+    copy: ProfileScreenCopy,
+    onEditRequested: () -> Unit,
+    editor: (@Composable () -> Unit)? = null,
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(18.dp),
@@ -65,28 +70,32 @@ internal fun ProfileIdentity(displayName: String, copy: ProfileScreenCopy, onEdi
                 fontWeight = FontWeight.SemiBold,
             )
         }
-        Row(
-            modifier = Modifier.weight(1f),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                displayName.trim().ifEmpty { copy.unknownName },
-                color = ProfileInk,
-                fontFamily = frauncesFont(),
-                fontSize = 26.sp,
-                lineHeight = 32.sp,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.weight(1f, fill = false).automationId(UiAutomationIds.PROFILE_NAME),
-            )
-            Box(
-                modifier = Modifier.size(48.dp).clip(CircleShape)
-                    .clickable(role = Role.Button, onClickLabel = copy.editName, onClick = onEditRequested)
-                    .semantics { contentDescription = copy.editName }
-                    .automationId(UiAutomationIds.PROFILE_EDIT_NAME),
-                contentAlignment = Alignment.CenterStart,
+        if (editor != null) {
+            Box(Modifier.weight(1f)) { editor() }
+        } else {
+            Row(
+                modifier = Modifier.weight(1f),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Image(painterResource(Res.drawable.profile_edit), null, Modifier.padding(start = 2.dp).size(20.dp))
+                Text(
+                    displayName.trim().ifEmpty { copy.unknownName },
+                    color = ProfileInk,
+                    fontFamily = frauncesFont(),
+                    fontSize = 26.sp,
+                    lineHeight = 32.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.weight(1f, fill = false).automationId(UiAutomationIds.PROFILE_NAME),
+                )
+                Box(
+                    modifier = Modifier.size(48.dp).clip(CircleShape)
+                        .clickable(role = Role.Button, onClickLabel = copy.editName, onClick = onEditRequested)
+                        .semantics { contentDescription = copy.editName }
+                        .automationId(UiAutomationIds.PROFILE_EDIT_NAME),
+                    contentAlignment = Alignment.CenterStart,
+                ) {
+                    Image(painterResource(Res.drawable.profile_edit), null, Modifier.padding(start = 2.dp).size(20.dp))
+                }
             }
         }
     }

@@ -1,0 +1,309 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.5.0/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build
+> Task :build-logic:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :build-logic:compileKotlin UP-TO-DATE
+> Task :build-logic:compileJava NO-SOURCE
+> Task :build-logic:pluginDescriptors UP-TO-DATE
+> Task :build-logic:processResources UP-TO-DATE
+> Task :build-logic:classes UP-TO-DATE
+> Task :build-logic:jar UP-TO-DATE
+
+> Configure project :platform:photo-android
+w: ⚠️ Unused Kotlin Source Sets
+The Kotlin source set commonTest was configured but not added to any Kotlin compilation.
+Solution: You can add a source set to a target's compilation by connecting it with the compilation's default source set using 'dependsOn'.
+See https://kotl.in/connecting-source-sets
+
+Warning: SDK processing. This version only understands SDK XML versions up to 3 but an SDK XML file of version 4 was encountered. This can happen if you use versions of Android Studio and the command-line tools that were released at different times.
+
+> Task :core:ui:kmpPartiallyResolvedDependenciesChecker
+> Task :core:config:kmpPartiallyResolvedDependenciesChecker
+> Task :core:ui:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :core:config:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :core:config:compileKotlinJvm UP-TO-DATE
+> Task :core:ui:compileKotlinJvm UP-TO-DATE
+> Task :core:config:compileJvmMainJava NO-SOURCE
+> Task :core:ui:compileJvmMainJava NO-SOURCE
+> Task :core:ui:jvmProcessResources NO-SOURCE
+> Task :core:config:jvmProcessResources NO-SOURCE
+> Task :core:ui:processJvmMainResources SKIPPED
+> Task :core:config:processJvmMainResources SKIPPED
+> Task :core:config:jvmMainClasses UP-TO-DATE
+> Task :core:ui:jvmMainClasses UP-TO-DATE
+> Task :core:ui:jvmJar UP-TO-DATE
+> Task :core:config:jvmJar UP-TO-DATE
+> Task :domain:inference:kmpPartiallyResolvedDependenciesChecker
+> Task :domain:inference:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :core:ui:compileTestKotlinJvm UP-TO-DATE
+> Task :core:ui:compileJvmTestJava NO-SOURCE
+> Task :core:ui:jvmTestProcessResources NO-SOURCE
+> Task :core:ui:processJvmTestResources SKIPPED
+> Task :core:ui:jvmTestClasses UP-TO-DATE
+> Task :core:ui:koverFindJar UP-TO-DATE
+> Task :core:ui:jvmTest UP-TO-DATE
+> Task :domain:nutrition:kmpPartiallyResolvedDependenciesChecker
+> Task :domain:nutrition:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :domain:inference:compileKotlinJvm UP-TO-DATE
+> Task :domain:inference:compileJvmMainJava NO-SOURCE
+> Task :domain:nutrition:jvmProcessResources UP-TO-DATE
+> Task :domain:nutrition:processJvmMainResources SKIPPED
+> Task :domain:inference:jvmProcessResources NO-SOURCE
+> Task :domain:inference:processJvmMainResources SKIPPED
+> Task :domain:photo-analysis:kmpPartiallyResolvedDependenciesChecker
+> Task :domain:inference:jvmMainClasses UP-TO-DATE
+> Task :domain:photo-analysis:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :domain:photo-analysis:jvmProcessResources NO-SOURCE
+> Task :domain:photo-analysis:processJvmMainResources SKIPPED
+> Task :domain:inference:jvmJar UP-TO-DATE
+> Task :feature:photo-analysis-presenter:kmpPartiallyResolvedDependenciesChecker
+> Task :domain:nutrition:compileKotlinJvm UP-TO-DATE
+> Task :domain:photo-analysis:compileKotlinJvm UP-TO-DATE
+> Task :domain:nutrition:compileJvmMainJava NO-SOURCE
+> Task :domain:nutrition:jvmMainClasses UP-TO-DATE
+> Task :domain:photo-analysis:compileJvmMainJava NO-SOURCE
+> Task :domain:photo-analysis:jvmMainClasses UP-TO-DATE
+> Task :domain:nutrition:jvmJar UP-TO-DATE
+> Task :feature:photo-analysis-presenter:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :domain:photo-analysis:jvmJar UP-TO-DATE
+> Task :feature:photo-analysis-presenter:jvmProcessResources NO-SOURCE
+> Task :feature:photo-analysis-presenter:compileKotlinJvm UP-TO-DATE
+> Task :feature:photo-analysis-presenter:compileJvmMainJava NO-SOURCE
+> Task :feature:photo-analysis-presenter:processJvmMainResources SKIPPED
+> Task :feature:photo-analysis-presenter:jvmMainClasses UP-TO-DATE
+> Task :feature:photo-analysis-presenter:jvmJar UP-TO-DATE
+> Task :feature:photo-analysis-presenter:compileTestKotlinJvm UP-TO-DATE
+> Task :feature:photo-analysis-presenter:compileJvmTestJava NO-SOURCE
+> Task :feature:photo-analysis-presenter:jvmTestProcessResources NO-SOURCE
+> Task :feature:photo-analysis-presenter:processJvmTestResources SKIPPED
+> Task :feature:photo-analysis-presenter:jvmTestClasses UP-TO-DATE
+> Task :feature:photo-analysis-presenter:koverFindJar UP-TO-DATE
+> Task :feature:photo-analysis:checkJvmMainComposeLibrariesCompatibility
+> Task :feature:photo-analysis:kmpPartiallyResolvedDependenciesChecker
+> Task :feature:photo-analysis:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :feature:photo-analysis:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :feature:photo-analysis-presenter:jvmTest UP-TO-DATE
+> Task :feature:photo-analysis:copyNonXmlValueResourcesForCommonMain NO-SOURCE
+> Task :feature:photo-analysis:prepareComposeResourcesTaskForCommonMain NO-SOURCE
+> Task :feature:photo-analysis:generateResourceAccessorsForCommonMain SKIPPED
+> Task :feature:photo-analysis:convertXmlValueResourcesForJvmMain NO-SOURCE
+> Task :feature:photo-analysis:copyNonXmlValueResourcesForJvmMain NO-SOURCE
+> Task :feature:photo-analysis:prepareComposeResourcesTaskForJvmMain NO-SOURCE
+> Task :feature:photo-analysis:generateResourceAccessorsForJvmMain SKIPPED
+> Task :feature:photo-analysis:generateActualResourceCollectorsForJvmMain SKIPPED
+> Task :feature:photo-analysis:generateComposeResClass SKIPPED
+> Task :feature:photo-analysis:generateExpectResourceCollectorsForCommonMain SKIPPED
+> Task :feature:photo-analysis-ui:checkJvmMainComposeLibrariesCompatibility
+> Task :feature:photo-analysis-ui:kmpPartiallyResolvedDependenciesChecker
+> Task :feature:photo-analysis-ui:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :feature:photo-analysis-ui:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :feature:photo-analysis:checkJvmTestComposeLibrariesCompatibility
+> Task :feature:photo-analysis:convertXmlValueResourcesForCommonTest NO-SOURCE
+> Task :feature:photo-analysis:copyNonXmlValueResourcesForCommonTest NO-SOURCE
+> Task :feature:photo-analysis:prepareComposeResourcesTaskForCommonTest NO-SOURCE
+> Task :feature:photo-analysis:generateResourceAccessorsForCommonTest SKIPPED
+> Task :feature:photo-analysis:convertXmlValueResourcesForJvmTest NO-SOURCE
+> Task :feature:photo-analysis:copyNonXmlValueResourcesForJvmTest NO-SOURCE
+> Task :feature:photo-analysis:prepareComposeResourcesTaskForJvmTest NO-SOURCE
+> Task :feature:photo-analysis:generateResourceAccessorsForJvmTest SKIPPED
+> Task :feature:photo-analysis:assembleJvmMainResources UP-TO-DATE
+> Task :feature:photo-analysis:jvmProcessResources UP-TO-DATE
+> Task :feature:photo-analysis:processJvmMainResources SKIPPED
+> Task :feature:photo-analysis-ui:copyNonXmlValueResourcesForCommonMain UP-TO-DATE
+> Task :feature:photo-analysis-ui:prepareComposeResourcesTaskForCommonMain UP-TO-DATE
+> Task :testing:compose-support:kmpPartiallyResolvedDependenciesChecker
+> Task :testing:compose-support:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :feature:photo-analysis-ui:generateResourceAccessorsForCommonMain UP-TO-DATE
+> Task :feature:photo-analysis-ui:convertXmlValueResourcesForJvmMain NO-SOURCE
+> Task :feature:photo-analysis-ui:copyNonXmlValueResourcesForJvmMain NO-SOURCE
+> Task :feature:photo-analysis-ui:prepareComposeResourcesTaskForJvmMain NO-SOURCE
+> Task :feature:photo-analysis-ui:generateResourceAccessorsForJvmMain NO-SOURCE
+> Task :feature:photo-analysis-ui:generateActualResourceCollectorsForJvmMain UP-TO-DATE
+> Task :feature:photo-analysis-ui:generateComposeResClass UP-TO-DATE
+> Task :feature:photo-analysis-ui:generateExpectResourceCollectorsForCommonMain UP-TO-DATE
+> Task :testing:compose-support:compileKotlinJvm UP-TO-DATE
+> Task :testing:compose-support:compileJvmMainJava NO-SOURCE
+> Task :testing:compose-support:jvmProcessResources NO-SOURCE
+> Task :testing:compose-support:processJvmMainResources SKIPPED
+> Task :testing:compose-support:jvmMainClasses UP-TO-DATE
+> Task :testing:compose-support:jvmJar UP-TO-DATE
+> Task :feature:photo-analysis:assembleJvmTestResources UP-TO-DATE
+> Task :feature:photo-analysis:jvmTestProcessResources UP-TO-DATE
+> Task :feature:photo-analysis:processJvmTestResources SKIPPED
+> Task :feature:photo-analysis:koverFindJar UP-TO-DATE
+> Task :apps:androidApp:preBuild UP-TO-DATE
+> Task :apps:androidApp:preProductionDebugBuild UP-TO-DATE
+> Task :apps:androidApp:mergeProductionDebugNativeDebugMetadata NO-SOURCE
+> Task :feature:photo-analysis-ui:compileKotlinJvm UP-TO-DATE
+> Task :apps:androidApp:generateProductionDebugBuildConfig UP-TO-DATE
+> Task :feature:photo-analysis-ui:compileJvmMainJava NO-SOURCE
+> Task :apps:androidApp:generateProductionDebugResources UP-TO-DATE
+> Task :apps:androidApp:packageProductionDebugResources UP-TO-DATE
+> Task :feature:photo-analysis:androidPreBuild UP-TO-DATE
+> Task :feature:photo-analysis:preAndroidMainBuild UP-TO-DATE
+> Task :feature:photo-analysis:generateAndroidMainEmptyResourceFiles UP-TO-DATE
+> Task :inference:local-android:androidPreBuild UP-TO-DATE
+> Task :inference:local-android:preAndroidMainBuild UP-TO-DATE
+> Task :feature:photo-analysis-ui:assembleJvmMainResources UP-TO-DATE
+> Task :inference:local-android:generateAndroidMainEmptyResourceFiles UP-TO-DATE
+> Task :inference:local-android-poc:preBuild UP-TO-DATE
+> Task :inference:local-android-poc:preDebugBuild UP-TO-DATE
+> Task :inference:local-android-poc:processDebugNavigationResources UP-TO-DATE
+> Task :inference:local-shared:androidPreBuild UP-TO-DATE
+> Task :inference:local-shared:preAndroidMainBuild UP-TO-DATE
+> Task :inference:local-shared:generateAndroidMainEmptyResourceFiles UP-TO-DATE
+> Task :platform:photo-android:androidPreBuild UP-TO-DATE
+> Task :platform:photo-android:preAndroidMainBuild UP-TO-DATE
+> Task :platform:photo-android:generateAndroidMainEmptyResourceFiles UP-TO-DATE
+> Task :feature:photo-analysis:convertXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :feature:photo-analysis:copyNonXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :feature:photo-analysis:prepareComposeResourcesTaskForAndroidMain NO-SOURCE
+> Task :feature:photo-analysis:generateResourceAccessorsForAndroidMain SKIPPED
+> Task :feature:photo-analysis:generateActualResourceCollectorsForAndroidMain SKIPPED
+> Task :feature:photo-analysis:copyAndroidMainComposeResourcesToAndroidAssets UP-TO-DATE
+> Task :feature:photo-analysis:packageAndroidMainResources UP-TO-DATE
+> Task :feature:photo-analysis-ui:jvmProcessResources UP-TO-DATE
+> Task :feature:photo-analysis-ui:processJvmMainResources SKIPPED
+> Task :feature:photo-analysis:parseAndroidMainLocalResources UP-TO-DATE
+> Task :feature:photo-analysis-ui:jvmMainClasses UP-TO-DATE
+> Task :feature:photo-analysis:generateAndroidMainRFile UP-TO-DATE
+> Task :feature:photo-analysis-ui:jvmJar UP-TO-DATE
+> Task :feature:photo-analysis-ui:androidPreBuild UP-TO-DATE
+> Task :feature:photo-analysis-ui:preAndroidMainBuild UP-TO-DATE
+> Task :feature:photo-analysis-ui:generateAndroidMainEmptyResourceFiles UP-TO-DATE
+> Task :feature:photo-analysis:compileKotlinJvm UP-TO-DATE
+> Task :feature:photo-analysis:compileJvmMainJava NO-SOURCE
+> Task :feature:photo-analysis:jvmMainClasses UP-TO-DATE
+> Task :feature:photo-analysis:jvmJar UP-TO-DATE
+> Task :feature:photo-analysis:compileTestKotlinJvm UP-TO-DATE
+> Task :feature:photo-analysis:compileJvmTestJava NO-SOURCE
+> Task :feature:photo-analysis:jvmTestClasses UP-TO-DATE
+> Task :feature:photo-analysis:jvmTest UP-TO-DATE
+> Task :feature:photo-analysis-ui:convertXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :feature:photo-analysis-ui:copyNonXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :feature:photo-analysis-ui:prepareComposeResourcesTaskForAndroidMain NO-SOURCE
+> Task :feature:photo-analysis-ui:generateResourceAccessorsForAndroidMain NO-SOURCE
+> Task :feature:photo-analysis-ui:generateActualResourceCollectorsForAndroidMain UP-TO-DATE
+> Task :feature:photo-analysis-ui:copyAndroidMainComposeResourcesToAndroidAssets UP-TO-DATE
+> Task :feature:photo-analysis-ui:packageAndroidMainResources UP-TO-DATE
+> Task :feature:photo-analysis-ui:parseAndroidMainLocalResources UP-TO-DATE
+> Task :feature:photo-analysis-ui:generateAndroidMainRFile UP-TO-DATE
+> Task :feature:photo-analysis-ui:compileAndroidMain UP-TO-DATE
+> Task :feature:photo-analysis-ui:bundleAndroidMainClassesToCompileJar UP-TO-DATE
+> Task :platform:photo-android:kmpPartiallyResolvedDependenciesChecker
+> Task :platform:photo-android:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :platform:photo-android:compileAndroidMain UP-TO-DATE
+> Task :platform:photo-android:bundleAndroidMainClassesToCompileJar UP-TO-DATE
+> Task :feature:photo-analysis:compileAndroidMain UP-TO-DATE
+> Task :feature:photo-analysis:bundleAndroidMainClassesToCompileJar UP-TO-DATE
+> Task :inference:local-android:kmpPartiallyResolvedDependenciesChecker
+> Task :apps:androidApp:processProductionDebugNavigationResources UP-TO-DATE
+> Task :inference:local-android:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :apps:androidApp:parseProductionDebugLocalResources UP-TO-DATE
+> Task :inference:local-shared:kmpPartiallyResolvedDependenciesChecker
+> Task :inference:local-shared:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :apps:androidApp:generateProductionDebugRFile UP-TO-DATE
+> Task :inference:local-android-poc:generateDebugResources UP-TO-DATE
+> Task :inference:local-android-poc:packageDebugResources UP-TO-DATE
+> Task :inference:local-android-poc:parseDebugLocalResources UP-TO-DATE
+> Task :inference:local-android-poc:generateDebugRFile UP-TO-DATE
+> Task :inference:local-android-poc:javaPreCompileDebug UP-TO-DATE
+> Task :apps:androidApp:javaPreCompileProductionDebug UP-TO-DATE
+> Task :apps:androidApp:generateProductionDebugAssets UP-TO-DATE
+> Task :feature:photo-analysis:generateAndroidMainAssets UP-TO-DATE
+> Task :feature:photo-analysis:mergeAndroidMainAssets UP-TO-DATE
+> Task :feature:photo-analysis-ui:generateAndroidMainAssets UP-TO-DATE
+> Task :inference:local-shared:compileAndroidMain UP-TO-DATE
+> Task :inference:local-shared:bundleAndroidMainClassesToCompileJar UP-TO-DATE
+> Task :feature:photo-analysis-ui:mergeAndroidMainAssets UP-TO-DATE
+> Task :inference:local-android-poc:generateDebugAssets UP-TO-DATE
+> Task :inference:local-android-poc:mergeDebugAssets UP-TO-DATE
+> Task :inference:local-android:compileAndroidMain UP-TO-DATE
+> Task :inference:local-android:bundleAndroidMainClassesToCompileJar UP-TO-DATE
+> Task :inference:local-android-poc:compileDebugKotlin UP-TO-DATE
+> Task :inference:local-android-poc:compileDebugJavaWithJavac UP-TO-DATE
+> Task :inference:local-android-poc:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :feature:photo-analysis:bundleLibRuntimeToDirAndroidMain UP-TO-DATE
+> Task :platform:photo-android:bundleLibRuntimeToDirAndroidMain UP-TO-DATE
+> Task :apps:androidApp:mergeProductionDebugAssets UP-TO-DATE
+> Task :apps:androidApp:compileProductionDebugKotlin NO-SOURCE
+> Task :apps:androidApp:compileProductionDebugJavaWithJavac UP-TO-DATE
+> Task :apps:androidApp:compressProductionDebugAssets UP-TO-DATE
+> Task :feature:photo-analysis-ui:bundleLibRuntimeToDirAndroidMain
+> Task :apps:androidApp:checkProductionDebugDuplicateClasses UP-TO-DATE
+> Task :apps:androidApp:desugarProductionDebugFileDependencies UP-TO-DATE
+> Task :apps:androidApp:mergeExtDexProductionDebug UP-TO-DATE
+> Task :inference:local-android-poc:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :inference:local-android:bundleLibRuntimeToDirAndroidMain UP-TO-DATE
+> Task :inference:local-shared:bundleLibRuntimeToDirAndroidMain UP-TO-DATE
+> Task :apps:androidApp:processProductionDebugJavaRes NO-SOURCE
+> Task :feature:photo-analysis:processAndroidMainJavaRes UP-TO-DATE
+> Task :feature:photo-analysis-ui:processAndroidMainJavaRes UP-TO-DATE
+> Task :inference:local-android:processAndroidMainJavaRes UP-TO-DATE
+> Task :inference:local-android-poc:processDebugJavaRes UP-TO-DATE
+> Task :inference:local-shared:processAndroidMainJavaRes UP-TO-DATE
+> Task :platform:photo-android:processAndroidMainJavaRes UP-TO-DATE
+> Task :apps:androidApp:mergeProductionDebugJavaResource UP-TO-DATE
+> Task :feature:photo-analysis:writeAndroidMainAarMetadata UP-TO-DATE
+> Task :feature:photo-analysis-ui:writeAndroidMainAarMetadata UP-TO-DATE
+> Task :inference:local-android:writeAndroidMainAarMetadata UP-TO-DATE
+> Task :inference:local-android-poc:writeDebugAarMetadata UP-TO-DATE
+> Task :inference:local-shared:writeAndroidMainAarMetadata UP-TO-DATE
+> Task :platform:photo-android:writeAndroidMainAarMetadata UP-TO-DATE
+> Task :apps:androidApp:checkProductionDebugAarMetadata UP-TO-DATE
+> Task :apps:androidApp:mapProductionDebugSourceSetPaths UP-TO-DATE
+> Task :apps:androidApp:compileProductionDebugNavigationResources UP-TO-DATE
+> Task :apps:androidApp:mergeProductionDebugResources UP-TO-DATE
+> Task :apps:androidApp:createProductionDebugCompatibleScreenManifests UP-TO-DATE
+> Task :apps:androidApp:extractDeepLinksProductionDebug UP-TO-DATE
+> Task :feature:photo-analysis:processAndroidMainManifest UP-TO-DATE
+> Task :feature:photo-analysis-ui:processAndroidMainManifest UP-TO-DATE
+> Task :inference:local-android:processAndroidMainManifest UP-TO-DATE
+> Task :inference:local-android-poc:extractDeepLinksDebug UP-TO-DATE
+> Task :inference:local-android-poc:processDebugManifest UP-TO-DATE
+> Task :inference:local-shared:processAndroidMainManifest UP-TO-DATE
+> Task :platform:photo-android:processAndroidMainManifest UP-TO-DATE
+> Task :apps:androidApp:processProductionDebugMainManifest UP-TO-DATE
+> Task :apps:androidApp:processProductionDebugManifest UP-TO-DATE
+> Task :apps:androidApp:processProductionDebugManifestForPackage UP-TO-DATE
+> Task :feature:photo-analysis:mapAndroidMainSourceSetPaths UP-TO-DATE
+> Task :feature:photo-analysis:compileAndroidMainLibraryResources UP-TO-DATE
+> Task :feature:photo-analysis-ui:mapAndroidMainSourceSetPaths UP-TO-DATE
+> Task :feature:photo-analysis-ui:compileAndroidMainLibraryResources UP-TO-DATE
+> Task :inference:local-android-poc:mapDebugSourceSetPaths UP-TO-DATE
+> Task :inference:local-android-poc:compileDebugLibraryResources UP-TO-DATE
+> Task :apps:androidApp:processProductionDebugResources UP-TO-DATE
+> Task :apps:androidApp:dexBuilderProductionDebug UP-TO-DATE
+> Task :apps:androidApp:mergeProjectDexProductionDebug UP-TO-DATE
+> Task :apps:androidApp:mergeProductionDebugJniLibFolders UP-TO-DATE
+> Task :feature:photo-analysis:mergeAndroidMainJniLibFolders UP-TO-DATE
+> Task :feature:photo-analysis:mergeAndroidMainNativeLibs NO-SOURCE
+> Task :feature:photo-analysis:copyAndroidMainJniLibsProjectOnly UP-TO-DATE
+> Task :feature:photo-analysis-ui:mergeAndroidMainJniLibFolders UP-TO-DATE
+> Task :feature:photo-analysis-ui:mergeAndroidMainNativeLibs NO-SOURCE
+> Task :feature:photo-analysis-ui:copyAndroidMainJniLibsProjectOnly UP-TO-DATE
+> Task :inference:local-android:mergeAndroidMainJniLibFolders UP-TO-DATE
+> Task :inference:local-android:mergeAndroidMainNativeLibs NO-SOURCE
+> Task :inference:local-android:copyAndroidMainJniLibsProjectOnly UP-TO-DATE
+> Task :inference:local-android-poc:mergeDebugJniLibFolders UP-TO-DATE
+> Task :inference:local-android-poc:mergeDebugNativeLibs NO-SOURCE
+> Task :inference:local-android-poc:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :inference:local-shared:mergeAndroidMainJniLibFolders UP-TO-DATE
+> Task :inference:local-shared:mergeAndroidMainNativeLibs NO-SOURCE
+> Task :inference:local-shared:copyAndroidMainJniLibsProjectOnly UP-TO-DATE
+> Task :platform:photo-android:mergeAndroidMainJniLibFolders UP-TO-DATE
+> Task :platform:photo-android:mergeAndroidMainNativeLibs NO-SOURCE
+> Task :platform:photo-android:copyAndroidMainJniLibsProjectOnly UP-TO-DATE
+> Task :apps:androidApp:mergeProductionDebugNativeLibs UP-TO-DATE
+> Task :apps:androidApp:stripProductionDebugDebugSymbols UP-TO-DATE
+> Task :apps:androidApp:validateSigningProductionDebug UP-TO-DATE
+> Task :apps:androidApp:writeProductionDebugAppMetadata UP-TO-DATE
+> Task :apps:androidApp:writeProductionDebugSigningConfigVersions UP-TO-DATE
+> Task :apps:androidApp:mergeLibDexProductionDebug
+> Task :apps:androidApp:packageProductionDebug
+> Task :apps:androidApp:createProductionDebugApkListingFileRedirect UP-TO-DATE
+> Task :apps:androidApp:assembleProductionDebug
+
+[Incubating] Problems report is available at: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/build/reports/problems/problems-report.html
+
+BUILD SUCCESSFUL in 7m 59s
+173 actionable tasks: 18 executed, 155 up-to-date

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="RewardsNavigationOverlayTest[jvm]" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-10-23T05:20:12.342Z" hostname="Anastasias-MacBook-Air.local" time="5.504">
+  <properties/>
+  <testcase name="Rewards remains visible and scrollable beside navigation in a short wide viewport[jvm]" classname="com.supernutrition.feature.photoanalysis.RewardsNavigationOverlayTest" time="4.268"/>
+  <testcase name="Rewards fills the safe viewport beneath working floating controls[jvm]" classname="com.supernutrition.feature.photoanalysis.RewardsNavigationOverlayTest" time="1.235"/>
+  <system-out><![CDATA[Suspicious! waitForIdle has not finished after 1 seconds.
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

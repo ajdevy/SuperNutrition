@@ -83,6 +83,8 @@ object UiAutomationIds {
     val HOME_METRIC_WATER = UiAutomationId("home_metric_water")
     val HOME_METRIC_PROTEIN = UiAutomationId("home_metric_protein")
     val HOME_METRIC_MOVEMENT = UiAutomationId("home_metric_movement")
+    val HOME_METRIC_COLORS = UiAutomationId("home_metric_colors")
+    val HOME_METRIC_FATS = UiAutomationId("home_metric_fats")
     val HOME_EMPTY_TITLE = UiAutomationId("home_empty_title")
     val HOME_EMPTY_DESCRIPTION = UiAutomationId("home_empty_description")
     val HOME_ADD_FOOD = UiAutomationId("home_add_food")
@@ -103,6 +105,9 @@ object UiAutomationIds {
     val PROFILE_CLOSE = UiAutomationId("profile_close")
     val PROFILE_NAME = UiAutomationId("profile_name")
     val PROFILE_EDIT_NAME = UiAutomationId("profile_edit_name")
+    val PROFILE_NAME_INPUT = UiAutomationId("profile_name_input")
+    val PROFILE_NAME_CLEAR = UiAutomationId("profile_name_clear")
+    val PROFILE_NAME_SAVE = UiAutomationId("profile_name_save")
     val PROFILE_HISTORY = UiAutomationId("profile_history")
     val PROFILE_PRIVACY = UiAutomationId("profile_privacy")
     val PROFILE_TERMS = UiAutomationId("profile_terms")
@@ -188,6 +193,8 @@ object UiAutomationIds {
         HOME_METRIC_WATER,
         HOME_METRIC_PROTEIN,
         HOME_METRIC_MOVEMENT,
+        HOME_METRIC_COLORS,
+        HOME_METRIC_FATS,
         HOME_EMPTY_TITLE,
         HOME_EMPTY_DESCRIPTION,
         HOME_ADD_FOOD,
@@ -208,6 +215,9 @@ object UiAutomationIds {
         PROFILE_CLOSE,
         PROFILE_NAME,
         PROFILE_EDIT_NAME,
+        PROFILE_NAME_INPUT,
+        PROFILE_NAME_CLEAR,
+        PROFILE_NAME_SAVE,
         PROFILE_HISTORY,
         PROFILE_PRIVACY,
         PROFILE_TERMS,

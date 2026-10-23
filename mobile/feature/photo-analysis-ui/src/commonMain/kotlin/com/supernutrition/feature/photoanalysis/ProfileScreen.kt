@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
@@ -53,15 +54,47 @@ fun ProfileScreen(
     modifier: Modifier = Modifier,
     copy: ProfileScreenCopy = ProfileScreenCopy(),
 ) {
+    ControlledProfileScreen(
+        identity = ProfileScreenIdentity(displayName, confirmedFoods),
+        actions = actions,
+        flowState = rememberProfileFlowState(),
+        modifier = modifier,
+        copy = copy,
+    )
+}
+
+@Composable
+internal fun ControlledProfileScreen(
+    identity: ProfileScreenIdentity,
+    actions: ProfileScreenActions,
+    flowState: ProfileFlowState,
+    modifier: Modifier = Modifier,
+    copy: ProfileScreenCopy = ProfileScreenCopy(),
+) {
+    val displayName = identity.displayName
+    val confirmedFoods = identity.confirmedFoods
     var dialog by rememberSaveable { mutableStateOf<ProfileDialog?>(null) }
     Box(modifier.fillMaxSize().background(ProfileBackground)) {
         Column(
             modifier = Modifier.align(Alignment.TopCenter).widthIn(max = MainContentMaxWidth).fillMaxSize()
-                .verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).padding(top = 7.dp, bottom = 24.dp),
+                .imePadding().verticalScroll(
+                    rememberScrollState(),
+                ).padding(horizontal = 16.dp).padding(top = 7.dp, bottom = 24.dp),
         ) {
-            ProfileHeader(copy, actions.onBackRequested)
+            ProfileHeader(copy) {
+                if (flowState.nameEditing) flowState.cancelNameEdit() else actions.onBackRequested()
+            }
             Spacer(Modifier.height(11.dp))
-            ProfileIdentity(displayName, copy) { dialog = ProfileDialog.NAME }
+            ProfileIdentity(
+                displayName,
+                copy,
+                onEditRequested = flowState::beginNameEdit,
+                editor = if (flowState.nameEditing) {
+                    { ProfileNameEditor(displayName, copy, actions.onNameChanged, flowState::cancelNameEdit) }
+                } else {
+                    null
+                },
+            )
             Spacer(Modifier.height(22.dp))
             ProfileHistoryCard(confirmedMealHistory(confirmedFoods).size, copy, actions.onHistoryRequested)
             Spacer(Modifier.height(14.dp))

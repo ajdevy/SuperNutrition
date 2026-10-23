@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="PhotoAnalysisAnalysisLauncherTest[jvm]" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-10-23T06:02:58.095Z" hostname="Anastasias-MacBook-Air.local" time="4.671">
+  <properties/>
+  <testcase name="launcher cancellation closes an in-flight analysis[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisAnalysisLauncherTest" time="3.965"/>
+  <testcase name="launcher runs coordinator and exposes unavailable runtime as analysis failure[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisAnalysisLauncherTest" time="0.705"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

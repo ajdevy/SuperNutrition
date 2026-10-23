@@ -118,19 +118,20 @@ class HostSlotRefreshTest {
         val goals = mutableStateOf<() -> Unit>({ events.add("old goals") })
         setContent {
             Column(Modifier.width(width.value)) {
-                HomeCarePrompt(home.value, add.value, goals.value)
+                HomeCarePrompt(home.value, add.value)
+                HomeRhythmCard(home.value, goals.value)
                 PhotoAnalysisLoadingOverlay(loading.value)
             }
         }
         onNodeWithTag(UiAutomationIds.HOME_ADD_FOOD.value).performClick()
         runOnIdle { goals.value = { events.add("new goals") } }
-        onNodeWithTag(UiAutomationIds.HOME_VIEW_GOALS.value).performClick()
+        onNodeWithTag(UiAutomationIds.HOME_METRIC_FIBER.value).performClick()
         runOnIdle { add.value = { events.add("new add") } }
         onNodeWithTag(UiAutomationIds.HOME_ADD_FOOD.value).performClick()
         runOnIdle { width.value = 320.dp }
         runOnIdle { home.value = home.value.copy(careQuestion = "Updated question", addFoodLabel = "Add lunch") }
         onNodeWithText("Updated question").assertIsDisplayed()
-        onNodeWithText("Add lunch").assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.HOME_ADD_FOOD.value).assertIsDisplayed()
         onNodeWithText("Working").assertIsDisplayed()
         runOnIdle { loading.value = loading.value.copy(statusLabel = "Checking results") }
         onNodeWithText("Checking results").assertIsDisplayed()

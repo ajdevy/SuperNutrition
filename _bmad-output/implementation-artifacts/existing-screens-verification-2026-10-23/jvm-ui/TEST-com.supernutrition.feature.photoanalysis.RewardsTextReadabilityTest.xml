@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="RewardsTextReadabilityTest[jvm]" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-10-23T05:20:19.915Z" hostname="Anastasias-MacBook-Air.local" time="58.985">
+  <properties/>
+  <testcase name="normal Rewards header displays its complete name[jvm]" classname="com.supernutrition.feature.photoanalysis.RewardsTextReadabilityTest" time="0.499"/>
+  <testcase name="actual Rewards titles remain complete on compact phone at double text[jvm]" classname="com.supernutrition.feature.photoanalysis.RewardsTextReadabilityTest" time="13.333"/>
+  <testcase name="actual Rewards titles remain complete on ordinary phone at double text[jvm]" classname="com.supernutrition.feature.photoanalysis.RewardsTextReadabilityTest" time="10.684"/>
+  <testcase name="actual Rewards descriptions remain complete on compact phone at double text[jvm]" classname="com.supernutrition.feature.photoanalysis.RewardsTextReadabilityTest" time="12.507"/>
+  <testcase name="native Back callback remains exposed as an accessibility action[jvm]" classname="com.supernutrition.feature.photoanalysis.RewardsTextReadabilityTest" time="0.931"/>
+  <testcase name="normal long actual titles remain complete inside their cards[jvm]" classname="com.supernutrition.feature.photoanalysis.RewardsTextReadabilityTest" time="7.649"/>
+  <testcase name="actual Rewards descriptions remain complete on ordinary phone at double text[jvm]" classname="com.supernutrition.feature.photoanalysis.RewardsTextReadabilityTest" time="12.479"/>
+  <testcase name="Daily label has readable contrast on the actual Rewards backdrop[jvm]" classname="com.supernutrition.feature.photoanalysis.RewardsTextReadabilityTest" time="0.9"/>
+  <system-out><![CDATA[Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 2 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 2 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+Suspicious! waitForIdle has not finished after 1 seconds.
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

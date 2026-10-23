@@ -1,0 +1,125 @@
+> Task :build-logic:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :build-logic:compileKotlin UP-TO-DATE
+> Task :build-logic:compileJava NO-SOURCE
+> Task :build-logic:pluginDescriptors UP-TO-DATE
+> Task :build-logic:processResources UP-TO-DATE
+> Task :build-logic:classes UP-TO-DATE
+> Task :build-logic:jar UP-TO-DATE
+
+> Configure project :apps:sharedKit
+w: ⚠️ Deprecated Kotlin/Native Host
+The current host platform 'macos_x64' is deprecated and will be removed in a future Kotlin release. The Kotlin/Native compiler will no longer be distributed for this host.
+Solution: Migrate your build to a non-deprecated supported host platform for Kotlin/Native.
+Learn more about Kotlin/Native target support and migration: https://kotl.in/native-targets-tiers
+
+w: ⚠️ Default Kotlin Hierarchy Template Not Applied Correctly
+The Default Kotlin Hierarchy Template was not applied to 'project ':apps:sharedKit'':
+Explicit .dependsOn() edges were configured for the following source sets:
+[iosArm64Main, iosMain]
+
+Consider removing dependsOn-calls or disabling the default template by adding
+    'kotlin.mpp.applyDefaultHierarchyTemplate=false'
+to your gradle.properties
+Solution: Please remove the dependsOn-calls or disable the default template.
+Learn more about hierarchy templates: https://kotl.in/hierarchy-template
+
+
+> Configure project :platform:photo-android
+w: ⚠️ Unused Kotlin Source Sets
+The Kotlin source set commonTest was configured but not added to any Kotlin compilation.
+Solution: You can add a source set to a target's compilation by connecting it with the compilation's default source set using 'dependsOn'.
+See https://kotl.in/connecting-source-sets
+
+
+> Task :core:ui:kmpPartiallyResolvedDependenciesChecker
+> Task :domain:inference:kmpPartiallyResolvedDependenciesChecker
+> Task :core:config:kmpPartiallyResolvedDependenciesChecker
+> Task :domain:nutrition:kmpPartiallyResolvedDependenciesChecker
+> Task :core:ui:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :domain:inference:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :core:config:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :domain:nutrition:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :domain:inference:downloadKotlinNativeDistribution UP-TO-DATE
+> Task :core:config:downloadKotlinNativeDistribution UP-TO-DATE
+> Task :core:ui:downloadKotlinNativeDistribution UP-TO-DATE
+> Task :domain:nutrition:downloadKotlinNativeDistribution UP-TO-DATE
+> Task :domain:nutrition:exportCrossCompilationMetadataForIosArm64ApiElements UP-TO-DATE
+> Task :domain:photo-analysis:kmpPartiallyResolvedDependenciesChecker
+> Task :domain:photo-analysis:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :domain:photo-analysis:downloadKotlinNativeDistribution UP-TO-DATE
+> Task :domain:photo-analysis:exportCrossCompilationMetadataForIosArm64ApiElements UP-TO-DATE
+> Task :feature:photo-analysis:checkIosArm64MainComposeLibrariesCompatibility
+> Task :feature:photo-analysis:kmpPartiallyResolvedDependenciesChecker
+> Task :feature:photo-analysis:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :feature:photo-analysis:downloadKotlinNativeDistribution UP-TO-DATE
+> Task :feature:photo-analysis:convertXmlValueResourcesForAppleMain NO-SOURCE
+> Task :feature:photo-analysis:copyNonXmlValueResourcesForAppleMain NO-SOURCE
+> Task :feature:photo-analysis:prepareComposeResourcesTaskForAppleMain NO-SOURCE
+> Task :feature:photo-analysis:generateResourceAccessorsForAppleMain SKIPPED
+> Task :feature:photo-analysis:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :feature:photo-analysis:copyNonXmlValueResourcesForCommonMain NO-SOURCE
+> Task :feature:photo-analysis:prepareComposeResourcesTaskForCommonMain NO-SOURCE
+> Task :feature:photo-analysis:generateResourceAccessorsForCommonMain SKIPPED
+> Task :feature:photo-analysis:convertXmlValueResourcesForIosArm64Main NO-SOURCE
+> Task :feature:photo-analysis:copyNonXmlValueResourcesForIosArm64Main NO-SOURCE
+> Task :feature:photo-analysis:prepareComposeResourcesTaskForIosArm64Main NO-SOURCE
+> Task :feature:photo-analysis:generateResourceAccessorsForIosArm64Main SKIPPED
+> Task :feature:photo-analysis:convertXmlValueResourcesForIosMain NO-SOURCE
+> Task :feature:photo-analysis:copyNonXmlValueResourcesForIosMain NO-SOURCE
+> Task :feature:photo-analysis:prepareComposeResourcesTaskForIosMain NO-SOURCE
+> Task :feature:photo-analysis:generateResourceAccessorsForIosMain SKIPPED
+> Task :feature:photo-analysis:convertXmlValueResourcesForNativeMain NO-SOURCE
+> Task :feature:photo-analysis:copyNonXmlValueResourcesForNativeMain NO-SOURCE
+> Task :feature:photo-analysis:prepareComposeResourcesTaskForNativeMain NO-SOURCE
+> Task :feature:photo-analysis:generateResourceAccessorsForNativeMain SKIPPED
+> Task :feature:photo-analysis:generateActualResourceCollectorsForIosArm64Main SKIPPED
+> Task :feature:photo-analysis:generateComposeResClass SKIPPED
+> Task :feature:photo-analysis:generateExpectResourceCollectorsForCommonMain SKIPPED
+> Task :feature:photo-analysis-presenter:kmpPartiallyResolvedDependenciesChecker
+> Task :feature:photo-analysis-presenter:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :core:ui:compileKotlinIosArm64 UP-TO-DATE
+> Task :core:config:compileKotlinIosArm64 UP-TO-DATE
+> Task :core:ui:exportCrossCompilationMetadataForIosArm64ApiElements UP-TO-DATE
+> Task :core:config:exportCrossCompilationMetadataForIosArm64ApiElements UP-TO-DATE
+> Task :feature:photo-analysis-presenter:downloadKotlinNativeDistribution UP-TO-DATE
+> Task :domain:inference:compileKotlinIosArm64 UP-TO-DATE
+> Task :domain:inference:exportCrossCompilationMetadataForIosArm64ApiElements UP-TO-DATE
+> Task :feature:photo-analysis-presenter:exportCrossCompilationMetadataForIosArm64ApiElements UP-TO-DATE
+> Task :feature:photo-analysis-ui:checkIosArm64MainComposeLibrariesCompatibility
+> Task :feature:photo-analysis-ui:kmpPartiallyResolvedDependenciesChecker
+> Task :feature:photo-analysis-ui:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :feature:photo-analysis-ui:downloadKotlinNativeDistribution UP-TO-DATE
+> Task :feature:photo-analysis-ui:convertXmlValueResourcesForAppleMain NO-SOURCE
+> Task :feature:photo-analysis-ui:copyNonXmlValueResourcesForAppleMain NO-SOURCE
+> Task :feature:photo-analysis-ui:prepareComposeResourcesTaskForAppleMain NO-SOURCE
+> Task :feature:photo-analysis-ui:generateResourceAccessorsForAppleMain NO-SOURCE
+> Task :feature:photo-analysis-ui:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :feature:photo-analysis-ui:copyNonXmlValueResourcesForCommonMain UP-TO-DATE
+> Task :feature:photo-analysis-ui:prepareComposeResourcesTaskForCommonMain UP-TO-DATE
+> Task :feature:photo-analysis-ui:generateResourceAccessorsForCommonMain UP-TO-DATE
+> Task :feature:photo-analysis-ui:convertXmlValueResourcesForIosArm64Main NO-SOURCE
+> Task :feature:photo-analysis-ui:copyNonXmlValueResourcesForIosArm64Main NO-SOURCE
+> Task :feature:photo-analysis-ui:prepareComposeResourcesTaskForIosArm64Main NO-SOURCE
+> Task :feature:photo-analysis-ui:generateResourceAccessorsForIosArm64Main NO-SOURCE
+> Task :feature:photo-analysis-ui:convertXmlValueResourcesForIosMain NO-SOURCE
+> Task :feature:photo-analysis-ui:copyNonXmlValueResourcesForIosMain NO-SOURCE
+> Task :feature:photo-analysis-ui:prepareComposeResourcesTaskForIosMain NO-SOURCE
+> Task :feature:photo-analysis-ui:generateResourceAccessorsForIosMain NO-SOURCE
+> Task :feature:photo-analysis-ui:convertXmlValueResourcesForNativeMain NO-SOURCE
+> Task :feature:photo-analysis-ui:copyNonXmlValueResourcesForNativeMain NO-SOURCE
+> Task :domain:nutrition:compileKotlinIosArm64 UP-TO-DATE
+> Task :domain:photo-analysis:compileKotlinIosArm64 UP-TO-DATE
+> Task :feature:photo-analysis-ui:prepareComposeResourcesTaskForNativeMain NO-SOURCE
+> Task :feature:photo-analysis-ui:generateResourceAccessorsForNativeMain NO-SOURCE
+> Task :feature:photo-analysis-ui:generateActualResourceCollectorsForIosArm64Main UP-TO-DATE
+> Task :feature:photo-analysis-ui:generateComposeResClass UP-TO-DATE
+> Task :feature:photo-analysis-ui:generateExpectResourceCollectorsForCommonMain UP-TO-DATE
+> Task :feature:photo-analysis-ui:exportCrossCompilationMetadataForIosArm64ApiElements UP-TO-DATE
+> Task :feature:photo-analysis-presenter:compileKotlinIosArm64 UP-TO-DATE
+> Task :feature:photo-analysis-ui:compileKotlinIosArm64
+> Task :feature:photo-analysis:compileKotlinIosArm64
+
+[Incubating] Problems report is available at: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/build/reports/problems/problems-report.html
+
+BUILD SUCCESSFUL in 14m 24s
+43 actionable tasks: 12 executed, 31 up-to-date

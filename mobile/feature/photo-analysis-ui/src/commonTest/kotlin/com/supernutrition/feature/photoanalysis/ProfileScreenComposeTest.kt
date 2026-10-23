@@ -11,6 +11,7 @@ import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasSetTextAction
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -64,16 +65,16 @@ class ProfileScreenComposeTest {
 
         onNodeWithTag(UiAutomationIds.PROFILE_EDIT_NAME.value).performClick()
         onNode(hasSetTextAction()).performTextReplacement("   ")
-        onNodeWithText(copy.save).assertIsNotEnabled()
+        onNodeWithContentDescription(copy.save).assertIsNotEnabled()
         assertEquals(null, savedName)
         onNode(hasSetTextAction()).performTextReplacement("  Alex  ")
-        onNodeWithText(copy.save).performClick()
+        onNodeWithContentDescription(copy.save).performClick()
         assertEquals("Alex", savedName)
         onNodeWithText("Alex").assertIsDisplayed()
         onNodeWithText("A").assertIsDisplayed()
         onNodeWithTag(UiAutomationIds.PROFILE_EDIT_NAME.value).performClick()
         onNode(hasSetTextAction()).performTextReplacement("Other name")
-        onNodeWithText(copy.cancel).performClick()
+        onNodeWithTag(UiAutomationIds.PROFILE_CLOSE.value).performClick()
         assertEquals("Alex", savedName)
     }
 

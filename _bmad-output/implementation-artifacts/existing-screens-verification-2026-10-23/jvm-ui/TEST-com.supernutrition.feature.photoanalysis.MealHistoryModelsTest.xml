@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="MealHistoryModelsTest[jvm]" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-10-23T05:18:31.933Z" hostname="Anastasias-MacBook-Air.local" time="0.011">
+  <properties/>
+  <testcase name="opening history captures the current day again after midnight[jvm]" classname="com.supernutrition.feature.photoanalysis.MealHistoryModelsTest" time="0.001"/>
+  <testcase name="search accepts pasted Unicode whitespace between ingredient words[jvm]" classname="com.supernutrition.feature.photoanalysis.MealHistoryModelsTest" time="0.002"/>
+  <testcase name="calendar conversion handles leap rules year boundaries and unsupported days[jvm]" classname="com.supernutrition.feature.photoanalysis.MealHistoryModelsTest" time="0.0"/>
+  <testcase name="adapter groups by day and meal while keeping known insertion order[jvm]" classname="com.supernutrition.feature.photoanalysis.MealHistoryModelsTest" time="0.001"/>
+  <testcase name="search trims query and matches title or any ingredient without changing source[jvm]" classname="com.supernutrition.feature.photoanalysis.MealHistoryModelsTest" time="0.001"/>
+  <testcase name="search supports mixed case Cyrillic names[jvm]" classname="com.supernutrition.feature.photoanalysis.MealHistoryModelsTest" time="0.001"/>
+  <testcase name="day labels use the supplied reference date and keep older years explicit[jvm]" classname="com.supernutrition.feature.photoanalysis.MealHistoryModelsTest" time="0.0"/>
+  <testcase name="local clock applies offsets before flooring at midnight[jvm]" classname="com.supernutrition.feature.photoanalysis.MealHistoryModelsTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

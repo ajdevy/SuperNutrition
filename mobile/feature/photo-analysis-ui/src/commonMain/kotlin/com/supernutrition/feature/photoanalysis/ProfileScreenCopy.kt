@@ -9,6 +9,7 @@ data class ProfileScreenCopy(
     val back: String = "Back to Home",
     val unknownName: String = "Your name",
     val editName: String = "Edit name",
+    val clearName: String = "Clear name",
     val save: String = "Save",
     val cancel: String = "Cancel",
     val done: String = "Done",

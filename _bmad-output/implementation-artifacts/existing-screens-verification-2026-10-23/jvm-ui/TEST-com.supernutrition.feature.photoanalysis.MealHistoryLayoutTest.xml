@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="MealHistoryLayoutTest[jvm]" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-23T05:18:26.801Z" hostname="Anastasias-MacBook-Air.local" time="5.123">
+  <properties/>
+  <testcase name="synthetic design fixture follows 375 by 812 geometry[jvm]" classname="com.supernutrition.feature.photoanalysis.MealHistoryLayoutTest" time="1.206"/>
+  <testcase name="history at 200 percent wraps readable text and keeps all cards reachable[jvm]" classname="com.supernutrition.feature.photoanalysis.MealHistoryLayoutTest" time="2.75"/>
+  <testcase name="search clear action preserves normal field height[jvm]" classname="com.supernutrition.feature.photoanalysis.MealHistoryLayoutTest" time="0.585"/>
+  <testcase name="small history text meets normal text contrast on its surfaces[jvm]" classname="com.supernutrition.feature.photoanalysis.MealHistoryLayoutTest" time="0.582"/>
+  <system-out><![CDATA[HOME_TEXT_MEASUREMENT: text='Egg toast', scale=2.0, overflowHeight=false, overflowWidth=true, hasVisualOverflow=true, size=143 x 42, paragraphWidth=174.0, paragraphHeight=42.0, didExceedMaxLines=false, lineCount=1, lines=[0[left=0.0, right=142.14398, bottom=42.0, end=9, ellipsized=false]], constraints=Constraints(minWidth = 0, maxWidth = 174, minHeight = 0, maxHeight = Infinity), font=16.0.sp, lineHeight=21.0.sp
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

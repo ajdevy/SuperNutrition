@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="PhotoReviewReadabilityTest[jvm]" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-23T05:19:31.641Z" hostname="Anastasias-MacBook-Air.local" time="5.534">
+  <properties/>
+  <testcase name="small reward title is readable on its white card[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoReviewReadabilityTest" time="0.831"/>
+  <testcase name="progress text stays readable over a white camera preview[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoReviewReadabilityTest" time="0.343"/>
+  <testcase name="small review text and the note placeholder stay readable over a white photo[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoReviewReadabilityTest" time="1.283"/>
+  <testcase name="home guidance and metric labels stay readable on their surfaces[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoReviewReadabilityTest" time="2.098"/>
+  <testcase name="home metric target and unit are readable without relying on the darker value[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoReviewReadabilityTest" time="0.977"/>
+  <system-out><![CDATA[Suspicious! waitForIdle has not finished after 1 seconds.
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

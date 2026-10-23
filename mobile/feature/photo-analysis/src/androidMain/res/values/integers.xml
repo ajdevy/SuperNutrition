@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Existing Home demonstration quantities; text and progress share these values. -->
+    <integer name="home_fiber_amount">12</integer>
+    <integer name="home_fiber_target">25</integer>
+    <integer name="home_protein_amount">72</integer>
+    <integer name="home_protein_target">90</integer>
+</resources>

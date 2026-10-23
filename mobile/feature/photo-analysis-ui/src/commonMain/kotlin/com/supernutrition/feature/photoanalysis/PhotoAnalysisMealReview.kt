@@ -55,7 +55,9 @@ import com.supernutrition.core.ui.UiAutomationIds
 import com.supernutrition.core.ui.photoAnalysisVisibleComponentId
 import com.supernutrition.domain.inference.ConfidenceBand
 import com.supernutrition.feature.photoanalysis.resources.Res
-import com.supernutrition.feature.photoanalysis.resources.review_pencil
+import com.supernutrition.feature.photoanalysis.resources.refresh_choice_check
+import com.supernutrition.feature.photoanalysis.resources.refresh_choice_plus
+import com.supernutrition.feature.photoanalysis.resources.refresh_review_pencil
 import org.jetbrains.compose.resources.painterResource
 
 private val ReviewTopPadding = 30.94.dp
@@ -110,7 +112,7 @@ internal fun PhotoAnalysisMealReview(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             val bodyModifier = if (pinFooter) Modifier.weight(1f).fillMaxWidth() else Modifier.fillMaxWidth()
-            MealReviewScrollableContent(review, surface, noteFocus, bodyModifier, pinFooter)
+            MealReviewScrollableContent(review, surface, bodyModifier, pinFooter)
             MealReviewFooter(review, onAction, surface, choices, noteFocus)
         }
     }
@@ -120,7 +122,6 @@ internal fun PhotoAnalysisMealReview(
 private fun MealReviewScrollableContent(
     review: PhotoAnalysisReviewModel?,
     surface: PhotoAnalysisCaptureSurface,
-    noteFocus: PhotoAnalysisReviewNoteFocus,
     modifier: Modifier,
     scrollable: Boolean,
 ) {
@@ -148,7 +149,6 @@ private fun MealReviewScrollableContent(
                     surface = surface,
                     choices = choices,
                     onChoicesChanged = surface.onMealReviewSelectionChanged,
-                    onAddRequested = { noteFocus.focusRequester.requestFocus() },
                 )
             }
         }
@@ -165,14 +165,14 @@ private fun MealReviewHeader(
     val copy = surface.presenterCopy.review
     Text(
         copy.title,
-        style = reviewTextStyle(18.22f, FontWeight.SemiBold),
+        style = reviewTextStyle(20f, FontWeight.SemiBold).copy(fontFamily = frauncesFont()),
         textAlign = TextAlign.Center,
         modifier = Modifier.padding(horizontal = 64.dp).automationId(surface.automationIds.status),
     )
     Spacer(Modifier.height(5.34.dp))
     Text(
         copy.subtitle,
-        style = reviewTextStyle(11.7f).copy(color = Color(0xFFD2D4D2)),
+        style = reviewTextStyle(13f).copy(color = Color(0xFFD2D4D2)),
         textAlign = TextAlign.Center,
         modifier = Modifier.padding(horizontal = 16.dp),
     )
@@ -185,7 +185,7 @@ private fun MealReviewHeader(
             modifier = Modifier.padding(horizontal = 16.dp),
         )
     }
-    Spacer(Modifier.height(34.12.dp))
+    Spacer(Modifier.height(18.dp))
     DishChoices(review, surface, choices, onChoicesChanged)
 }
 
@@ -324,9 +324,9 @@ private fun CustomDishChoice(
 @Composable
 private fun DishChoice(content: DishChoiceContent, isSelected: Boolean, modifier: Modifier, onClick: () -> Unit) {
     Column(
-        modifier = modifier.heightIn(min = 67.4.dp).clip(RoundedCornerShape(11.5.dp))
-            .background(if (isSelected) Color(0xFF6B7C18) else Color.White.copy(alpha = 0.08f))
-            .border(1.dp, Color.White.copy(alpha = 0.45f), RoundedCornerShape(11.5.dp))
+        modifier = modifier.heightIn(min = 67.4.dp).clip(RoundedCornerShape(20.dp))
+            .background(if (isSelected) ReviewGreen else Color.White.copy(alpha = 0.08f))
+            .border(1.dp, Color.White.copy(alpha = 0.45f), RoundedCornerShape(20.dp))
             .clickable(role = Role.RadioButton, onClick = onClick)
             .semantics {
                 contentDescription = content.description
@@ -337,14 +337,15 @@ private fun DishChoice(content: DishChoiceContent, isSelected: Boolean, modifier
         verticalArrangement = Arrangement.Center,
     ) {
         if (content.custom) {
-            Text("+", style = reviewTextStyle(24f), textAlign = TextAlign.Center)
+            Image(painterResource(Res.drawable.refresh_choice_plus), null, Modifier.size(20.dp))
+            Text(content.label, style = reviewTextStyle(12.5f, FontWeight.SemiBold), textAlign = TextAlign.Center)
         } else {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                if (isSelected) Text("✓ ", style = reviewTextStyle(13f))
+                if (isSelected) Image(painterResource(Res.drawable.refresh_choice_check), null, Modifier.size(17.dp))
                 Text(
                     content.label,
                     modifier = Modifier.weight(1f),
-                    style = reviewTextStyle(13f),
+                    style = reviewTextStyle(12.5f, FontWeight.SemiBold),
                     textAlign = TextAlign.Center,
                 )
             }
@@ -381,14 +382,18 @@ private fun ExtraReviewEvidence(surface: PhotoAnalysisCaptureSurface) {
 private fun ReviewNoteInput(surface: PhotoAnalysisCaptureSurface, noteFocus: PhotoAnalysisReviewNoteFocus) {
     val focusManager = LocalFocusManager.current
     Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp).height(ReviewNoteHeight)
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp).heightIn(min = 48.dp)
+            .automationId(surface.automationIds.manualIngredientAdd)
+            .clickable(
+                onClickLabel = surface.presenterCopy.capture.manualIngredientAdd,
+            ) { noteFocus.focusRequester.requestFocus() }
             .bringIntoViewRequester(noteFocus.noteRequester)
-            .clip(RoundedCornerShape(12.dp)).background(Color.Black.copy(alpha = 0.6f))
-            .border(1.dp, Color.White.copy(alpha = 0.35f), RoundedCornerShape(12.dp)).padding(horizontal = 16.dp),
+            .clip(RoundedCornerShape(999.dp)).background(Color.Black.copy(alpha = 0.6f))
+            .border(1.dp, Color.White.copy(alpha = 0.35f), RoundedCornerShape(999.dp)).padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        Image(painterResource(Res.drawable.review_pencil), null, Modifier.size(20.dp))
+        Image(painterResource(Res.drawable.refresh_review_pencil), null, Modifier.size(20.dp))
         BasicTextField(
             value = surface.manualIngredientInput,
             onValueChange = surface.onManualIngredientInputChanged,
@@ -397,7 +402,7 @@ private fun ReviewNoteInput(surface: PhotoAnalysisCaptureSurface, noteFocus: Pho
                 .automationId(surface.automationIds.manualIngredientInput)
                 .semantics { contentDescription = surface.presenterCopy.review.anythingElse },
             singleLine = true,
-            textStyle = reviewTextStyle(15.5f),
+            textStyle = reviewTextStyle(15f),
             cursorBrush = SolidColor(ReviewWhite),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
@@ -406,7 +411,7 @@ private fun ReviewNoteInput(surface: PhotoAnalysisCaptureSurface, noteFocus: Pho
                     if (surface.manualIngredientInput.isEmpty()) {
                         Text(
                             surface.presenterCopy.review.anythingElse,
-                            style = reviewTextStyle(15.5f).copy(color = Color(0xFF95928F)),
+                            style = reviewTextStyle(15f).copy(color = Color(0xFFBCB8B3)),
                         )
                     }
                     inner()

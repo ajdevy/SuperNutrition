@@ -150,7 +150,7 @@ class RelevantFoodStickersTest {
             onNodeWithTag(UiAutomationIds.photoAnalysisPantryChoice(unrelated).value).assertDoesNotExist()
         }
         onNodeWithTag(UiAutomationIds.PHOTO_ANALYSIS_MANUAL_INGREDIENT_ADD.value)
-            .performScrollTo().assertWidthIsAtLeast(48.dp).assertHeightIsAtLeast(48.dp)
+            .assertIsDisplayed().assertWidthIsAtLeast(48.dp).assertHeightIsAtLeast(48.dp)
     }
 
     @Test
