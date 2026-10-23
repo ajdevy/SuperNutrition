@@ -1,0 +1,111 @@
+{
+  "run": 40008326613,
+  "head": "c15cdee27fe59825b87463f5906d46801c1ad9f7",
+  "url": "https://github.com/flexsent-labs/SuperNutrition/actions/runs/40008326613",
+  "conclusion": "failure",
+  "modules": [
+    {
+      "module": "core:config",
+      "task": "jvmTest",
+      "tests": 32,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "core:ui",
+      "task": "jvmTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "domain:inference",
+      "task": "jvmTest",
+      "tests": 126,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "domain:nutrition",
+      "task": "jvmTest",
+      "tests": 257,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "domain:photo-analysis",
+      "task": "jvmTest",
+      "tests": 115,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "feature:photo-analysis",
+      "task": "jvmTest",
+      "tests": 25,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "feature:photo-analysis-presenter",
+      "task": "jvmTest",
+      "tests": 19,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "feature:photo-analysis-ui",
+      "task": "jvmTest",
+      "tests": 237,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "inference:local-android",
+      "task": "jvmTest",
+      "tests": 25,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "inference:local-android-poc",
+      "task": "testDebugUnitTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "inference:local-ios",
+      "task": "jvmTest",
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "inference:local-shared",
+      "task": "jvmTest",
+      "tests": 25,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "totals": {
+    "tests": 892,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "policy_failure": "Native-gap evidence is stale: bootstrap-android-host"
+}

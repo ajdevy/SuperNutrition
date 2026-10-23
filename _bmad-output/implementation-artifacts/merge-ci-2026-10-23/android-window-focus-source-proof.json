@@ -1,0 +1,35 @@
+{
+  "android_ref": "android-16.0.0_r1",
+  "native_query": [
+    "dumpsys",
+    "window",
+    "displays"
+  ],
+  "sources": [
+    {
+      "url": "https://android.googlesource.com/platform/frameworks/base/+/android-16.0.0_r1/services/core/java/com/android/server/wm/WindowManagerService.java#7167",
+      "lines": "7167-7171",
+      "claim": "displays dispatches to RootWindowContainer.dumpDisplayContents"
+    },
+    {
+      "url": "https://android.googlesource.com/platform/frameworks/base/+/android-16.0.0_r1/services/core/java/com/android/server/wm/RootWindowContainer.java#1053",
+      "lines": "1053-1059",
+      "claim": "dumpDisplayContents invokes each live DisplayContent.dump"
+    },
+    {
+      "url": "https://android.googlesource.com/platform/frameworks/base/+/android-16.0.0_r1/services/core/java/com/android/server/wm/DisplayContent.java#3701",
+      "lines": "3701-3702",
+      "claim": "DisplayContent.dump emits mCurrentFocus and mFocusedApp"
+    },
+    {
+      "url": "https://android.googlesource.com/platform/frameworks/base/+/android-16.0.0_r1/services/core/java/com/android/server/wm/WindowManagerService.java#7177",
+      "lines": "7177-7181",
+      "claim": "windows dispatches only to dumpWindowsLocked and returns"
+    },
+    {
+      "url": "https://android.googlesource.com/platform/frameworks/base/+/android-16.0.0_r1/services/core/java/com/android/server/wm/WindowManagerService.java#6821",
+      "lines": "6821-6824",
+      "claim": "dumpWindowsLocked enumerates WindowStates through dumpWindowsNoHeader"
+    }
+  ]
+}

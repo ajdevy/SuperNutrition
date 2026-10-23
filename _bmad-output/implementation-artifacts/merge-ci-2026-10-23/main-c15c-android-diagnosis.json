@@ -1,0 +1,21 @@
+{
+  "run": 40008326772,
+  "head": "c15cdee27fe59825b87463f5906d46801c1ad9f7",
+  "url": "https://github.com/flexsent-labs/SuperNutrition/actions/runs/40008326772",
+  "conclusion": "failure",
+  "app_tests_executed": 0,
+  "startup_error": "Android startup health deadline expired",
+  "elapsed_seconds": 360.0001053510001,
+  "emulator_boot_millis": 70768,
+  "system_image": "system-images;android-36;default;x86_64",
+  "native_events_snapshot": "",
+  "native_crashes_snapshot": "",
+  "preserved_log_fatal_lines": [],
+  "windows_only_has_focus_marker": false,
+  "activity_native_focus": [
+    "topResumedActivity=ActivityRecord{131935144 u0 com.android.launcher3/.uioverrides.QuickstepLauncher t7}",
+    "mCurrentFocus=Window{950a355 u0 com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher}"
+  ],
+  "fresh_launcher_hierarchy_visible": true,
+  "diagnosis": "WindowManager windows-only section omits current focus required by helper; native healthy surface remains rejected until fixed query. Native execution of app did not run."
+}
