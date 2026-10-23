@@ -41,6 +41,7 @@ kotlin {
             }
         }
         commonMain.dependencies {
+            implementation(libs.compose.runtime)
             implementation(libs.koin.core)
             implementation(project(":core:ui"))
             api(project(":feature:photo-analysis-presenter"))

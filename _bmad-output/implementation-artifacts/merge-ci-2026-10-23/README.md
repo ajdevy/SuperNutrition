@@ -25,3 +25,11 @@ The JVM workflow uses `--continue`, retains strict policy failure, has30minutes 
 All six required successful Android evidence records expired on2026-10-12T08:04:52Z. Five explicitly require a physical Android device. The user has only an emulator; that cannot renew physical evidence. [Typed manifest snapshot](policy-blockers.json). Full policy remains red until genuine fresh physical execution is bound; no dates, requirements, skips, floors or exclusions were changed.
 
 See [findings](findings.md) and [independent review triage](review-triage.md). Final hosted results and merge identity will be appended after execution.
+
+## Follow-up candidate
+
+Hosted Android run39986624811 completed50uiAcceptance cases with1failure/0errors/0skips. Logcat proves an asynchronous test precondition: Back was injected14ms after requesting IME hide, before its animation ended. The test now waits actual visible/hidden insets plus native animation completion, handles API30 pre-start cancellation, and restores the hardware-keyboard setting. Explicit Core1.16.0 test compile dependency uses the existing runtime version. Three variant javac builds passed; the final focused native run is in progress. [Original XML counts](android-before-tests.json).
+
+Hosted iOS run39988860538 confirms the resource crash is gone:8cases executed,7assertion failures/1pass/0skips, all at the obsolete camera status selector. [Diagnosis](ios-candidate-diagnosis.json). XCTest now verifies the current canonical stage/value and capture controls with product-owned localization in its own test bundle. All progress/recovery/navigation assertions remain. Actual hosted rerun remains required.
+
+SharedKit JVM compilation initially exposed missing lock associations and missing direct Compose Runtime. Both are corrected; portable common metadata locks were also regenerated following independent review. A complete gate rerun is still required after the final changes. Source reviews, partial runs and successful compilation are not a full policy pass.
