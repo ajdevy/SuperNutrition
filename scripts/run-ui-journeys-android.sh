@@ -202,7 +202,8 @@ if ((${#emulator_accel_args[@]} > 0)); then
   boot_wait_iterations="${SUPERNUTRITION_ANDROID_SOFTWARE_BOOT_WAIT_ITERATIONS:-180}"
 fi
 
-"$adb_bin" start-server >/dev/null
+export ANDROID_ADB_LOG_PATH="$report_root/debug/adb-server.log"
+ADB_TRACE=transport "$adb_bin" start-server >/dev/null
 "$emulator_bin" -avd "$avd_name" \
   -skin "${display_width}x${display_height}" \
   -no-window \
@@ -301,6 +302,8 @@ test -n "$apk_path" || {
 "$adb_bin" -s "$device_serial" install -r "$apk_path" >/dev/null
 
 maestro_bin="$(ensure_maestro_cli "$repo_root" "$temp_root")"
+"$adb_bin" version >"$report_root/debug/adb-environment.txt" 2>&1
+"$adb_bin" server-status >>"$report_root/debug/adb-environment.txt" 2>&1 || true
 "$maestro_bin" check-syntax \
   "$repo_root/mobile/.maestro/photo-analysis/photo-analysis-capture-recovery.yaml"
 
@@ -309,6 +312,8 @@ maestro_bin="$(ensure_maestro_cli "$repo_root" "$temp_root")"
   --env APP_ID=app.supernutrition.uiAcceptance \
   --format junit \
   --output "$report_root/junit.xml" \
+  --debug-output "$report_root/debug" \
+  --flatten-debug-output \
   --test-output-dir "$report_root/debug"
 python3 "$repo_root/scripts/verify_ui_test_reports.py" \
   --junit-root "$report_root" \
