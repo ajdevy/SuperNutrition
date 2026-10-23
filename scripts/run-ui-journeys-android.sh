@@ -40,12 +40,17 @@ for executable in "$sdkmanager_bin" "$avdmanager_bin"; do
   }
 done
 
+# Full AOSP retains native platform UI without Google preload/background services.
+system_image_tag=default
+system_image_package="system-images;android-36;$system_image_tag;x86_64"
+system_image_dir="$sdk_root/system-images/android-36/$system_image_tag/x86_64"
+
 sdk_packages=()
 test -x "$adb_bin" || sdk_packages+=("platform-tools")
 test -x "$emulator_bin" || sdk_packages+=("emulator")
 test -d "$sdk_root/platforms/android-36" || sdk_packages+=("platforms;android-36")
-test -f "$sdk_root/system-images/android-36/google_apis/x86_64/source.properties" ||
-  sdk_packages+=("system-images;android-36;google_apis;x86_64")
+test -f "$system_image_dir/source.properties" ||
+  sdk_packages+=("$system_image_package")
 if (("${#sdk_packages[@]}" > 0)); then
   sdk_install_timeout="${SUPERNUTRITION_SDK_INSTALL_TIMEOUT_SECONDS:-600}"
   python3 - "$sdkmanager_bin" "$sdk_install_timeout" "${sdk_packages[@]}" <<'PY'
@@ -127,11 +132,11 @@ done
   --no-daemon \
   --no-configuration-cache
 
-avd_name="supernutrition-api36-x86_64"
+avd_name="supernutrition-api36-$system_image_tag-x86_64"
 if ! test -f "$ANDROID_AVD_HOME/$avd_name.ini"; then
   printf 'no\n' | "$avdmanager_bin" create avd \
     --name "$avd_name" \
-    --package "system-images;android-36;google_apis;x86_64" \
+    --package "$system_image_package" \
     --device "pixel_6" \
     --force
 fi
