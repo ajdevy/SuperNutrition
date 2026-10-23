@@ -26,3 +26,7 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-ios-host-target-selection.md`
   summary: Package shared Compose resources into the iOS host and verify Home/Profile/Rewards on a supported runtime.
   evidence: The fresh unsigned arm64 app contains nine files and no Compose resource directory or Fraunces/Nunito fonts; see emulator-verification-2026-10-23/ios-app-package.json and IOS-PACKAGE-1.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-home-capybara-grounding.md`
+  summary: Close or accurately reconcile the photo-analysis UI module branch coverage gap without weakening the85% policy floor.
+  evidence: The final fresh report has1274/1923 covered branches (66.25%); the new garden geometry is24/24. See capybara-grounding-2026-10-23/coverage-jvm.xml and HOME-COVERAGE-1.

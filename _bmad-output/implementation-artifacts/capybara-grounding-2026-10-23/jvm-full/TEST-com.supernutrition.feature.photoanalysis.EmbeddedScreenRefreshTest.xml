@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="EmbeddedScreenRefreshTest[jvm]" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-23T15:04:08.433Z" hostname="Anastasias-MacBook-Air.local" time="0.991">
+  <properties/>
+  <testcase name="embedded meal review keeps host choice and dispatches current retake callback after copy refresh[jvm]" classname="com.supernutrition.feature.photoanalysis.EmbeddedScreenRefreshTest" time="0.249"/>
+  <testcase name="research toolbar and photo area follow live slot copy and action refresh[jvm]" classname="com.supernutrition.feature.photoanalysis.EmbeddedScreenRefreshTest" time="0.219"/>
+  <testcase name="embedded manual ingredient editor refreshes labels sources and keyboard callback[jvm]" classname="com.supernutrition.feature.photoanalysis.EmbeddedScreenRefreshTest" time="0.523"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="CameraActionContrastTest[jvm]" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-10-23T15:04:04.901Z" hostname="Anastasias-MacBook-Air.local" time="0.07">
+  <properties/>
+  <testcase name="rendered camera artwork reaches three to one against its actual circle[jvm]" classname="com.supernutrition.feature.photoanalysis.CameraActionContrastTest" time="0.07"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

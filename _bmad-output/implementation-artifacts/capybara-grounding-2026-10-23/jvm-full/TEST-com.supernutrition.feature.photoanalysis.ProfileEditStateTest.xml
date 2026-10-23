@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ProfileEditStateTest[jvm]" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-23T15:04:55.026Z" hostname="Anastasias-MacBook-Air.local" time="0.003">
+  <properties/>
+  <testcase name="destination changes close editing and history cannot start a hidden editor[jvm]" classname="com.supernutrition.feature.photoanalysis.ProfileEditStateTest" time="0.0"/>
+  <testcase name="malformed saved destinations are rejected[jvm]" classname="com.supernutrition.feature.photoanalysis.ProfileEditStateTest" time="0.0"/>
+  <testcase name="legacy saved destinations restore without opening an editor[jvm]" classname="com.supernutrition.feature.photoanalysis.ProfileEditStateTest" time="0.001"/>
+  <testcase name="saved profile state preserves editing mode and remains cancellable[jvm]" classname="com.supernutrition.feature.photoanalysis.ProfileEditStateTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

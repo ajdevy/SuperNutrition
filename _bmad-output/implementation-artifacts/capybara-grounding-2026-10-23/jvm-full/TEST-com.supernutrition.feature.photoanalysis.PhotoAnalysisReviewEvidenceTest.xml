@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="PhotoAnalysisReviewEvidenceTest[jvm]" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-23T15:04:50.091Z" hostname="Anastasias-MacBook-Air.local" time="0.264">
+  <properties/>
+  <testcase name="familiar and unfamiliar foods retain all supplied evidence descriptions[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisReviewEvidenceTest" time="0.076"/>
+  <testcase name="component only review explains unavailable dish suggestions[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisReviewEvidenceTest" time="0.07"/>
+  <testcase name="resolved manually added food names retain host labels in evidence and confirmed draft[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisReviewEvidenceTest" time="0.118"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

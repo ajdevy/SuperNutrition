@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="HomeGardenGroundingTest[jvm]" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-23T15:04:11.427Z" hostname="Anastasias-MacBook-Air.local" time="0.299">
+  <properties/>
+  <testcase name="glass shows the same anchored garden coordinates as the full blurred scene[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeGardenGroundingTest" time="0.106"/>
+  <testcase name="tall native phone has sand beside the paws instead of distant sky[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeGardenGroundingTest" time="0.135"/>
+  <testcase name="glass without measured garden bounds still fills its own offset canvas[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeGardenGroundingTest" time="0.058"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

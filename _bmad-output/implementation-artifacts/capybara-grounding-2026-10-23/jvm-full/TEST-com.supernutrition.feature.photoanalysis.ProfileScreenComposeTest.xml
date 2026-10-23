@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ProfileScreenComposeTest[jvm]" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-23T15:04:55.966Z" hostname="Anastasias-MacBook-Air.local" time="1.731">
+  <properties/>
+  <testcase name="name editing rejects blank input and sends a trimmed name to its session owner[jvm]" classname="com.supernutrition.feature.photoanalysis.ProfileScreenComposeTest" time="0.232"/>
+  <testcase name="avatar initials support blank names unicode and emoji[jvm]" classname="com.supernutrition.feature.photoanalysis.ProfileScreenComposeTest" time="0.002"/>
+  <testcase name="unknown identity and empty history never invent user data[jvm]" classname="com.supernutrition.feature.photoanalysis.ProfileScreenComposeTest" time="0.16"/>
+  <testcase name="missing browser explains document unavailability without crashing[jvm]" classname="com.supernutrition.feature.photoanalysis.ProfileScreenComposeTest" time="0.521"/>
+  <testcase name="avatar preserves combining marks flags and joined emoji[jvm]" classname="com.supernutrition.feature.photoanalysis.ProfileScreenComposeTest" time="0.0"/>
+  <testcase name="unavailable documents and crash reports explain their state[jvm]" classname="com.supernutrition.feature.photoanalysis.ProfileScreenComposeTest" time="0.716"/>
+  <testcase name="approved document actions are delegated to the host[jvm]" classname="com.supernutrition.feature.photoanalysis.ProfileScreenComposeTest" time="0.098"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="GalleryPhotoFitTest[jvm]" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-10-23T15:04:09.709Z" hostname="Anastasias-MacBook-Air.local" time="1.306">
+  <properties/>
+  <testcase name="backgrounding removes retained pixels without reviving live camera[jvm]" classname="com.supernutrition.feature.photoanalysis.GalleryPhotoFitTest" time="0.128"/>
+  <testcase name="retained photo keeps its fitted frame across preparation analysis and review[jvm]" classname="com.supernutrition.feature.photoanalysis.GalleryPhotoFitTest" time="0.132"/>
+  <testcase name="tall portrait gallery photo fits and centers during analysis[jvm]" classname="com.supernutrition.feature.photoanalysis.GalleryPhotoFitTest" time="0.065"/>
+  <testcase name="unknown or invalid photo aspect metadata stays unzoomed during review[jvm]" classname="com.supernutrition.feature.photoanalysis.GalleryPhotoFitTest" time="0.597"/>
+  <testcase name="one pixel high landscape photo stays bounded without invalid constraints[jvm]" classname="com.supernutrition.feature.photoanalysis.GalleryPhotoFitTest" time="0.053"/>
+  <testcase name="landscape gallery photo fits and centers during analysis[jvm]" classname="com.supernutrition.feature.photoanalysis.GalleryPhotoFitTest" time="0.052"/>
+  <testcase name="one pixel wide portrait photo stays bounded without invalid constraints[jvm]" classname="com.supernutrition.feature.photoanalysis.GalleryPhotoFitTest" time="0.045"/>
+  <testcase name="square gallery photo fits and centers during analysis[jvm]" classname="com.supernutrition.feature.photoanalysis.GalleryPhotoFitTest" time="0.043"/>
+  <testcase name="fitting retained photos leaves review controls in their existing positions[jvm]" classname="com.supernutrition.feature.photoanalysis.GalleryPhotoFitTest" time="0.107"/>
+  <testcase name="live capture fills the viewport despite stale retained metadata and keeps controls usable[jvm]" classname="com.supernutrition.feature.photoanalysis.GalleryPhotoFitTest" time="0.082"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
