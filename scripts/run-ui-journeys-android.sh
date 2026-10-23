@@ -309,6 +309,8 @@ maestro_bin="$(ensure_maestro_cli "$repo_root" "$temp_root")"
   --env APP_ID=app.supernutrition.uiAcceptance \
   --format junit \
   --output "$report_root/junit.xml" \
+  --debug-output "$report_root/debug" \
+  --flatten-debug-output \
   --test-output-dir "$report_root/debug"
 python3 "$repo_root/scripts/verify_ui_test_reports.py" \
   --junit-root "$report_root" \
