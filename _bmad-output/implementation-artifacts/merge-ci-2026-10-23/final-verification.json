@@ -1,0 +1,90 @@
+{
+  "tested_main": "35023601c35a427afae0dfade83f8b11e2039154",
+  "source_head": "4cf07733b196fcb2d0fc9791d5111416edf5ab67",
+  "worktree": "/Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition",
+  "source_branch": "codex/android-ci-window-focus",
+  "integrated_prs": [
+    55,
+    56,
+    57,
+    58
+  ],
+  "native_workflow_conclusions": {
+    "android": "success",
+    "ios": "success"
+  },
+  "jvm_workflow_conclusion": "failure",
+  "jvm_only_failed_task": ":verifyMobilePolicy",
+  "policy_failure": "Native-gap evidence is stale: bootstrap-android-host",
+  "unchanged_required_evidence": {
+    "expired_records": 6,
+    "explicit_physical_android_records": 5,
+    "expired_on": "2026-10-12T08:04:52Z",
+    "emulator_cannot_renew_physical": true,
+    "evidence_dates_floors_and_skips_changed": false
+  },
+  "script_tests": {
+    "tests": 60,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "focused_boot_tests": 21
+  },
+  "local_full_gate": {
+    "reference": "local-quality-result.json",
+    "test_counts_reference": "local-quality-tests.json",
+    "tests": 918,
+    "modules": 18,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "mobile_tree_at_both_tested_heads": "4c38b6de9e5efed46c563a7592e2e5202e381ca8",
+    "source_heads_compared": [
+      "79535a2d",
+      "35023601"
+    ],
+    "result": "Only verifyMobilePolicy fails; all six APKs build"
+  },
+  "commands": [
+    "python3 -m unittest discover -s scripts/tests -v",
+    "bash -n scripts/run-ui-journeys-android.sh",
+    "scripts/verify-ci-policy.sh",
+    "scripts/verify-owner-decisions.sh --strict",
+    "scripts/run-ui-journeys-android.sh",
+    "scripts/run-ui-journeys-ios.sh",
+    "git diff --check",
+    "graphify update ."
+  ],
+  "reports": {
+    "android": "final-main-android-tests.json",
+    "ios": "final-main-ios-tests.json",
+    "jvm": "final-main-jvm-tests.json"
+  },
+  "graphify": {
+    "nodes": 21830,
+    "edges": 29776,
+    "communities": 2048,
+    "success": true,
+    "limitations": [
+      "520 files produced zero nodes",
+      "2 SQL files missing optional parser",
+      "HTML skipped above node limit"
+    ]
+  },
+  "native_limits": {
+    "host": "Intel x86_64 macOS15.8/16GiB",
+    "local_android_aosp36": {
+      "phase": "failed",
+      "started_at": 1792783486.9887,
+      "error": "Android startup recorded am_anr: --------- beginning of events\nI/am_anr  (  759): [0,1490,com.android.systemui,818462221,Process ProcessRecord{b1a14a4 1490:com.android.systemui/u0a124} failed to complete startup]",
+      "finished_at": 1792784042.556695
+    },
+    "local_app_tests_run": 0,
+    "local_emulator_stopped": true,
+    "ios_local_execution": "Unavailable on Intel for configured Compose simulator targets; actual hosted arm64 simulator evidence is separate",
+    "physical_android_or_iphone_evidence_renewed": false
+  },
+  "independent_source_reviews": "Two fresh reviewers per repair plus bounded red-green finding closure; no human/native approval inferred",
+  "unrelated_worktree_changes": "Preserved; primary checkout not edited",
+  "final_documentation_commit": "Documentation only; verify its executable-source diff stays empty against tested_main before handoff"
+}
