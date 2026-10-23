@@ -55,7 +55,9 @@ context: []
 - [x] Android runner/helper and focused tests — implement native startup health checks after reproducing the SystemUI overlay, remove premature force-stops and preserve diagnostics.12 focused regressions and both independent source reviews pass; real API36 validation remains pending below.
 - [x] Merge PR55 — normal merge663b4212 contains the full source tree; actual main iOS8/8+1/1 passes, JVM892tests pass with unchanged stale-evidence policy failure.
 - [x] Android rendering/disabled-animation follow-up — preserve exact dp viewport at720×1600/280dpi and validate actual disabled-animation proof. Both fresh source reviews,16 focused and55 total script tests pass.
-- [ ] Merge the Android startup follow-up and inspect actual main boot, instrumentation and Maestro; record any remaining genuine policy/hardware blocker.
+- [x] Merge Android display follow-up PR56 as10a7e045; actual main iOS8/8+1/1 and JVM892tests pass, unchanged stale-evidence failure remains. Android still fails native boot before app tests, recorded with exact evidence.
+- [x] Full AOSP36 image selection — retain full native UI and all existing guards while avoiding failing Google preload; package/path/owned AVD share one tag. Both fresh reviewers and all55 script tests pass.
+- [ ] Merge the full-AOSP runner follow-up and inspect actual native boot, instrumentation and Maestro; record final policy/hardware blockers.
 
 **Acceptance Criteria:**
 - Given the missing-resource crash in archived XCTest, when the fixed host builds and runs on supported hosted arm64 iOS, then resources are found and genuine tests/journeys execute; any additional product failures are fixed and rechecked.

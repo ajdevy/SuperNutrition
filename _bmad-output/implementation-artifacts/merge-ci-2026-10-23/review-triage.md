@@ -27,3 +27,7 @@ The helper's absolute deadline begins after serial connection. The retained oute
 ## Android rendering follow-up review
 
 Two fresh-context reviewers inspected the complete three-file source diff against main663b4212. Blind Hunter and Edge Case Hunter return no actionable findings. Both ran16 focused boot/display regressions and shell syntax checks; root ran all55 script tests. Edge probes additionally covered duplicate/space-separated AVD keys, named-skin removal, signed32 boundaries, and continued locked-user/ANR/disabled-zero rejection. Primary AOSP source confirms numeric skin framebuffer precedence and positive animation-disable semantics. Native API36 boot/instrumentation/Maestro remains required; these source reviews do not certify runtime health.
+
+## Full AOSP36 image review
+
+Two new fresh-context Blind Hunter/Edge Case Hunter reviews against10a7e045 return no actionable findings. SDK package/path and the owned AVD name share one tag; an old Google AVD cannot match. Existing startup, crash, native UI, instrumentation and Maestro guards are byte-identical after AVD creation. Scoped syntax/diff checks and16 focused boot/display tests pass; root's full55 script tests and policy/owner checks pass. Source review does not establish healthy native execution.
