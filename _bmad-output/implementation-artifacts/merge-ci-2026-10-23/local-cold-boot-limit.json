@@ -1,0 +1,17 @@
+{
+  "host": "Intel x86_64 macOS15.8",
+  "avd": "SN_Screenshots_20261023",
+  "cli_command": [
+    "android",
+    "emulator",
+    "start",
+    "--cold",
+    "SN_Screenshots_20261023"
+  ],
+  "cli_exit_code": 0,
+  "actual_result": "ADB remained offline and CLI reported not online after300seconds",
+  "system_memory_free_percent_observed": 73,
+  "native_tests_ran": false,
+  "owned_emulator_pid": 30491,
+  "cleanup": "SIGTERM sent only after exact AVD process-identity check"
+}

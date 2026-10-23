@@ -31,3 +31,22 @@ Hosted logcat proves the hide request at16:45:44.710 was followed by test Back a
 - CI-BUDGET-1: the measured cold hosted Android run consumed21minutes before stopping on its first50-case variant; production instrumentation and Maestro still remained. Increase the job budget from30to45minutes for complete execution; test assertions retain their original deadlines and no suite is filtered or skipped.
 
 - LOCAL-EXEC-1: the first local focused native invocation compiled/packaged the app and ran1case, which failed before IME/Back assertions because home_profile was not found. The captured device hierarchy shows the stock Quickstep launcher ANR dialog (`com.android.launcher3`, “Quickstep isn't responding”), blocking focus. No IME regression pass is claimed. The dialog was dismissed through its observed Close app button and the exact focused test is rerunning on the now-idle emulator with one Gradle worker.
+## ANDROID-BOOT-1 — system ANR overlay before instrumentation
+
+### BOOT-EARLY-AM — user-state query before ActivityManager publication
+
+Implementation self-review found that an initial ADB connection may precede ActivityManager service publication. Querying `am get-started-user-state` while `sys.boot_completed=0` must not terminate an otherwise progressing healthy boot. Acceptance: defer this ActivityManager query until the boot property is1, retain the same absolute deadline and fail closed for native errors after publication. Worker will run the regression red before the guard and then green; native execution remains required.
+
+### BOOT-STALE-XML — zero-exit UIAutomator failure can reuse a prior hierarchy
+
+Independent Blind Hunter reproduced `healthy=True` when a later UIAutomator dump reports `ERROR: could not get idle state.` with exit0 and the fixed remote file still contains a previous successful HOME hierarchy. AOSP DumpCommand permits such failure paths without writing a new file. Acceptance: require a fresh successful hierarchy on every poll, reject zero-exit error/null-root output, and regress the successful-then-failed dump sequence. Native preflight must fail closed rather than accept a stale HOME snapshot.
+
+### BOOT-IME-READY — ignored native IMMS readiness
+
+Independent Edge Case Hunter reproduced `healthy=True` for zero-exit `dumpsys input_method` responses containing `mSystemReady=false` or `Can't find service: input_method`, while selected/enabled IME settings remain valid. Android16 IMMS prints the native `mSystemReady` flag in its own dump. Acceptance: require a valid true native readiness marker, reject false/missing/malformed/error output, retain selected/enabled validation and permit HOME to have no active IME client. Run focused red→green regressions before native validation.
+
+Bounded re-review reproduced a partial-dump variant still accepted after the initial guard: valid header plus `mSystemReady=true` followed by native `*** SERVICE 'input_method' DUMP TIMEOUT (10000ms) EXPIRED ***`. Native dumpsys returns0 after this partial failure. Acceptance additionally requires rejecting timeout/error footers even after a valid readiness prefix; add the observed partial-output regression before patching.
+
+Hosted Android run39994995975 on79535a2d executed50tests with12failures,0errors and0skips. Independent artifact diagnosis found the final UI hierarchy contains Android's `System UI isn’t responding` dialog, with `android:id/aerr_close` and `aerr_wait`; no application surface is reachable. Logcat records `com.android.systemui` ANR at17:38:34.951 (line4185) and its dialog at17:38:50.039 (line5733), before instrumentation starts at17:41:03. GoogleAS/GMS/phone/IME also suffer system ANRs; the app's Activity is displayed repeatedly, without an app FATAL/ANR in the examined log. These are actual blocked test failures, not a passing UI run.
+
+Acceptance: establish a healthy API36 emulator before instrumentation without weakening app assertions, hiding app ANRs, blindly retrying native tests or replacing physical-device evidence. Diagnose and correct startup resource/readiness prerequisites, then repeat the complete hosted Android suite and Maestro. Source review alone cannot close this finding.

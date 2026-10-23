@@ -4,7 +4,7 @@ type: bugfix
 created: '2026-10-23'
 status: in-review
 baseline_commit: 1026075221373c9c810c73fb80b2a0093f8d5961
-review_loop_iteration: 0
+review_loop_iteration: 3
 context: []
 ---
 
@@ -41,16 +41,18 @@ context: []
 - `mobile/apps/iosApp/build-sharedkit-framework.sh` and `SuperNutritionUIAcceptance.xcodeproj/project.pbxproj` — common build path for production and acceptance hosts.
 - `scripts/run-ui-journeys-ios.sh` and `.github/workflows/ios-ui-coverage.yml` — real arm64 XCTest and Maestro execution in hosted CI.
 - `.github/workflows/ci-required.yml` — JVM coverage/policy workflow.
+- `scripts/run-ui-journeys-android.sh`, `scripts/android_boot_health.py` — native emulator startup prerequisites and preserved failure diagnostics.
 - `mobile/config/quality/{native-gaps,evidence-bindings,coverage}.toml` — unchanged authoritative native evidence and coverage policy.
 - `_bmad-output/implementation-artifacts/merge-ci-2026-10-23/` — findings, command outcomes and limitations.
 
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] `mobile/apps/sharedKit/build.gradle.kts`, iOS helper/project, focused script tests — repair transitive Compose resource packaging for both hosts with executable regression coverage, after reproducing the failure.
-- [ ] `mobile/apps/androidApp/src/androidTest/java/com/supernutrition/android/ProfileNameEditingInstrumentationTest.java` — synchronize real IME visibility and animation completion before one native Back; preserve draft/name/route assertions exposed by hosted CI.
-- [ ] `.github/workflows/ci-required.yml` — add continued execution while preserving strict failure, with sufficient execution time for independent tasks.
-- [ ] Grounding README and deferred-work record — correct the raw UI coverage interpretation and record disposition of packaging work.
+- [x] `mobile/apps/sharedKit/build.gradle.kts`, iOS helper/project, focused script tests — repair transitive Compose resource packaging for both hosts with executable regression coverage, after reproducing the failure. Hosted iOS8/8 XCTest and1/1 Maestro pass.
+- [x] `mobile/apps/androidApp/src/androidTest/java/com/supernutrition/android/ProfileNameEditingInstrumentationTest.java` — implement synchronization of real IME visibility and animation completion before one native Back, preserving draft/name/route assertions. Java compilation passes; final hosted native verification remains pending below.
+- [x] `.github/workflows/ci-required.yml` — continued execution preserves strict failure, with sufficient execution time and working independent reports.
+- [x] Grounding README and deferred-work record — correct the raw UI coverage interpretation and record disposition of packaging work.
+- [x] Android runner/helper and focused tests — implement native startup health checks after reproducing the SystemUI overlay, remove premature force-stops and preserve diagnostics.12 focused regressions and both independent source reviews pass; real API36 validation remains pending below.
 - [ ] Merge evidence report and PR55 — execute relevant checks, independent review, push intended slice, merge current work, inspect post-merge runs and record final actual state.
 
 **Acceptance Criteria:**
