@@ -1,0 +1,107 @@
+{
+  "run_id": "40005129380",
+  "main_head": "10a7e045fcf527e5f3b03e5c2619248ac708ebac",
+  "test_phase": "native bootstrap",
+  "application_tests_executed": 0,
+  "health": {
+    "healthy": false,
+    "serial": "emulator-5554",
+    "error": "Android startup recorded am_anr: --------- beginning of events\nI/am_anr  (  717): [0,1450,com.android.systemui,550026765,executing service com.android.systemui/.keyguard.KeyguardService, waited 20165ms]\nI/am_anr  (  717): [0,1777,com.google.android.gms.persistent,-1597325755,Process ProcessRecord{5627ae0 1777:com.google.android.gms.persistent/u0a146} failed to complete startup]\nI/am_anr  (  717): [0,2313,com.google.android.gms,-1597325755,Process ProcessRecord{c0164ba 2313:com.google.android.gms/u0a146} failed to complete startup]\nI/am_anr  (  717): [0,2107,com.google.android.as,818658885,Process ProcessRecord{42a284e 2107:com.google.android.as/u0a144} failed to complete startup]\nI/am_crash(  717): [1778,0,com.google.android.apps.nexuslauncher,885767749,java.lang.NullPointerException,Attempt to read from field 'java.lang.String android.view.SurfaceControl.mName' on a null object reference in method 'void android.view.SurfaceControl.copyFrom(android.view.SurfaceControl, java.lang.String)',Parcel.java,3346,0]\nI/am_anr  (  717): [0,2683,com.google.android.gms.persistent,-1597325755,Broadcast of Intent { act=android.safetycenter.action.REFRESH_SAFETY_SOURCES flg=0x10000010 xflg=0x4 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.GmsIntentOperationService$PersistentTrustedReceiver (has extras) }]",
+    "elapsed_seconds": 173.76449663199992
+  },
+  "health_command_count": 225,
+  "anchors": {
+    "kvm": {
+      "line": 41,
+      "text": "10-23 18:50:19.779     0     0 I Hypervisor detected: KVM"
+    },
+    "paravirtualized": {
+      "line": 96,
+      "text": "10-23 18:50:19.796     0     0 I         : Booting paravirtualized kernel on KVM"
+    },
+    "image_fingerprint": {
+      "line": 571,
+      "text": "10-23 18:50:26.589     0     0 I init    : Setting property 'ro.build.fingerprint' to 'google/sdk_gphone64_x86_64/emu64xa:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys'"
+    },
+    "display": {
+      "line": 5183,
+      "text": "10-23 18:50:56.565   717   759 I DisplayDeviceRepository: Display device added: DisplayDeviceInfo{\"Built-in Screen\": uniqueId=\"local:4619827259835644672\", 720 x 1600, modeId 1, renderFrameRate 60.000004, hasArrSupport false, frameRateCategoryRate FrameRateCategoryRate {normal=60.0, high=90.0}, supportedRefreshRates [60.000004], defaultModeId 1, userPreferredModeId -1, supportedModes [{id=1, width=720, height=1600, fps=60.000004, vsync=60.000004, synthetic=false, alternativeRefreshRates=[], supportedHdrTypes=[]}], colorMode 0, supportedColorModes [0], hdrCapabilities HdrCapabilities{mSupportedHdrTypes=[], mMaxLuminance=500.0, mMaxAverageLuminance=500.0, mMinLuminance=0.0}, isForceSdr false, allmSupported false, gameContentTypeSupported false, density 280, 280.0 x 280.0 dpi, appVsyncOff 1000000, presDeadline 16666666, touch INTERNAL, rotation 0, type INTERNAL, address {port=0, model=0x401cec6a7a2b7b}, deviceProductInfo DeviceProductInfo{name=EMU_display_0, manufacturerPnpId=GGL, productId=1, modelYear=null, manufactureDate=ManufactureDate{week=27, year=2006}, connectionToSinkType=1}, state UNKNOWN, committedState UNKNOWN, frameRateOverride , brightnessMinimum 0.035433073, brightnessMaximum 1.0, brightnessDefault 0.39763778, brightnessDim 0.05, hdrSdrRatio NaN, FLAG_ALLOWED_TO_BE_DEFAULT_DISPLAY, FLAG_ROTATES_WITH_CONTENT, FLAG_SECURE, FLAG_SUPPORTS_PROTECTED_BUFFERS, FLAG_TRUSTED, installOrientation 0, displayShape DisplayShape{ spec=2134893525 displayWidth=720 displayHeight=1600 physicalPixelDisplaySizeRatio=1.0 rotation=0 offsetX=0 offsetY=0 scale=1.0}}"
+    },
+    "first_anr": {
+      "line": 21916,
+      "text": "10-23 18:51:57.991   717  2390 I am_anr  : [0,1450,com.android.systemui,550026765,executing service com.android.systemui/.keyguard.KeyguardService, waited 20165ms]"
+    },
+    "first_anr_report": {
+      "line": 25154,
+      "text": "10-23 18:52:13.824   717  2390 E ActivityManager: ANR in com.android.systemui"
+    },
+    "launcher_fatal": {
+      "line": 26145,
+      "text": "10-23 18:52:17.417  1778  1824 E AndroidRuntime: FATAL EXCEPTION: UiThreadHelper"
+    },
+    "launcher_surface_null": {
+      "line": 26147,
+      "text": "10-23 18:52:17.417  1778  1824 E AndroidRuntime: java.lang.NullPointerException: Attempt to read from field 'java.lang.String android.view.SurfaceControl.mName' on a null object reference in method 'void android.view.SurfaceControl.copyFrom(android.view.SurfaceControl, java.lang.String)'"
+    },
+    "guest_low_watermark": {
+      "line": 57214,
+      "text": "10-23 18:53:34.392   207   207 I lowmemorykiller: Kill 'com.android.printspooler' (2104), uid 10129, oom_score_adj 995 to free 105080kB rss, 4864kB swap; reason: low watermark is breached"
+    }
+  },
+  "resources": {
+    "api": 36,
+    "image": "google_apis/x86_64",
+    "emulator": "37.2.12.0",
+    "cpu": 2,
+    "ram_mib": 2560,
+    "heap_mib": 576,
+    "rendering": "SwiftShader",
+    "display": [
+      720,
+      1600
+    ],
+    "density": 280,
+    "vm_acceleration": "KVM proven in guest kernel"
+  },
+  "observations": [
+    "First ANR CPU99percent,pressure86.74percent;SurfaceFlinger27percent,NexusLauncher13percent,system_server13percent.",
+    "Later GMS ANR CPU98percent,pressure92.13percent;SurfaceFlinger3.1percent,Launcher14percent,IME12percent,GMS13.1percent,AiAi5.8percent.",
+    "Native broadcast-idle eventually returned All broadcast queues are idle; crash history and error dialog correctly still fail health.",
+    "lowmemorykiller killed105080KiB printspooler at18:53:34.392 for guest lowwatermark."
+  ],
+  "recommendation": {
+    "next_candidate": "Retain full API36 and SystemUI/native rendering/picker/camera in a standard AOSP image, removing Google preload only through official image selection; root owns package availability verification.",
+    "preserve": [
+      "all ANR/crash fatal guards",
+      "all app assertions",
+      "2guestCPU on2CPUhost",
+      "KVM",
+      "no false physical-device evidence"
+    ],
+    "if_standard_image_unavailable": "Current runner/image tuple has no demonstrated clean bootstrap; use actual additional host capacity or validate a different supported full image/runtime combination, not vCPU oversubscription or deadline/error relaxation."
+  },
+  "limits": [
+    "Observed saturation is proven; no single process is proven to be the initiating cause.",
+    "NexusLauncher SurfaceControl NPE may have an independent image/platform defect; causation by load is not proven.",
+    "Scaled display preserves fullviewportdp but device-specific cutout metadata remains tied to Pixel6 coordinates; do not claim exact insets equivalence.",
+    "AOSP remediation is a justified next candidate, not yet a verified pass."
+  ],
+  "next_image_verified_by_root": {
+    "tag": "default",
+    "api": 36,
+    "abi": "x86_64",
+    "revision": 2,
+    "kind": "standard full AOSP image, notATD",
+    "runtime_result": "not verified by this diagnosis"
+  },
+  "insets_limitation": {
+    "source_log_line": 26168,
+    "observation": "720px display retains Pixel6-style cutout coordinates aroundx540, with cutout top128px; customLCD scaling did not establish device-specific inset equivalence.",
+    "conclusion": "411.43\u00d7914.29dp overallviewport is mathematically preserved, but full cutout/safe-area equivalence is not demonstrated. No claim that this caused the launcherNPE."
+  },
+  "runtime_dependency_scan": {
+    "scope": "checked-in mobile Gradle manifests,libs.versions.toml,AndroidManifest.xml",
+    "matches_for_play_services_com_google_android_gms_firebase": 0,
+    "limit": "No match in these declarations does not prove every transitive dependency is free of Google services."
+  }
+}
