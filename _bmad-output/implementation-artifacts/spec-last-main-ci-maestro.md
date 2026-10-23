@@ -51,6 +51,8 @@ context: []
 - [x] This spec and the verification record — record the latest failed-run evidence before fixes and distinguish diagnosed defects from hypotheses.
 - [ ] Hosted Android workflow — reproduce with diagnostics, fix any demonstrated underlying failure, and retain its executable verification evidence.
 - [ ] Final main workflows — wait for completion and report Android/iOS results plus the sole accepted policy limitation.
+- [x] `mobile/.maestro/photo-analysis/photo-analysis-capture-recovery.yaml` — declare the journey's camera permission explicitly, avoiding implicit full-APK permission discovery without changing its ordered actions/assertions.
+- [x] Android runner diagnostics — preserve the ADB server transport log from startup, without restarting an existing shared server or retrying a failed journey.
 
 **Acceptance Criteria:**
 - Given a CLI failure before app launch, its diagnostic log is available in the always-uploaded artifact and CI remains failed.
@@ -58,6 +60,8 @@ context: []
 - No production mobile code, test assertions, evidence dates, or native startup checks change without a separately demonstrated defect.
 
 ## Spec Change Log
+
+- Candidate `40021687118` reproduced the failure and now retained its true error: ADB server transport reports the emulator offline during launch. The native driver starts, variables/configuration/locator script complete, and the app never starts. Source inspection narrows the preceding permission phase: implicit `all: allow` pulls the whole APK through dadb and silently catches extraction/transport errors. The journey needs only camera permission, which both pinned Android and iOS drivers explicitly support. Add that bounded declaration plus ADB server transport diagnostics, then validate both platforms. KEEP: every action/assertion, native guard, pinned version, original failure status, and newly retained Maestro artifacts. This is a differential test of the permission-discovery hypothesis; do not call APK transfer the proven root cause before the hosted evidence supports it.
 
 ## Design Notes
 

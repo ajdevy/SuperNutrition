@@ -1,5 +1,6 @@
 """Exercise Maestro's failure output and the workflow's artifact boundary without a device."""
 import glob
+import json
 import os
 import shutil
 import subprocess
@@ -26,8 +27,41 @@ class AndroidMaestroDiagnosticsTest(unittest.TestCase):
         self.report = self.runner_temp / 'supernutrition-ui-android/report'
         (self.report / 'debug').mkdir(parents=True)
         self.default_debug = self.directory / 'default maestro output'
+        self.adb_calls = self.directory / 'adb calls.jsonl'
+        self.maestro_environment = self.directory / 'maestro environment.json'
+        self.adb = self.directory / 'stub adb'
+        self.adb.write_text('''#!/usr/bin/env python3
+import json
+import os
+import sys
+from pathlib import Path
+
+args = sys.argv[1:]
+with Path(os.environ['ADB_CALLS']).open('a') as output:
+    output.write(json.dumps({'args': args, 'trace': os.environ.get('ADB_TRACE'),
+                             'log_path': os.environ.get('ANDROID_ADB_LOG_PATH')}) + '\\n')
+if args == ['start-server']:
+    if not os.environ.get('EXISTING_ADB_SERVER') and os.environ.get('ADB_TRACE') == 'transport':
+        log = Path(os.environ['ANDROID_ADB_LOG_PATH'])
+        log.parent.mkdir(parents=True, exist_ok=True)
+        log.write_text('ADB transport diagnostic detail\\n')
+elif args == ['version']:
+    print('Android Debug Bridge version 1.0.41')
+    print('Installed as ' + sys.argv[0])
+elif args == ['server-status']:
+    if os.environ.get('UNSUPPORTED_SERVER_STATUS'):
+        print('adb: unknown command server-status', file=sys.stderr)
+        sys.exit(42)
+    print('Server log: ' + ('/shared/existing-adb.log' if os.environ.get('EXISTING_ADB_SERVER')
+                            else os.environ.get('ANDROID_ADB_LOG_PATH', 'default adb log')))
+else:
+    print('Unexpected ADB mutation: ' + repr(args), file=sys.stderr)
+    sys.exit(97)
+''')
+        self.adb.chmod(0o755)
         self.maestro = self.directory / 'stub maestro'
         self.maestro.write_text('''#!/usr/bin/env python3
+import json
 import os
 import sys
 from pathlib import Path
@@ -35,6 +69,10 @@ from pathlib import Path
 args = sys.argv[1:]
 if args[0] == 'check-syntax':
     sys.exit(0)
+Path(os.environ['MAESTRO_ENVIRONMENT']).write_text(json.dumps({
+    'trace': os.environ.get('ADB_TRACE'),
+    'log_path': os.environ.get('ANDROID_ADB_LOG_PATH'),
+}))
 
 def option(name, default):
     return args[args.index(name) + 1] if name in args else default
@@ -57,7 +95,9 @@ sys.exit(37 if outcome == 'failure' else 0)
         self.maestro.chmod(0o755)
         # Execute the real runner's Maestro phase, substituting only the external CLI
         # and device/build prerequisites. The real fail-closed report verifier runs.
-        tail = RUNNER.read_text().split('maestro_bin="$(ensure_maestro_cli', 1)
+        runner = RUNNER.read_text()
+        startup = runner.split('emulator_accel_args=()', 1)[1].split('"$emulator_bin" -avd', 1)[0]
+        tail = runner.split('maestro_bin="$(ensure_maestro_cli', 1)
         self.assertEqual(len(tail), 2, 'The runner must retain its Maestro phase')
         self.harness = self.directory / 'maestro phase.sh'
         self.harness.write_text('''#!/usr/bin/env bash
@@ -66,14 +106,21 @@ repo_root="$1"
 temp_root="$2"
 report_root="$temp_root/report"
 device_serial=emulator-test
+adb_bin="$STUB_ADB"
 ensure_maestro_cli() { printf '%s\\n' "$STUB_MAESTRO"; }
-''' + 'maestro_bin="$(ensure_maestro_cli' + tail[1])
+''' + 'emulator_accel_args=()' + startup + 'maestro_bin="$(ensure_maestro_cli' + tail[1])
 
-    def run_phase(self, outcome):
-        environment = dict(os.environ,
+    def run_phase(self, outcome, **extra):
+        environment = dict((key, value) for key, value in os.environ.items()
+                           if key not in {'ADB_TRACE', 'ANDROID_ADB_LOG_PATH'})
+        environment.update(
+                           STUB_ADB=str(self.adb),
+                           ADB_CALLS=str(self.adb_calls),
+                           MAESTRO_ENVIRONMENT=str(self.maestro_environment),
                            STUB_MAESTRO=str(self.maestro),
                            DEFAULT_MAESTRO_DEBUG=str(self.default_debug),
                            MAESTRO_OUTCOME=outcome)
+        environment.update(extra)
         return subprocess.run(['bash', str(self.harness), str(self.repo),
                                str(self.report.parent)],
                               env=environment, text=True, capture_output=True, check=False)
@@ -123,6 +170,38 @@ ensure_maestro_cli() { printf '%s\\n' "$STUB_MAESTRO"; }
         result = self.run_phase('missing-report')
         self.assertNotEqual(result.returncode, 0)
         self.assertIn('no JUnit testcases found', result.stderr)
+
+    def test_adb_trace_is_startup_only_and_log_path_reaches_maestro(self):
+        result = self.run_phase('failure')
+        self.assertEqual(result.returncode, 37, result.stderr)
+        calls = [json.loads(line) for line in self.adb_calls.read_text().splitlines()]
+        self.assertEqual([call['args'] for call in calls],
+                         [['start-server'], ['version'], ['server-status']])
+        self.assertEqual([call['trace'] for call in calls], ['transport', None, None])
+        log = self.report / 'debug/adb-server.log'
+        self.assertTrue(all(call['log_path'] == str(log) for call in calls))
+        self.assertEqual(json.loads(self.maestro_environment.read_text()),
+                         {'trace': None, 'log_path': str(log)})
+        self.assertIn('ADB transport diagnostic detail', log.read_text())
+        environment = self.report / 'debug/adb-environment.txt'
+        self.assertIn('Android Debug Bridge version', environment.read_text())
+        self.assertIn('Server log:', environment.read_text())
+        self.assertTrue({log, environment}.issubset(self.uploaded_files()))
+
+    def test_unsupported_server_status_preserves_the_original_maestro_failure(self):
+        result = self.run_phase('failure', UNSUPPORTED_SERVER_STATUS='1')
+        self.assertEqual(result.returncode, 37, result.stderr)
+        environment = self.report / 'debug/adb-environment.txt'
+        self.assertIn('unknown command server-status', environment.read_text())
+
+    def test_existing_server_is_preserved_even_when_it_keeps_its_previous_log_path(self):
+        result = self.run_phase('failure', EXISTING_ADB_SERVER='1')
+        self.assertEqual(result.returncode, 37, result.stderr)
+        calls = [json.loads(line)['args'] for line in self.adb_calls.read_text().splitlines()]
+        self.assertEqual(calls, [['start-server'], ['version'], ['server-status']])
+        self.assertFalse((self.report / 'debug/adb-server.log').exists())
+        environment = self.report / 'debug/adb-environment.txt'
+        self.assertIn('/shared/existing-adb.log', environment.read_text())
 
 
 if __name__ == '__main__':

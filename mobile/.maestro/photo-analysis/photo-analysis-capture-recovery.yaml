@@ -3,7 +3,9 @@ appId: ${APP_ID}
 
 - runScript:
     file: ./photo-analysis-locators.js
-- launchApp
+- launchApp:
+    permissions:
+      camera: allow
 - runFlow:
     when:
       visible:
