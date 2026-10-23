@@ -48,6 +48,7 @@ context: []
 
 **Execution:**
 - [ ] `mobile/apps/sharedKit/build.gradle.kts`, iOS helper/project, focused script tests — repair transitive Compose resource packaging for both hosts with executable regression coverage, after reproducing the failure.
+- [ ] `mobile/apps/androidApp/src/androidTest/java/com/supernutrition/android/ProfileNameEditingInstrumentationTest.java` — synchronize real IME visibility and animation completion before one native Back; preserve draft/name/route assertions exposed by hosted CI.
 - [ ] `.github/workflows/ci-required.yml` — add continued execution while preserving strict failure, with sufficient execution time for independent tasks.
 - [ ] Grounding README and deferred-work record — correct the raw UI coverage interpretation and record disposition of packaging work.
 - [ ] Merge evidence report and PR55 — execute relevant checks, independent review, push intended slice, merge current work, inspect post-merge runs and record final actual state.

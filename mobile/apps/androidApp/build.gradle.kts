@@ -54,6 +54,7 @@ dependencies {
     implementation(project(":platform:photo-android"))
     // The current app uses the same local model runtime as the former PoC screen.
     implementation(project(":inference:local-android-poc"))
+    androidTestImplementation(libs.androidx.core)
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.uiautomator)
     androidTestImplementation(project(":domain:photo-analysis"))

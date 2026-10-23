@@ -20,6 +20,7 @@
 		B10000010000000000000012 /* capture_close.png in Resources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000012 /* capture_close.png */; };
 		B10000010000000000000013 /* capture_gallery.png in Resources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000013 /* capture_gallery.png */; };
 		B10000010000000000000014 /* capture_shutter.png in Resources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000014 /* capture_shutter.png */; };
+		B10000010000000000000015 /* Localizable.strings in Test Resources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000009 /* Localizable.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -237,7 +238,7 @@
 
 /* Begin PBXResourcesBuildPhase section */
 		P30000010000000000000004 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (B10000010000000000000010 /* Localizable.strings in Resources */, B10000010000000000000012 /* capture_close.png in Resources */, B10000010000000000000013 /* capture_gallery.png in Resources */, B10000010000000000000014 /* capture_shutter.png in Resources */); runOnlyForDeploymentPostprocessing = 0; };
-		P30000010000000000000006 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		P30000010000000000000006 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (B10000010000000000000015 /* Localizable.strings in Test Resources */); runOnlyForDeploymentPostprocessing = 0; };
 		P30000010000000000000008 /* Production Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (B10000010000000000000010 /* Localizable.strings in Resources */, B10000010000000000000012 /* capture_close.png in Resources */, B10000010000000000000013 /* capture_gallery.png in Resources */, B10000010000000000000014 /* capture_shutter.png in Resources */); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXResourcesBuildPhase section */
 

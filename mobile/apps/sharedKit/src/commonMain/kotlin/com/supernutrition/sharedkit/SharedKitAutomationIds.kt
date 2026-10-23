@@ -8,6 +8,8 @@ public object SharedKitAutomationIds {
         get() = UiAutomationIds.BOOTSTRAP_LAUNCH_DI.value
     public val photoAnalysisTitle: String
         get() = UiAutomationIds.PHOTO_ANALYSIS_TITLE.value
+    public val photoAnalysisStage: String
+        get() = UiAutomationIds.PHOTO_ANALYSIS_STAGE.value
     public val photoAnalysisStatus: String
         get() = UiAutomationIds.PHOTO_ANALYSIS_STATUS.value
     public val captureShutter: String

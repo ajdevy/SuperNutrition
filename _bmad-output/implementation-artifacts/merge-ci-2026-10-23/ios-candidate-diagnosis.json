@@ -1,0 +1,53 @@
+{
+  "run_id": "39988860538",
+  "commit_sha": "28ff2d643a706317e65c0929003f993ccf398eb8",
+  "device": {
+    "architecture": "arm64",
+    "name": "iPhone17Pro",
+    "os": "iOS26.4.1",
+    "kind": "simulator"
+  },
+  "tests": {
+    "total": 8,
+    "passed": 1,
+    "failed": 7,
+    "skipped": 0
+  },
+  "failure_kind": "assertion failures; no crash failures in xcresult summary",
+  "root_cause": "XCTest captureSurfaceIsReady unconditionally requires photo_analysis_status. Consumer capture exposes state on photo_analysis_stage and renders photo_analysis_status only during progress/recovery.",
+  "failed_source_locations": [
+    "BootstrapLaunchTests.swift:207",
+    "BootstrapLaunchTests.swift:17",
+    "BootstrapLaunchTests.swift:23",
+    "BootstrapLaunchTests.swift:24",
+    "BootstrapLaunchTests.swift:64",
+    "BootstrapLaunchTests.swift:118",
+    "BootstrapLaunchTests.swift:124",
+    "BootstrapLaunchTests.swift:151"
+  ],
+  "activity_evidence": [
+    "Waiting 15.0s for \"photo_analysis_status\" Any to exist",
+    "XCTAssertTrue failed",
+    "Waiting 15.0s for \"capture_close\" Button to exist",
+    "Tap \"capture_close\" Button",
+    "Waiting 10.0s for \"home_title\" StaticText to exist",
+    "Waiting 10.0s for \"home_add_food\" Button to exist",
+    "Waiting 15.0s for \"photo_analysis_status\" Any to exist",
+    "XCTAssertTrue failed",
+    "XCTAssertTrue failed",
+    "Waiting 15.0s for \"capture_shutter\" Button to exist",
+    "Tap \"capture_close\" Button",
+    "Waiting 10.0s for \"home_title\" StaticText to exist",
+    "Waiting 10.0s for \"home_add_food\" Button to exist"
+  ],
+  "product_sources": [
+    "PhotoAnalysisCameraScreen.kt:72-73",
+    "PhotoAnalysisCameraScreen.kt:209"
+  ],
+  "recommended_ownership": [
+    "mobile/apps/iosApp/Tests/BootstrapLaunchTests.swift",
+    "mobile/apps/sharedKit/src/commonMain/kotlin/com/supernutrition/sharedkit/SharedKitAutomationIds.kt",
+    "mobile/apps/sharedKit/src/commonTest/kotlin/com/supernutrition/sharedkit/SharedKitBootstrapTest.kt"
+  ],
+  "not_yet_verified": "stage accessibility value in runtime hierarchy; replacement test must inspect and assert it rather than assuming mapping"
+}
