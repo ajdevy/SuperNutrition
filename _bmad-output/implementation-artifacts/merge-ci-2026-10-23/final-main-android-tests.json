@@ -1,0 +1,51 @@
+{
+  "run": 40012409738,
+  "head": "35023601c35a427afae0dfade83f8b11e2039154",
+  "url": "https://github.com/flexsent-labs/SuperNutrition/actions/runs/40012409738",
+  "conclusion": "success",
+  "device": {
+    "system_image": "system-images;android-36;default;x86_64",
+    "api": 36,
+    "abi": "x86_64",
+    "serial": "emulator-5554",
+    "physical_device": false,
+    "framebuffer": "720x1600 at280dpi",
+    "cpu_cores": 2
+  },
+  "instrumentation": [
+    {
+      "path": "SuperNutrition/SuperNutrition/mobile/apps/androidApp/build/outputs/androidTest-results/connected/debug/flavors/uiAcceptance/TEST-emulator-5554 - 16-_apps_androidApp-uiAcceptance.xml",
+      "tests": 50,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "testcases": 50,
+      "profile_back_regression": [
+        {
+          "name": "systemBackCancelsNameEditingAndPreservesProfile",
+          "class": "com.supernutrition.android.ProfileNameEditingInstrumentationTest",
+          "passed": true
+        }
+      ]
+    }
+  ],
+  "maestro": [
+    {
+      "path": "_temp/supernutrition-ui-android/report/junit.xml",
+      "name": "Test Suite",
+      "device": "emulator-5554",
+      "tests": 1,
+      "failures": 0,
+      "time": "41.0",
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "startup": {
+    "healthy": true,
+    "serial": "emulator-5554",
+    "home": "com.android.launcher3/.uioverrides.QuickstepLauncher",
+    "elapsed_seconds": 74.67326657699994
+  },
+  "scope": "uiAcceptanceDebug instrumentation and one Maestro scenario; not canonical all-three-variant physical/native evidence renewal"
+}

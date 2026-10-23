@@ -2,7 +2,7 @@
 title: 'Merge current mobile work and repair executable CI defects'
 type: bugfix
 created: '2026-10-23'
-status: in-review
+status: done
 baseline_commit: 1026075221373c9c810c73fb80b2a0093f8d5961
 review_loop_iteration: 3
 context: []
@@ -58,7 +58,7 @@ context: []
 - [x] Merge Android display follow-up PR56 as10a7e045; actual main iOS8/8+1/1 and JVM892tests pass, unchanged stale-evidence failure remains. Android still fails native boot before app tests, recorded with exact evidence.
 - [x] Full AOSP36 image selection — retain full native UI and all existing guards while avoiding failing Google preload; package/path/owned AVD share one tag. Both fresh reviewers and all55 script tests pass.
 - [x] Merge full-AOSP follow-up PR57 as c15cdee2; preserved native logs contain no ANR/crash/FATAL and healthy launcher is observed, but helper has a false deadline because it queried focus from the wrong WindowManager section. Actual main iOS8/8+1/1 and JVM892tests pass with unchanged evidence-policy failure.
-- [ ] Merge correct WindowManager focus-query/partial-dump guard and confirm actual native boot, instrumentation and Maestro; record final policy/hardware blockers.
+- [x] Merge correct WindowManager focus-query/partial-dump guard as PR58/main35023601. Actual hosted Android50/50+1/1 and iOS8/8+1/1 pass, JVM892tests pass with unchanged required-evidence policy failure. Final commands/counts/native limits are recorded in merge-ci-2026-10-23/final-verification.json.
 
 **Acceptance Criteria:**
 - Given the missing-resource crash in archived XCTest, when the fixed host builds and runs on supported hosted arm64 iOS, then resources are found and genuine tests/journeys execute; any additional product failures are fixed and rechecked.
@@ -75,3 +75,42 @@ context: []
 - `qualityCheckJvmAndroid --continue` and `mobileUnitCoverage mobileCoverageReports --continue` — actual outcomes recorded, including physical prerequisite failures.
 - Hosted iOS/Android workflows on the candidate and integrated main — inspect exact test totals, failures and reports.
 - `git diff --check`; `graphify update .` — intended diff is clean and graph updated.
+
+## Final Result
+
+Executable CI defects are repaired and the feature work is integrated. Android and iOS native workflows pass on35023601. The full JVM gate remains correctly red for six expired Android records, five requiring a physical phone; emulator-only availability cannot satisfy those records. No policy/evidence waiver is implied by this spec being done.
+
+## Suggested Review Order
+
+**Android native execution**
+
+- Select full AOSP while retaining the native platform UI under test.
+  [run-ui-journeys-android.sh:44](../../scripts/run-ui-journeys-android.sh#L44)
+
+- Bound real boot, native focus, launcher, keyboard and fatal-event readiness.
+  [android_boot_health.py:188](../../scripts/android_boot_health.py#L188)
+
+- Reject zero-exit native dump failures through one shared validator.
+  [android_boot_health.py:18](../../scripts/android_boot_health.py#L18)
+
+- Wait actual IME completion before the original single native Back assertion.
+  [ProfileNameEditingInstrumentationTest.java:40](../../mobile/apps/androidApp/src/androidTest/java/com/supernutrition/android/ProfileNameEditingInstrumentationTest.java#L40)
+
+**Apple packaging and readiness**
+
+- Aggregate transitive Compose resources at the exported framework root.
+  [build.gradle.kts:3](../../mobile/apps/sharedKit/build.gradle.kts#L3)
+
+- Use one resource-packaging implementation for both Xcode hosts.
+  [build-sharedkit-framework.sh:6](../../mobile/apps/iosApp/build-sharedkit-framework.sh#L6)
+
+- Check the current capture stage and native accessibility controls.
+  [BootstrapLaunchTests.swift:194](../../mobile/apps/iosApp/Tests/BootstrapLaunchTests.swift#L194)
+
+**Diagnostics and regression evidence**
+
+- Preserve independent report checks after genuine Gradle policy failure.
+  [ci-required.yml:78](../../.github/workflows/ci-required.yml#L78)
+
+- Regress real command semantics and failure boundaries before trusting fake readiness.
+  [test_android_boot_health.py:130](../../scripts/tests/test_android_boot_health.py#L130)
