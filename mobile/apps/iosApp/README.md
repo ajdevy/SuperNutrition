@@ -44,6 +44,21 @@ The existing framework output is
 Framework compilation, Xcode host packaging, and device execution are separate
 verification steps.
 
+## Compose resources in Xcode bundles
+
+Both host phases pass `--xcode-resources` to the same build helper. SharedKit
+applies the pinned Compose plugin so `syncComposeResourcesForIos` aggregates
+resources from its transitive dependencies and installs them under the app's
+`compose-resources` directory. The static framework alone does not contain
+those host resources.
+
+This mode requires Xcode's `BUILT_PRODUCTS_DIR`,
+`UNLOCALIZED_RESOURCES_FOLDER_PATH`, `PLATFORM_NAME` and `ARCHS`; missing values
+fail before Gradle starts. It supports arm64 devices and arm64 simulators.
+The pinned plugin cannot synchronize iosX64 resources and reports that
+limitation explicitly. Calling the helper without this option retains the
+standalone framework-only command above.
+
 ## Intel simulator limitation
 
 The pinned Compose **1.11.1 has no `iosX64` variants**. The older compatibility

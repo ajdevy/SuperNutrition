@@ -271,7 +271,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "exec /bin/sh \"${PROJECT_DIR}/build-sharedkit-framework.sh\"\n";
+			shellScript = "exec /bin/sh \"${PROJECT_DIR}/build-sharedkit-framework.sh\" --xcode-resources\n";
 		};
 		S32000010000000000000002 /* Build Production SharedKit framework */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -288,7 +288,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "exec /bin/sh \"${PROJECT_DIR}/build-sharedkit-framework.sh\"\n";
+			shellScript = "exec /bin/sh \"${PROJECT_DIR}/build-sharedkit-framework.sh\" --xcode-resources\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

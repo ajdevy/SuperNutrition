@@ -43,7 +43,7 @@ DEVELOPER_DIR='/Applications/Xcode-26.6.0.app/Contents/Developer' \
 
 A fresh `:feature:photo-analysis-ui:koverXmlReportJvm` report covers all19 executable lines and all24 branches of the new pure garden geometry. [Coverage summary](coverage-summary.json), [XML](coverage-jvm.xml).
 
-The whole UI module raw report has4635/5357 lines (86.52%) and1274/1923 branches (66.25%), below the85% branch floor. This broader gap remains open; this task does not establish a green full coverage/quality gate. No exclusions, baselines or test skips were added.
+The whole UI module raw report has4635/5357 lines (86.52%) and1274/1923 branches (66.25%). This is a diagnostic observation, not a failing declared JVM denominator: the existing `coverage.toml` classifies this UI module as native-equivalent, while the numerical JVM verifier selects nine other modules. Native equivalence still requires valid executable evidence; the expired physical Android records prevent a green complete gate. No exclusions, baselines or test skips were added. This corrects the earlier85% interpretation (REPORT-COVERAGE-1, merge-ci-2026-10-23).
 
 Fresh changed-source-set commonMain/commonTest/jvmTest Detekt reports show0 findings. The separate typed `detektMainJvm` analysis warns of3 compiler-analysis errors, limiting its accuracy; actual JVM/Android/arm64 compilation succeeded. Required physical Android policy evidence remains unavailable. The accepted Intel-only iOS runtime limitation and the separately recorded iOS resource-packaging defect are unchanged.
 
