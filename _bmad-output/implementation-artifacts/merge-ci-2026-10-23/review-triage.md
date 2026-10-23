@@ -31,3 +31,7 @@ Two fresh-context reviewers inspected the complete three-file source diff agains
 ## Full AOSP36 image review
 
 Two new fresh-context Blind Hunter/Edge Case Hunter reviews against10a7e045 return no actionable findings. SDK package/path and the owned AVD name share one tag; an old Google AVD cannot match. Existing startup, crash, native UI, instrumentation and Maestro guards are byte-identical after AVD creation. Scoped syntax/diff checks and16 focused boot/display tests pass; root's full55 script tests and policy/owner checks pass. Source review does not establish healthy native execution.
+
+## WindowManager native-query review
+
+Two fresh-context reviewers againstc15cdee2 confirmed the displays-section query. Edge reviewer found valid focus followed by native zero-exit dump timeout/error; implementation review identified the same ActivityManager class, and bounded Blind re-review identified caught Binder Throwable output. Each finding was recorded in findings.md before patch; actual red regressions failed for all listed native prefixes. One shared validator now protects WMS/AM/IMMS. Final bounded re-reviews from both reviewers return no remaining actionable findings;21 focused and60 total script tests pass. Native execution remains required; source review is not a runtime pass.
