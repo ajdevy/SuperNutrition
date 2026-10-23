@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ProfileLayoutTest[jvm]" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-10-22T21:40:52.789Z" hostname="Anastasias-MacBook-Air.local" time="2.154">
+  <properties/>
+  <testcase name="profile follows the design geometry at 375 by 812[jvm]" classname="com.supernutrition.feature.photoanalysis.ProfileLayoutTest" time="0.75"/>
+  <testcase name="large profile text scrolls and every action remains reachable[jvm]" classname="com.supernutrition.feature.photoanalysis.ProfileLayoutTest" time="1.404"/>
+  <system-out><![CDATA[HOME_TEXT_MEASUREMENT: text='Meal history', scale=2.0, overflowHeight=false, overflowWidth=true, hasVisualOverflow=true, size=178 x 44, paragraphWidth=204.0, paragraphHeight=44.0, didExceedMaxLines=false, lineCount=1, lines=[0[left=0.0, right=177.57686, bottom=44.0, end=12, ellipsized=false]], constraints=Constraints(minWidth = 0, maxWidth = 204, minHeight = 0, maxHeight = Infinity), font=16.0.sp, lineHeight=22.0.sp
+HOME_TEXT_MEASUREMENT: text='0 meals saved', scale=2.0, overflowHeight=false, overflowWidth=true, hasVisualOverflow=true, size=181 x 38, paragraphWidth=204.0, paragraphHeight=38.0, didExceedMaxLines=false, lineCount=1, lines=[0[left=0.0, right=180.12576, bottom=37.0, end=13, ellipsized=false]], constraints=Constraints(minWidth = 0, maxWidth = 204, minHeight = 0, maxHeight = Infinity), font=14.0.sp, lineHeight=19.0.sp
+HOME_TEXT_MEASUREMENT: text='Privacy Policy', scale=2.0, overflowHeight=false, overflowWidth=true, hasVisualOverflow=true, size=198 x 44, paragraphWidth=210.0, paragraphHeight=44.0, didExceedMaxLines=false, lineCount=1, lines=[0[left=0.0, right=197.1577, bottom=44.0, end=14, ellipsized=false]], constraints=Constraints(minWidth = 0, maxWidth = 210, minHeight = 0, maxHeight = Infinity), font=16.0.sp, lineHeight=22.0.sp
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

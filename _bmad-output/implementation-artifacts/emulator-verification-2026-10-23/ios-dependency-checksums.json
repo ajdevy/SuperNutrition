@@ -1,0 +1,476 @@
+[
+  {
+    "group": "org.jetbrains.compose.animation",
+    "name": "animation-core-uikitx64",
+    "version": "1.9.1",
+    "artifact": "animation-core-uikitx64-1.9.1.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/animation/animation-core-uikitx64/1.9.1/animation-core-uikitx64-1.9.1.module",
+    "sha256": "a9591a5a2c1ef020d0cb6a2bc7ce8d0a3b4029927df095fe7d773f3b3395e6a9",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "a9591a5a2c1ef020d0cb6a2bc7ce8d0a3b4029927df095fe7d773f3b3395e6a9"
+  },
+  {
+    "group": "org.jetbrains.kotlinx",
+    "name": "atomicfu-iosx64",
+    "version": "0.26.1",
+    "artifact": "atomicfu-iosx64-0.26.1.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/atomicfu-iosx64/0.26.1/atomicfu-iosx64-0.26.1.module",
+    "sha256": "2aec9bb8f3a4c09aa2abb083ea6812355c2131b390faa947036ae015a1d8adbc",
+    "published_checksum_algorithm": "sha1",
+    "published_checksum": "d9abf77ef43f065733374426f3c66e6bfef704ff"
+  },
+  {
+    "group": "org.jetbrains.compose.foundation",
+    "name": "foundation-layout-uikitx64",
+    "version": "1.9.1",
+    "artifact": "foundation-layout-uikitx64-1.9.1.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/foundation/foundation-layout-uikitx64/1.9.1/foundation-layout-uikitx64-1.9.1.module",
+    "sha256": "58aa636dd68dbdfc6d5663ab8c056717ddf04fe2d901eb0a643554baf9c67e7a",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "58aa636dd68dbdfc6d5663ab8c056717ddf04fe2d901eb0a643554baf9c67e7a"
+  },
+  {
+    "group": "org.jetbrains.compose.material",
+    "name": "material-ripple-uikitx64",
+    "version": "1.9.1",
+    "artifact": "material-ripple-uikitx64-1.9.1.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/material/material-ripple-uikitx64/1.9.1/material-ripple-uikitx64-1.9.1.module",
+    "sha256": "27c03b66cbae2407c91ee9234ff2f21aa290d9d3385a8b04a2df668f3621711f",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "27c03b66cbae2407c91ee9234ff2f21aa290d9d3385a8b04a2df668f3621711f"
+  },
+  {
+    "group": "org.jetbrains.compose.material3",
+    "name": "material3-uikitx64",
+    "version": "1.9.0",
+    "artifact": "material3-uikitx64-1.9.0.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/material3/material3-uikitx64/1.9.0/material3-uikitx64-1.9.0.module",
+    "sha256": "4851c0229028b1ebe16c5e6452e00899cbfa1e3251af323591cc5358c4c31e5d",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "4851c0229028b1ebe16c5e6452e00899cbfa1e3251af323591cc5358c4c31e5d"
+  },
+  {
+    "group": "org.jetbrains.compose.ui",
+    "name": "ui-util",
+    "version": "1.9.1",
+    "artifact": "ui-util-1.9.1.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/ui/ui-util/1.9.1/ui-util-1.9.1.module",
+    "sha256": "8037cfcd912def30911b46411ee28d1355a6457e05111d4354d0fec333aafc77",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "8037cfcd912def30911b46411ee28d1355a6457e05111d4354d0fec333aafc77"
+  },
+  {
+    "group": "org.jetbrains.kotlinx",
+    "name": "kotlinx-datetime-iosx64",
+    "version": "0.7.1",
+    "artifact": "kotlinx-datetime-iosx64-0.7.1.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-datetime-iosx64/0.7.1/kotlinx-datetime-iosx64-0.7.1.module",
+    "sha256": "f55de3dbaf63649a6e5b891c575076cc3b091351391216afa3d48aa5ebc924cb",
+    "published_checksum_algorithm": "sha1",
+    "published_checksum": "09957728b21e38c626831daa46b91f194f0f20e1"
+  },
+  {
+    "group": "org.jetbrains.compose.ui",
+    "name": "ui-backhandler-uikitx64",
+    "version": "1.9.1",
+    "artifact": "ui-backhandler-uikitx64-1.9.1.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/ui/ui-backhandler-uikitx64/1.9.1/ui-backhandler-uikitx64-1.9.1.module",
+    "sha256": "dd6d4bd9ef5cb22b6ea1c6bc0d1c6beb158a1cb419b05edb9ce2c47472111c48",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "dd6d4bd9ef5cb22b6ea1c6bc0d1c6beb158a1cb419b05edb9ce2c47472111c48"
+  },
+  {
+    "group": "org.jetbrains.compose.ui",
+    "name": "ui-graphics-uikitx64",
+    "version": "1.9.1",
+    "artifact": "ui-graphics-uikitx64-1.9.1.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/ui/ui-graphics-uikitx64/1.9.1/ui-graphics-uikitx64-1.9.1.module",
+    "sha256": "803fe40337c797975e7d907fce5e59c8af9429e953d550f2ffa8fc5b00517359",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "803fe40337c797975e7d907fce5e59c8af9429e953d550f2ffa8fc5b00517359"
+  },
+  {
+    "group": "org.jetbrains.compose.ui",
+    "name": "ui-text-uikitx64",
+    "version": "1.9.1",
+    "artifact": "ui-text-uikitx64-1.9.1.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/ui/ui-text-uikitx64/1.9.1/ui-text-uikitx64-1.9.1.module",
+    "sha256": "0b8ee62cf7f29c99ce285bbcbeb40e1363caf6a12d8a0e04f6fde98e9dce8f1f",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "0b8ee62cf7f29c99ce285bbcbeb40e1363caf6a12d8a0e04f6fde98e9dce8f1f"
+  },
+  {
+    "group": "org.jetbrains.compose.ui",
+    "name": "ui-util-uikitx64",
+    "version": "1.9.1",
+    "artifact": "ui-util-uikitx64-1.9.1.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/ui/ui-util-uikitx64/1.9.1/ui-util-uikitx64-1.9.1.module",
+    "sha256": "54b104ee0870aa27927e398b726b21b5adb0117ec68695585deea70c49b5ab03",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "54b104ee0870aa27927e398b726b21b5adb0117ec68695585deea70c49b5ab03"
+  },
+  {
+    "group": "androidx.annotation",
+    "name": "annotation-iosx64",
+    "version": "1.9.1",
+    "artifact": "annotation-iosx64-1.9.1.module",
+    "url": "https://dl.google.com/dl/android/maven2/androidx/annotation/annotation-iosx64/1.9.1/annotation-iosx64-1.9.1.module",
+    "sha256": "d6bf103eac3e4575641f008cc26aeeda2c2f324d81bf8feb1f91b8e5727224bb",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "d6bf103eac3e4575641f008cc26aeeda2c2f324d81bf8feb1f91b8e5727224bb"
+  },
+  {
+    "group": "androidx.collection",
+    "name": "collection-iosx64",
+    "version": "1.5.0",
+    "artifact": "collection-iosx64-1.5.0.module",
+    "url": "https://dl.google.com/dl/android/maven2/androidx/collection/collection-iosx64/1.5.0/collection-iosx64-1.5.0.module",
+    "sha256": "815cd1666d729e7076b52a5b24f3668073a0b127f6c0eed1ca65b956a6e51453",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "815cd1666d729e7076b52a5b24f3668073a0b127f6c0eed1ca65b956a6e51453"
+  },
+  {
+    "group": "androidx.compose.runtime",
+    "name": "runtime",
+    "version": "1.9.0",
+    "artifact": "runtime-1.9.0.module",
+    "url": "https://dl.google.com/dl/android/maven2/androidx/compose/runtime/runtime/1.9.0/runtime-1.9.0.module",
+    "sha256": "b11e9b641b65477f686e19b499daa435baf420d13bb79e98db05ec01892db22e",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "b11e9b641b65477f686e19b499daa435baf420d13bb79e98db05ec01892db22e"
+  },
+  {
+    "group": "androidx.compose.runtime",
+    "name": "runtime",
+    "version": "1.9.3",
+    "artifact": "runtime-1.9.3.module",
+    "url": "https://dl.google.com/dl/android/maven2/androidx/compose/runtime/runtime/1.9.3/runtime-1.9.3.module",
+    "sha256": "2aadf5f7259810646799e6972b9ff582173576cae03819b5c07622ba6fdd7b10",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "2aadf5f7259810646799e6972b9ff582173576cae03819b5c07622ba6fdd7b10"
+  },
+  {
+    "group": "androidx.compose.runtime",
+    "name": "runtime-annotation",
+    "version": "1.9.3",
+    "artifact": "runtime-annotation-1.9.3.module",
+    "url": "https://dl.google.com/dl/android/maven2/androidx/compose/runtime/runtime-annotation/1.9.3/runtime-annotation-1.9.3.module",
+    "sha256": "c185964fab2a0c48d8a1ff13b3e1fa8badd841d94cb1c1352fed0aac79654e79",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "c185964fab2a0c48d8a1ff13b3e1fa8badd841d94cb1c1352fed0aac79654e79"
+  },
+  {
+    "group": "androidx.compose.runtime",
+    "name": "runtime-annotation-iosx64",
+    "version": "1.9.3",
+    "artifact": "runtime-annotation-iosx64-1.9.3.module",
+    "url": "https://dl.google.com/dl/android/maven2/androidx/compose/runtime/runtime-annotation-iosx64/1.9.3/runtime-annotation-iosx64-1.9.3.module",
+    "sha256": "c67589ccdddc82695331a78d2c08d65b63b9d64618cb165f7096e3203a8d2cbb",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "c67589ccdddc82695331a78d2c08d65b63b9d64618cb165f7096e3203a8d2cbb"
+  },
+  {
+    "group": "androidx.compose.runtime",
+    "name": "runtime-iosx64",
+    "version": "1.9.3",
+    "artifact": "runtime-iosx64-1.9.3.module",
+    "url": "https://dl.google.com/dl/android/maven2/androidx/compose/runtime/runtime-iosx64/1.9.3/runtime-iosx64-1.9.3.module",
+    "sha256": "36c324695e6d14c32e327011a4b0bb9c76ac3712d96e04f48d240b064357980c",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "36c324695e6d14c32e327011a4b0bb9c76ac3712d96e04f48d240b064357980c"
+  },
+  {
+    "group": "androidx.compose.runtime",
+    "name": "runtime-saveable",
+    "version": "1.9.3",
+    "artifact": "runtime-saveable-1.9.3.module",
+    "url": "https://dl.google.com/dl/android/maven2/androidx/compose/runtime/runtime-saveable/1.9.3/runtime-saveable-1.9.3.module",
+    "sha256": "f4ebd2ded2d7288ab3e8fe37ac6282df3f63ba7b8a7f207edbd701150b37ed7c",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "f4ebd2ded2d7288ab3e8fe37ac6282df3f63ba7b8a7f207edbd701150b37ed7c"
+  },
+  {
+    "group": "androidx.compose.runtime",
+    "name": "runtime-saveable-iosx64",
+    "version": "1.9.3",
+    "artifact": "runtime-saveable-iosx64-1.9.3.module",
+    "url": "https://dl.google.com/dl/android/maven2/androidx/compose/runtime/runtime-saveable-iosx64/1.9.3/runtime-saveable-iosx64-1.9.3.module",
+    "sha256": "12b42ba4bb8fa92f8e1f94534ca1686dd8d64fe2d05c62d5360943d176d1a600",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "12b42ba4bb8fa92f8e1f94534ca1686dd8d64fe2d05c62d5360943d176d1a600"
+  },
+  {
+    "group": "androidx.lifecycle",
+    "name": "lifecycle-common-iosx64",
+    "version": "2.9.4",
+    "artifact": "lifecycle-common-iosx64-2.9.4.module",
+    "url": "https://dl.google.com/dl/android/maven2/androidx/lifecycle/lifecycle-common-iosx64/2.9.4/lifecycle-common-iosx64-2.9.4.module",
+    "sha256": "2a8df1803012d422d051038d4396a58e354ed29e55d4fda5c243e1e1cd2cc5fd",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "2a8df1803012d422d051038d4396a58e354ed29e55d4fda5c243e1e1cd2cc5fd"
+  },
+  {
+    "group": "androidx.lifecycle",
+    "name": "lifecycle-runtime-compose-iosx64",
+    "version": "2.9.4",
+    "artifact": "lifecycle-runtime-compose-iosx64-2.9.4.module",
+    "url": "https://dl.google.com/dl/android/maven2/androidx/lifecycle/lifecycle-runtime-compose-iosx64/2.9.4/lifecycle-runtime-compose-iosx64-2.9.4.module",
+    "sha256": "52bef2e92d85e8e31ef48f978645c3f95fc2a1a1812f1100fcf1a994d62effd5",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "52bef2e92d85e8e31ef48f978645c3f95fc2a1a1812f1100fcf1a994d62effd5"
+  },
+  {
+    "group": "androidx.lifecycle",
+    "name": "lifecycle-runtime-iosx64",
+    "version": "2.9.4",
+    "artifact": "lifecycle-runtime-iosx64-2.9.4.module",
+    "url": "https://dl.google.com/dl/android/maven2/androidx/lifecycle/lifecycle-runtime-iosx64/2.9.4/lifecycle-runtime-iosx64-2.9.4.module",
+    "sha256": "e93e316af98a9909f432ce64180692dfc2cfd2220d06f4d8ba14ed85c2e3a092",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "e93e316af98a9909f432ce64180692dfc2cfd2220d06f4d8ba14ed85c2e3a092"
+  },
+  {
+    "group": "androidx.savedstate",
+    "name": "savedstate-compose-iosx64",
+    "version": "1.3.3",
+    "artifact": "savedstate-compose-iosx64-1.3.3.module",
+    "url": "https://dl.google.com/dl/android/maven2/androidx/savedstate/savedstate-compose-iosx64/1.3.3/savedstate-compose-iosx64-1.3.3.module",
+    "sha256": "f0917d5edbb17b4b85e7e3fa7dbd12eb16a676681d502636b8542422d7eb1b6a",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "f0917d5edbb17b4b85e7e3fa7dbd12eb16a676681d502636b8542422d7eb1b6a"
+  },
+  {
+    "group": "androidx.savedstate",
+    "name": "savedstate-iosx64",
+    "version": "1.3.3",
+    "artifact": "savedstate-iosx64-1.3.3.module",
+    "url": "https://dl.google.com/dl/android/maven2/androidx/savedstate/savedstate-iosx64/1.3.3/savedstate-iosx64-1.3.3.module",
+    "sha256": "f4806a1e9066d86812e6974adfa1908bb94fc86e25c1ce50e9abe55e96a66ef9",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "f4806a1e9066d86812e6974adfa1908bb94fc86e25c1ce50e9abe55e96a66ef9"
+  },
+  {
+    "group": "org.jetbrains.androidx.lifecycle",
+    "name": "lifecycle-common",
+    "version": "2.9.5",
+    "artifact": "lifecycle-common-2.9.5.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/androidx/lifecycle/lifecycle-common/2.9.5/lifecycle-common-2.9.5.module",
+    "sha256": "1525fbe1eec1ecab1ac8973c99371694df03a3a8147836f998b96fd0588a93ff",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "1525fbe1eec1ecab1ac8973c99371694df03a3a8147836f998b96fd0588a93ff"
+  },
+  {
+    "group": "org.jetbrains.androidx.lifecycle",
+    "name": "lifecycle-runtime",
+    "version": "2.9.5",
+    "artifact": "lifecycle-runtime-2.9.5.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/androidx/lifecycle/lifecycle-runtime/2.9.5/lifecycle-runtime-2.9.5.module",
+    "sha256": "d4db6e5057e6afa0156e49b5f15dcd248bb488afcdf772bc7f804c12348381be",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "d4db6e5057e6afa0156e49b5f15dcd248bb488afcdf772bc7f804c12348381be"
+  },
+  {
+    "group": "org.jetbrains.androidx.lifecycle",
+    "name": "lifecycle-runtime-compose",
+    "version": "2.9.5",
+    "artifact": "lifecycle-runtime-compose-2.9.5.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/androidx/lifecycle/lifecycle-runtime-compose/2.9.5/lifecycle-runtime-compose-2.9.5.module",
+    "sha256": "c122317b9012d3296fa32710f8d3471ba1c597d9f659ede443890b35f19b85d9",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "c122317b9012d3296fa32710f8d3471ba1c597d9f659ede443890b35f19b85d9"
+  },
+  {
+    "group": "org.jetbrains.androidx.lifecycle",
+    "name": "lifecycle-runtime-compose-uikitx64",
+    "version": "2.9.5",
+    "artifact": "lifecycle-runtime-compose-uikitx64-2.9.5.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/androidx/lifecycle/lifecycle-runtime-compose-uikitx64/2.9.5/lifecycle-runtime-compose-uikitx64-2.9.5.module",
+    "sha256": "cfbff9e92186b10f6d8680905da0a005a749a6f7bc1eae92d4403287716a35fd",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "cfbff9e92186b10f6d8680905da0a005a749a6f7bc1eae92d4403287716a35fd"
+  },
+  {
+    "group": "org.jetbrains.compose.animation",
+    "name": "animation",
+    "version": "1.9.1",
+    "artifact": "animation-1.9.1.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/animation/animation/1.9.1/animation-1.9.1.module",
+    "sha256": "4f3c68f3e71a80b9a01e30daba24c9f6a2fc52aef24ba8ad553b6497b718b5a8",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "4f3c68f3e71a80b9a01e30daba24c9f6a2fc52aef24ba8ad553b6497b718b5a8"
+  },
+  {
+    "group": "org.jetbrains.compose.animation",
+    "name": "animation-uikitx64",
+    "version": "1.9.1",
+    "artifact": "animation-uikitx64-1.9.1.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/animation/animation-uikitx64/1.9.1/animation-uikitx64-1.9.1.module",
+    "sha256": "dfcd2b06d7a74c6164a001f7addc7d007bb3ddb39575c531b443d79324b6b006",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "dfcd2b06d7a74c6164a001f7addc7d007bb3ddb39575c531b443d79324b6b006"
+  },
+  {
+    "group": "org.jetbrains.compose.runtime",
+    "name": "runtime-saveable",
+    "version": "1.9.1",
+    "artifact": "runtime-saveable-1.9.1.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/runtime/runtime-saveable/1.9.1/runtime-saveable-1.9.1.module",
+    "sha256": "3326cc03c54837e06398fbb3bac89bd9c5f0cfddc097ea6075ef1edac0ca845c",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "3326cc03c54837e06398fbb3bac89bd9c5f0cfddc097ea6075ef1edac0ca845c"
+  },
+  {
+    "group": "org.jetbrains.compose.runtime",
+    "name": "runtime-saveable-uikitx64",
+    "version": "1.9.1",
+    "artifact": "runtime-saveable-uikitx64-1.9.1.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/runtime/runtime-saveable-uikitx64/1.9.1/runtime-saveable-uikitx64-1.9.1.module",
+    "sha256": "64c40977cfdf98c7674592ac38713db1614d007f8905a17336ac0bbfa3caaa59",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "64c40977cfdf98c7674592ac38713db1614d007f8905a17336ac0bbfa3caaa59"
+  },
+  {
+    "group": "org.jetbrains.compose.ui",
+    "name": "ui-geometry",
+    "version": "1.9.1",
+    "artifact": "ui-geometry-1.9.1.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/ui/ui-geometry/1.9.1/ui-geometry-1.9.1.module",
+    "sha256": "2a6883eb838b0b7e0b489f645dac93466f0b46022d9b54cbe84d442b0ebd2434",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "2a6883eb838b0b7e0b489f645dac93466f0b46022d9b54cbe84d442b0ebd2434"
+  },
+  {
+    "group": "org.jetbrains.compose.ui",
+    "name": "ui-geometry-uikitx64",
+    "version": "1.9.1",
+    "artifact": "ui-geometry-uikitx64-1.9.1.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/ui/ui-geometry-uikitx64/1.9.1/ui-geometry-uikitx64-1.9.1.module",
+    "sha256": "994846ab5509b4239226545baf6582f1c0ac047d6c9c9f2211fe1ff1f2ba8321",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "994846ab5509b4239226545baf6582f1c0ac047d6c9c9f2211fe1ff1f2ba8321"
+  },
+  {
+    "group": "org.jetbrains.compose.ui",
+    "name": "ui-uikit",
+    "version": "1.9.1",
+    "artifact": "ui-uikit-1.9.1.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/ui/ui-uikit/1.9.1/ui-uikit-1.9.1.module",
+    "sha256": "5cf6c231d9ed30cf1e9c631507f9dac1be9ec67ffcbbcc51971f1d63b7238a1b",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "5cf6c231d9ed30cf1e9c631507f9dac1be9ec67ffcbbcc51971f1d63b7238a1b"
+  },
+  {
+    "group": "org.jetbrains.compose.ui",
+    "name": "ui-uikit-uikitx64",
+    "version": "1.9.1",
+    "artifact": "ui-uikit-uikitx64-1.9.1.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/ui/ui-uikit-uikitx64/1.9.1/ui-uikit-uikitx64-1.9.1.module",
+    "sha256": "bd174ce645f4d8c16c5f6cdf7a3072d52b94aad1aaad4fbc6640d1c0c140c72e",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "bd174ce645f4d8c16c5f6cdf7a3072d52b94aad1aaad4fbc6640d1c0c140c72e"
+  },
+  {
+    "group": "org.jetbrains.compose.ui",
+    "name": "ui-unit",
+    "version": "1.9.1",
+    "artifact": "ui-unit-1.9.1.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/ui/ui-unit/1.9.1/ui-unit-1.9.1.module",
+    "sha256": "1659a89420c51e201b548aff35e942622d61855f3c72cf1e7bee5c948881053f",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "1659a89420c51e201b548aff35e942622d61855f3c72cf1e7bee5c948881053f"
+  },
+  {
+    "group": "org.jetbrains.compose.ui",
+    "name": "ui-unit-uikitx64",
+    "version": "1.9.1",
+    "artifact": "ui-unit-uikitx64-1.9.1.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/compose/ui/ui-unit-uikitx64/1.9.1/ui-unit-uikitx64-1.9.1.module",
+    "sha256": "93b99eadd0523ff1846a636d6210e74e721b2ecf7ba5a395e9a03d0a49f70700",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "93b99eadd0523ff1846a636d6210e74e721b2ecf7ba5a395e9a03d0a49f70700"
+  },
+  {
+    "group": "org.jetbrains.kotlinx",
+    "name": "atomicfu",
+    "version": "0.27.0",
+    "artifact": "atomicfu-0.27.0.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/atomicfu/0.27.0/atomicfu-0.27.0.module",
+    "sha256": "ba679c0757e399e68a99f97d738428b2fb7007717ddff0f1deeba862baf44690",
+    "published_checksum_algorithm": "sha1",
+    "published_checksum": "45fe865969b52b01530d7c0c5f165cbcc53a3c3e"
+  },
+  {
+    "group": "org.jetbrains.kotlinx",
+    "name": "atomicfu-iosx64",
+    "version": "0.27.0",
+    "artifact": "atomicfu-iosx64-0.27.0.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/atomicfu-iosx64/0.27.0/atomicfu-iosx64-0.27.0.module",
+    "sha256": "283d8a9431f65d0b7ba12b80bff18934a41f96e7efc12b73464c16eaa97d15fe",
+    "published_checksum_algorithm": "sha1",
+    "published_checksum": "1d4b02e53d603a93a183b894cb4821c6cf1b66c2"
+  },
+  {
+    "group": "org.jetbrains.skiko",
+    "name": "skiko",
+    "version": "0.9.22.2",
+    "artifact": "skiko-0.9.22.2.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/skiko/skiko/0.9.22.2/skiko-0.9.22.2.module",
+    "sha256": "fbece88e8c6b07f2fe94f8122acf407e39d3b0c154cc77fe38b6683df367f4ab",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "fbece88e8c6b07f2fe94f8122acf407e39d3b0c154cc77fe38b6683df367f4ab"
+  },
+  {
+    "group": "org.jetbrains.skiko",
+    "name": "skiko-iosx64",
+    "version": "0.9.22.2",
+    "artifact": "skiko-iosx64-0.9.22.2.module",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/skiko/skiko-iosx64/0.9.22.2/skiko-iosx64-0.9.22.2.module",
+    "sha256": "5c08b726749b238a690716cb6036163ea6dddaaca5c29d52d2f2587de3c29e2f",
+    "published_checksum_algorithm": "sha256",
+    "published_checksum": "5c08b726749b238a690716cb6036163ea6dddaaca5c29d52d2f2587de3c29e2f"
+  },
+  {
+    "group": "org.jetbrains.kotlinx",
+    "name": "atomicfu-iosx64",
+    "version": "0.26.1",
+    "artifact": "atomicfu-cinterop-interop.klib",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/atomicfu-iosx64/0.26.1/atomicfu-iosx64-0.26.1-cinterop-interop.klib",
+    "sha256": "520ab088a7528b2b92fffbc71ea957a94b078db8f25a25aef1ea1f21148a9fd1",
+    "published_checksum_algorithm": "sha256_from_verified_module",
+    "published_checksum": "520ab088a7528b2b92fffbc71ea957a94b078db8f25a25aef1ea1f21148a9fd1",
+    "module_sha256": "2aec9bb8f3a4c09aa2abb083ea6812355c2131b390faa947036ae015a1d8adbc"
+  },
+  {
+    "group": "org.jetbrains.kotlinx",
+    "name": "atomicfu-iosx64",
+    "version": "0.26.1",
+    "artifact": "atomicfu.klib",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/atomicfu-iosx64/0.26.1/atomicfu-iosx64-0.26.1.klib",
+    "sha256": "f3e4de1dfdae64af5a174258f4bb2bf517dae3353d79f5bd442719f39b1db741",
+    "published_checksum_algorithm": "sha256_from_verified_module",
+    "published_checksum": "f3e4de1dfdae64af5a174258f4bb2bf517dae3353d79f5bd442719f39b1db741",
+    "module_sha256": "2aec9bb8f3a4c09aa2abb083ea6812355c2131b390faa947036ae015a1d8adbc"
+  },
+  {
+    "group": "org.jetbrains.kotlinx",
+    "name": "kotlinx-coroutines-core-iosx64",
+    "version": "1.10.2",
+    "artifact": "kotlinx-coroutines-core-iosX64Main-1.10.2.klib",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-core-iosx64/1.10.2/kotlinx-coroutines-core-iosx64-1.10.2.klib",
+    "sha256": "9f9f710955856ae7836688d886acc42da222c729652dbf796855d75cf9c93bcd",
+    "published_checksum_algorithm": "sha256_from_verified_module",
+    "published_checksum": "9f9f710955856ae7836688d886acc42da222c729652dbf796855d75cf9c93bcd",
+    "module_sha256": "ca80ca6d5268734a05ea7f7aa72275f96c9cd7ab3e800b853b5ec5016064230a"
+  },
+  {
+    "group": "org.jetbrains.kotlinx",
+    "name": "kotlinx-serialization-core-iosx64",
+    "version": "1.9.0",
+    "artifact": "kotlinx-serialization-core-iosX64Main-1.9.0.klib",
+    "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-core-iosx64/1.9.0/kotlinx-serialization-core-iosx64-1.9.0.klib",
+    "sha256": "b8078ea8ca68fab531957f2006e107c908579dd43ed62e08703a6a6144283567",
+    "published_checksum_algorithm": "sha256_from_verified_module",
+    "published_checksum": "b8078ea8ca68fab531957f2006e107c908579dd43ed62e08703a6a6144283567",
+    "module_sha256": "7a14d0494028e08a7b4f8b87366d785292ea08a7a2417c5df5e8af83f4b7f1d2"
+  }
+]

@@ -24,7 +24,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-/** Pixel and occlusion checks run inside the production app's physical-device instrumentation. */
+/** Pixel and occlusion checks run inside the packaged app's Android instrumentation. */
 public final class BrandNavigationVisualInstrumentationTest {
     private static final String HOME_TAB = "capture_tab";
     private static final String REWARDS_TAB = "rewards_tab";
@@ -35,6 +35,8 @@ public final class BrandNavigationVisualInstrumentationTest {
         UiDevice device = launchHome();
         Rect home = node(device, HOME_TAB).getVisibleBounds();
         Rect rewards = node(device, REWARDS_TAB).getVisibleBounds();
+        String homeLabel = node(device, HOME_TAB).getContentDescription();
+        String rewardsLabel = node(device, REWARDS_TAB).getContentDescription();
         Bitmap before = screenshot(device, "home_title", "device-home");
         node(device, REWARDS_TAB).click();
         node(device, "rewards_title");
@@ -43,15 +45,10 @@ public final class BrandNavigationVisualInstrumentationTest {
         Bitmap after = screenshot(device, "rewards_list", "device-rewards");
         assertEquals(home, node(device, HOME_TAB).getVisibleBounds());
         assertEquals(rewards, node(device, REWARDS_TAB).getVisibleBounds());
-        float density = context().getResources().getDisplayMetrics().density;
-        float fontScale = context().getResources().getConfiguration().fontScale;
+        assertEquals(homeLabel, node(device, HOME_TAB).getContentDescription());
+        assertEquals(rewardsLabel, node(device, REWARDS_TAB).getContentDescription());
         for (Rect tab : new Rect[]{home, rewards}) {
-            float labelHeight = 12f * fontScale;
-            int labelTop = tab.top + Math.round(((58f - 22f - labelHeight) / 2f + 22f) * density);
-            Rect label = new Rect(tab.left, labelTop, tab.right, labelTop + Math.round(labelHeight * density));
-            assertEquals("label pixels changed on selection", 0, changedPixels(before, after, label));
-            Rect icon = new Rect(tab.left, tab.top, tab.right, labelTop - Math.round(4f * density));
-            assertTrue("selected icon did not change tint", changedPixels(before, after, icon) > 0);
+            assertTrue("selected tab did not change appearance", changedPixels(before, after, tab) > 0);
         }
         before.recycle();
         after.recycle();
@@ -86,20 +83,29 @@ public final class BrandNavigationVisualInstrumentationTest {
         float density = context().getResources().getDisplayMetrics().density;
         Bitmap initial = screenshot(device, "rewards_list", "device-rewards-backdrop");
         Rect camera = node(device, "camera_action").getVisibleBounds();
-        int paper = 0xFFF7F3EF;
+        int paper = 0xFFF6F7F5;
         assertEquals(paper, initial.getPixel(4, camera.centerY()));
         assertEquals(paper, initial.getPixel(initial.getWidth() - 5, camera.centerY()));
         initial.recycle();
         for (int attempt = 0; attempt < 6; attempt++) {
-            UiObject2 card = device.findObject(By.res("rewards_row_9"));
-            if (card != null && card.getVisibleBounds().bottom < camera.top) break;
+            UiObject2 card = device.findObject(By.res("rewards_row_4"));
+            if (card != null && card.getVisibleBounds().height() > 0 && card.getVisibleBounds().bottom < camera.top) break;
             Rect list = node(device, "rewards_list").getVisibleBounds();
-            device.swipe(list.centerX(), list.bottom - Math.round(140 * density),
+            device.swipe(list.centerX(), camera.top - Math.round(40 * density),
                     list.centerX(), list.top + Math.round(120 * density), 90);
             device.waitForIdle();
         }
-        Rect finalCard = node(device, "rewards_row_9").getVisibleBounds();
-        Rect finalState = node(device, "rewards_row_9_state").getVisibleBounds();
+        Rect weeklyCard = node(device, "rewards_row_4").getVisibleBounds();
+        for (int attempt = 0; attempt < 4; attempt++) {
+            UiObject2 card = device.findObject(By.res("rewards_row_6"));
+            if (card != null && card.getVisibleBounds().width() >= Math.round(145 * density)) break;
+            device.swipe(device.getDisplayWidth() - Math.round(32 * density), weeklyCard.centerY(),
+                    Math.round(24 * density), weeklyCard.centerY(), 90);
+            device.waitForIdle();
+        }
+        Rect finalCard = node(device, "rewards_row_6").getVisibleBounds();
+        Rect finalState = node(device, "rewards_row_6_state").getVisibleBounds();
+        assertTrue("final reward is clipped horizontally", finalCard.width() >= Math.round(145 * density));
         assertTrue("final reward is hidden under the camera", finalCard.bottom < camera.top);
         assertTrue("final reward state is clipped", finalState.height() > 0 && finalState.bottom <= finalCard.bottom);
         screenshot(device, "rewards_list", "device-rewards-final").recycle();

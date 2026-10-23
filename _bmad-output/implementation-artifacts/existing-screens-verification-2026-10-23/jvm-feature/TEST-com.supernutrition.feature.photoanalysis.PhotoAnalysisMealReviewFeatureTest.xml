@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="PhotoAnalysisMealReviewFeatureTest[jvm]" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-10-23T06:03:08.969Z" hostname="Anastasias-MacBook-Air.local" time="9.691">
+  <properties/>
+  <testcase name="accepted replacement clears the previous confirmation and note[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisMealReviewFeatureTest" time="0.593"/>
+  <testcase name="accepted reanalysis clears stale evidence but preserves explicit manual choices[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisMealReviewFeatureTest" time="2.275"/>
+  <testcase name="retained selection survives background and copies mutable evidence sets[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisMealReviewFeatureTest" time="0.666"/>
+  <testcase name="review validates evidence IDs and preserves the candidate label from its source[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisMealReviewFeatureTest" time="0.834"/>
+  <testcase name="ignored photo replacement preserves the current review and note[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisMealReviewFeatureTest" time="0.565"/>
+  <testcase name="selection rejects unavailable evidence and conflicting dish choices[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisMealReviewFeatureTest" time="0.768"/>
+  <testcase name="retake cancel and new photo clear previous review and manual input[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisMealReviewFeatureTest" time="2.875"/>
+  <testcase name="capture cannot confirm a draft and custom meal requires content[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisMealReviewFeatureTest" time="0.699"/>
+  <testcase name="ignored reanalysis preserves current manual selection and confirmation[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisMealReviewFeatureTest" time="0.413"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

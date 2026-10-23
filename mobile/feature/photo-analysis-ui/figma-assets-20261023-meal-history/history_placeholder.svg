@@ -1,0 +1,14 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="52" height="32" viewBox="0 0 52 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Graphic / Meal Placeholder" clip-path="url(#clip0_0_166)">
+<path id="Vector" d="M1.5 1.5V10.5C1.5 12.7 3.1 14.2 5 14.2C6.9 14.2 8.5 12.7 8.5 10.5V1.5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke="#44703A"/>
+<path id="Vector_2" d="M5 1.5V10.5" stroke-width="1.5" stroke-linecap="round" stroke="#44703A"/>
+<path id="Vector_3" d="M5 14.2V30.5" stroke-width="1.5" stroke-linecap="round" stroke="#44703A"/>
+<path id="Vector_4" d="M41.85 16C41.85 23.8701 35.4701 30.25 27.6 30.25C19.7299 30.25 13.35 23.8701 13.35 16C13.35 8.12994 19.7299 1.75 27.6 1.75C35.4701 1.75 41.85 8.12994 41.85 16Z" stroke-width="1.5" stroke="#44703A"/>
+<path id="Vector_5" d="M47.6 30.5V16.4M47.6 16.4V1.5C49.8 1.9 51 5.7 51 10.4C51 14 49.7 16.4 47.6 16.4Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke="#44703A"/>
+</g>
+<defs>
+<clipPath id="clip0_0_166">
+<rect width="52" height="32" fill="white"/>
+</clipPath>
+</defs>
+</svg>

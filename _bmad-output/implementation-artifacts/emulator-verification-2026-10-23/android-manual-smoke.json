@@ -1,0 +1,56 @@
+{
+  "viewport_px": [
+    720,
+    1560
+  ],
+  "viewport_dp": [
+    360,
+    780
+  ],
+  "density": 320,
+  "font_scale": 1,
+  "locale": "en-US",
+  "screens": [
+    "Home",
+    "Profile",
+    "Meal history empty state",
+    "Profile inline name editing with native IME",
+    "Rewards",
+    "Camera permission foreground grant + emulated capture",
+    "Review via local inference after native picker import"
+  ],
+  "manual_assertions": {
+    "home_profile_history_back": true,
+    "name_draft_cancel_after_ime_dismiss": true,
+    "installed_apk_matches_current_source_build": true,
+    "synthetic_camera_photo_rejected_as_no_food": true,
+    "real_test_photo_reaches_review": true
+  },
+  "fixture": "mobile/fixtures/photo-analysis/user-samples/2026-08-02_22-30-42-chicken-salad-vegetables.jpg",
+  "recognition_accuracy_claim": false,
+  "fixture_candidates_confirmed": false,
+  "large_font": {
+    "font_scale": 2,
+    "home_scroll_verified": true,
+    "normal_no_scroll_viewport_dp": [
+      360,
+      780
+    ],
+    "no_scroll_at_200_percent": false,
+    "restored_font_scale": 1
+  },
+  "record_started_at_utc": "2026-10-23T12:56:52.951047+00:00",
+  "consolidated_at_utc": "2026-10-23T13:57:43.569993+00:00",
+  "timestamp_notes": "The original record time preceded later large-font checks. File creation times below are filesystem evidence, not reconstructed capture events.",
+  "screenshot_file_created_at_utc": {
+    "android-camera.png": "2026-10-23T12:46:06.429193+00:00",
+    "android-home-200-scrolled.png": "2026-10-23T13:13:21.156833+00:00",
+    "android-home-200.png": "2026-10-23T13:08:15.592676+00:00",
+    "android-home.png": "2026-10-23T12:22:39.698887+00:00",
+    "android-meal-history.png": "2026-10-23T12:27:08.318488+00:00",
+    "android-profile-edit-keyboard.png": "2026-10-23T12:31:31.586456+00:00",
+    "android-profile.png": "2026-10-23T12:24:27.313347+00:00",
+    "android-review-test-photo.png": "2026-10-23T12:55:33.174454+00:00",
+    "android-rewards.png": "2026-10-23T12:38:23.690568+00:00"
+  }
+}

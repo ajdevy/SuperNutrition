@@ -11,9 +11,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 
 internal val LocalMainBackdropProvided = staticCompositionLocalOf { false }
@@ -31,25 +37,31 @@ fun PhotoAnalysisMainLayout(
     contentPadding: PaddingValues = PaddingValues(),
     content: @Composable () -> Unit,
 ) {
-    Box(modifier.fillMaxSize()) {
-        PhotoAnalysisMainBackground(state.selectedTab)
-        Box(Modifier.fillMaxSize().padding(contentPadding).consumeWindowInsets(contentPadding)) {
-            val overlaysNavigation = state.selectedTab == 0 || state.selectedTab == 1
-            CompositionLocalProvider(
-                LocalMainBackdropProvided provides true,
-                LocalMainNavigationOverlap provides if (overlaysNavigation) MainBottomBarCanvasHeight else 0.dp,
-            ) {
-                if (overlaysNavigation) {
-                    content()
-                    PhotoAnalysisMainBottomBar(
-                        state = state,
-                        actions = actions,
-                        modifier = Modifier.align(Alignment.BottomCenter),
-                    )
-                } else {
-                    Column(Modifier.fillMaxSize()) {
-                        Box(Modifier.fillMaxWidth().weight(1f)) { content() }
-                        PhotoAnalysisMainBottomBar(state = state, actions = actions)
+    val density = LocalDensity.current
+    var navigationHeight by remember { mutableStateOf(MainBottomBarCanvasHeight) }
+    WithHomeBackdrop {
+        Box(modifier.fillMaxSize()) {
+            PhotoAnalysisMainBackground(state.selectedTab)
+            Box(Modifier.fillMaxSize().padding(contentPadding).consumeWindowInsets(contentPadding)) {
+                val overlaysNavigation = state.selectedTab == 0 || state.selectedTab == 1
+                CompositionLocalProvider(
+                    LocalMainBackdropProvided provides true,
+                    LocalMainNavigationOverlap provides if (overlaysNavigation) navigationHeight else 0.dp,
+                ) {
+                    if (overlaysNavigation) {
+                        content()
+                        PhotoAnalysisMainBottomBar(
+                            state = state,
+                            actions = actions,
+                            modifier = Modifier.align(Alignment.BottomCenter).onSizeChanged {
+                                navigationHeight = with(density) { it.height.toDp() }
+                            },
+                        )
+                    } else {
+                        Column(Modifier.fillMaxSize()) {
+                            Box(Modifier.fillMaxWidth().weight(1f)) { content() }
+                            PhotoAnalysisMainBottomBar(state = state, actions = actions)
+                        }
                     }
                 }
             }

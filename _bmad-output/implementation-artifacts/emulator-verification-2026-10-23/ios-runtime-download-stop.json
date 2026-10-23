@@ -1,0 +1,7 @@
+{
+  "at": "2026-10-23T13:15:38.805904+00:00",
+  "pid": 94695,
+  "signal": "SIGINT",
+  "reason": "User accepted Intel limitation; current Compose 1.11.1 does not publish ios_x64 variants",
+  "checksum_experiment_reverted": true
+}

@@ -28,7 +28,7 @@ class NativePhoneHomeLayoutTest {
             ) { HomeScreen(layoutHomeModel()) }
         }
         val mascot = onNodeWithContentDescription("Capybara mascot").fetchSemanticsNode().boundsInRoot
-        assertTrue(mascot.height >= 160f, "Mascot shrinks to a thumbnail on the native phone: $mascot")
+        assertTrue(mascot.height >= 100f, "Mascot shrinks to a thumbnail on the native phone: $mascot")
     }
 
     @Test
@@ -44,14 +44,14 @@ class NativePhoneHomeLayoutTest {
             ) { HomeScreen(layoutHomeModel()) }
         }
         val pill = onNodeWithTag(UiAutomationIds.BOTTOM_BAR_PILL.value).fetchSemanticsNode().boundsInRoot
-        // At tab centers, the solid fill ends at row 271 of the 344px export; the rest is shadow.
-        val visibleBottom = pill.top + pill.height * 272f / 344f
+        // The current capsule is a native shape; its semantic bounds are its solid fill.
+        val visibleBottom = pill.bottom
         val bottomGap = 782f - 22f - visibleBottom
         assertTrue(bottomGap in 0f..8f, "Navigation floats above its safe edge by $bottomGap dp")
     }
 
     @Test
-    fun `next step card is complete in the first ordinary phone frame`() = runSkikoComposeUiTest(
+    fun `last nutrition metric is complete in the first ordinary phone frame`() = runSkikoComposeUiTest(
         size = Size(361f, 782f),
         density = Density(1f),
     ) {
@@ -62,10 +62,13 @@ class NativePhoneHomeLayoutTest {
                 contentPadding = PaddingValues(top = 39.dp, bottom = 22.dp),
             ) { HomeScreen(layoutHomeModel()) }
         }
-        val card = onNodeWithTag(UiAutomationIds.HOME_NEXT_STEP.value).fetchSemanticsNode().boundsInRoot
+        val card = onNodeWithTag(UiAutomationIds.HOME_METRIC_FATS.value).fetchSemanticsNode().boundsInRoot
         val content = onNodeWithTag(UiAutomationIds.HOME_SCREEN.value).fetchSemanticsNode().boundsInRoot
-        val action = onNodeWithText("Do it").fetchSemanticsNode().boundsInRoot
-        assertTrue(card.bottom <= content.bottom - 8f, "Initial frame clips the next-step card: $card in $content")
+        val action = onNodeWithText(
+            layoutHomeModel().fats.label,
+            useUnmergedTree = true,
+        ).fetchSemanticsNode().boundsInRoot
+        assertTrue(card.bottom <= content.bottom - 8f, "Initial frame clips the final metric: $card in $content")
         assertTrue(action.top >= card.top + 8f && action.bottom <= card.bottom - 8f)
     }
 }

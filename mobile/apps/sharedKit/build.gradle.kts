@@ -1,5 +1,7 @@
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.compose)
+    alias(libs.plugins.kotlin.compose)
     id("com.supernutrition.kmp-apple-targets")
 }
 
@@ -39,6 +41,7 @@ kotlin {
             }
         }
         commonMain.dependencies {
+            implementation(libs.compose.runtime)
             implementation(libs.koin.core)
             implementation(project(":core:ui"))
             api(project(":feature:photo-analysis-presenter"))

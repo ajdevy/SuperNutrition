@@ -2,7 +2,7 @@ package com.supernutrition.feature.photoanalysis
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,39 +34,41 @@ import androidx.compose.ui.unit.sp
 import com.supernutrition.core.ui.UiAutomationId
 import com.supernutrition.core.ui.UiAutomationIds
 import com.supernutrition.feature.photoanalysis.resources.Res
-import com.supernutrition.feature.photoanalysis.resources.icon_bean_vector
-import com.supernutrition.feature.photoanalysis.resources.icon_droplet_vector
-import com.supernutrition.feature.photoanalysis.resources.icon_footprints_vector
-import com.supernutrition.feature.photoanalysis.resources.icon_leaf_today_vector
-import com.supernutrition.feature.photoanalysis.resources.icon_leaf_vector
+import com.supernutrition.feature.photoanalysis.resources.refresh_colors
+import com.supernutrition.feature.photoanalysis.resources.refresh_fats
+import com.supernutrition.feature.photoanalysis.resources.refresh_fiber
+import com.supernutrition.feature.photoanalysis.resources.refresh_protein
+import com.supernutrition.feature.photoanalysis.resources.refresh_sun
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
-// The original Figma metric track is 151.75dp wide minus 9dp/10dp inner padding.
-private const val DESIGN_METRIC_TRACK_WIDTH = 132.75f
-
 @Composable
-internal fun HomeRhythmCard(model: HomeScreenModel) {
-    Column(
-        modifier = Modifier.fillMaxWidth().automationId(UiAutomationIds.HOME_SUMMARY)
-            .semantics { contentDescription = homeRhythmDescription(model) }
-            .shadow(8.dp, RoundedCornerShape(24.dp), spotColor = Color(0x1F594D3D))
-            .clip(RoundedCornerShape(24.dp)).background(HomeCream)
-            .padding(HomeCardPadding),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
+internal fun HomeRhythmCard(model: HomeScreenModel, onViewGoals: () -> Unit = {}) {
+    Box(
+        Modifier.fillMaxWidth().shadow(8.dp, RoundedCornerShape(20.dp), spotColor = Color(0x1F594D3D))
+            .clip(RoundedCornerShape(20.dp)),
     ) {
-        HomeRhythmHeading(model)
-        HomeRhythmGrid(model)
+        HomeGlassBackdrop(Modifier.matchParentSize())
+        Column(
+            modifier = Modifier.fillMaxWidth().automationId(UiAutomationIds.HOME_SUMMARY)
+                .semantics { contentDescription = homeRhythmDescription(model) }
+                .clip(RoundedCornerShape(20.dp)).background(Color.White.copy(alpha = .55f))
+                .padding(start = 8.dp, end = 8.dp, top = 14.dp, bottom = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            HomeRhythmHeading(model)
+            HomeRhythmGrid(model, onViewGoals)
+        }
     }
 }
 
 @Composable
-private fun HomeRhythmGrid(model: HomeScreenModel) {
+private fun HomeRhythmGrid(model: HomeScreenModel, onViewGoals: () -> Unit) {
     Layout(
         modifier = Modifier.fillMaxWidth(),
         content = {
             homeRhythmItems(model).forEach { item ->
-                HomeMetricCard(item.metric, item.appearance, Modifier.automationId(item.automationId))
+                HomeMetricCard(item.metric, item.appearance, Modifier.automationId(item.automationId), onViewGoals)
             }
         },
     ) { measurables, constraints ->
@@ -101,42 +103,38 @@ private fun homeRhythmItems(model: HomeScreenModel) = listOf(
     HomeRhythmItem(
         model.fiber,
         HomeMetricAppearance(
-            Res.drawable.icon_leaf_today_vector,
-            Color(0xFFDCEBD3),
-            Color(0xFF7CB342),
-            61f / DESIGN_METRIC_TRACK_WIDTH,
+            Res.drawable.refresh_fiber,
+            Color(0xFFE1F3DA),
+            Color(0xFF7AB462),
         ),
         UiAutomationIds.HOME_METRIC_FIBER,
     ),
     HomeRhythmItem(
-        model.water,
+        model.colors,
         HomeMetricAppearance(
-            Res.drawable.icon_droplet_vector,
-            Color(0xFFD9EAF7),
-            Color(0xFF3B8FD4),
-            77f / DESIGN_METRIC_TRACK_WIDTH,
+            Res.drawable.refresh_colors,
+            Color(0xFFF8F4E9),
+            Color(0xFF6B4F9E),
         ),
-        UiAutomationIds.HOME_METRIC_WATER,
+        UiAutomationIds.HOME_METRIC_COLORS,
     ),
     HomeRhythmItem(
         model.protein,
         HomeMetricAppearance(
-            Res.drawable.icon_bean_vector,
+            Res.drawable.refresh_protein,
             Color(0xFFEADCF5),
             Color(0xFF8B4FD1),
-            102f / DESIGN_METRIC_TRACK_WIDTH,
         ),
         UiAutomationIds.HOME_METRIC_PROTEIN,
     ),
     HomeRhythmItem(
-        model.movement,
+        model.fats,
         HomeMetricAppearance(
-            Res.drawable.icon_footprints_vector,
-            Color(0xFFFBE3D0),
-            Color(0xFFF2812F),
-            91f / DESIGN_METRIC_TRACK_WIDTH,
+            Res.drawable.refresh_fats,
+            Color(0xFFFDF3DF),
+            Color(0xFFD98324),
         ),
-        UiAutomationIds.HOME_METRIC_MOVEMENT,
+        UiAutomationIds.HOME_METRIC_FATS,
     ),
 )
 
@@ -149,24 +147,20 @@ private data class HomeRhythmItem(
 private fun homeRhythmDescription(model: HomeScreenModel) = listOf(
     model.rhythmTitle,
     model.rhythmSubtitle,
-    "${model.fiber.label} ${model.fiber.value}",
-    "${model.water.label} ${model.water.value}",
-    "${model.protein.label} ${model.protein.value}",
-    "${model.movement.label} ${model.movement.value}",
 ).joinToString(". ")
 
 @Composable
 private fun HomeRhythmHeading(model: HomeScreenModel) {
-    Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+    Column(Modifier.padding(start = 12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            Image(painterResource(Res.drawable.icon_leaf_vector), null, Modifier.size(13.dp))
+            Image(painterResource(Res.drawable.refresh_sun), null, Modifier.size(16.dp))
             Text(
                 text = model.rhythmTitle,
                 color = HomeBody,
                 fontFamily = nunitoFont(),
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 10.5.sp,
-                lineHeight = 14.sp,
+                fontSize = 13.sp,
+                lineHeight = 16.sp,
             )
         }
         Text(
@@ -174,31 +168,35 @@ private fun HomeRhythmHeading(model: HomeScreenModel) {
             color = HomeInk,
             fontFamily = frauncesFont(),
             fontWeight = FontWeight.SemiBold,
-            fontSize = 14.sp,
-            lineHeight = 18.sp,
+            fontSize = 18.sp,
+            lineHeight = 22.sp,
         )
     }
 }
 
 @Composable
-private fun HomeMetricCard(metric: HomeMetricModel, appearance: HomeMetricAppearance, modifier: Modifier) {
+private fun HomeMetricCard(
+    metric: HomeMetricModel,
+    appearance: HomeMetricAppearance,
+    modifier: Modifier,
+    onViewGoals: () -> Unit,
+) {
     Column(
-        modifier = modifier.heightIn(min = 60.dp)
-            .clip(RoundedCornerShape(14.dp)).background(HomeCard)
-            .border(1.dp, HomeLine, RoundedCornerShape(14.dp))
-            .padding(9.dp),
+        modifier = modifier.heightIn(min = 98.dp).clickable(onClick = onViewGoals)
+            .clip(RoundedCornerShape(12.dp)).background(Color.White)
+            .padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 10.dp),
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
         Row(
             modifier = Modifier.padding(bottom = HomeMetricGap),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             Box(
-                modifier = Modifier.size(25.dp).clip(CircleShape).background(appearance.iconBackground),
+                modifier = Modifier.size(36.dp).clip(CircleShape).background(appearance.iconBackground),
                 contentAlignment = Alignment.Center,
             ) {
-                Image(painterResource(appearance.icon), null, Modifier.size(15.dp))
+                Image(painterResource(appearance.icon), null, Modifier.size(20.dp))
             }
             Column(Modifier.weight(1f)) {
                 Text(
@@ -206,15 +204,17 @@ private fun HomeMetricCard(metric: HomeMetricModel, appearance: HomeMetricAppear
                     color = HomeBody,
                     fontFamily = nunitoFont(),
                     fontWeight = FontWeight.SemiBold,
-                    fontSize = 9.5.sp,
-                    lineHeight = 12.sp,
+                    fontSize = 13.sp,
+                    lineHeight = 16.sp,
                     modifier = Modifier.fillMaxWidth(),
                 )
                 HomeMetricValue(metric.value)
             }
         }
-        Box(Modifier.fillMaxWidth().height(4.dp).clip(CircleShape).background(Color(0xFFE7E4E0))) {
-            Box(Modifier.fillMaxWidth(appearance.progressFraction).height(4.dp).background(appearance.accent))
+        Box(Modifier.fillMaxWidth().height(6.dp).clip(CircleShape).background(Color(0xFFE7E4E0))) {
+            metric.progressFraction?.takeIf { it.isFinite() }?.coerceIn(0f, 1f)?.let { progress ->
+                Box(Modifier.fillMaxWidth(progress).height(6.dp).background(appearance.accent))
+            }
         }
     }
 }
@@ -231,7 +231,7 @@ private fun HomeMetricValue(value: String) {
                     SpanStyle(
                         color = HomeMutedText,
                         fontFamily = unitFont,
-                        fontSize = 9.sp,
+                        fontSize = 13.sp,
                         fontWeight = FontWeight.Normal,
                     ),
                 ) {
@@ -242,14 +242,9 @@ private fun HomeMetricValue(value: String) {
         color = HomeBody,
         fontFamily = frauncesFont(),
         fontWeight = FontWeight.SemiBold,
-        fontSize = 13.5.sp,
-        lineHeight = 17.sp,
+        fontSize = 26.sp,
+        lineHeight = 30.sp,
     )
 }
 
-private data class HomeMetricAppearance(
-    val icon: DrawableResource,
-    val iconBackground: Color,
-    val accent: Color,
-    val progressFraction: Float,
-)
+private data class HomeMetricAppearance(val icon: DrawableResource, val iconBackground: Color, val accent: Color)

@@ -1,0 +1,28 @@
+Starting a Gradle Daemon (subsequent builds will be faster)
+Reusing configuration cache.
+> Task :apps:androidApp:detektFormat NO-SOURCE
+> Task :apps:sharedKit:detektFormat UP-TO-DATE
+> Task :core:config:detektFormat UP-TO-DATE
+> Task :core:ui:detektFormat UP-TO-DATE
+> Task :domain:inference:detektFormat UP-TO-DATE
+> Task :feature:meal-search-presenter:detektFormat UP-TO-DATE
+> Task :domain:photo-analysis:detektFormat UP-TO-DATE
+> Task :domain:nutrition:detektFormat UP-TO-DATE
+> Task :feature:meal-search-ui:detektFormat UP-TO-DATE
+> Task :feature:photo-analysis-presenter:detektFormat UP-TO-DATE
+> Task :inference:local-ios:detektFormat UP-TO-DATE
+> Task :inference:local-shared:detektFormat UP-TO-DATE
+> Task :inference:local-android:detektFormat UP-TO-DATE
+> Task :platform:photo-ios:detektFormat UP-TO-DATE
+> Task :platform:photo-android:detektFormat UP-TO-DATE
+> Task :testing:compose-support:detektFormat UP-TO-DATE
+> Task :testing:scaffold-probe:detektFormat UP-TO-DATE
+> Task :feature:photo-analysis:detektFormat
+> Task :feature:photo-analysis-ui:detektFormat
+
+> Task :qualityFormat
+Detekt/ktlint-wrapper formatting completed through the explicit qualityFormat entrypoint.
+
+BUILD SUCCESSFUL in 2m 11s
+19 actionable tasks: 3 executed, 16 up-to-date
+Configuration cache entry reused.

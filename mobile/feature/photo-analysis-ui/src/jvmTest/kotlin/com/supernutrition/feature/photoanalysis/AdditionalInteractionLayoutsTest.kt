@@ -14,6 +14,7 @@ import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -30,7 +31,6 @@ import androidx.compose.ui.unit.dp
 import com.supernutrition.core.ui.UiAutomationIds
 import org.jetbrains.skia.EncodedImageFormat
 import java.io.File
-import kotlin.math.abs
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -41,18 +41,18 @@ import org.jetbrains.skia.Image as SkiaImage
 @OptIn(ExperimentalTestApi::class)
 class AdditionalInteractionLayoutsTest {
     @Test
-    fun `large Home badge wraps completely beside the profile action`() = runSkikoComposeUiTest(
+    fun `large Home prompt wraps completely below the reachable profile action`() = runSkikoComposeUiTest(
         size = Size(320f, 568f),
         density = Density(1f, 2f),
     ) {
-        val badge = "A steady rhythm built over twelve days"
-        setContent { HomeScreen(layoutHomeModel().copy(rhythmBadgeLabel = badge)) }
-        val label = onNodeWithText(badge, useUnmergedTree = true)
+        val prompt = "A steady rhythm built with your next meal"
+        setContent { HomeScreen(layoutHomeModel().copy(careQuestion = prompt)) }
+        val label = onNodeWithText(prompt, useUnmergedTree = true)
         val layout = label.assertIsDisplayed().assertReadableHomeText(2f)
-        assertTrue(layout.lineCount > 1, "Long badge must exercise enlarged-text wrapping")
+        assertTrue(layout.lineCount > 1, "Long prompt must exercise enlarged-text wrapping")
         val profile = onNodeWithTag(UiAutomationIds.HOME_PROFILE.value).assertIsDisplayed()
             .assertHeightIsAtLeast(48.dp).fetchSemanticsNode().boundsInRoot
-        assertTrue(label.fetchSemanticsNode().boundsInRoot.right + 16f <= profile.left, "Badge overlaps profile")
+        assertTrue(label.fetchSemanticsNode().boundsInRoot.top > profile.bottom, "Prompt overlaps profile")
     }
 
     @Test
@@ -64,7 +64,7 @@ class AdditionalInteractionLayoutsTest {
                         HomeScreen(layoutHomeModel())
                     }
                 }
-                listOf("Movement", "Fiber", "Water", "Protein").forEach { label ->
+                listOf("Fiber", "Colors", "Protein", "Fats").forEach { label ->
                     val layouts = mutableListOf<TextLayoutResult>()
                     onNodeWithText(label, useUnmergedTree = true).performScrollTo()
                         .performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
@@ -102,21 +102,32 @@ class AdditionalInteractionLayoutsTest {
     }
 
     @Test
-    fun `home care actions keep symmetric touch targets with unequal large labels`() = runSkikoComposeUiTest(
+    fun `home prompt and metric goals retain independent large text touch targets`() = runSkikoComposeUiTest(
         size = Size(320f, 568f),
         density = Density(1f, 2f),
     ) {
+        var adds = 0
+        var goals = 0
         setContent {
-            HomeScreen(layoutHomeModel().copy(viewGoalsLabel = "View my nutrition goals"))
+            HomeScreen(
+                layoutHomeModel().copy(viewGoalsLabel = "View my nutrition goals"),
+                onAddFoodRequested = { adds++ },
+                onViewGoalsRequested = { goals++ },
+            )
         }
         val add = onNodeWithTag(UiAutomationIds.HOME_ADD_FOOD.value).performScrollTo()
-            .assertHeightIsAtLeast(48.dp).fetchSemanticsNode().boundsInRoot
-        val goals = onNodeWithTag(UiAutomationIds.HOME_VIEW_GOALS.value)
-            .assertHeightIsAtLeast(48.dp).fetchSemanticsNode().boundsInRoot
+            .assertHeightIsAtLeast(48.dp)
+        add.performClick()
+        val metric = onNodeWithTag(UiAutomationIds.HOME_METRIC_FATS.value).performScrollTo()
+            .assertHeightIsAtLeast(48.dp)
         assertTrue(
-            abs(add.top - goals.top) <= 1f && abs(add.bottom - goals.bottom) <= 1f,
-            "Care action heights differ: add=$add goals=$goals",
+            add.getUnclippedBoundsInRoot().bottom < metric.getUnclippedBoundsInRoot().top,
+            "Prompt overlaps metrics",
         )
+        metric.performClick()
+        onNodeWithText("Your goals").assertIsDisplayed()
+        assertEquals(1, adds)
+        assertEquals(1, goals)
         writeCaseScreenshot("home-care-large-text", captureToImage().asSkiaBitmap())
     }
 
@@ -127,7 +138,7 @@ class AdditionalInteractionLayoutsTest {
     ) {
         setContent { HomeScreen(layoutHomeModel()) }
         onNodeWithTag(UiAutomationIds.HOME_ADD_FOOD.value).assertHeightIsAtLeast(48.dp)
-        onNodeWithTag(UiAutomationIds.HOME_VIEW_GOALS.value).assertHeightIsAtLeast(48.dp)
+        onNodeWithTag(UiAutomationIds.HOME_METRIC_FIBER.value).assertHeightIsAtLeast(48.dp)
     }
 
     @Test
@@ -142,7 +153,7 @@ class AdditionalInteractionLayoutsTest {
             }
         }
         setContent(content)
-        onNodeWithTag(UiAutomationIds.HOME_VIEW_GOALS.value).performClick()
+        onNodeWithTag(UiAutomationIds.HOME_METRIC_FIBER.value).performClick()
         val openState = runOnIdle { registry.performSave() }
         setContent { }
         registry = SaveableStateRegistry(openState) { true }
@@ -190,7 +201,9 @@ class AdditionalInteractionLayoutsTest {
             PhotoAnalysisMainLayout(layoutBottomBarState(), layoutBottomBarActions()) { HomeScreen(layoutHomeModel()) }
         }
         onNode(hasScrollAction()).performSemanticsAction(SemanticsActions.ScrollBy) { it(0f, 10_000f) }
-        val action = onNodeWithText("Do it").assertIsDisplayed().fetchSemanticsNode().boundsInRoot
+        val action = onNodeWithTag(
+            UiAutomationIds.HOME_METRIC_FATS.value,
+        ).assertIsDisplayed().fetchSemanticsNode().boundsInRoot
         val camera = onNodeWithTag(UiAutomationIds.CAMERA_ACTION.value).fetchSemanticsNode().boundsInRoot
         assertTrue(action.bottom < camera.top, "Home action overlaps navigation: action=$action camera=$camera")
         setContent {
@@ -198,10 +211,11 @@ class AdditionalInteractionLayoutsTest {
                 RewardsScreen(layoutRewardsModel())
             }
         }
+        onNodeWithTag(UiAutomationIds.rewardsRow(6).value).performScrollTo()
         onNodeWithTag(UiAutomationIds.REWARDS_SCREEN.value).performRewardsScrollToEnd()
-        val reward = onNodeWithTag(UiAutomationIds.rewardsRow(9).value)
+        val reward = onNodeWithTag(UiAutomationIds.rewardsRow(6).value)
             .assertIsDisplayed().fetchSemanticsNode().boundsInRoot
-        val rewardState = onNodeWithTag(UiAutomationIds.rewardsRowState(9).value)
+        val rewardState = onNodeWithTag(UiAutomationIds.rewardsRowState(6).value)
             .assertIsDisplayed().fetchSemanticsNode().boundsInRoot
         assertTrue(rewardState.top >= reward.top && rewardState.bottom <= reward.bottom)
         assertTrue(reward.bottom < camera.top, "Last reward overlaps navigation: reward=$reward camera=$camera")

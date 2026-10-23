@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="PhotoAnalysisCaptureScreenComposeTest[jvm]" tests="11" skipped="0" failures="0" errors="0" timestamp="2026-10-23T05:18:53.600Z" hostname="Anastasias-MacBook-Air.local" time="2.804">
+  <properties/>
+  <testcase name="manual ingredient input follows the nine grid buttons and shares the evidence list[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisCaptureScreenComposeTest" time="0.281"/>
+  <testcase name="review renders separate dish text and from-photo evidence without selection controls[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisCaptureScreenComposeTest" time="0.185"/>
+  <testcase name="screen renders and dispatches every bounded action[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisCaptureScreenComposeTest" time="0.843"/>
+  <testcase name="live camera occupies the photo slot before capture actions[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisCaptureScreenComposeTest" time="0.174"/>
+  <testcase name="research grid exposes nine cells and loading overlay while analysis is active[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisCaptureScreenComposeTest" time="0.445"/>
+  <testcase name="capture screen exposes the shared semantic contract[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisCaptureScreenComposeTest" time="0.136"/>
+  <testcase name="screen remains a stable status surface when no action is available[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisCaptureScreenComposeTest" time="0.112"/>
+  <testcase name="capture screen matches the research poc layout with warning and nine grid hints[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisCaptureScreenComposeTest" time="0.18"/>
+  <testcase name="review keeps separate photo evidence with the same localized label[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisCaptureScreenComposeTest" time="0.145"/>
+  <testcase name="each local wait stage exposes retake import and cancel actions without nutrition output[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisCaptureScreenComposeTest" time="0.173"/>
+  <testcase name="local visible-food review omits ingredient hints and grams[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisCaptureScreenComposeTest" time="0.129"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

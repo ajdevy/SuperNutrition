@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="SharedKitBootstrapTest[jvm]" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-22T22:11:36.978Z" hostname="Anastasias-MacBook-Air.local" time="0.891">
+  <properties/>
+  <testcase name="photoAnalysisNativeActionKeepsTheSwiftOrdinalContract[jvm]" classname="com.supernutrition.sharedkit.SharedKitBootstrapTest" time="0.245"/>
+  <testcase name="bootstrapIsIdempotent[jvm]" classname="com.supernutrition.sharedkit.SharedKitBootstrapTest" time="0.375"/>
+  <testcase name="automationRegistryProjectsTheBootstrapAndCaptureIds[jvm]" classname="com.supernutrition.sharedkit.SharedKitBootstrapTest" time="0.016"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

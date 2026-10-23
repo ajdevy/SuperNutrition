@@ -89,7 +89,7 @@ class HomeNoScrollLayoutTest {
                 UiAutomationIds.HOME_TAB,
                 UiAutomationIds.REWARDS_TAB,
             ).minOf { onNodeWithTag(it.value).fetchSemanticsNode().boundsInRoot.top }
-            val nextStep = onNodeWithTag(UiAutomationIds.HOME_NEXT_STEP.value).assertIsDisplayed()
+            val nextStep = onNodeWithTag(UiAutomationIds.HOME_METRIC_FATS.value).assertIsDisplayed()
                 .fetchSemanticsNode().boundsInRoot
             assertEquals(safeTop, content.top, 1f)
             assertEquals(viewport.height - safeBottom, content.bottom, 1f)
@@ -109,7 +109,7 @@ class HomeNoScrollLayoutTest {
             }
             listOf(
                 UiAutomationIds.HOME_ADD_FOOD,
-                UiAutomationIds.HOME_VIEW_GOALS,
+                UiAutomationIds.HOME_METRIC_FIBER,
                 UiAutomationIds.HOME_PROFILE,
             ).forEach {
                 val button = onNodeWithTag(it.value).assertIsDisplayed().fetchSemanticsNode().boundsInRoot
@@ -118,14 +118,10 @@ class HomeNoScrollLayoutTest {
             val mascot = onNodeWithContentDescription(model.mascotDescription).assertIsDisplayed()
                 .fetchSemanticsNode().boundsInRoot
             val summary = onNodeWithTag(UiAutomationIds.HOME_SUMMARY.value).fetchSemanticsNode().boundsInRoot
-            assertTrue(mascot.height >= 120f, "Fitting shrinks the mascot below meaningful artwork: $mascot")
-            assertTrue(mascot.bottom > summary.top, "The mascot foreground no longer overlaps the rhythm card")
+            assertTrue(mascot.height >= 100f, "Fitting shrinks the mascot below meaningful artwork: $mascot")
+            assertTrue(mascot.bottom < summary.top, "The mascot overlaps the new metrics panel")
 
-            val action = onNodeWithContentDescription(model.nextStepAction).assertIsDisplayed()
-            val actionBounds = action.fetchSemanticsNode().boundsInRoot
-            assertTrue(actionBounds.height >= 48f, "The helpful-step action lost its touch frame: $actionBounds")
-            assertTrue(actionBounds.top >= nextStep.top && actionBounds.bottom <= nextStep.bottom)
-            action.performClick()
+            onNodeWithTag(UiAutomationIds.HOME_ADD_FOOD.value).performClick()
             assertEquals(1, addFoodRequests)
         }
 
@@ -167,32 +163,24 @@ class HomeNoScrollLayoutTest {
 
         scroll.performSemanticsAction(SemanticsActions.ScrollBy) { it(0f, 10_000f) }
         val controlsTop = onNodeWithTag(UiAutomationIds.CAMERA_ACTION.value).fetchSemanticsNode().boundsInRoot.top
-        val nextStep = onNodeWithTag(UiAutomationIds.HOME_NEXT_STEP.value).assertIsDisplayed()
+        val nextStep = onNodeWithTag(UiAutomationIds.HOME_METRIC_FATS.value).assertIsDisplayed()
             .fetchSemanticsNode().boundsInRoot
         assertTrue(nextStep.bottom <= controlsTop - 8f, "Readable overflow loses the final card: $nextStep")
-        val action = onNodeWithContentDescription(model.nextStepAction).assertIsDisplayed()
-        assertTrue(action.fetchSemanticsNode().boundsInRoot.height >= 48f)
-        action.performClick()
-        assertEquals(1, addFoodRequests)
+        // The final current metric remains reachable; the old next-step action no longer exists.
+        assertTrue(nextStep.height >= 48f)
     }
 
     private fun requiredHomeText(model: HomeScreenModel) = listOf(
-        model.rhythmBadgeLabel,
         model.careQuestion,
-        model.addFoodLabel,
-        model.viewGoalsLabel,
         model.rhythmTitle,
         model.rhythmSubtitle,
         model.fiber.label,
         model.fiber.value,
-        model.water.label,
-        model.water.value,
+        model.colors.label,
+        model.colors.value,
         model.protein.label,
         model.protein.value,
-        model.movement.label,
-        model.movement.value,
-        model.nextStepTitle,
-        model.nextStepDescription,
-        model.nextStepAction,
-    )
+        model.fats.label,
+        model.fats.value,
+    ).distinct()
 }

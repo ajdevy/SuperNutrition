@@ -1,0 +1,10 @@
+{
+  "at": "2026-10-23T12:19:06.833287+00:00",
+  "branch": "codex/home-profile",
+  "commit": "779fc327405b19f6301874edc79d5f5c6536b15e",
+  "source_commit": "3d54a716730858a313ac54ba943675251d10852a",
+  "host": "Intel x86_64 macOS 15.8",
+  "android_avd": "SN_Screenshots_20261023",
+  "android_serial": "emulator-5554",
+  "apk": "mobile/apps/androidApp/build/outputs/apk/production/debug/androidApp-production-debug.apk"
+}

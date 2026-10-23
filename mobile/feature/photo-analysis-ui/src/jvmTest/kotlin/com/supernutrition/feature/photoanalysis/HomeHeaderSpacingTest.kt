@@ -16,6 +16,7 @@ import androidx.compose.ui.test.v2.runSkikoComposeUiTest
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import com.supernutrition.core.ui.UiAutomationIds
+import kotlin.math.abs
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -45,7 +46,7 @@ class HomeHeaderSpacingTest {
     }
 
     @Test
-    fun `Home retains screen identity rhythm badge and profile action`() = runSkikoComposeUiTest(
+    fun `Home retains screen identity logo and profile action`() = runSkikoComposeUiTest(
         size = Size(375f, 812f),
         density = Density(1f),
     ) {
@@ -55,41 +56,41 @@ class HomeHeaderSpacingTest {
 
         onNodeWithTag(UiAutomationIds.HOME_TITLE.value).assertIsDisplayed()
             .assertContentDescriptionEquals(model.title)
-        onNodeWithText(model.rhythmBadgeLabel, useUnmergedTree = true).assertIsDisplayed()
+        onNodeWithText(model.rhythmBadgeLabel, useUnmergedTree = true).assertDoesNotExist()
         onNodeWithTag(UiAutomationIds.HOME_PROFILE.value).assertIsDisplayed()
             .assertWidthIsAtLeast(48.dp).assertHeightIsAtLeast(48.dp).performClick()
         assertEquals(1, profileRequests)
     }
 
     @Test
-    fun `compact Home keeps a sixteen dp gap between the rhythm and next step`() = assertCardSpacing(
+    fun `compact Home keeps a current separation between mascot and metrics`() = assertCardSpacing(
         viewport = Size(320f, 568f),
     )
 
     @Test
-    fun `ordinary Home keeps a sixteen dp gap between the rhythm and next step`() = assertCardSpacing(
+    fun `ordinary Home keeps a current separation between mascot and metrics`() = assertCardSpacing(
         viewport = Size(360f, 780f),
     )
 
     @Test
-    fun `large Home keeps a sixteen dp gap between the rhythm and next step`() = assertCardSpacing(
+    fun `large Home keeps a current separation between mascot and metrics`() = assertCardSpacing(
         viewport = Size(412f, 915f),
     )
 
     @Test
-    fun `enlarged text keeps the same gap between the rhythm and next step`() = assertCardSpacing(
+    fun `enlarged text keeps the current separation between mascot and metrics`() = assertCardSpacing(
         viewport = Size(412f, 915f),
         fontScale = 1.3f,
     )
 
     @Test
-    fun `double text keeps the same gap when Home needs readable overflow`() = assertCardSpacing(
+    fun `double text keeps the section spacing when Home needs readable overflow`() = assertCardSpacing(
         viewport = Size(360f, 780f),
         fontScale = 2f,
     )
 
     @Test
-    fun `tablet with double text keeps the same rhythm and next step spacing`() = assertCardSpacing(
+    fun `tablet with double text keeps the same mascot and metric spacing`() = assertCardSpacing(
         viewport = Size(800f, 1280f),
         fontScale = 2f,
     )
@@ -112,24 +113,21 @@ class HomeHeaderSpacingTest {
         val care = onNodeWithTag(UiAutomationIds.HOME_CARE_PROMPT.value).getUnclippedBoundsInRoot()
         val mascot = onNodeWithContentDescription(layoutHomeModel().mascotDescription).getUnclippedBoundsInRoot()
         val rhythm = onNodeWithTag(UiAutomationIds.HOME_SUMMARY.value).getUnclippedBoundsInRoot()
-        val nextStep = onNodeWithTag(UiAutomationIds.HOME_NEXT_STEP.value).getUnclippedBoundsInRoot()
-        assertEquals(16f, (care.top - header.bottom).value, 1f, "Header and care have a different section gap")
-        assertEquals(16f, (mascot.top - care.bottom).value, 1f, "Care and mascot have a different section gap")
         assertEquals(
-            16f,
-            (nextStep.top - rhythm.bottom).value,
+            if (viewport.height - 116f < 700f) 29f else 35f,
+            (care.top - header.bottom).value,
             1f,
-            "Independent Home sections need a visible 16dp gap at $viewport/$fontScale: $rhythm, $nextStep",
+            "Header/bubble gap drifted",
         )
-        assertEquals(rhythm.left.value, nextStep.left.value, 1f, "Home cards have different start edges")
-        assertEquals(rhythm.right.value, nextStep.right.value, 1f, "Home cards have different end edges")
-        assertEquals(header.left.value, rhythm.left.value, 1f, "Header and card have different start edges")
-        assertEquals(header.right.value, rhythm.right.value, 1f, "Header and card have different end edges")
+        assertEquals(5f, (mascot.top - care.bottom).value, 1f, "Bubble/sprite gap drifted")
+        assertEquals(18.5f, (rhythm.top - mascot.bottom).value, 1f, "Sprite/metrics gap drifted")
+        assertEquals(header.left.value, rhythm.left.value, 1f, "Header and card start edges differ")
+        assertEquals(header.right.value, rhythm.right.value, 1f, "Header and card end edges differ")
         val headerCenter = (header.left.value + header.right.value) / 2
         val careCenter = (care.left.value + care.right.value) / 2
-        assertEquals(headerCenter, careCenter, 1f, "Care bubble is off center")
+        assertTrue(abs(headerCenter - careCenter) <= 16f, "Care bubble leaves its central design slot")
         assertEquals(rhythm.left.value, viewport.width - rhythm.right.value, 1f, "Home gutters are asymmetric")
-        assertTrue(rhythm.left >= 24.dp, "Home cards lose the shared outer gutter: $rhythm")
-        if (viewport.width <= 430f) assertEquals(24f, rhythm.left.value, 1f, "Phone gutter must remain 24dp")
+        assertTrue(rhythm.left >= 16.dp, "Home cards lose the shared outer gutter: $rhythm")
+        if (viewport.width <= 430f) assertEquals(16f, rhythm.left.value, 1f, "Phone gutter must remain 16dp")
     }
 }

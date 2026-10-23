@@ -1,0 +1,38 @@
+[
+  {
+    "content-desc": "Super Nutrition",
+    "center": "[360,780]",
+    "resource-id": "photo_analysis_title",
+    "key": 3506402
+  },
+  {
+    "content-desc": "Close",
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "center": "[74,158]",
+    "resource-id": "capture_close",
+    "key": 3506402
+  },
+  {
+    "content-desc": "Take photo",
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "center": "[360,1239]",
+    "resource-id": "capture_shutter",
+    "key": 3506402
+  },
+  {
+    "content-desc": "Choose photo",
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "center": "[83,1242]",
+    "resource-id": "capture_import",
+    "key": 3506402
+  }
+]

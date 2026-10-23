@@ -1,0 +1,52 @@
+[
+  {
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "center": "[80,110]",
+    "resource-id": "meal_history_close",
+    "key": 3506402
+  },
+  {
+    "text": "Meal history",
+    "center": "[360,110]",
+    "resource-id": "meal_history_title",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "clickable",
+      "focusable",
+      "long-clickable"
+    ],
+    "center": "[360,216]",
+    "resource-id": "meal_history_search",
+    "key": 3506402
+  },
+  {
+    "content-desc": "Back to Profile",
+    "center": "[80,110]",
+    "key": 3506402
+  },
+  {
+    "content-desc": "Search your meals",
+    "center": "[360,216]",
+    "key": 3506402
+  },
+  {
+    "text": "Search your meals",
+    "center": "[248,216]",
+    "key": 3506402
+  },
+  {
+    "text": "No meals saved yet",
+    "center": "[360,377]",
+    "key": 3506402
+  },
+  {
+    "text": "No confirmed meals are available in this session.",
+    "center": "[360,438]",
+    "key": 3506402
+  }
+]

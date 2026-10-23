@@ -1,0 +1,22 @@
+{
+  "app_path": "/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.app",
+  "bundle_identifier": "com.supernutrition.ios",
+  "display_name": "Super Nutrition",
+  "architectures": "arm64",
+  "executable_sha256": "7e4ca18cb49c304fb4d1d90a420bc8a49cd6e894785fe487230d3f19419a597f",
+  "files": [
+    "Frameworks/SharedKit.framework/Info.plist",
+    "Frameworks/SharedKit.framework/SharedKit",
+    "Info.plist",
+    "Localizable.strings",
+    "PkgInfo",
+    "SuperNutrition",
+    "capture_close.png",
+    "capture_gallery.png",
+    "capture_shutter.png"
+  ],
+  "compose_resources_present": false,
+  "runtime_execution": false,
+  "signed": false,
+  "inspected_after_final_build_at_utc": "2026-10-23T13:59:17.847132+00:00"
+}

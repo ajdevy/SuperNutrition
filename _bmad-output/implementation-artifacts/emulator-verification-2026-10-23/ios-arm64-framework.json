@@ -1,0 +1,13 @@
+{
+  "task": ":apps:sharedKit:linkDebugFrameworkIosArm64",
+  "exit_code": 0,
+  "elapsed": "9m 21s",
+  "xcode": "26.6 (17F113)",
+  "developer_dir": "/Applications/Xcode-26.6.0.app/Contents/Developer",
+  "architecture": "arm64",
+  "framework": "/Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/sharedKit/build/bin/iosArm64/debugFramework/SharedKit.framework",
+  "framework_binary_bytes": 250923536,
+  "framework_binary_sha256": "bdcf4205927e7a712834269de3f26914662da31cf2c5558465b960b410c08aea",
+  "runtime_execution": false,
+  "source_commit": "3d54a716730858a313ac54ba943675251d10852a"
+}

@@ -1,0 +1,121 @@
+{
+  "run_id": "39994995975",
+  "head": "79535a2dfd3a4c3cb67c73bb6e26ba8421c1cf74",
+  "xml": "/tmp/supernutrition-merge-ci-20261023/hosted-android-79535-artifact/android-ui-reports-39994995975-1/SuperNutrition/SuperNutrition/mobile/apps/androidApp/build/outputs/androidTest-results/connected/debug/flavors/uiAcceptance/TEST-emulator-5554 - 16-_apps_androidApp-uiAcceptance.xml",
+  "counts": {
+    "tests": "50",
+    "failures": "12",
+    "errors": "0",
+    "skipped": "0"
+  },
+  "failures": [
+    {
+      "class": "com.supernutrition.android.BrandNavigationVisualInstrumentationTest",
+      "test": "rewardsBackdropAndFinalCardClearFloatingNavigation",
+      "message": "java.lang.AssertionError: missing app resource home_title"
+    },
+    {
+      "class": "com.supernutrition.android.BrandNavigationVisualInstrumentationTest",
+      "test": "heldTabKeepsItsTouchSurfaceTransparent",
+      "message": "java.lang.AssertionError: missing app resource home_title"
+    },
+    {
+      "class": "com.supernutrition.android.BrandNavigationVisualInstrumentationTest",
+      "test": "selectionChangesIconsAndKeepsLabels",
+      "message": "java.lang.AssertionError: missing app resource home_title"
+    },
+    {
+      "class": "com.supernutrition.android.PhotoAnalysisComposeSemanticsInstrumentationTest",
+      "test": "backFromCaptureReturnsToHomeWithoutBottomBarInCapture",
+      "message": "java.lang.AssertionError: Home surface did not open on launch"
+    },
+    {
+      "class": "com.supernutrition.android.PhotoAnalysisComposeSemanticsInstrumentationTest",
+      "test": "profileOpensMealHistoryAndBackPreservesProfile",
+      "message": "java.lang.AssertionError: Home surface did not open on launch"
+    },
+    {
+      "class": "com.supernutrition.android.PhotoAnalysisComposeSemanticsInstrumentationTest",
+      "test": "homeAddMealActionOpensCaptureSurface",
+      "message": "java.lang.AssertionError: Home surface did not open on launch"
+    },
+    {
+      "class": "com.supernutrition.android.PhotoAnalysisComposeSemanticsInstrumentationTest",
+      "test": "firstTabOpensHomeAfterRewardsSelection",
+      "message": "java.lang.AssertionError: Home surface did not open on launch"
+    },
+    {
+      "class": "com.supernutrition.android.PhotoAnalysisComposeSemanticsInstrumentationTest",
+      "test": "profileLinkOpensProfileSurface",
+      "message": "java.lang.AssertionError: missing Compose semantic id: profile_title"
+    },
+    {
+      "class": "com.supernutrition.android.PhotoAnalysisComposeSemanticsInstrumentationTest",
+      "test": "homeAvatarOpensDesignedProfileAndBackReturnsHome",
+      "message": "java.lang.AssertionError: Home surface did not open on launch"
+    },
+    {
+      "class": "com.supernutrition.android.PhotoAnalysisComposeSemanticsInstrumentationTest",
+      "test": "initialLaunchOpensHomeSurface",
+      "message": "java.lang.AssertionError: missing Compose semantic id: home_title"
+    },
+    {
+      "class": "com.supernutrition.android.PhotoAnalysisComposeSemanticsInstrumentationTest",
+      "test": "centerCameraActionKeepsCaptureSurfaceAvailable",
+      "message": "java.lang.AssertionError: Home surface did not open on launch"
+    },
+    {
+      "class": "com.supernutrition.android.ProfileNameEditingInstrumentationTest",
+      "test": "systemBackCancelsNameEditingAndPreservesProfile",
+      "message": "java.lang.AssertionError: missing app resource home_profile"
+    }
+  ],
+  "confirmed_root_cause": "System UI ANR dialog blocks app accessibility; cold boot fails under CPU/memory pressure before instrumentation",
+  "resources_observed": {
+    "cpu_cores": 2,
+    "recommended_cores_in_emulator_log": 4,
+    "ram_mib": 2560,
+    "dalvik_heap_mib": 576,
+    "gpu": "swiftshader",
+    "emulator_version": "37.2.12.0",
+    "api": 36
+  },
+  "anchors": {
+    "emulator_log_lines": {
+      "ram": 6,
+      "cores_warning": 15,
+      "heap": 60,
+      "boot_duration_ms_77628": 105
+    },
+    "logcat_lines": {
+      "first_log_line_after_boot_mutations": 2,
+      "restarted_search_interactor": 115,
+      "restarted_gms": 142,
+      "restarted_ime": 892,
+      "systemui_service_timeout": 1685,
+      "systemui_anr_report": 4185,
+      "cpu_load_pressure": 4190,
+      "cpu_pressure85_53": 4196,
+      "cpu_total98_percent": 4215,
+      "systemui_anr_dialog_window": 5733,
+      "actual_boot_complete_post": 18760,
+      "app_activity_displayed": 54032
+    },
+    "host_job_log_lines": {
+      "avd_resources": 592,
+      "binder_services_ready": 596,
+      "force_stop_phase_finished": 597,
+      "test_execution_started": 944
+    },
+    "ui_hierarchy": "android:id/alertTitle=System UI isn't responding; android:id/aerr_close; android:id/aerr_wait"
+  },
+  "limitations": [
+    "Logcat started after force-stops and was cleared; pre-force-stop logs unavailable.",
+    "CPU/resource starvation is observed;4cores/4GB remediation requires new native run before calling fixed.",
+    "Final hierarchy captured during cleanup, corroborated by pre-test ANR window logged while app still launched."
+  ],
+  "recommended_files": [
+    "scripts/run-ui-journeys-android.sh",
+    "focused mocked bootstrap fixtures if added"
+  ]
+}

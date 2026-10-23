@@ -3,20 +3,21 @@ package com.supernutrition.feature.photoanalysis
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.supernutrition.feature.photoanalysis.resources.Res
 import com.supernutrition.feature.photoanalysis.resources.fraunces
 import com.supernutrition.feature.photoanalysis.resources.nunito
 import org.jetbrains.compose.resources.Font
 
-internal val MainScreenGutter = 24.dp
+internal val MainScreenGutter = 16.dp
 internal val MainContentMaxWidth = 430.dp
 internal val HomeSectionGap = 16.dp
 internal val HomePagePadding = 8.dp
 internal val HomeCardPadding = 12.dp
 internal val HomeMetricGap = 8.dp
-internal val HomeBackgroundColor = Color(0xFFF6F1EA)
-internal val HomeInk = Color(0xFF1E4A2E)
+internal val HomeBackgroundColor = Color(0xFFF6F7F5)
+internal val HomeInk = Color(0xFF253F26)
 internal val HomeBody = Color(0xFF33302C)
 internal val HomeMuted = Color(0xFFA08D80)
 internal val HomeMutedText = Color(0xFF75665B)
@@ -33,4 +34,8 @@ internal val HomeAmberText = Color(0xFF93520F)
 internal fun frauncesFont() = FontFamily(Font(Res.font.fraunces))
 
 @Composable
-internal fun nunitoFont() = FontFamily(Font(Res.font.nunito))
+internal fun nunitoFont() = FontFamily(
+    Font(Res.font.nunito, weight = FontWeight.Normal),
+    Font(Res.font.nunito, weight = FontWeight.SemiBold),
+    Font(Res.font.nunito, weight = FontWeight.Bold),
+)

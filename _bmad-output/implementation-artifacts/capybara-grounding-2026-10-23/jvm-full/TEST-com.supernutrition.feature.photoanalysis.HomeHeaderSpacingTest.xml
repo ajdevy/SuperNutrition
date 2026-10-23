@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="HomeHeaderSpacingTest[jvm]" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-10-23T15:04:11.730Z" hostname="Anastasias-MacBook-Air.local" time="1.135">
+  <properties/>
+  <testcase name="ordinary Home keeps a current separation between mascot and metrics[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeHeaderSpacingTest" time="0.113"/>
+  <testcase name="double text keeps the section spacing when Home needs readable overflow[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeHeaderSpacingTest" time="0.128"/>
+  <testcase name="large Home keeps a current separation between mascot and metrics[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeHeaderSpacingTest" time="0.155"/>
+  <testcase name="Home does not display the redundant wordmark[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeHeaderSpacingTest" time="0.134"/>
+  <testcase name="Home does not display the weekday or date[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeHeaderSpacingTest" time="0.09"/>
+  <testcase name="enlarged text keeps the current separation between mascot and metrics[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeHeaderSpacingTest" time="0.113"/>
+  <testcase name="compact Home keeps a current separation between mascot and metrics[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeHeaderSpacingTest" time="0.107"/>
+  <testcase name="tablet with double text keeps the same mascot and metric spacing[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeHeaderSpacingTest" time="0.138"/>
+  <testcase name="Home retains screen identity logo and profile action[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeHeaderSpacingTest" time="0.153"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

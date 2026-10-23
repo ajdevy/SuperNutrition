@@ -1,0 +1,123 @@
+{
+  "run": 39994937686,
+  "head": "79535a2dfd3a4c3cb67c73bb6e26ba8421c1cf74",
+  "denominators": [
+    {
+      "id": "domain-inference",
+      "branch": {
+        "covered": 709,
+        "missed": 123,
+        "percent": 85.21634615384616
+      },
+      "line": {
+        "covered": 1215,
+        "missed": 2,
+        "percent": 99.83566146261299
+      }
+    },
+    {
+      "id": "core-config",
+      "branch": {
+        "covered": 247,
+        "missed": 21,
+        "percent": 92.16417910447761
+      },
+      "line": {
+        "covered": 369,
+        "missed": 7,
+        "percent": 98.13829787234043
+      }
+    },
+    {
+      "id": "domain-photo-analysis",
+      "branch": {
+        "covered": 700,
+        "missed": 114,
+        "percent": 85.995085995086
+      },
+      "line": {
+        "covered": 1142,
+        "missed": 23,
+        "percent": 98.02575107296137
+      }
+    },
+    {
+      "id": "inference-local-android",
+      "branch": {
+        "covered": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "line": {
+        "covered": 16,
+        "missed": 1,
+        "percent": 94.11764705882354
+      }
+    },
+    {
+      "id": "inference-local-ios",
+      "branch": {
+        "covered": 0,
+        "missed": 0,
+        "percent": null
+      },
+      "line": {
+        "covered": 15,
+        "missed": 2,
+        "percent": 88.23529411764706
+      }
+    },
+    {
+      "id": "inference-local-shared",
+      "branch": {
+        "covered": 119,
+        "missed": 13,
+        "percent": 90.15151515151516
+      },
+      "line": {
+        "covered": 329,
+        "missed": 11,
+        "percent": 96.76470588235294
+      }
+    },
+    {
+      "id": "core-ui",
+      "branch": {
+        "covered": 25,
+        "missed": 3,
+        "percent": 89.28571428571429
+      },
+      "line": {
+        "covered": 180,
+        "missed": 10,
+        "percent": 94.73684210526316
+      }
+    },
+    {
+      "id": "feature-photo-analysis-presenter",
+      "branch": {
+        "covered": 125,
+        "missed": 20,
+        "percent": 86.20689655172414
+      },
+      "line": {
+        "covered": 407,
+        "missed": 15,
+        "percent": 96.44549763033176
+      }
+    },
+    {
+      "id": "domain-nutrition",
+      "branch": {
+        "covered": 456,
+        "missed": 0,
+        "percent": 100.0
+      },
+      "line": {
+        "covered": 12017,
+        "missed": 1,
+        "percent": 99.99167914794475
+      }
+    }
+  ]
+}

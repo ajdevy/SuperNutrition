@@ -9,9 +9,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.assertContentDescriptionEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsSelected
-import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -54,16 +54,17 @@ class MainScreenRefreshTest {
             }
         }
         onNodeWithTag(UiAutomationIds.HOME_ADD_FOOD.value).performClick()
-        onNodeWithTag(UiAutomationIds.HOME_VIEW_GOALS.value).performClick()
+        onNodeWithTag(UiAutomationIds.HOME_METRIC_FIBER.value).performClick()
         onNodeWithText("Your goals").assertIsDisplayed()
         runOnIdle { model.value = updatedHomeModel(model.value) }
         onNodeWithText("Updated goals").assertIsDisplayed()
         onNodeWithText("Water 2 L").assertIsDisplayed()
         onNodeWithText("Close goals").performClick()
         onNodeWithText("Friday, Aug 8").assertDoesNotExist()
-        onNodeWithText("7 day rhythm").assertIsDisplayed()
+        onNodeWithText("7 day rhythm").assertDoesNotExist()
+        onNodeWithText("Ready for lunch?").assertIsDisplayed()
         onNodeWithText("18 g").assertIsDisplayed()
-        onNodeWithText("2 / 2 L").assertIsDisplayed()
+        onNodeWithText("52 / 70 g").assertIsDisplayed()
         runOnIdle {
             add.value = { events.add("new add") }
             goals.value = { events.add("new goals") }
@@ -71,14 +72,15 @@ class MainScreenRefreshTest {
         }
         onNodeWithTag(UiAutomationIds.HOME_ADD_FOOD.value).performClick()
         onNodeWithTag(UiAutomationIds.HOME_PROFILE.value).performClick()
-        onNodeWithTag(UiAutomationIds.HOME_VIEW_GOALS.value).performClick()
+        onNodeWithTag(UiAutomationIds.HOME_METRIC_FATS.value).performClick()
         onNodeWithText("Close goals").performClick()
-        onNodeWithText("Add water").performScrollTo().performClick()
+        onNodeWithTag(UiAutomationIds.HOME_ADD_FOOD.value).performScrollTo().performClick()
         runOnIdle { size.value = Size(320f, 536f) }
         onNodeWithTag(UiAutomationIds.HOME_ADD_FOOD.value).performScrollTo().assertIsDisplayed()
         runOnIdle { fontScale.value = 1.5f }
-        onNodeWithTag(UiAutomationIds.HOME_NEXT_STEP.value).performScrollTo().assertIsDisplayed()
-        onNodeWithText("Add water").performClick()
+        onNodeWithTag(UiAutomationIds.HOME_METRIC_FATS.value).performScrollTo().assertIsDisplayed().performClick()
+        onNodeWithText("Updated goals").assertIsDisplayed()
+        onNodeWithText("Close goals").performClick()
         assertEquals(expectedHomeActions(), events)
     }
 
@@ -101,7 +103,9 @@ class MainScreenRefreshTest {
         }
         onNodeWithTag(UiAutomationIds.REWARDS_TITLE.value).assertIsDisplayed()
         runOnIdle { model.value = layoutRewardsModel() }
-        onNodeWithTag(UiAutomationIds.rewardsRowProgress(4).value).assertTextEquals("0/1")
+        onNodeWithTag(UiAutomationIds.rewardsRow(6).value).performScrollTo()
+        onNodeWithTag(UiAutomationIds.REWARDS_SCREEN.value).performRewardsScrollToEnd()
+        onNodeWithTag(UiAutomationIds.rewardsRowProgress(6).value).assertContentDescriptionEquals("0 of 1")
         runOnIdle {
             model.value = model.value.copy(
                 title = "Your rewards",
@@ -118,19 +122,27 @@ class MainScreenRefreshTest {
                 },
             )
         }
-        onNodeWithText("Your rewards").assertIsDisplayed()
-        onNodeWithTag(UiAutomationIds.rewardsRowProgress(4).value).assertTextEquals("1/1")
-        onNodeWithContentDescription("Earned today").assertIsDisplayed()
+        onNodeWithText("Your rewards").performScrollTo().assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.rewardsRow(6).value).performScrollTo()
+        onNodeWithTag(UiAutomationIds.REWARDS_SCREEN.value).performRewardsScrollToEnd()
+        onNodeWithTag(UiAutomationIds.rewardsRowProgress(6).value).assertContentDescriptionEquals("1 of 1")
+        assertEquals(
+            "Earned today",
+            onNodeWithTag(UiAutomationIds.rewardsRowState(6).value)
+                .fetchSemanticsNode().config[androidx.compose.ui.semantics.SemanticsProperties.StateDescription],
+        )
         runOnIdle { inset.value = MainBottomBarHeight }
         runOnIdle { width.value = 300.dp }
-        onNodeWithTag(UiAutomationIds.rewardsRow(9).value).performScrollTo()
+        onNodeWithTag(UiAutomationIds.rewardsRow(6).value).performScrollTo()
+        onNodeWithTag(UiAutomationIds.REWARDS_SCREEN.value).performRewardsScrollToEnd()
         val final = onNodeWithTag(
-            UiAutomationIds.rewardsRow(9).value,
+            UiAutomationIds.rewardsRow(6).value,
         ).assertIsDisplayed().fetchSemanticsNode().boundsInRoot
         assertTrue(final.bottom <= 812f - MainBottomBarHeight.value)
         runOnIdle { fontScale.value = 1.5f }
-        onNodeWithTag(UiAutomationIds.rewardsRow(9).value).performScrollTo()
-        onNodeWithTag(UiAutomationIds.rewardsRowState(9).value).assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.rewardsRow(6).value).performScrollTo()
+        onNodeWithTag(UiAutomationIds.REWARDS_SCREEN.value).performRewardsScrollToEnd()
+        onNodeWithTag(UiAutomationIds.rewardsRowState(6).value).assertIsDisplayed()
     }
 
     @Test
@@ -162,7 +174,7 @@ class MainScreenRefreshTest {
         onNodeWithTag(UiAutomationIds.CAMERA_ACTION.value).performClick()
         onNodeWithTag(UiAutomationIds.REWARDS_TAB.value).performClick().assertIsSelected()
         runOnIdle { padding.value = PaddingValues(top = 24.dp, bottom = 20.dp) }
-        assertEquals(912f, onNodeWithTag(UiAutomationIds.REWARDS_LIST.value).fetchSemanticsNode().boundsInRoot.bottom)
+        assertEquals(912f, onNodeWithTag(UiAutomationIds.REWARDS_SCREEN.value).fetchSemanticsNode().boundsInRoot.bottom)
         runOnIdle {
             state.value = state.value.copy(
                 homeLabel = "Today",
@@ -185,13 +197,14 @@ class MainScreenRefreshTest {
         onNodeWithTag(UiAutomationIds.HOME_TAB.value).performClick().assertIsSelected()
         onNodeWithTag(UiAutomationIds.CAMERA_ACTION.value).performClick()
         onNodeWithTag(UiAutomationIds.HOME_TITLE.value).assertIsDisplayed()
-        onNodeWithText(layoutHomeModel().rhythmBadgeLabel).assertIsDisplayed()
+        onNodeWithText(layoutHomeModel().rhythmBadgeLabel).assertDoesNotExist()
+        onNodeWithText(layoutHomeModel().careQuestion).assertIsDisplayed()
         assertEquals(listOf("old camera", "new home", "new camera"), events)
     }
 
     private fun updatedHomeModel(model: HomeScreenModel) = model.copy(
         dateLabel = "Friday, Aug 8", rhythmBadgeLabel = "7 day rhythm", careQuestion = "Ready for lunch?",
-        fiber = HomeMetricModel("Fiber", "18 g"), water = HomeMetricModel("Water", "2 / 2 L"),
+        fiber = HomeMetricModel("Fiber", "18 g"), fats = HomeMetricModel("Fats", "52 / 70 g"),
         goalsTitle = "Updated goals", goalsDescription = "Water 2 L", goalsDoneLabel = "Close goals",
         nextStepDescription = "Add a glass of water", nextStepAction = "Add water",
     )
@@ -202,6 +215,6 @@ class MainScreenRefreshTest {
         "new profile",
         "new goals",
         "new add",
-        "new add",
+        "new goals",
     )
 }

@@ -1,5 +1,21 @@
 # Deferred owner decisions
 
+## D-06 — publish factual app legal notices and expose them in Profile
+
+Decided on: 2026-10-22
+Decided by: human user in the current Codex chat
+Channel: Codex chat 01a16557-276b-7002-b45e-4a79f11f1c89, direct publication request and operator-identification reply
+
+The user requested Privacy Policy and Terms & Conditions on supernutrition.app
+and identified the operator as Flexsent labs SIA, a Latvian company. The
+existing website already publishes hello@supernutrition.app as its contact.
+Preserve the waitlist notice, describe current application behavior factually,
+and connect Profile to the published app-policy and terms URLs. This entry
+records the human publication instruction and supplied identity; it does not
+assert GitHub account ratification or settle any pending provider, retention,
+market-routing or diagnostic-collection decision. Diagnostics remain off.
+
+
 Three findings from the review are real but are not mine to settle: each one
 picks between defensible designs, and the choice binds a published contract or
 a privacy posture. They were left alone deliberately. This records what the

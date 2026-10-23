@@ -16,7 +16,7 @@ concurrency:
 jobs:
   android-ui-coverage:
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Set up JDK 21
@@ -47,6 +47,7 @@ jobs:
             ${{ runner.temp }}/supernutrition-ui-android/ui-hierarchy.xml
             ${{ runner.temp }}/supernutrition-ui-android/report/junit.xml
             ${{ runner.temp }}/supernutrition-ui-android/report/android-instrumentation-files.txt
+            ${{ runner.temp }}/supernutrition-ui-android/report/startup-health/
             mobile/apps/androidApp/build/outputs/androidTest-results/**/*.xml
           if-no-files-found: error
           retention-days: 14

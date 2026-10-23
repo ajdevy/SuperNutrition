@@ -54,7 +54,31 @@ class PhotoAnalysisCameraEdgeCasesTest {
         size = Size(375f, 600f),
         density = Density(1f),
     ) {
-        setContent { PhotoAnalysisCaptureScreen(cameraReviewFixture(), {}, cameraSurface()) }
+        val original = cameraReviewFixture()
+        val review = requireNotNull(original.review)
+        val extraFoods = listOf(
+            "Quinoa",
+            "Carrot",
+            "Avocado",
+            "Salmon",
+            "Broccoli",
+            "Salt",
+            "Edamame",
+            "Tahini",
+            "Cucumber",
+        )
+            .mapIndexed { index, label -> cameraComponentFixture("fixture-extra-$index", label) }
+        setContent {
+            PhotoAnalysisCaptureScreen(
+                original.copy(
+                    review = review.copy(
+                        visibleComponents = review.visibleComponents + extraFoods,
+                    ),
+                ),
+                {},
+                cameraSurface(),
+            )
+        }
         val food = onNodeWithTag(photoAnalysisVisibleComponentId("photo-broccoli").value)
         food.performScrollTo()
         val scroll = onNode(hasScrollAction())

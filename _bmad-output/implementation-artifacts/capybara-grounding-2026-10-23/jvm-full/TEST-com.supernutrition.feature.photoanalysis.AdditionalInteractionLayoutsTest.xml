@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="AdditionalInteractionLayoutsTest[jvm]" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-10-23T15:03:41.466Z" hostname="Anastasias-MacBook-Air.local" time="19.109">
+  <properties/>
+  <testcase name="home prompt and metric goals retain independent large text touch targets[jvm]" classname="com.supernutrition.feature.photoanalysis.AdditionalInteractionLayoutsTest" time="11.191"/>
+  <testcase name="landscape main screens retain reachable content at double text size[jvm]" classname="com.supernutrition.feature.photoanalysis.AdditionalInteractionLayoutsTest" time="1.645"/>
+  <testcase name="goals dialog and its dismissal survive saved state restoration[jvm]" classname="com.supernutrition.feature.photoanalysis.AdditionalInteractionLayoutsTest" time="1.345"/>
+  <testcase name="home care actions have adequate touch targets at normal text size[jvm]" classname="com.supernutrition.feature.photoanalysis.AdditionalInteractionLayoutsTest" time="0.174"/>
+  <testcase name="right to left navigation mirrors slots and keeps their correct actions[jvm]" classname="com.supernutrition.feature.photoanalysis.AdditionalInteractionLayoutsTest" time="0.141"/>
+  <testcase name="short recovery keeps its status outside the close touch target[jvm]" classname="com.supernutrition.feature.photoanalysis.AdditionalInteractionLayoutsTest" time="0.375"/>
+  <testcase name="large Home metrics keep their standard titles whole[jvm]" classname="com.supernutrition.feature.photoanalysis.AdditionalInteractionLayoutsTest" time="2.085"/>
+  <testcase name="large Home prompt wraps completely below the reachable profile action[jvm]" classname="com.supernutrition.feature.photoanalysis.AdditionalInteractionLayoutsTest" time="0.169"/>
+  <testcase name="manual review rejects whitespace and preserves explicit unicode correction[jvm]" classname="com.supernutrition.feature.photoanalysis.AdditionalInteractionLayoutsTest" time="1.26"/>
+  <testcase name="three long dish names remain fully measured at double text size[jvm]" classname="com.supernutrition.feature.photoanalysis.AdditionalInteractionLayoutsTest" time="0.701"/>
+  <system-out><![CDATA[Suspicious! waitForIdle has not finished after 2 seconds.
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

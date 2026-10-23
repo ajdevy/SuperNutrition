@@ -1,0 +1,11 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="22.5" height="22.5" viewBox="0 0 22.5 22.5" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Badge">
+<g id="Disc">
+<circle cx="11.25" cy="11.25" r="11.25" fill="#518841"/>
+<circle cx="11.25" cy="11.25" r="10.5" stroke="white" stroke-opacity="0.92" stroke-width="1.5"/>
+</g>
+<g id="Icon / check">
+<path id="Vector" d="M7.16667 11.5417L10.0833 14.4583L15.3333 8.33333" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" stroke="white"/>
+</g>
+</g>
+</svg>

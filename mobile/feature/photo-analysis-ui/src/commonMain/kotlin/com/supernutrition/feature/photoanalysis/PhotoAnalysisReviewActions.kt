@@ -23,7 +23,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
@@ -79,18 +78,21 @@ internal fun reviewActionsHeight(retakeLabel: String, addLabel: String, width: D
 }
 
 @Composable
-private fun reviewActionStyle() = LocalTextStyle.current.merge(reviewTextStyle(18f)).copy(textAlign = TextAlign.Center)
+private fun reviewActionStyle() = LocalTextStyle.current.merge(
+    reviewTextStyle(16f, FontWeight.Bold),
+).copy(textAlign = TextAlign.Center)
 
+@Composable
 internal fun reviewTextStyle(size: Float, weight: FontWeight = FontWeight.Normal) = TextStyle(
     color = ReviewWhite,
-    fontFamily = FontFamily.SansSerif,
+    fontFamily = nunitoFont(),
     fontSize = size.sp,
     fontWeight = weight,
 )
 
 @Composable
 private fun ReviewAction(spec: ReviewButtonSpec, style: TextStyle, onClick: () -> Unit, modifier: Modifier) {
-    val shape = RoundedCornerShape(13.dp)
+    val shape = RoundedCornerShape(999.dp)
     Box(
         modifier = modifier.heightIn(min = ActionMinimumHeight).automationId(spec.id).clip(shape)
             .background(
@@ -100,7 +102,7 @@ private fun ReviewAction(spec: ReviewButtonSpec, style: TextStyle, onClick: () -
                     Color(0xFF1A1915).copy(alpha = 0.92f)
                 },
             )
-            .border(1.dp, if (spec.filled) Color(0xFFA7AD9D) else Color(0xFFF0EEEE), shape)
+            .border(1.dp, if (spec.filled) Color(0xFFB4CDAB) else Color(0xFFF0EEEE), shape)
             .clickable(enabled = spec.enabled, role = Role.Button, onClick = onClick)
             .padding(horizontal = ActionHorizontalPadding, vertical = ActionVerticalPadding),
         contentAlignment = Alignment.Center,

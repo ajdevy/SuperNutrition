@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="HomeScreenComposeTest[jvm]" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-10-23T05:18:09.398Z" hostname="Anastasias-MacBook-Air.local" time="3.047">
+  <properties/>
+  <testcase name="home screen keeps goals and profile actions reachable[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeScreenComposeTest" time="2.616"/>
+  <testcase name="home screen exposes the Figma rhythm surface and add meal action[jvm]" classname="com.supernutrition.feature.photoanalysis.HomeScreenComposeTest" time="0.431"/>
+  <system-out><![CDATA[Suspicious! waitForIdle has not finished after 1 seconds.
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,84 @@
+Command line invocation:
+    /Applications/Xcode-26.6.0.app/Contents/Developer/usr/bin/xcodebuild build -project mobile/apps/iosApp/SuperNutritionUIAcceptance.xcodeproj -target SuperNutrition -configuration Debug -sdk iphoneos -jobs 2 SYMROOT=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products OBJROOT=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates SHARED_KIT_FRAMEWORK_DIR=/Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/sharedKit/build/bin/iosArm64/debugFramework ARCHS=arm64 ONLY_ACTIVE_ARCH=YES CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+
+Build settings from command line:
+    ARCHS = arm64
+    CODE_SIGNING_ALLOWED = NO
+    CODE_SIGNING_REQUIRED = NO
+    OBJROOT = /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates
+    ONLY_ACTIVE_ARCH = YES
+    SDKROOT = iphoneos26.5
+    SHARED_KIT_FRAMEWORK_DIR = /Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/sharedKit/build/bin/iosArm64/debugFramework
+    SYMROOT = /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products
+
+Build Preparation
+Build task concurrency set to 2 via user default IDEBuildOperationMaxNumberOfConcurrentCompileTasks
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (1 target)
+    Target 'SuperNutrition' in project 'SuperNutritionUIAcceptance' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Applications/Xcode-26.6.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode-26.6.0.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode-26.6.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Applications/Xcode-26.6.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+Build description signature: 2fb039999c1c182f3ed9a4a13a28df70
+Build description path: /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/XCBuildData/2fb039999c1c182f3ed9a4a13a28df70.xcbuilddata
+ClangStatCache /Applications/Xcode-26.6.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode-26.6.0.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/C/com.apple.DeveloperTools/26.6-17F113/Xcode/SDKStatCaches.noindex/iphoneos26.5-23F81a-8687e77c73e7c2167dddce0efb4d140b.sdkstatcache
+    cd /Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/iosApp/SuperNutritionUIAcceptance.xcodeproj
+    /Applications/Xcode-26.6.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode-26.6.0.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk -o /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/C/com.apple.DeveloperTools/26.6-17F113/Xcode/SDKStatCaches.noindex/iphoneos26.5-23F81a-8687e77c73e7c2167dddce0efb4d140b.sdkstatcache
+
+error: Cycle inside SuperNutrition; building could produce unreliable results.
+Cycle details:
+→ Target 'SuperNutrition' has link command with output '/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.app/SuperNutrition'
+○ That command depends on command in Target 'SuperNutrition': script phase “Build Production SharedKit framework”
+○ Target 'SuperNutrition' has link command with output '/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.app/SuperNutrition'
+
+
+Raw dependency cycle trace:
+
+target:  ->
+
+node: <all> ->
+
+command: <all> ->
+
+node: /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata ->
+
+command: P0:target-SuperNutrition-d84aa6dae790162c8dade9879b877b424b78e072ea5fe76261eecbc80b431bc5-:Debug:ExtractAppIntentsMetadata ->
+
+node: /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.app/SuperNutrition ->
+
+CYCLE POINT ->
+
+command: P2:target-SuperNutrition-d84aa6dae790162c8dade9879b877b424b78e072ea5fe76261eecbc80b431bc5-:Debug:Ld /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.app/SuperNutrition normal ->
+
+node: /Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/sharedKit/build/bin/iosArm64/debugFramework/SharedKit.framework/SharedKit ->
+
+command: P2:target-SuperNutrition-d84aa6dae790162c8dade9879b877b424b78e072ea5fe76261eecbc80b431bc5-:Debug:PhaseScriptExecution Build Production SharedKit framework /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Script-S32000010000000000000002.sh ->
+
+node: <target-SuperNutrition-d84aa6dae790162c8dade9879b877b424b78e072ea5fe76261eecbc80b431bc5--fused-phase0-compile-sources&link-binary> ->
+
+command: P0:::Gate target-SuperNutrition-d84aa6dae790162c8dade9879b877b424b78e072ea5fe76261eecbc80b431bc5--fused-phase0-compile-sources&link-binary ->
+
+node: /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/SuperNutrition_lto.o ->
+
+command: P2:target-SuperNutrition-d84aa6dae790162c8dade9879b877b424b78e072ea5fe76261eecbc80b431bc5-:Debug:Ld /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.app/SuperNutrition normal
+** BUILD FAILED **

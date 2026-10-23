@@ -9,12 +9,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asSkiaBitmap
 import androidx.compose.ui.graphics.toPixelMap
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.assertContentDescriptionEquals
 import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsSelected
@@ -22,6 +24,7 @@ import androidx.compose.ui.test.assertWidthIsAtLeast
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.v2.runSkikoComposeUiTest
 import androidx.compose.ui.unit.Density
@@ -40,7 +43,7 @@ import org.jetbrains.skia.Image as SkiaImage
 @OptIn(ExperimentalTestApi::class)
 class BrandNavigationVisualTest {
     @Test
-    fun `compact header keeps its badge and reachable profile across widths and text scales`() {
+    fun `compact header keeps its profile reachable without the legacy badge across widths and text scales`() {
         listOf(Size(375f, 812f) to 1f, Size(320f, 568f) to 1.5f, Size(600f, 800f) to 1f)
             .forEach { (viewport, fontScale) ->
                 runSkikoComposeUiTest(size = viewport, density = Density(1f, fontScale)) {
@@ -52,14 +55,13 @@ class BrandNavigationVisualTest {
                     val model = layoutHomeModel()
                     onNodeWithText("Super Nutrition", useUnmergedTree = true).assertDoesNotExist()
                     onNodeWithText(model.dateLabel, useUnmergedTree = true).assertDoesNotExist()
-                    val text = onNodeWithText(model.rhythmBadgeLabel, useUnmergedTree = true).assertIsDisplayed()
-                    text.assertReadableHomeText(fontScale)
+                    onNodeWithText(model.rhythmBadgeLabel, useUnmergedTree = true).assertDoesNotExist()
                     val header = onNodeWithTag(UiAutomationIds.HOME_HEADER.value).fetchSemanticsNode().boundsInRoot
                     val profile = onNodeWithTag(UiAutomationIds.HOME_PROFILE.value).assertIsDisplayed()
                         .assertHeightIsAtLeast(48.dp).assertWidthIsAtLeast(48.dp)
                         .fetchSemanticsNode().boundsInRoot
                     assertEquals(header.right, profile.right, 1f, "Profile is not aligned to the header end")
-                    assertTrue(text.fetchSemanticsNode().boundsInRoot.right + 16f <= profile.left)
+                    assertTrue(header.left + 40.5f + 16f <= profile.left, "Logo and profile areas overlap")
                     val image = captureToImage()
                     writeScreenshot("header-${viewport.width.toInt()}-$fontScale", image)
                 }
@@ -67,7 +69,7 @@ class BrandNavigationVisualTest {
     }
 
     @Test
-    fun `compact header follows live badge and font changes without restoring the date`() = runSkikoComposeUiTest(
+    fun `compact header follows live profile and font changes without restoring legacy copy`() = runSkikoComposeUiTest(
         size = Size(375f, 180f),
         density = Density(1f),
     ) {
@@ -83,12 +85,18 @@ class BrandNavigationVisualTest {
             }
         }
         repeat(3) { stage ->
-            val text = onNodeWithText(model.value.rhythmBadgeLabel, useUnmergedTree = true).assertIsDisplayed()
-            text.assertReadableHomeText(fontScale.value)
-            onNodeWithTag(UiAutomationIds.HOME_PROFILE.value).performClick()
+            onNodeWithText(model.value.rhythmBadgeLabel, useUnmergedTree = true).assertDoesNotExist()
+            onNodeWithTag(UiAutomationIds.HOME_PROFILE.value)
+                .assertContentDescriptionEquals(
+                    model.value.profileActionLabel,
+                ).assertHeightIsAtLeast(48.dp).performClick()
             when (stage) {
                 0 -> runOnIdle {
-                    model.value = model.value.copy(dateLabel = "Friday, Aug 8", rhythmBadgeLabel = "7 day rhythm")
+                    model.value = model.value.copy(
+                        dateLabel = "Friday, Aug 8",
+                        rhythmBadgeLabel = "7 day rhythm",
+                        profileActionLabel = "Open your profile",
+                    )
                 }
 
                 1 -> runOnIdle {
@@ -104,7 +112,7 @@ class BrandNavigationVisualTest {
     }
 
     @Test
-    fun `compact header mirrors badge and profile in an RTL host`() = runSkikoComposeUiTest(
+    fun `compact header mirrors its logo area and profile in an RTL host`() = runSkikoComposeUiTest(
         size = Size(375f, 110f),
         density = Density(1f),
     ) {
@@ -116,13 +124,12 @@ class BrandNavigationVisualTest {
                 }
             }
         }
-        val text = onNodeWithText(layoutHomeModel().rhythmBadgeLabel, useUnmergedTree = true).assertIsDisplayed()
-        text.assertReadableHomeText(1f)
+        onNodeWithText(layoutHomeModel().rhythmBadgeLabel, useUnmergedTree = true).assertDoesNotExist()
         val header = onNodeWithTag(UiAutomationIds.HOME_HEADER.value).fetchSemanticsNode().boundsInRoot
         val profile = onNodeWithTag(UiAutomationIds.HOME_PROFILE.value).assertIsDisplayed()
         val profileBounds = profile.fetchSemanticsNode().boundsInRoot
         assertEquals(header.left, profileBounds.left, 1f, "RTL profile is not at the trailing edge")
-        assertTrue(text.fetchSemanticsNode().boundsInRoot.left >= profileBounds.right + 16f)
+        assertTrue(header.right - 40.5f >= profileBounds.right + 16f, "RTL logo area overlaps profile")
         profile.performClick()
         assertEquals(1, profileRequests)
         val image = captureToImage()
@@ -130,7 +137,7 @@ class BrandNavigationVisualTest {
     }
 
     @Test
-    fun `tab selection changes icons while retaining label pixels`() = runSkikoComposeUiTest(
+    fun `tab selection changes icons and label colors while retaining their positions`() = runSkikoComposeUiTest(
         size = Size(375f, 100f),
         density = Density(1f),
     ) {
@@ -158,8 +165,19 @@ class BrandNavigationVisualTest {
         onNodeWithTag(UiAutomationIds.REWARDS_TAB.value).performClick().assertIsSelected()
         val rewards = captureToImage()
         writeScreenshot("navigation-rewards", rewards)
-        labels.forEach { assertEquals(0, changedPixels(home, rewards, it), "Tab label recolors on selection: $it") }
-        tabs.forEach { assertTrue(changedPixels(home, rewards, it) > 0, "Icon tint did not change: $it") }
+        labels.forEachIndexed { index, bounds ->
+            assertTrue(changedPixels(home, rewards, bounds) > 0, "Tab label color did not change: $bounds")
+            assertEquals(
+                bounds,
+                onNodeWithText(if (index == 0) "Home" else "Rewards", useUnmergedTree = true)
+                    .fetchSemanticsNode().boundsInRoot,
+                "Tab label moved on selection",
+            )
+            assertTrue(
+                changedPixels(home, rewards, tabs[index]) > changedPixels(home, rewards, bounds),
+                "Tab icon did not change with its label",
+            )
+        }
         onNodeWithTag(UiAutomationIds.HOME_TAB.value).performClick().assertIsSelected()
         val restored = captureToImage()
         labels.forEach { assertEquals(0, changedPixels(home, restored, it)) }
@@ -203,9 +221,10 @@ class BrandNavigationVisualTest {
                     writeScreenshot("rewards-floating-${viewport.width.toInt()}-$fontScale", image)
                     assertEquals(viewport.height - 20f, bounds.bottom, "Rewards ends at an opaque navigation strip")
                     assertEquals(24f, bounds.top, "Host top inset should be applied once")
-                    assertEquals(RewardsPaper, image.toPixelMap()[4, viewport.height.toInt() - 24])
-                    assertEquals(RewardsPaper, image.toPixelMap()[4, viewport.height.toInt() - 4])
-                    val finalReward = onNodeWithTag(UiAutomationIds.rewardsRow(9).value)
+                    assertEquals(Color(0xFFF6F7F5), image.toPixelMap()[4, viewport.height.toInt() - 24])
+                    assertEquals(Color(0xFFF6F7F5), image.toPixelMap()[4, viewport.height.toInt() - 4])
+                    val finalReward = onNodeWithTag(UiAutomationIds.rewardsRow(6).value)
+                    finalReward.performScrollTo()
                     onNodeWithTag(UiAutomationIds.REWARDS_SCREEN.value).performRewardsScrollToEnd()
                     val card = finalReward.assertIsDisplayed()
                         .fetchSemanticsNode().boundsInRoot

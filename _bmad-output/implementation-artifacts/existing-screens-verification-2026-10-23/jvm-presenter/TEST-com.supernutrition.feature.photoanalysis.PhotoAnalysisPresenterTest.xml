@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="PhotoAnalysisPresenterTest[jvm]" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-23T00:51:27.500Z" hostname="Anastasias-MacBook-Air.local" time="0.11">
+  <properties/>
+  <testcase name="presenter maps every live state and preserves localized copy[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterTest" time="0.035"/>
+  <testcase name="presenter keeps capture actions bounded and excludes remote consent[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterTest" time="0.063"/>
+  <testcase name="host pantry copy rejects blank ingredient labels[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterTest" time="0.002"/>
+  <testcase name="presenter renders every recovery label and bounded actions[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterTest" time="0.001"/>
+  <testcase name="grid prompt action validates the nine research cells[jvm]" classname="com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterTest" time="0.006"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
