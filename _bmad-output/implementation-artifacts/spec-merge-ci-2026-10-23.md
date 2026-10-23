@@ -53,7 +53,9 @@ context: []
 - [x] `.github/workflows/ci-required.yml` — continued execution preserves strict failure, with sufficient execution time and working independent reports.
 - [x] Grounding README and deferred-work record — correct the raw UI coverage interpretation and record disposition of packaging work.
 - [x] Android runner/helper and focused tests — implement native startup health checks after reproducing the SystemUI overlay, remove premature force-stops and preserve diagnostics.12 focused regressions and both independent source reviews pass; real API36 validation remains pending below.
-- [ ] Merge evidence report and PR55 — execute relevant checks, independent review, push intended slice, merge current work, inspect post-merge runs and record final actual state.
+- [x] Merge PR55 — normal merge663b4212 contains the full source tree; actual main iOS8/8+1/1 passes, JVM892tests pass with unchanged stale-evidence policy failure.
+- [x] Android rendering/disabled-animation follow-up — preserve exact dp viewport at720×1600/280dpi and validate actual disabled-animation proof. Both fresh source reviews,16 focused and55 total script tests pass.
+- [ ] Merge the Android startup follow-up and inspect actual main boot, instrumentation and Maestro; record any remaining genuine policy/hardware blocker.
 
 **Acceptance Criteria:**
 - Given the missing-resource crash in archived XCTest, when the fixed host builds and runs on supported hosted arm64 iOS, then resources are found and genuine tests/journeys execute; any additional product failures are fixed and rechecked.

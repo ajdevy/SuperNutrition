@@ -1,0 +1,67 @@
+{
+  "run_id": "40000963150",
+  "commit": "663b42129c0305b613f9025cec7aa31c3e66d034",
+  "tree_equivalent_to": "7cafbe367db1ceedae4cbc6a61fa28d6cf99d9f0",
+  "phase": "native startup; instrumentation was not invoked",
+  "tests_executed": 0,
+  "startup_summary": {
+    "healthy": false,
+    "serial": "emulator-5554",
+    "error": "Android startup recorded am_anr: --------- beginning of events\nI/am_anr  (  723): [0,1536,com.android.phone,952647245,Broadcast of Intent { act=android.safetycenter.action.REFRESH_SAFETY_SOURCES flg=0x10000010 xflg=0x4 pkg=com.android.phone cmp=com.android.phone/.security.SafetySourceReceiver (has extras) }]",
+    "elapsed_seconds": 60.19853952300002
+  },
+  "startup_command_count": 178,
+  "boot_values": {
+    "boot-completed": "1",
+    "boot-animation": "",
+    "user-state": "RUNNING_UNLOCKED"
+  },
+  "observed_resources": {
+    "api": 36,
+    "cpu": 2,
+    "ram_mib": 2560,
+    "heap_mib": 576,
+    "renderer": "SwiftShader",
+    "display_pixels": [
+      1080,
+      2400
+    ],
+    "density_dpi": 420
+  },
+  "logcat_anchors": {
+    "display1080x2400_density420": 5187,
+    "phone_anr_event18_20_49_194": 20579,
+    "phone_anr_details18_20_57_805": 23186,
+    "memory_pressure8_40": 23193,
+    "cpu_pressure85_48": 23197,
+    "io_pressure33_29": 23201,
+    "surfaceflinger34_percent": 23206,
+    "cpu_total100_percent": 23216,
+    "keyguard_anr_event18_20_57_813": 23222
+  },
+  "artifact_limitations": [
+    "No instrumentation XML produced because startup stopped before Gradle connected test invocation.",
+    "No UI hierarchy was exported in this run; do not claim visual confirmation of a dialog.",
+    "Specific resource remediation still needs native validation."
+  ],
+  "narrow_remediation_candidate": {
+    "preboot_lcd": {
+      "width": 720,
+      "height": 1600,
+      "density": 280
+    },
+    "preserved_dp_viewport": [
+      411.42857142857144,
+      914.2857142857143
+    ],
+    "pixel_reduction_percent": 55.55555555555556,
+    "unchanged": [
+      "API36",
+      "2guestCPU",
+      "app/test assertions",
+      "ANR/crash failure policy"
+    ],
+    "reason": "SurfaceFlinger dominates guestCPU at34percent during100percentCPU saturated bootstrap; lowerpixel count preservesdpviewport while reducing softwaregraphicswork."
+  },
+  "separate_latent_issue": "Helper requires init.svc.bootanim=stopped while -no-boot-anim is configured and observed property is empty. Support an explicitly verified disabled-animation mode rather than treating all empty values as ready."
+}

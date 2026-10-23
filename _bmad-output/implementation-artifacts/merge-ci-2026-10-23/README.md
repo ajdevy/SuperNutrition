@@ -1,6 +1,6 @@
 # Merge and CI verification — 2026-10-23
 
-The current feature work is in PR55 on `codex/home-profile`: Home→Profile, Profile→Meal history, existing-screen Figma alignment and grounded Home capybara. Website legal documents are already integrated through the separate website repository. Historical closed/superseded branches and unrelated dirty worktrees remain preserved.
+PR55 merged into main as `663b42129c0305b613f9025cec7aa31c3e66d034`, integrating: Home→Profile, Profile→Meal history, existing-screen Figma alignment and grounded Home capybara. Website legal documents are already integrated through the separate website repository. Historical closed/superseded branches and unrelated dirty worktrees remain preserved.
 
 ## Confirmed CI repairs
 
@@ -52,3 +52,15 @@ Android run39994995975 completed50cases with12failures/0errors/0skips. Its final
 The runner now retains startup logcat from the first connection, removes the premature launcher/GMS/IME force-stops, and waits for unlocked native boot, stopped boot animation, native broadcast idle, a single real HOME launch, current launcher/window hierarchy, and native IMMS readiness. The helper rejects ANR/crash events, stale/error UIAutomator output and partial or timed-out service dumps. Its own monotonic deadline starts after a serial connects; it does not claim a deadline over the entire retained ADB discovery loop. Private-runner CPU capacity remains respected and connected Gradle uses one worker. API36/GPU/heap and all application assertions remain unchanged.
 
 Twelve focused tests cover actual command failure contracts. Meaningful red→green regressions reproduced early ActivityManager absence, stale successful-then-failed hierarchy dumps, false/missing IMMS readiness and valid readiness followed by native timeout/error footers. Both independent reviewers confirm closure of the recorded source defects. All51 script tests, shell syntax, CI policy and diff checks pass. This source/fake validation requires a new real API36 run; it is not a passing native result.
+
+## Main663b4212 and Android rendering follow-up
+
+PR55 is merged normally; its complete source tree matches main663b4212. There are no remaining open mobile or website PRs at this checkpoint. Unrelated primary-worktree changes remain untouched.
+
+[Main iOS40000963075](https://github.com/flexsent-labs/SuperNutrition/actions/runs/40000963075) passes8/8 XCTest and1/1 Maestro, zero failures/skips, on arm64 iPhone17Pro/iOS26.4.1: [fresh exact counts](main-ios-tests.json). [Main JVM40000963058](https://github.com/flexsent-labs/SuperNutrition/actions/runs/40000963058) passes892tests across12modules with zero failures/errors/skips; its sole failed task remains stale native evidence: [fresh XML counts](main-jvm-tests.json).
+
+[Main Android40000963150](https://github.com/flexsent-labs/SuperNutrition/actions/runs/40000963150) correctly stops before instrumentation on a genuine Phone/SafetySourceReceiver ANR, followed by SystemUI/KeyguardService ANR. No app test ran: [native diagnosis](main-android-diagnosis.json). The pre-boot display now uses720×1600 at280dpi, exactly preserving the prior1080×2400/420dpi logical viewport while reducing framebuffer pixels55.56%. Named skin overrides are removed; an explicit numeric skin and authoritative AVD density are used. API36,2CPU,2560MiB/576MiB, SwiftShader, all app assertions and fatal-event rejection remain.
+
+Empty boot-animation service state is accepted only with actual positive signed32 `debug.sf.nobootanimation` proof. Zero/negative/absent/malformed/overflow flags and running animation remain rejected. A local task-owned API36 emulator independently returned boot_completed1, disabled flag1 and empty bootanim, confirming that observed native mode; no application test is claimed from that probe. The owned emulator was stopped by its verified PID.
+
+The new disabled-animation regression failed before the fix (two missing-success cases); all16 focused boot/display tests and all55 script tests now pass. Shell syntax, CI policy, strict owner-decision validation and diff whitespace checks pass. The rendering remediation still requires actual hosted boot/instrumentation/Maestro execution.
