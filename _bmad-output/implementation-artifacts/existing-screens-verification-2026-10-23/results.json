@@ -3,7 +3,7 @@
   "branch": "codex/home-profile",
   "physical_android": false,
   "apple_runtime": false,
-  "status": "implementation verified in shared UI; final native attempt incomplete with Activity launch failures",
+  "status": "shared UI and final-source Android native verification passed; required physical policy evidence remains unavailable",
   "jvm-ui": {
     "tests": 230,
     "failures": 0,
@@ -55,7 +55,7 @@
     "path": "mobile/apps/androidApp/build/outputs/apk/production/debug/androidApp-production-debug.apk",
     "sha256": "7a7984fa1ef5eed14919e861210d4f232db2da7d16b3d80868970993b81a2a33",
     "bytes": 511675995,
-    "installed_hash_verified": false
+    "installed_hash_verified": true
   },
   "android_final_attempt1": {
     "commit": "3d54a716730858a313ac54ba943675251d10852a",
@@ -75,5 +75,43 @@
     "system_failure": "Quickstep ANR on Launcher before app launch",
     "instrumentation_started": false,
     "screenshot": "environment-headless-quickstep-anr.png"
-  }
+  },
+  "android_final_clean_avd": {
+    "command_exit": 0,
+    "started_utc": "2026-10-23T12:56:15.428315+00:00",
+    "source_commit": "3d54a716730858a313ac54ba943675251d10852a",
+    "head": "779fc327405b19f6301874edc79d5f5c6536b15e",
+    "device": "emulator-5554",
+    "avd": "SN_Screenshots_20261023",
+    "rows": [
+      {
+        "variant": "poc",
+        "tests": 50,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "report": "/Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/androidApp/build/outputs/androidTest-results/connected/debug/flavors/poc/TEST-SN_Screenshots_20261023(AVD) - 15-_apps_androidApp-poc.xml"
+      },
+      {
+        "variant": "production",
+        "tests": 50,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "report": "/Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/androidApp/build/outputs/androidTest-results/connected/debug/flavors/production/TEST-SN_Screenshots_20261023(AVD) - 15-_apps_androidApp-production.xml"
+      },
+      {
+        "variant": "uiAcceptance",
+        "tests": 50,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "report": "/Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/androidApp/build/outputs/androidTest-results/connected/debug/flavors/uiAcceptance/TEST-SN_Screenshots_20261023(AVD) - 15-_apps_androidApp-uiAcceptance.xml"
+      }
+    ],
+    "total_tests": 150,
+    "elapsed": "8m 3s",
+    "physical_device": false
+  },
+  "latest_runtime_evidence": "../emulator-verification-2026-10-23/README.md"
 }

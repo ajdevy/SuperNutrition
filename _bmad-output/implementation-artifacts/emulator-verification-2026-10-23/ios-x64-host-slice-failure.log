@@ -1,0 +1,42 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.5.0/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build
+> Task :build-logic:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :build-logic:compileKotlin UP-TO-DATE
+> Task :build-logic:compileJava NO-SOURCE
+> Task :build-logic:pluginDescriptors UP-TO-DATE
+> Task :build-logic:processResources UP-TO-DATE
+> Task :build-logic:classes UP-TO-DATE
+> Task :build-logic:jar UP-TO-DATE
+
+> Configure project :apps:sharedKit
+w: ⚠️ Deprecated Kotlin/Native Host
+The current host platform 'macos_x64' is deprecated and will be removed in a future Kotlin release. The Kotlin/Native compiler will no longer be distributed for this host.
+Solution: Migrate your build to a non-deprecated supported host platform for Kotlin/Native.
+Learn more about Kotlin/Native target support and migration: https://kotl.in/native-targets-tiers
+
+
+> Configure project :feature:photo-analysis
+w: file:///Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/feature/photo-analysis/build.gradle.kts:56:36: 'val runtime: String' is deprecated. Specify dependency directly.
+w: file:///Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/feature/photo-analysis/build.gradle.kts:78:36: 'val runtime: String' is deprecated. Specify dependency directly.
+w: file:///Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/feature/photo-analysis/build.gradle.kts:79:36: 'val foundation: String' is deprecated. Specify dependency directly.
+w: file:///Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/feature/photo-analysis/build.gradle.kts:80:36: 'val material3: String' is deprecated. Specify dependency directly.
+w: file:///Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/feature/photo-analysis/build.gradle.kts:81:36: 'val ui: String' is deprecated. Specify dependency directly.
+
+[Incubating] Problems report is available at: file:///Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* Where:
+Build file '/Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/feature/photo-analysis/build.gradle.kts' line: 42
+
+* What went wrong:
+Project with path ':domain:nutrition' could not be found.
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 1m 36s
+4 actionable tasks: 4 up-to-date

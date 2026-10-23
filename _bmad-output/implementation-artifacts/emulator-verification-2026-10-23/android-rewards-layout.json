@@ -1,0 +1,293 @@
+[
+  {
+    "content-desc": "Rewards",
+    "center": "[360,756]",
+    "resource-id": "rewards_screen",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "scrollable"
+    ],
+    "center": "[360,756]",
+    "bounds": "[0,48][720,1464]",
+    "resource-id": "rewards_list",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "center": "[188,1400]",
+    "resource-id": "capture_tab",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "clickable",
+      "focusable"
+    ],
+    "center": "[360,1400]",
+    "resource-id": "camera_action",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "focusable"
+    ],
+    "state": [
+      "selected"
+    ],
+    "center": "[532,1400]",
+    "resource-id": "rewards_tab",
+    "key": 3506402
+  },
+  {
+    "text": "Rewards",
+    "center": "[360,106]",
+    "resource-id": "rewards_title",
+    "key": 3506402
+  },
+  {
+    "text": "Daily",
+    "center": "[323,507]",
+    "resource-id": "rewards_earned_section",
+    "key": 3506402
+  },
+  {
+    "text": "0 of 4",
+    "center": "[651,508]",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "scrollable"
+    ],
+    "center": "[360,740]",
+    "bounds": "[0,549][720,932]",
+    "key": 3506402
+  },
+  {
+    "text": "Weekly",
+    "center": "[323,973]",
+    "resource-id": "rewards_in_progress_section",
+    "key": 3506402
+  },
+  {
+    "text": "0 of 3",
+    "center": "[651,974]",
+    "key": 3506402
+  },
+  {
+    "interactions": [
+      "scrollable"
+    ],
+    "center": "[360,1206]",
+    "bounds": "[0,1015][720,1398]",
+    "key": 3506402
+  },
+  {
+    "content-desc": "Home",
+    "center": "[188,1400]",
+    "key": 3506402
+  },
+  {
+    "text": "Home",
+    "center": "[188,1426]",
+    "key": 3506402
+  },
+  {
+    "content-desc": "Take photo",
+    "center": "[360,1400]",
+    "key": 3506402
+  },
+  {
+    "content-desc": "Rewards",
+    "center": "[532,1400]",
+    "key": 3506402
+  },
+  {
+    "text": "Rewards",
+    "center": "[532,1426]",
+    "key": 3506402
+  },
+  {
+    "text": "Today: 0 of 4 rewards",
+    "center": "[476,258]",
+    "key": 3506402
+  },
+  {
+    "text": "This week: 0 of 3 rewards",
+    "center": "[467,311]",
+    "key": 3506402
+  },
+  {
+    "content-desc": "Protein all day. Protein in every recorded meal. 0 of 2. Ready when you are",
+    "center": "[182,732]",
+    "resource-id": "rewards_row_0",
+    "key": 3506402
+  },
+  {
+    "content-desc": "Fats on track. Foods with nourishing fats. 0 of 1. Ready when you are",
+    "center": "[502,732]",
+    "resource-id": "rewards_row_1",
+    "key": 3506402
+  },
+  {
+    "content-desc": "Fiber on track. Fiber in two recorded meals. 0 of 2. Ready when you are",
+    "center": "[696,732]",
+    "resource-id": "rewards_row_2",
+    "key": 3506402
+  },
+  {
+    "content-desc": "7 days in a row. Entries on seven days. 0 of 7. Ready when you are",
+    "center": "[182,1198]",
+    "resource-id": "rewards_row_4",
+    "key": 3506402
+  },
+  {
+    "content-desc": "30 foods. 30 different foods this week. 0 of 30. Ready when you are",
+    "center": "[502,1198]",
+    "resource-id": "rewards_row_5",
+    "key": 3506402
+  },
+  {
+    "content-desc": "Living shelf. Fermented foods on three days. 0 of 3. Ready when you are",
+    "center": "[696,1198]",
+    "resource-id": "rewards_row_6",
+    "key": 3506402
+  },
+  {
+    "text": "Protein all day",
+    "center": "[158,742]",
+    "resource-id": "rewards_row_0_title",
+    "key": 3506402
+  },
+  {
+    "text": "Protein in every recorded meal",
+    "center": "[182,803]",
+    "key": 3506402
+  },
+  {
+    "text": "Fats on track",
+    "center": "[466,742]",
+    "resource-id": "rewards_row_1_title",
+    "key": 3506402
+  },
+  {
+    "text": "Foods with nourishing fats",
+    "center": "[502,803]",
+    "key": 3506402
+  },
+  {
+    "text": "Fiber on track",
+    "center": "[708,742]",
+    "resource-id": "rewards_row_2_title",
+    "key": 3506402
+  },
+  {
+    "text": "Fiber in two recorded meals",
+    "center": "[708,803]",
+    "key": 3506402
+  },
+  {
+    "text": "7 days in a row",
+    "center": "[162,1208]",
+    "resource-id": "rewards_row_4_title",
+    "key": 3506402
+  },
+  {
+    "text": "Entries on seven days",
+    "center": "[182,1269]",
+    "key": 3506402
+  },
+  {
+    "text": "30 foods",
+    "center": "[437,1208]",
+    "resource-id": "rewards_row_5_title",
+    "key": 3506402
+  },
+  {
+    "text": "30 different foods this week",
+    "center": "[502,1269]",
+    "key": 3506402
+  },
+  {
+    "text": "Living shelf",
+    "center": "[708,1208]",
+    "resource-id": "rewards_row_6_title",
+    "key": 3506402
+  },
+  {
+    "text": "Fermented foods on three days",
+    "center": "[708,1269]",
+    "key": 3506402
+  },
+  {
+    "text": "0 of 2",
+    "center": "[82,852]",
+    "key": 3506402
+  },
+  {
+    "content-desc": "0 of 2",
+    "center": "[182,871]",
+    "resource-id": "rewards_row_0_progress",
+    "key": 3506402
+  },
+  {
+    "text": "0 of 1",
+    "center": "[402,852]",
+    "key": 3506402
+  },
+  {
+    "content-desc": "0 of 1",
+    "center": "[502,871]",
+    "resource-id": "rewards_row_1_progress",
+    "key": 3506402
+  },
+  {
+    "text": "0 of 2",
+    "center": "[708,852]",
+    "key": 3506402
+  },
+  {
+    "content-desc": "0 of 2",
+    "center": "[708,871]",
+    "resource-id": "rewards_row_2_progress",
+    "key": 3506402
+  },
+  {
+    "text": "0 of 7",
+    "center": "[82,1318]",
+    "key": 3506402
+  },
+  {
+    "content-desc": "0 of 7",
+    "center": "[182,1337]",
+    "resource-id": "rewards_row_4_progress",
+    "key": 3506402
+  },
+  {
+    "text": "0 of 30",
+    "center": "[408,1318]",
+    "key": 3506402
+  },
+  {
+    "content-desc": "0 of 30",
+    "center": "[502,1337]",
+    "resource-id": "rewards_row_5_progress",
+    "key": 3506402
+  },
+  {
+    "text": "0 of 3",
+    "center": "[708,1318]",
+    "key": 3506402
+  },
+  {
+    "content-desc": "0 of 3",
+    "center": "[708,1337]",
+    "resource-id": "rewards_row_6_progress",
+    "key": 3506402
+  }
+]

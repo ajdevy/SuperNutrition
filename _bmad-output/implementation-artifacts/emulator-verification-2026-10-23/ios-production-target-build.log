@@ -1,0 +1,799 @@
+Command line invocation:
+    /Applications/Xcode-26.6.0.app/Contents/Developer/usr/bin/xcodebuild build -project mobile/apps/iosApp/SuperNutritionUIAcceptance.xcodeproj -target SuperNutrition -configuration Debug -sdk iphoneos -jobs 2 SYMROOT=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products OBJROOT=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates SHARED_KIT_FRAMEWORK_DIR=/Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/sharedKit/build/bin/iosArm64/debugFramework ARCHS=arm64 ONLY_ACTIVE_ARCH=YES CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+
+Build settings from command line:
+    ARCHS = arm64
+    CODE_SIGNING_ALLOWED = NO
+    CODE_SIGNING_REQUIRED = NO
+    OBJROOT = /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates
+    ONLY_ACTIVE_ARCH = YES
+    SDKROOT = iphoneos26.5
+    SHARED_KIT_FRAMEWORK_DIR = /Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/sharedKit/build/bin/iosArm64/debugFramework
+    SYMROOT = /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products
+
+Build Preparation
+Build task concurrency set to 2 via user default IDEBuildOperationMaxNumberOfConcurrentCompileTasks
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (1 target)
+    Target 'SuperNutrition' in project 'SuperNutritionUIAcceptance' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Applications/Xcode-26.6.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode-26.6.0.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode-26.6.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Applications/Xcode-26.6.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+Build description signature: c4901edf69c34cd6c07006c4d12207a6
+Build description path: /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/XCBuildData/c4901edf69c34cd6c07006c4d12207a6.xcbuilddata
+ClangStatCache /Applications/Xcode-26.6.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode-26.6.0.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/C/com.apple.DeveloperTools/26.6-17F113/Xcode/SDKStatCaches.noindex/iphoneos26.5-23F81a-8687e77c73e7c2167dddce0efb4d140b.sdkstatcache
+    cd /Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/iosApp/SuperNutritionUIAcceptance.xcodeproj
+    /Applications/Xcode-26.6.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode-26.6.0.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk -o /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/C/com.apple.DeveloperTools/26.6-17F113/Xcode/SDKStatCaches.noindex/iphoneos26.5-23F81a-8687e77c73e7c2167dddce0efb4d140b.sdkstatcache
+
+note: Run script build phase 'Build Production SharedKit framework' will be run during every build because the option to run the script phase "Based on dependency analysis" is unchecked. (in target 'SuperNutrition' from project 'SuperNutritionUIAcceptance')
+PhaseScriptExecution Build\ Production\ SharedKit\ framework /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Script-S32000010000000000000002.sh (in target 'SuperNutrition' from project 'SuperNutritionUIAcceptance')
+    cd /Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/iosApp
+    export ACTION\=build
+    export AD_HOC_CODE_SIGNING_ALLOWED\=NO
+    export AGGREGATE_TRACKED_DOMAINS\=YES
+    export ALLOW_BUILD_REQUEST_OVERRIDES\=NO
+    export ALLOW_TARGET_PLATFORM_SPECIALIZATION\=NO
+    export ALTERNATE_GROUP\=staff
+    export ALTERNATE_MODE\=u+w,go-w,a+rX
+    export ALTERNATE_OWNER\=anastasia
+    export ALTERNATIVE_DISTRIBUTION_WEB\=NO
+    export ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES\=NO
+    export ALWAYS_SEARCH_USER_PATHS\=NO
+    export ALWAYS_USE_SEPARATE_HEADERMAPS\=NO
+    export APPLICATION_EXTENSION_API_ONLY\=NO
+    export APPLY_RULES_IN_COPY_FILES\=NO
+    export APPLY_RULES_IN_COPY_HEADERS\=NO
+    export APP_SHORTCUTS_ENABLE_FLEXIBLE_MATCHING\=YES
+    export ARCHS\=arm64
+    export ARCHS_BASE\=arm64
+    export ARCHS_STANDARD\=arm64
+    export ARCHS_STANDARD_32_64_BIT\=armv7\ arm64
+    export ARCHS_STANDARD_32_BIT\=armv7
+    export ARCHS_STANDARD_64_BIT\=arm64
+    export ARCHS_STANDARD_INCLUDING_64_BIT\=arm64
+    export ARCHS_UNIVERSAL_IPHONE_OS\=armv7\ arm64
+    export AUTOMATICALLY_MERGE_DEPENDENCIES\=NO
+    export AUTOMATION_APPLE_EVENTS\=NO
+    export AVAILABLE_PLATFORMS\=android\ appletvos\ appletvsimulator\ driverkit\ freebsd\ iphoneos\ iphonesimulator\ linux\ macosx\ none\ openbsd\ qnx\ watchos\ watchsimulator\ webassembly\ xros\ xrsimulator
+    export BUILD_ACTIVE_RESOURCES_ONLY\=NO
+    export BUILD_COMPONENTS\=headers\ build
+    export BUILD_DIR\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products
+    export BUILD_LIBRARY_FOR_DISTRIBUTION\=NO
+    export BUILD_ONLY_KNOWN_LOCALIZATIONS\=NO
+    export BUILD_ROOT\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products
+    export BUILD_STYLE\=
+    export BUILD_VARIANTS\=normal
+    export BUILT_PRODUCTS_DIR\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos
+    export BUNDLE_CONTENTS_FOLDER_PATH_deep\=Contents/
+    export BUNDLE_EXECUTABLE_FOLDER_NAME_deep\=MacOS
+    export BUNDLE_EXTENSIONS_FOLDER_PATH\=Extensions
+    export BUNDLE_FORMAT\=shallow
+    export BUNDLE_FRAMEWORKS_FOLDER_PATH\=Frameworks
+    export BUNDLE_PLUGINS_FOLDER_PATH\=PlugIns
+    export BUNDLE_PRIVATE_HEADERS_FOLDER_PATH\=PrivateHeaders
+    export BUNDLE_PUBLIC_HEADERS_FOLDER_PATH\=Headers
+    export CACHE_ROOT\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/C/com.apple.DeveloperTools/26.6-17F113/Xcode
+    export CCHROOT\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/C/com.apple.DeveloperTools/26.6-17F113/Xcode
+    export CHMOD\=/bin/chmod
+    export CHOWN\=chown
+    export CLANG_CACHE_FINE_GRAINED_OUTPUTS\=YES
+    export CLANG_ENABLE_EXPLICIT_MODULES\=YES
+    export CLANG_ENABLE_MODULES\=YES
+    export CLANG_MODULES_BUILD_SESSION_FILE\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/C/org.llvm.clang/ModuleCache.noindex/Session.modulevalidation
+    export CLASS_FILE_DIR\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/JavaClasses
+    export CLEAN_PRECOMPS\=YES
+    export CLONE_HEADERS\=NO
+    export CODESIGNING_FOLDER_PATH\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.app
+    export CODE_SIGNING_ALLOWED\=NO
+    export CODE_SIGNING_REQUIRED\=NO
+    export CODE_SIGN_CONTEXT_CLASS\=XCiPhoneOSCodeSignContext
+    export CODE_SIGN_IDENTITY\=Apple\ Development
+    export CODE_SIGN_INJECT_BASE_ENTITLEMENTS\=YES
+    export CODE_SIGN_STYLE\=Automatic
+    export COLOR_DIAGNOSTICS\=NO
+    export COMBINE_HIDPI_IMAGES\=NO
+    export COMPILATION_CACHE_CAS_PATH\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/C/com.apple.DeveloperTools/26.6-17F113/Xcode/CompilationCache.noindex
+    export COMPILATION_CACHE_KEEP_CAS_DIRECTORY\=YES
+    export COMPILER_INDEX_STORE_ENABLE\=Default
+    export COMPOSITE_SDK_DIRS\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/CompositeSDKs
+    export COMPRESS_PNG_FILES\=YES
+    export CONFIGURATION\=Debug
+    export CONFIGURATION_BUILD_DIR\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos
+    export CONFIGURATION_TEMP_DIR\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos
+    export CONTENTS_FOLDER_PATH\=SuperNutrition.app
+    export CONTENTS_FOLDER_PATH_SHALLOW_BUNDLE_NO\=SuperNutrition.app/Contents
+    export CONTENTS_FOLDER_PATH_SHALLOW_BUNDLE_YES\=SuperNutrition.app
+    export COPYING_PRESERVES_HFS_DATA\=NO
+    export COPY_HEADERS_RUN_UNIFDEF\=NO
+    export COPY_PHASE_STRIP\=YES
+    export CORRESPONDING_SIMULATOR_PLATFORM_DIR\=/Applications/Xcode-26.6.0.app/Contents/Developer/Platforms/iPhoneSimulator.platform
+    export CORRESPONDING_SIMULATOR_PLATFORM_NAME\=iphonesimulator
+    export CORRESPONDING_SIMULATOR_SDK_DIR\=/Applications/Xcode-26.6.0.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk
+    export CORRESPONDING_SIMULATOR_SDK_NAME\=iphonesimulator26.5
+    export CP\=/bin/cp
+    export CREATE_INFOPLIST_SECTION_IN_BINARY\=NO
+    export CURRENT_ARCH\=undefined_arch
+    export CURRENT_PROJECT_VERSION\=1
+    export CURRENT_VARIANT\=normal
+    export DEAD_CODE_STRIPPING\=YES
+    export DEBUGGING_SYMBOLS\=YES
+    export DEBUG_INFORMATION_FORMAT\=dwarf-with-dsym
+    export DEBUG_INFORMATION_VERSION\=compiler-default
+    export DEFAULT_COMPILER\=com.apple.compilers.llvm.clang.1_0
+    export DEFAULT_DEXT_INSTALL_PATH\=/System/Library/DriverExtensions
+    export DEFAULT_KEXT_INSTALL_PATH\=/System/Library/Extensions
+    export DEFINES_MODULE\=NO
+    export DEPLOYMENT_LOCATION\=NO
+    export DEPLOYMENT_POSTPROCESSING\=NO
+    export DEPLOYMENT_TARGET_SETTING_NAME\=IPHONEOS_DEPLOYMENT_TARGET
+    export DEPLOYMENT_TARGET_SUGGESTED_VALUES\=12.0\ 12.1\ 12.2\ 12.3\ 12.4\ 13.0\ 13.1\ 13.2\ 13.3\ 13.4\ 13.5\ 13.6\ 14.0\ 14.1\ 14.2\ 14.3\ 14.4\ 14.5\ 14.6\ 14.7\ 15.0\ 15.1\ 15.2\ 15.3\ 15.4\ 15.5\ 15.6\ 16.0\ 16.1\ 16.2\ 16.3\ 16.4\ 16.5\ 16.6\ 17.0\ 17.1\ 17.2\ 17.3\ 17.4\ 17.5\ 17.6\ 18.0\ 18.1\ 18.2\ 18.3\ 18.4\ 18.5\ 18.6\ 26.0\ 26.2\ 26.3\ 26.4\ 26.5
+    export DERIVED_FILES_DIR\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/DerivedSources
+    export DERIVED_FILE_DIR\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/DerivedSources
+    export DERIVED_SOURCES_DIR\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/DerivedSources
+    export DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER\=NO
+    export DEVELOPER_APPLICATIONS_DIR\=/Applications/Xcode-26.6.0.app/Contents/Developer/Applications
+    export DEVELOPER_BIN_DIR\=/Applications/Xcode-26.6.0.app/Contents/Developer/usr/bin
+    export DEVELOPER_DIR\=/Applications/Xcode-26.6.0.app/Contents/Developer
+    export DEVELOPER_FRAMEWORKS_DIR\=/Applications/Xcode-26.6.0.app/Contents/Developer/Library/Frameworks
+    export DEVELOPER_FRAMEWORKS_DIR_QUOTED\=/Applications/Xcode-26.6.0.app/Contents/Developer/Library/Frameworks
+    export DEVELOPER_LIBRARY_DIR\=/Applications/Xcode-26.6.0.app/Contents/Developer/Library
+    export DEVELOPER_SDK_DIR\=/Applications/Xcode-26.6.0.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs
+    export DEVELOPER_TOOLS_DIR\=/Applications/Xcode-26.6.0.app/Contents/Developer/Tools
+    export DEVELOPER_USR_DIR\=/Applications/Xcode-26.6.0.app/Contents/Developer/usr
+    export DEVELOPMENT_LANGUAGE\=en
+    export DIAGNOSE_MISSING_TARGET_DEPENDENCIES\=YES
+    export DIFF\=/usr/bin/diff
+    export DOCUMENTATION_FOLDER_PATH\=SuperNutrition.app/en.lproj/Documentation
+    export DONT_GENERATE_INFOPLIST_FILE\=NO
+    export DSTROOT\=/tmp/SuperNutritionUIAcceptance.dst
+    export DT_TOOLCHAIN_DIR\=/Applications/Xcode-26.6.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain
+    export DUMP_DEPENDENCIES\=NO
+    export DUMP_DEPENDENCIES_OUTPUT_PATH\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/SuperNutrition-BuildDependencyInfo.json
+    export DWARF_DSYM_FILE_NAME\=SuperNutrition.app.dSYM
+    export DWARF_DSYM_FILE_SHOULD_ACCOMPANY_PRODUCT\=NO
+    export DWARF_DSYM_FOLDER_PATH\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos
+    export DYNAMIC_LIBRARY_EXTENSION\=dylib
+    export EAGER_COMPILATION_ALLOW_SCRIPTS\=NO
+    export EAGER_LINKING\=NO
+    export EFFECTIVE_PLATFORM_NAME\=-iphoneos
+    export EFFECTIVE_SWIFT_VERSION\=5
+    export EMBEDDED_CONTENT_CONTAINS_SWIFT\=NO
+    export EMBEDDED_PROFILE_NAME\=embedded.mobileprovision
+    export EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE\=NO
+    export ENABLE_APP_SANDBOX\=NO
+    export ENABLE_CODE_COVERAGE\=YES
+    export ENABLE_COHORT_ARCHS\=NO
+    export ENABLE_CPLUSPLUS_BOUNDS_SAFE_BUFFERS\=NO
+    export ENABLE_C_BOUNDS_SAFETY\=NO
+    export ENABLE_DEBUG_DYLIB\=YES
+    export ENABLE_DEFAULT_HEADER_SEARCH_PATHS\=YES
+    export ENABLE_DEFAULT_SEARCH_PATHS\=YES
+    export ENABLE_ENHANCED_SECURITY\=NO
+    export ENABLE_HARDENED_RUNTIME\=NO
+    export ENABLE_HEADER_DEPENDENCIES\=YES
+    export ENABLE_INCOMING_NETWORK_CONNECTIONS\=NO
+    export ENABLE_ON_DEMAND_RESOURCES\=YES
+    export ENABLE_OUTGOING_NETWORK_CONNECTIONS\=NO
+    export ENABLE_POINTER_AUTHENTICATION\=NO
+    export ENABLE_PREVIEWS\=NO
+    export ENABLE_RESOURCE_ACCESS_AUDIO_INPUT\=NO
+    export ENABLE_RESOURCE_ACCESS_BLUETOOTH\=NO
+    export ENABLE_RESOURCE_ACCESS_CALENDARS\=NO
+    export ENABLE_RESOURCE_ACCESS_CAMERA\=NO
+    export ENABLE_RESOURCE_ACCESS_CONTACTS\=NO
+    export ENABLE_RESOURCE_ACCESS_LOCATION\=NO
+    export ENABLE_RESOURCE_ACCESS_PHOTO_LIBRARY\=NO
+    export ENABLE_RESOURCE_ACCESS_PRINTING\=NO
+    export ENABLE_RESOURCE_ACCESS_USB\=NO
+    export ENABLE_SDK_IMPORTS\=NO
+    export ENABLE_SECURITY_COMPILER_WARNINGS\=NO
+    export ENABLE_TESTABILITY\=NO
+    export ENABLE_TESTING_SEARCH_PATHS\=NO
+    export ENABLE_USER_SCRIPT_SANDBOXING\=NO
+    export ENABLE_XOJIT_PREVIEWS\=NO
+    export ENFORCE_VALID_ARCHS\=YES
+    export ENTITLEMENTS_ALLOWED\=YES
+    export ENTITLEMENTS_DESTINATION\=Signature
+    export ENTITLEMENTS_REQUIRED\=NO
+    export EXCLUDED_INSTALLSRC_SUBDIRECTORY_PATTERNS\=.DS_Store\ .svn\ .git\ .hg\ CVS
+    export EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES\=\*.nib\ \*.lproj\ \*.framework\ \*.gch\ \*.xcode\*\ \*.xcassets\ \*.icon\ \(\*\)\ .DS_Store\ CVS\ .svn\ .git\ .hg\ \*.pbproj\ \*.pbxproj
+    export EXECUTABLES_FOLDER_PATH\=SuperNutrition.app/Executables
+    export EXECUTABLE_FOLDER_PATH\=SuperNutrition.app
+    export EXECUTABLE_FOLDER_PATH_SHALLOW_BUNDLE_NO\=SuperNutrition.app/MacOS
+    export EXECUTABLE_FOLDER_PATH_SHALLOW_BUNDLE_YES\=SuperNutrition.app
+    export EXECUTABLE_NAME\=SuperNutrition
+    export EXECUTABLE_PATH\=SuperNutrition.app/SuperNutrition
+    export EXTENSIONS_FOLDER_PATH\=SuperNutrition.app/Extensions
+    export FILE_LIST\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects/LinkFileList
+    export FIXED_FILES_DIR\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/FixedFiles
+    export FRAMEWORKS_FOLDER_PATH\=SuperNutrition.app/Frameworks
+    export FRAMEWORK_FLAG_PREFIX\=-framework
+    export FRAMEWORK_SEARCH_PATHS\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos\ /Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/sharedKit/build/bin/iosArm64/debugFramework\ /Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/sharedKit/build/bin/iosArm64/debugFramework\
+    export FRAMEWORK_VERSION\=A
+    export FULL_PRODUCT_NAME\=SuperNutrition.app
+    export FUSE_BUILD_PHASES\=YES
+    export FUSE_BUILD_SCRIPT_PHASES\=NO
+    export GCC3_VERSION\=3.3
+    export GCC_DYNAMIC_NO_PIC\=NO
+    export GCC_INLINES_ARE_PRIVATE_EXTERN\=YES
+    export GCC_PFE_FILE_C_DIALECTS\=c\ objective-c\ c++\ objective-c++
+    export GCC_SYMBOLS_PRIVATE_EXTERN\=YES
+    export GCC_THUMB_SUPPORT\=YES
+    export GCC_TREAT_WARNINGS_AS_ERRORS\=NO
+    export GCC_VERSION\=com.apple.compilers.llvm.clang.1_0
+    export GCC_VERSION_IDENTIFIER\=com_apple_compilers_llvm_clang_1_0
+    export GCC_WARN_64_TO_32_BIT_CONVERSION\=NO
+    export GENERATED_MODULEMAP_DIR\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/GeneratedModuleMaps-iphoneos
+    export GENERATE_INFOPLIST_FILE\=NO
+    export GENERATE_INTERMEDIATE_TEXT_BASED_STUBS\=YES
+    export GENERATE_PKGINFO_FILE\=YES
+    export GENERATE_PRELINK_OBJECT_FILE\=NO
+    export GENERATE_PROFILING_CODE\=NO
+    export GENERATE_TEXT_BASED_STUBS\=NO
+    export GID\=20
+    export GROUP\=staff
+    export HEADERMAP_INCLUDES_FLAT_ENTRIES_FOR_TARGET_BEING_BUILT\=YES
+    export HEADERMAP_INCLUDES_FRAMEWORK_ENTRIES_FOR_ALL_PRODUCT_TYPES\=YES
+    export HEADERMAP_INCLUDES_FRAMEWORK_ENTRIES_FOR_TARGETS_NOT_BEING_BUILT\=YES
+    export HEADERMAP_INCLUDES_NONPUBLIC_NONPRIVATE_HEADERS\=YES
+    export HEADERMAP_INCLUDES_PROJECT_HEADERS\=YES
+    export HEADERMAP_USES_FRAMEWORK_PREFIX_ENTRIES\=YES
+    export HEADERMAP_USES_VFS\=NO
+    export HEADER_SEARCH_PATHS\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/include\
+    export HOME\=/Users/anastasia
+    export HOST_ARCH\=x86_64
+    export HOST_PLATFORM\=macosx
+    export ICONV\=/usr/bin/iconv
+    export IMPLICIT_DEPENDENCY_DOMAIN\=default
+    export INDEX_STORE_COMPRESS\=NO
+    export INDEX_STORE_ONLY_PROJECT_FILES\=NO
+    export INFOPLIST_ENABLE_CFBUNDLEICONS_MERGE\=YES
+    export INFOPLIST_EXPAND_BUILD_SETTINGS\=YES
+    export INFOPLIST_FILE\=Info.plist
+    export INFOPLIST_OUTPUT_FORMAT\=binary
+    export INFOPLIST_PATH\=SuperNutrition.app/Info.plist
+    export INFOPLIST_PREPROCESS\=NO
+    export INFOSTRINGS_PATH\=SuperNutrition.app/en.lproj/InfoPlist.strings
+    export INLINE_PRIVATE_FRAMEWORKS\=NO
+    export INSTALLAPI_IGNORE_SKIP_INSTALL\=YES
+    export INSTALLHDRS_COPY_PHASE\=NO
+    export INSTALLHDRS_SCRIPT_PHASE\=NO
+    export INSTALL_DIR\=/tmp/SuperNutritionUIAcceptance.dst/Applications
+    export INSTALL_GROUP\=staff
+    export INSTALL_MODE_FLAG\=u+w,go-w,a+rX
+    export INSTALL_OWNER\=anastasia
+    export INSTALL_PATH\=/Applications
+    export INSTALL_ROOT\=/tmp/SuperNutritionUIAcceptance.dst
+    export IPHONEOS_DEPLOYMENT_TARGET\=15.0
+    export IS_UNOPTIMIZED_BUILD\=NO
+    export JAVAC_DEFAULT_FLAGS\=-J-Xms64m\ -J-XX:NewSize\=4M\ -J-Dfile.encoding\=UTF8
+    export JAVA_APP_STUB\=/System/Library/Frameworks/JavaVM.framework/Resources/MacOS/JavaApplicationStub
+    export JAVA_ARCHIVE_CLASSES\=YES
+    export JAVA_ARCHIVE_TYPE\=JAR
+    export JAVA_COMPILER\=/usr/bin/javac
+    export JAVA_FOLDER_PATH\=SuperNutrition.app/Java
+    export JAVA_FRAMEWORK_RESOURCES_DIRS\=Resources
+    export JAVA_JAR_FLAGS\=cv
+    export JAVA_SOURCE_SUBDIR\=.
+    export JAVA_USE_DEPENDENCIES\=YES
+    export JAVA_ZIP_FLAGS\=-urg
+    export JIKES_DEFAULT_FLAGS\=+E\ +OLDCSO
+    export KASAN_CFLAGS_CLASSIC\=-DKASAN\=1\ -DKASAN_CLASSIC\=1\ -fsanitize\=address\ -mllvm\ -asan-globals-live-support\ -mllvm\ -asan-force-dynamic-shadow
+    export KASAN_CFLAGS_TBI\=-DKASAN\=1\ -DKASAN_TBI\=1\ -fsanitize\=kernel-hwaddress\ -mllvm\ -hwasan-recover\=0\ -mllvm\ -hwasan-instrument-atomics\=0\ -mllvm\ -hwasan-instrument-stack\=1\ -mllvm\ -hwasan-generate-tags-with-calls\=1\ -mllvm\ -hwasan-instrument-with-calls\=1\ -mllvm\ -hwasan-use-short-granules\=0\ -mllvm\ -hwasan-memory-access-callback-prefix\=__asan_
+    export KASAN_DEFAULT_CFLAGS\=-DKASAN\=1\ -DKASAN_CLASSIC\=1\ -fsanitize\=address\ -mllvm\ -asan-globals-live-support\ -mllvm\ -asan-force-dynamic-shadow
+    export KEEP_PRIVATE_EXTERNS\=NO
+    export KOTLIN_TARGET\=iosArm64
+    export LD_DEPENDENCY_INFO_FILE\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/undefined_arch/SuperNutrition_dependency_info.dat
+    export LD_EXPORT_SYMBOLS\=YES
+    export LD_GENERATE_MAP_FILE\=NO
+    export LD_MAP_FILE_PATH\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/SuperNutrition-LinkMap-normal-undefined_arch.txt
+    export LD_NO_PIE\=NO
+    export LD_QUOTE_LINKER_ARGUMENTS_FOR_COMPILER_DRIVER\=YES
+    export LD_RUNPATH_SEARCH_PATHS_YES\=@loader_path/../Frameworks
+    export LD_SHARED_CACHE_ELIGIBLE\=Automatic
+    export LD_WARN_DUPLICATE_LIBRARIES\=NO
+    export LD_WARN_UNUSED_DYLIBS\=NO
+    export LEGACY_DEVELOPER_DIR\=/Applications/Xcode-26.6.0.app/Contents/PlugIns/Xcode3Core.ideplugin/Contents/SharedSupport/Developer
+    export LEX\=lex
+    export LIBRARY_DEXT_INSTALL_PATH\=/Library/DriverExtensions
+    export LIBRARY_FLAG_NOSPACE\=YES
+    export LIBRARY_FLAG_PREFIX\=-l
+    export LIBRARY_KEXT_INSTALL_PATH\=/Library/Extensions
+    export LIBRARY_SEARCH_PATHS\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos\
+    export LINKER_DISPLAYS_MANGLED_NAMES\=NO
+    export LINK_FILE_LIST_normal_arm64\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/SuperNutrition.LinkFileList
+    export LINK_OBJC_RUNTIME\=YES
+    export LINK_WITH_STANDARD_LIBRARIES\=YES
+    export LLVM_TARGET_TRIPLE_OS_VERSION\=ios15.0
+    export LLVM_TARGET_TRIPLE_VENDOR\=apple
+    export LM_AUX_CONST_METADATA_LIST_PATH_normal_arm64\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/SuperNutrition.SwiftConstValuesFileList
+    export LOCALIZATION_EXPORT_SUPPORTED\=YES
+    export LOCALIZATION_PREFERS_STRING_CATALOGS\=NO
+    export LOCALIZED_RESOURCES_FOLDER_PATH\=SuperNutrition.app/en.lproj
+    export LOCALIZED_STRING_CODE_COMMENTS\=NO
+    export LOCALIZED_STRING_MACRO_NAMES\=NSLocalizedString\ CFCopyLocalizedString
+    export LOCALIZED_STRING_SWIFTUI_SUPPORT\=YES
+    export LOCAL_ADMIN_APPS_DIR\=/Applications/Utilities
+    export LOCAL_APPS_DIR\=/Applications
+    export LOCAL_DEVELOPER_DIR\=/Library/Developer
+    export LOCAL_LIBRARY_DIR\=/Library
+    export LOCROOT\=/Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/iosApp
+    export LOCSYMROOT\=/Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/iosApp
+    export MACH_O_TYPE\=mh_execute
+    export MAC_OS_X_PRODUCT_BUILD_VERSION\=24H32
+    export MAC_OS_X_VERSION_ACTUAL\=150801
+    export MAC_OS_X_VERSION_MAJOR\=150000
+    export MAC_OS_X_VERSION_MINOR\=150800
+    export MAKE_MERGEABLE\=NO
+    export MERGEABLE_LIBRARY\=NO
+    export MERGED_BINARY_TYPE\=none
+    export MERGE_LINKED_LIBRARIES\=NO
+    export METAL_LIBRARY_FILE_BASE\=default
+    export METAL_LIBRARY_OUTPUT_DIR\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.app
+    export MODULES_FOLDER_PATH\=SuperNutrition.app/Modules
+    export NATIVE_ARCH\=x86_64
+    export NATIVE_ARCH_32_BIT\=i386
+    export NATIVE_ARCH_64_BIT\=x86_64
+    export NATIVE_ARCH_ACTUAL\=x86_64
+    export NO_COMMON\=YES
+    export OBJECT_FILE_DIR\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects
+    export OBJECT_FILE_DIR_normal\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal
+    export OBJROOT\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates
+    export ONLY_ACTIVE_ARCH\=YES
+    export OS\=MACOS
+    export OSAC\=/usr/bin/osacompile
+    export PACKAGE_TYPE\=com.apple.package-type.wrapper.application
+    export PASCAL_STRINGS\=YES
+    export PATH\=/Applications/Xcode-26.6.0.app/Contents/SharedFrameworks/SwiftBuild.framework/Versions/A/PlugIns/SWBBuildService.bundle/Contents/PlugIns/SWBUniversalPlatformPlugin.bundle/Contents/Frameworks/SWBUniversalPlatform.framework/Resources:/Applications/Xcode-26.6.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin:/Applications/Xcode-26.6.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/local/bin:/Applications/Xcode-26.6.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/libexec:/Applications/Xcode-26.6.0.app/Contents/Developer/Platforms/iPhoneOS.platform/usr/bin:/Applications/Xcode-26.6.0.app/Contents/Developer/Platforms/iPhoneOS.platform/usr/local/bin:/Applications/Xcode-26.6.0.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin:/Applications/Xcode-26.6.0.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/local/bin:/Applications/Xcode-26.6.0.app/Contents/Developer/usr/bin:/Applications/Xcode-26.6.0.app/Contents/Developer/usr/local/bin:/Applications/ChatGPT.app/Contents/Resources/codex-cli/codex-path:/Users/anastasia/.local/bin:/Users/anastasia/.kimi-code/bin:/Users/anastasia/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Library/Apple/usr/bin:/Users/anastasia/.codex/tmp/arg0-macos/codex-arg08VCV0l:/Users/anastasia/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/Users/anastasia/.cargo/bin:/Users/anastasia/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/Applications/ChatGPT.app/Contents/Resources:/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS
+    export PATH_PREFIXES_EXCLUDED_FROM_HEADER_DEPENDENCIES\=/usr/include\ /usr/local/include\ /System/Library/Frameworks\ /System/Library/PrivateFrameworks\ /Applications/Xcode-26.6.0.app/Contents/Developer/Headers\ /Applications/Xcode-26.6.0.app/Contents/Developer/SDKs\ /Applications/Xcode-26.6.0.app/Contents/Developer/Platforms
+    export PBDEVELOPMENTPLIST_PATH\=SuperNutrition.app/pbdevelopment.plist
+    export PER_ARCH_MODULE_FILE_DIR\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/undefined_arch
+    export PER_ARCH_OBJECT_FILE_DIR\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/undefined_arch
+    export PER_VARIANT_OBJECT_FILE_DIR\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal
+    export PKGINFO_FILE_PATH\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/PkgInfo
+    export PKGINFO_PATH\=SuperNutrition.app/PkgInfo
+    export PLATFORM_DEVELOPER_APPLICATIONS_DIR\=/Applications/Xcode-26.6.0.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/Applications
+    export PLATFORM_DEVELOPER_BIN_DIR\=/Applications/Xcode-26.6.0.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin
+    export PLATFORM_DEVELOPER_LIBRARY_DIR\=/Applications/Xcode-26.6.0.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/Library
+    export PLATFORM_DEVELOPER_SDK_DIR\=/Applications/Xcode-26.6.0.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs
+    export PLATFORM_DEVELOPER_TOOLS_DIR\=/Applications/Xcode-26.6.0.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/Tools
+    export PLATFORM_DEVELOPER_USR_DIR\=/Applications/Xcode-26.6.0.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr
+    export PLATFORM_DIR\=/Applications/Xcode-26.6.0.app/Contents/Developer/Platforms/iPhoneOS.platform
+    export PLATFORM_DISPLAY_NAME\=iOS
+    export PLATFORM_FAMILY_NAME\=iOS
+    export PLATFORM_NAME\=iphoneos
+    export PLATFORM_PREFERRED_ARCH\=arm64
+    export PLATFORM_PRODUCT_BUILD_VERSION\=23F81a
+    export PLATFORM_REQUIRES_SWIFT_AUTOLINK_EXTRACT\=NO
+    export PLATFORM_REQUIRES_SWIFT_MODULEWRAP\=NO
+    export PLATFORM_USES_DSYMS\=YES
+    export PLIST_FILE_OUTPUT_FORMAT\=binary
+    export PLUGINS_FOLDER_PATH\=SuperNutrition.app/PlugIns
+    export PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR\=YES
+    export PRECOMP_DESTINATION_DIR\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/PrefixHeaders
+    export PRIVATE_HEADERS_FOLDER_PATH\=SuperNutrition.app/PrivateHeaders
+    export PROCESSED_INFOPLIST_PATH\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/undefined_arch/Processed-Info.plist
+    export PRODUCT_BUNDLE_IDENTIFIER\=com.supernutrition.ios
+    export PRODUCT_BUNDLE_PACKAGE_TYPE\=APPL
+    export PRODUCT_MODULE_NAME\=SuperNutrition
+    export PRODUCT_NAME\=SuperNutrition
+    export PRODUCT_SETTINGS_PATH\=/Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/iosApp/Info.plist
+    export PRODUCT_TYPE\=com.apple.product-type.application
+    export PROFILING_CODE\=NO
+    export PROJECT\=SuperNutritionUIAcceptance
+    export PROJECT_DERIVED_FILE_DIR\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/DerivedSources
+    export PROJECT_DIR\=/Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/iosApp
+    export PROJECT_FILE_PATH\=/Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/iosApp/SuperNutritionUIAcceptance.xcodeproj
+    export PROJECT_GUID\=d84aa6dae790162c8dade9879b877b42
+    export PROJECT_NAME\=SuperNutritionUIAcceptance
+    export PROJECT_TEMP_DIR\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build
+    export PROJECT_TEMP_ROOT\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates
+    export PROVISIONING_PROFILE_REQUIRED\=YES
+    export PROVISIONING_PROFILE_REQUIRED_YES_YES\=YES
+    export PROVISIONING_PROFILE_SUPPORTED\=YES
+    export PUBLIC_HEADERS_FOLDER_PATH\=SuperNutrition.app/Headers
+    export RECOMMENDED_IPHONEOS_DEPLOYMENT_TARGET\=15.0
+    export RECURSIVE_SEARCH_PATHS_FOLLOW_SYMLINKS\=YES
+    export REMOVE_CVS_FROM_RESOURCES\=YES
+    export REMOVE_GIT_FROM_RESOURCES\=YES
+    export REMOVE_HEADERS_FROM_EMBEDDED_BUNDLES\=YES
+    export REMOVE_HG_FROM_RESOURCES\=YES
+    export REMOVE_STATIC_EXECUTABLES_FROM_EMBEDDED_BUNDLES\=YES
+    export REMOVE_SVN_FROM_RESOURCES\=YES
+    export RESCHEDULE_INDEPENDENT_HEADERS_PHASES\=YES
+    export REZ_COLLECTOR_DIR\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/ResourceManagerResources
+    export REZ_OBJECTS_DIR\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/ResourceManagerResources/Objects
+    export REZ_SEARCH_PATHS\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos\
+    export RPATH_ORIGIN\=@loader_path
+    export RUNTIME_EXCEPTION_ALLOW_DYLD_ENVIRONMENT_VARIABLES\=NO
+    export RUNTIME_EXCEPTION_ALLOW_JIT\=NO
+    export RUNTIME_EXCEPTION_ALLOW_UNSIGNED_EXECUTABLE_MEMORY\=NO
+    export RUNTIME_EXCEPTION_DEBUGGING_TOOL\=NO
+    export RUNTIME_EXCEPTION_DISABLE_EXECUTABLE_PAGE_PROTECTION\=NO
+    export RUNTIME_EXCEPTION_DISABLE_LIBRARY_VALIDATION\=NO
+    export SCANNING_PCM_KEEP_CACHE_DIRECTORY\=YES
+    export SCAN_ALL_SOURCE_FILES_FOR_INCLUDES\=NO
+    export SCRIPTS_FOLDER_PATH\=SuperNutrition.app/Scripts
+    export SCRIPT_INPUT_FILE_0\=/Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/iosApp/build-sharedkit-framework.sh
+    export SCRIPT_INPUT_FILE_COUNT\=1
+    export SCRIPT_INPUT_FILE_LIST_COUNT\=0
+    export SCRIPT_OUTPUT_FILE_0\=/Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/sharedKit/build/bin/iosArm64/debugFramework/SharedKit.framework/SharedKit
+    export SCRIPT_OUTPUT_FILE_COUNT\=1
+    export SCRIPT_OUTPUT_FILE_LIST_COUNT\=0
+    export SDKROOT\=/Applications/Xcode-26.6.0.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk
+    export SDK_DIR\=/Applications/Xcode-26.6.0.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk
+    export SDK_DIR_iphoneos\=/Applications/Xcode-26.6.0.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk
+    export SDK_DIR_iphoneos26_5\=/Applications/Xcode-26.6.0.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk
+    export SDK_NAME\=iphoneos26.5
+    export SDK_NAMES\=iphoneos26.5
+    export SDK_PRODUCT_BUILD_VERSION\=23F81a
+    export SDK_STAT_CACHE_DIR\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/C/com.apple.DeveloperTools/26.6-17F113/Xcode
+    export SDK_STAT_CACHE_ENABLE\=YES
+    export SDK_STAT_CACHE_PATH\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/C/com.apple.DeveloperTools/26.6-17F113/Xcode/SDKStatCaches.noindex/iphoneos26.5-23F81a-8687e77c73e7c2167dddce0efb4d140b.sdkstatcache
+    export SDK_VERSION\=26.5
+    export SDK_VERSION_ACTUAL\=260500
+    export SDK_VERSION_MAJOR\=260000
+    export SDK_VERSION_MINOR\=260500
+    export SED\=/usr/bin/sed
+    export SEPARATE_STRIP\=NO
+    export SEPARATE_SYMBOL_EDIT\=NO
+    export SET_DIR_MODE_OWNER_GROUP\=YES
+    export SET_FILE_MODE_OWNER_GROUP\=NO
+    export SHALLOW_BUNDLE\=YES
+    export SHALLOW_BUNDLE_TRIPLE\=ios
+    export SHALLOW_BUNDLE_ios_macabi\=NO
+    export SHALLOW_BUNDLE_macos\=NO
+    export SHARED_DERIVED_FILE_DIR\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/DerivedSources
+    export SHARED_FRAMEWORKS_FOLDER_PATH\=SuperNutrition.app/SharedFrameworks
+    export SHARED_KIT_FRAMEWORK_DIR\=/Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/sharedKit/build/bin/iosArm64/debugFramework
+    export SHARED_PRECOMPS_DIR\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SharedPrecompiledHeaders
+    export SHARED_SUPPORT_FOLDER_PATH\=SuperNutrition.app/SharedSupport
+    export SKIP_INSTALL\=NO
+    export SKIP_MERGEABLE_LIBRARY_BUNDLE_HOOK\=NO
+    export SOURCE_ROOT\=/Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/iosApp
+    export SRCROOT\=/Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/iosApp
+    export STRINGSDATA_DIR\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/undefined_arch
+    export STRINGSDATA_ROOT\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build
+    export STRINGS_FILE_INFOPLIST_RENAME\=YES
+    export STRINGS_FILE_OUTPUT_ENCODING\=binary
+    export STRING_CATALOG_GENERATE_SYMBOLS\=NO
+    export STRIP_BITCODE_FROM_COPIED_FILES\=YES
+    export STRIP_INSTALLED_PRODUCT\=YES
+    export STRIP_STYLE\=all
+    export STRIP_SWIFT_SYMBOLS\=YES
+    export SUPPORTED_DEVICE_FAMILIES\=1,2
+    export SUPPORTED_PLATFORMS\=iphoneos\ iphonesimulator
+    export SUPPORTS_MACCATALYST\=NO
+    export SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD\=YES
+    export SUPPORTS_ON_DEMAND_RESOURCES\=YES
+    export SUPPORTS_TEXT_BASED_API\=NO
+    export SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD\=YES
+    export SUPPRESS_WARNINGS\=NO
+    export SWIFT_EMIT_CONST_VALUE_PROTOCOLS\=AnyResolverProviding\ AppEntity\ AppEnum\ AppExtension\ AppIntent\ AppIntentsPackage\ AppShortcutProviding\ AppShortcutsProvider\ AppUnionValue\ AppUnionValueCasesProviding\ DynamicOptionsProvider\ EntityQuery\ ExtensionPointDefining\ IntentValueQuery\ Resolver\ TransientEntity\ _AssistantIntentsProvider\ _GenerativeFunctionExtractable\ _IntentValueRepresentable
+    export SWIFT_EMIT_LOC_STRINGS\=NO
+    export SWIFT_ENABLE_EXPLICIT_MODULES\=YES
+    export SWIFT_PLATFORM_TARGET_PREFIX\=ios
+    export SWIFT_RESPONSE_FILE_PATH_normal_arm64\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/SuperNutrition.SwiftFileList
+    export SWIFT_VERSION\=5.0
+    export SYMROOT\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products
+    export SYSTEM_ADMIN_APPS_DIR\=/Applications/Utilities
+    export SYSTEM_APPS_DIR\=/Applications
+    export SYSTEM_CORE_SERVICES_DIR\=/System/Library/CoreServices
+    export SYSTEM_DEMOS_DIR\=/Applications/Extras
+    export SYSTEM_DEVELOPER_APPS_DIR\=/Applications/Xcode-26.6.0.app/Contents/Developer/Applications
+    export SYSTEM_DEVELOPER_BIN_DIR\=/Applications/Xcode-26.6.0.app/Contents/Developer/usr/bin
+    export SYSTEM_DEVELOPER_DEMOS_DIR\=/Applications/Xcode-26.6.0.app/Contents/Developer/Applications/Utilities/Built\ Examples
+    export SYSTEM_DEVELOPER_DIR\=/Applications/Xcode-26.6.0.app/Contents/Developer
+    export SYSTEM_DEVELOPER_DOC_DIR\=/Applications/Xcode-26.6.0.app/Contents/Developer/ADC\ Reference\ Library
+    export SYSTEM_DEVELOPER_GRAPHICS_TOOLS_DIR\=/Applications/Xcode-26.6.0.app/Contents/Developer/Applications/Graphics\ Tools
+    export SYSTEM_DEVELOPER_JAVA_TOOLS_DIR\=/Applications/Xcode-26.6.0.app/Contents/Developer/Applications/Java\ Tools
+    export SYSTEM_DEVELOPER_PERFORMANCE_TOOLS_DIR\=/Applications/Xcode-26.6.0.app/Contents/Developer/Applications/Performance\ Tools
+    export SYSTEM_DEVELOPER_RELEASENOTES_DIR\=/Applications/Xcode-26.6.0.app/Contents/Developer/ADC\ Reference\ Library/releasenotes
+    export SYSTEM_DEVELOPER_TOOLS\=/Applications/Xcode-26.6.0.app/Contents/Developer/Tools
+    export SYSTEM_DEVELOPER_TOOLS_DOC_DIR\=/Applications/Xcode-26.6.0.app/Contents/Developer/ADC\ Reference\ Library/documentation/DeveloperTools
+    export SYSTEM_DEVELOPER_TOOLS_RELEASENOTES_DIR\=/Applications/Xcode-26.6.0.app/Contents/Developer/ADC\ Reference\ Library/releasenotes/DeveloperTools
+    export SYSTEM_DEVELOPER_USR_DIR\=/Applications/Xcode-26.6.0.app/Contents/Developer/usr
+    export SYSTEM_DEVELOPER_UTILITIES_DIR\=/Applications/Xcode-26.6.0.app/Contents/Developer/Applications/Utilities
+    export SYSTEM_DEXT_INSTALL_PATH\=/System/Library/DriverExtensions
+    export SYSTEM_DOCUMENTATION_DIR\=/Library/Documentation
+    export SYSTEM_EXTENSIONS_FOLDER_PATH\=SuperNutrition.app/SystemExtensions
+    export SYSTEM_EXTENSIONS_FOLDER_PATH_SHALLOW_BUNDLE_NO\=SuperNutrition.app/Library/SystemExtensions
+    export SYSTEM_EXTENSIONS_FOLDER_PATH_SHALLOW_BUNDLE_YES\=SuperNutrition.app/SystemExtensions
+    export SYSTEM_KEXT_INSTALL_PATH\=/System/Library/Extensions
+    export SYSTEM_LIBRARY_DIR\=/System/Library
+    export TAPI_DEMANGLE\=YES
+    export TAPI_ENABLE_PROJECT_HEADERS\=NO
+    export TAPI_LANGUAGE\=objective-c
+    export TAPI_LANGUAGE_STANDARD\=compiler-default
+    export TAPI_USE_SRCROOT\=YES
+    export TAPI_VERIFY_MODE\=Pedantic
+    export TARGETED_DEVICE_FAMILY\=1,2
+    export TARGETNAME\=SuperNutrition
+    export TARGET_BUILD_DIR\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos
+    export TARGET_NAME\=SuperNutrition
+    export TARGET_TEMP_DIR\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build
+    export TEMP_DIR\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build
+    export TEMP_FILES_DIR\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build
+    export TEMP_FILE_DIR\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build
+    export TEMP_ROOT\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates
+    export TEMP_SANDBOX_DIR\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/TemporaryTaskSandboxes
+    export TEST_FRAMEWORK_SEARCH_PATHS\=\ /Applications/Xcode-26.6.0.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/Library/Frameworks\ /Applications/Xcode-26.6.0.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk/Developer/Library/Frameworks
+    export TEST_LIBRARY_SEARCH_PATHS\=\ /Applications/Xcode-26.6.0.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib
+    export TOOLCHAINS\=com.apple.dt.toolchain.XcodeDefault
+    export TOOLCHAIN_DIR\=/Applications/Xcode-26.6.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain
+    export TREAT_MISSING_BASELINES_AS_TEST_FAILURES\=NO
+    export TREAT_MISSING_SCRIPT_PHASE_OUTPUTS_AS_ERRORS\=NO
+    export UID\=501
+    export UNINSTALLED_PRODUCTS_DIR\=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/UninstalledProducts
+    export UNLOCALIZED_RESOURCES_FOLDER_PATH\=SuperNutrition.app
+    export UNLOCALIZED_RESOURCES_FOLDER_PATH_SHALLOW_BUNDLE_NO\=SuperNutrition.app/Resources
+    export UNLOCALIZED_RESOURCES_FOLDER_PATH_SHALLOW_BUNDLE_YES\=SuperNutrition.app
+    export UNSTRIPPED_PRODUCT\=NO
+    export USER\=anastasia
+    export USER_APPS_DIR\=/Users/anastasia/Applications
+    export USER_LIBRARY_DIR\=/Users/anastasia/Library
+    export USE_DYNAMIC_NO_PIC\=YES
+    export USE_HEADERMAP\=YES
+    export USE_HEADER_SYMLINKS\=NO
+    export VALIDATE_DEVELOPMENT_ASSET_PATHS\=YES_ERROR
+    export VALIDATE_PRODUCT\=NO
+    export VALID_ARCHS\=arm64\ arm64e\ armv7\ armv7s
+    export VERBOSE_PBXCP\=NO
+    export VERSIONPLIST_PATH\=SuperNutrition.app/version.plist
+    export VERSION_INFO_BUILDER\=anastasia
+    export VERSION_INFO_FILE\=SuperNutrition_vers.c
+    export VERSION_INFO_STRING\=\"@\(\#\)PROGRAM:SuperNutrition\ \ PROJECT:SuperNutritionUIAcceptance-1\"
+    export WORKSPACE_DIR\=/Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/iosApp/SuperNutritionUIAcceptance.xcodeproj
+    export WRAPPER_EXTENSION\=app
+    export WRAPPER_NAME\=SuperNutrition.app
+    export WRAPPER_SUFFIX\=.app
+    export WRAP_ASSET_PACKS_IN_SEPARATE_DIRECTORIES\=NO
+    export XCODE_APP_SUPPORT_DIR\=/Applications/Xcode-26.6.0.app/Contents/Developer/Library/Xcode
+    export XCODE_PRODUCT_BUILD_VERSION\=17F113
+    export XCODE_VERSION_ACTUAL\=2660
+    export XCODE_VERSION_MAJOR\=2600
+    export XCODE_VERSION_MINOR\=2660
+    export XPCSERVICES_FOLDER_PATH\=SuperNutrition.app/XPCServices
+    export YACC\=yacc
+    export _DISCOVER_COMMAND_LINE_LINKER_INPUTS\=YES
+    export _DISCOVER_COMMAND_LINE_LINKER_INPUTS_INCLUDE_WL\=YES
+    export _LD_MULTIARCH\=YES
+    export _WRAPPER_CONTENTS_DIR_SHALLOW_BUNDLE_NO\=/Contents
+    export _WRAPPER_PARENT_PATH_SHALLOW_BUNDLE_NO\=/..
+    export _WRAPPER_RESOURCES_DIR_SHALLOW_BUNDLE_NO\=/Resources
+    export __DIAGNOSE_DEPRECATED_ARCHS\=YES
+    export __IS_NOT_MACOS\=YES
+    export __IS_NOT_MACOS_macosx\=NO
+    export __IS_NOT_SIMULATOR\=YES
+    export __IS_NOT_SIMULATOR_simulator\=NO
+    export __ORIGINAL_SDK_DEFINED_LLVM_TARGET_TRIPLE_SYS\=ios
+    export arch\=undefined_arch
+    export variant\=normal
+    /bin/sh -c /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Script-S32000010000000000000002.sh
+> Task :build-logic:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :build-logic:compileKotlin UP-TO-DATE
+> Task :build-logic:compileJava NO-SOURCE
+> Task :build-logic:pluginDescriptors UP-TO-DATE
+> Task :build-logic:processResources UP-TO-DATE
+> Task :build-logic:classes UP-TO-DATE
+> Task :build-logic:jar UP-TO-DATE
+
+> Configure project :apps:sharedKit
+w: [33m[1m⚠️ Deprecated Kotlin/Native Host[0m[0m
+The current host platform 'macos_x64' is deprecated and will be removed in a future Kotlin release. The Kotlin/Native compiler will no longer be distributed for this host.
+[32m[1mSolution:[0m[0m
+[32m[3mMigrate your build to a non-deprecated supported host platform for Kotlin/Native.[0m[0m
+[36mLearn more about Kotlin/Native target support and migration: [0m[34mhttps://kotl.in/native-targets-tiers[0m[36m[0m
+
+w: [33m[1m⚠️ Default Kotlin Hierarchy Template Not Applied Correctly[0m[0m
+The Default Kotlin Hierarchy Template was not applied to 'project ':apps:sharedKit'':
+Explicit .dependsOn() edges were configured for the following source sets:
+[iosArm64Main, iosMain]
+
+Consider removing dependsOn-calls or disabling the default template by adding
+    'kotlin.mpp.applyDefaultHierarchyTemplate=false'
+to your gradle.properties
+[32m[1mSolution:[0m[0m
+[32m[3mPlease remove the dependsOn-calls or disable the default template.[0m[0m
+[36mLearn more about hierarchy templates: [0m[34mhttps://kotl.in/hierarchy-template[0m[36m[0m
+
+
+> Configure project :platform:photo-android
+w: [33m[1m⚠️ Unused Kotlin Source Sets[0m[0m
+The Kotlin source set commonTest was configured but not added to any Kotlin compilation.
+[32m[1mSolution:[0m[0m
+[32m[3mYou can add a source set to a target's compilation by connecting it with the compilation's default source set using 'dependsOn'.[0m[0m
+[36mSee [0m[34mhttps://kotl.in/connecting-source-sets[0m[36m[0m
+
+
+> Task :core:ui:kmpPartiallyResolvedDependenciesChecker
+> Task :core:config:kmpPartiallyResolvedDependenciesChecker
+> Task :domain:inference:kmpPartiallyResolvedDependenciesChecker
+> Task :core:config:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :domain:inference:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :core:ui:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :core:config:downloadKotlinNativeDistribution UP-TO-DATE
+> Task :core:ui:downloadKotlinNativeDistribution UP-TO-DATE
+> Task :domain:inference:downloadKotlinNativeDistribution UP-TO-DATE
+> Task :core:config:compileKotlinIosArm64 UP-TO-DATE
+> Task :core:ui:compileKotlinIosArm64 UP-TO-DATE
+> Task :core:config:exportCrossCompilationMetadataForIosArm64ApiElements UP-TO-DATE
+> Task :domain:inference:compileKotlinIosArm64 UP-TO-DATE
+> Task :core:ui:exportCrossCompilationMetadataForIosArm64ApiElements UP-TO-DATE
+> Task :domain:nutrition:kmpPartiallyResolvedDependenciesChecker
+> Task :domain:nutrition:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :domain:inference:exportCrossCompilationMetadataForIosArm64ApiElements UP-TO-DATE
+> Task :domain:photo-analysis:kmpPartiallyResolvedDependenciesChecker
+> Task :domain:photo-analysis:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :domain:photo-analysis:downloadKotlinNativeDistribution UP-TO-DATE
+> Task :domain:nutrition:downloadKotlinNativeDistribution UP-TO-DATE
+> Task :feature:photo-analysis:checkIosArm64MainComposeLibrariesCompatibility
+> Task :feature:photo-analysis:kmpPartiallyResolvedDependenciesChecker
+> Task :feature:photo-analysis:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :domain:photo-analysis:compileKotlinIosArm64 UP-TO-DATE
+> Task :domain:nutrition:compileKotlinIosArm64 UP-TO-DATE
+> Task :feature:photo-analysis:downloadKotlinNativeDistribution UP-TO-DATE
+> Task :domain:photo-analysis:exportCrossCompilationMetadataForIosArm64ApiElements UP-TO-DATE
+> Task :domain:nutrition:exportCrossCompilationMetadataForIosArm64ApiElements UP-TO-DATE
+> Task :feature:photo-analysis-presenter:kmpPartiallyResolvedDependenciesChecker
+> Task :feature:photo-analysis:convertXmlValueResourcesForAppleMain NO-SOURCE
+> Task :feature:photo-analysis-presenter:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :feature:photo-analysis:copyNonXmlValueResourcesForAppleMain NO-SOURCE
+> Task :apps:sharedKit:kmpPartiallyResolvedDependenciesChecker
+> Task :feature:photo-analysis:prepareComposeResourcesTaskForAppleMain NO-SOURCE
+> Task :apps:sharedKit:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :feature:photo-analysis:generateResourceAccessorsForAppleMain SKIPPED
+> Task :apps:sharedKit:checkSandboxAndWriteProtection
+> Task :feature:photo-analysis:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :feature:photo-analysis:copyNonXmlValueResourcesForCommonMain NO-SOURCE
+> Task :feature:photo-analysis:prepareComposeResourcesTaskForCommonMain NO-SOURCE
+> Task :feature:photo-analysis:generateResourceAccessorsForCommonMain SKIPPED
+> Task :feature:photo-analysis-presenter:downloadKotlinNativeDistribution UP-TO-DATE
+> Task :feature:photo-analysis:convertXmlValueResourcesForIosArm64Main NO-SOURCE
+> Task :feature:photo-analysis:copyNonXmlValueResourcesForIosArm64Main NO-SOURCE
+> Task :feature:photo-analysis:prepareComposeResourcesTaskForIosArm64Main NO-SOURCE
+> Task :apps:sharedKit:downloadKotlinNativeDistribution UP-TO-DATE
+> Task :feature:photo-analysis:generateResourceAccessorsForIosArm64Main SKIPPED
+> Task :feature:photo-analysis:convertXmlValueResourcesForIosMain NO-SOURCE
+> Task :feature:photo-analysis:copyNonXmlValueResourcesForIosMain NO-SOURCE
+> Task :feature:photo-analysis:prepareComposeResourcesTaskForIosMain NO-SOURCE
+> Task :feature:photo-analysis:generateResourceAccessorsForIosMain SKIPPED
+> Task :feature:photo-analysis-ui:checkIosArm64MainComposeLibrariesCompatibility
+> Task :feature:photo-analysis:convertXmlValueResourcesForNativeMain NO-SOURCE
+> Task :feature:photo-analysis-ui:kmpPartiallyResolvedDependenciesChecker
+> Task :feature:photo-analysis-ui:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :feature:photo-analysis:copyNonXmlValueResourcesForNativeMain NO-SOURCE
+> Task :feature:photo-analysis:prepareComposeResourcesTaskForNativeMain NO-SOURCE
+> Task :feature:photo-analysis:generateResourceAccessorsForNativeMain SKIPPED
+> Task :feature:photo-analysis:generateActualResourceCollectorsForIosArm64Main SKIPPED
+> Task :feature:photo-analysis:generateComposeResClass SKIPPED
+> Task :feature:photo-analysis:generateExpectResourceCollectorsForCommonMain SKIPPED
+> Task :feature:photo-analysis:exportCrossCompilationMetadataForIosArm64ApiElements UP-TO-DATE
+> Task :platform:photo-ios:cinteropCommonCryptoIosArm64 UP-TO-DATE
+> Task :feature:photo-analysis-ui:downloadKotlinNativeDistribution UP-TO-DATE
+> Task :feature:photo-analysis-presenter:compileKotlinIosArm64 UP-TO-DATE
+> Task :feature:photo-analysis-ui:convertXmlValueResourcesForAppleMain NO-SOURCE
+> Task :apps:sharedKit:checkSyntheticImportProjectIsCorrectlyIntegrated SKIPPED
+> Task :feature:photo-analysis-presenter:exportCrossCompilationMetadataForIosArm64ApiElements UP-TO-DATE
+> Task :feature:photo-analysis-ui:copyNonXmlValueResourcesForAppleMain NO-SOURCE
+> Task :apps:sharedKit:generateSyntheticLinkageSwiftPMImportProjectForEmbedAndSignLinkage SKIPPED
+> Task :feature:photo-analysis-ui:prepareComposeResourcesTaskForAppleMain NO-SOURCE
+> Task :feature:photo-analysis-ui:generateResourceAccessorsForAppleMain NO-SOURCE
+> Task :platform:photo-ios:cinteropPhotoCaptureIosArm64 UP-TO-DATE
+> Task :feature:photo-analysis-ui:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :feature:photo-analysis-ui:copyNonXmlValueResourcesForCommonMain UP-TO-DATE
+> Task :platform:photo-ios:cinteropPhotoFixtureIosArm64 UP-TO-DATE
+> Task :feature:photo-analysis-ui:prepareComposeResourcesTaskForCommonMain UP-TO-DATE
+> Task :feature:photo-analysis-ui:generateResourceAccessorsForCommonMain UP-TO-DATE
+> Task :feature:photo-analysis-ui:convertXmlValueResourcesForIosArm64Main NO-SOURCE
+> Task :feature:photo-analysis-ui:copyNonXmlValueResourcesForIosArm64Main NO-SOURCE
+> Task :feature:photo-analysis-ui:prepareComposeResourcesTaskForIosArm64Main NO-SOURCE
+> Task :feature:photo-analysis-ui:generateResourceAccessorsForIosArm64Main NO-SOURCE
+> Task :feature:photo-analysis-ui:convertXmlValueResourcesForIosMain NO-SOURCE
+> Task :platform:photo-ios:cinteropPhotoPermissionIosArm64 UP-TO-DATE
+> Task :feature:photo-analysis-ui:copyNonXmlValueResourcesForIosMain NO-SOURCE
+> Task :platform:photo-ios:kmpPartiallyResolvedDependenciesChecker
+> Task :platform:photo-ios:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :feature:photo-analysis-ui:prepareComposeResourcesTaskForIosMain NO-SOURCE
+> Task :feature:photo-analysis-ui:generateResourceAccessorsForIosMain NO-SOURCE
+> Task :feature:photo-analysis-ui:convertXmlValueResourcesForNativeMain NO-SOURCE
+> Task :feature:photo-analysis-ui:copyNonXmlValueResourcesForNativeMain NO-SOURCE
+> Task :feature:photo-analysis-ui:prepareComposeResourcesTaskForNativeMain NO-SOURCE
+> Task :feature:photo-analysis-ui:generateResourceAccessorsForNativeMain NO-SOURCE
+> Task :platform:photo-ios:downloadKotlinNativeDistribution UP-TO-DATE
+> Task :feature:photo-analysis-ui:generateActualResourceCollectorsForIosArm64Main UP-TO-DATE
+> Task :feature:photo-analysis-ui:generateComposeResClass UP-TO-DATE
+> Task :feature:photo-analysis-ui:generateExpectResourceCollectorsForCommonMain UP-TO-DATE
+> Task :platform:photo-ios:compileKotlinIosArm64 UP-TO-DATE
+> Task :platform:photo-ios:exportCrossCompilationMetadataForIosArm64ApiElements UP-TO-DATE
+> Task :feature:photo-analysis-ui:compileKotlinIosArm64 UP-TO-DATE
+> Task :feature:photo-analysis-ui:exportCrossCompilationMetadataForIosArm64ApiElements UP-TO-DATE
+> Task :feature:photo-analysis:compileKotlinIosArm64 UP-TO-DATE
+> Task :apps:sharedKit:compileKotlinIosArm64 UP-TO-DATE
+> Task :apps:sharedKit:linkDebugFrameworkIosArm64 UP-TO-DATE
+
+[Incubating] Problems report is available at: file:///Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/build/reports/problems/problems-report.html
+
+BUILD SUCCESSFUL in 6s
+57 actionable tasks: 13 executed, 44 up-to-date
+
+SwiftDriver SuperNutrition normal arm64 com.apple.xcode.tools.swift.compiler (in target 'SuperNutrition' from project 'SuperNutritionUIAcceptance')
+    cd /Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/iosApp
+    builtin-SwiftDriver -- /Applications/Xcode-26.6.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name SuperNutrition -O @/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/SuperNutrition.SwiftFileList -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode-26.6.0.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk -target arm64-apple-ios15.0 -g -Xfrontend -serialize-debugging-options -swift-version 5 -I /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos -F /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos -F /Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/sharedKit/build/bin/iosArm64/debugFramework -F /Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/sharedKit/build/bin/iosArm64/debugFramework -parse-as-library -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/C/com.apple.DeveloperTools/26.6-17F113/Xcode/SDKStatCaches.noindex/iphoneos26.5-23F81a-8687e77c73e7c2167dddce0efb4d140b.sdkstatcache -output-file-map /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/SuperNutrition-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SwiftExplicitPrecompiledModules -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/SuperNutrition.swiftmodule -validate-clang-modules-once -clang-build-session-file /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/C/org.llvm.clang/ModuleCache.noindex/Session.modulevalidation -Xcc -I/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/SuperNutrition_const_extract_protocols.json -Xcc -iquote -Xcc /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/SuperNutrition-generated-files.hmap -Xcc -I/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/SuperNutrition-own-target-headers.hmap -Xcc -I/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/SuperNutrition-all-target-headers.hmap -Xcc -iquote -Xcc /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/SuperNutrition-project-headers.hmap -Xcc -I/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/include -Xcc -I/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/DerivedSources-normal/arm64 -Xcc -I/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/DerivedSources/arm64 -Xcc -I/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/DerivedSources -emit-objc-header -emit-objc-header-path /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/SuperNutrition-Swift.h -working-directory /Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/iosApp -experimental-emit-module-separately -disable-cmo
+
+SwiftDriver\ Compilation SuperNutrition normal arm64 com.apple.xcode.tools.swift.compiler (in target 'SuperNutrition' from project 'SuperNutritionUIAcceptance')
+    cd /Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/iosApp
+    builtin-Swift-Compilation -- /Applications/Xcode-26.6.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name SuperNutrition -O @/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/SuperNutrition.SwiftFileList -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode-26.6.0.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk -target arm64-apple-ios15.0 -g -Xfrontend -serialize-debugging-options -swift-version 5 -I /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos -F /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos -F /Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/sharedKit/build/bin/iosArm64/debugFramework -F /Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/sharedKit/build/bin/iosArm64/debugFramework -parse-as-library -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/C/com.apple.DeveloperTools/26.6-17F113/Xcode/SDKStatCaches.noindex/iphoneos26.5-23F81a-8687e77c73e7c2167dddce0efb4d140b.sdkstatcache -output-file-map /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/SuperNutrition-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SwiftExplicitPrecompiledModules -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/SuperNutrition.swiftmodule -validate-clang-modules-once -clang-build-session-file /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/C/org.llvm.clang/ModuleCache.noindex/Session.modulevalidation -Xcc -I/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/SuperNutrition_const_extract_protocols.json -Xcc -iquote -Xcc /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/SuperNutrition-generated-files.hmap -Xcc -I/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/SuperNutrition-own-target-headers.hmap -Xcc -I/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/SuperNutrition-all-target-headers.hmap -Xcc -iquote -Xcc /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/SuperNutrition-project-headers.hmap -Xcc -I/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/include -Xcc -I/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/DerivedSources-normal/arm64 -Xcc -I/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/DerivedSources/arm64 -Xcc -I/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/DerivedSources -emit-objc-header -emit-objc-header-path /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/SuperNutrition-Swift.h -working-directory /Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/iosApp -experimental-emit-module-separately -disable-cmo
+
+SwiftDriver\ Compilation\ Requirements SuperNutrition normal arm64 com.apple.xcode.tools.swift.compiler (in target 'SuperNutrition' from project 'SuperNutritionUIAcceptance')
+    cd /Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/iosApp
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode-26.6.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name SuperNutrition -O @/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/SuperNutrition.SwiftFileList -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode-26.6.0.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk -target arm64-apple-ios15.0 -g -Xfrontend -serialize-debugging-options -swift-version 5 -I /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos -F /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos -F /Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/sharedKit/build/bin/iosArm64/debugFramework -F /Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/sharedKit/build/bin/iosArm64/debugFramework -parse-as-library -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/C/com.apple.DeveloperTools/26.6-17F113/Xcode/SDKStatCaches.noindex/iphoneos26.5-23F81a-8687e77c73e7c2167dddce0efb4d140b.sdkstatcache -output-file-map /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/SuperNutrition-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SwiftExplicitPrecompiledModules -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/SuperNutrition.swiftmodule -validate-clang-modules-once -clang-build-session-file /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/C/org.llvm.clang/ModuleCache.noindex/Session.modulevalidation -Xcc -I/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/SuperNutrition_const_extract_protocols.json -Xcc -iquote -Xcc /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/SuperNutrition-generated-files.hmap -Xcc -I/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/SuperNutrition-own-target-headers.hmap -Xcc -I/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/SuperNutrition-all-target-headers.hmap -Xcc -iquote -Xcc /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/SuperNutrition-project-headers.hmap -Xcc -I/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/include -Xcc -I/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/DerivedSources-normal/arm64 -Xcc -I/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/DerivedSources/arm64 -Xcc -I/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/DerivedSources -emit-objc-header -emit-objc-header-path /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/SuperNutrition-Swift.h -working-directory /Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/iosApp -experimental-emit-module-separately -disable-cmo
+
+Copy /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.swiftmodule/arm64-apple-ios.swiftmodule /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/SuperNutrition.swiftmodule (in target 'SuperNutrition' from project 'SuperNutritionUIAcceptance')
+    cd /Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/iosApp
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -strip-unsigned-binaries -strip-deterministic -strip-tool /Applications/Xcode-26.6.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip -resolve-src-symlinks -rename /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/SuperNutrition.swiftmodule /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.swiftmodule/arm64-apple-ios.swiftmodule
+
+Copy /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.swiftmodule/arm64-apple-ios.swiftdoc /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/SuperNutrition.swiftdoc (in target 'SuperNutrition' from project 'SuperNutritionUIAcceptance')
+    cd /Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/iosApp
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -strip-unsigned-binaries -strip-deterministic -strip-tool /Applications/Xcode-26.6.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip -resolve-src-symlinks -rename /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/SuperNutrition.swiftdoc /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.swiftmodule/arm64-apple-ios.swiftdoc
+
+Copy /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.swiftmodule/arm64-apple-ios.abi.json /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/SuperNutrition.abi.json (in target 'SuperNutrition' from project 'SuperNutritionUIAcceptance')
+    cd /Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/iosApp
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -strip-unsigned-binaries -strip-deterministic -strip-tool /Applications/Xcode-26.6.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip -resolve-src-symlinks -rename /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/SuperNutrition.abi.json /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.swiftmodule/arm64-apple-ios.abi.json
+
+Copy /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.swiftmodule/Project/arm64-apple-ios.swiftsourceinfo /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/SuperNutrition.swiftsourceinfo (in target 'SuperNutrition' from project 'SuperNutritionUIAcceptance')
+    cd /Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/iosApp
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -strip-unsigned-binaries -strip-deterministic -strip-tool /Applications/Xcode-26.6.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip -resolve-src-symlinks -rename /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/SuperNutrition.swiftsourceinfo /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.swiftmodule/Project/arm64-apple-ios.swiftsourceinfo
+
+Ld /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.app/SuperNutrition normal (in target 'SuperNutrition' from project 'SuperNutritionUIAcceptance')
+    cd /Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/iosApp
+    /Applications/Xcode-26.6.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios15.0 -isysroot /Applications/Xcode-26.6.0.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk -Os -L/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/EagerLinkingTBDs/Debug-iphoneos -L/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos -F/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/EagerLinkingTBDs/Debug-iphoneos -F/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos -F/Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/sharedKit/build/bin/iosArm64/debugFramework -F/Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/sharedKit/build/bin/iosArm64/debugFramework -filelist /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/SuperNutrition.LinkFileList -Xlinker -rpath -Xlinker /usr/lib/swift -Xlinker -dead_strip -Xlinker -object_path_lto -Xlinker /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/SuperNutrition_lto.o -Xlinker -dependency_info -Xlinker /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/SuperNutrition_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode-26.6.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/SuperNutrition.swiftmodule @/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/SuperNutrition-linker-args.resp -framework SharedKit -o /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.app/SuperNutrition
+
+Copy /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.app/Frameworks/SharedKit.framework /Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/sharedKit/build/bin/iosArm64/debugFramework/SharedKit.framework (in target 'SuperNutrition' from project 'SuperNutritionUIAcceptance')
+    cd /Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/iosApp
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -strip-unsigned-binaries -strip-deterministic -bitcode-strip all -bitcode-strip-tool /Applications/Xcode-26.6.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip -strip-tool /Applications/Xcode-26.6.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip -resolve-src-symlinks -remove-static-executable /Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/sharedKit/build/bin/iosArm64/debugFramework/SharedKit.framework /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.app/Frameworks
+note: Injecting stub binary into codeless framework (in target 'SuperNutrition' from project 'SuperNutritionUIAcceptance')
+    /Applications/Xcode-26.6.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode-26.6.0.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk -x c -c /dev/null -target arm64-apple-ios15.0 -o /private/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/swbuild.tmp.cPErAJpv/Data.noindex/arm64-apple.o
+    /Applications/Xcode-26.6.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode-26.6.0.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk -dynamiclib -Xlinker -adhoc_codesign -target arm64-apple-ios15.0 -o /private/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/swbuild.tmp.cPErAJpv/Data.noindex/arm64-apple /private/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/swbuild.tmp.cPErAJpv/Data.noindex/arm64-apple.o
+    /Applications/Xcode-26.6.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo -create -output /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.app/Frameworks/SharedKit.framework/SharedKit /private/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/swbuild.tmp.cPErAJpv/Data.noindex/arm64-apple
+
+ProcessInfoPlistFile /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.app/Info.plist /Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/iosApp/Info.plist (in target 'SuperNutrition' from project 'SuperNutritionUIAcceptance')
+    cd /Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/iosApp
+    builtin-infoPlistUtility /Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/iosApp/Info.plist -producttype com.apple.product-type.application -genpkginfo /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.app/PkgInfo -expandbuildsettings -format binary -platform iphoneos -scanforprivacyfile /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.app/Frameworks/SharedKit.framework -requiredArchitecture arm64 -o /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.app/Info.plist
+
+ExtractAppIntentsMetadata (in target 'SuperNutrition' from project 'SuperNutritionUIAcceptance')
+    cd /Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/iosApp
+    /Applications/Xcode-26.6.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode-26.6.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name SuperNutrition --sdk-root /Applications/Xcode-26.6.0.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk --xcode-version 17F113 --platform-family iOS --deployment-target 15.0 --bundle-identifier com.supernutrition.ios --output /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.app --target-triple arm64-apple-ios15.0 --binary-file /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.app/SuperNutrition --dependency-file /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/SuperNutrition_dependency_info.dat --stringsdata-file /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/SuperNutrition.SwiftFileList --metadata-file-list /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/SuperNutrition.DependencyMetadataFileList --static-metadata-file-list /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/SuperNutrition.DependencyStaticMetadataFileList --swift-const-vals-list /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/Objects-normal/arm64/SuperNutrition.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --validate-assistant-intents --no-app-shortcuts-localization
+2026-10-23 16:57:57.356 appintentsmetadataprocessor[4267:5192178] Starting appintentsmetadataprocessor export
+2026-10-23 16:57:57.364 appintentsmetadataprocessor[4267:5192178] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
+
+CopySwiftLibs /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.app (in target 'SuperNutrition' from project 'SuperNutritionUIAcceptance')
+    cd /Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/iosApp
+    builtin-swiftStdLibTool --copy --verbose --scan-executable /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.app/SuperNutrition --scan-folder /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.app/Frameworks --scan-folder /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.app/PlugIns --scan-folder /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.app/SystemExtensions --scan-folder /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.app/Extensions --scan-folder /Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/sharedKit/build/bin/iosArm64/debugFramework/SharedKit.framework --platform iphoneos --toolchain /Applications/Xcode-26.6.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode-26.6.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates/SuperNutritionUIAcceptance.build/Debug-iphoneos/SuperNutrition.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os --back-deploy-swift-span
+Ignoring --strip-bitcode because --sign was not passed
+
+GenerateDSYMFile /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.app.dSYM /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.app/SuperNutrition (in target 'SuperNutrition' from project 'SuperNutritionUIAcceptance')
+    cd /Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/iosApp
+    /Applications/Xcode-26.6.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/dsymutil /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.app/SuperNutrition -o /var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products/Debug-iphoneos/SuperNutrition.app.dSYM
+
+** BUILD SUCCEEDED **

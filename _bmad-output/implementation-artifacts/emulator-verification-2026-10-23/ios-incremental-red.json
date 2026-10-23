@@ -1,0 +1,31 @@
+{
+  "exit_code": 65,
+  "gradle_phase_observed": false,
+  "expected_gradle_phase_observed": true,
+  "red_condition_reproduced": true,
+  "timestamp_probe_only": true,
+  "source_and_framework_bytes_unchanged": true,
+  "argv": [
+    "/Applications/Xcode-26.6.0.app/Contents/Developer/usr/bin/xcodebuild",
+    "build",
+    "-project",
+    "mobile/apps/iosApp/SuperNutritionUIAcceptance.xcodeproj",
+    "-target",
+    "SuperNutrition",
+    "-configuration",
+    "Debug",
+    "-sdk",
+    "iphoneos",
+    "-jobs",
+    "2",
+    "SYMROOT=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products",
+    "OBJROOT=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates",
+    "SHARED_KIT_FRAMEWORK_DIR=/Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/sharedKit/build/bin/iosArm64/debugFramework",
+    "ARCHS=arm64",
+    "ONLY_ACTIVE_ARCH=YES",
+    "CODE_SIGNING_ALLOWED=NO",
+    "CODE_SIGNING_REQUIRED=NO"
+  ],
+  "observed_failure": "Xcode dependency cycle between linker and late Gradle phase",
+  "skip_regression_runtime_reproduced": false
+}

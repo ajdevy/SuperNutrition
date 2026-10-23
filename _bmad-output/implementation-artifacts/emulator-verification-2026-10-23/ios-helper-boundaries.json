@@ -1,0 +1,187 @@
+{
+  "checks": 13,
+  "passed": 13,
+  "isolated_wrapper": true,
+  "path_with_spaces": true,
+  "results": [
+    {
+      "name": "iosArm64",
+      "exit_code": 0,
+      "stderr": "",
+      "called_wrapper": true,
+      "args": [
+        "-p",
+        "/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition helper boundary q20g9ph5/mobile",
+        "-Psupernutrition.enableSharedKitFramework=true",
+        "-Psupernutrition.enableIosDeviceTarget=true",
+        "-Psupernutrition.enableTestingAppleTargets=true",
+        "-Psupernutrition.enableIntelIosX64=false",
+        ":apps:sharedKit:linkDebugFrameworkIosArm64",
+        "--dependency-verification=strict",
+        "--no-configuration-cache"
+      ],
+      "passed": true
+    },
+    {
+      "name": "IosArm64",
+      "exit_code": 0,
+      "stderr": "",
+      "called_wrapper": true,
+      "args": [
+        "-p",
+        "/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition helper boundary q20g9ph5/mobile",
+        "-Psupernutrition.enableSharedKitFramework=true",
+        "-Psupernutrition.enableIosDeviceTarget=true",
+        "-Psupernutrition.enableTestingAppleTargets=true",
+        "-Psupernutrition.enableIntelIosX64=false",
+        ":apps:sharedKit:linkDebugFrameworkIosArm64",
+        "--dependency-verification=strict",
+        "--no-configuration-cache"
+      ],
+      "passed": true
+    },
+    {
+      "name": "iosSimulatorArm64",
+      "exit_code": 0,
+      "stderr": "",
+      "called_wrapper": true,
+      "args": [
+        "-p",
+        "/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition helper boundary q20g9ph5/mobile",
+        "-Psupernutrition.enableSharedKitFramework=true",
+        "-Psupernutrition.enableIosDeviceTarget=true",
+        "-Psupernutrition.enableTestingAppleTargets=true",
+        "-Psupernutrition.enableIntelIosX64=false",
+        ":apps:sharedKit:linkDebugFrameworkIosSimulatorArm64",
+        "--dependency-verification=strict",
+        "--no-configuration-cache"
+      ],
+      "passed": true
+    },
+    {
+      "name": "IosSimulatorArm64",
+      "exit_code": 0,
+      "stderr": "",
+      "called_wrapper": true,
+      "args": [
+        "-p",
+        "/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition helper boundary q20g9ph5/mobile",
+        "-Psupernutrition.enableSharedKitFramework=true",
+        "-Psupernutrition.enableIosDeviceTarget=true",
+        "-Psupernutrition.enableTestingAppleTargets=true",
+        "-Psupernutrition.enableIntelIosX64=false",
+        ":apps:sharedKit:linkDebugFrameworkIosSimulatorArm64",
+        "--dependency-verification=strict",
+        "--no-configuration-cache"
+      ],
+      "passed": true
+    },
+    {
+      "name": "iosX64",
+      "exit_code": 0,
+      "stderr": "",
+      "called_wrapper": true,
+      "args": [
+        "-p",
+        "/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition helper boundary q20g9ph5/mobile",
+        "-Psupernutrition.enableSharedKitFramework=true",
+        "-Psupernutrition.enableIosDeviceTarget=true",
+        "-Psupernutrition.enableTestingAppleTargets=true",
+        "-Psupernutrition.enableIntelIosX64=true",
+        ":apps:sharedKit:linkDebugFrameworkIosX64",
+        "--dependency-verification=strict",
+        "--no-configuration-cache"
+      ],
+      "passed": true
+    },
+    {
+      "name": "IosX64",
+      "exit_code": 0,
+      "stderr": "",
+      "called_wrapper": true,
+      "args": [
+        "-p",
+        "/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition helper boundary q20g9ph5/mobile",
+        "-Psupernutrition.enableSharedKitFramework=true",
+        "-Psupernutrition.enableIosDeviceTarget=true",
+        "-Psupernutrition.enableTestingAppleTargets=true",
+        "-Psupernutrition.enableIntelIosX64=true",
+        ":apps:sharedKit:linkDebugFrameworkIosX64",
+        "--dependency-verification=strict",
+        "--no-configuration-cache"
+      ],
+      "passed": true
+    },
+    {
+      "name": "release",
+      "exit_code": 0,
+      "stderr": "",
+      "called_wrapper": true,
+      "args": [
+        "-p",
+        "/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition helper boundary q20g9ph5/mobile",
+        "-Psupernutrition.enableSharedKitFramework=true",
+        "-Psupernutrition.enableIosDeviceTarget=true",
+        "-Psupernutrition.enableTestingAppleTargets=true",
+        "-Psupernutrition.enableIntelIosX64=false",
+        ":apps:sharedKit:linkReleaseFrameworkIosArm64",
+        "--dependency-verification=strict",
+        "--no-configuration-cache"
+      ],
+      "passed": true
+    },
+    {
+      "name": "gradle_failure",
+      "exit_code": 37,
+      "stderr": "",
+      "called_wrapper": true,
+      "args": [
+        "-p",
+        "/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition helper boundary q20g9ph5/mobile",
+        "-Psupernutrition.enableSharedKitFramework=true",
+        "-Psupernutrition.enableIosDeviceTarget=true",
+        "-Psupernutrition.enableTestingAppleTargets=true",
+        "-Psupernutrition.enableIntelIosX64=false",
+        ":apps:sharedKit:linkDebugFrameworkIosArm64",
+        "--dependency-verification=strict",
+        "--no-configuration-cache"
+      ],
+      "passed": true
+    },
+    {
+      "name": "unknown_target",
+      "exit_code": 1,
+      "stderr": "error: Unsupported KOTLIN_TARGET \"iosBanana\"; expected iosArm64, iosSimulatorArm64, or iosX64.",
+      "called_wrapper": false,
+      "passed": true
+    },
+    {
+      "name": "missing_target",
+      "exit_code": 1,
+      "stderr": "error: Unsupported KOTLIN_TARGET \"\"; expected iosArm64, iosSimulatorArm64, or iosX64.",
+      "called_wrapper": false,
+      "passed": true
+    },
+    {
+      "name": "unknown_configuration",
+      "exit_code": 1,
+      "stderr": "error: Unsupported CONFIGURATION \"Profile\"; expected Debug or Release.",
+      "called_wrapper": false,
+      "passed": true
+    },
+    {
+      "name": "missing_configuration",
+      "exit_code": 1,
+      "stderr": "error: Unsupported CONFIGURATION \"\"; expected Debug or Release.",
+      "called_wrapper": false,
+      "passed": true
+    },
+    {
+      "name": "missing_project_dir",
+      "exit_code": 1,
+      "stderr": "/Users/anastasia/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/iosApp/build-sharedkit-framework.sh: line 31: PROJECT_DIR: error: PROJECT_DIR must point to mobile/apps/iosApp",
+      "called_wrapper": false,
+      "passed": true
+    }
+  ]
+}

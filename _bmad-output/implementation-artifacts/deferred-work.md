@@ -22,3 +22,7 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-profile-meal-history.md`
   summary: Configure typed Detekt KMP analysis to distinguish common expect declarations from platform actuals.
   evidence: The unchanged analyzer setup combines commonMain and jvmMain into one analysis module; diagnostic detektMainJvm reports three expect/actual module errors for currentHistoryReferenceDay, while real JVM/Android/iOS-arm64 compilation and executable tests pass. See meal-history-verification-2026-10-23/detekt-diagnostic.gradle and the verification report. No rule, baseline, task, or source-set exclusion was added.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-ios-host-target-selection.md`
+  summary: Package shared Compose resources into the iOS host and verify Home/Profile/Rewards on a supported runtime.
+  evidence: The fresh unsigned arm64 app contains nine files and no Compose resource directory or Fraunces/Nunito fonts; see emulator-verification-2026-10-23/ios-app-package.json and IOS-PACKAGE-1.
