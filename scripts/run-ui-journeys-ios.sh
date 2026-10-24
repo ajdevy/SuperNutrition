@@ -88,6 +88,7 @@ esac
 derived_data="$temp_root/DerivedData"
 mkdir -p "$temp_root"
 result_bundle="$report_root/SuperNutritionUIAcceptance-${GITHUB_RUN_ID:-local}-$(date +%s).xcresult"
+xctest_exit=0
 xcodebuild clean test -quiet \
   -project "$repo_root/mobile/apps/iosApp/SuperNutritionUIAcceptance.xcodeproj" \
   -scheme SuperNutritionUIAcceptance \
@@ -97,16 +98,30 @@ xcodebuild clean test -quiet \
   SHARED_KIT_FRAMEWORK_DIR="$repo_root/mobile/apps/sharedKit/build/bin/$kotlin_target/debugFramework" \
   ARCHS="$host_arch" \
   ONLY_ACTIVE_ARCH=YES \
-  CODE_SIGNING_ALLOWED=NO
+  CODE_SIGNING_ALLOWED=NO || xctest_exit=$?
+
+summary_exit=0
+if test -d "$result_bundle"; then
+  xcrun xcresulttool get test-results summary \
+    --path "$result_bundle" \
+    >"$report_root/xctest-summary.json" || summary_exit=$?
+  cat "$report_root/xctest-summary.json"
+else
+  printf 'This XCTest run did not produce a result bundle\n' >&2
+  summary_exit=1
+fi
+if test "$xctest_exit" -ne 0; then
+  exit "$xctest_exit"
+fi
+if test "$summary_exit" -ne 0; then
+  exit "$summary_exit"
+fi
 
 ios_app="$(find "$derived_data" -type d -path '*/Debug-iphonesimulator/SuperNutritionUIAcceptance.app' -print -quit)"
 test -n "$ios_app" || {
   printf 'iOS UI acceptance app was not produced\n' >&2
   exit 1
 }
-xcrun xcresulttool get test-results summary \
-  --path "$result_bundle" \
-  >"$report_root/xctest-summary.json"
 python3 "$repo_root/scripts/verify_ui_test_reports.py" \
   --xcresult-summary "$report_root/xctest-summary.json" \
   --label "iOS XCTest"

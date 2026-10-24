@@ -220,12 +220,43 @@ final class BootstrapLaunchTests: XCTestCase {
     private func tapVisible(_ element: XCUIElement, in app: XCUIApplication) {
         XCTAssertTrue(element.waitForExistence(timeout: 10))
         dismissKeyboardIntroduction(in: app)
+        var scrolled = false
         for _ in 0..<8 where !element.isHittable {
             scrollAboveKeyboard(in: app)
+            scrolled = true
         }
         XCTAssertTrue(element.isHittable)
         guard element.isHittable else { return }
+        if scrolled {
+            guard waitForSettledFrame(of: element) else { return }
+        }
         element.tap()
+    }
+
+    private func waitForSettledFrame(of element: XCUIElement) -> Bool {
+        var previousFrame = CGRect.null
+        var stableSince = ProcessInfo.processInfo.systemUptime
+        let settled = XCTNSPredicateExpectation(
+            predicate: NSPredicate { _, _ in
+                let now = ProcessInfo.processInfo.systemUptime
+                guard element.exists && element.isHittable else {
+                    previousFrame = .null
+                    stableSince = now
+                    return false
+                }
+                let frame = element.frame
+                if frame != previousFrame {
+                    previousFrame = frame
+                    stableSince = now
+                    return false
+                }
+                return now - stableSince >= 0.5
+            },
+            object: element,
+        )
+        let result = XCTWaiter.wait(for: [settled], timeout: 5)
+        XCTAssertEqual(result, .completed, "Wait for scrolling to settle before one tap")
+        return result == .completed
     }
 
     private func dismissKeyboardIntroduction(in app: XCUIApplication) {

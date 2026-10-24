@@ -186,3 +186,101 @@ No intent/spec gap or loopback was established; review loop iteration stays 0.
 - The local Quick Dev implementation/review is complete. The separately
   authorized remote phase must publish this patch and wait for all workflows
   on its exact merged main commit; this handoff does not call hosted CI green.
+
+## R-04 — remaining iOS runtime failure on repaired main (before repair)
+
+PR #62 merged normally at 16:37:24Z into
+`08e668bc51ba136a5f9f7c9771349cc41e8053b8`; fetched `origin/main` confirms it.
+Its JVM run `40112411970` fails only the unchanged expired
+`bootstrap-android-host` policy record. Fresh downloaded XML confirms zero
+failures/errors/skips in all 13 modules, and hosted README/dashboard passed
+with 1,215 tracked source files / 350,835 code lines.
+
+iOS run `40112411913` compiled and linked, then XCTest ended `TEST FAILED`
+after 348.002 seconds, exit 65. The first `--log-failed` request returned an
+empty log despite a completed/failure run; fetching the full log supplied the
+actual failure. The job summary also temporarily retained stale in-progress
+step entries, so the complete log and xcresult are authoritative over that
+partial snapshot. No assertion cause is assumed until reading the new bundle.
+
+Downloading artifact `12567557076` (162,823,011 compressed bytes) for exact
+test names/assertions. Ignored full log:
+`mobile/build/verification/mvp-audit/main-08e668bc-ios-full.log`.
+Acceptance remains all original nine XCTest scenarios plus Maestro with no
+skips/relaxed assertions, then completed latest main CI except device expiry.
+
+### R-04 exact assertions and native boundary plan (before repair)
+
+The completed main08 bundle again has 9 cases, 6 passed / 3 failed / 0 skipped.
+Home isolation still fails the same five `!exists` checks. The keyboard fix did
+work: the meal scenario creates, saves, opens history, edits and verifies the
+exact corrected title. It now fails because `meal_details_delete_confirm` never
+appears after the Delete tap; its final hierarchy still shows the Details view.
+The extra empty Window alone does not establish whether a dialog was presented.
+
+Independent exploration of pinned Compose 1.11.1 sources establishes that AX
+roots live on internal overlay views and automation elements are published
+separately; it found no source evidence of Compose overwriting the root flag.
+Replace the insufficient root flags with a plain UIKit parent retaining Main
+as a child and detach only the child's view while covered. Keep controller
+containment: CMPViewController's in-window test includes its parent, whereas
+removing the controller would permit scene disposal. Reattach the same view
+with balanced appearance forwarding. Preserve all isolation assertions and
+reopen checks. Diagnose the Delete action separately from exported snapshots
+before changing its implementation or test interactions.
+
+Android run `40112411928` finished successfully on this same main commit.
+The next repair must pass a dispatched full iOS workflow on the feature branch
+before merge, then await all workflows on the exact merged main head.
+
+### R-04 recording and failure-reporting gap (before repair)
+
+The exported screen recording contains the actual app pixels (1206x2622).
+Frames at 59s and 64s show the Delete button and no confirmation; the recorded
+tap is (201,790.333) in the 402x874-point screen and inside the visible button.
+This establishes a missing response rather than merely a missing AX locator,
+but does not yet distinguish gesture delivery from dialog-layer presentation.
+Original video and extracted frames remain ignored under the main08 artifact.
+
+The runner uses `set -e`, so failed xcodebuild exits before exporting its compact
+XCTest summary. Preserve the original failing exit code, but always export the
+summary when a bundle exists before returning failure. This keeps the gate
+strict and exposes the failed assertions without another 163MB download.
+
+### R-04 bounded gesture synchronization plan (before test repair)
+
+Pinned foundation1.11.1 Scrollable/Draggable explicitly consumes the next down
+while scroll/overscroll is in progress. This is a supported hypothesis for the
+single correctly positioned tap producing no dialog; it is not yet a confirmed
+runtime diagnosis. The existing helper taps as soon as AX reports hittable,
+which does not establish animation completion. After scrolling, wait boundedly
+for a continuously stable, hittable target frame before one tap. Do not retry
+Delete or its confirmation, and keep all outcome assertions unchanged. Hosted
+branch execution must establish whether this addresses the actual failure.
+
+### R-04 review finding (before correction)
+
+Blind review found that the new stable-frame predicate did not reset its time
+baseline when the element became unavailable/non-hittable. That interval must
+not count toward continuous stability. Reset both the prior frame and the
+clock on that branch, retaining the same bounded timeout and one eventual tap.
+
+Edge review found the moved summary export needs an explicit missing-bundle
+failure: otherwise a successful xcodebuild with no bundle could let an old
+summary survive in the reusable report directory. Fail closed when this run's
+bundle is absent. This preserves the original behavior of xcresulttool failure
+on a nonexistent exact bundle. Verify missing-bundle and failure-code paths.
+
+### R-04 local verification before branch publication
+
+Both current unsigned arm64 products built successfully with Xcode26.6 on
+Intel: `SuperNutrition` and `SuperNutritionUIAcceptanceTests` (including the
+acceptance host). No local iOS runtime execution is claimed. Logs are under
+`mobile/apps/iosApp/build/verification/mvp-ios-ci-repair-r04/`.
+
+Independent blind and edge reviews are complete; both concrete findings above
+were recorded first and fixed. Bash syntax, six mocked runner exit/report paths
+(including a stale summary and absent current bundle), the six Python report/
+README unit tests, project plist lint, actual dashboard/README generation/check
+and `git diff --check` passed. No Kotlin, dependency or policy source changed.
+The next evidence is the full arm64 simulator branch workflow, still pending.
