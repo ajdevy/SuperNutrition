@@ -12,12 +12,35 @@ import platform.Foundation.NSURLIsExcludedFromBackupKey
 import platform.Foundation.NSUUID
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 @OptIn(ExperimentalForeignApi::class)
 class IosPrivateDocumentStoreTest {
+    @Test
+    fun staleOwnersRejectChangesAndCannotResurrectDeletedDocuments() {
+        for (id in PrivateDocumentId.entries) {
+            val directory = NSURL.fileURLWithPath(NSTemporaryDirectory() + "document-store-test-" + NSUUID().UUIDString)
+            try {
+                val first = IosPrivateDocumentStore(id, directory)
+                val stale = IosPrivateDocumentStore(id, directory)
+                assertNull(first.load())
+                assertNull(stale.load())
+                assertTrue(first.save("Accepted change"))
+                assertFalse(stale.save("Lost update"))
+                val beforeDeletion = IosPrivateDocumentStore(id, directory)
+                assertEquals("Accepted change", beforeDeletion.load())
+                assertTrue(first.save(""))
+                assertFalse(beforeDeletion.save("Resurrected"))
+                assertEquals("", IosPrivateDocumentStore(id, directory).load())
+            } finally {
+                NSFileManager.defaultManager.removeItemAtURL(directory, null)
+            }
+        }
+    }
+
     @Test
     fun protectedBackupExcludedDocumentsRestoreUnicodeAndExplicitClearing() {
         val directory = NSURL.fileURLWithPath(NSTemporaryDirectory() + "document-store-test-" + NSUUID().UUIDString)

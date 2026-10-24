@@ -10,10 +10,14 @@ internal fun MealDiary.homeScreenModel(
     savedMeals: List<SavedMeal>,
     catalog: MealCatalogState,
 ): HomeScreenModel {
-    val history = mergedMealHistory(confirmedFoods, savedMeals, catalog.catalogOrNull)
+    val history = mergedMealHistory(
+        confirmedFoods.filter { it.localDay == localDay },
+        savedMeals.filter { it.localDay == localDay },
+        catalog.catalogOrNull,
+    )
     return liveHomeScreenModel(
         dateLabel,
-        history.count { it.id.localDay == localDay },
+        history.size,
         storageLoadFailed = loadFailed,
         todayNutrients = todayMealNutrients(history, localDay),
     )

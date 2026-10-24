@@ -5,6 +5,7 @@ package com.supernutrition.platform.photoios
 import com.supernutrition.core.config.PrivateDocumentEncoding
 import com.supernutrition.core.config.PrivateDocumentId
 import com.supernutrition.core.config.PrivateDocumentStore
+import com.supernutrition.core.config.RevisionCheckedPrivateDocumentStore
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
@@ -30,11 +31,16 @@ import platform.Foundation.writeToURL
 class IosPrivateDocumentStore(id: PrivateDocumentId, private val directory: NSURL = privateUserDataDirectory()) :
     PrivateDocumentStore {
     private val url = requireNotNull(directory.URLByAppendingPathComponent(id.fileName))
+    private val document = RevisionCheckedPrivateDocumentStore(::readDocument, ::writeDocument)
 
-    override fun load(): String? = withDocumentLock {
+    override fun load(): String? = withDocumentLock { document.load() }
+
+    override fun save(encoded: String): Boolean = withDocumentLock { document.save(encoded) }
+
+    private fun readDocument(): String? {
         ensurePrivateDirectory()
         val path = requireNotNull(url.path)
-        if (!NSFileManager.defaultManager.fileExistsAtPath(path)) return@withDocumentLock null
+        if (!NSFileManager.defaultManager.fileExistsAtPath(path)) return null
         val attributes = checkNotNull(NSFileManager.defaultManager.attributesOfItemAtPath(path, null)) {
             "Private document metadata could not be read"
         }
@@ -51,13 +57,13 @@ class IosPrivateDocumentStore(id: PrivateDocumentId, private val directory: NSUR
         } else {
             checkNotNull(data.bytes).readBytes(data.length.toInt())
         }
-        PrivateDocumentEncoding.decode(bytes)
+        return PrivateDocumentEncoding.decode(bytes)
     }
 
-    override fun save(encoded: String): Boolean = withDocumentLock {
+    private fun writeDocument(encoded: String): Boolean {
         ensurePrivateDirectory()
         val bytes = PrivateDocumentEncoding.encode(encoded)
-        bytes.usePinned { pinned ->
+        return bytes.usePinned { pinned ->
             val data = NSData.create(
                 bytes = if (bytes.isEmpty()) null else pinned.addressOf(0),
                 length = bytes.size.toULong(),

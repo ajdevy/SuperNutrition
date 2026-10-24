@@ -12,7 +12,7 @@ android {
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 1
         versionName = "0.0.0-scaffold"
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.supernutrition.android.IsolatedPrivateDataTestRunner"
     }
 
     buildFeatures {

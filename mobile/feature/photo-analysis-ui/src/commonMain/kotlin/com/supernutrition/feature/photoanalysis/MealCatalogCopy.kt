@@ -18,4 +18,5 @@ data class MealCatalogCopy(
     val closeInfo: String = "Close source information",
     val source: String = "Source",
     val licence: String = "Licence",
+    val linkOpenFailed: String = "Couldn't open this link. Try the link again or close source information.",
 )

@@ -34,3 +34,7 @@
 - source_spec: `spec-mvp-local-meal-diary.md`
   summary: Implement correction of grounded-only historical meals after G-2 grounding contracts are approved.
   evidence: ProfileSelectedMeal permits editing only SavedMeal records; grounded-only entries were already read-only before this story. Converting them must preserve unknown capture time and invalidate obsolete nutrient proof without inventing a new catalog binding.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-mvp-durable-catalog-diary.md`
+  summary: Bind native evidence invalidation globs to executable source-change verification.
+  evidence: Independent review traced native-gaps.toml invalidated_by entries to no executable reader; MobilePolicyValidator checks age and attestation shape, not candidate source paths. This predates the durable-diary change; physical evidence remains expired and is not reported green.
