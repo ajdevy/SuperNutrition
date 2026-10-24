@@ -94,9 +94,10 @@ private struct ProductionAppHost: View {
     private var profileSession: SharedKitProfileSession { sessions.profileSession }
 
     var body: some View {
-        ProductionMainComposeHost(
+        MainComposeHost(
             session: session,
             rewardsSession: rewardsSession,
+            isCovered: destination != nil,
             onCaptureRequested: showCapture,
             onProfileRequested: { destination = .profile },
         )
@@ -143,24 +144,6 @@ private struct ProductionAppHost: View {
         session.cancel()
         destination = nil
     }
-}
-
-private struct ProductionMainComposeHost: UIViewControllerRepresentable {
-    let session: SharedKitPhotoAnalysisSession
-    let rewardsSession: SharedKitRewardsSession
-    let onCaptureRequested: () -> Void
-    let onProfileRequested: () -> Void
-
-    func makeUIViewController(context: Context) -> UIViewController {
-        SharedKitMain.shared.viewController(
-            session: session,
-            rewardsSession: rewardsSession,
-            onCaptureRequested: onCaptureRequested,
-            onProfileRequested: onProfileRequested,
-        )
-    }
-
-    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
 
 private struct ProductionProfileComposeHost: UIViewControllerRepresentable {
