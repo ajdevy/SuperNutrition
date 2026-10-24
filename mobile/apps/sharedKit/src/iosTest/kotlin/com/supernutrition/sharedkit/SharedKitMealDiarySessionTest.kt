@@ -4,7 +4,6 @@ import com.supernutrition.feature.photoanalysis.MealDraft
 import com.supernutrition.feature.photoanalysis.saveTextMeal
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertSame
@@ -35,9 +34,11 @@ class SharedKitMealDiarySessionTest {
         val absent = SharedKitProfileSession(rewards, null)
         assertNull(legacy.mealDiary)
         assertNull(absent.mealDiary)
-        assertFalse(legacy.updateDisplayName(" "))
+        assertTrue(legacy.updateDisplayName(" "))
         assertTrue(legacy.updateDisplayName(" Alex "))
         assertEquals("Alex", legacy.displayName)
+        assertTrue(legacy.updateDisplayName(""))
+        assertEquals("", legacy.displayName)
         assertEquals("", absent.displayName)
     }
 }

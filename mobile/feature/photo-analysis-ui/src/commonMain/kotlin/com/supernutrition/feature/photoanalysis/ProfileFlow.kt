@@ -21,7 +21,7 @@ fun ProfileFlow(
     diary: ProfileDiaryContext = ProfileDiaryContext(),
 ) {
     val savedState = rememberSaveableStateHolder()
-    val meals = mergedMealHistory(diary.confirmedFoods, diary.savedMeals)
+    val meals = mergedMealHistory(diary.confirmedFoods, diary.savedMeals, diary.catalog.state.catalogOrNull)
     val selected = meals.firstOrNull { it.id == state.selectedMealId }
     LaunchedEffect(state.selectedMealId, selected) {
         if (state.selectedMealId != null && selected == null) state.showHistory()
@@ -31,9 +31,8 @@ fun ProfileFlow(
             ProfileSelectedMeal(
                 state,
                 selected,
-                ProfileMealActions(diary.onMealEdited, diary.onMealDeleted),
+                diary,
                 modifier,
-                diary.copy,
             )
         } else if (state.historyVisible) {
             MealHistoryScreen(
@@ -43,12 +42,18 @@ fun ProfileFlow(
                 presentation = MealHistoryPresentation(
                     referenceDay = state.referenceDay,
                     searchState = state.historySearch,
+                    storageLoadFailed = diary.storageLoadFailed,
                 ),
                 onMealSelected = { state.showMeal(it.id) },
             )
         } else {
             ControlledProfileScreen(
-                identity = ProfileScreenIdentity(displayName, diary.confirmedFoods, diary.savedMeals),
+                identity = ProfileScreenIdentity(
+                    displayName,
+                    diary.confirmedFoods,
+                    diary.savedMeals,
+                    diary.storageLoadFailed,
+                ),
                 actions = actions.copy(onHistoryRequested = state::showHistory),
                 flowState = state,
                 modifier = modifier,

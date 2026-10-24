@@ -1,0 +1,39 @@
+CREATE TABLE catalog_food (
+    package_digest TEXT NOT NULL,
+    canonical_id TEXT NOT NULL,
+    display_name TEXT NOT NULL,
+    energy_kcal REAL,
+    protein_g REAL,
+    carbohydrate_g REAL,
+    fat_g REAL,
+    fiber_g REAL,
+    sugar_g REAL,
+    sodium_mg REAL,
+    PRIMARY KEY (package_digest, canonical_id)
+);
+
+CREATE TABLE catalog_package (
+    digest TEXT NOT NULL PRIMARY KEY,
+    catalog_id TEXT NOT NULL,
+    dataset_version TEXT NOT NULL,
+    country TEXT NOT NULL,
+    food_count INTEGER NOT NULL
+);
+
+insertFood:
+INSERT INTO catalog_food VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+insertPackage:
+INSERT INTO catalog_package VALUES (?, ?, ?, ?, ?);
+
+findFood:
+SELECT * FROM catalog_food WHERE package_digest = ? AND canonical_id = ?;
+
+listFoods:
+SELECT * FROM catalog_food WHERE package_digest = ? ORDER BY canonical_id;
+
+foodCount:
+SELECT count(*) FROM catalog_food WHERE package_digest = ?;
+
+findPackage:
+SELECT * FROM catalog_package WHERE digest = ?;

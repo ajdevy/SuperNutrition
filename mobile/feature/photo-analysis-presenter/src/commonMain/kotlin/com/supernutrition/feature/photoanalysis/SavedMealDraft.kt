@@ -6,4 +6,5 @@ fun SavedMeal.toMealDraft(): MealDraft = MealDraft(
     portion = if (portionGrams == null) "" else portionGrams.toString().removeSuffix(".0"),
     ingredients = ingredients.joinToString(", "),
     note = note,
+    catalogBinding = catalogBinding,
 )

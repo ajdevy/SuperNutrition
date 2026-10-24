@@ -4,8 +4,8 @@ product = "mobile"
 lifecycle = "active"
 source_digest = "local-only"
 quality_claim = true
-production_source_count = 14
-denominator_count = 14
+production_source_count = 15
+denominator_count = 15
 minimum_line_percent = 85
 minimum_branch_percent = 85
 changed_line_percent = 100
@@ -19,16 +19,30 @@ empty_or_zero_denominator = "fail"
 branchless_branch_counter_policy = "exclude-absent-branch-counter-only"
 status = "active-local"
 # Authoritative output of qualityCoverageJvm in qualityCheckJvmAndroid.
-# It covers the nine JVM-observable production modules; native-equivalent
+# It covers the ten JVM-observable production modules; native-equivalent
 # modules remain bound to the explicit physical-device records below.
-local_aggregate_line_percent = "98.15"
-local_aggregate_branch_percent = "87.22"
-local_aggregate_status = "local-verified"
+local_aggregate_line_percent = "pending"
+local_aggregate_branch_percent = "pending"
+local_aggregate_status = "pending"
 
 # Every compiled production unit has exactly one denominator. JVM observations
 # below are local-only measurements; native-equivalent records are bound to
 # executable Android evidence. Apple evidence is optional for activation, and
 # pending optional records are never counted as successful evidence.
+[[denominator]]
+id = "data-nutrition"
+unit_id = "data-nutrition"
+source_path = "mobile/data/nutrition"
+coverage_kind = "jvm"
+test_task = ":data:nutrition:jvmTest"
+line_minimum_percent = 85
+branch_minimum_percent = 85
+changed_line_minimum_percent = 100
+changed_branch_minimum_percent = 100
+observed_line_percent = "96.8338"
+observed_branch_percent = "100.0000"
+status = "local-verified"
+
 [[denominator]]
 id = "domain-inference"
 unit_id = "domain-inference"
@@ -39,8 +53,8 @@ line_minimum_percent = 85
 branch_minimum_percent = 85
 changed_line_minimum_percent = 100
 changed_branch_minimum_percent = 100
-observed_line_percent = "99.14"
-observed_branch_percent = "94.29"
+observed_line_percent = "99.8357"
+observed_branch_percent = "85.2163"
 status = "local-verified"
 
 [[denominator]]
@@ -53,8 +67,8 @@ line_minimum_percent = 85
 branch_minimum_percent = 85
 changed_line_minimum_percent = 100
 changed_branch_minimum_percent = 100
-observed_line_percent = "98.51"
-observed_branch_percent = "100.00"
+observed_line_percent = "98.2005"
+observed_branch_percent = "92.3913"
 status = "local-verified"
 
 [[denominator]]
@@ -67,8 +81,8 @@ line_minimum_percent = 85
 branch_minimum_percent = 85
 changed_line_minimum_percent = 100
 changed_branch_minimum_percent = 100
-observed_line_percent = "91.7073"
-observed_branch_percent = "85.1301"
+observed_line_percent = "98.0258"
+observed_branch_percent = "85.9951"
 status = "local-verified"
 
 [[denominator]]
@@ -81,8 +95,8 @@ line_minimum_percent = 85
 branch_minimum_percent = 85
 changed_line_minimum_percent = 100
 changed_branch_minimum_percent = 100
-observed_line_percent = "99.3151"
-observed_branch_percent = "90.7895"
+observed_line_percent = "94.1176"
+observed_branch_percent = "100.0000"
 status = "local-verified"
 
 [[denominator]]
@@ -95,8 +109,8 @@ line_minimum_percent = 85
 branch_minimum_percent = 85
 changed_line_minimum_percent = 100
 changed_branch_minimum_percent = 100
-observed_line_percent = "98.6111"
-observed_branch_percent = "86.8421"
+observed_line_percent = "88.2353"
+observed_branch_percent = "100.0000"
 status = "local-verified"
 
 [[denominator]]
@@ -138,8 +152,8 @@ line_minimum_percent = 85
 branch_minimum_percent = 85
 changed_line_minimum_percent = 100
 changed_branch_minimum_percent = 100
-observed_line_percent = "96.15"
-observed_branch_percent = "100.00"
+observed_line_percent = "96.3768"
+observed_branch_percent = "89.2857"
 status = "local-verified"
 
 [[denominator]]
@@ -197,8 +211,8 @@ line_minimum_percent = 85
 branch_minimum_percent = 85
 changed_line_minimum_percent = 100
 changed_branch_minimum_percent = 100
-observed_line_percent = "100.00"
-observed_branch_percent = "100.00"
+observed_line_percent = "97.7444"
+observed_branch_percent = "94.6667"
 status = "local-verified"
 
 [[denominator]]
@@ -226,6 +240,6 @@ line_minimum_percent = 85
 branch_minimum_percent = 85
 changed_line_minimum_percent = 100
 changed_branch_minimum_percent = 100
-observed_line_percent = "90.91"
-observed_branch_percent = "100.00"
+observed_line_percent = "99.9918"
+observed_branch_percent = "100.0000"
 status = "local-verified"

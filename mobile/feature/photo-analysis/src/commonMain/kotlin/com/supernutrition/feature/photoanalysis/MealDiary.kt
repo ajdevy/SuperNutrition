@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 class MealDiary(
     private val recordContext: () -> MealRecordContext = ::currentMealRecordContext,
     private val store: MealDiaryStore = InMemoryMealDiaryStore(),
+    val catalogSession: MealCatalogSession = MealCatalogSession(),
 ) {
     private var writable = true
     private val _failure = MutableStateFlow<MealDiaryFailure?>(null)
@@ -16,14 +17,18 @@ class MealDiary(
 
     val meals: StateFlow<List<SavedMeal>> = _meals.asStateFlow()
     val failure: StateFlow<MealDiaryFailure?> = _failure.asStateFlow()
+    val loadFailed: Boolean get() = !writable
 
     fun add(draft: MealDraft, source: SavedMealSource): SavedMeal? {
-        val validated = MealDraftValidator.validate(draft) as? MealDraftValidation.Valid ?: return null
+        val validated = MealDraftValidator.validate(draft, catalogSession.catalog) as? MealDraftValidation.Valid
+            ?: return null
         return add(validated.value, source)
     }
 
     internal fun add(draft: ValidatedMealDraft, source: SavedMealSource): SavedMeal? {
         if (!writable) return null
+        val validated = MealDraftValidator.validate(draft, null, catalogSession.catalog) as? MealDraftValidation.Valid
+            ?: return null
         val context = recordContext()
         if (_meals.value.any { it.id == context.id }) {
             _failure.value = MealDiaryFailure.WRITE_FAILED
@@ -33,11 +38,12 @@ class MealDiary(
             context.id,
             context.localDay,
             context.timeLabel,
-            draft.name,
-            draft.portionGrams,
-            draft.ingredients.toList(),
-            draft.note,
+            validated.value.name,
+            validated.value.portionGrams,
+            validated.value.ingredients.toList(),
+            validated.value.note,
             source,
+            validated.value.catalogBinding,
         )
         return if (persist(listOf(meal) + _meals.value)) meal else null
     }
@@ -46,7 +52,12 @@ class MealDiary(
 
     internal fun update(id: String, draft: MealDraft, beforePublish: (List<SavedMeal>) -> Unit): Boolean {
         val existing = _meals.value.firstOrNull { it.id == id } ?: return false
-        val validated = MealDraftValidator.validate(draft, existing) as? MealDraftValidation.Valid ?: return false
+        val validated = MealDraftValidator.validate(
+            draft,
+            existing,
+            catalogSession.catalog,
+        ) as? MealDraftValidation.Valid
+            ?: return false
         return update(id, validated.value, beforePublish)
     }
 
@@ -55,15 +66,23 @@ class MealDiary(
         draft: ValidatedMealDraft,
         beforePublish: (List<SavedMeal>) -> Unit = {},
     ): Boolean {
-        if (!writable || _meals.value.none { it.id == id }) return false
+        if (!writable) return false
+        val existing = _meals.value.firstOrNull { it.id == id } ?: return false
+        val validated = MealDraftValidator.validate(
+            draft,
+            existing,
+            catalogSession.catalog,
+        ) as? MealDraftValidation.Valid
+            ?: return false
         return persist(
             _meals.value.map { meal ->
                 if (meal.id == id) {
                     meal.copy(
-                        name = draft.name,
-                        portionGrams = draft.portionGrams,
-                        ingredients = draft.ingredients.toList(),
-                        note = draft.note,
+                        name = validated.value.name,
+                        portionGrams = validated.value.portionGrams,
+                        ingredients = validated.value.ingredients.toList(),
+                        note = validated.value.note,
+                        catalogBinding = validated.value.catalogBinding,
                     )
                 } else {
                     meal

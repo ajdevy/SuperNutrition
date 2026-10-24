@@ -14,13 +14,13 @@ sealed interface MealDiaryDecodeResult {
     data class Failure(val reason: MealDiaryCodecError) : MealDiaryDecodeResult
 }
 
-/** Version one uses UTF-16 length-prefixed fields, so Unicode and delimiters remain exact. */
+/** Both versions use UTF-16 length-prefixed fields; version two appends an optional source identity. */
 object MealDiaryCodec {
     /** Caller mistakes fail before returning a value suitable for replacing stored data. */
     fun encode(meals: List<SavedMeal>): String {
         require(meals.size <= MealDiaryLimits.MEALS_MAX_COUNT) { "Meal diary exceeds its record limit" }
         val ids = mutableSetOf<String>()
-        val encoded = StringBuilder("SNMD1:${meals.size}:")
+        val encoded = StringBuilder("SNMD2:${meals.size}:")
         meals.forEach { meal ->
             require(isValidSavedMeal(meal)) { "Meal diary contains an invalid record" }
             require(ids.add(meal.id)) { "Meal diary contains a duplicate record ID" }
@@ -35,12 +35,13 @@ object MealDiaryCodec {
         if (encoded.length > MealDiaryLimits.ENCODED_MAX_LENGTH) failMealDiary(MealDiaryCodecError.TOO_LARGE)
         if (!encoded.startsWith("SNMD")) failMealDiary(MealDiaryCodecError.MALFORMED)
         val reader = MealDiaryReader(encoded, start = 4)
-        if (reader.readNumber() != 1) failMealDiary(MealDiaryCodecError.UNSUPPORTED_VERSION)
+        val version = reader.readNumber()
+        if (version !in 1..2) failMealDiary(MealDiaryCodecError.UNSUPPORTED_VERSION)
         val count = reader.readNumber()
         if (count > MealDiaryLimits.MEALS_MAX_COUNT) failMealDiary(MealDiaryCodecError.TOO_LARGE)
         val ids = mutableSetOf<String>()
         val meals = List(count) {
-            val meal = reader.readMeal()
+            val meal = reader.readMeal(version)
             if (!isValidSavedMeal(meal)) failMealDiary(MealDiaryCodecError.INVALID_RECORD)
             if (!ids.add(meal.id)) failMealDiary(MealDiaryCodecError.DUPLICATE_ID)
             meal
@@ -63,6 +64,17 @@ object MealDiaryCodec {
             meal.ingredients.size.toString(),
         ).forEach { appendField(it) }
         meal.ingredients.forEach { appendField(it) }
+        val binding = meal.catalogBinding
+        appendField(if (binding == null) "0" else "1")
+        if (binding != null) {
+            listOf(
+                binding.snapshot.identity.catalogId,
+                binding.snapshot.identity.version,
+                binding.snapshot.catalogCountry,
+                binding.snapshot.contentDigest,
+                binding.canonicalItemId,
+            ).forEach { appendField(it) }
+        }
     }
 
     private fun StringBuilder.appendField(value: String) {
@@ -75,7 +87,12 @@ internal fun isValidSavedMeal(meal: SavedMeal): Boolean =
         meal.timeLabel.isNotBlank() && meal.timeLabel.length <= MealDiaryLimits.TIME_MAX_LENGTH &&
         meal.name.isNotBlank() && meal.name.length <= MealDraftLimits.NAME_MAX_LENGTH &&
         validSavedPortion(meal.portionGrams) &&
-        meal.note.length <= MealDraftLimits.NOTE_MAX_LENGTH && validSavedIngredients(meal.ingredients)
+        meal.note.length <= MealDraftLimits.NOTE_MAX_LENGTH && validSavedIngredients(meal.ingredients) &&
+        validSavedBinding(meal)
+
+private fun validSavedBinding(meal: SavedMeal): Boolean = meal.catalogBinding?.let {
+    isBoundedCatalogBinding(it) && meal.portionGrams != null && meal.ingredients.isEmpty()
+} ?: true
 
 private fun validSavedPortion(grams: Double?): Boolean = grams == null || (grams.isFinite() && grams > 0.0)
 

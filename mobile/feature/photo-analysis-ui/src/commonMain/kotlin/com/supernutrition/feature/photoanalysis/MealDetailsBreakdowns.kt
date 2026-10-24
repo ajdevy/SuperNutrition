@@ -21,7 +21,7 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import com.supernutrition.core.ui.UiAutomationId
 import com.supernutrition.core.ui.UiAutomationIds
-import com.supernutrition.domain.nutrition.CatalogNutrientProfile
+import com.supernutrition.domain.nutrition.PartialNutrientProfile
 
 @Composable
 internal fun MealDetailsBreakdowns(meal: MealHistoryMeal, per100: Boolean, copy: MealDetailsCopy) {
@@ -67,14 +67,14 @@ private data class MealNutrientSectionModel(
     val rows: List<Pair<String, String>>,
 )
 
-private fun mealNutrientSections(values: CatalogNutrientProfile?, copy: MealNutrientCopy) = listOf(
+private fun mealNutrientSections(values: PartialNutrientProfile?, copy: MealNutrientCopy) = listOf(
     MealNutrientSectionModel(
         copy.carbohydrates,
         UiAutomationIds.MEAL_DETAILS_CARBS,
         listOf(
             copy.totalCarbs to nutrientValue(values?.carbohydrateGrams),
             copy.fiber to nutrientValue(values?.fiberGrams),
-            copy.sugars to "—",
+            copy.sugars to nutrientValue(values?.sugarGrams),
             copy.addedSugars to "—",
         ),
     ),

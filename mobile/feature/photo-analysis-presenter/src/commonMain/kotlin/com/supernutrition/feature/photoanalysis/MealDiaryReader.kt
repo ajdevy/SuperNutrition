@@ -1,5 +1,9 @@
 package com.supernutrition.feature.photoanalysis
 
+import com.supernutrition.domain.nutrition.CatalogMealBinding
+import com.supernutrition.domain.nutrition.NutritionCatalogIdentity
+import com.supernutrition.domain.nutrition.NutritionCatalogSnapshot
+
 internal class MealDiaryDecodingException(val reason: MealDiaryCodecError) : Exception(reason.name)
 
 internal fun failMealDiary(reason: MealDiaryCodecError): Nothing = throw MealDiaryDecodingException(reason)
@@ -19,7 +23,7 @@ internal class MealDiaryReader(private val encoded: String, start: Int) {
         return number
     }
 
-    fun readMeal(): SavedMeal {
+    fun readMeal(version: Int): SavedMeal {
         val id = readField()
         val day = readField().toIntOrNull() ?: failMealDiary(MealDiaryCodecError.INVALID_RECORD)
         val time = readField()
@@ -31,7 +35,33 @@ internal class MealDiaryReader(private val encoded: String, start: Int) {
         val note = readField()
         val count = readField().toIntOrNull() ?: failMealDiary(MealDiaryCodecError.INVALID_RECORD)
         if (count !in 0..MealDraftLimits.INGREDIENTS_MAX_COUNT) failMealDiary(MealDiaryCodecError.INVALID_RECORD)
-        return SavedMeal(id, day, time, name, portion, List(count) { readField() }, note, source)
+        val ingredients = List(count) { readField() }
+        val binding = if (version == 2) readBinding() else null
+        return SavedMeal(id, day, time, name, portion, ingredients, note, source, binding)
+    }
+
+    private fun readBinding(): CatalogMealBinding? = when (readField()) {
+        "0" -> null
+
+        "1" -> try {
+            val catalogId = readBindingField(MealCatalogBindingLimits.IDENTIFIER_MAX_LENGTH)
+            val version = readBindingField(MealCatalogBindingLimits.IDENTIFIER_MAX_LENGTH)
+            val country = readBindingField(MealCatalogBindingLimits.COUNTRY_MAX_LENGTH)
+            val digest = readBindingField(MealCatalogBindingLimits.DIGEST_LENGTH)
+            val canonicalId = readBindingField(MealCatalogBindingLimits.IDENTIFIER_MAX_LENGTH)
+            CatalogMealBinding(
+                NutritionCatalogSnapshot(NutritionCatalogIdentity(catalogId, version), country, digest),
+                canonicalId,
+            )
+        } catch (_: IllegalArgumentException) {
+            failMealDiary(MealDiaryCodecError.INVALID_RECORD)
+        }
+
+        else -> failMealDiary(MealDiaryCodecError.INVALID_RECORD)
+    }
+
+    private fun readBindingField(maxLength: Int): String = readField().also {
+        if (it.length > maxLength) failMealDiary(MealDiaryCodecError.INVALID_RECORD)
     }
 
     private fun readPortion(): Double? {

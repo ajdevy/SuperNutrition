@@ -83,6 +83,10 @@ internal fun MealDetailsNutrition(meal: MealHistoryMeal, per100: Boolean, copy: 
     val nutrients = meal.nutrition(per100)
     DiaryHeading(copy.nutrition)
     DiaryBody(if (per100) copy.per100Description else copy.perPortionDescription, secondary = true)
+    DiaryCard(Modifier.automationId(UiAutomationIds.MEAL_DETAILS_ENERGY)) {
+        DiaryBody(copy.energy, secondary = true)
+        DiaryHeading(nutrientValue(nutrients?.energyKcal, "kcal"))
+    }
     val cards = listOf(
         MealMacro(copy.protein, nutrients?.proteinGrams, Res.drawable.refresh_protein),
         MealMacro(copy.carbs, nutrients?.carbohydrateGrams, Res.drawable.food_sticker_bread),

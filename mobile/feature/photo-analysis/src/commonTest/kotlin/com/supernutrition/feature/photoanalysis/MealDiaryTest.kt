@@ -22,6 +22,7 @@ class MealDiaryTest {
         assertEquals(listOf("Banana", "oats"), saved.ingredients)
         assertEquals(listOf(saved), diary(store).meals.value)
         assertNull(diary.failure.value)
+        assertFalse(diary.loadFailed)
     }
 
     @Test
@@ -116,6 +117,7 @@ class MealDiaryTest {
         }
         val diary = diary(store)
         assertEquals(MealDiaryFailure.CORRUPT_STORAGE, diary.failure.value)
+        assertTrue(diary.loadFailed)
         assertNull(diary.add(MealDraft("Soup"), SavedMealSource.TEXT))
         assertEquals(0, saves)
     }

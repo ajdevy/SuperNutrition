@@ -51,17 +51,22 @@ import org.jetbrains.compose.resources.painterResource
 internal fun ProfileNameEditor(
     displayName: String,
     copy: ProfileScreenCopy,
-    onNameChanged: (String) -> Unit,
+    onNameChanged: (String) -> Boolean,
     onDismiss: () -> Unit,
 ) {
     var draft by remember(displayName) { mutableStateOf(displayName) }
+    var saveFailed by remember { mutableStateOf(false) }
     val requester = remember { FocusRequester() }
     val focus = LocalFocusManager.current
     val save = {
-        if (draft.isNotBlank()) {
-            onNameChanged(draft.trim())
-            focus.clearFocus()
-            onDismiss()
+        val normalized = ProfileNamePolicy.normalize(draft)
+        if (normalized != null && ProfileNamePolicy.canSubmit(draft, displayName)) {
+            if (onNameChanged(normalized)) {
+                focus.clearFocus()
+                onDismiss()
+            } else {
+                saveFailed = true
+            }
         }
     }
     LaunchedEffect(Unit) { requester.requestFocus() }
@@ -71,14 +76,20 @@ internal fun ProfileNameEditor(
             copy,
             requester,
             ProfileNameInputActions(
-                onDraftChanged = { draft = it },
+                onDraftChanged = {
+                    draft = it
+                    saveFailed = false
+                },
                 onSave = save,
                 onCancel = {
                     focus.clearFocus()
                     onDismiss()
                 },
+                canSave = ProfileNamePolicy.canSubmit(draft, displayName),
             ),
         )
+        if (saveFailed) ProfileStorageMessage(copy.nameSaveFailed)
+        if (ProfileNamePolicy.normalize(draft) == null) ProfileStorageMessage(copy.nameInvalid)
         Text(
             copy.sessionNameDescription,
             color = ProfileSecondary,
@@ -132,7 +143,7 @@ private fun ProfileNameInputRow(
             )
             ProfileNameClearButton(copy) { actions.onDraftChanged("") }
         }
-        ProfileNameSaveButton(copy, draft.isNotBlank(), actions.onSave)
+        ProfileNameSaveButton(copy, actions.canSave, actions.onSave)
     }
 }
 
@@ -140,6 +151,7 @@ private data class ProfileNameInputActions(
     val onDraftChanged: (String) -> Unit,
     val onSave: () -> Unit,
     val onCancel: () -> Unit,
+    val canSave: Boolean,
 )
 
 @Composable

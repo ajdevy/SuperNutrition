@@ -13,21 +13,53 @@ private enum PhotoAnalysisNativeActionKind: Int {
 /// Production app shell. Screen content and navigation within each surface remain shared.
 @main
 struct SuperNutritionApp: App {
-    private let session: SharedKitPhotoAnalysisSession
-
-    init() {
-        _ = SharedKitBootstrap.shared.start()
-        session = SharedKitPhotoAnalysisSession(attemptId: "ios-photo-attempt")
-    }
+    @StateObject private var sessions = ProductionSessionOwner()
 
     var body: some Scene {
         WindowGroup {
             #if arch(x86_64)
             ProductionUnsupportedRenderer()
             #else
-            ProductionAppHost(session: session)
+            ProductionAppHost(sessions: sessions)
             #endif
         }
+    }
+}
+
+/// One app lifetime owns the shared source; transient screens only borrow its sessions.
+private final class ProductionSessionOwner: ObservableObject {
+    let photoAnalysisSession: SharedKitPhotoAnalysisSession
+    let rewardsSession: SharedKitRewardsSession
+    let profileSession: SharedKitProfileSession
+
+    init() {
+        _ = SharedKitBootstrap.shared.start()
+        let photo = SharedKitProductionSessions.shared.photoAnalysisSession(attemptId: "ios-photo-attempt")
+        let rewards = SharedKitRewardsSession()
+        photoAnalysisSession = photo
+        rewardsSession = rewards
+        profileSession = SharedKitProductionSessions.shared.profileSession(
+            rewardsSession: rewards,
+            photoAnalysisSession: photo,
+        )
+    }
+
+    func startCatalog() {
+        let retainedSession = photoAnalysisSession
+        onProductionMain { retainedSession.startCatalog() }
+    }
+
+    deinit {
+        let retainedSession = photoAnalysisSession
+        onProductionMain { retainedSession.closeCatalog() }
+    }
+}
+
+private func onProductionMain(_ action: @escaping () -> Void) {
+    if Thread.isMainThread {
+        action()
+    } else {
+        DispatchQueue.main.async { action() }
     }
 }
 
@@ -53,21 +85,13 @@ private enum ProductionDestination: String, Identifiable {
 }
 
 private struct ProductionAppHost: View {
-    let session: SharedKitPhotoAnalysisSession
+    let sessions: ProductionSessionOwner
     @Environment(\.scenePhase) private var scenePhase
-    @State private var rewardsSession: SharedKitRewardsSession
-    @State private var profileSession: SharedKitProfileSession
     @State private var destination: ProductionDestination?
 
-    init(session: SharedKitPhotoAnalysisSession) {
-        self.session = session
-        let rewards = SharedKitRewardsSession()
-        _rewardsSession = State(initialValue: rewards)
-        _profileSession = State(initialValue: SharedKitProfileSession(
-            rewardsSession: rewards,
-            photoAnalysisSession: session,
-        ))
-    }
+    private var session: SharedKitPhotoAnalysisSession { sessions.photoAnalysisSession }
+    private var rewardsSession: SharedKitRewardsSession { sessions.rewardsSession }
+    private var profileSession: SharedKitProfileSession { sessions.profileSession }
 
     var body: some View {
         ProductionMainComposeHost(
@@ -77,6 +101,7 @@ private struct ProductionAppHost: View {
             onProfileRequested: { destination = .profile },
         )
             .ignoresSafeArea()
+            .onAppear(perform: sessions.startCatalog)
             .fullScreenCover(item: $destination) { surface in
                 switch surface {
                 case .capture:

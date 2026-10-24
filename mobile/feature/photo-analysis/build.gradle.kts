@@ -37,9 +37,10 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":feature:photo-analysis-presenter"))
+            api(project(":core:config"))
+            api(project(":feature:photo-analysis-presenter"))
             implementation(project(":feature:photo-analysis-ui"))
-            implementation(project(":domain:nutrition"))
+            api(project(":domain:nutrition"))
             // Public feature APIs expose the domain state/ports, so this is an
             // intentional API dependency rather than an implementation leak.
             api(project(":domain:photo-analysis"))

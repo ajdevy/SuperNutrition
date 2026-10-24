@@ -1,6 +1,9 @@
 # Concrete G-2 proposal for the local MVP
 
-Status: proposed; not activated. The user has been asked to decide.
+Status: source and rules approved by the human user on 2026-10-24, recorded in
+`.evidence/OWNER-DECISIONS.md` D-08. Activation implementation and evidence are
+tracked in `spec-mvp-durable-catalog-diary.md`; approval alone is not evidence
+that a production package has been activated.
 
 Use the already imported USDA FoodData Central SR Legacy release `2018-04`.
 The existing TSV records the upstream archive SHA-256

@@ -114,7 +114,13 @@ private fun MealDetailsSource(meal: MealHistoryMeal, copy: MealDetailsCopy) {
         Modifier.fillMaxWidth().background(Color(0xFFE1F3DA), RoundedCornerShape(20.dp)).padding(14.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        if (meal.groundedFoods.isEmpty() || meal.savedMeal != null) {
+        val provenance = meal.nutritionProjection?.provenance
+        if (provenance != null) {
+            DiaryBody(copy.nutritionSource)
+            DiaryBody(provenance.sourceName, secondary = true)
+            DiaryBody(provenance.coverageDescription, secondary = true)
+            MealCatalogSourceButton(provenance, MealCatalogContext())
+        } else if (meal.nutritionProjection == null) {
             DiaryBody(copy.nutritionUnavailable, Modifier.automationId(UiAutomationIds.MEAL_DETAILS_NUTRITION_UNKNOWN))
             DiaryBody(
                 copy.unavailableDescription,

@@ -39,7 +39,12 @@ import org.jetbrains.compose.resources.painterResource
 /** The typed fallback remains available while camera access is missing or denied. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun CaptureTextEntry(onSave: (MealDraft) -> Boolean, copy: MealFormCopy, controlsVisible: Boolean = true) {
+internal fun CaptureTextEntry(
+    onSave: (MealDraft) -> Boolean,
+    copy: MealFormCopy,
+    controlsVisible: Boolean,
+    catalog: MealCatalogContext,
+) {
     var visible by remember { mutableStateOf(false) }
     var hintVisible by remember { mutableStateOf(true) }
     val open = {
@@ -56,7 +61,7 @@ internal fun CaptureTextEntry(onSave: (MealDraft) -> Boolean, copy: MealFormCopy
             shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
         ) {
             MealForm(
-                config = MealFormConfig(title = copy.addTitle),
+                config = MealFormConfig(title = copy.addTitle, catalog = catalog),
                 actions = MealFormActions(
                     onSave = { draft -> onSave(draft).also { saved -> if (saved) visible = false } },
                     onCancel = { visible = false },

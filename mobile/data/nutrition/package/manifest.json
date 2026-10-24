@@ -1,0 +1,18 @@
+{
+  "schema": "supernutrition.usda-bundled-package/v1",
+  "nutritionContract": "grounded-nutrition/v2",
+  "catalogId": "usda-sr-legacy",
+  "release": "2018-04",
+  "catalogCountry": "US",
+  "foodCount": 7793,
+  "packageSha256": "a7b422344393e918ca8ab13bbcfa2ae56812c1ed6046a2b3eae0b2908b74d174",
+  "sourceTsvSha256": "1b416249fde1f9a6a0672e71c3ffb216b2a3883f3dbd833a173d3b5332b657eb",
+  "upstreamArchiveSha256": "b80817294b8850530aaedf2e515c02593b1824f763a0ff356e5c2081643e6fd0",
+  "upstreamUrl": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip",
+  "licence": "CC0-1.0",
+  "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "basis": "per 100 g edible portion; grams entered explicitly",
+  "missingValue": "empty cell is unknown; source zero remains zero",
+  "activation": "immutable app-bundled payload; no downloaded catalog updates",
+  "authentication": "enclosing application's signature; separate payload/source SHA-256 pins"
+}

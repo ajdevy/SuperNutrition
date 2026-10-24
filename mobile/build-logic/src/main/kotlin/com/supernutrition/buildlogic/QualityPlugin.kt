@@ -209,10 +209,19 @@ class QualityPlugin : Plugin<Project> {
         // emitted formatting produces findings outside the authored source tree.
         // Restrict this to the plugin's exact output folder; other source inputs stay checked.
         val composeResourceOutput = target.layout.buildDirectory.dir("generated/compose/resourceGenerator")
+        // SQLDelight owns this database's emitted accessors, including their naming and formatting.
+        // Authored catalog/package sources under src remain checked; coverage is unchanged.
+        val hasNutritionDatabase = target.path == ":data:nutrition"
+        val nutritionDatabaseOutput = target.layout.buildDirectory.dir(
+            "generated/sqldelight/code/UsdaCatalogDatabase/commonMain",
+        )
         analysisTasks.configureEach {
             exclude { element ->
-                element.file.toPath().toAbsolutePath().normalize()
-                    .startsWith(composeResourceOutput.get().asFile.toPath().toAbsolutePath().normalize())
+                val sourcePath = element.file.toPath().toAbsolutePath().normalize()
+                sourcePath.startsWith(composeResourceOutput.get().asFile.toPath().toAbsolutePath().normalize()) ||
+                    (hasNutritionDatabase && sourcePath.startsWith(
+                        nutritionDatabaseOutput.get().asFile.toPath().toAbsolutePath().normalize(),
+                    ))
             }
         }
         qualityCheckJvmAndroid.configure { dependsOn(analysisTasks) }

@@ -39,13 +39,101 @@ import com.supernutrition.domain.photoanalysis.PhotoLeaseStore
 import com.supernutrition.domain.photoanalysis.PhotoSessionStore
 import com.supernutrition.domain.photoanalysis.RecoveryReason
 import com.supernutrition.domain.photoanalysis.RequestId
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 
 class PhotoAnalysisAnalysisCoordinatorTest {
+    @Test
+    fun `foreign attempt and request identifiers are ignored before either engine is called`() = runBlocking {
+        listOf("foreign-attempt" to "request", "current" to "foreign-request").forEach { (attempt, request) ->
+            val feature = preparedFeature("current")
+            var calls = 0
+            val result = coordinator(feature, v2Engine(beforeReturn = { calls++ })).run(
+                RequestId("request"),
+                attemptContext(attempt, request),
+            )
+            assertEquals(PhotoAnalysisAnalysisResult.Ignored, result)
+            assertEquals(0, calls)
+            assertIs<PhotoAnalysisState.Ready>(feature.state)
+        }
+    }
+
+    @Test
+    fun `all component abstention reasons preserve their typed recovery and never create a review`() = runBlocking {
+        V2AbstentionReason.entries.forEach { reason ->
+            val feature = preparedFeature("abstention-${reason.name}")
+            val outcome = InferenceV2Outcome.Abstention(reason, "unavailable", v2Provenance())
+            val result = coordinator(feature, v2Engine(outcome = outcome)).run(
+                RequestId("request"),
+                attemptContext("abstention-${reason.name}", "request"),
+            )
+            val expected = if (reason == V2AbstentionReason.IMAGE_QUALITY) {
+                RecoveryReason.POOR_IMAGE
+            } else {
+                RecoveryReason.NO_FOOD
+            }
+            assertEquals(PhotoAnalysisAnalysisResult.Recovery(expected), result)
+            assertEquals(expected, assertIs<PhotoAnalysisState.Recovery>(feature.state).reason)
+        }
+    }
+
+    @Test
+    fun `all component failure codes retain truthful recovery without fabricated candidates`() = runBlocking {
+        V2InferenceFailureCode.entries.forEach { code ->
+            val feature = preparedFeature("failure-${code.name}")
+            val outcome = InferenceV2Outcome.Failure(code, true, "unavailable", v2Provenance())
+            val result = coordinator(feature, v2Engine(outcome = outcome)).run(
+                RequestId("request"),
+                attemptContext("failure-${code.name}", "request"),
+            )
+            val expected = if (code == V2InferenceFailureCode.INVALID_INPUT) {
+                RecoveryReason.CAPTURE_FAILED
+            } else {
+                RecoveryReason.ANALYSIS_FAILED
+            }
+            assertEquals(PhotoAnalysisAnalysisResult.Recovery(expected), result)
+            assertEquals(expected, assertIs<PhotoAnalysisState.Recovery>(feature.state).reason)
+        }
+    }
+
+    @Test
+    fun `ordinary engine errors are reported and cancellation is rethrown without resurrecting review`() = runBlocking {
+        listOf(IllegalArgumentException("invalid"), IllegalStateException("closed")).forEach { failure ->
+            val feature = preparedFeature("error")
+            val failures = mutableListOf<Throwable>()
+            val coordinator = PhotoAnalysisAnalysisCoordinator(
+                feature,
+                DishEngine(),
+                v2Engine(beforeReturn = { throw failure }),
+                onFailure = failures::add,
+            )
+            val result = coordinator.run(RequestId("request"), attemptContext("error", "request"))
+            assertEquals(PhotoAnalysisAnalysisResult.Recovery(RecoveryReason.CAPTURE_FAILED), result)
+            assertEquals(listOf<Throwable>(failure), failures)
+        }
+        listOf(false, true).forEach { cancelBeforeThrow ->
+            val feature = preparedFeature("cancelled")
+            val coordinator = coordinator(
+                feature,
+                v2Engine(
+                    beforeReturn = {
+                        if (cancelBeforeThrow) feature.dispatch(PhotoAnalysisEvent.Cancel)
+                        throw CancellationException("cancelled by source")
+                    },
+                ),
+            )
+            assertFailsWith<CancellationException> {
+                coordinator.run(RequestId("request"), attemptContext("cancelled", "request"))
+            }
+            assertEquals(RecoveryReason.CANCELLED, assertIs<PhotoAnalysisState.Recovery>(feature.state).reason)
+        }
+    }
+
     @Test
     fun `coordinator sequences local stages and keeps v1 dishes separate from v2 evidence`() = runBlocking {
         val feature = preparedFeature("coordinator-success")

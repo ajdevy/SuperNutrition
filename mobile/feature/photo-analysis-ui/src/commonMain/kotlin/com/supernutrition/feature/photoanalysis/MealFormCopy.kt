@@ -24,6 +24,8 @@ data class MealFormCopy(
     val ingredientTooLong: String = "Each ingredient can contain up to 120 characters.",
     val noteTooLong: String = "The meal note is too long.",
     val note: String = "Note",
+    val catalogUnavailable: String = "The selected nutrition source is unavailable. Try again or remove the selection.",
+    val catalogSelectionInvalid: String = "Choose this product again or remove the selection.",
 )
 
 internal fun MealFormCopy.errorDescription(errors: Set<MealDraftError>): String = errors.joinToString("\n") {
@@ -36,5 +38,7 @@ internal fun MealFormCopy.errorDescription(errors: Set<MealDraftError>): String 
         MealDraftError.INGREDIENT_REQUIRED -> ingredientRequired
         MealDraftError.INGREDIENT_TOO_LONG -> ingredientTooLong
         MealDraftError.NOTE_TOO_LONG -> noteTooLong
+        MealDraftError.CATALOG_UNAVAILABLE -> catalogUnavailable
+        MealDraftError.CATALOG_SELECTION_INVALID -> catalogSelectionInvalid
     }
 }

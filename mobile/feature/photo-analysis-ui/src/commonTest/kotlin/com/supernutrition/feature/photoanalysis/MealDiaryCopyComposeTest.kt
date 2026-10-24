@@ -52,7 +52,7 @@ class MealDiaryCopyComposeTest {
         onNodeWithText("Pour 100 g").assertIsDisplayed()
         onNodeWithTag(UiAutomationIds.MEAL_DETAILS_VITAMINS.value).performScrollTo().assertIsDisplayed()
         onNodeWithText("Vitamines").assertIsDisplayed()
-        onNodeWithText("Energy").assertDoesNotExist()
+        onNodeWithTag(UiAutomationIds.MEAL_DETAILS_ENERGY.value).performScrollTo().assertIsDisplayed()
     }
 
     @Test
