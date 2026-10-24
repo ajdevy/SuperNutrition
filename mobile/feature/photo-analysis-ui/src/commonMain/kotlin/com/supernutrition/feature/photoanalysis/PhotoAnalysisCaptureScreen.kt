@@ -68,6 +68,7 @@ data class PhotoAnalysisCaptureSurface(
     val textEntryCopy: MealFormCopy = MealFormCopy(),
     /** When supplied, reports whether explicit photo confirmation was accepted by the owning diary. */
     val onMealReviewSaveRequested: ((PhotoAnalysisMealReviewConfirmation) -> Boolean)? = null,
+    val catalog: MealCatalogContext = MealCatalogContext(),
 )
 
 data class PhotoAnalysisCaptureAutomationIds(

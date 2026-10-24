@@ -54,7 +54,14 @@ fun MealHistoryScreen(
     onMealSelected: ((MealHistoryMeal) -> Unit)? = null,
 ) {
     val referenceDay = presentation.referenceDay ?: currentHistoryReferenceDay()
-    val copy = presentation.copy
+    val copy = if (presentation.storageLoadFailed) {
+        presentation.copy.copy(
+            emptyTitle = presentation.copy.loadFailedTitle,
+            emptyDescription = presentation.copy.loadFailedDescription,
+        )
+    } else {
+        presentation.copy
+    }
     val rememberedSearch = remember { MealHistorySearchState() }
     val search = presentation.searchState ?: rememberedSearch
     val query = search.query

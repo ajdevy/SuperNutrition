@@ -1,6 +1,7 @@
 package com.supernutrition.feature.photoanalysis
 
 import android.Manifest
+import android.app.Application
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -42,7 +43,7 @@ import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.supernutrition.core.ui.CameraPermissionState
@@ -55,7 +56,10 @@ import com.supernutrition.domain.photoanalysis.PhotoSessionStore
 import com.supernutrition.platform.photoandroid.AndroidImageNormalizer
 import com.supernutrition.platform.photoandroid.AndroidPhotoAttemptIds
 import com.supernutrition.platform.photoandroid.AndroidPhotoBridge
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -394,10 +398,15 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         rewardsModel: RewardsPresenterModel,
         confirmedFoods: List<ConfirmedConsumedFood>,
         savedMeals: List<SavedMeal>,
+        profile: LocalProfileSnapshot,
+        catalog: MealCatalogContext,
     ) = PhotoAnalysisTabShell(
-        homeModel = liveHomeScreenModel(
+        homeModel = feature.mealDiary.homeScreenModel(
             homeClock.label,
-            mergedMealHistory(confirmedFoods, savedMeals).count { it.id.localDay == homeClock.day },
+            homeClock.day,
+            confirmedFoods,
+            savedMeals,
+            catalog.state,
         ),
         rewardsModel = rewardsModel,
         rewardsScreenCopy = rewardsScreenCopy(),
@@ -410,8 +419,13 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         rewardsFeature = retainedState.rewardsFeature,
         onCaptureClosed = { host.handleAction(PhotoAnalysisPresenterAction.Cancel) },
         onCaptureOpened = { host.handleAction(PhotoAnalysisPresenterAction.ScanAgain) },
-        profileName = retainedState.profileDisplayName,
-        onProfileNameChanged = { retainedState.profileDisplayName = it },
+        profileName = profile.name,
+        namePersistence = ProfileNamePersistence(
+            retainedState.localData.profile::updateDisplayName,
+            profile.nameLoadFailed,
+        ),
+        diaryLoadFailed = profile.diaryLoadFailed,
+        catalog = catalog,
         onSystemBarAppearanceChanged = ::updateSystemBarAppearance,
     )
 
@@ -422,6 +436,8 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
             val rewardsSnapshot by retainedState.rewardsFeature.snapshot.collectAsState()
             val confirmedFoods by retainedState.rewardsFeature.confirmedFoods.collectAsState()
             val savedMeals by feature.mealDiary.meals.collectAsState()
+            val catalogState by feature.mealDiary.catalogSession.state.collectAsState()
+            LaunchedEffect(retainedState) { retainedState.startCatalog() }
             RefreshHomeClock { homeClock = currentAndroidHomeClock() }
             LaunchedEffect(savedMeals, homeClock.day) { retainedState.rewardsFeature.updateRecordedMeals(savedMeals) }
             val openedProfileId = profileId
@@ -442,30 +458,12 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
                             RewardsPresenterModel.from(rewardsSnapshot, rewardsCopy),
                             confirmedFoods,
                             savedMeals,
+                            retainedState.localData.profileSnapshot(),
+                            MealCatalogContext(catalogState, feature.mealDiary.catalogSession::retry),
                         ),
                         captureContent = { onCloseRequested ->
                             PhotoAnalysisCaptureTab(
-                                state = PhotoAnalysisCaptureTabState(
-                                    feature = feature,
-                                    host = host,
-                                    presentationCopy = presentationCopy,
-                                    closeLabel = getString(R.string.capture_close),
-                                    onCloseRequested = onCloseRequested,
-                                    preview = preview,
-                                    manualIngredientState = manualIngredientState,
-                                    cameraAccess = PhotoAnalysisCameraAccess(
-                                        permissionState = cameraPermissionState,
-                                        requestInFlight = cameraPermissionRequestInFlight,
-                                        onAccessRequested = {
-                                            cameraPermissionState = host.requestCameraPreviewAccess()
-                                        },
-                                    ),
-                                    onCameraPreviewEntered = {
-                                        cameraPermissionState = host.onCameraPreviewEntered()
-                                    },
-                                    inlineCameraController = inlineCameraController,
-                                    gridHintsEnabled = runtimeReady,
-                                ),
+                                captureTabState(onCloseRequested, preview, manualIngredientState),
                             )
                         },
                     )
@@ -473,6 +471,32 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
             }
         }
     }
+
+    private fun captureTabState(
+        onCloseRequested: () -> Unit,
+        preview: AndroidRetainedPhotoPreview?,
+        manualIngredientState: PhotoAnalysisManualIngredientState,
+    ) = PhotoAnalysisCaptureTabState(
+        feature = feature,
+        host = host,
+        presentationCopy = presentationCopy,
+        closeLabel = getString(R.string.capture_close),
+        onCloseRequested = onCloseRequested,
+        preview = preview,
+        manualIngredientState = manualIngredientState,
+        cameraAccess = PhotoAnalysisCameraAccess(
+            permissionState = cameraPermissionState,
+            requestInFlight = cameraPermissionRequestInFlight,
+            onAccessRequested = {
+                cameraPermissionState = host.requestCameraPreviewAccess()
+            },
+        ),
+        onCameraPreviewEntered = {
+            cameraPermissionState = host.onCameraPreviewEntered()
+        },
+        inlineCameraController = inlineCameraController,
+        gridHintsEnabled = runtimeReady,
+    )
 
     private fun rewardsScreenCopy() = RewardsScreenCopy(
         daily = getString(R.string.rewards_daily),
@@ -536,8 +560,11 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         }
     }
 
-    class RetainedState : ViewModel() {
-        internal var profileDisplayName by mutableStateOf("")
+    class RetainedState(application: Application) : AndroidViewModel(application) {
+        private val catalogProvider = application as? PhotoAnalysisAndroidCatalogProvider
+        private val catalogScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+        private val catalogSession = MealCatalogSession(catalogProvider?.photoAnalysisCatalogFactory)
+        internal val localData = androidLocalUserData(application, catalogSession)
         internal val leases = PhotoLeaseStore()
         internal val sessions = PhotoSessionStore()
         internal val previewStore = AndroidRetainedPhotoPreviewStore()
@@ -545,6 +572,7 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
             attemptId = AttemptId(AndroidPhotoAttemptIds.CAPTURE),
             leases = leases,
             sessions = sessions,
+            mealDiary = localData.mealDiary,
         )
         val rewardsFeature = RewardsFeature(
             localDay = { currentMealRecordContext().localDay },
@@ -552,7 +580,14 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         val captureOperation = CaptureOperationState()
         var wasBackgrounded: Boolean = false
 
+        internal fun startCatalog() {
+            val provider = catalogProvider ?: return
+            catalogSession.start(catalogScope, provider.photoAnalysisCatalogBackgroundDispatcher)
+        }
+
         override fun onCleared() {
+            catalogSession.close()
+            catalogScope.cancel()
             previewStore.clear()
             super.onCleared()
         }
@@ -616,9 +651,12 @@ private fun HomeProfileDestination(shell: PhotoAnalysisTabShell, onBackRequested
             savedMeals = shell.savedMeals,
             onMealEdited = { id, draft -> shell.mealDiary.updateFromHistory(id, draft, shell.rewardsFeature) },
             onMealDeleted = { id -> shell.mealDiary.deleteFromHistory(id, shell.rewardsFeature) },
+            storageLoadFailed = shell.diaryLoadFailed,
+            catalog = shell.catalog,
         ),
         actions = ProfileScreenActions(
-            onNameChanged = shell.onProfileNameChanged,
+            onNameChanged = {},
+            namePersistence = shell.namePersistence,
             onBackRequested = onBackRequested,
             onPrivacyPolicyRequested = { uriHandler.openUri(ProfileLegalLinks.PRIVACY_POLICY) },
             onTermsRequested = { uriHandler.openUri(ProfileLegalLinks.TERMS) },
@@ -765,7 +803,9 @@ private data class PhotoAnalysisTabShell(
     val onCaptureClosed: () -> Unit,
     val onCaptureOpened: () -> Unit,
     val profileName: String,
-    val onProfileNameChanged: (String) -> Unit,
+    val namePersistence: ProfileNamePersistence,
+    val diaryLoadFailed: Boolean,
+    val catalog: MealCatalogContext,
     val onSystemBarAppearanceChanged: (darkIcons: Boolean) -> Unit,
 )
 
@@ -774,6 +814,7 @@ private fun PhotoAnalysisCaptureTab(state: PhotoAnalysisCaptureTabState) {
     val feature = state.feature
     val mealReviewSelection by feature.mealReviewSelection.collectAsState()
     val workflowState by feature.stateFlow.collectAsState()
+    val catalogState by feature.mealDiary.catalogSession.state.collectAsState()
     val host = state.host
     val presentationCopy = state.presentationCopy
     val preview = state.preview
@@ -787,6 +828,7 @@ private fun PhotoAnalysisCaptureTab(state: PhotoAnalysisCaptureTabState) {
         stateFlow = feature.stateFlow,
         onAction = host::handleAction,
         surface = PhotoAnalysisCaptureSurface(
+            catalog = MealCatalogContext(catalogState, feature.mealDiary.catalogSession::retry),
             presenterCopy = presentationCopy,
             closeLabel = state.closeLabel,
             onCloseRequested = state.onCloseRequested,

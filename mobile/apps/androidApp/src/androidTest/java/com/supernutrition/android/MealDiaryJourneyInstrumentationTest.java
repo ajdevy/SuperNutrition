@@ -7,6 +7,7 @@ import android.os.SystemClock;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.uiautomator.By;
+import androidx.test.uiautomator.StaleObjectException;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject2;
 import androidx.test.uiautomator.Until;
@@ -33,11 +34,7 @@ public final class MealDiaryJourneyInstrumentationTest {
         InstrumentationRegistry.getInstrumentation().startActivitySync(intent);
         UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         node(device, UiAutomationIds.INSTANCE.getHOME_ADD_FOOD().getValue()).click();
-        UiObject2 cameraPermission = device.wait(Until.findObject(
-                By.res(Pattern.compile("(?:.*:id/)?permission_deny_button"))), 3_000L);
-        if (cameraPermission != null) cameraPermission.click();
-        node(device, UiAutomationIds.INSTANCE.getCAPTURE_TEXT().getValue()).click();
-        node(device, UiAutomationIds.INSTANCE.getMEAL_FORM_NAME().getValue()).setText("Apple oatmeal");
+        openTextMealForm(device, context.getPackageName()).setText("Apple oatmeal");
         scrollTo(device, UiAutomationIds.INSTANCE.getMEAL_FORM_SAVE().getValue(), true).click();
         node(device, UiAutomationIds.INSTANCE.getHOME_PROFILE().getValue()).click();
         node(device, UiAutomationIds.INSTANCE.getPROFILE_HISTORY().getValue()).click();
@@ -52,6 +49,39 @@ public final class MealDiaryJourneyInstrumentationTest {
         scrollTo(device, UiAutomationIds.INSTANCE.getMEAL_DETAILS_DELETE().getValue(), true).click();
         node(device, UiAutomationIds.INSTANCE.getMEAL_DETAILS_DELETE_CONFIRM().getValue()).click();
         node(device, UiAutomationIds.INSTANCE.getMEAL_HISTORY_EMPTY().getValue());
+    }
+
+    private static UiObject2 openTextMealForm(UiDevice device, String targetPackage) {
+        long deadline = SystemClock.uptimeMillis() + TIMEOUT_MS;
+        String captureId = UiAutomationIds.INSTANCE.getCAPTURE_TEXT().getValue();
+        String nameId = UiAutomationIds.INSTANCE.getMEAL_FORM_NAME().getValue();
+        boolean textRequested = false;
+        while (SystemClock.uptimeMillis() < deadline) {
+            try {
+                UiObject2 permission = device.findObject(
+                        By.res(Pattern.compile("(?:.*:id/)?permission_deny_button")));
+                if (permission != null && permission.isEnabled() && !permission.getVisibleBounds().isEmpty()) {
+                    permission.click();
+                    textRequested = false;
+                } else if (targetPackage.equals(device.getCurrentPackageName())) {
+                    UiObject2 name = device.findObject(By.res(nameId));
+                    if (name != null && name.isEnabled() && !name.getVisibleBounds().isEmpty()) return name;
+                    UiObject2 capture = device.findObject(By.res(captureId));
+                    if (!textRequested && capture != null && capture.isEnabled()
+                            && !capture.getVisibleBounds().isEmpty()) {
+                        capture.click();
+                        textRequested = true;
+                    }
+                }
+            } catch (StaleObjectException ignored) {
+                // Re-query controls replaced while the permission window or meal sheet changes.
+            }
+            long remaining = deadline - SystemClock.uptimeMillis();
+            if (remaining > 0) SystemClock.sleep(Math.min(100L, remaining));
+        }
+        String missingId = textRequested ? nameId : captureId;
+        NativeUiSemanticDiagnostics.dump(device, missingId);
+        throw new AssertionError("Could not open text meal form: " + missingId);
     }
 
     private static UiObject2 node(UiDevice device, String id) {

@@ -9,7 +9,7 @@ data class MealHistoryCopy(
     val search: String = "Search your meals",
     val clearSearch: String = "Clear",
     val emptyTitle: String = "No meals saved yet",
-    val emptyDescription: String = "No confirmed meals are available in this session.",
+    val emptyDescription: String = "Meals you save will appear here until you delete them.",
     val noResultsTitle: String = "No meals found",
     val noResultsDescription: String = "Try another food or ingredient name.",
     val timeUnavailable: String = "Time unavailable",
@@ -20,4 +20,6 @@ data class MealHistoryCopy(
     val yesterday: String = "Yesterday",
     val dateUnavailable: String = "Date unavailable",
     val done: String = "Done",
+    val loadFailedTitle: String = "Saved meals unavailable",
+    val loadFailedDescription: String = "Your saved meals could not be loaded. They have not been erased or replaced.",
 )

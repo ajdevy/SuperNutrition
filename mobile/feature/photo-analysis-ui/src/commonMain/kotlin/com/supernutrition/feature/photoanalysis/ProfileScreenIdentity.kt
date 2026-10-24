@@ -7,4 +7,5 @@ internal data class ProfileScreenIdentity(
     val displayName: String,
     val confirmedFoods: List<ConfirmedConsumedFood>,
     val savedMeals: List<SavedMeal> = emptyList(),
+    val diaryLoadFailed: Boolean = false,
 )

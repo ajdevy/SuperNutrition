@@ -44,19 +44,17 @@ private fun AppleMainContent(
     val meals by feature.mealDiary.meals.collectAsState()
     val foods by rewards.confirmedFoods.collectAsState()
     val snapshot by rewards.snapshot.collectAsState()
+    val catalogState by feature.mealDiary.catalogSession.state.collectAsState()
     var selectedTab by remember { mutableIntStateOf(0) }
     val rewardFlow = rememberRewardsFlowState()
-    var clock by remember { mutableStateOf(appleMainClock()) }
-    LaunchedEffect(Unit) {
-        while (isActive) {
-            clock = appleMainClock()
-            delay(MAIN_CLOCK_REFRESH_MILLIS)
-        }
-    }
+    val clock = rememberAppleMainClock()
     LaunchedEffect(meals, clock.day) { rewards.updateRecordedMeals(meals) }
-    val home = liveHomeScreenModel(
+    val home = feature.mealDiary.homeScreenModel(
         clock.label,
-        mergedMealHistory(foods, meals).count { it.id.localDay == clock.day },
+        clock.day,
+        foods,
+        meals,
+        catalogState,
     )
     val rewardsModel = RewardsPresenterModel.from(snapshot, copy)
     val details = RewardsDetailsContext(
@@ -97,6 +95,18 @@ private fun AppleMainContent(
             }
         }
     }
+}
+
+@Composable
+private fun rememberAppleMainClock(): AppleMainClock {
+    var clock by remember { mutableStateOf(appleMainClock()) }
+    LaunchedEffect(Unit) {
+        while (isActive) {
+            clock = appleMainClock()
+            delay(MAIN_CLOCK_REFRESH_MILLIS)
+        }
+    }
+    return clock
 }
 
 private data class AppleMainClock(val day: Int, val label: String)

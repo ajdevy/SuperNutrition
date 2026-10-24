@@ -1,6 +1,8 @@
 package com.supernutrition.feature.photoanalysis
 
-/** An explicit identity-only diary entry; no photo reference or nutrient claim is retained. */
+import com.supernutrition.domain.nutrition.CatalogMealBinding
+
+/** An explicit diary entry; a source binding retains identifiers, never photo bytes or nutrient estimates. */
 data class SavedMeal(
     val id: String,
     /** Local calendar date expressed as days since 1970-01-01, supplied by the host clock. */
@@ -11,6 +13,7 @@ data class SavedMeal(
     val ingredients: List<String>,
     val note: String = "",
     val source: SavedMealSource,
+    val catalogBinding: CatalogMealBinding? = null,
 )
 
 enum class SavedMealSource { PHOTO, TEXT }
@@ -21,6 +24,7 @@ data class MealDraft(
     val portion: String = "",
     val ingredients: String = "",
     val note: String = "",
+    val catalogBinding: CatalogMealBinding? = null,
 )
 
 data class ValidatedMealDraft(
@@ -28,6 +32,7 @@ data class ValidatedMealDraft(
     val portionGrams: Double?,
     val ingredients: List<String>,
     val note: String,
+    val catalogBinding: CatalogMealBinding? = null,
 )
 
 object MealDraftLimits {
@@ -48,6 +53,8 @@ enum class MealDraftError {
     INGREDIENT_TOO_LONG,
     NOTE_TOO_LONG,
     INGREDIENT_REQUIRED,
+    CATALOG_UNAVAILABLE,
+    CATALOG_SELECTION_INVALID,
 }
 
 sealed interface MealDraftValidation {

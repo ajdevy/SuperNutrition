@@ -93,6 +93,7 @@ internal fun PhotoAnalysisCameraScreen(
                 it,
                 surface.textEntryCopy,
                 controlsVisible = !reviewing && model.state != PhotoAnalysisPresenterState.BACKGROUNDED,
+                catalog = surface.catalog,
             )
         }
     }

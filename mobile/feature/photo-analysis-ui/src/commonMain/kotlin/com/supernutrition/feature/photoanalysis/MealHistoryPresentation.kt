@@ -5,4 +5,5 @@ data class MealHistoryPresentation(
     val copy: MealHistoryCopy = MealHistoryCopy(),
     val detailsCopy: MealDetailsCopy = MealDetailsCopy(),
     val searchState: MealHistorySearchState? = null,
+    val storageLoadFailed: Boolean = false,
 )

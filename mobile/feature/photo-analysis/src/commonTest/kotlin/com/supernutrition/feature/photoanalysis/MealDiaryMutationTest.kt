@@ -46,7 +46,7 @@ class MealDiaryMutationTest {
                 MealRecordContext("meal", 20_020, "10:00")
             },
             store = object : MealDiaryStore {
-                override fun load() = "SNMD2:0:"
+                override fun load() = "SNMD3:0:"
                 override fun save(encoded: String): Boolean {
                     saves++
                     return true

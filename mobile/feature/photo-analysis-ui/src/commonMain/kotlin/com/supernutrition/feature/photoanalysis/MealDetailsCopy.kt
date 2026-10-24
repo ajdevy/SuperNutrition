@@ -31,6 +31,7 @@ data class MealDetailsCopy(
     val cancel: String = "Cancel",
     val unknownDescription: String = "— means this value is unavailable.",
     val nutrients: MealNutrientCopy = MealNutrientCopy(),
+    val energy: String = "Energy",
 )
 
 data class MealNutrientCopy(

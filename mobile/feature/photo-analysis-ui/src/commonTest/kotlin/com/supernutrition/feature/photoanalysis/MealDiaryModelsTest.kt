@@ -11,6 +11,16 @@ import kotlin.test.assertTrue
 
 class MealDiaryModelsTest {
     @Test
+    fun `unreadable diary never describes an empty zero-meal day`() {
+        val copy = LiveHomeCopy()
+        val model = liveHomeScreenModel("Today", 0, storageLoadFailed = true)
+        assertEquals("—", model.dailySummaryValue)
+        assertEquals(copy.historyLoadFailed, model.dailySummaryDescription)
+        assertEquals(copy.historyUnavailable, model.rhythmSubtitle)
+        assertEquals(copy.historyUnavailable, model.careQuestion)
+    }
+
+    @Test
     fun `authored entries merge without duplicate meals or old nutrient claims`() {
         val saved = diaryMealFixture(id = "same")
         val foods = listOf(profileConfirmedFood("1", "same", "Old catalog meal"))

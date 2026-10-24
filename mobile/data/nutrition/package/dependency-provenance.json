@@ -1,0 +1,462 @@
+{
+  "schema": "supernutrition.catalog-dependency-provenance/v1",
+  "checkedAtUtc": "2026-10-24T05:58:18.891653+00:00",
+  "baselineCommit": "7309e140b9cf12c6acf5733cfdcec00ce5912f1b",
+  "metadataLockRefresh": {
+    "declaredVersionPinsChanged": false,
+    "existingCoordinatesPreserved": true,
+    "restoredUnrelatedLockfiles": [],
+    "lockfiles": [
+      {
+        "lockfile": "mobile/domain/inference/gradle.lockfile",
+        "existingCoordinatesPreserved": true,
+        "addedCoordinates": [
+          "org.jetbrains.kotlin:kotlin-native-prebuilt:2.4.10",
+          "org.jetbrains.kotlin:kotlin-stdlib-common:2.4.10",
+          "org.jetbrains.kotlinx:atomicfu-iosarm64:0.26.1",
+          "org.jetbrains.kotlinx:atomicfu:0.23.1",
+          "org.jetbrains.kotlinx:atomicfu:0.26.1",
+          "org.jetbrains.kotlinx:kotlinx-coroutines-core-iosarm64:1.10.2",
+          "org.jetbrains.kotlinx:kotlinx-serialization-core-iosarm64:1.9.0",
+          "org.jetbrains.kotlinx:kotlinx-serialization-json-iosarm64:1.9.0"
+        ],
+        "commonMainResolvableDependenciesMetadata": {
+          "before": [
+            "org.jetbrains.kotlin:kotlin-stdlib:2.4.10",
+            "org.jetbrains.kotlinx:kotlinx-serialization-core:1.9.0",
+            "org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0"
+          ],
+          "after": [
+            "org.jetbrains.kotlin:kotlin-stdlib-common:2.4.10",
+            "org.jetbrains.kotlin:kotlin-stdlib:2.4.10",
+            "org.jetbrains.kotlinx:atomicfu:0.23.1",
+            "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2",
+            "org.jetbrains.kotlinx:kotlinx-serialization-core:1.9.0",
+            "org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0"
+          ]
+        },
+        "iosArm64CompileKlibraries": {
+          "before": [],
+          "after": [
+            "org.jetbrains.kotlin:kotlin-stdlib:2.4.10",
+            "org.jetbrains.kotlinx:atomicfu-iosarm64:0.26.1",
+            "org.jetbrains.kotlinx:atomicfu:0.26.1",
+            "org.jetbrains.kotlinx:kotlinx-coroutines-core-iosarm64:1.10.2",
+            "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2",
+            "org.jetbrains.kotlinx:kotlinx-serialization-core-iosarm64:1.9.0",
+            "org.jetbrains.kotlinx:kotlinx-serialization-core:1.9.0",
+            "org.jetbrains.kotlinx:kotlinx-serialization-json-iosarm64:1.9.0",
+            "org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0"
+          ]
+        }
+      },
+      {
+        "lockfile": "mobile/domain/nutrition/gradle.lockfile",
+        "existingCoordinatesPreserved": true,
+        "addedCoordinates": [
+          "org.jetbrains.kotlin:kotlin-native-prebuilt:2.4.10",
+          "org.jetbrains.kotlinx:atomicfu-iosarm64:0.26.1",
+          "org.jetbrains.kotlinx:atomicfu:0.26.1",
+          "org.jetbrains.kotlinx:kotlinx-coroutines-core-iosarm64:1.10.2",
+          "org.jetbrains.kotlinx:kotlinx-serialization-core-iosarm64:1.9.0",
+          "org.jetbrains.kotlinx:kotlinx-serialization-json-iosarm64:1.9.0"
+        ],
+        "commonMainResolvableDependenciesMetadata": {
+          "before": [
+            "org.jetbrains.kotlin:kotlin-stdlib:2.4.10"
+          ],
+          "after": [
+            "org.jetbrains.kotlin:kotlin-stdlib:2.4.10"
+          ]
+        },
+        "iosArm64CompileKlibraries": {
+          "before": [],
+          "after": [
+            "org.jetbrains.kotlin:kotlin-stdlib:2.4.10",
+            "org.jetbrains.kotlinx:atomicfu-iosarm64:0.26.1",
+            "org.jetbrains.kotlinx:atomicfu:0.26.1",
+            "org.jetbrains.kotlinx:kotlinx-coroutines-core-iosarm64:1.10.2",
+            "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2",
+            "org.jetbrains.kotlinx:kotlinx-serialization-core-iosarm64:1.9.0",
+            "org.jetbrains.kotlinx:kotlinx-serialization-core:1.9.0",
+            "org.jetbrains.kotlinx:kotlinx-serialization-json-iosarm64:1.9.0",
+            "org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0"
+          ]
+        }
+      },
+      {
+        "lockfile": "mobile/data/nutrition/gradle.lockfile",
+        "existingCoordinatesPreserved": true,
+        "addedCoordinates": [
+          "app.cash.sqldelight:runtime-iosarm64:2.3.2",
+          "org.jetbrains.kotlin:kotlin-native-prebuilt:2.4.10",
+          "org.jetbrains.kotlinx:atomicfu-iosarm64:0.26.1",
+          "org.jetbrains.kotlinx:atomicfu:0.26.1",
+          "org.jetbrains.kotlinx:kotlinx-coroutines-core-iosarm64:1.10.2",
+          "org.jetbrains.kotlinx:kotlinx-serialization-core-iosarm64:1.9.0",
+          "org.jetbrains.kotlinx:kotlinx-serialization-json-iosarm64:1.9.0"
+        ],
+        "commonMainResolvableDependenciesMetadata": {
+          "before": [
+            "app.cash.sqldelight:runtime:2.3.2",
+            "org.jetbrains.kotlin:kotlin-stdlib:2.4.10"
+          ],
+          "after": [
+            "app.cash.sqldelight:runtime:2.3.2",
+            "org.jetbrains.kotlin:kotlin-stdlib:2.4.10"
+          ]
+        },
+        "iosArm64CompileKlibraries": {
+          "before": [],
+          "after": [
+            "app.cash.sqldelight:runtime-iosarm64:2.3.2",
+            "app.cash.sqldelight:runtime:2.3.2",
+            "org.jetbrains.kotlin:kotlin-stdlib:2.4.10",
+            "org.jetbrains.kotlinx:atomicfu-iosarm64:0.26.1",
+            "org.jetbrains.kotlinx:atomicfu:0.26.1",
+            "org.jetbrains.kotlinx:kotlinx-coroutines-core-iosarm64:1.10.2",
+            "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2",
+            "org.jetbrains.kotlinx:kotlinx-serialization-core-iosarm64:1.9.0",
+            "org.jetbrains.kotlinx:kotlinx-serialization-core:1.9.0",
+            "org.jetbrains.kotlinx:kotlinx-serialization-json-iosarm64:1.9.0",
+            "org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0"
+          ]
+        }
+      },
+      {
+        "lockfile": "mobile/core/config/gradle.lockfile",
+        "existingCoordinatesPreserved": true,
+        "addedCoordinates": [
+          "org.jetbrains.kotlin:kotlin-native-prebuilt:2.4.10"
+        ],
+        "commonMainResolvableDependenciesMetadata": {
+          "before": [
+            "org.jetbrains.kotlin:kotlin-stdlib:2.4.10"
+          ],
+          "after": [
+            "org.jetbrains.kotlin:kotlin-stdlib:2.4.10"
+          ]
+        },
+        "iosArm64CompileKlibraries": {
+          "before": [],
+          "after": [
+            "org.jetbrains.kotlin:kotlin-stdlib:2.4.10"
+          ]
+        }
+      }
+    ],
+    "firstRunLog": "mobile/build/verification/mvp-audit/catalog-metadata-ios-arm64.log",
+    "refreshLog": "mobile/build/verification/mvp-audit/catalog-metadata-lock-refresh.log",
+    "verificationMetadataChanged": false,
+    "notes": "Only four required graph lockfiles changed; every pre-existing coordinate is retained. Native platform variants and compiler/metadata configurations were resolved at existing declared version pins. No unrelated lock churn occurred in this targeted refresh."
+  },
+  "method": "Compare Gradle SHA-256 pins with independently requested Maven Central published .sha256 files; when those are unavailable, compare an independent HTTPS artifact download. Each method is explicitly recorded.",
+  "artifacts": [
+    {
+      "coordinate": "app.cash.sql-psi:core:0.7.3",
+      "artifact": "core-0.7.3.jar",
+      "sha256": "8c8cfe03be1d6d4d55dd49ddd5e184ccfd32060cef3618f68e8325ace67d2ea3",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/app/cash/sql-psi/core/0.7.3/core-0.7.3.jar",
+      "publishedSha256Matches": true
+    },
+    {
+      "coordinate": "app.cash.sql-psi:core:0.7.3",
+      "artifact": "core-0.7.3.module",
+      "sha256": "446df8c6739e308e16b1123eba4f54136ebf3224481ffc1fb8ffb8becc5c59de",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/app/cash/sql-psi/core/0.7.3/core-0.7.3.module",
+      "publishedSha256Matches": true
+    },
+    {
+      "coordinate": "app.cash.sql-psi:environment:0.7.3",
+      "artifact": "environment-0.7.3.jar",
+      "sha256": "a061d4c51dd48a683a9356893bddc1a1da7e6a337e90d95edb85eb585d249326",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/app/cash/sql-psi/environment/0.7.3/environment-0.7.3.jar",
+      "publishedSha256Matches": true
+    },
+    {
+      "coordinate": "app.cash.sql-psi:environment:0.7.3",
+      "artifact": "environment-0.7.3.module",
+      "sha256": "7096d88d94363d4a0f5db829b365745a456df8d76bfaa481209f38fce9f2bb1a",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/app/cash/sql-psi/environment/0.7.3/environment-0.7.3.module",
+      "publishedSha256Matches": true
+    },
+    {
+      "coordinate": "app.cash.sqldelight:app.cash.sqldelight.gradle.plugin:2.3.2",
+      "artifact": "app.cash.sqldelight.gradle.plugin-2.3.2.pom",
+      "sha256": "b5435c6763617a472b1be89e55efe1b1e4477ef475e248b236c74db32b902b9d",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/app/cash/sqldelight/app.cash.sqldelight.gradle.plugin/2.3.2/app.cash.sqldelight.gradle.plugin-2.3.2.pom",
+      "publishedSha256Matches": true
+    },
+    {
+      "coordinate": "app.cash.sqldelight:compiler-env:2.3.2",
+      "artifact": "compiler-env-2.3.2.jar",
+      "sha256": "e40d283282a9c31a80adf2538d1d706f71dacddc5b004582694dc6d693b29a00",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/app/cash/sqldelight/compiler-env/2.3.2/compiler-env-2.3.2.jar",
+      "publishedSha256Matches": true
+    },
+    {
+      "coordinate": "app.cash.sqldelight:compiler-env:2.3.2",
+      "artifact": "compiler-env-2.3.2.module",
+      "sha256": "bda019f34b77b454b4ba65b11ef358641b7e63495ca0708650185d98e2b45e4e",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/app/cash/sqldelight/compiler-env/2.3.2/compiler-env-2.3.2.module",
+      "publishedSha256Matches": true
+    },
+    {
+      "coordinate": "app.cash.sqldelight:core:2.3.2",
+      "artifact": "core-2.3.2.jar",
+      "sha256": "0148c58fac1daa410fecd092a50ca02ba2ba4eae0fa3b88e5ac5e925f5392855",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/app/cash/sqldelight/core/2.3.2/core-2.3.2.jar",
+      "publishedSha256Matches": true
+    },
+    {
+      "coordinate": "app.cash.sqldelight:core:2.3.2",
+      "artifact": "core-2.3.2.module",
+      "sha256": "dd99d84e5b03f91916618c4ec55782ae9ee1d5f775ed50a34d480e4e54cb9a78",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/app/cash/sqldelight/core/2.3.2/core-2.3.2.module",
+      "publishedSha256Matches": true
+    },
+    {
+      "coordinate": "app.cash.sqldelight:dialect-api:2.3.2",
+      "artifact": "dialect-api-2.3.2.jar",
+      "sha256": "6c6ddd0b0ec43e06d6d1fcd806ae2f6c8f0cc2b2db349038ea82ff1aee0440fa",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/app/cash/sqldelight/dialect-api/2.3.2/dialect-api-2.3.2.jar",
+      "publishedSha256Matches": true
+    },
+    {
+      "coordinate": "app.cash.sqldelight:dialect-api:2.3.2",
+      "artifact": "dialect-api-2.3.2.module",
+      "sha256": "7f3a3846e1cf76462a4f56668dc5da12c0487f0c38f19678b906e29955ef4da2",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/app/cash/sqldelight/dialect-api/2.3.2/dialect-api-2.3.2.module",
+      "publishedSha256Matches": true
+    },
+    {
+      "coordinate": "app.cash.sqldelight:gradle-plugin:2.3.2",
+      "artifact": "gradle-plugin-2.3.2.jar",
+      "sha256": "799b685eee7971a88496dfe4bc98c7dd033a375504d42437210fbe1887bb53a1",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/app/cash/sqldelight/gradle-plugin/2.3.2/gradle-plugin-2.3.2.jar",
+      "publishedSha256Matches": true
+    },
+    {
+      "coordinate": "app.cash.sqldelight:gradle-plugin:2.3.2",
+      "artifact": "gradle-plugin-2.3.2.module",
+      "sha256": "fd18b81b060870383e97766e33989e1ce97d73c1d45c62f0df8754c7ea44061b",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/app/cash/sqldelight/gradle-plugin/2.3.2/gradle-plugin-2.3.2.module",
+      "publishedSha256Matches": true
+    },
+    {
+      "coordinate": "app.cash.sqldelight:jdbc-driver:2.3.2",
+      "artifact": "jdbc-driver-2.3.2.jar",
+      "sha256": "66f28e6b98867b822ad652126766e62a200c72bbca9b6f22fbafaccdcbf292a2",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/app/cash/sqldelight/jdbc-driver/2.3.2/jdbc-driver-2.3.2.jar",
+      "publishedSha256Matches": true
+    },
+    {
+      "coordinate": "app.cash.sqldelight:jdbc-driver:2.3.2",
+      "artifact": "jdbc-driver-2.3.2.module",
+      "sha256": "4241cdc4d08f64b5b1a3f06ef2305f195cdb621e9f1c04606890aa397d60da0a",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/app/cash/sqldelight/jdbc-driver/2.3.2/jdbc-driver-2.3.2.module",
+      "publishedSha256Matches": true
+    },
+    {
+      "coordinate": "app.cash.sqldelight:migration-env:2.3.2",
+      "artifact": "migration-env-2.3.2.jar",
+      "sha256": "ff229c64ce752fc907514de0be543e5398e63c978476e4f34514e552cfd5d57e",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/app/cash/sqldelight/migration-env/2.3.2/migration-env-2.3.2.jar",
+      "publishedSha256Matches": true
+    },
+    {
+      "coordinate": "app.cash.sqldelight:migration-env:2.3.2",
+      "artifact": "migration-env-2.3.2.module",
+      "sha256": "e624ce93fec45788ce3d3c3e38fbb9c071e855d7b26e86fdabbe9bfdbeacfa64",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/app/cash/sqldelight/migration-env/2.3.2/migration-env-2.3.2.module",
+      "publishedSha256Matches": true
+    },
+    {
+      "coordinate": "app.cash.sqldelight:migrations:2.3.2",
+      "artifact": "migrations-2.3.2.jar",
+      "sha256": "f0ca4fa18ff1d4cf7e86e228a6c1c7e31108654d43f325be02f614e86ef14c2d",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/app/cash/sqldelight/migrations/2.3.2/migrations-2.3.2.jar",
+      "publishedSha256Matches": true
+    },
+    {
+      "coordinate": "app.cash.sqldelight:migrations:2.3.2",
+      "artifact": "migrations-2.3.2.module",
+      "sha256": "8aeb55cee6a19bf7e61924eb2e41b749310ad9cfa78411870d7eba1734240dfb",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/app/cash/sqldelight/migrations/2.3.2/migrations-2.3.2.module",
+      "publishedSha256Matches": true
+    },
+    {
+      "coordinate": "app.cash.sqldelight:sqlite-3-18-dialect:2.3.2",
+      "artifact": "sqlite-3-18-dialect-2.3.2.jar",
+      "sha256": "fa7cc153f58e4ab8e0e48390c7cc3c70f25406bc5bd1245cb1b6de62e93379f3",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/app/cash/sqldelight/sqlite-3-18-dialect/2.3.2/sqlite-3-18-dialect-2.3.2.jar",
+      "publishedSha256Matches": true
+    },
+    {
+      "coordinate": "app.cash.sqldelight:sqlite-3-18-dialect:2.3.2",
+      "artifact": "sqlite-3-18-dialect-2.3.2.module",
+      "sha256": "5c762c5e5e0f695985f6305a11e827d95f17924757386168406dd2a7b1387185",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/app/cash/sqldelight/sqlite-3-18-dialect/2.3.2/sqlite-3-18-dialect-2.3.2.module",
+      "publishedSha256Matches": true
+    },
+    {
+      "coordinate": "app.cash.sqldelight:sqlite-driver:2.3.2",
+      "artifact": "sqlite-driver-2.3.2.jar",
+      "sha256": "4809b633a0d7ae896d250bc7e977b9ce91aab0e5fce8861b40bfd13fda172199",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/app/cash/sqldelight/sqlite-driver/2.3.2/sqlite-driver-2.3.2.jar",
+      "publishedSha256Matches": true
+    },
+    {
+      "coordinate": "app.cash.sqldelight:sqlite-driver:2.3.2",
+      "artifact": "sqlite-driver-2.3.2.module",
+      "sha256": "3177ae4c3b59bdecb0c8bf918a516dd751ccc62706169aa343ba0f51c02b0f68",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/app/cash/sqldelight/sqlite-driver/2.3.2/sqlite-driver-2.3.2.module",
+      "publishedSha256Matches": true
+    },
+    {
+      "coordinate": "com.squareup:kotlinpoet:2.2.0",
+      "artifact": "kotlinpoet-2.2.0.module",
+      "sha256": "68861abd0953469bed5038a4dffffe23ca0a6c1c321e005e5e5901a1b95bf235",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/com/squareup/kotlinpoet/2.2.0/kotlinpoet-2.2.0.module",
+      "publishedSha256Matches": true
+    },
+    {
+      "coordinate": "com.squareup:kotlinpoet-jvm:2.2.0",
+      "artifact": "kotlinpoet-jvm-2.2.0.jar",
+      "sha256": "87ba83576e2bbda929e2d4d83035eaf7984b9adc0798837b8e8d1eb4953a17da",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/com/squareup/kotlinpoet-jvm/2.2.0/kotlinpoet-jvm-2.2.0.jar",
+      "publishedSha256Matches": true
+    },
+    {
+      "coordinate": "com.squareup:kotlinpoet-jvm:2.2.0",
+      "artifact": "kotlinpoet-jvm-2.2.0.module",
+      "sha256": "ebafc5924cf71bd4f46f377124a1a5e866b10a0045b7163fb704da743b7747f9",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/com/squareup/kotlinpoet-jvm/2.2.0/kotlinpoet-jvm-2.2.0.module",
+      "publishedSha256Matches": true
+    },
+    {
+      "coordinate": "org.apfloat:apfloat:1.10.1",
+      "artifact": "apfloat-1.10.1.jar",
+      "sha256": "a1480f560f37355f6c0458c523bda46658da4cd3e23cc64e309fedcd7b0782ba",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/org/apfloat/apfloat/1.10.1/apfloat-1.10.1.jar",
+      "publishedChecksumUnavailable": 404,
+      "independentArtifactDownloadSha256Matches": true
+    },
+    {
+      "coordinate": "org.apfloat:apfloat:1.10.1",
+      "artifact": "apfloat-1.10.1.pom",
+      "sha256": "861a6900c593ed2268600dd17713ec7891d933ca019d39509b46f31812745dcb",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/org/apfloat/apfloat/1.10.1/apfloat-1.10.1.pom",
+      "publishedChecksumUnavailable": 404,
+      "independentArtifactDownloadSha256Matches": true
+    },
+    {
+      "coordinate": "org.apfloat:apfloat-parent:1.10.1",
+      "artifact": "apfloat-parent-1.10.1.pom",
+      "sha256": "ac70c12fe709b570eeaca3994f835ba469e725a59bbe36110d3a412261e052df",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/org/apfloat/apfloat-parent/1.10.1/apfloat-parent-1.10.1.pom",
+      "publishedChecksumUnavailable": 404,
+      "independentArtifactDownloadSha256Matches": true
+    },
+    {
+      "coordinate": "org.jetbrains.kotlin:kotlin-stdlib:2.3.10",
+      "artifact": "kotlin-stdlib-2.3.10.jar",
+      "sha256": "f61662c6d3a2f8ef5bd34362a02d877772c39f393cd394feb259dfaf7f4d8437",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/2.3.10/kotlin-stdlib-2.3.10.jar",
+      "publishedChecksumUnavailable": 404,
+      "independentArtifactDownloadSha256Matches": true
+    },
+    {
+      "coordinate": "org.jetbrains.kotlin:kotlin-stdlib:2.3.10",
+      "artifact": "kotlin-stdlib-2.3.10.module",
+      "sha256": "ea871f66319cda27ab2522fa8d929131d5e6fcb53344e4f54cdae03111d150aa",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/2.3.10/kotlin-stdlib-2.3.10.module",
+      "publishedChecksumUnavailable": 404,
+      "independentArtifactDownloadSha256Matches": true
+    },
+    {
+      "coordinate": "org.jgrapht:jgrapht:1.5.2",
+      "artifact": "jgrapht-1.5.2.pom",
+      "sha256": "5785fe6861d154cf6d8a7e6bc12d97f86726c6003683f00e5befb8ac03f2d2c3",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/org/jgrapht/jgrapht/1.5.2/jgrapht-1.5.2.pom",
+      "publishedChecksumUnavailable": 404,
+      "independentArtifactDownloadSha256Matches": true
+    },
+    {
+      "coordinate": "org.jgrapht:jgrapht-core:1.5.2",
+      "artifact": "jgrapht-core-1.5.2.jar",
+      "sha256": "dfa596e9f0d0838f1b5e81dd0cd60e3a76c2c290ac25a0a029ffde58cf5e4c14",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/org/jgrapht/jgrapht-core/1.5.2/jgrapht-core-1.5.2.jar",
+      "publishedChecksumUnavailable": 404,
+      "independentArtifactDownloadSha256Matches": true
+    },
+    {
+      "coordinate": "org.jgrapht:jgrapht-core:1.5.2",
+      "artifact": "jgrapht-core-1.5.2.pom",
+      "sha256": "47e32519791d0d06e5c6c88da8c519800f4effd336c7d6d5604fdfd74f927fca",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/org/jgrapht/jgrapht-core/1.5.2/jgrapht-core-1.5.2.pom",
+      "publishedChecksumUnavailable": 404,
+      "independentArtifactDownloadSha256Matches": true
+    },
+    {
+      "coordinate": "org.jheaps:jheaps:0.14",
+      "artifact": "jheaps-0.14.jar",
+      "sha256": "49a9898da3758659388f1333c53ccadb6fbd142a7d18aa7b1a33577090684279",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/org/jheaps/jheaps/0.14/jheaps-0.14.jar",
+      "publishedChecksumUnavailable": 404,
+      "independentArtifactDownloadSha256Matches": true
+    },
+    {
+      "coordinate": "org.jheaps:jheaps:0.14",
+      "artifact": "jheaps-0.14.pom",
+      "sha256": "1607b620e1f2b4e1a0f4891010b3490b1fb4a83e713ac4d38b08dc2c67fa3e51",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/org/jheaps/jheaps/0.14/jheaps-0.14.pom",
+      "publishedChecksumUnavailable": 404,
+      "independentArtifactDownloadSha256Matches": true
+    },
+    {
+      "coordinate": "org.junit:junit-bom:5.12.2",
+      "artifact": "junit-bom-5.12.2.pom",
+      "sha256": "cef80fec86454f6806bfb0df24669b5c6f32e2cb728539ea859f47dfdc9bbc17",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/org/junit/junit-bom/5.12.2/junit-bom-5.12.2.pom",
+      "publishedSha256Matches": true
+    },
+    {
+      "coordinate": "org.xerial:sqlite-jdbc:3.51.3.0",
+      "artifact": "sqlite-jdbc-3.51.3.0.jar",
+      "sha256": "3684ac5e9bd893cbe68eb0ac1708343f66be829b1d2b5ab317e783d05acd5aef",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/org/xerial/sqlite-jdbc/3.51.3.0/sqlite-jdbc-3.51.3.0.jar",
+      "publishedSha256Matches": true
+    },
+    {
+      "coordinate": "org.xerial:sqlite-jdbc:3.51.3.0",
+      "artifact": "sqlite-jdbc-3.51.3.0.pom",
+      "sha256": "c387f6884c2991079f76e0474f6f8e3580272ce1b9d0cbf4d871ad2f91f70fbf",
+      "repositoryUrl": "https://repo.maven.apache.org/maven2/org/xerial/sqlite-jdbc/3.51.3.0/sqlite-jdbc-3.51.3.0.pom",
+      "publishedSha256Matches": true
+    }
+  ],
+  "setupNote": "Global dependency metadata acquisition also expanded old configuration locks. Those clean-before-setup old locks are restored; only the new data lock is retained. Host integration refreshes its own changed dependency scopes.",
+  "restoredSetupOnlyLockfiles": [
+    "mobile/apps/androidApp/gradle.lockfile",
+    "mobile/apps/sharedKit/gradle.lockfile",
+    "mobile/build-logic/gradle.lockfile",
+    "mobile/domain/inference/gradle.lockfile",
+    "mobile/domain/nutrition/gradle.lockfile",
+    "mobile/domain/photo-analysis/gradle.lockfile",
+    "mobile/feature/meal-search-presenter/gradle.lockfile",
+    "mobile/feature/meal-search-ui/gradle.lockfile",
+    "mobile/feature/photo-analysis-presenter/gradle.lockfile",
+    "mobile/feature/photo-analysis-ui/gradle.lockfile",
+    "mobile/feature/photo-analysis/gradle.lockfile",
+    "mobile/inference/local-android-poc/gradle.lockfile",
+    "mobile/inference/local-android/gradle.lockfile",
+    "mobile/inference/local-ios/gradle.lockfile",
+    "mobile/platform/photo-android/gradle.lockfile",
+    "mobile/platform/photo-ios/gradle.lockfile"
+  ],
+  "removedIncidentalMetadata": [
+    "androidx.collection:collection-jvm:1.4.2 module",
+    "androidx.lifecycle:lifecycle-process:2.6.2 module"
+  ]
+}

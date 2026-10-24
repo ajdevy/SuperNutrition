@@ -131,7 +131,19 @@ object UiAutomationIds {
     val MEAL_FORM_SAVE = UiAutomationId("meal_form_save")
     val MEAL_FORM_CANCEL = UiAutomationId("meal_form_cancel")
     val MEAL_FORM_ERROR = UiAutomationId("meal_form_error")
+    val MEAL_CATALOG_OPEN = UiAutomationId("meal_catalog_open")
+    val MEAL_CATALOG_QUERY = UiAutomationId("meal_catalog_query")
+    val MEAL_CATALOG_STATUS = UiAutomationId("meal_catalog_status")
+    val MEAL_CATALOG_RESULTS = UiAutomationId("meal_catalog_results")
+    val MEAL_CATALOG_SELECTED = UiAutomationId("meal_catalog_selected")
+    val MEAL_CATALOG_REMOVE = UiAutomationId("meal_catalog_remove")
+    val MEAL_CATALOG_MORE = UiAutomationId("meal_catalog_more")
+    val MEAL_CATALOG_INFO = UiAutomationId("meal_catalog_info")
+    val MEAL_CATALOG_INFO_CLOSE = UiAutomationId("meal_catalog_info_close")
+    val MEAL_CATALOG_SOURCE = UiAutomationId("meal_catalog_source")
+    val MEAL_CATALOG_LICENCE = UiAutomationId("meal_catalog_licence")
     val MEAL_DETAILS_SCREEN = UiAutomationId("meal_details_screen")
+    val MEAL_DETAILS_ENERGY = UiAutomationId("meal_details_energy")
     val MEAL_DETAILS_TITLE = UiAutomationId("meal_details_title")
     val MEAL_DETAILS_BACK = UiAutomationId("meal_details_back")
     val MEAL_DETAILS_EDIT = UiAutomationId("meal_details_edit")
@@ -272,7 +284,19 @@ object UiAutomationIds {
         MEAL_FORM_SAVE,
         MEAL_FORM_CANCEL,
         MEAL_FORM_ERROR,
+        MEAL_CATALOG_OPEN,
+        MEAL_CATALOG_QUERY,
+        MEAL_CATALOG_STATUS,
+        MEAL_CATALOG_RESULTS,
+        MEAL_CATALOG_SELECTED,
+        MEAL_CATALOG_REMOVE,
+        MEAL_CATALOG_MORE,
+        MEAL_CATALOG_INFO,
+        MEAL_CATALOG_INFO_CLOSE,
+        MEAL_CATALOG_SOURCE,
+        MEAL_CATALOG_LICENCE,
         MEAL_DETAILS_SCREEN,
+        MEAL_DETAILS_ENERGY,
         MEAL_DETAILS_TITLE,
         MEAL_DETAILS_BACK,
         MEAL_DETAILS_EDIT,

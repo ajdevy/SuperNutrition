@@ -9,4 +9,6 @@ data class ProfileDiaryContext(
     val onMealEdited: (String, MealDraft) -> Boolean = { _, _ -> false },
     val onMealDeleted: (String) -> Boolean = { false },
     val copy: MealDiaryCopy = MealDiaryCopy(),
+    val storageLoadFailed: Boolean = false,
+    val catalog: MealCatalogContext = MealCatalogContext(),
 )

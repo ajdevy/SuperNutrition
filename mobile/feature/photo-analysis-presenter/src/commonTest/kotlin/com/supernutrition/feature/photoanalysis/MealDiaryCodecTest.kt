@@ -25,7 +25,7 @@ class MealDiaryCodecTest {
 
     @Test
     fun `rejects unsupported versions and malformed headers`() {
-        assertFailure("SNMD2:0:", MealDiaryCodecError.UNSUPPORTED_VERSION)
+        assertFailure("SNMD3:0:", MealDiaryCodecError.UNSUPPORTED_VERSION)
         listOf("", "foo", "SNMD", "SNMD1:", "SNMD1:-1:", "SNMD1:1.0:", "SNMD1:01:", "SNMD1:999999999999:")
             .forEach { assertFailure(it, MealDiaryCodecError.MALFORMED) }
     }

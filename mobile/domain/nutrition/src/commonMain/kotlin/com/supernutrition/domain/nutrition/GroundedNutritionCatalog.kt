@@ -58,24 +58,17 @@ data class CatalogNutrientProfile(
         requireNonNegativeFinite(sodiumMilligrams, "Sodium")
     }
 
-    fun scaledTo(serving: NutritionServing): CatalogNutrientProfile {
-        val factor = serving.grams / GRAMS_PER_REFERENCE_SERVING
-        return CatalogNutrientProfile(
-            energyKcal = energyKcal * factor,
-            proteinGrams = proteinGrams * factor,
-            carbohydrateGrams = carbohydrateGrams * factor,
-            fatGrams = fatGrams * factor,
-            fiberGrams = fiberGrams * factor,
-            sodiumMilligrams = sodiumMilligrams * factor,
-        )
-    }
+    fun scaledTo(serving: NutritionServing): CatalogNutrientProfile = CatalogNutrientProfile(
+        energyKcal = scalePerHundredGrams(energyKcal, serving.grams),
+        proteinGrams = scalePerHundredGrams(proteinGrams, serving.grams),
+        carbohydrateGrams = scalePerHundredGrams(carbohydrateGrams, serving.grams),
+        fatGrams = scalePerHundredGrams(fatGrams, serving.grams),
+        fiberGrams = scalePerHundredGrams(fiberGrams, serving.grams),
+        sodiumMilligrams = scalePerHundredGrams(sodiumMilligrams, serving.grams),
+    )
 
     private fun requireNonNegativeFinite(value: Double, name: String) {
         require(value.isFinite() && value >= 0.0) { "$name must be finite and non-negative" }
-    }
-
-    private companion object {
-        const val GRAMS_PER_REFERENCE_SERVING = 100.0
     }
 }
 

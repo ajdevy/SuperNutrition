@@ -23,10 +23,12 @@ data class LiveHomeCopy(
     val captureDescription: String = "Take a photo or add a meal by text.",
     val aboutNutrition: String = "About nutrition",
     val nutritionTitle: String = "Nutrition availability",
-    val nutritionDescription: String = "Your meal names and ingredients are recorded in your diary. " +
-        "Nutrient values aren't available for these entries. No personal nutrient targets have been set.",
+    val nutritionDescription: String = "Select an exact source product and enter grams to see its nutrient values. " +
+        "Missing values stay unavailable. No personal nutrient targets have been set.",
     val done: String = "Done",
     val openProfile: String = "Open profile",
     val mascotDescription: String = "Capybara mascot",
     val saladDescription: String = "Salad",
+    val historyUnavailable: String = "Saved meals unavailable",
+    val historyLoadFailed: String = "Your saved meals could not be loaded. They have not been erased or replaced.",
 )

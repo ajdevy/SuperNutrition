@@ -42,6 +42,8 @@ kotlin {
             }
             iosMain.dependencies {
                 implementation(project(":platform:photo-ios"))
+                implementation(project(":data:nutrition"))
+                implementation(libs.sqldelight.native.driver)
             }
         }
         commonMain.dependencies {

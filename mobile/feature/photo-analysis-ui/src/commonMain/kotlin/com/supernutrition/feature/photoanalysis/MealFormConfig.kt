@@ -6,4 +6,5 @@ internal data class MealFormConfig(
     val initialDraft: MealDraft = MealDraft(),
     val editing: Boolean = false,
     val existingMeal: SavedMeal? = null,
+    val catalog: MealCatalogContext = MealCatalogContext(),
 )

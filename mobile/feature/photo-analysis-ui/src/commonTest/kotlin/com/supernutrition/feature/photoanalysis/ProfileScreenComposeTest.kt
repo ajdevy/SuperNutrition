@@ -10,6 +10,7 @@ import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
@@ -25,6 +26,57 @@ import kotlin.test.assertTrue
 @OptIn(ExperimentalTestApi::class)
 class ProfileScreenComposeTest {
     private val copy = ProfileScreenCopy()
+
+    @Test
+    fun `clearing an existing optional name submits its deletion`() = runComposeUiTest {
+        var submitted: String? = null
+        setContent { ProfileScreen("Alex", emptyList(), ProfileScreenActions({ submitted = it }, {})) }
+        onNodeWithTag(UiAutomationIds.PROFILE_EDIT_NAME.value).performClick()
+        onNodeWithTag(UiAutomationIds.PROFILE_NAME_CLEAR.value).performClick()
+        onNodeWithTag(UiAutomationIds.PROFILE_NAME_SAVE.value).performClick()
+        assertEquals("", submitted)
+    }
+
+    @Test
+    fun `failed persistent name save preserves the editor and entered name`() = runComposeUiTest {
+        var legacyCalls = 0
+        setContent {
+            ProfileScreen(
+                "Alex",
+                emptyList(),
+                ProfileScreenActions(
+                    { legacyCalls++ },
+                    {},
+                    namePersistence = ProfileNamePersistence(save = { false }),
+                ),
+            )
+        }
+        onNodeWithTag(UiAutomationIds.PROFILE_EDIT_NAME.value).performClick()
+        onNode(hasSetTextAction()).performTextReplacement("Other")
+        onNodeWithTag(UiAutomationIds.PROFILE_NAME_SAVE.value).performClick()
+        onNodeWithText(copy.nameSaveFailed).assertIsDisplayed()
+        onNode(hasSetTextAction()).assertTextEquals("Other")
+        assertEquals(0, legacyCalls)
+    }
+
+    @Test
+    fun `unreadable saved data is explained separately from empty history`() = runComposeUiTest {
+        setContent {
+            ProfileFlow(
+                rememberProfileFlowState(),
+                "",
+                ProfileScreenActions({}, {}, namePersistence = ProfileNamePersistence({ false }, loadFailed = true)),
+                diary = ProfileDiaryContext(storageLoadFailed = true),
+            )
+        }
+        onNodeWithText(copy.nameLoadFailed).assertIsDisplayed()
+        onNodeWithText(copy.diaryLoadFailed).assertIsDisplayed()
+        onNodeWithText("0 meals saved").assertDoesNotExist()
+        onNodeWithText(copy.historyUnavailable).assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.PROFILE_HISTORY.value).performClick()
+        onNodeWithText(MealHistoryCopy().loadFailedTitle).assertIsDisplayed()
+        onNodeWithText(MealHistoryCopy().emptyTitle).assertDoesNotExist()
+    }
 
     @Test
     fun `unknown identity and empty history never invent user data`() = runComposeUiTest {

@@ -8,7 +8,8 @@ data class RewardDetailsScreenCopy(
     val howItWorks: String = "How it works",
     val whatCounts: String = "What counts",
     val noFoods: String = "No confirmed foods yet",
-    val noFoodsDescription: String = "Nutrition and food groups aren't available for your saved meals yet.",
+    val noFoodsDescription: String = "Verified food groups aren't available for these entries. " +
+        "Recorded meals still count toward rhythm.",
     val exampleDescription: String = "Examples are guidance. Only confirmed food groups contribute to these rewards.",
     val cards: Map<RewardId, RewardDetailCopy> = RewardId.entries.associateWith(::rewardDetailCopy),
     val noRecordings: String = "No recordings yet",

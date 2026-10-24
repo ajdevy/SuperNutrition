@@ -42,6 +42,10 @@ internal fun MealForm(
     ) {
         MealFormHeader(config.title, config.editing, copy, cancel)
         DiaryBody(copy.description, secondary = true)
+        MealCatalogChooser(draft, config.catalog) {
+            draft = it
+            error = null
+        }
         MealFormIdentity(draft, copy) {
             draft = it
             error = null
@@ -52,7 +56,7 @@ internal fun MealForm(
             UiAutomationIds.MEAL_FORM_INGREDIENTS,
             options = MealFormInputOptions(multiline = true),
         ) {
-            draft = draft.copy(ingredients = it)
+            draft = draft.withEditedIngredients(it)
             error = null
         }
         DiaryBody(copy.ingredientDescription, secondary = true)
@@ -69,11 +73,7 @@ internal fun MealForm(
         }
         error?.let { DiaryBody(it, Modifier.automationId(UiAutomationIds.MEAL_FORM_ERROR)) }
         DiaryButton(if (config.editing) copy.save else copy.add, UiAutomationIds.MEAL_FORM_SAVE, onClick = {
-            val validation = if (config.existingMeal == null) {
-                MealDraftValidator.validate(draft)
-            } else {
-                MealDraftValidator.validate(draft, config.existingMeal)
-            }
+            val validation = MealDraftValidator.validate(draft, config.existingMeal, config.catalog.state.catalogOrNull)
             when (val result = validation) {
                 is MealDraftValidation.Invalid -> error = copy.errorDescription(result.errors)
 
@@ -89,7 +89,7 @@ internal fun MealForm(
 private fun MealFormIdentity(draft: MealDraft, copy: MealFormCopy, onChanged: (MealDraft) -> Unit) {
     if (LocalDensity.current.fontScale > 1.3f) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            MealFormInput(copy.name, draft.name, UiAutomationIds.MEAL_FORM_NAME) { onChanged(draft.copy(name = it)) }
+            MealFormInput(copy.name, draft.name, UiAutomationIds.MEAL_FORM_NAME) { onChanged(draft.withEditedName(it)) }
             MealFormPortion(draft, copy, onChanged)
         }
     } else {
@@ -99,7 +99,7 @@ private fun MealFormIdentity(draft: MealDraft, copy: MealFormCopy, onChanged: (M
                     copy.name,
                     draft.name,
                     UiAutomationIds.MEAL_FORM_NAME,
-                ) { onChanged(draft.copy(name = it)) }
+                ) { onChanged(draft.withEditedName(it)) }
             }
             Column(Modifier.weight(1f)) { MealFormPortion(draft, copy, onChanged) }
         }

@@ -8,10 +8,10 @@ import androidx.compose.ui.Modifier
 internal fun ProfileSelectedMeal(
     state: ProfileFlowState,
     meal: MealHistoryMeal,
-    actions: ProfileMealActions,
+    diary: ProfileDiaryContext,
     modifier: Modifier,
-    copy: MealDiaryCopy,
 ) {
+    val copy = diary.copy
     if (state.mealEditing && meal.savedMeal != null) {
         MealForm(
             config = MealFormConfig(
@@ -19,11 +19,12 @@ internal fun ProfileSelectedMeal(
                 initialDraft = meal.savedMeal.toMealDraft(),
                 existingMeal = meal.savedMeal,
                 editing = true,
+                catalog = diary.catalog,
             ),
             actions = MealFormActions(
                 onCancel = state::cancelMealEdit,
                 onSave = { draft ->
-                    actions.onEdited(meal.id.mealId, draft).also { saved -> if (saved) state.cancelMealEdit() }
+                    diary.onMealEdited(meal.id.mealId, draft).also { saved -> if (saved) state.cancelMealEdit() }
                 },
             ),
             modifier = modifier,
@@ -36,7 +37,7 @@ internal fun ProfileSelectedMeal(
                 onBackRequested = { state.back() },
                 onEditRequested = if (meal.savedMeal != null) state::beginMealEdit else null,
                 onDeleteRequested = if (meal.savedMeal != null) {
-                    { actions.onDeleted(meal.id.mealId).also { deleted -> if (deleted) state.showHistory() } }
+                    { diary.onMealDeleted(meal.id.mealId).also { deleted -> if (deleted) state.showHistory() } }
                 } else {
                     null
                 },

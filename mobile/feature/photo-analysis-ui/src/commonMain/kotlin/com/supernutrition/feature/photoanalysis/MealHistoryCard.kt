@@ -45,7 +45,9 @@ internal fun MealHistoryCard(meal: MealHistoryMeal, index: Int, copy: MealHistor
     ) {
         MealHistoryThumbnail(meal, copy)
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            MealHistoryTime(meal.metadata.timeLabel ?: copy.timeUnavailable)
+            val time = meal.metadata.timeLabel ?: copy.timeUnavailable
+            val energy = meal.nutrition(false)?.energyKcal
+            MealHistoryTime(if (energy == null) time else "$time · ${nutrientValue(energy, "kcal")}")
             Text(
                 meal.title,
                 color = ProfileBody,
