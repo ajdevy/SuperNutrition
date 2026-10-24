@@ -85,3 +85,104 @@ Hosted RED log: ignored
   succeeded; full aggregate verification behind the failed policy dependency
   is not certified green. Ignored log:
   `mobile/build/verification/mvp-audit/pr61-strict-unit-report-after-checksum.log`.
+
+## Main publication and R-03 — iOS XCTest failure (before repair)
+
+PR #61 merged normally (no admin override) at 2026-10-24T16:05:33Z.
+`origin/main` was fetched and verified as
+`7ff3b197763ad3a15ac648fcdfc5f012c6eba547`, with parents the prior main
+`0f1fbb4e599e0a71accaef5c074466436b9e8e0b` and PR head
+`7a202654f55c59565bccda6eabf84e8227c5d065`. Their source trees agree.
+
+- Main JVM run `40109951845` completed with exactly one failing task:
+  `verifyMobilePolicy`, expired `bootstrap-android-host`. Dashboard and README
+  passed. Downloaded test XML contains zero failures/errors/skips in all 13
+  reported modules; exact per-module counts are retained in ignored
+  `mobile/build/verification/mvp-audit/main-7ff3b197-unit-counts.json`.
+- Main iOS run `40109951840` successfully compiled and linked
+  `iosSimulatorArm64` SharedKit in 4m57s (62 executed tasks), then built the
+  XCTest products. Actual simulator testing ended `TEST FAILED` / exit 65
+  after 289.994 seconds. The quiet Xcode log omits the assertions.
+  This is outside the accepted device-expiry exception and must be repaired.
+- Downloading the actual `.xcresult` artifact to identify failures before
+  changing code or tests. No product/runtime failure cause is assumed from the
+  repeated debugger-version warnings alone. Android main UI run remains active.
+
+R-03 acceptance: identify the actual failed XCTest names and assertions from
+the result bundle; fix the demonstrated cause without deleting required tests,
+weakening assertions or treating simulator execution as physical evidence;
+verify focused/local applicable checks and rerun the full iOS CI on the repaired
+main commit. The existing device expiry remains visible and unchanged.
+
+Ignored original log: `mobile/build/verification/mvp-audit/main-7ff3b197-ios-failed.log`.
+
+### R-03 diagnosed assertions (still before repair)
+
+The real result bundle on iPhone 17 Pro arm64 / iOS Simulator 26.4.1 contains
+9 cases: 6 passed, 3 failed, zero skipped/expected failures.
+
+1. `testInitialLaunchShowsCaptureSurfaceAndCloseReturnsHome`: `XCTAssertFalse`
+   at lines 18 and 30 sees the underlying `camera_action` in accessibility.
+2. `testHomeAvatarOpensProfileAndBackReturnsHome`: `XCTAssertFalse` at lines
+   168–170 sees underlying `camera_action`, `rewards_tab`, `home_add_food`.
+   Arm64 now retains Main under `fullScreenCover` in production and acceptance;
+   Intel replaced its root. The exported hierarchy confirms Home's descendants
+   are retained under the modal, but does not prove touch/VoiceOver reachability.
+   Preserve the existing nonexistence assertions; explicitly exclude the covered
+   retained UIKit view from accessibility and interaction in both hosts.
+3. `testTextMealSaveHistoryCorrectionAndDeletion` fails the initial Add action
+   in `tapVisible` lines 221–222, before correction/deletion: `meal_form_save`
+   is at y=615.3–665.3 while the keyboard begins at y=539. The actual hierarchy
+   contains `UIContinuousPathIntroductionView` and its Continue button over the
+   keyboard. The helper swipes the whole app, starting over this system overlay.
+   Dismiss only this known first-run keyboard introduction and scroll inside
+   the visible app area above the keyboard. Keep the full name/save/edit/delete
+   assertions and ordinary keyboard input; do not suppress the failing scenario.
+
+Distilled independent exploration confirmed the shared diary/session wiring is
+consistent. Exact summary, test details, activities and hierarchy are ignored
+under `mobile/build/verification/mvp-audit/main-*ios*`.
+
+Android main UI run `40109951839` finished successfully at 16:22:22Z.
+
+### Independent repair review (before any review patch)
+
+Quick Dev blind and edge reviewers independently inspected the complete
+bounded repair diff without conversation context. Edge returned no findings;
+blind reported no established correctness defect and two explicit uncertainties:
+
+- Whether the system tutorial string was an identifier: rejected from the
+  exported original AX tree, which explicitly declares
+  `identifier: 'UIContinuousPathIntroductionView'`.
+- English-only `Continue` selection in the new helper: low-severity patch.
+  The current CI snapshot is English, but matching the sole button inside the
+  exact identified tutorial is independent of simulator language. Preserve the
+  specific container guard, require exactly one button and keep failure visible
+  for a different/ambiguous prompt. This avoids extending dismissal to generic
+  system alerts. Record this concern before applying that small test-only patch.
+
+No intent/spec gap or loopback was established; review loop iteration stays 0.
+
+### Local repair validation and hosted handoff
+
+- A single `MainComposeHost.swift` now owns creation/update of the same retained
+  controller in both app targets. The UIKit view explicitly excludes its
+  descendants from accessibility and touch while covered and restores both
+  properties when uncovered. No visual-layer hiding or session recreation.
+- All nine XCTest scenarios and the original five `!exists` isolation assertions
+  remain. The helper handles only the identified keyboard introduction with
+  exactly one action, independent of button language. Gestures clip to the
+  earliest keyboard/input/assistant obstruction and remain bounded to eight.
+- On this Intel Mac, actual unsigned arm64 Xcode builds succeeded for
+  `SuperNutrition` (125.56s) and `SuperNutritionUIAcceptanceTests` (64.30s), using
+  Xcode 26.6 / iphoneos26.5 and the unchanged already-linked arm64 SharedKit.
+  After the review's test-only selector patch, the full XCTest target build was
+  rerun and again exited 0 / `BUILD SUCCEEDED`.
+  Logs: `mobile/apps/iosApp/build/verification/mvp-ios-ci-repair/` (ignored).
+  No local iOS test execution occurred; runtime acceptance remains pending CI.
+- `plutil -lint` on the Xcode project, exact dashboard/README generation and
+  `--check`, and `git diff --check` passed. No Kotlin/dependency/policy source
+  changed in this repair; their same-tree main results above remain applicable.
+- The local Quick Dev implementation/review is complete. The separately
+  authorized remote phase must publish this patch and wait for all workflows
+  on its exact merged main commit; this handoff does not call hosted CI green.

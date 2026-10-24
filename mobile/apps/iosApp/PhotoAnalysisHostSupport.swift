@@ -46,6 +46,7 @@ struct PhotoAnalysisAppRootView: View {
         MainComposeHost(
             session: session,
             rewardsSession: rewardsSession,
+            isCovered: showingCapture || showingProfile,
             onCaptureRequested: showCaptureSurface,
             onProfileRequested: { showingProfile = true },
         )
@@ -360,24 +361,6 @@ private struct PhotoAnalysisNavigationPillShape: Shape {
 }
 
 #if !arch(x86_64)
-private struct MainComposeHost: UIViewControllerRepresentable {
-    let session: SharedKitPhotoAnalysisSession
-    let rewardsSession: SharedKitRewardsSession
-    let onCaptureRequested: () -> Void
-    let onProfileRequested: () -> Void
-
-    func makeUIViewController(context: Context) -> UIViewController {
-        SharedKitMain.shared.viewController(
-            session: session,
-            rewardsSession: rewardsSession,
-            onCaptureRequested: onCaptureRequested,
-            onProfileRequested: onProfileRequested,
-        )
-    }
-
-    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
-}
-
 struct RewardsComposeHost: UIViewControllerRepresentable {
     let session: SharedKitRewardsSession
 
