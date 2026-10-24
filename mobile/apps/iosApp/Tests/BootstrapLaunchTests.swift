@@ -193,6 +193,7 @@ final class BootstrapLaunchTests: XCTestCase {
         let name = app.descendants(matching: .any)[SharedKitAutomationIds.shared.mealFormName]
         XCTAssertTrue(name.waitForExistence(timeout: 10))
         name.tap()
+        dismissKeyboardIntroduction(in: app)
         name.typeText("Apple oatmeal")
         tapVisible(app.buttons[SharedKitAutomationIds.shared.mealFormSave], in: app)
         XCTAssertTrue(homeSurfaceIsReady(in: app, timeout: 15))
@@ -218,9 +219,54 @@ final class BootstrapLaunchTests: XCTestCase {
 
     private func tapVisible(_ element: XCUIElement, in app: XCUIApplication) {
         XCTAssertTrue(element.waitForExistence(timeout: 10))
-        for _ in 0..<8 where !element.isHittable { app.swipeUp() }
+        dismissKeyboardIntroduction(in: app)
+        for _ in 0..<8 where !element.isHittable {
+            scrollAboveKeyboard(in: app)
+        }
         XCTAssertTrue(element.isHittable)
+        guard element.isHittable else { return }
         element.tap()
+    }
+
+    private func dismissKeyboardIntroduction(in app: XCUIApplication) {
+        let introduction = app.otherElements["UIContinuousPathIntroductionView"]
+        guard introduction.waitForExistence(timeout: 1) else { return }
+        let button = introduction.buttons.firstMatch
+        XCTAssertTrue(button.waitForExistence(timeout: 2))
+        let buttonCount = introduction.buttons.count
+        XCTAssertEqual(buttonCount, 1, "Only dismiss the identified keyboard introduction's sole action")
+        XCTAssertTrue(button.isHittable)
+        guard buttonCount == 1 && button.isHittable else { return }
+        button.tap()
+        let dismissed = XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "exists == false"),
+            object: introduction,
+        )
+        XCTAssertEqual(XCTWaiter.wait(for: [dismissed], timeout: 3), .completed)
+    }
+
+    private func scrollAboveKeyboard(in app: XCUIApplication) {
+        let bounds = app.frame
+        var visibleBottom = bounds.maxY
+        let keyboardSurfaces = [
+            app.keyboards.firstMatch,
+            app.otherElements["SystemInputAssistantView"].firstMatch,
+            app.otherElements["inputView"].firstMatch,
+        ]
+        for surface in keyboardSurfaces where surface.exists {
+            let overlap = bounds.intersection(surface.frame)
+            if !overlap.isNull && !overlap.isEmpty {
+                visibleBottom = min(visibleBottom, overlap.minY)
+            }
+        }
+        let visibleHeight = visibleBottom - bounds.minY
+        XCTAssertGreaterThan(visibleHeight, 120, "The app needs unobscured space for a scroll gesture")
+        guard visibleHeight > 120 else { return }
+        let origin = app.coordinate(withNormalizedOffset: CGVector(dx: 0, dy: 0))
+        let x = bounds.width * 0.85
+        let start = origin.withOffset(CGVector(dx: x, dy: visibleHeight * 0.85))
+        let end = origin.withOffset(CGVector(dx: x, dy: visibleHeight * 0.30))
+        start.press(forDuration: 0.05, thenDragTo: end)
     }
 
     private func nativeCameraControlIsVisible(in app: XCUIApplication) -> Bool {

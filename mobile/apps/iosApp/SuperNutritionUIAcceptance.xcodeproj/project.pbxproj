@@ -21,6 +21,8 @@
 		B10000010000000000000013 /* capture_gallery.png in Resources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000013 /* capture_gallery.png */; };
 		B10000010000000000000014 /* capture_shutter.png in Resources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000014 /* capture_shutter.png */; };
 		B10000010000000000000015 /* Localizable.strings in Test Resources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000009 /* Localizable.strings */; };
+		B10000010000000000000016 /* MainComposeHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000015 /* MainComposeHost.swift */; };
+		B10000010000000000000017 /* MainComposeHost.swift in Production Sources */ = {isa = PBXBuildFile; fileRef = F20000010000000000000015 /* MainComposeHost.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +40,7 @@
 		F20000010000000000000012 /* capture_close.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = capture_close.png; path = "../../feature/photo-analysis-ui/src/commonMain/composeResources/drawable/capture_close.png"; sourceTree = "<group>"; };
 		F20000010000000000000013 /* capture_gallery.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = capture_gallery.png; path = "../../feature/photo-analysis-ui/src/commonMain/composeResources/drawable/capture_gallery.png"; sourceTree = "<group>"; };
 		F20000010000000000000014 /* capture_shutter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = capture_shutter.png; path = "../../feature/photo-analysis-ui/src/commonMain/composeResources/drawable/capture_shutter.png"; sourceTree = "<group>"; };
+		F20000010000000000000015 /* MainComposeHost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainComposeHost.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +112,7 @@
 				F20000010000000000000001 /* SuperNutritionUIAcceptanceApp.swift */,
 				F20000010000000000000008 /* SuperNutritionApp.swift */,
 				F20000010000000000000010 /* PhotoAnalysisHostSupport.swift */,
+				F20000010000000000000015 /* MainComposeHost.swift */,
 				F20000010000000000000002 /* Info.plist */,
 				F20000010000000000000009 /* Localizable.strings */,
 				F20000010000000000000012 /* capture_close.png */,
@@ -243,9 +247,9 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		P30000010000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B10000010000000000000001 /* SuperNutritionUIAcceptanceApp.swift in Sources */, B10000010000000000000011 /* PhotoAnalysisHostSupport.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
+		P30000010000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B10000010000000000000001 /* SuperNutritionUIAcceptanceApp.swift in Sources */, B10000010000000000000011 /* PhotoAnalysisHostSupport.swift in Sources */, B10000010000000000000016 /* MainComposeHost.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
 		P30000010000000000000005 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B10000010000000000000004 /* BootstrapLaunchTests.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
-		P30000010000000000000007 /* Production Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B10000010000000000000009 /* SuperNutritionApp.swift in Production Sources */); runOnlyForDeploymentPostprocessing = 0; };
+		P30000010000000000000007 /* Production Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B10000010000000000000009 /* SuperNutritionApp.swift in Production Sources */, B10000010000000000000017 /* MainComposeHost.swift in Production Sources */); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
