@@ -29,8 +29,10 @@ internal class FeatureCatalogFixture : ApprovedNutritionCatalog {
         emptyList(),
     )
     var failure: Exception? = null
+    var lookups = 0
 
     override fun lookup(snapshot: NutritionCatalogSnapshot, canonicalItemId: String): CatalogProduct? {
+        lookups++
         failure?.let { throw it }
         return product
     }

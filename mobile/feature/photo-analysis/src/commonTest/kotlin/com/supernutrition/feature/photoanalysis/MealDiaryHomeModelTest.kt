@@ -6,6 +6,30 @@ import kotlin.test.assertNotNull
 
 class MealDiaryHomeModelTest {
     @Test
+    fun `home resolves only the requested day instead of the retained historical catalog meals`() {
+        val catalog = FeatureCatalogFixture()
+        val session = catalog.openSession()
+        try {
+            val diary = MealDiary({ MealRecordContext("today", 20_020, "12:34") }, catalogSession = session)
+            val today = assertNotNull(diary.add(catalog.structuredDraft(), SavedMealSource.TEXT))
+            val historical = List(1_000) { today.copy(id = "older-$it", localDay = 20_019) }
+            catalog.lookups = 0
+            val home = diary.homeScreenModel(
+                "Today",
+                20_020,
+                emptyList(),
+                listOf(today) + historical,
+                session.state.value,
+            )
+            assertEquals("1 meal recorded", home.dailySummaryValue)
+            assertEquals("12.26 g", home.protein.value)
+            assertEquals(1, catalog.lookups)
+        } finally {
+            session.close()
+        }
+    }
+
+    @Test
     fun `home count and nutrients use today's merged saved source and preserve missing values`() {
         val catalog = FeatureCatalogFixture()
         val session = catalog.openSession()

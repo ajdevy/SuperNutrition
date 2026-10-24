@@ -26,19 +26,23 @@ data class MealFormCopy(
     val note: String = "Note",
     val catalogUnavailable: String = "The selected nutrition source is unavailable. Try again or remove the selection.",
     val catalogSelectionInvalid: String = "Choose this product again or remove the selection.",
+    val selectedProductPortionDescription: String =
+        "Required for the selected product. Enter a positive portion in grams.",
+    val selectedProductPortionInvalid: String = "Enter a positive portion in grams for the selected product.",
 )
 
-internal fun MealFormCopy.errorDescription(errors: Set<MealDraftError>): String = errors.joinToString("\n") {
-    when (it) {
-        MealDraftError.NAME_REQUIRED -> nameRequired
-        MealDraftError.NAME_TOO_LONG -> nameTooLong
-        MealDraftError.PORTION_INVALID -> portionInvalid
-        MealDraftError.INGREDIENTS_TOO_LONG -> ingredientsTooLong
-        MealDraftError.TOO_MANY_INGREDIENTS -> tooManyIngredients
-        MealDraftError.INGREDIENT_REQUIRED -> ingredientRequired
-        MealDraftError.INGREDIENT_TOO_LONG -> ingredientTooLong
-        MealDraftError.NOTE_TOO_LONG -> noteTooLong
-        MealDraftError.CATALOG_UNAVAILABLE -> catalogUnavailable
-        MealDraftError.CATALOG_SELECTION_INVALID -> catalogSelectionInvalid
+internal fun MealFormCopy.errorDescription(errors: Set<MealDraftError>, catalogSelected: Boolean): String =
+    errors.joinToString("\n") {
+        when (it) {
+            MealDraftError.NAME_REQUIRED -> nameRequired
+            MealDraftError.NAME_TOO_LONG -> nameTooLong
+            MealDraftError.PORTION_INVALID -> if (catalogSelected) selectedProductPortionInvalid else portionInvalid
+            MealDraftError.INGREDIENTS_TOO_LONG -> ingredientsTooLong
+            MealDraftError.TOO_MANY_INGREDIENTS -> tooManyIngredients
+            MealDraftError.INGREDIENT_REQUIRED -> ingredientRequired
+            MealDraftError.INGREDIENT_TOO_LONG -> ingredientTooLong
+            MealDraftError.NOTE_TOO_LONG -> noteTooLong
+            MealDraftError.CATALOG_UNAVAILABLE -> catalogUnavailable
+            MealDraftError.CATALOG_SELECTION_INVALID -> catalogSelectionInvalid
+        }
     }
-}

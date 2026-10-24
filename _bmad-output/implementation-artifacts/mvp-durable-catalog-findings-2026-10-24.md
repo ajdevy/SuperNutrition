@@ -464,3 +464,90 @@ platform component; no destination/runtime success is inferred from direct link.
 ### Full Android run: late permission dialog synchronization (before repair)
 
 Unfiltered connectedAndroidTest candidate v1 executed the PoC journey and failed `MealDiaryJourneyInstrumentationTest.textMealCanBeSavedCorrectedAndDeletedThroughProfile`: missing capture_text. NativeUiSemanticDiagnostics proves the foreground/active root is com.android.permissioncontroller at13:45:50, rather than an absent Compose control. The test waits only3000ms for permission_deny_button, then waits15000ms exclusively for capture_text; a later permission prompt remains modal and cannot be handled. Evidence is saved in mobile/build/verification/mvp-audit/native-failure-diag.log and connected-durable-full-v1.log. This is an actual native assertion RED. Acceptance: synchronize on either the real text-entry control or the real system permission-deny control within one bounded deadline, deny the actual prompt when present, then assert capture_text. Do not pregrant/revoke permission, bypass the flow, inflate all timeouts or weaken assertions. Remaining flavors/current full run must finish before any repair/build.
+
+
+## Independent review triage — recorded before review repairs
+
+Candidate `137293faec3e2003df72fb571dfa2fe92179037f`; complete baseline diff reviewed independently in the blind and edge reports. Eleven distinct observations after deduplicating the external-link finding. Parent classified by consumer consequence, not reviewer ranking. No intent gap or spec ambiguity was found: the following are bounded implementation patches of the approved retention/visible-failure behavior; frozen intent and Code Map remain unchanged.
+
+| ID | Consequence / severity | Category | Acceptance before completion |
+|---|---|---|---|
+| R1 | A stale second owner can lose accepted meals or resurrect deletions; high | patch | Serialize platform read/compare/write under the existing shared document lock. Track each adapter's last loaded revision and visibly reject a stale write. Exercise interleaved owners and preserve the accepted document. |
+| R2 | Android post-commit verification can report failure despite committed replacement; high | patch | Use an atomic rename with a definitive syscall result; complete all fallible preparation before the rename and perform no fallible verification after commitment. A deliberately unreadable staged replacement must reproduce the old false-failure path before repair, then report the actual commit and restore exact bytes after read permission is restored. |
+| R3 | Missing URL handler escapes source-sheet callback; medium | patch | Throwing platform and explicit host URL handlers retain the sheet/draft, expose a retryable visible message, and preserve successful exact-once URL opening. |
+| R4 | API29 AtomicFile legacy directory recovery deletes a valid base; high | patch | Reject a directory at .bak before invoking recovery. A fixture for both document IDs preserves exact base bytes and directory contents on load failure. Verify API29 execution separately from the primary API35 suite. |
+| R5 | Journey fixtures use production documents and assume an empty diary; high | patch | Test runner supplies an isolated no-backup directory in a test-only Application subclass. Production adapter/catalog selection remains exercised. Check fixture path isolation, retained preexisting data, and cleanup after a deliberately interrupted fixture without clearing user data. |
+| R6 | Bound product field/error incorrectly says grams can be omitted; medium | patch | Required selected-product help and error are visible; removing selection restores optional free-text wording. |
+| R7 | Home unnecessarily resolves every historical bound meal; medium | patch | Filter both ledgers to the requested epoch day before their shared merge/projection. A counting catalog resolves current-day meals only; ID supersession/count/unknown semantics stay intact. |
+| R8 | Preexisting native invalidation globs are not consumed by validators; high | defer | Append a focused deferred-work entry. Do not claim source-bound or renewed physical evidence; current expired-record gate remains a blocker. |
+
+Three remaining static observations do not establish a contract failure: a transient initial read deliberately fails closed until a fresh owner/process retries; chooser and whole-document storage responsiveness were not measured against a failing threshold. The existing explicit load error and process-restart recovery satisfy the approved MVP acceptance. These are not additional completed performance tests or a claim of unlimited responsiveness.
+
+Repairs must observe actual regression failure before source changes, retain per-module XML counts, compile touched Apple source sets on this Intel toolchain, and rerun the unfiltered Android suite after runner/platform changes. Independent reviewers ran zero runtime tests; parent verification below is separate.
+
+### Review-repair ownership sequence (AD-15)
+
+One bounded source invocation at a time: `feature/photo-analysis-ui` R3/R6 (existing worker); `apps/androidApp` native RED fixtures and test-only storage runner R1/R2/R4/R5 (parent); `core/config` shared revision protocol and unit tests; `platform/photo-android` R1/R2/R4 implementation; `platform/photo-ios` R1 implementation and Native fixtures; `feature/photo-analysis` R7 and two-owner shared-store unit fixture; then `mobile-quality-policy` typed observations/digest only. Integration commands coordinate these completed slices without acquiring product ownership.
+
+Storage design: retain the existing load/save port. A shared revision-checking decorator records the last successful read, compares current content before saving, and advances its revision only after a true write result. Platform wrappers serialize every decorator operation under their existing process-wide lock. Thus a stale live owner receives the existing visible write failure instead of replacing accepted data. Android completes bounded encoding, write and fd.sync before `android.system.Os.rename`; a successful rename is the commit point, with no fallible post-commit verification. Check .bak directories before AtomicFile's legacy regular-file recovery. Apple retains its protected atomic Foundation writer and shared recursive lock.
+
+Test isolation design: a test-only AndroidJUnitRunner creates a test-only BootstrapApplication subclass whose noBackupFilesDir is unique per run. Removing final from the production Application permits that standard test substitution without a production testing dependency or runtime backdoor. Production package/factory/adapter selection is unchanged. The final unfiltered suite must run with a preseeded real diary/profile and preserve those original bytes; test cleanup targets only owned fixture paths.
+
+
+### API29 native RED before storage/runner repairs
+
+Exact connectedProductionDebugAndroidTest run closed exit1 in4m21 (192tasks:26executed166UP-TO-DATE). Fresh aggregate XML timestamp2026-10-24T12:50:21UTC contains9tests,4failures,0errors,0skips. Five existing filesystem cases passed. Each new assertion failed for its intended behavior: stale owner replacement was accepted; obstructed .bak recovery removed the valid base; Application used the actual user-document namespace; and the post-commit failure path removed the completed base file. That last result is stronger than the static false-result observation: on API29, calling failWrite after finishWrite with the obstructing .new fixture deletes the committed base without a backup left to restore. The test asserts file existence before reading, so this is an executed product assertion failure, not a harness read error.
+
+Full XML and per-case failure details preserved under mobile/build/verification/mvp-audit/review-storage-red-api29/; log review-storage-red-api29.log. Platform/core/production Application/runner were unchanged for this RED. Emulator5556 was paused after exact completion; UI worker owns the single Gradle mutex for its final rerun. Parent owns only the apps/androidApp runner/Application fixture patch at this checkpoint; platform fixes and integration green remain pending.
+
+
+### R7 actual RED before Home repair
+
+Core worker's exact combined run32903 closed exit1 in2m54, solely because focused MealDiaryHomeModelTest executed3tests with1failure (13:04:46.048UTC): expected1 source lookup, actual1001 for one current and1000historical bound records. Home count and protein assertions passed before the lookup assertion. Fresh XML/log/summary archived review-home-red; core47tests passed independently. Parent now filters both ledgers by the requested epoch day before the shared merge; paired(day,id) supersession must stay intact. Add mixed confirmed/authored ledger coverage and the shared-layer two-owner visible write-failure fixture; these supplement the already executed native R1 RED, rather than being claimed as new pre-fix runtime evidence.
+
+
+### Final gate test-line wrapping before repair
+
+The active final quality/arm64 v1 run reports detektCommonTestSourceSet and detektTestJvm findings at MealDiaryHomeModelTest.kt:17: its new homeScreenModel call is longer than120characters and requires one argument per line, including the nested listOf expression. Actual104feature tests passed before this check. No production behavior defect is inferred from this formatting finding. Acceptance: after the exact run closes, wrap only that test call without changing arguments/assertions; rerun the full relevant104-test task and final quality gates. Do not autocorrect unrelated sources or mutate inputs while the v1 framework/test compilation continues.
+
+
+### R5 post-suite ordinary-document preservation regression — before repair
+
+The unfiltered API35 run completed195/195 with0failures/errors/skips, but the
+separate ordinary-app exact-byte comparison failed for meal-diary.txt. All
+three variants executed8filesystem and2isolation cases; those passing cases
+do not establish whole-suite isolation. Preserve both before/after bytes and
+SHA256 metadata under review-native-isolation-regression before investigating.
+Acceptance: identify every native-test path to ordinary production documents,
+observe the preservation regression before its fix, isolate that path without
+weakening production behavior, rerun relevant tests and the full unfiltered
+suite, and preserve both ordinary documents exactly. Do not clean or overwrite
+the ordinary documents until the offending path is established.
+
+
+The after-value was subsequently inspected as synthetic-fixture evidence: both
+44byte buffers were `run-as: unknown package: app.supernutrition`, not document
+contents. `adb shell -T run-as ...` confirms the package was removed. The default
+AGP connected-test teardown uninstalls the target APK, deleting its data; this
+is separate from test Application namespace isolation. The ignored capture
+helper used exec-out, which did not propagate the remote exit code, and must
+use non-PTY shell-v2 plus an explicit installed-package precondition instead.
+No original user records existed before QA; the saved232/12byte QA baseline
+remains available. Repair scope is mobile test-execution configuration only:
+keep APKs installed after connected tests using the existing AGP option, as
+used by AndroidX, and correct the read-only evidence helper. No production
+storage or runner algorithm change is indicated by this result. Restore only
+the saved synthetic QA baseline after reinstall, then repeat the full suite and
+require installed APK plus unchanged bytes afterward.
+
+Primary source for the preserve-APKs property:
+https://android.googlesource.com/platform/frameworks/support/+/eb74b1a4b3527414639994574a201f125aff90f5
+
+
+R5 teardown repair now has executed full-suite evidence: v2 session54378 closed
+exit0,195/195cases across all variants. Both ordinary QA documents remained
+installed and byte-for-byte unchanged after each completed variant and final
+teardown; no instrumentation namespace remained. The successful comparison used
+the corrected shell-v2/installed-package reader. See the v2 verification section
+and review-final-native-v2-document-preservation.json. Production storage and
+runner implementations required no additional mutation for this teardown issue.

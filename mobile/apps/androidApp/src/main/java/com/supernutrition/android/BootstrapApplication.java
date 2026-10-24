@@ -7,7 +7,7 @@ import com.supernutrition.feature.photoanalysis.PhotoAnalysisAndroidCatalogProvi
 import kotlinx.coroutines.CoroutineDispatcher;
 import kotlinx.coroutines.Dispatchers;
 
-public final class BootstrapApplication extends Application
+public class BootstrapApplication extends Application
         implements com.supernutrition.feature.photoanalysis.PhotoAnalysisAndroidRuntimeProvider,
         PhotoAnalysisAndroidCatalogProvider {
     private final com.supernutrition.feature.photoanalysis.PhotoAnalysisAndroidRuntimeFactory

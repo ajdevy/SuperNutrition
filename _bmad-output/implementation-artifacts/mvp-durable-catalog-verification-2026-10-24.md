@@ -1,6 +1,6 @@
 # Durable local diary and USDA verification
 
-Status: implementation and emulator verification complete; independent local review pending. Required expired physical evidence still blocks the complete quality gate. This file supersedes the
+Status: local implementation, independent review repairs and final emulator validation are complete. The full quality gates remain blocked by expired physical Android evidence. This file supersedes the
 previous MVP report only for the D-07/D-08 continuation; it is not a release or
 hosted-CI success claim.
 
@@ -32,7 +32,7 @@ hosted-CI success claim.
   change through `flexsent-labs/supernutrition.app` and its reproducible GitHub
   build when this mobile behavior is publicly released.
 
-## Regression evidence collected so far
+## Historical integration checkpoints
 
 - Retention: the existing profile Compose test was executed before the fix and
   failed specifically on Clear→Save (8 tests, 1 intended failure). A later
@@ -688,3 +688,348 @@ xcodebuild -project mobile/apps/iosApp/SuperNutritionUIAcceptance.xcodeproj \
 ```
 
 For the second invocation replace only -target with SuperNutritionUIAcceptanceTests; never build both targets concurrently. The pre-existing locked Pods inputs were available locally. This direct-project build does not substitute for a fresh workspace scheme build: the local missing iOS26.5 platform-component limitation remains. No Xcode tests executed.
+
+
+## Independent review repair checkpoint (not final verification)
+
+Both independent reviews completed on the full185-file candidate diff. Parent recorded eleven deduplicated observations, seven implementation patches and one preexisting deferred policy gap before repairs in the findings record. Reviewers executed zero tests. See their separate blind/edge reports for source-trace limits.
+
+UI slice: four new tests were actually RED against the old implementation (4/4 failures, no compile/harness error). The first full repaired UI run executed305 tests across78 fresh suites,0failures/0errors/0skips, but exited1 because of four signature-formatting conditions repeated in three main lint tasks and one UseRequire condition in a fake handler. Worker recorded those before an equivalent formatting/require repair. Typed detekt additionally prints the established six-errors-during-analysis accuracy warning for Android/JVM; actual JVM and Android compilation succeeded. The full UI rerun remains required. A just-started rerun was interrupted at startup (exit143, no test result) to transfer the single Gradle mutex to the native RED run; this is not a green or a new behavior failure.
+
+Parent drafted only the separate apps/androidApp host slice: three additional private-store methods plus one instrumentation namespace test. The existing five store tests remain. Before overwrite, all prior final API35 native XMLs (60/0/0/0 per flavor) were copied with mtimes to mobile/build/verification/mvp-audit/pre-review-native-green. API29 emulator was created from the already installed google_apis/x86 image, with no SDK download: SN_StorageRegression29_20261024, emulator-5556,1536MiB configured RAM,2virtualCPUs,headless. Main API35 AVD was stopped normally; exactly one ADB endpoint is connected. API29 boot_completed=1 was read back before the run. It was paused during UI-only work and explicitly resumed before native execution.
+
+Current native RED request is connectedProductionDebugAndroidTest filtered to PrivateDocumentStoreInstrumentationTest and InstrumentationStorageIsolationTest, strict dependencies, --continue, no configuration cache/daemon, max-workers1, serial5556. Log: mobile/build/verification/mvp-audit/review-storage-red-api29.log. Platform implementations and production Application/runner are still unchanged from candidate137293f; this request must execute real tests and preserve fresh XML before any storage/runner implementation repair. No final pass is inferred at this checkpoint.
+
+
+### API29 native RED before storage/runner repairs
+
+Exact connectedProductionDebugAndroidTest run closed exit1 in4m21 (192tasks:26executed166UP-TO-DATE). Fresh aggregate XML timestamp2026-10-24T12:50:21UTC contains9tests,4failures,0errors,0skips. Five existing filesystem cases passed. Each new assertion failed for its intended behavior: stale owner replacement was accepted; obstructed .bak recovery removed the valid base; Application used the actual user-document namespace; and the post-commit failure path removed the completed base file. That last result is stronger than the static false-result observation: on API29, calling failWrite after finishWrite with the obstructing .new fixture deletes the committed base without a backup left to restore. The test asserts file existence before reading, so this is an executed product assertion failure, not a harness read error.
+
+Full XML and per-case failure details preserved under mobile/build/verification/mvp-audit/review-storage-red-api29/; log review-storage-red-api29.log. Platform/core/production Application/runner were unchanged for this RED. Emulator5556 was paused after exact completion; UI worker owns the single Gradle mutex for its final rerun. Parent owns only the apps/androidApp runner/Application fixture patch at this checkpoint; platform fixes and integration green remain pending.
+
+
+### Review repair source checkpoint — runtime integration still pending
+
+The final UI rerun closed exit0 in8m13:305tests/78freshsuites (12:56:04UTC),0failures/0errors/0skips. Fresh commonMain/commonTest/mainAndroid/mainJvm/testJvm detekt XML contain0issues; typed Android/JVM retain their six-analysis-error diagnostic. Full RED/v1/interrupted/final evidence and supplemental coverage limits are in mvp-review-ui-verification-2026-10-24.md and review-ui-green/final. The worker released the mutex and made no further source writes.
+
+Parent's separate apps/androidApp slice now selects test-only IsolatedPrivateDataTestRunner, which creates test-only IsolatedPrivateDataApplication. Production BootstrapApplication becomes subclassable, but its manifest identity, concrete factory/adapter selection and production dependencies stay the same. No production test switch or storage override is introduced. The custom Application uses a unique instrumentation-* subtree of the real no-backup parent; runner finish removes only known owned document paths. Existing filesystem fixtures also root themselves in the application namespace. A second isolation test simulates an interruption, restores its prior test-namespace document in finally and checks a uniquely owned sibling sentinel's exact bytes. It never writes the real diary/name. These source changes still await actual runner launch/full-suite verification.
+
+Parent then completed separately named platform adapter source slices: Android wraps the common revision protocol under the existing global monitor; rejects .bak directories before AtomicFile legacy recovery; stages bounded bytes, syncs and closes before Os.rename; and has no fallible read after successful rename. Expected failures discard only a regular owned .new file. iOS wraps the same protocol under its existing global NSRecursiveLock, retaining the protected backup-excluded Foundation atomic writer. A two-owner Native iOS fixture was added for both document IDs; it must compile, and it is not executed evidence on this Intel host. Actual Android/native/Apple integration green is pending.
+
+The core worker owns only core/config and its tests. Its one Gradle request also executes the parent's focused Home RED as an integration reader; parent does not edit feature/core inputs while that run is active. Production Home filtering is intentionally still unchanged. No concurrent Gradle build is active.
+
+
+### Review repair focused integration — actual green
+
+Exact session86124 closed exit0 in4m54 (243tasks:55executed188UP-TO-DATE). Full feature JVM XML:19suites,104tests,0failures/0errors/0skips. This includes R7's1lookup instead of1001, mixed confirmed/authored day filtering with ID supersession and unknown-fiber preservation, and shared-layer visible stale-owner failures/no meal or name resurrection. Both platform modules' requested lint completed without findings; changed platform/photo-ios main and test source sets actually compiled for iosArm64 on Intel. That is compilation, not iOS runtime execution.
+
+Filtered production Android execution on emulator-5556 (Android10/API29/x86; fingerprint google/sdk_gphone_x86/generic_x86:10/QSR1.200403.001/6362371:userdebug/dev-keys) ran10tests with0failures/0errors/0skips. Fresh aggregate XML timestamp13:13:16UTC and device properties are archived review-storage-home-green-v1. All eight filesystem cases and both namespace/interruption cases executed, including the custom runner/Application launch. This is emulator evidence, not physical evidence. The auxiliary API29 emulator was then stopped normally; its owned exec process15859 exited0. No duplicate ADB endpoint remains.
+
+The focused read-only follow-up reviewer found no additional established defect in the nine fingerprinted storage/runner source paths (mvp-review-storage-followup-2026-10-24.md). It is a static patch inspection, not a second full185-file or runtime audit.
+
+Typed policy reconciliation initially failed before mutation because system python3 lacked tomlkit. Re-running the same helper through uv run --offline --with tomlkit used a cached package and succeeded. It refreshed the ten numeric JVM observations while preserving production source/denominator counts15, all floors and all eleven native execution records. New13-manifest digest:548ff951d5c4908c9a16600698cd59b499b2fb46dca637bf53899034bc700230. No native evidence was renewed and no expiry exemption was added. Final full gates/SharedKit arm64 framework and test compilation are running separately; this focused success is not their result.
+
+
+### Final read-only gates and Xcode link after review repairs
+
+Quality/arm64 v1 session2095 closed exit1 in11m51 (505tasks:101executed4FROM-CACHE400UP-TO-DATE). The exact three failed tasks were verifyMobilePolicy (stale bootstrap-android-host) and the two feature test-lint aliases for the same long line. Native SharedKit main compiled, DebugFramework linked and Native SharedKit test code compiled successfully in that run. Only the new test call's line wrapping was then repaired, preserving its arguments/assertions and all production sources.
+
+Full final v2 session40012 explicitly reran full feature:jvmTest/koverXmlReportJvm plus qualityCheckJvmAndroid qualityCheckApple and SharedKit arm64 framework/test targets with all three enable-* flags, strict dependencies, --continue, no daemon/configuration cache, max-workers1. It closed exit1 in2m41 (507tasks:42executed465UP-TO-DATE). SOLE failure: verifyMobilePolicy: Native-gap evidence is stale: bootstrap-android-host. No source/test/lint/compilation finding remains in this request. Cached Native framework/test outputs were unchanged from v1's actual successful compile/link; v2 is not described as a fresh Native rebuild. The full gates remain blocked, not green; a failed shared policy prerequisite does not certify downstream aggregate tasks. Numeric XML/changed-helper observations are separate evidence.
+
+Fresh final JVM per-module counts/timestamps are saved in review-final-jvm-results.json. Core helper:13/13executablelines and6/6branches; Home projection:9/9lines and4/4branches in actual Kover XML, no missed outcomes. No numeric threshold or native-equivalent classification changed. Root-boundaries and all8strict owner-decision records passed again.
+
+Actual direct Xcode project target builds were rerun sequentially against the final arm64 framework: production SuperNutrition session97833 exit0 BUILD SUCCEEDED, then SuperNutritionUIAcceptanceTests session99124 exit0 BUILD SUCCEEDED (including its app dependency). Same explicit arm64/iphoneos/unsigned settings and available Xcode26.6 SDK26.5 as the commands above. Logs: mobile/apps/iosApp/build/verification/review-final/{production,xctest}.log. These are app/XCTest compilation and link results;0iOS tests executed, no simulator/device UI run, no signed/archive/release result. The generic workspace destination remains a separately documented missing-component limitation; direct target success does not change it.
+
+Final primary API35 manual verification, installed-user document preservation around the unfiltered native suite, graph refresh and local handoff commit remain pending at this checkpoint.
+
+
+## Final API 35 installed candidate
+
+The primary `SN_Screenshots_20261023` AVD was started normally with the Android
+CLI. Only `emulator-5554` is connected. Boot completed and `font_scale = 1.0`.
+`android run` installed and activated the final production debug APK (exit 0).
+Both the local APK and the installed `base.apk` have SHA-256
+`358abeddce82e9df63e908c37fa89903f16adddf41e41b8fb78d0f2687bc3ceb`.
+Log: `mobile/build/verification/mvp-audit/review-final-install.log`.
+
+Cold boot initially displayed a **System UI** ANR dialog. Selecting Wait
+recovered the system UI; the subsequent actual Home layout displayed zero
+meals and unknown nutrients. This is a recorded emulator prerequisite incident,
+not an app crash or a successful performance measurement. Two actual activity
+tasks (`265`, `266`) now hold separately loaded storage revisions for the manual
+conflict check; the second task was launched from the Android launcher rather
+than delivering another intent to the singleTop foreground instance.
+
+
+### Final code graph refresh
+
+`graphify update .` completed exit0 after the review source repairs. It rebuilt
+23,149nodes,32,729edges and2,113communities from AST extraction (798uncached
+files). No LLM/semantic-document extraction was requested. The 525zero-node
+sources, two SQL sources lacking optional tree_sitter_sql and HTML size limit
+are recorded tool limitations, not source coverage. Generated graph/build outputs
+remain unstaged. Log: `mobile/build/verification/mvp-audit/review-final-graphify.log`.
+
+
+### Actual two-owner conflict check
+
+The original activity task265 retained its initially empty profile/diary while
+task266 saved `MVP QA` and the explicit queso seco50g meal. Bringing task265 to
+the front retained its earlier snapshot. Saving `Stale QA` showed the visible
+profile failure and kept that draft. A valid unrestricted `Stale meal`/apple
+entry showed `Couldn't save this meal. Please try again.` and kept the form
+fields. Neither operation reported success. Both drafts were cancelled.
+
+One manual automation attempt asked for Home immediately after cancelling name
+editing; the guarded helper stopped because Home was absent. The fresh layout
+correctly showed the non-editing profile. Returning from that profile and
+repeating the intended navigation completed the conflict check; no guessed tap
+or production repair was required.
+
+
+### Final manual restore and screenshots
+
+Force-stop actually removed PID2187; a normal launch created PID3438. The
+`am start -W` wait returned `Status: timeout`,15,647ms, so this is not a startup
+latency pass. Subsequent actual layouts and screenshots were usable. Profile
+restored `MVP QA` and exactly1meal. History restored its source-bound queso seco
+entry with162.5kcal. Details restored `Your portion · 50g`; selecting Per100g
+showed325kcal. After the background catalog became ready, Home showed protein
+12.26g, fat12.18g, unknown fiber and exactly1meal. Both rejected stale drafts
+were absent after restart.
+
+All three new720×1560 PNGs were captured from the installed final APK and
+visually inspected immediately, before the next device action:
+
+- `/Users/REDACTED/.codex/visualizations/2026/10/22/01a16557-276b-7002-b45e-4a79f11f1c89/mvp-durable-20261024/review-final/home.png`
+- `/Users/REDACTED/.codex/visualizations/2026/10/22/01a16557-276b-7002-b45e-4a79f11f1c89/mvp-durable-20261024/review-final/profile.png`
+- `/Users/REDACTED/.codex/visualizations/2026/10/22/01a16557-276b-7002-b45e-4a79f11f1c89/mvp-durable-20261024/review-final/meal-history.png`
+
+Home's capybara is visibly seated on the room floor; all metric cards are above
+the bottom navigation. At360dp the protein unit wraps within its card without
+clipping. The screenshots intentionally show synthetic QA data; cleanup and
+persistence of deletion remain required after the running native suite.
+PNG hashes/dimensions are in `review-final-screenshots.json`; manual assertions
+and exact restart output are in `review-final-manual.json`, both below
+`mobile/build/verification/mvp-audit`.
+
+Before the unfiltered native run, exact ordinary-app documents were captured
+and compared again: meal-diary232bytes SHA256
+`8cfc755bc4d36d6455ace4cc01c9e4d5bfb5a7c2903fb978a6e39a259064a574`;
+profile-name12bytes SHA256
+`7285b0332cfcf6f1e447a27f02e5b44e698a1bf47ed36f38326caecc0c857bfc`.
+No raw user-document payload is printed in the log or staged in Git. These
+files are preseeded ordinary app documents, outside the custom test namespace.
+
+The full `:apps:androidApp:connectedAndroidTest` now runs without class/method
+filters, on the sole endpoint emulator-5554, with strict dependencies, no
+configuration cache/daemon, max-workers1 and --continue. Exact start timestamp
+and unfiltered declaration: `review-final-native-started.json`; log:
+`review-final-native-full.log`. Its completion and post-run exact-byte comparison
+are still pending at this checkpoint.
+
+
+### Final per-module JVM XML inventory
+
+These are each module's latest relevant executed XML results against unchanged
+inputs, not a claim that all modules ran in one final invocation. The optional
+platform/photo-ios JVM contract suite retains its older October23 result;
+changed iosMain/iosTest were separately compiled to actual arm64, as above.
+All rows have0failures,0errors and0skips. Exact XML timestamps and absolute report
+directories are in `review-final-jvm-results.json`.
+
+| Module | Suites | Tests | Latest XML UTC |
+|---|---:|---:|---|
+| `core/config` | 6 | 47 | 2026-10-24T13:03:34.309Z |
+| `core/ui` | 1 | 4 | 2026-10-24T08:22:48.433Z |
+| `data/nutrition` | 3 | 21 | 2026-10-24T13:16:17.739Z |
+| `domain/inference` | 16 | 126 | 2026-10-24T09:55:39.787Z |
+| `domain/nutrition` | 40 | 306 | 2026-10-24T13:16:37.096Z |
+| `domain/photo-analysis` | 11 | 115 | 2026-10-24T13:16:43.871Z |
+| `feature/photo-analysis` | 19 | 104 | 2026-10-24T13:29:11.713Z |
+| `feature/photo-analysis-presenter` | 13 | 79 | 2026-10-24T13:16:52.329Z |
+| `feature/photo-analysis-ui` | 78 | 305 | 2026-10-24T13:18:51.346Z |
+| `inference/local-shared` | 2 | 25 | 2026-10-24T13:19:19.417Z |
+| `inference/local-android` | 2 | 25 | 2026-10-24T13:19:01.725Z |
+| `inference/local-ios` | 2 | 21 | 2026-10-24T13:19:13.181Z |
+| `inference/local-android-poc` | 3 | 6 | 2026-10-24T13:19:05.697Z |
+| `platform/photo-ios` | 1 | 2 | 2026-10-23T17:40:49.172Z |
+| `apps/sharedKit` | 1 | 3 | 2026-10-24T10:13:18.772Z |
+
+
+### Full native v1 passed but APK preservation failed — superseded harness checkpoint
+
+Unfiltered session9226 closed exit0 in26m50s (325tasks:34executed,
+2FROM-CACHE,289UP-TO-DATE). Fresh XML has65/0/0/0 for each of poc,
+production and uiAcceptance;195total. All three variants include the eight
+filesystem and two namespace/interruption cases. XML freshness and those class
+counts were checked and archived in review-final-native-green; exact summaries
+are review-final-native-results.json and review-final-native-assertions.json.
+
+The separate post-suite preservation check then failed. Diagnosis: AGP removed
+the target APK in teardown, so the package/data no longer existed. The exec-out
+transport helper had incorrectly treated zero transport exit plus44bytes of
+`run-as: unknown package` error output as document bytes. These are not actual
+after-documents and do not establish a storage-adapter or namespace write.
+The capture helper now uses non-PTY shell-v2 remote status plus an installed-APK
+precondition; it actually refused the absent APK before any read after this fix.
+
+An additional bounded mobile-test-execution configuration slice adds
+android.injected.androidTest.leaveApksInstalledAfterRun=true to the checked-in
+mobile Gradle defaults. Installed AGP9.1.0's BooleanOption class contains this
+exact option. AndroidX uses the same setting to retain APKs/data after test
+teardown ([primary source](https://android.googlesource.com/platform/frameworks/support/+/eb74b1a4b3527414639994574a201f125aff90f5)).
+No production source, runner, test filter, coverage floor or native expiry was
+changed in this repair. Only the previously saved synthetic QA documents will
+be restored to the reinstalled APK; no original user records existed before QA.
+Full unfiltered native rerun and final read-only gates are required under the
+new setting. Do not infer preservation success from the195passing v1 tests.
+
+
+### Preserve-APKs repair — focused actual green
+
+Focused session13150 completed exit0 in3m24s (192tasks:14executed,
+178UP-TO-DATE). Its two isolation/interruption tests passed with0failures,
+0errors and0skips. Under the new checked-in setting, the real target APK still
+existed after AGP teardown. The corrected shell-v2 reader compared both
+ordinary documents exactly with the original232/12byte QA snapshots. No
+instrumentation-* namespace remained in the ordinary no-backup parent.
+Proof: review-apk-retention-focused-documents.json; log:
+review-apk-retention-focused.log. This is a focused repair result, not the full
+suite's final result.
+
+Full unfiltered v2 session54378 now runs the same connectedAndroidTest command
+with no class/method property, retaining APKs via the checked-in Gradle default.
+Fresh-run marker: review-final-native-v2-started.json. Log:
+review-final-native-full-v2.log. Do not reuse v1 XML as v2 evidence.
+
+Graphify was rerun after the configuration repair, exit0:23,155nodes,
+32,735edges,2,126communities;767uncached files. The same optional SQL-parser,
+zero-node and HTML-size limitations remain. Log: review-final-graphify-v2.log.
+
+
+### Final unfiltered native v2 and ordinary-document preservation — actual green
+
+Session54378 closed exit0 in22m15s (325tasks:16executed,309UP-TO-DATE).
+The three connected tasks actually executed; only the aggregate alias itself
+is UP-TO-DATE. Fresh XML per variant: poc65/0/0/0 at14:43:34UTC,
+production65/0/0/0 at14:51:27UTC, uiAcceptance65/0/0/0 at14:57:54UTC.
+All195cases executed with0failures,0errors,0skips. Each variant's eight
+filesystem and two isolation/interruption cases were separately counted.
+All XML mtimes are after review-final-native-v2-started.json's exact start.
+XMLs are archived in review-final-native-v2-green; exact summaries:
+review-final-native-v2-results.json and review-final-native-v2-assertions.json.
+Log: review-final-native-full-v2.log. No class/method test filter was supplied.
+
+The corrected reader verified installed APK presence and exact ordinary diary
+and profile bytes after poc, after production and after the complete suite.
+Final hashes/lengths equal the original232/12byte synthetic QA baseline above.
+No instrumentation-* directory remained in the ordinary no-backup parent.
+Final proof: review-final-native-v2-document-preservation.json; intermediate
+proofs: review-native-v2-after-{poc,production}-documents.json. This explicitly
+verifies preservation through real AGP installation/teardown, beyond the unit
+and isolated namespace tests. v1's package-removal result remains recorded as
+a superseded failed preservation check, not hidden by this success.
+
+Final qualityCheckJvmAndroid and qualityCheckApple now rerun under the
+checked-in preserve-APKs setting; no production source changed since the earlier
+arm64/Xcode and JVM results. Their actual completion remains pending here.
+
+
+### Final root gates after test-execution configuration repair
+
+Session39481 completed exit1 in3m2s (451tasks:31executed,
+420UP-TO-DATE). Both qualityCheckJvmAndroid and qualityCheckApple were
+requested with strict dependencies, --continue and all three explicit Apple
+registration/framework/testing flags. Exactly one task failed:
+verifyMobilePolicy — Native-gap evidence is stale: bootstrap-android-host.
+No code/test/lint/compilation finding appears in this request. The aggregate
+coverage verifier remains behind the failed shared policy prerequisite; this is
+not a green full gate or an executed aggregate coverage certification.
+Log: review-final-quality-after-apk-retention.log. No expiry, floor, exclusion,
+native-equivalent classification or physical-device record was changed.
+
+The final per-module JVM XML inventory was collected again into
+review-final-jvm-results-after-apk-retention.json. Counts remain47core/config,
+21data/nutrition,306domain/nutrition,104feature,79presenter,305UI; every
+module row has0failures/errors/skips. Cached unchanged-source results retain
+their actual XML timestamps and are not called fresh executions. Actual arm64
+and Xcode compile/link evidence above still applies to unchanged production
+sources; the sole later edit is a connected-test teardown configuration flag.
+
+The final production APK remains installed with SHA256
+358abeddce82e9df63e908c37fa89903f16adddf41e41b8fb78d0f2687bc3ceb,
+matching the local APK and all three final screenshots. Normal post-native
+launch created PID6771 after confirming the prior production process absent.
+Its am start -W wait timed out at18,197ms; later actual Home/Profile/details
+were usable, so this remains no startup-performance pass. Profile restored
+MVP QA and1meal; details restored queso seco50g,162.5kcal,12.18gfat,
+unknown fiber and904mgsodium. No stale draft appeared. UI cleanup is in progress.
+
+
+## Final handoff verdict
+
+The approved local D-07/D-08 implementation is complete on
+`codex/mvp-completion` in worktree
+`/Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition`. The seven reviewed
+patch conditions are repaired and verified; the preexisting native invalidation
+glob enforcement gap remains explicitly deferred. No frozen intent changed.
+All eight dated owner decisions passed strict verification again before handoff.
+No release, hosted-CI success or physical-device success is claimed.
+
+- Meals and optional name persist privately until deletion. Atomic platform
+  commits and the shared revision protocol preserve accepted data and reject
+  stale owners with visible errors.
+- Exact USDA SR Legacy2018-04 products and explicit positive grams produce
+  sourced values; missing fields and affected totals stay unknown. Free text
+  does not silently acquire nutrient estimates. Source/licence opener failures
+  retain the draft and expose retryable copy; bound-product help requires grams.
+- Final unfiltered Android execution: **65poc +65production +65uiAcceptance =
+  195tests**, **0failures/0errors/0skips**, on Android15/API35 x86_64 emulator5554.
+  The separate API29 filesystem/isolation run passed10/10. These are emulator
+  results, never physical evidence.
+- After the entire final native run, the ordinary production APK and exact
+  original232/12byte diary/name documents remained intact. Test namespace
+  cleanup left no instrumentation directory. Checked-in AGP teardown settings
+  preserve installed apps, and the evidence reader fails closed on missing
+  packages or failed shell reads.
+- Per-module JVM XML: core/config47, data/nutrition21, domain/nutrition306,
+  feature104, presenter79, UI305; all rows have zero failures/errors/skips.
+  Other unchanged modules and exact timestamps are in the final JSON inventory.
+  Core revision helper13/13lines,6/6branches; Home projection9/9lines,4/4branches.
+  Raw Compose supplemental coverage limitations remain documented; no threshold
+  or native-equivalent policy was weakened.
+- Changed iosMain/iosTest and SharedKit arm64 sources actually compiled; the
+  Debug framework and unsigned production app/XCTest bundle linked successfully.
+  **0iOS tests executed**. Intel x86_64 prevents the primary Compose UI simulator
+  run; no iPhone was available. The direct target builds do not resolve the
+  separately recorded generic workspace platform-component prerequisite.
+- Final `qualityCheckJvmAndroid qualityCheckApple --continue` exited1 solely
+  at expired `bootstrap-android-host` policy evidence. It is **not a green full
+  gate**; downstream aggregate coverage verification is not certified.
+- Final graph refresh completed; `git diff --check` and strict owner verification
+  passed. Generated build/graph outputs and raw QA data are not staged.
+
+### Final cleanup and installed state
+
+The synthetic queso seco record was deleted with the visible confirmation,
+and `MVP QA` was cleared and saved through Profile. Force-stop removed PID6771;
+a normal cold launch created PID7198 (Status:ok, TotalTime14,974ms,
+WaitTime15,011ms). This proves launch/deletion persistence, not a startup SLO.
+Fresh post-restart Profile showed `Your name` and0savedmeals; Meal History
+showed `No meals saved yet`. The app was then returned to Home with0meals and
+font_scale1.0. Only the explicitly created QA record/name were removed; the
+pre-QA app had no records or name. Final machine assertions and empty-document
+metadata are in review-final-manual.json, cleanup_pending=false.
+
+The installed production APK still matches SHA256
+`358abeddce82e9df63e908c37fa89903f16adddf41e41b8fb78d0f2687bc3ceb`.
+Home/Profile/MealHistory screenshots listed above show the synthetic record
+before cleanup and were immediately inspected. Runtime code/APK did not change
+after those captures; the later edit only preserves APKs during test teardown.
+
+Website retention wording in EN/RU/ES remains a prepared handoff, **unpublished**.
+Any website publication must go through `flexsent-labs/supernutrition.app` and
+its reproducible repository build. No push, remote merge, upload or deployment
+was performed in this continuation. The implementation spec is complete with a
+Suggested Review Order; sprint sync is skipped because no story_key is set.

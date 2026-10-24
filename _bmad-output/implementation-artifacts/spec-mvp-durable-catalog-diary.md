@@ -2,7 +2,7 @@
 title: Durable local diary with explicitly sourced nutrition
 type: feature
 created: 2026-10-24
-status: in-progress
+status: done
 baseline_commit: 7309e140b9cf12c6acf5733cfdcec00ce5912f1b
 review_loop_iteration: 0
 context: []
@@ -59,7 +59,7 @@ context: []
 - [x] Meal models/codec and nutrition projection — validated explicit bindings, version migration and nullable nutrient arithmetic without changing v1.
 - [x] Meal form/details/profile/Home — optional exact product + grams confirmation, truthful values/source and durable delete/clear.
 - [x] Focused unit/UI/native tests — prove red before fixes, restart/deletion, invalid values and missing nutrients.
-- [ ] Full relevant gates, arm64 compilation, emulator checks, graph refresh and local commit — publish exact evidence and limitations.
+- [x] Full relevant gates, arm64 compilation, emulator checks, graph refresh and local commit — publish exact evidence and limitations.
 
 **Acceptance Criteria:**
 - Given explicit saves, when the Android process is restarted, then name and meals remain; after deletion and another restart they remain deleted.
@@ -84,3 +84,64 @@ This continues the already-approved MVP task. Both pending questions were answer
 - Explicit arm64 SharedKit/iOS compilation on Intel; no simulator success claim.
 - Reinstall final production APK, manually verify restart/edit/delete and source values; inspect screenshots immediately.
 - `git diff --check` and `graphify update .` after final code changes.
+
+
+## Suggested Review Order
+
+**Entry and durable ownership**
+
+- One composition root connects the catalog, diary and profile to private storage.
+  [LocalUserData.kt:8](../../mobile/feature/photo-analysis/src/commonMain/kotlin/com/supernutrition/feature/photoanalysis/LocalUserData.kt#L8)
+
+- A shared revision protocol rejects stale owners before replacement.
+  [RevisionCheckedPrivateDocumentStore.kt:7](../../mobile/core/config/src/commonMain/kotlin/com/supernutrition/core/config/RevisionCheckedPrivateDocumentStore.kt#L7)
+
+**Platform commit boundaries**
+
+- Android serializes revisions and commits synced staged bytes with atomic rename.
+  [AndroidPrivateDocumentStore.kt:19](../../mobile/platform/photo-android/src/androidMain/kotlin/com/supernutrition/platform/photoandroid/AndroidPrivateDocumentStore.kt#L19)
+
+- Apple retains protected atomic documents outside backups under the same revision protocol.
+  [IosPrivateDocumentStore.kt:31](../../mobile/platform/photo-ios/src/iosMain/kotlin/com/supernutrition/platform/photoios/IosPrivateDocumentStore.kt#L31)
+
+**Persisted meaning and nutrition**
+
+- The bounded versioned codec retains explicit source bindings and rejects malformed documents.
+  [MealDiaryCodec.kt:18](../../mobile/feature/photo-analysis-presenter/src/commonMain/kotlin/com/supernutrition/feature/photoanalysis/MealDiaryCodec.kt#L18)
+
+- Only the pinned validated package becomes an active SQL catalog.
+  [BundledUsdaCatalog.kt:14](../../mobile/data/nutrition/src/commonMain/kotlin/com/supernutrition/data/nutrition/BundledUsdaCatalog.kt#L14)
+
+- Product identity, source digest and positive grams determine sourced values.
+  [CatalogMealNutritionResolver.kt:28](../../mobile/domain/nutrition/src/commonMain/kotlin/com/supernutrition/domain/nutrition/CatalogMealNutritionResolver.kt#L28)
+
+- Unknown fields stay unknown through scaling and totals.
+  [PartialNutrientArithmetic.kt:8](../../mobile/domain/nutrition/src/commonMain/kotlin/com/supernutrition/domain/nutrition/PartialNutrientArithmetic.kt#L8)
+
+**User-facing projection and recovery**
+
+- Home filters the requested day before shared merge and nutrition projection.
+  [MealDiaryHomeModel.kt:6](../../mobile/feature/photo-analysis/src/commonMain/kotlin/com/supernutrition/feature/photoanalysis/MealDiaryHomeModel.kt#L6)
+
+- Selected products require grams while unrestricted text entries retain optional portions.
+  [MealForm.kt:25](../../mobile/feature/photo-analysis-ui/src/commonMain/kotlin/com/supernutrition/feature/photoanalysis/MealForm.kt#L25)
+
+- Unavailable source links expose a retryable message without discarding the draft.
+  [CatalogSourceLink.kt:21](../../mobile/feature/photo-analysis-ui/src/commonMain/kotlin/com/supernutrition/feature/photoanalysis/CatalogSourceLink.kt#L21)
+
+**Fixtures and reproducibility**
+
+- Real filesystem regressions exercise conflicts, backup obstructions and commit outcomes.
+  [PrivateDocumentStoreInstrumentationTest.java:30](../../mobile/apps/androidApp/src/androidTest/java/com/supernutrition/android/PrivateDocumentStoreInstrumentationTest.java#L30)
+
+- The test-only runner isolates instrumentation without production testing switches.
+  [IsolatedPrivateDataTestRunner.java:10](../../mobile/apps/androidApp/src/androidTest/java/com/supernutrition/android/IsolatedPrivateDataTestRunner.java#L10)
+
+- Preserve installed apps and ordinary documents when connected-test teardown completes.
+  [gradle.properties:32](../../mobile/gradle.properties#L32)
+
+- Regeneration verifies source identity before producing the immutable numeric package.
+  [generate-catalog-from-srlegacy.py:539](../../scripts/generate-catalog-from-srlegacy.py#L539)
+
+- The verification record distinguishes executed evidence from expired physical and unavailable iOS runtime checks.
+  [mvp-durable-catalog-verification-2026-10-24.md:970](mvp-durable-catalog-verification-2026-10-24.md#L970)

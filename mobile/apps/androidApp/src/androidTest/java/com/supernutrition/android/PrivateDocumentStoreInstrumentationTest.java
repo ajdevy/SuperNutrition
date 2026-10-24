@@ -29,6 +29,89 @@ import static org.junit.Assert.fail;
 /** Real app-private filesystem I/O; fixture paths never overlap production user documents. */
 public final class PrivateDocumentStoreInstrumentationTest {
     @Test
+    public void staleOwnersCannotOverwriteAcceptedChangesOrResurrectDeletedValues() throws Exception {
+        for (PrivateDocumentId id : PrivateDocumentId.values()) {
+            File directory = fixtureDirectory();
+            Context context = fixtureContext(directory);
+            File target = new File(directory, id.getFileName());
+            try {
+                AndroidPrivateDocumentStore first = new AndroidPrivateDocumentStore(context, id);
+                AndroidPrivateDocumentStore stale = new AndroidPrivateDocumentStore(context, id);
+                assertNull(first.load());
+                assertNull(stale.load());
+                assertTrue(first.save("Accepted change"));
+                assertFalse("A stale owner must reject its replacement", stale.save("Lost update"));
+                AndroidPrivateDocumentStore beforeDeletion = new AndroidPrivateDocumentStore(context, id);
+                assertEquals("Accepted change", beforeDeletion.load());
+                assertTrue(first.save(""));
+                assertFalse("A stale owner must not resurrect deleted content", beforeDeletion.save("Resurrected"));
+                assertEquals("", new AndroidPrivateDocumentStore(context, id).load());
+            } finally {
+                target.delete();
+                new File(target.getPath() + ".bak").delete();
+                new File(target.getPath() + ".new").delete();
+                directory.delete();
+            }
+        }
+    }
+
+    @Test
+    public void aCommittedReplacementDoesNotBecomeFailureBecauseVerificationCannotReadIt() throws Exception {
+        File directory = fixtureDirectory();
+        Context context = fixtureContext(directory);
+        File target = new File(directory, PrivateDocumentId.PROFILE_NAME.getFileName());
+        File pending = new File(target.getPath() + ".new");
+        try {
+            try (FileOutputStream output = new FileOutputStream(target)) {
+                output.write("Previous value".getBytes(StandardCharsets.UTF_8));
+            }
+            assertTrue(pending.createNewFile());
+            assertTrue(pending.setReadable(false, false));
+            boolean saved = new AndroidPrivateDocumentStore(context, PrivateDocumentId.PROFILE_NAME).save("Committed value");
+            target.setReadable(true, true);
+            pending.setReadable(true, true);
+            assertTrue("A completed replacement must remain a file", target.isFile());
+            assertEquals("The replacement was committed before its reported result", "Committed value", readDocument(target));
+            assertTrue("A committed replacement must report success", saved);
+        } finally {
+            target.setReadable(true, true);
+            pending.setReadable(true, true);
+            target.delete();
+            pending.delete();
+            new File(target.getPath() + ".bak").delete();
+            directory.delete();
+        }
+    }
+
+    @Test
+    public void readingAnObstructedBackupPreservesTheValidBaseAndBackupContents() throws Exception {
+        for (PrivateDocumentId id : PrivateDocumentId.values()) {
+            File directory = fixtureDirectory();
+            Context context = fixtureContext(directory);
+            File target = new File(directory, id.getFileName());
+            File backup = new File(target.getPath() + ".bak");
+            File obstruction = new File(backup, "owned-fixture");
+            try {
+                try (FileOutputStream output = new FileOutputStream(target)) {
+                    output.write("Previous valid bytes 🥗".getBytes(StandardCharsets.UTF_8));
+                }
+                assertTrue(backup.mkdir());
+                assertTrue(obstruction.createNewFile());
+                expectLoadFailure(new AndroidPrivateDocumentStore(context, id));
+                assertTrue("A failed recovery must preserve the base file", target.isFile());
+                assertEquals("Previous valid bytes 🥗", readDocument(target));
+                assertTrue(obstruction.exists());
+            } finally {
+                new File(target, "owned-fixture").delete();
+                target.delete();
+                obstruction.delete();
+                backup.delete();
+                directory.delete();
+            }
+        }
+    }
+
+    @Test
     public void freshInstancesRestoreExactUnicodeAndEmptyDocuments() throws Exception {
         File directory = fixtureDirectory();
         Context context = fixtureContext(directory);
@@ -170,8 +253,17 @@ public final class PrivateDocumentStoreInstrumentationTest {
         }
     }
 
+    private static String readDocument(File file) throws Exception {
+        try (BufferedReader input = new BufferedReader(new InputStreamReader(
+                new FileInputStream(file), StandardCharsets.UTF_8))) {
+            String value = input.readLine();
+            assertNull(input.readLine());
+            return value;
+        }
+    }
+
     private static File fixtureDirectory() {
-        Context target = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        Context target = InstrumentationRegistry.getInstrumentation().getTargetContext().getApplicationContext();
         File directory = new File(target.getNoBackupFilesDir(), "document-store-test-" + UUID.randomUUID());
         assertTrue(directory.mkdir());
         return directory;

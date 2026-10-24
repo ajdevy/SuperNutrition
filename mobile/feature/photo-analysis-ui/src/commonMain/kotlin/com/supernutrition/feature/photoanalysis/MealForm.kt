@@ -75,7 +75,9 @@ internal fun MealForm(
         DiaryButton(if (config.editing) copy.save else copy.add, UiAutomationIds.MEAL_FORM_SAVE, onClick = {
             val validation = MealDraftValidator.validate(draft, config.existingMeal, config.catalog.state.catalogOrNull)
             when (val result = validation) {
-                is MealDraftValidation.Invalid -> error = copy.errorDescription(result.errors)
+                is MealDraftValidation.Invalid -> {
+                    error = copy.errorDescription(result.errors, draft.catalogBinding != null)
+                }
 
                 is MealDraftValidation.Valid -> {
                     if (actions.onSave(draft)) focus.clearFocus() else error = copy.saveFailed
@@ -104,7 +106,10 @@ private fun MealFormIdentity(draft: MealDraft, copy: MealFormCopy, onChanged: (M
             Column(Modifier.weight(1f)) { MealFormPortion(draft, copy, onChanged) }
         }
     }
-    DiaryBody(copy.portionDescription, secondary = true)
+    DiaryBody(
+        if (draft.catalogBinding == null) copy.portionDescription else copy.selectedProductPortionDescription,
+        secondary = true,
+    )
 }
 
 @Composable
