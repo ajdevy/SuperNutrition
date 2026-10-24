@@ -1,5 +1,39 @@
 # Deferred owner decisions
 
+## D-07 — retain the local meal diary and profile name until user deletion
+
+Decided on: 2026-10-24
+Decided by: human user in the current Codex chat (direct product-owner instruction)
+Channel: Codex chat 01a16557-276b-7002-b45e-4a79f11f1c89, reply to call_78f14ed32d134919be8322b05ff5c3f5
+
+The user explicitly approved: "Да, хранить локально до удаления пользователем".
+Persist saved meal records and the editable profile name in app-private local
+storage across app launches, until the user deletes them. Deletion and edits
+must survive restart; a failed write must not be reported as saved. Do not
+persist raw photos, inference attempts, remote-consent receipts or diagnostics
+under this decision. Do not introduce server sync or cloud backup of these
+records. This is the human's direct approval; it is not an implementer-authored
+GitHub ratification and does not decide other deferred retention questions.
+
+## D-08 — approve the pinned USDA SR Legacy package for explicit MVP nutrition
+
+Decided on: 2026-10-24
+Decided by: human user in the current Codex chat (direct product-owner instruction)
+Channel: Codex chat 01a16557-276b-7002-b45e-4a79f11f1c89, reply to call_3e2731770fe64013b077614752e59d8b
+
+The user explicitly approved: "Да, подключить USDA по этим правилам" after
+being shown USDA FoodData Central SR Legacy (2018-04, CC0), US catalog coverage,
+explicit product selection and weight, and unknown values for absent nutrients.
+Adopt the concrete proposal in
+`_bmad-output/implementation-artifacts/mvp-catalog-proposal-2026-10-24.md`:
+preserve namespaced canonical IDs and reproducible, integrity-checked package
+provenance; show product/preparation and source before confirmation; require
+grams and never infer ingredient distribution from whole-meal weight. Missing
+values remain unknown, including in totals; unsupported meals remain identity
+only. Only documented catalog-owned conversions are allowed. This approval
+does not select a privacy jurisdiction, activate remote processing, settle
+G-1/G-3/G-4/G-5 or authorize public accuracy claims.
+
 ## D-06 — publish factual app legal notices and expose them in Profile
 
 Decided on: 2026-10-22

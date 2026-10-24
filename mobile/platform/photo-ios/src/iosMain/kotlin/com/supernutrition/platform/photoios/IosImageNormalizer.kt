@@ -112,7 +112,7 @@ class IosNormalizedPhoto(val input: NormalizedPhotoInput, val preview: UIImage)
 
 /** Uses the platform crypto implementation instead of maintaining SHA-256 here. */
 @OptIn(ExperimentalForeignApi::class)
-internal fun iosSha256(bytes: ByteArray): String {
+fun iosSha256(bytes: ByteArray): String {
     val digest = ByteArray(SHA256_DIGEST_LENGTH)
     digest.usePinned { output ->
         if (bytes.isEmpty()) {

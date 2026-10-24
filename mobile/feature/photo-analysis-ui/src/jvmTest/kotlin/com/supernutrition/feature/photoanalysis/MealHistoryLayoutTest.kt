@@ -45,7 +45,7 @@ class MealHistoryLayoutTest {
         val meals = mealHistoryDesignFixture()
         setContent {
             Box(Modifier.fillMaxSize().background(ProfileBackground).padding(top = 44.dp, bottom = 34.dp)) {
-                MealHistoryScreen(meals, {}, referenceDay = 20747)
+                MealHistoryScreen(meals, {}, presentation = MealHistoryPresentation(referenceDay = 20747))
             }
         }
         waitUntil(timeoutMillis = 5_000) { onNodeWithText("Meal history").hasLoadedHistoryFont() }
@@ -66,7 +66,7 @@ class MealHistoryLayoutTest {
         onNodeWithText("Oatmeal with apple").assertIsDisplayed()
         writeHistoryScreenshot("meal-history-375x812", captureToImage().asSkiaBitmap())
         onNodeWithTag(UiAutomationIds.mealHistoryRow(0).value).performClick()
-        onNodeWithTag(UiAutomationIds.MEAL_HISTORY_SUMMARY.value).assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.MEAL_DETAILS_SCREEN.value).assertIsDisplayed()
         onNodeWithText(MealHistoryCopy().photoUnavailable).assertDoesNotExist()
     }
 
@@ -75,7 +75,13 @@ class MealHistoryLayoutTest {
         size = Size(375f, 812f),
         density = Density(1f),
     ) {
-        setContent { MealHistoryScreen(mealHistoryDesignFixture(), {}, referenceDay = 20747) }
+        setContent {
+            MealHistoryScreen(
+                mealHistoryDesignFixture(),
+                {},
+                presentation = MealHistoryPresentation(referenceDay = 20747),
+            )
+        }
         waitUntil(timeoutMillis = 5_000) { onNodeWithText("Meal history").hasLoadedHistoryFont() }
         waitForIdle()
         val search = onNodeWithTag(UiAutomationIds.MEAL_HISTORY_SEARCH.value)
@@ -94,7 +100,7 @@ class MealHistoryLayoutTest {
         val meals = mealHistoryDesignFixture()
         setContent {
             Box(Modifier.fillMaxSize().background(ProfileBackground).padding(top = 24.dp, bottom = 24.dp)) {
-                MealHistoryScreen(meals, {}, referenceDay = 20747)
+                MealHistoryScreen(meals, {}, presentation = MealHistoryPresentation(referenceDay = 20747))
             }
         }
         waitUntil(timeoutMillis = 5_000) { onNodeWithText("Meal history").hasLoadedHistoryFont() }
@@ -110,7 +116,7 @@ class MealHistoryLayoutTest {
         }
         writeHistoryScreenshot("meal-history-360x780-200-bottom", captureToImage().asSkiaBitmap())
         onNodeWithTag(UiAutomationIds.mealHistoryRow(4).value).performClick()
-        onNodeWithTag(UiAutomationIds.MEAL_HISTORY_SUMMARY.value).assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.MEAL_DETAILS_SCREEN.value).assertIsDisplayed()
     }
 
     @Test
@@ -118,7 +124,13 @@ class MealHistoryLayoutTest {
         size = Size(375f, 812f),
         density = Density(1f),
     ) {
-        setContent { MealHistoryScreen(mealHistoryDesignFixture(), {}, referenceDay = 20747) }
+        setContent {
+            MealHistoryScreen(
+                mealHistoryDesignFixture(),
+                {},
+                presentation = MealHistoryPresentation(referenceDay = 20747),
+            )
+        }
         val surfaces = listOf(
             "Today · Oct 21" to ProfileBackground,
             "13:15" to Color.White,

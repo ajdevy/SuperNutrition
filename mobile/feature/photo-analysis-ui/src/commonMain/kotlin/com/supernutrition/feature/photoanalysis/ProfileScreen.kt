@@ -85,18 +85,24 @@ internal fun ControlledProfileScreen(
                 if (flowState.nameEditing) flowState.cancelNameEdit() else actions.onBackRequested()
             }
             Spacer(Modifier.height(11.dp))
+            if (actions.namePersistence?.loadFailed == true) ProfileStorageMessage(copy.nameLoadFailed)
             ProfileIdentity(
                 displayName,
                 copy,
                 onEditRequested = flowState::beginNameEdit,
                 editor = if (flowState.nameEditing) {
-                    { ProfileNameEditor(displayName, copy, actions.onNameChanged, flowState::cancelNameEdit) }
+                    { ProfileNameEditor(displayName, copy, actions::saveName, flowState::cancelNameEdit) }
                 } else {
                     null
                 },
             )
             Spacer(Modifier.height(22.dp))
-            ProfileHistoryCard(confirmedMealHistory(confirmedFoods).size, copy, actions.onHistoryRequested)
+            if (identity.diaryLoadFailed) ProfileStorageMessage(copy.diaryLoadFailed)
+            ProfileHistoryCard(
+                if (identity.diaryLoadFailed) null else mergedMealHistory(confirmedFoods, identity.savedMeals).size,
+                copy,
+                actions.onHistoryRequested,
+            )
             Spacer(Modifier.height(14.dp))
             ProfileSettings(
                 copy = copy,
@@ -110,15 +116,10 @@ internal fun ControlledProfileScreen(
             )
         }
     }
-    ProfileDialogs(
-        dialog,
-        displayName,
-        copy,
-        ProfileDialogActions(actions.onNameChanged) { dialog = null },
-    )
+    ProfileDialogs(dialog, copy) { dialog = null }
 }
 
-internal enum class ProfileDialog { NAME, PRIVACY, TERMS, CRASH_REPORTS }
+internal enum class ProfileDialog { PRIVACY, TERMS, CRASH_REPORTS }
 
 private fun openProfileDocument(action: (() -> Unit)?, onUnavailable: () -> Unit) {
     if (action == null) {

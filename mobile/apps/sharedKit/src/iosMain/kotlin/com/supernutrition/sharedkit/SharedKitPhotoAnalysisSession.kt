@@ -29,6 +29,7 @@ import com.supernutrition.domain.photoanalysis.PhotoSessionStore
 import com.supernutrition.domain.photoanalysis.RecoveryReason
 import com.supernutrition.domain.photoanalysis.RequestId
 import com.supernutrition.feature.photoanalysis.IosRetainedPhotoPreview
+import com.supernutrition.feature.photoanalysis.LocalUserData
 import com.supernutrition.feature.photoanalysis.PhotoAnalysisAnalysisLauncher
 import com.supernutrition.feature.photoanalysis.PhotoAnalysisFeature
 import com.supernutrition.feature.photoanalysis.PhotoAnalysisPresenterCopy
@@ -39,16 +40,21 @@ import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.usePinned
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
 import platform.Foundation.NSData
+import platform.Foundation.NSThread
 import platform.Foundation.create
 
 /** Shared Apple session facade; only the renderer differs between Apple targets. */
 @Suppress("TooManyFunctions")
-public class SharedKitPhotoAnalysisSession private constructor(
+public class SharedKitPhotoAnalysisSession internal constructor(
     attemptId: String,
     public val presenterCopy: PhotoAnalysisPresenterCopy = localizedPhotoAnalysisCopy(),
+    internal val localData: LocalUserData,
 ) {
-    public constructor(attemptId: String) : this(attemptId, localizedPhotoAnalysisCopy())
+    public constructor(attemptId: String) : this(attemptId, localizedPhotoAnalysisCopy(), LocalUserData())
 
     private val leases = PhotoLeaseStore()
     private val sessions = PhotoSessionStore()
@@ -56,8 +62,23 @@ public class SharedKitPhotoAnalysisSession private constructor(
         attemptId = AttemptId(attemptId),
         leases = leases,
         sessions = sessions,
+        mealDiary = localData.mealDiary,
     )
     private val analysisLauncher: PhotoAnalysisAnalysisLauncher = PhotoAnalysisAnalysisLauncher.None
+    private val catalogScope = MainScope()
+
+    /** Call on Main after the root host has rendered; repeated starts retain the same source owner. */
+    public fun startCatalog() {
+        requireCatalogMainThread()
+        localData.catalogSession.start(catalogScope, Dispatchers.Default)
+    }
+
+    /** Root-owner disposal only. Closing a capture modal or cancelling a photo flow keeps the catalog alive. */
+    public fun closeCatalog() {
+        requireCatalogMainThread()
+        localData.catalogSession.close()
+        catalogScope.cancel()
+    }
 
     /** Native display copy retained only while the current photo flow needs it. */
     public var retainedPhoto: IosRetainedPhotoPreview? = null
@@ -312,6 +333,11 @@ public class SharedKitPhotoAnalysisSession private constructor(
         const val IOS_POC_DISH_CALIBRATION_VERSION = "softmax-proxy-v1"
         const val IOS_POC_COMPONENT_CALIBRATION_VERSION = "uncalibrated-proxy-v1"
     }
+}
+
+@OptIn(ExperimentalForeignApi::class)
+private fun requireCatalogMainThread() {
+    check(NSThread.isMainThread) { "Catalog lifetime operations must run on Main" }
 }
 
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)

@@ -73,21 +73,7 @@ internal fun PhotoAnalysisCameraScreen(
                 .semantics { stateDescription = model.statusLabel },
         ) {
             // The stage owns both layers so it cannot occlude native access-action semantics.
-            Box(
-                modifier = Modifier.fillMaxSize().automationId(surface.automationIds.retainedPhoto),
-                contentAlignment = Alignment.Center,
-            ) {
-                if (retained) {
-                    val ratio = surface.retainedPhotoAspectRatio?.takeIf { it.isFinite() && it > 0f }
-                    val photoModifier = if (ratio != null) Modifier.fitRetainedPhoto(ratio) else Modifier.fillMaxSize()
-                    // Native renderers Fit the source within this bounded, pixel-rounded frame.
-                    Box(photoModifier.clipToBounds()) {
-                        surface.retainedPhoto.invoke()
-                    }
-                } else if (model.state != PhotoAnalysisPresenterState.BACKGROUNDED) {
-                    surface.liveCamera?.invoke()
-                }
-            }
+            CameraPhotoPreview(model.state, surface, retained)
             when {
                 reviewing -> PhotoAnalysisMealReview(model, onAction, reviewSurface)
                 model.state == PhotoAnalysisPresenterState.CAPTURE -> CameraControls(onAction, surface)
@@ -102,6 +88,37 @@ internal fun PhotoAnalysisCameraScreen(
                 .padding(start = 16.dp, top = if (reviewing) ReviewCloseTopPadding else 34.2.dp),
             onClick = surface.onCloseRequested,
         )
+        surface.onTextMealSaved?.let {
+            CaptureTextEntry(
+                it,
+                surface.textEntryCopy,
+                controlsVisible = !reviewing && model.state != PhotoAnalysisPresenterState.BACKGROUNDED,
+                catalog = surface.catalog,
+            )
+        }
+    }
+}
+
+@Composable
+private fun CameraPhotoPreview(
+    state: PhotoAnalysisPresenterState,
+    surface: PhotoAnalysisCaptureSurface,
+    retained: Boolean,
+) {
+    Box(
+        modifier = Modifier.fillMaxSize().automationId(surface.automationIds.retainedPhoto),
+        contentAlignment = Alignment.Center,
+    ) {
+        if (retained) {
+            val ratio = surface.retainedPhotoAspectRatio?.takeIf { it.isFinite() && it > 0f }
+            val photoModifier = if (ratio != null) Modifier.fitRetainedPhoto(ratio) else Modifier.fillMaxSize()
+            // Native renderers Fit the source within this bounded, pixel-rounded frame.
+            Box(photoModifier.clipToBounds()) {
+                surface.retainedPhoto?.invoke()
+            }
+        } else if (state != PhotoAnalysisPresenterState.BACKGROUNDED) {
+            surface.liveCamera?.invoke()
+        }
     }
 }
 
@@ -196,7 +213,8 @@ private fun CameraProgressAndRecovery(
         val headerHeight = minOf(maxHeight, 88.dp)
         Column(
             modifier = Modifier.fillMaxWidth().padding(top = headerHeight).verticalScroll(rememberScrollState())
-                .heightIn(min = maxHeight - headerHeight).padding(32.dp),
+                .heightIn(min = maxHeight - headerHeight).padding(32.dp)
+                .padding(bottom = if (surface.onTextMealSaved != null) 130.dp else 0.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
         ) {

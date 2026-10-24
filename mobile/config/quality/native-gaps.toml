@@ -36,7 +36,7 @@ evidence_task = "connectedUiAcceptanceDebugAndroidTest"
 status = "success"
 max_age_days = 30
 required_capability = "physical-android-device"
-invalidated_by = ["mobile/platform/photo-android/**", "mobile/feature/photo-analysis/**"]
+invalidated_by = ["mobile/platform/photo-android/**", "mobile/feature/photo-analysis/**", "mobile/feature/photo-analysis-ui/**"]
 
 [[gap]]
 id = "photo-android-normalization"
@@ -56,7 +56,7 @@ evidence_task = "connectedUiAcceptanceDebugAndroidTest"
 status = "success"
 max_age_days = 30
 required_capability = "physical-android-device"
-invalidated_by = ["mobile/feature/photo-analysis/**", "mobile/domain/photo-analysis/**"]
+invalidated_by = ["mobile/feature/photo-analysis/**", "mobile/domain/photo-analysis/**", "mobile/feature/photo-analysis-ui/**"]
 
 [[gap]]
 id = "photo-android-accessibility"
@@ -66,7 +66,7 @@ evidence_task = "connectedUiAcceptanceDebugAndroidTest"
 status = "success"
 max_age_days = 30
 required_capability = "physical-android-device"
-invalidated_by = ["mobile/apps/androidApp/**", "mobile/core/ui/**"]
+invalidated_by = ["mobile/apps/androidApp/**", "mobile/core/ui/**", "mobile/feature/photo-analysis-ui/**"]
 
 [[gap]]
 id = "photo-android-inference-poc"
@@ -90,7 +90,7 @@ temporary_lane = "docs/decisions/2026-07-27-intel-ios-x64-acceptance-lane.md"
 compatibility_task = "iosX64Test"
 compatibility_only = true
 required_capability = "physical-ios-device"
-invalidated_by = ["mobile/platform/photo-ios/**", "mobile/apps/iosApp/**"]
+invalidated_by = ["mobile/platform/photo-ios/**", "mobile/apps/iosApp/**", "mobile/feature/photo-analysis-ui/**"]
 
 [[gap]]
 id = "photo-ios-normalization"
@@ -118,7 +118,7 @@ temporary_lane = "docs/decisions/2026-07-27-intel-ios-x64-acceptance-lane.md"
 compatibility_task = "xcodebuild-test-iosX64"
 compatibility_only = true
 required_capability = "physical-ios-device"
-invalidated_by = ["mobile/feature/photo-analysis/**", "mobile/apps/iosApp/**"]
+invalidated_by = ["mobile/feature/photo-analysis/**", "mobile/apps/iosApp/**", "mobile/feature/photo-analysis-ui/**"]
 
 [[gap]]
 id = "photo-ios-accessibility"
@@ -132,4 +132,4 @@ temporary_lane = "docs/decisions/2026-07-27-intel-ios-x64-acceptance-lane.md"
 compatibility_task = "xcodebuild-test-iosX64"
 compatibility_only = true
 required_capability = "physical-ios-device"
-invalidated_by = ["mobile/apps/iosApp/**", "mobile/core/ui/**"]
+invalidated_by = ["mobile/apps/iosApp/**", "mobile/core/ui/**", "mobile/feature/photo-analysis-ui/**"]

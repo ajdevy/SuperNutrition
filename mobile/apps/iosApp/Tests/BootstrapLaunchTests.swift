@@ -182,6 +182,47 @@ final class BootstrapLaunchTests: XCTestCase {
         XCTAssertTrue(homeSurfaceIsReady(in: app, timeout: 10))
     }
 
+    func testTextMealSaveHistoryCorrectionAndDeletion() throws {
+        #if arch(x86_64)
+        throw XCTSkip("Compose 1.11.1 has no Intel iOS renderer; execute on arm64")
+        #else
+        let app = XCUIApplication()
+        app.launch()
+        XCTAssertTrue(captureSurfaceIsReady(in: app, timeout: 15))
+        tapVisible(app.buttons[SharedKitAutomationIds.shared.captureText], in: app)
+        let name = app.descendants(matching: .any)[SharedKitAutomationIds.shared.mealFormName]
+        XCTAssertTrue(name.waitForExistence(timeout: 10))
+        name.tap()
+        name.typeText("Apple oatmeal")
+        tapVisible(app.buttons[SharedKitAutomationIds.shared.mealFormSave], in: app)
+        XCTAssertTrue(homeSurfaceIsReady(in: app, timeout: 15))
+        app.buttons[SharedKitAutomationIds.shared.homeProfile].tap()
+        tapVisible(app.buttons[SharedKitAutomationIds.shared.profileHistory], in: app)
+        tapVisible(app.buttons[SharedKitAutomationIds.shared.mealHistoryRow(index: 0)], in: app)
+        let title = app.staticTexts[SharedKitAutomationIds.shared.mealDetailsTitle]
+        XCTAssertTrue(title.waitForExistence(timeout: 10))
+        XCTAssertEqual(title.label, "Apple oatmeal")
+        tapVisible(app.buttons[SharedKitAutomationIds.shared.mealDetailsEdit], in: app)
+        XCTAssertTrue(name.waitForExistence(timeout: 10))
+        name.coordinate(withNormalizedOffset: CGVector(dx: 0.95, dy: 0.5)).tap()
+        name.typeText(" corrected")
+        tapVisible(app.buttons[SharedKitAutomationIds.shared.mealFormSave], in: app)
+        XCTAssertTrue(title.waitForExistence(timeout: 10))
+        XCTAssertEqual(title.label, "Apple oatmeal corrected")
+        tapVisible(app.buttons[SharedKitAutomationIds.shared.mealDetailsDelete], in: app)
+        tapVisible(app.buttons[SharedKitAutomationIds.shared.mealDetailsDeleteConfirm], in: app)
+        XCTAssertTrue(app.descendants(matching: .any)[SharedKitAutomationIds.shared.mealHistoryEmpty]
+            .waitForExistence(timeout: 10))
+        #endif
+    }
+
+    private func tapVisible(_ element: XCUIElement, in app: XCUIApplication) {
+        XCTAssertTrue(element.waitForExistence(timeout: 10))
+        for _ in 0..<8 where !element.isHittable { app.swipeUp() }
+        XCTAssertTrue(element.isHittable)
+        element.tap()
+    }
+
     private func nativeCameraControlIsVisible(in app: XCUIApplication) -> Bool {
         let capture = app.descendants(matching: .any)[SharedKitAutomationIds.shared.captureNative]
         return capture.waitForExistence(timeout: 10)
@@ -218,7 +259,7 @@ final class BootstrapLaunchTests: XCTestCase {
     }
 
     private func homeSurfaceIsReady(in app: XCUIApplication, timeout: TimeInterval) -> Bool {
-        let title = app.staticTexts[SharedKitAutomationIds.shared.homeTitle]
+        let title = app.descendants(matching: .any)[SharedKitAutomationIds.shared.homeTitle]
         let addFood = app.buttons[SharedKitAutomationIds.shared.homeAddFood]
         return title.waitForExistence(timeout: timeout) && addFood.waitForExistence(timeout: timeout)
     }

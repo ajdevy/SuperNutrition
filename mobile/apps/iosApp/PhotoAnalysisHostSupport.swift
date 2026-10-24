@@ -35,11 +35,37 @@ struct PhotoAnalysisAppRootView: View {
         self.session = session
         let rewards = SharedKitRewardsSession()
         _rewardsSession = State(initialValue: rewards)
-        _profileSession = State(initialValue: SharedKitProfileSession(rewardsSession: rewards))
+        _profileSession = State(initialValue: SharedKitProfileSession(rewardsSession: rewards, photoAnalysisSession: session))
         _cameraAction = StateObject(wrappedValue: PhotoAnalysisCameraAction())
     }
 
     var body: some View {
+        #if arch(x86_64)
+        intelBody
+        #else
+        MainComposeHost(
+            session: session,
+            rewardsSession: rewardsSession,
+            onCaptureRequested: showCaptureSurface,
+            onProfileRequested: { showingProfile = true },
+        )
+        .ignoresSafeArea()
+        .fullScreenCover(isPresented: $showingCapture) {
+            PhotoAnalysisComposeLifecycleHost(
+                session: session,
+                cameraAction: cameraAction,
+                onCloseRequested: closeCaptureSurface,
+            )
+            .ignoresSafeArea()
+        }
+        .fullScreenCover(isPresented: $showingProfile) {
+            ProfileComposeHost(session: profileSession, onCloseRequested: { showingProfile = false })
+        }
+        #endif
+    }
+
+    #if arch(x86_64)
+    private var intelBody: some View {
         Group {
             if showingProfile {
                 Group {
@@ -113,7 +139,14 @@ struct PhotoAnalysisAppRootView: View {
         }
     }
 
+    #endif
+
+    private func closeCaptureSurface() {
+        showingCapture = false
+    }
+
     private func showCaptureSurface() {
+        session.scanAgain()
         selectedTab = 0
         showingCapture = true
     }
@@ -327,6 +360,24 @@ private struct PhotoAnalysisNavigationPillShape: Shape {
 }
 
 #if !arch(x86_64)
+private struct MainComposeHost: UIViewControllerRepresentable {
+    let session: SharedKitPhotoAnalysisSession
+    let rewardsSession: SharedKitRewardsSession
+    let onCaptureRequested: () -> Void
+    let onProfileRequested: () -> Void
+
+    func makeUIViewController(context: Context) -> UIViewController {
+        SharedKitMain.shared.viewController(
+            session: session,
+            rewardsSession: rewardsSession,
+            onCaptureRequested: onCaptureRequested,
+            onProfileRequested: onProfileRequested,
+        )
+    }
+
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+}
+
 struct RewardsComposeHost: UIViewControllerRepresentable {
     let session: SharedKitRewardsSession
 
@@ -461,8 +512,10 @@ struct PhotoAnalysisComposeHost: UIViewControllerRepresentable {
         }
 
         func closeCapture() {
+            presentation.session.cancel()
             onCloseRequested()
         }
+
     }
 }
 

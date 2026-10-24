@@ -150,6 +150,7 @@ SOURCE_URL = "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_f
 # recorded rather than picking whichever looks tidier.
 SOURCE_RELEASE = "2018-04"
 SOURCE_PUBLICATION_DATE = "2019-04-01"
+SOURCE_SHA256 = "b80817294b8850530aaedf2e515c02593b1824f763a0ff356e5c2081643e6fd0"
 
 # Verbatim from https://fdc.nal.usda.gov/api-guide (section "Licensing"),
 # retrieved 2026-08-02.
@@ -240,7 +241,9 @@ def sha256_of(path: Path) -> str:
     return digest.hexdigest()
 
 
-def load_tables(source: Path) -> "tuple[dict[str, list[dict[str, str]]], str]":
+def load_tables(
+    source: Path, expected_digest: "str | None" = SOURCE_SHA256
+) -> "tuple[dict[str, list[dict[str, str]]], str]":
     """Read the required CSV tables from a zip archive or an extracted directory.
 
     Returns the tables and the sha256 of the archive, or "" when reading a
@@ -248,9 +251,14 @@ def load_tables(source: Path) -> "tuple[dict[str, list[dict[str, str]]], str]":
     provenance theatre).
     """
     if source.is_dir():
+        if expected_digest is not None:
+            raise GeneratorError("Production imports require the pinned archive, not an extracted directory")
         return _load_from_directory(source), ""
     if zipfile.is_zipfile(source):
-        return _load_from_zip(source), sha256_of(source)
+        digest = sha256_of(source)
+        if expected_digest is not None and digest != expected_digest:
+            raise GeneratorError(f"SR Legacy archive SHA-256 mismatch: expected {expected_digest}, got {digest}")
+        return _load_from_zip(source), digest
     raise GeneratorError(f"--input must be the SR Legacy zip or an extracted directory, got: {source}")
 
 
@@ -531,7 +539,7 @@ def resolve_generated_on(explicit: "str | None") -> str:
 def main(argv: "list[str] | None" = None) -> int:
     repo_root = Path(__file__).resolve().parent.parent
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--input", type=Path, help="SR Legacy CSV zip, or a directory of the extracted CSVs")
+    parser.add_argument("--input", type=Path, help="the approved, SHA-256-pinned SR Legacy CSV zip")
     parser.add_argument("--download", action="store_true", help="fetch the archive into --cache if absent")
     parser.add_argument(
         "--cache",
@@ -545,7 +553,7 @@ def main(argv: "list[str] | None" = None) -> int:
     args = parser.parse_args(argv)
 
     if not args.input and not args.download:
-        parser.error("pass --input <zip|dir>, or --download to fetch the archive")
+        parser.error("pass --input <zip>, or --download to fetch the archive")
 
     try:
         source = args.input if args.input else download_archive(args.cache)

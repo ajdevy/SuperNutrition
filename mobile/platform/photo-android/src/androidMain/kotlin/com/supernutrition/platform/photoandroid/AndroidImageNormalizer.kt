@@ -12,7 +12,6 @@ import com.supernutrition.domain.photoanalysis.PhotoPreparationException
 import com.supernutrition.domain.photoanalysis.PhotoRef
 import com.supernutrition.domain.photoanalysis.RawPhoto
 import java.io.ByteArrayOutputStream
-import java.security.MessageDigest
 
 /**
  * Decodes and re-encodes one image so EXIF/GPS/non-essential metadata cannot
@@ -21,7 +20,7 @@ import java.security.MessageDigest
  */
 class AndroidImageNormalizer(private val maxDimension: Int = PhotoNormalizationDefaults.MAX_DIMENSION) :
     AndroidPhotoNormalizerPort {
-    private val common = PhotoInputNormalizer(digest = ::sha256)
+    private val common = PhotoInputNormalizer(digest = ::androidSha256)
 
     @Suppress("ThrowsCount")
     override fun normalize(
@@ -104,12 +103,6 @@ class AndroidImageNormalizer(private val maxDimension: Int = PhotoNormalizationD
 
     private fun decodedPixelCount(width: Int, height: Int, sample: Int): Long =
         ((width.toLong() + sample - 1L) / sample) * ((height.toLong() + sample - 1L) / sample)
-
-    private fun sha256(bytes: ByteArray): String = MessageDigest.getInstance("SHA-256")
-        .digest(bytes)
-        .joinToString(separator = "") { byte ->
-            byte.toInt().and(0xff).toString(16).padStart(2, '0')
-        }
 
     private companion object {
         const val MAX_DECODE_PIXELS = 16_777_216L
