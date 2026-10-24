@@ -17,7 +17,7 @@ class MealHistoryComposeTest {
 
     @Test
     fun `empty history has a dedicated screen and returns to profile`() = runComposeUiTest {
-        setContent { ProfileFlow(rememberProfileFlowState(), "Alex", emptyList(), ProfileScreenActions({}, {})) }
+        setContent { ProfileFlow(rememberProfileFlowState(), "Alex", ProfileScreenActions({}, {})) }
         onNodeWithTag(UiAutomationIds.PROFILE_HISTORY.value).performClick()
         onNodeWithTag(UiAutomationIds.MEAL_HISTORY_SEARCH.value).assertIsDisplayed()
         onNodeWithTag(UiAutomationIds.MEAL_HISTORY_EMPTY.value).assertIsDisplayed()
@@ -36,7 +36,7 @@ class MealHistoryComposeTest {
                 profileConfirmedFood("3", "b", "Lentils"),
             ),
         )
-        setContent { MealHistoryScreen(meals, {}, referenceDay = 10) }
+        setContent { MealHistoryScreen(meals, {}, presentation = MealHistoryPresentation(referenceDay = 10)) }
         onNodeWithTag(UiAutomationIds.MEAL_HISTORY_SEARCH.value).performTextReplacement("  EGG   TOAST  ")
         onNodeWithText("Egg").assertIsDisplayed()
         onNodeWithText("Lentils").assertDoesNotExist()
@@ -48,18 +48,18 @@ class MealHistoryComposeTest {
     }
 
     @Test
-    fun `card opens a read only summary and does not invent time photo or nutrients`() = runComposeUiTest {
+    fun `card opens dedicated grounded details without invented time or photo`() = runComposeUiTest {
         val meals = confirmedMealHistory(
             listOf(profileConfirmedFood("1", "a", "Egg"), profileConfirmedFood("2", "a", "Toast")),
         )
-        setContent { MealHistoryScreen(meals, {}, referenceDay = 10) }
+        setContent { MealHistoryScreen(meals, {}, presentation = MealHistoryPresentation(referenceDay = 10)) }
         onNodeWithTag(UiAutomationIds.mealHistoryRow(0).value).performClick()
-        onNodeWithTag(UiAutomationIds.MEAL_HISTORY_SUMMARY.value).assertIsDisplayed()
-        onNodeWithText(copy.confirmedFoods).assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.MEAL_DETAILS_SCREEN.value).assertIsDisplayed()
+        onNodeWithTag(UiAutomationIds.MEAL_DETAILS_TITLE.value).assertIsDisplayed()
         onNodeWithText(copy.photoUnavailable).assertIsDisplayed()
         onNodeWithText("100 kcal").assertDoesNotExist()
-        onNodeWithText(copy.done).performClick()
-        onNodeWithTag(UiAutomationIds.MEAL_HISTORY_SUMMARY.value).assertDoesNotExist()
+        onNodeWithTag(UiAutomationIds.MEAL_DETAILS_BACK.value).performClick()
+        onNodeWithTag(UiAutomationIds.MEAL_DETAILS_SCREEN.value).assertDoesNotExist()
         assertTrue(meals.single().metadata.timeLabel == null)
     }
 

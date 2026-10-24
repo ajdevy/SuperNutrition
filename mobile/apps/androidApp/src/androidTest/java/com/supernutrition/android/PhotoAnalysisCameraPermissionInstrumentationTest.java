@@ -297,19 +297,20 @@ public final class PhotoAnalysisCameraPermissionInstrumentationTest {
     }
 
     private static PhotoAnalysisFeature featureFixture() {
-        // Invoke Kotlin's existing default-argument constructor without adding
-        // the feature's internal nutrition/lifecycle dependencies to this Java test.
+        // Keep the four explicit fixture dependencies; let Kotlin supply any
+        // trailing optional references without coupling this helper to its arity.
         for (Constructor<?> constructor : PhotoAnalysisFeature.class.getConstructors()) {
-            if (constructor.getParameterTypes().length == 6) {
+            Class<?>[] parameterTypes = constructor.getParameterTypes();
+            if (parameterTypes.length >= 6 && parameterTypes[parameterTypes.length - 1].getName()
+                    .equals("kotlin.jvm.internal.DefaultConstructorMarker")) {
+                Object[] arguments = new Object[parameterTypes.length];
+                arguments[0] = new AttemptId("camera-permission-test");
+                arguments[1] = new PhotoLeaseStore();
+                arguments[2] = new PhotoSessionStore();
+                arguments[3] = SHARED_PRODUCTION_PARSER;
+                arguments[parameterTypes.length - 2] = -1 << 4;
                 try {
-                    return (PhotoAnalysisFeature) constructor.newInstance(
-                            new AttemptId("camera-permission-test"),
-                            new PhotoLeaseStore(),
-                            new PhotoSessionStore(),
-                            SHARED_PRODUCTION_PARSER,
-                            0,
-                            null
-                    );
+                    return (PhotoAnalysisFeature) constructor.newInstance(arguments);
                 } catch (ReflectiveOperationException error) {
                     throw new AssertionError("unable to create the permission feature fixture", error);
                 }

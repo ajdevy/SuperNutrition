@@ -120,6 +120,37 @@ object UiAutomationIds {
     val MEAL_HISTORY_EMPTY = UiAutomationId("meal_history_empty")
     val MEAL_HISTORY_NO_RESULTS = UiAutomationId("meal_history_no_results")
     val MEAL_HISTORY_SUMMARY = UiAutomationId("meal_history_summary")
+    val CAPTURE_TEXT = UiAutomationId("capture_text")
+    val CAPTURE_TEXT_HINT = UiAutomationId("capture_text_hint")
+    val MEAL_FORM_TITLE = UiAutomationId("meal_form_title")
+    val MEAL_FORM_NAME = UiAutomationId("meal_form_name")
+    val MEAL_FORM_PORTION = UiAutomationId("meal_form_portion")
+    val MEAL_FORM_INGREDIENTS = UiAutomationId("meal_form_ingredients")
+    val MEAL_FORM_NOTE = UiAutomationId("meal_form_note")
+    val MEAL_REVIEW_SAVE_ERROR = UiAutomationId("meal_review_save_error")
+    val MEAL_FORM_SAVE = UiAutomationId("meal_form_save")
+    val MEAL_FORM_CANCEL = UiAutomationId("meal_form_cancel")
+    val MEAL_FORM_ERROR = UiAutomationId("meal_form_error")
+    val MEAL_DETAILS_SCREEN = UiAutomationId("meal_details_screen")
+    val MEAL_DETAILS_TITLE = UiAutomationId("meal_details_title")
+    val MEAL_DETAILS_BACK = UiAutomationId("meal_details_back")
+    val MEAL_DETAILS_EDIT = UiAutomationId("meal_details_edit")
+    val MEAL_DETAILS_PORTION = UiAutomationId("meal_details_portion")
+    val MEAL_DETAILS_PER_100 = UiAutomationId("meal_details_per_100")
+    val MEAL_DETAILS_INGREDIENTS = UiAutomationId("meal_details_ingredients")
+    val MEAL_DETAILS_CARBS = UiAutomationId("meal_details_carbs")
+    val MEAL_DETAILS_FATS = UiAutomationId("meal_details_fats")
+    val MEAL_DETAILS_VITAMINS = UiAutomationId("meal_details_vitamins")
+    val MEAL_DETAILS_MINERALS = UiAutomationId("meal_details_minerals")
+    val MEAL_DETAILS_MORE = UiAutomationId("meal_details_more")
+    val MEAL_DETAILS_NUTRITION_UNKNOWN = UiAutomationId("meal_details_nutrition_unknown")
+    val MEAL_DETAILS_DELETE = UiAutomationId("meal_details_delete")
+    val MEAL_DETAILS_DELETE_CONFIRM = UiAutomationId("meal_details_delete_confirm")
+    val REWARD_DETAILS_TITLE = UiAutomationId("reward_details_title")
+    val REWARD_DETAILS_BACK = UiAutomationId("reward_details_back")
+    val REWARD_DETAILS_PROGRESS = UiAutomationId("reward_details_progress")
+    val REWARD_DETAILS_HOW = UiAutomationId("reward_details_how")
+    val REWARD_DETAILS_FOODS = UiAutomationId("reward_details_foods")
 
     fun mealHistoryRow(index: Int): UiAutomationId = UiAutomationId("meal_history_row_$index")
 
@@ -230,5 +261,36 @@ object UiAutomationIds {
         MEAL_HISTORY_EMPTY,
         MEAL_HISTORY_NO_RESULTS,
         MEAL_HISTORY_SUMMARY,
+        CAPTURE_TEXT,
+        CAPTURE_TEXT_HINT,
+        MEAL_FORM_TITLE,
+        MEAL_FORM_NAME,
+        MEAL_FORM_PORTION,
+        MEAL_FORM_INGREDIENTS,
+        MEAL_FORM_NOTE,
+        MEAL_REVIEW_SAVE_ERROR,
+        MEAL_FORM_SAVE,
+        MEAL_FORM_CANCEL,
+        MEAL_FORM_ERROR,
+        MEAL_DETAILS_SCREEN,
+        MEAL_DETAILS_TITLE,
+        MEAL_DETAILS_BACK,
+        MEAL_DETAILS_EDIT,
+        MEAL_DETAILS_PORTION,
+        MEAL_DETAILS_PER_100,
+        MEAL_DETAILS_INGREDIENTS,
+        MEAL_DETAILS_CARBS,
+        MEAL_DETAILS_FATS,
+        MEAL_DETAILS_VITAMINS,
+        MEAL_DETAILS_MINERALS,
+        MEAL_DETAILS_MORE,
+        MEAL_DETAILS_NUTRITION_UNKNOWN,
+        MEAL_DETAILS_DELETE,
+        MEAL_DETAILS_DELETE_CONFIRM,
+        REWARD_DETAILS_TITLE,
+        REWARD_DETAILS_BACK,
+        REWARD_DETAILS_PROGRESS,
+        REWARD_DETAILS_HOW,
+        REWARD_DETAILS_FOODS,
     )
 }

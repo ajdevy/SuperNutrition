@@ -96,7 +96,11 @@ internal fun ControlledProfileScreen(
                 },
             )
             Spacer(Modifier.height(22.dp))
-            ProfileHistoryCard(confirmedMealHistory(confirmedFoods).size, copy, actions.onHistoryRequested)
+            ProfileHistoryCard(
+                mergedMealHistory(confirmedFoods, identity.savedMeals).size,
+                copy,
+                actions.onHistoryRequested,
+            )
             Spacer(Modifier.height(14.dp))
             ProfileSettings(
                 copy = copy,

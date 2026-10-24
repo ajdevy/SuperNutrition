@@ -12,5 +12,6 @@ public object SharedKitProfile {
             displayName = session.displayNameFlow,
             onNameChanged = { session.updateDisplayName(it) },
             onCloseRequested = onCloseRequested,
+            mealDiary = session.mealDiary,
         )
 }

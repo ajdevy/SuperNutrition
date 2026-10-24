@@ -16,6 +16,8 @@ public object SharedKitAutomationIds {
         get() = UiAutomationIds.CAPTURE_SHUTTER.value
     public val captureImport: String
         get() = UiAutomationIds.CAPTURE_IMPORT.value
+    public val captureText: String
+        get() = UiAutomationIds.CAPTURE_TEXT.value
     public val captureClose: String
         get() = UiAutomationIds.CAPTURE_CLOSE.value
     public val captureOpenSettings: String
@@ -54,4 +56,32 @@ public object SharedKitAutomationIds {
         get() = UiAutomationIds.PROFILE_TITLE.value
     public val profileClose: String
         get() = UiAutomationIds.PROFILE_CLOSE.value
+    public val profileHistory: String
+        get() = UiAutomationIds.PROFILE_HISTORY.value
+    public val mealHistoryEmpty: String
+        get() = UiAutomationIds.MEAL_HISTORY_EMPTY.value
+    public val mealFormName: String
+        get() = UiAutomationIds.MEAL_FORM_NAME.value
+    public val mealFormPortion: String
+        get() = UiAutomationIds.MEAL_FORM_PORTION.value
+    public val mealFormIngredients: String
+        get() = UiAutomationIds.MEAL_FORM_INGREDIENTS.value
+    public val mealFormSave: String
+        get() = UiAutomationIds.MEAL_FORM_SAVE.value
+    public val mealFormCancel: String
+        get() = UiAutomationIds.MEAL_FORM_CANCEL.value
+    public val mealFormError: String
+        get() = UiAutomationIds.MEAL_FORM_ERROR.value
+    public val mealDetailsTitle: String
+        get() = UiAutomationIds.MEAL_DETAILS_TITLE.value
+    public val mealDetailsBack: String
+        get() = UiAutomationIds.MEAL_DETAILS_BACK.value
+    public val mealDetailsEdit: String
+        get() = UiAutomationIds.MEAL_DETAILS_EDIT.value
+    public val mealDetailsDelete: String
+        get() = UiAutomationIds.MEAL_DETAILS_DELETE.value
+    public val mealDetailsDeleteConfirm: String
+        get() = UiAutomationIds.MEAL_DETAILS_DELETE_CONFIRM.value
+
+    public fun mealHistoryRow(index: Int): String = UiAutomationIds.mealHistoryRow(index).value
 }

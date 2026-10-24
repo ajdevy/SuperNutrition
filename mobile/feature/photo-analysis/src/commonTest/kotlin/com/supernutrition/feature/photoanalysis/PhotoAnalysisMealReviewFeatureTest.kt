@@ -33,6 +33,160 @@ import kotlin.test.assertTrue
 
 class PhotoAnalysisMealReviewFeatureTest {
     @Test
+    fun `review source ingredient labels containing commas remain one explicit ingredient`() {
+        val feature = feature()
+        prepare(feature)
+        val request = RequestId("comma-label")
+        val evidence = draft().photoEvidence.first()
+        feature.dispatch(PhotoAnalysisEvent.AnalysisStarted(request))
+        feature.dispatch(
+            PhotoAnalysisEvent.ReviewEvidenceAvailable(
+                request,
+                draft().copy(
+                    photoEvidence = listOf(evidence.copy(candidate = evidence.candidate.copy(label = "Rice, white"))),
+                ),
+            ),
+        )
+        assertTrue(feature.saveReviewedMeal(confirmation().copy(photoEvidenceComponentIds = listOf("photo-1"))))
+        assertEquals(listOf("Rice, white"), feature.mealDiary.meals.value.single().ingredients)
+    }
+
+    @Test
+    fun `background and ignored replacement preserve the saved review identity while corrections replace it`() {
+        val feature = feature()
+        prepare(feature)
+        val review = confirmation().copy(note = "First note")
+        assertTrue(feature.saveReviewedMeal(review))
+        val original = feature.mealDiary.meals.value.single()
+        val photo = assertIs<PhotoAnalysisState.Ready>(feature.state).input.ref
+        feature.dispatch(PhotoAnalysisEvent.Backgrounded)
+        feature.dispatch(PhotoAnalysisEvent.ReplacePhoto(photo))
+        assertTrue(feature.saveReviewedMeal(review.copy(note = "Corrected note")))
+        val corrected = feature.mealDiary.meals.value.single()
+        assertEquals(original.id, corrected.id)
+        assertEquals("Corrected note", corrected.note)
+        feature.dispatch(PhotoAnalysisEvent.Restored)
+        assertTrue(feature.saveReviewedMeal(review.copy(note = "Final note")))
+        assertEquals(original.id, feature.mealDiary.meals.value.single().id)
+        assertEquals("Final note", feature.mealDiary.meals.value.single().note)
+    }
+
+    @Test
+    fun `a failed review correction retains the previous meal and retries without creating another`() {
+        var writable = true
+        val diary = MealDiary(
+            recordContext = { MealRecordContext("meal", 20_020, "13:15") },
+            store = object : MealDiaryStore {
+                override fun load(): String? = null
+                override fun save(encoded: String): Boolean = writable
+            },
+        )
+        val feature = PhotoAnalysisFeature(
+            AttemptId("correction"),
+            PhotoLeaseStore(),
+            PhotoSessionStore(),
+            mealDiary = diary,
+        )
+        prepare(feature)
+        assertTrue(feature.saveReviewedMeal(confirmation().copy(note = "Original")))
+        writable = false
+        assertFalse(feature.saveReviewedMeal(confirmation().copy(note = "Corrected")))
+        assertEquals("Original", diary.meals.value.single().note)
+        writable = true
+        assertTrue(feature.saveReviewedMeal(confirmation().copy(note = "Corrected")))
+        assertEquals("meal", diary.meals.value.single().id)
+        assertEquals("Corrected", diary.meals.value.single().note)
+    }
+
+    @Test
+    fun `an empty custom title has an honest default and excessive review data is not stored`() {
+        val feature = feature()
+        prepare(feature)
+        assertTrue(feature.saveReviewedMeal(confirmation().copy(dishLabel = " ", note = "Explicit note")))
+        assertEquals("Custom meal", feature.mealDiary.meals.value.single().name)
+        assertFalse(
+            feature.saveReviewedMeal(confirmation().copy(note = "x".repeat(MealDraftLimits.NOTE_MAX_LENGTH + 1))),
+        )
+        assertEquals("Explicit note", feature.mealDiary.meals.value.single().note)
+    }
+
+    @Test
+    fun `explicit review save creates one diary meal and survives leaving capture`() {
+        val feature = feature()
+        val reviewed = confirmation().copy(addedIngredientLabels = listOf(" Rice ", "Carrot"), note = "Less sauce")
+        assertFalse(feature.saveReviewedMeal(reviewed))
+        prepare(feature)
+        assertTrue(feature.saveReviewedMeal(reviewed))
+        assertTrue(feature.saveReviewedMeal(reviewed))
+        val saved = feature.mealDiary.meals.value.single()
+        assertEquals("Custom meal", saved.name)
+        assertEquals(listOf("Rice", "Carrot"), saved.ingredients)
+        assertEquals("Less sauce", saved.note)
+        assertEquals(SavedMealSource.PHOTO, saved.source)
+        feature.dispatch(PhotoAnalysisEvent.Cancel)
+        assertEquals(listOf(saved), feature.mealDiary.meals.value)
+        assertNull(feature.confirmedMealReview.value)
+    }
+
+    @Test
+    fun `saving photo evidence uses source labels and a new photo creates a separate meal`() {
+        val feature = feature()
+        prepare(feature)
+        val request = RequestId("review")
+        feature.dispatch(PhotoAnalysisEvent.AnalysisStarted(request))
+        feature.dispatch(PhotoAnalysisEvent.ReviewEvidenceAvailable(request, draft()))
+        assertTrue(
+            feature.saveReviewedMeal(
+                confirmation().copy(
+                    dishCandidateId = "dish-1",
+                    dishLabel = "Untrusted UI title",
+                    photoEvidenceComponentIds = listOf("photo-1"),
+                    addedIngredientLabels = listOf("Carrot"),
+                ),
+            ),
+        )
+        val first = feature.mealDiary.meals.value.single()
+        assertEquals("Salmon bowl", first.name)
+        assertEquals(listOf("Salmon", "Carrot"), first.ingredients)
+        feature.dispatch(PhotoAnalysisEvent.ScanAgain)
+        prepare(feature)
+        assertTrue(feature.saveReviewedMeal(confirmation().copy(note = "Second meal")))
+        assertEquals(2, feature.mealDiary.meals.value.size)
+    }
+
+    @Test
+    fun `a storage failure keeps the reviewed meal available for retry`() {
+        var writable = false
+        val diary = MealDiary(
+            recordContext = { MealRecordContext("meal", 20_020, "13:15") },
+            store = object : MealDiaryStore {
+                override fun load(): String? = null
+                override fun save(encoded: String): Boolean = writable
+            },
+        )
+        val feature = PhotoAnalysisFeature(AttemptId("save"), PhotoLeaseStore(), PhotoSessionStore(), mealDiary = diary)
+        prepare(feature)
+        val review = confirmation().copy(addedIngredientLabels = listOf("Rice"))
+        assertFalse(feature.saveReviewedMeal(review))
+        assertIs<PhotoAnalysisState.Ready>(feature.state)
+        assertTrue(diary.meals.value.isEmpty())
+        writable = true
+        assertTrue(feature.saveReviewedMeal(review))
+        assertEquals(1, diary.meals.value.size)
+    }
+
+    @Test
+    fun `text save is reachable without a photo and cannot create nutrient reward evidence`() {
+        val feature = feature()
+        assertFalse(feature.saveTextMeal(MealDraft()))
+        assertTrue(feature.saveTextMeal(MealDraft("Green bowl", "300", "Spinach, avocado, chickpeas")))
+        val saved = feature.mealDiary.meals.value.single()
+        assertEquals(SavedMealSource.TEXT, saved.source)
+        assertEquals(listOf("Spinach", "avocado", "chickpeas"), saved.ingredients)
+        assertEquals(PhotoAnalysisState.Capture, feature.state)
+    }
+
+    @Test
     fun `capture cannot confirm a draft and custom meal requires content`() {
         val feature = feature()
         assertFalse(feature.confirmMealReview(confirmation().copy(note = "Rice")))

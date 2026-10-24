@@ -30,7 +30,7 @@ class ProfileScreenComposeTest {
     fun `unknown identity and empty history never invent user data`() = runComposeUiTest {
         var backRequested = false
         setContent {
-            ProfileFlow(rememberProfileFlowState(), "", emptyList(), ProfileScreenActions({}, { backRequested = true }))
+            ProfileFlow(rememberProfileFlowState(), "", ProfileScreenActions({}, { backRequested = true }))
         }
 
         onNodeWithText("?").assertIsDisplayed()

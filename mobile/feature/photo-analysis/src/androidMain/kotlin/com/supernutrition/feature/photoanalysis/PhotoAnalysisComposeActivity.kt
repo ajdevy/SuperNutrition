@@ -28,6 +28,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
@@ -55,6 +56,7 @@ import com.supernutrition.platform.photoandroid.AndroidImageNormalizer
 import com.supernutrition.platform.photoandroid.AndroidPhotoAttemptIds
 import com.supernutrition.platform.photoandroid.AndroidPhotoBridge
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -71,6 +73,7 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
     private var analysisLauncher: PhotoAnalysisAnalysisLauncher? = null
     private var runtimeBinding: PhotoAnalysisAndroidRuntimeBinding? = null
     private var runtimeReady by mutableStateOf(false)
+    private var homeClock by mutableStateOf(currentAndroidHomeClock())
     private val inlineCameraController = PhotoAnalysisInlineCameraController()
     private var cameraPermissionState by mutableStateOf(CameraPermissionState.NOT_DETERMINED)
     private var cameraPermissionRequestInFlight by mutableStateOf(false)
@@ -387,19 +390,30 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         }
     }
 
-    private fun tabShell(rewardsModel: RewardsPresenterModel, confirmedFoods: List<ConfirmedConsumedFood>) =
-        PhotoAnalysisTabShell(
-            homeModel = homeScreenModel(),
-            rewardsModel = rewardsModel,
-            rewardsScreenCopy = rewardsScreenCopy(),
-            homeLabel = getString(R.string.capture_tab),
-            rewardsLabel = getString(R.string.rewards_tab),
-            cameraLabel = getString(R.string.capture_shutter),
-            confirmedFoods = confirmedFoods,
-            profileName = retainedState.profileDisplayName,
-            onProfileNameChanged = { retainedState.profileDisplayName = it },
-            onSystemBarAppearanceChanged = ::updateSystemBarAppearance,
-        )
+    private fun tabShell(
+        rewardsModel: RewardsPresenterModel,
+        confirmedFoods: List<ConfirmedConsumedFood>,
+        savedMeals: List<SavedMeal>,
+    ) = PhotoAnalysisTabShell(
+        homeModel = liveHomeScreenModel(
+            homeClock.label,
+            mergedMealHistory(confirmedFoods, savedMeals).count { it.id.localDay == homeClock.day },
+        ),
+        rewardsModel = rewardsModel,
+        rewardsScreenCopy = rewardsScreenCopy(),
+        homeLabel = getString(R.string.capture_tab),
+        rewardsLabel = getString(R.string.rewards_tab),
+        cameraLabel = getString(R.string.capture_shutter),
+        confirmedFoods = confirmedFoods,
+        savedMeals = savedMeals,
+        mealDiary = feature.mealDiary,
+        rewardsFeature = retainedState.rewardsFeature,
+        onCaptureClosed = { host.handleAction(PhotoAnalysisPresenterAction.Cancel) },
+        onCaptureOpened = { host.handleAction(PhotoAnalysisPresenterAction.ScanAgain) },
+        profileName = retainedState.profileDisplayName,
+        onProfileNameChanged = { retainedState.profileDisplayName = it },
+        onSystemBarAppearanceChanged = ::updateSystemBarAppearance,
+    )
 
     private fun renderContent() {
         setContent {
@@ -407,6 +421,9 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
             val manualIngredientState by feature.manualIngredientStateFlow.collectAsState()
             val rewardsSnapshot by retainedState.rewardsFeature.snapshot.collectAsState()
             val confirmedFoods by retainedState.rewardsFeature.confirmedFoods.collectAsState()
+            val savedMeals by feature.mealDiary.meals.collectAsState()
+            RefreshHomeClock { homeClock = currentAndroidHomeClock() }
+            LaunchedEffect(savedMeals, homeClock.day) { retainedState.rewardsFeature.updateRecordedMeals(savedMeals) }
             val openedProfileId = profileId
             Box(
                 modifier = Modifier
@@ -421,7 +438,11 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
                     )
                 } else {
                     PhotoAnalysisTabs(
-                        shell = tabShell(RewardsPresenterModel.from(rewardsSnapshot, rewardsCopy), confirmedFoods),
+                        shell = tabShell(
+                            RewardsPresenterModel.from(rewardsSnapshot, rewardsCopy),
+                            confirmedFoods,
+                            savedMeals,
+                        ),
                         captureContent = { onCloseRequested ->
                             PhotoAnalysisCaptureTab(
                                 state = PhotoAnalysisCaptureTabState(
@@ -453,70 +474,6 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         }
     }
 
-    private fun homeScreenModel() = HomeScreenModel(
-        title = getString(R.string.home_title),
-        greeting = getString(R.string.home_greeting),
-        dailySummaryTitle = getString(R.string.home_summary_title),
-        dailySummaryValue = getString(R.string.home_summary_value),
-        dailySummaryDescription = getString(R.string.home_summary_description),
-        emptyTitle = getString(R.string.home_empty_title),
-        emptyDescription = getString(R.string.home_empty_description),
-        addFoodLabel = getString(R.string.home_add_food),
-        dateLabel = getString(R.string.home_date_label),
-        careQuestion = getString(R.string.home_care_question),
-        rhythmTitle = getString(R.string.home_rhythm_title),
-        rhythmSubtitle = getString(R.string.home_rhythm_subtitle),
-        rhythmBadgeLabel = getString(R.string.home_rhythm_badge),
-        fiber = homeMetricModel(
-            R.string.home_fiber_label,
-            R.string.home_fiber_value,
-            R.integer.home_fiber_amount,
-            R.integer.home_fiber_target,
-        ),
-        water = HomeMetricModel(
-            label = getString(R.string.home_water_label),
-            value = getString(R.string.home_water_value),
-        ),
-        protein = homeMetricModel(
-            R.string.home_protein_label,
-            R.string.home_protein_value,
-            R.integer.home_protein_amount,
-            R.integer.home_protein_target,
-        ),
-        movement = HomeMetricModel(
-            label = getString(R.string.home_movement_label),
-            value = getString(R.string.home_movement_value),
-        ),
-        colors = HomeMetricModel(
-            label = getString(R.string.home_colors_label),
-            value = getString(R.string.home_metric_unavailable),
-        ),
-        fats = HomeMetricModel(
-            label = getString(R.string.home_fats_label),
-            value = getString(R.string.home_metric_unavailable),
-        ),
-        nextStepTitle = getString(R.string.home_next_step_title),
-        nextStepDescription = getString(R.string.home_next_step_description),
-        nextStepAction = getString(R.string.home_next_step_action),
-        viewGoalsLabel = getString(R.string.home_view_goals),
-        goalsTitle = getString(R.string.home_goals_title),
-        goalsDescription = getString(
-            R.string.home_goals_description,
-            resources.getInteger(R.integer.home_fiber_target),
-            resources.getInteger(R.integer.home_protein_target),
-        ),
-        goalsDoneLabel = getString(R.string.home_goals_done),
-        profileActionLabel = getString(R.string.home_profile_action),
-        mascotDescription = getString(R.string.home_mascot_description),
-        saladDescription = getString(R.string.home_salad_description),
-    )
-
-    private fun homeMetricModel(labelRes: Int, valueRes: Int, amountRes: Int, targetRes: Int): HomeMetricModel {
-        val amount = resources.getInteger(amountRes)
-        val target = resources.getInteger(targetRes)
-        return HomeMetricModel(getString(labelRes), getString(valueRes, amount, target), amount.toFloat() / target)
-    }
-
     private fun rewardsScreenCopy() = RewardsScreenCopy(
         daily = getString(R.string.rewards_daily),
         weekly = getString(R.string.rewards_weekly),
@@ -545,6 +502,7 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
+        homeClock = currentAndroidHomeClock()
         cameraPermissionState = host.refreshCameraPermission()
         cameraPermissionRequestInFlight = retainedState.captureOperation.permissionRequestInFlight
     }
@@ -589,7 +547,7 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
             sessions = sessions,
         )
         val rewardsFeature = RewardsFeature(
-            localDay = { java.time.LocalDate.now().toEpochDay().toInt() },
+            localDay = { currentMealRecordContext().localDay },
         )
         val captureOperation = CaptureOperationState()
         var wasBackgrounded: Boolean = false
@@ -649,12 +607,16 @@ private fun LinkedProfileScreen(profileId: String, onCloseRequested: () -> Unit)
 private fun HomeProfileDestination(shell: PhotoAnalysisTabShell, onBackRequested: () -> Unit) {
     val uriHandler = LocalUriHandler.current
     val profileFlow = rememberProfileFlowState()
-    BackHandler(enabled = profileFlow.historyVisible, onBack = profileFlow::showProfile)
-    BackHandler(enabled = profileFlow.nameEditing, onBack = profileFlow::cancelNameEdit)
+    BackHandler(enabled = profileFlow.canGoBack, onBack = { profileFlow.back() })
     ProfileFlow(
         state = profileFlow,
         displayName = shell.profileName,
-        confirmedFoods = shell.confirmedFoods,
+        diary = ProfileDiaryContext(
+            confirmedFoods = shell.confirmedFoods,
+            savedMeals = shell.savedMeals,
+            onMealEdited = { id, draft -> shell.mealDiary.updateFromHistory(id, draft, shell.rewardsFeature) },
+            onMealDeleted = { id -> shell.mealDiary.deleteFromHistory(id, shell.rewardsFeature) },
+        ),
         actions = ProfileScreenActions(
             onNameChanged = shell.onProfileNameChanged,
             onBackRequested = onBackRequested,
@@ -675,11 +637,14 @@ private fun PhotoAnalysisTabs(
     var captureReturnTab by rememberSaveable { mutableIntStateOf(0) }
     var profileVisible by rememberSaveable { mutableStateOf(false) }
     val mainState = rememberSaveableStateHolder()
+    val rewardsFlow = rememberRewardsFlowState()
     val closeCapture: () -> Unit = {
+        shell.onCaptureClosed()
         captureVisible = false
         selectedTab = captureReturnTab
     }
     val showCapture: () -> Unit = {
+        shell.onCaptureOpened()
         captureReturnTab = selectedTab
         captureVisible = true
     }
@@ -687,37 +652,74 @@ private fun PhotoAnalysisTabs(
     SideEffect { shell.onSystemBarAppearanceChanged(darkSystemBarIcons) }
     BackHandler(enabled = profileVisible, onBack = { profileVisible = false })
     BackHandler(enabled = captureVisible, onBack = closeCapture)
+    BackHandler(enabled = !profileVisible && !captureVisible && selectedTab == 1 && rewardsFlow.canGoBack) {
+        rewardsFlow.back()
+    }
     Box(Modifier.fillMaxSize().semantics { testTagsAsResourceId = true }) {
         if (profileVisible) {
             HomeProfileDestination(shell) { profileVisible = false }
         } else if (captureVisible) {
             captureContent(closeCapture)
+        } else if (selectedTab == 1 && rewardsFlow.canGoBack) {
+            RewardsScreen(
+                shell.rewardsModel,
+                modifier = Modifier.safeDrawingPadding(),
+                copy = shell.rewardsScreenCopy,
+                details = RewardsDetailsContext(
+                    flowState = rewardsFlow,
+                    confirmedFoods = shell.confirmedFoods,
+                    savedMeals = shell.savedMeals,
+                ),
+            )
         } else {
             mainState.SaveableStateProvider("main-tabs") {
-                PhotoAnalysisMainLayout(
-                    state = PhotoAnalysisMainBottomBarState(
-                        selectedTab = selectedTab,
-                        homeLabel = shell.homeLabel,
-                        rewardsLabel = shell.rewardsLabel,
-                        cameraLabel = shell.cameraLabel,
-                    ),
+                MainTabDestination(
+                    shell = shell,
+                    selectedTab = selectedTab,
+                    rewardsFlow = rewardsFlow,
                     actions = PhotoAnalysisMainBottomBarActions(
                         onHomeSelected = { selectedTab = 0 },
                         onRewardsSelected = { selectedTab = 1 },
                         onCameraRequested = showCapture,
                     ),
-                    contentPadding = WindowInsets.safeDrawing.asPaddingValues(),
-                ) {
-                    PhotoAnalysisTabContent(
-                        shell = shell,
-                        selectedTab = selectedTab,
-                        onAddFood = showCapture,
-                        onRewardsBack = { selectedTab = 0 },
-                        onProfileRequested = { profileVisible = true },
-                    )
-                }
+                    onProfileRequested = { profileVisible = true },
+                )
             }
         }
+    }
+}
+
+@Composable
+private fun RefreshHomeClock(onRefresh: () -> Unit) {
+    val refresh by rememberUpdatedState(onRefresh)
+    LaunchedEffect(Unit) {
+        while (isActive) {
+            refresh()
+            delay(60_000L)
+        }
+    }
+}
+
+@Composable
+private fun MainTabDestination(
+    shell: PhotoAnalysisTabShell,
+    selectedTab: Int,
+    rewardsFlow: RewardsFlowState,
+    actions: PhotoAnalysisMainBottomBarActions,
+    onProfileRequested: () -> Unit,
+) {
+    PhotoAnalysisMainLayout(
+        state = PhotoAnalysisMainBottomBarState(selectedTab, shell.homeLabel, shell.rewardsLabel, shell.cameraLabel),
+        actions = actions,
+        contentPadding = WindowInsets.safeDrawing.asPaddingValues(),
+    ) {
+        PhotoAnalysisTabContent(
+            shell = shell,
+            selectedTab = selectedTab,
+            actions = actions,
+            onProfileRequested = onProfileRequested,
+            rewardsFlow = rewardsFlow,
+        )
     }
 }
 
@@ -725,18 +727,27 @@ private fun PhotoAnalysisTabs(
 private fun PhotoAnalysisTabContent(
     shell: PhotoAnalysisTabShell,
     selectedTab: Int,
-    onAddFood: () -> Unit,
-    onRewardsBack: () -> Unit,
+    actions: PhotoAnalysisMainBottomBarActions,
     onProfileRequested: () -> Unit,
+    rewardsFlow: RewardsFlowState,
 ) {
     if (selectedTab == 0) {
         HomeScreen(
             model = shell.homeModel,
-            onAddFoodRequested = onAddFood,
+            onAddFoodRequested = actions.onCameraRequested,
             onProfileRequested = onProfileRequested,
         )
     } else {
-        RewardsScreen(shell.rewardsModel, onBackRequested = onRewardsBack, copy = shell.rewardsScreenCopy)
+        RewardsScreen(
+            shell.rewardsModel,
+            onBackRequested = actions.onHomeSelected,
+            copy = shell.rewardsScreenCopy,
+            details = RewardsDetailsContext(
+                flowState = rewardsFlow,
+                confirmedFoods = shell.confirmedFoods,
+                savedMeals = shell.savedMeals,
+            ),
+        )
     }
 }
 
@@ -748,6 +759,11 @@ private data class PhotoAnalysisTabShell(
     val rewardsLabel: String,
     val cameraLabel: String,
     val confirmedFoods: List<ConfirmedConsumedFood>,
+    val savedMeals: List<SavedMeal>,
+    val mealDiary: MealDiary,
+    val rewardsFeature: RewardsFeature,
+    val onCaptureClosed: () -> Unit,
+    val onCaptureOpened: () -> Unit,
     val profileName: String,
     val onProfileNameChanged: (String) -> Unit,
     val onSystemBarAppearanceChanged: (darkIcons: Boolean) -> Unit,
@@ -801,8 +817,11 @@ private fun PhotoAnalysisCaptureTab(state: PhotoAnalysisCaptureTabState) {
             onManualIngredientAdded = feature::addManualIngredients,
             mealReviewSelection = mealReviewSelection,
             onMealReviewSelectionChanged = { feature.updateMealReviewSelection(it) },
-            onMealReviewConfirmed = { confirmation ->
-                if (feature.confirmMealReview(confirmation)) state.onCloseRequested()
+            onMealReviewSaveRequested = { confirmation ->
+                feature.saveReviewedMeal(confirmation).also { saved -> if (saved) state.onCloseRequested() }
+            },
+            onTextMealSaved = { draft ->
+                feature.saveTextMeal(draft).also { saved -> if (saved) state.onCloseRequested() }
             },
         ),
     )

@@ -28,7 +28,6 @@ class ProfileControlledEditingTest {
                 ProfileFlow(
                     state,
                     savedName.value,
-                    emptyList(),
                     ProfileScreenActions({ savedName.value = it }, { backRequests++ }),
                 )
             }

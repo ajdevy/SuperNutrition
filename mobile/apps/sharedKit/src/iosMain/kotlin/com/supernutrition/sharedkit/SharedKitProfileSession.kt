@@ -5,8 +5,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 /** Optional identity is scoped to this host session and is never uploaded. */
-public class SharedKitProfileSession(rewardsSession: SharedKitRewardsSession) {
+public class SharedKitProfileSession(
+    rewardsSession: SharedKitRewardsSession,
+    photoAnalysisSession: SharedKitPhotoAnalysisSession?,
+) {
+    public constructor(rewardsSession: SharedKitRewardsSession) : this(rewardsSession, null)
+
     internal val rewardsFeature = rewardsSession.feature
+    internal val mealDiary = photoAnalysisSession?.feature?.mealDiary
     private val name = MutableStateFlow("")
     internal val displayNameFlow = name.asStateFlow()
 
