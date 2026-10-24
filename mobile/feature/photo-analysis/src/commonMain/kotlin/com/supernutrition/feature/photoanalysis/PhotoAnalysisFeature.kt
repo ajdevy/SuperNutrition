@@ -30,7 +30,9 @@ class PhotoAnalysisFeature(
     leases: PhotoLeaseStorePort,
     sessions: PhotoSessionStorePort,
     private val manualIngredientParser: ManualIngredientParser = productionManualIngredientParser(),
+    val mealDiary: MealDiary = MealDiary(),
 ) {
+    private val mealReviewDiaryRecorder = MealReviewDiaryRecorder(mealDiary)
     private val reducer = PhotoAnalysisReducer(
         leases = leases,
         sessions = sessions,
@@ -64,6 +66,7 @@ class PhotoAnalysisFeature(
             _manualIngredientStateFlow.value = PhotoAnalysisManualIngredientState()
             _confirmedMealReview.value = null
             _mealReviewSelection.value = PhotoAnalysisMealReviewSelection()
+            mealReviewDiaryRecorder.reset()
         } else if (previous != currentWorkState() && event is PhotoAnalysisEvent.GridCellSelected) {
             _confirmedMealReview.value = null
             _mealReviewSelection.value = _mealReviewSelection.value.withoutPhotoEvidence()
@@ -115,6 +118,14 @@ class PhotoAnalysisFeature(
             note = note,
         )
         return true
+    }
+
+    fun saveReviewedMeal(confirmation: PhotoAnalysisMealReviewConfirmation): Boolean {
+        if (!confirmMealReview(confirmation)) return false
+        return mealReviewDiaryRecorder.save(
+            checkNotNull(_confirmedMealReview.value),
+            (currentWorkState() as? PhotoAnalysisState.CandidateReview)?.draft,
+        )
     }
 
     fun updateManualIngredientQuery(query: String) {

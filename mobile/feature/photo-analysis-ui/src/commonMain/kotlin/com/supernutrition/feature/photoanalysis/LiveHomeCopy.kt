@@ -1,0 +1,32 @@
+package com.supernutrition.feature.photoanalysis
+
+data class LiveHomeCopy(
+    val title: String = "Home",
+    val greeting: String = "Welcome back",
+    val mealsToday: String = "Today's meals",
+    val singularMealCount: String = "{count} meal recorded",
+    val pluralMealCount: String = "{count} meals recorded",
+    val historyDescription: String = "Your saved meals are in Profile → Meal history.",
+    val diaryTitle: String = "Your meal diary",
+    val addDescription: String = "Add a meal when you're ready.",
+    val addMeal: String = "Add a meal",
+    val firstMealPrompt: String = "Let's add your first meal",
+    val nextMealPrompt: String = "Ready for your next meal?",
+    val diaryBadge: String = "Meal diary",
+    val fiber: String = "Fiber",
+    val water: String = "Water",
+    val protein: String = "Protein",
+    val movement: String = "Movement",
+    val colors: String = "Colors",
+    val fats: String = "Fats",
+    val nextMeal: String = "Your next meal",
+    val captureDescription: String = "Take a photo or add a meal by text.",
+    val aboutNutrition: String = "About nutrition",
+    val nutritionTitle: String = "Nutrition availability",
+    val nutritionDescription: String = "Your meal names and ingredients are recorded in your diary. " +
+        "Nutrient values aren't available for these entries. No personal nutrient targets have been set.",
+    val done: String = "Done",
+    val openProfile: String = "Open profile",
+    val mascotDescription: String = "Capybara mascot",
+    val saladDescription: String = "Salad",
+)

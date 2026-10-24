@@ -14,12 +14,18 @@ fun profileViewController(
     displayName: StateFlow<String>,
     onNameChanged: (String) -> Unit,
     onCloseRequested: () -> Unit,
+    mealDiary: MealDiary? = null,
 ): UIViewController = ComposeUIViewController {
     val uriHandler = LocalUriHandler.current
     ProfileFlow(
         state = rememberProfileFlowState(),
         displayName = displayName.collectAsState().value,
-        confirmedFoods = feature.confirmedFoods.collectAsState().value,
+        diary = ProfileDiaryContext(
+            confirmedFoods = feature.confirmedFoods.collectAsState().value,
+            savedMeals = mealDiary?.meals?.collectAsState()?.value.orEmpty(),
+            onMealEdited = { id, draft -> mealDiary?.updateFromHistory(id, draft, feature) == true },
+            onMealDeleted = { id -> mealDiary?.deleteFromHistory(id, feature) == true },
+        ),
         actions = ProfileScreenActions(
             onNameChanged = onNameChanged,
             onBackRequested = onCloseRequested,

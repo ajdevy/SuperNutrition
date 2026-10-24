@@ -59,8 +59,11 @@ fun PhotoAnalysisViewController(
             onManualIngredientAdded = feature::addManualIngredients,
             mealReviewSelection = mealReviewSelection,
             onMealReviewSelectionChanged = { feature.updateMealReviewSelection(it) },
-            onMealReviewConfirmed = { confirmation ->
-                if (feature.confirmMealReview(confirmation)) callbacks.onMealReviewCompleted()
+            onMealReviewSaveRequested = { confirmation ->
+                feature.saveReviewedMeal(confirmation).also { saved -> if (saved) callbacks.onMealReviewCompleted() }
+            },
+            onTextMealSaved = { draft ->
+                feature.saveTextMeal(draft).also { saved -> if (saved) callbacks.onMealReviewCompleted() }
             },
         ),
     )

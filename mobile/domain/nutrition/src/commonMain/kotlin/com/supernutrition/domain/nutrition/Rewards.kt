@@ -20,12 +20,13 @@ enum class RewardFiberGroup {
     BERRIES,
 }
 
-/** The four visible color groups used by the daily color card. */
+/** Catalog color facts; orange and yellow share one of the four visible reward groups. */
 enum class RewardFoodColor {
     RED,
     ORANGE,
     YELLOW,
     GREEN,
+    BLUE_PURPLE,
 }
 
 /**
@@ -84,7 +85,19 @@ class ConfirmedConsumedFood private constructor(
     }
 }
 
-data class RewardsInput(val confirmedFoods: List<ConfirmedConsumedFood>, val asOfDay: Int) {
+/** Explicit recording evidence carries no food labels, catalog identity, or nutrient facts. */
+data class RecordedMealEvidence(val mealId: String, val localDay: Int) {
+    init {
+        requireNonBlankValue(mealId, "Recorded meal ID must not be blank")
+        require(localDay >= 0) { "Recorded meal local day must not be negative" }
+    }
+}
+
+data class RewardsInput(
+    val confirmedFoods: List<ConfirmedConsumedFood>,
+    val asOfDay: Int,
+    val recordedMeals: List<RecordedMealEvidence> = emptyList(),
+) {
     init {
         require(asOfDay >= 0) { "Reward reference day must not be negative" }
     }
@@ -128,33 +141,42 @@ object RewardsEvaluator {
     fun evaluate(input: RewardsInput): RewardsSnapshot {
         val today = input.confirmedFoods.filter { it.localDay == input.asOfDay }
         val week = input.confirmedFoods.filter { it.localDay in weekDays(input.asOfDay) }
+        val recordedToday = input.recordedMeals.filter { it.localDay == input.asOfDay }
+            .map(RecordedMealEvidence::mealId).toSet()
         return RewardsSnapshot(
             asOfDay = input.asOfDay,
-            cards = dailyCards(today) + weeklyCards(week),
+            cards = dailyCards(today, recordedToday) + weeklyCards(week, consecutiveRecordedDays(input)),
         )
     }
 
-    private fun dailyCards(today: List<ConfirmedConsumedFood>): List<RewardStatus> = listOf(
-        proteinStatus(today),
-        RewardStatus(
-            id = RewardId.FATS_PRESENT,
-            progress = RewardProgress(current = if (today.any { it.attributes.fatGroup != null }) 1 else 0, target = 1),
-        ),
-        RewardStatus(
-            id = RewardId.FIBER_PRESENT,
-            progress = RewardProgress(
-                current = today.groupBy(ConfirmedConsumedFood::mealId)
-                    .count { (_, meal) -> meal.any { it.attributes.fiberGroup != null } },
-                target = 2,
+    private fun dailyCards(today: List<ConfirmedConsumedFood>, recordedMealIds: Set<String>): List<RewardStatus> =
+        listOf(
+            proteinStatus(today, recordedMealIds),
+            RewardStatus(
+                id = RewardId.FATS_PRESENT,
+                progress = RewardProgress(
+                    current = if (today.any { it.attributes.fatGroup != null }) 1 else 0,
+                    target = 1,
+                ),
             ),
-        ),
-        RewardStatus(
-            id = RewardId.COLORS_OF_DAY,
-            progress = RewardProgress(current = today.mapNotNull { it.attributes.color }.distinct().size, target = 3),
-        ),
-    )
+            RewardStatus(
+                id = RewardId.FIBER_PRESENT,
+                progress = RewardProgress(
+                    current = today.groupBy(ConfirmedConsumedFood::mealId)
+                        .count { (_, meal) -> meal.any { it.attributes.fiberGroup != null } },
+                    target = 2,
+                ),
+            ),
+            RewardStatus(
+                id = RewardId.COLORS_OF_DAY,
+                progress = RewardProgress(
+                    current = today.mapNotNull { it.attributes.color?.rewardGroup() }.distinct().size,
+                    target = 3,
+                ),
+            ),
+        )
 
-    private fun weeklyCards(week: List<ConfirmedConsumedFood>): List<RewardStatus> = listOf(
+    private fun weeklyCards(week: List<ConfirmedConsumedFood>, recordedDays: Int): List<RewardStatus> = listOf(
         RewardStatus(
             id = RewardId.THIRTY_PRODUCTS,
             progress = RewardProgress(current = countWeeklyProducts(week), target = 30),
@@ -172,19 +194,30 @@ object RewardsEvaluator {
         RewardStatus(
             id = RewardId.SEVEN_DAYS_RECORDED,
             progress = RewardProgress(
-                current = week.map(ConfirmedConsumedFood::localDay).distinct().size,
-                target = WEEK_LENGTH_DAYS,
+                current = recordedDays,
+                target = RECORDING_STREAK_TARGET_DAYS,
             ),
         ),
     )
 
-    private fun proteinStatus(today: List<ConfirmedConsumedFood>): RewardStatus {
+    private fun RewardFoodColor.rewardGroup(): RewardFoodColor =
+        if (this == RewardFoodColor.YELLOW) RewardFoodColor.ORANGE else this
+
+    /** Today remains available to continue yesterday's run until a complete day is missed. */
+    private fun consecutiveRecordedDays(input: RewardsInput): Int {
+        val days = input.confirmedFoods.map(ConfirmedConsumedFood::localDay).toSet() +
+            input.recordedMeals.map(RecordedMealEvidence::localDay)
+        return recordingStreakDays(days, input.asOfDay).size
+    }
+
+    private fun proteinStatus(today: List<ConfirmedConsumedFood>, recordedMealIds: Set<String>): RewardStatus {
         val meals = today.groupBy(ConfirmedConsumedFood::mealId)
+        val allMealIds = meals.keys + recordedMealIds
         val proteinMeals = proteinMealCount(meals)
         return RewardStatus(
             id = RewardId.PROTEIN_ALL_DAY,
-            progress = RewardProgress(current = proteinMeals, target = meals.size.coerceAtLeast(2)),
-            isEarned = meals.size >= 2 && proteinMeals == meals.size,
+            progress = RewardProgress(current = proteinMeals, target = allMealIds.size.coerceAtLeast(2)),
+            isEarned = allMealIds.size >= 2 && proteinMeals == allMealIds.size,
         )
     }
 

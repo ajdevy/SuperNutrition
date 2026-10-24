@@ -1,10 +1,10 @@
 package com.supernutrition.feature.photoanalysis
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Modifier
-import com.supernutrition.domain.nutrition.ConfirmedConsumedFood
 
 @Composable
 fun rememberProfileFlowState(): ProfileFlowState = rememberSaveable(saver = ProfileFlowState.StateSaver) {
@@ -16,27 +16,50 @@ fun rememberProfileFlowState(): ProfileFlowState = rememberSaveable(saver = Prof
 fun ProfileFlow(
     state: ProfileFlowState,
     displayName: String,
-    confirmedFoods: List<ConfirmedConsumedFood>,
     actions: ProfileScreenActions,
     modifier: Modifier = Modifier,
+    diary: ProfileDiaryContext = ProfileDiaryContext(),
 ) {
     val savedState = rememberSaveableStateHolder()
-    val destination = if (state.historyVisible) "history" else "profile"
-    savedState.SaveableStateProvider(destination) {
-        if (state.historyVisible) {
+    val meals = mergedMealHistory(diary.confirmedFoods, diary.savedMeals)
+    val selected = meals.firstOrNull { it.id == state.selectedMealId }
+    LaunchedEffect(state.selectedMealId, selected) {
+        if (state.selectedMealId != null && selected == null) state.showHistory()
+    }
+    savedState.SaveableStateProvider(profileDestinationKey(state, selected)) {
+        if (selected != null) {
+            ProfileSelectedMeal(
+                state,
+                selected,
+                ProfileMealActions(diary.onMealEdited, diary.onMealDeleted),
+                modifier,
+                diary.copy,
+            )
+        } else if (state.historyVisible) {
             MealHistoryScreen(
-                meals = confirmedMealHistory(confirmedFoods),
+                meals = meals,
                 onBackRequested = state::showProfile,
                 modifier = modifier,
-                referenceDay = state.referenceDay,
+                presentation = MealHistoryPresentation(
+                    referenceDay = state.referenceDay,
+                    searchState = state.historySearch,
+                ),
+                onMealSelected = { state.showMeal(it.id) },
             )
         } else {
             ControlledProfileScreen(
-                identity = ProfileScreenIdentity(displayName, confirmedFoods),
+                identity = ProfileScreenIdentity(displayName, diary.confirmedFoods, diary.savedMeals),
                 actions = actions.copy(onHistoryRequested = state::showHistory),
                 flowState = state,
                 modifier = modifier,
             )
         }
     }
+}
+
+private fun profileDestinationKey(state: ProfileFlowState, selected: MealHistoryMeal?): String = when {
+    state.mealEditing && selected != null -> "edit:${selected.id}"
+    selected != null -> "meal:${selected.id}"
+    state.historyVisible -> "history"
+    else -> "profile"
 }

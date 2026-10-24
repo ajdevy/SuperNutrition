@@ -63,6 +63,11 @@ data class PhotoAnalysisCaptureSurface(
     val onMealReviewSelectionChanged: (PhotoAnalysisMealReviewSelection) -> Unit = {},
     /** Explicit diagnostic surface; ordinary capture uses the consumer design. */
     val researchLayout: Boolean = false,
+    /** Returns true only after the owning diary accepted this explicit text entry. */
+    val onTextMealSaved: ((MealDraft) -> Boolean)? = null,
+    val textEntryCopy: MealFormCopy = MealFormCopy(),
+    /** When supplied, reports whether explicit photo confirmation was accepted by the owning diary. */
+    val onMealReviewSaveRequested: ((PhotoAnalysisMealReviewConfirmation) -> Boolean)? = null,
 )
 
 data class PhotoAnalysisCaptureAutomationIds(

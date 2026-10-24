@@ -19,6 +19,8 @@ data class MealHistoryMeal(
     val title: String,
     val ingredients: List<String>,
     val metadata: MealHistoryMetadata = MealHistoryMetadata(),
+    val savedMeal: SavedMeal? = null,
+    val groundedFoods: List<ConfirmedConsumedFood> = emptyList(),
 )
 
 /** One adapter supplies both the Profile count and the dedicated history. */
@@ -26,10 +28,26 @@ fun confirmedMealHistory(foods: List<ConfirmedConsumedFood>): List<MealHistoryMe
     .groupBy { MealHistoryId(it.localDay, it.mealId) }
     .map { (id, entries) ->
         val names = entries.map { it.displayName }
-        MealHistoryMeal(id, names.first(), names)
+        MealHistoryMeal(id, names.first(), names, groundedFoods = entries)
     }
     // Kotlin's stable sort retains the ledger's insertion order within each day.
     .sortedByDescending { it.id.localDay }
+
+/** Authored corrections replace the matching display entry without borrowing its old nutrient facts. */
+fun mergedMealHistory(foods: List<ConfirmedConsumedFood>, savedMeals: List<SavedMeal>): List<MealHistoryMeal> {
+    val authored = savedMeals.distinctBy { MealHistoryId(it.localDay, it.id) }.map { meal ->
+        MealHistoryMeal(
+            id = MealHistoryId(meal.localDay, meal.id),
+            title = meal.name,
+            ingredients = meal.ingredients,
+            metadata = MealHistoryMetadata(timeLabel = meal.timeLabel),
+            savedMeal = meal,
+        )
+    }
+    val authoredIds = authored.map { it.id }.toSet()
+    return (authored + confirmedMealHistory(foods).filterNot { it.id in authoredIds })
+        .sortedByDescending { it.id.localDay }
+}
 
 fun searchMealHistory(meals: List<MealHistoryMeal>, query: String): List<MealHistoryMeal> {
     val trimmed = query.trim()

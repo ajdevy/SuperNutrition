@@ -42,8 +42,16 @@ fun RewardsScreen(
     modifier: Modifier = Modifier,
     onBackRequested: () -> Unit = {},
     copy: RewardsScreenCopy = RewardsScreenCopy(),
+    details: RewardsDetailsContext = RewardsDetailsContext(),
 ) {
-    CurrentRewardsScreen(model, modifier, onBackRequested, copy)
+    val rememberedFlow = rememberRewardsFlowState()
+    val flowState = details.flowState ?: rememberedFlow
+    val selected = model.cards.firstOrNull { it.id == flowState.selectedReward }
+    if (selected != null) {
+        RewardDetailsScreen(selected, { flowState.back() }, modifier, details)
+    } else {
+        CurrentRewardsScreen(model, modifier, onBackRequested, copy, flowState::showReward)
+    }
 }
 
 internal fun defaultVisualCards() = listOf(
