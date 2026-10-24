@@ -2,7 +2,7 @@
 title: Restore iOS modal isolation and the complete meal UI journey in CI
 type: bugfix
 created: 2026-10-24
-status: done
+status: in-progress
 baseline_commit: 7ff3b197763ad3a15ac648fcdfc5f012c6eba547
 review_loop_iteration: 0
 context: []
@@ -124,3 +124,21 @@ Production and XCTest arm64 builds, independent review, project validation and R
 
 - Both applications compile the shared host source.
   [project.pbxproj:24](../../mobile/apps/iosApp/SuperNutritionUIAcceptance.xcodeproj/project.pbxproj#L24)
+
+## R-04 runtime follow-up
+
+Main08 still fails the original modal isolation assertions; the text flow now
+passes save/correction and fails when the first Delete tap produces no dialog.
+Keep the frozen product intent and assertions. The native implementation uses
+a retained UIKit child with its view physically detached while covered. The
+test waits boundedly for a continuously stable target after scrolling. Full
+branch iOS execution must pass before merging this follow-up.
+
+- [x] Record exact main08 failure and exported recording before repair.
+- [x] Replace root flags with retained child containment and view exclusion.
+- [x] Add bounded frame-settling synchronization before a single real tap.
+- [x] Export compact XCTest failure summary while preserving failing status.
+- [x] Compile both actual arm64 app/test products and refresh source metrics.
+- [x] Review the bounded follow-up and resolve concrete findings.
+- [ ] Dispatch full iOS workflow on feature head and satisfy all original cases.
+- [ ] Merge and await every latest-main workflow, except accepted device expiry.
