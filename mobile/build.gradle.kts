@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.android.kotlin.multiplatform.library) apply false
     alias(libs.plugins.compose) apply false
+    alias(libs.plugins.sqldelight) apply false
 }
 
 // Every project in the product build owns a committed lock state. Refreshing

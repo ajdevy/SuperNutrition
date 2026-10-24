@@ -41,7 +41,7 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-internal fun ProfileHistoryCard(mealCount: Int, copy: ProfileScreenCopy, onClick: () -> Unit) {
+internal fun ProfileHistoryCard(mealCount: Int?, copy: ProfileScreenCopy, onClick: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth().heightIn(min = 74.dp).shadow(1.dp, RoundedCornerShape(20.dp))
             .clip(RoundedCornerShape(20.dp)).border(1.dp, Color(0xFFD8EED2), RoundedCornerShape(20.dp))
@@ -54,7 +54,11 @@ internal fun ProfileHistoryCard(mealCount: Int, copy: ProfileScreenCopy, onClick
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             ProfileRowTitle(copy.history, bold = true)
             Text(
-                "$mealCount ${if (mealCount == 1) copy.mealSaved else copy.mealsSaved}",
+                if (mealCount == null) {
+                    copy.historyUnavailable
+                } else {
+                    "$mealCount ${if (mealCount == 1) copy.mealSaved else copy.mealsSaved}"
+                },
                 color = ProfileSecondary,
                 fontFamily = nunitoFont(),
                 fontSize = 14.sp,

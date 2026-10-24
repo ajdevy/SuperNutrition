@@ -28,7 +28,12 @@ class ProfileHistoryTest {
             profileConfirmedFood("entry-3", "lunch", "Lentils"),
         )
         setContent {
-            ProfileFlow(rememberProfileFlowState(), "Alex", foods, ProfileScreenActions({}, {}))
+            ProfileFlow(
+                rememberProfileFlowState(),
+                "Alex",
+                ProfileScreenActions({}, {}),
+                diary = ProfileDiaryContext(confirmedFoods = foods),
+            )
         }
         onNodeWithText("2 meals saved").assertIsDisplayed()
         onNodeWithText("3 meals saved").assertDoesNotExist()

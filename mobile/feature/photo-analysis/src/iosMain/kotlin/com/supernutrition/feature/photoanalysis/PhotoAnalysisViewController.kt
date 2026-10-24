@@ -28,6 +28,7 @@ fun PhotoAnalysisViewController(
     feature.stateFlow.collectAsState().value
     val manual = feature.manualIngredientStateFlow.collectAsState().value
     val mealReviewSelection = feature.mealReviewSelection.collectAsState().value
+    val catalogState = feature.mealDiary.catalogSession.state.collectAsState().value
     val preview = retainedPhoto()
     PhotoAnalysisCaptureContent(
         stateFlow = feature.stateFlow,
@@ -38,6 +39,7 @@ fun PhotoAnalysisViewController(
             }
         },
         surface = PhotoAnalysisCaptureSurface(
+            catalog = MealCatalogContext(catalogState, feature.mealDiary.catalogSession::retry),
             presenterCopy = copy,
             closeLabel = "Close",
             onCloseRequested = callbacks.onCloseRequested,
@@ -59,8 +61,11 @@ fun PhotoAnalysisViewController(
             onManualIngredientAdded = feature::addManualIngredients,
             mealReviewSelection = mealReviewSelection,
             onMealReviewSelectionChanged = { feature.updateMealReviewSelection(it) },
-            onMealReviewConfirmed = { confirmation ->
-                if (feature.confirmMealReview(confirmation)) callbacks.onMealReviewCompleted()
+            onMealReviewSaveRequested = { confirmation ->
+                feature.saveReviewedMeal(confirmation).also { saved -> if (saved) callbacks.onMealReviewCompleted() }
+            },
+            onTextMealSaved = { draft ->
+                feature.saveTextMeal(draft).also { saved -> if (saved) callbacks.onMealReviewCompleted() }
             },
         ),
     )

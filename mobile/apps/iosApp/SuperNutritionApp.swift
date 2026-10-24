@@ -10,40 +10,117 @@ private enum PhotoAnalysisNativeActionKind: Int {
     case openSettings
 }
 
-/// Production host. UI-acceptance-only launch and compatibility code remains in
-/// SuperNutritionUIAcceptanceApp.swift and is compiled only by the acceptance target.
+/// Production app shell. Screen content and navigation within each surface remain shared.
 @main
 struct SuperNutritionApp: App {
-    private let session: SharedKitPhotoAnalysisSession
-
-    init() {
-        _ = SharedKitBootstrap.shared.start()
-        session = SharedKitPhotoAnalysisSession(attemptId: "ios-photo-attempt")
-    }
+    @StateObject private var sessions = ProductionSessionOwner()
 
     var body: some Scene {
         WindowGroup {
-            ProductionPhotoAnalysisHost(session: session)
+            #if arch(x86_64)
+            ProductionUnsupportedRenderer()
+            #else
+            ProductionAppHost(sessions: sessions)
+            #endif
         }
     }
 }
 
-private struct ProductionPhotoAnalysisHost: View {
-    let session: SharedKitPhotoAnalysisSession
+/// One app lifetime owns the shared source; transient screens only borrow its sessions.
+private final class ProductionSessionOwner: ObservableObject {
+    let photoAnalysisSession: SharedKitPhotoAnalysisSession
+    let rewardsSession: SharedKitRewardsSession
+    let profileSession: SharedKitProfileSession
+
+    init() {
+        _ = SharedKitBootstrap.shared.start()
+        let photo = SharedKitProductionSessions.shared.photoAnalysisSession(attemptId: "ios-photo-attempt")
+        let rewards = SharedKitRewardsSession()
+        photoAnalysisSession = photo
+        rewardsSession = rewards
+        profileSession = SharedKitProductionSessions.shared.profileSession(
+            rewardsSession: rewards,
+            photoAnalysisSession: photo,
+        )
+    }
+
+    func startCatalog() {
+        let retainedSession = photoAnalysisSession
+        onProductionMain { retainedSession.startCatalog() }
+    }
+
+    deinit {
+        let retainedSession = photoAnalysisSession
+        onProductionMain { retainedSession.closeCatalog() }
+    }
+}
+
+private func onProductionMain(_ action: @escaping () -> Void) {
+    if Thread.isMainThread {
+        action()
+    } else {
+        DispatchQueue.main.async { action() }
+    }
+}
+
+#if arch(x86_64)
+private struct ProductionUnsupportedRenderer: View {
+    var body: some View {
+        VStack(spacing: 16) {
+            Text("Super Nutrition")
+                .font(.title)
+            Text("The main interface requires an arm64 iOS device or simulator. It is unavailable on this Intel simulator.")
+                .multilineTextAlignment(.center)
+        }
+        .padding(24)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+#else
+private enum ProductionDestination: String, Identifiable {
+    case capture
+    case profile
+
+    var id: String { rawValue }
+}
+
+private struct ProductionAppHost: View {
+    let sessions: ProductionSessionOwner
     @Environment(\.scenePhase) private var scenePhase
-    @State private var showingReviewConfirmation = false
+    @State private var destination: ProductionDestination?
+
+    private var session: SharedKitPhotoAnalysisSession { sessions.photoAnalysisSession }
+    private var rewardsSession: SharedKitRewardsSession { sessions.rewardsSession }
+    private var profileSession: SharedKitProfileSession { sessions.profileSession }
 
     var body: some View {
-        ProductionPhotoAnalysisComposeHost(
+        ProductionMainComposeHost(
             session: session,
-            onMealReviewCompleted: { showingReviewConfirmation = true },
+            rewardsSession: rewardsSession,
+            onCaptureRequested: showCapture,
+            onProfileRequested: { destination = .profile },
         )
-            .alert(String(localized: "photo_analysis.review.confirmed"), isPresented: $showingReviewConfirmation) {
-                Button(String(localized: "photo_analysis.review.confirmed_dismiss"), role: .cancel) {}
-            } message: {
-                Text(String(localized: "photo_analysis.review.confirmed_message"))
+            .ignoresSafeArea()
+            .onAppear(perform: sessions.startCatalog)
+            .fullScreenCover(item: $destination) { surface in
+                switch surface {
+                case .capture:
+                    ProductionPhotoAnalysisComposeHost(
+                        session: session,
+                        onCloseRequested: closeCapture,
+                        onMealReviewCompleted: closeCapture,
+                    )
+                    .ignoresSafeArea()
+                    .interactiveDismissDisabled()
+                case .profile:
+                    ProductionProfileComposeHost(
+                        session: profileSession,
+                        onCloseRequested: { destination = nil },
+                    )
+                }
             }
             .onChange(of: scenePhase) { phase in
+                guard destination == .capture else { return }
                 switch phase {
                 case .background:
                     session.backgrounded()
@@ -56,10 +133,50 @@ private struct ProductionPhotoAnalysisHost: View {
                 }
             }
     }
+
+    private func showCapture() {
+        session.scanAgain()
+        destination = .capture
+    }
+
+    private func closeCapture() {
+        session.cancel()
+        destination = nil
+    }
+}
+
+private struct ProductionMainComposeHost: UIViewControllerRepresentable {
+    let session: SharedKitPhotoAnalysisSession
+    let rewardsSession: SharedKitRewardsSession
+    let onCaptureRequested: () -> Void
+    let onProfileRequested: () -> Void
+
+    func makeUIViewController(context: Context) -> UIViewController {
+        SharedKitMain.shared.viewController(
+            session: session,
+            rewardsSession: rewardsSession,
+            onCaptureRequested: onCaptureRequested,
+            onProfileRequested: onProfileRequested,
+        )
+    }
+
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+}
+
+private struct ProductionProfileComposeHost: UIViewControllerRepresentable {
+    let session: SharedKitProfileSession
+    let onCloseRequested: () -> Void
+
+    func makeUIViewController(context: Context) -> UIViewController {
+        SharedKitProfile.shared.viewController(session: session, onCloseRequested: onCloseRequested)
+    }
+
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
 
 private struct ProductionPhotoAnalysisComposeHost: UIViewControllerRepresentable {
     let session: SharedKitPhotoAnalysisSession
+    let onCloseRequested: () -> Void
     let onMealReviewCompleted: () -> Void
 
     func makeCoordinator() -> Coordinator {
@@ -72,9 +189,7 @@ private struct ProductionPhotoAnalysisComposeHost: UIViewControllerRepresentable
             onNativeAction: { (action: SharedKitPhotoAnalysisNativeAction) in
                 context.coordinator.handle(action: action)
             },
-            onCloseRequested: {
-                session.captureCancelled()
-            },
+            onCloseRequested: onCloseRequested,
             onMealReviewCompleted: onMealReviewCompleted,
         )
         context.coordinator.hostViewController = controller
@@ -181,3 +296,4 @@ private struct ProductionPhotoAnalysisComposeHost: UIViewControllerRepresentable
         }
     }
 }
+#endif

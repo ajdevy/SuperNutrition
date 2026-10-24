@@ -86,6 +86,7 @@ internal fun CurrentRewardsScreen(
     modifier: Modifier,
     onBackRequested: () -> Unit,
     copy: RewardsScreenCopy,
+    onRewardRequested: (RewardId) -> Unit,
 ) {
     val byId = model.cards.associateBy { it.id }
     val daily = DailyRewardIds.mapNotNull(byId::get)
@@ -116,8 +117,8 @@ internal fun CurrentRewardsScreen(
                 CurrentRewardsSummary(daily, weekly, copy)
                 Spacer(Modifier.height(24.dp))
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    CurrentRewardGroup(copy.daily, daily, copy, 0)
-                    CurrentRewardGroup(copy.weekly, weekly, copy, DailyRewardIds.size)
+                    CurrentRewardGroup(copy.daily, daily, copy, 0, onRewardRequested)
+                    CurrentRewardGroup(copy.weekly, weekly, copy, DailyRewardIds.size, onRewardRequested)
                 }
             }
         }
@@ -217,7 +218,13 @@ private fun CurrentRewardsMascot(modifier: Modifier) {
 }
 
 @Composable
-private fun CurrentRewardGroup(title: String, cards: List<RewardsCardModel>, copy: RewardsScreenCopy, startIndex: Int) {
+private fun CurrentRewardGroup(
+    title: String,
+    cards: List<RewardsCardModel>,
+    copy: RewardsScreenCopy,
+    startIndex: Int,
+    onRewardRequested: (RewardId) -> Unit,
+) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(
@@ -247,7 +254,11 @@ private fun CurrentRewardGroup(title: String, cards: List<RewardsCardModel>, cop
         val fontScale = LocalDensity.current.fontScale
         val cardWidth = (150 * fontScale.coerceIn(1f, 1.6f)).dp
         Layout(
-            content = { cards.forEachIndexed { index, card -> CurrentRewardCard(startIndex + index, card) } },
+            content = {
+                cards.forEachIndexed { index, card ->
+                    CurrentRewardCard(startIndex + index, card) { onRewardRequested(card.id) }
+                }
+            },
             modifier = Modifier.horizontalScroll(
                 rememberScrollState(),
             ).padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
@@ -264,9 +275,12 @@ private fun CurrentRewardGroup(title: String, cards: List<RewardsCardModel>, cop
 }
 
 @Composable
-private fun CurrentRewardCard(index: Int, card: RewardsCardModel) {
+private fun CurrentRewardCard(index: Int, card: RewardsCardModel, onClick: () -> Unit) {
     Column(
-        Modifier.automationId(UiAutomationIds.rewardsRow(index)).semantics {
+        Modifier.automationId(UiAutomationIds.rewardsRow(index)).clickable(
+            role = Role.Button,
+            onClick = onClick,
+        ).semantics {
             contentDescription = listOf(
                 card.title,
                 card.description,
@@ -287,7 +301,8 @@ private fun CurrentRewardCard(index: Int, card: RewardsCardModel) {
                 fontWeight = FontWeight.Bold,
                 fontSize = 15.sp,
                 lineHeight = 19.sp,
-                modifier = Modifier.automationId(UiAutomationIds.rewardsRowTitle(index)),
+                modifier = Modifier.automationId(UiAutomationIds.rewardsRowTitle(index))
+                    .semantics(mergeDescendants = true) {},
             )
             Text(
                 card.description,
@@ -304,7 +319,9 @@ private fun CurrentRewardCard(index: Int, card: RewardsCardModel) {
 @Composable
 private fun CurrentRewardFooter(index: Int, card: RewardsCardModel) {
     Column(
-        Modifier.automationId(UiAutomationIds.rewardsRowState(index)).semantics { stateDescription = card.stateLabel },
+        Modifier.automationId(UiAutomationIds.rewardsRowState(index)).semantics(mergeDescendants = true) {
+            stateDescription = card.stateLabel
+        },
     ) {
         Text(
             card.progressLabel,
@@ -314,7 +331,7 @@ private fun CurrentRewardFooter(index: Int, card: RewardsCardModel) {
             lineHeight = 12.sp,
         )
         Box(
-            Modifier.automationId(UiAutomationIds.rewardsRowProgress(index)).semantics {
+            Modifier.automationId(UiAutomationIds.rewardsRowProgress(index)).semantics(mergeDescendants = true) {
                 contentDescription = card.progressLabel
             },
         ) {
@@ -355,7 +372,7 @@ private fun CurrentRewardProgress(fraction: Float) {
     }
 }
 
-private fun currentRewardArtwork(id: RewardId) = when (id) {
+internal fun currentRewardArtwork(id: RewardId) = when (id) {
     RewardId.PROTEIN_ALL_DAY -> Res.drawable.refresh_reward_protein
     RewardId.FATS_PRESENT -> Res.drawable.refresh_reward_fats
     RewardId.FIBER_PRESENT -> Res.drawable.refresh_reward_fiber

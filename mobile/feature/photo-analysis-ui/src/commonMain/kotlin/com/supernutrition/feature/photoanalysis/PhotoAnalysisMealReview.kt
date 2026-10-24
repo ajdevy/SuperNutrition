@@ -73,8 +73,8 @@ internal fun PhotoAnalysisMealReview(
     onAction: (PhotoAnalysisPresenterAction) -> Unit,
     surface: PhotoAnalysisCaptureSurface,
 ) {
-    val choices = requireNotNull(surface.mealReviewSelection)
     val noteFocus = remember { PhotoAnalysisReviewNoteFocus() }
+    val saveState = remember { MealReviewSaveState() }
     val review = model.review
     BoxWithConstraints(
         modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = PHOTO_TEXT_SCRIM_ALPHA))
@@ -82,8 +82,13 @@ internal fun PhotoAnalysisMealReview(
     ) {
         val copy = surface.presenterCopy.review
         val actionHeight = reviewActionsHeight(copy.retake, copy.addToMeal, minOf(maxWidth, 430.dp) - 32.dp)
+        val errorHeight = reviewSaveFeedbackHeight(
+            saveState.failed,
+            surface.textEntryCopy,
+            minOf(maxWidth, 430.dp) - 32.dp,
+        )
         val minimumPinnedHeight = actionHeight + ReviewNoteHeight + ReviewNoteGap + ReviewActionsGap +
-            ReviewTopPadding + ReviewBottomPadding + ReviewMinimumScrollHeight
+            ReviewTopPadding + ReviewBottomPadding + ReviewMinimumScrollHeight + errorHeight
         val pinFooter = maxHeight >= minimumPinnedHeight
         // The compact form scrolls below the independently anchored Close touch target.
         val density = LocalDensity.current
@@ -113,7 +118,7 @@ internal fun PhotoAnalysisMealReview(
         ) {
             val bodyModifier = if (pinFooter) Modifier.weight(1f).fillMaxWidth() else Modifier.fillMaxWidth()
             MealReviewScrollableContent(review, surface, bodyModifier, pinFooter)
-            MealReviewFooter(review, onAction, surface, choices, noteFocus)
+            MealReviewFooter(review, onAction, surface, noteFocus, saveState)
         }
     }
 }
@@ -194,9 +199,10 @@ private fun MealReviewFooter(
     review: PhotoAnalysisReviewModel?,
     onAction: (PhotoAnalysisPresenterAction) -> Unit,
     surface: PhotoAnalysisCaptureSurface,
-    choices: MealReviewChoices,
     noteFocus: PhotoAnalysisReviewNoteFocus,
+    saveState: MealReviewSaveState,
 ) {
+    val choices = requireNotNull(surface.mealReviewSelection)
     val copy = surface.presenterCopy.review
     Column(
         Modifier.fillMaxWidth().bringIntoViewRequester(noteFocus.footerRequester)
@@ -205,6 +211,7 @@ private fun MealReviewFooter(
     ) {
         Spacer(Modifier.height(ReviewNoteGap))
         ReviewNoteInput(surface, noteFocus)
+        if (saveState.failed) MealReviewSaveFeedback(surface.textEntryCopy)
         Spacer(Modifier.height(ReviewActionsGap))
         val hasContent = listOf(
             choices.componentIds.isNotEmpty(),
@@ -221,7 +228,7 @@ private fun MealReviewFooter(
                 enabled = choices.dishId != null || hasContent,
             ),
             onRetake = { onAction(PhotoAnalysisPresenterAction.ScanAgain) },
-            onAdd = { surface.onMealReviewConfirmed(confirmationForChoices(review, choices, surface)) },
+            onAdd = { saveState.submit(confirmationForChoices(review, choices, surface), surface) },
         )
     }
 }

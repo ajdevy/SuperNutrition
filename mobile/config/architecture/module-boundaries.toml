@@ -45,6 +45,13 @@ source_sets = ["commonMain", "commonTest", "androidMain", "iosMain"]
 production = false
 
 [[module]]
+id = "data-nutrition"
+path = "mobile/data/nutrition"
+kind = "shared-adapter"
+source_sets = ["commonMain", "commonTest", "jvmTest"]
+production = true
+
+[[module]]
 id = "inference"
 path = "mobile/inference"
 kind = "adapter-group"
@@ -132,7 +139,7 @@ production = false
 
 [[allowed_edge]]
 from = "apps"
-to = "feature|feature-host|feature-presenter|feature-ui|platform|inference|inference-local-android-poc|data|core"
+to = "feature|feature-host|feature-presenter|feature-ui|platform|inference|inference-local-android-poc|data|data-nutrition|core"
 scope = "production"
 
 [[allowed_edge]]
@@ -182,7 +189,7 @@ to = "domain|core"
 scope = "production"
 
 [[allowed_edge]]
-from = "platform|data"
+from = "platform|data|data-nutrition"
 to = "domain|core"
 scope = "production"
 

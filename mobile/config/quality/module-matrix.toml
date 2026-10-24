@@ -5,8 +5,8 @@ lifecycle = "active"
 inventory_state = "local-verified"
 source_digest = "local-only"
 quality_claim = true
-production_source_count = 14
-coverage_denominator_count = 14
+production_source_count = 15
+coverage_denominator_count = 15
 undeclared_executable_policy = "fail"
 
 # Active local inventory: every production source has an explicit quality
@@ -106,6 +106,14 @@ path = "mobile/domain/nutrition"
 kind = "production-kmp"
 production = true
 quality_task = "domain:nutrition:jvmTest"
+status = "local-verified"
+
+[[unit]]
+id = "data-nutrition"
+path = "mobile/data/nutrition"
+kind = "production-adapter"
+production = true
+quality_task = "data:nutrition:jvmTest"
 status = "local-verified"
 
 [[unit]]

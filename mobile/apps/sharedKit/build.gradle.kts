@@ -27,17 +27,23 @@ kotlin {
         if (enableAppleTargets) {
             val iosMain = maybeCreate("iosMain")
             val iosMainSourceSet = getByName("iosMain").also { it.dependsOn(getByName("commonMain")) }
+            val iosTestSourceSet = maybeCreate("iosTest").also { it.dependsOn(getByName("commonTest")) }
             if (enableIosDeviceTarget) {
                 named("iosArm64Main") { dependsOn(iosMainSourceSet) }
+                named("iosArm64Test") { dependsOn(iosTestSourceSet) }
                 if (!hostIsIntelMac) {
                     named("iosSimulatorArm64Main") { dependsOn(iosMainSourceSet) }
+                    named("iosSimulatorArm64Test") { dependsOn(iosTestSourceSet) }
                 }
             }
             if (enableIntelX64) {
                 named("iosX64Main") { dependsOn(iosMainSourceSet) }
+                named("iosX64Test") { dependsOn(iosTestSourceSet) }
             }
             iosMain.dependencies {
                 implementation(project(":platform:photo-ios"))
+                implementation(project(":data:nutrition"))
+                implementation(libs.sqldelight.native.driver)
             }
         }
         commonMain.dependencies {

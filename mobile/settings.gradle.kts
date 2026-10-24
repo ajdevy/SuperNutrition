@@ -3,7 +3,15 @@ import org.gradle.api.initialization.resolve.RepositoriesMode
 pluginManagement {
     repositories {
         gradlePluginPortal()
-        google()
+        google {
+            content {
+                // These pinned SQLDelight families are published on Maven Central.
+                excludeGroupByRegex("app\\.cash\\..*")
+                excludeGroup("co.touchlab")
+                excludeGroup("org.xerial")
+                excludeGroup("org.slf4j")
+            }
+        }
         mavenCentral()
     }
 
@@ -13,7 +21,14 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        google()
+        google {
+            content {
+                excludeGroupByRegex("app\\.cash\\..*")
+                excludeGroup("co.touchlab")
+                excludeGroup("org.xerial")
+                excludeGroup("org.slf4j")
+            }
+        }
         mavenCentral()
     }
 
@@ -63,6 +78,8 @@ scaffoldModules.forEach { path ->
             ":core:config",
             ":core:ui",
             ":domain:inference",
+            ":domain:nutrition",
+            ":data:nutrition",
             ":domain:photo-analysis",
             ":feature:photo-analysis",
             ":feature:photo-analysis-presenter",

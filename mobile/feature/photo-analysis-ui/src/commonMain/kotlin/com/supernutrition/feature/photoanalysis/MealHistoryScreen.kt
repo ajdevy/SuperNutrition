@@ -50,11 +50,33 @@ fun MealHistoryScreen(
     meals: List<MealHistoryMeal>,
     onBackRequested: () -> Unit,
     modifier: Modifier = Modifier,
-    referenceDay: Int = currentHistoryReferenceDay(),
-    copy: MealHistoryCopy = MealHistoryCopy(),
+    presentation: MealHistoryPresentation = MealHistoryPresentation(),
+    onMealSelected: ((MealHistoryMeal) -> Unit)? = null,
 ) {
-    var query by remember { mutableStateOf("") }
+    val referenceDay = presentation.referenceDay ?: currentHistoryReferenceDay()
+    val copy = if (presentation.storageLoadFailed) {
+        presentation.copy.copy(
+            emptyTitle = presentation.copy.loadFailedTitle,
+            emptyDescription = presentation.copy.loadFailedDescription,
+        )
+    } else {
+        presentation.copy
+    }
+    val rememberedSearch = remember { MealHistorySearchState() }
+    val search = presentation.searchState ?: rememberedSearch
+    val query = search.query
     var selected by remember { mutableStateOf<MealHistoryId?>(null) }
+    val selectedMeal = meals.firstOrNull { it.id == selected }
+    if (selectedMeal != null) {
+        MealDetailsScreen(
+            selectedMeal,
+            MealDetailsActions(onBackRequested = { selected = null }),
+            modifier = modifier,
+            referenceDay = referenceDay,
+            copy = presentation.detailsCopy,
+        )
+        return
+    }
     val visible = searchMealHistory(meals, query)
     Box(modifier.fillMaxSize().background(ProfileBackground).automationId(UiAutomationIds.MEAL_HISTORY_SCREEN)) {
         Column(
@@ -63,13 +85,12 @@ fun MealHistoryScreen(
         ) {
             MealHistoryHeader(copy, onBackRequested)
             Spacer(Modifier.height(5.dp))
-            MealHistorySearch(query, { query = it }, copy)
+            MealHistorySearch(query, search::updateQuery, copy)
             Spacer(Modifier.height(20.dp))
-            MealHistoryList(visible, referenceDay, copy, meals.isEmpty()) { selected = it.id }
+            MealHistoryList(visible, referenceDay, copy, meals.isEmpty()) {
+                if (onMealSelected != null) onMealSelected(it) else selected = it.id
+            }
         }
-    }
-    meals.firstOrNull { it.id == selected }?.let { meal ->
-        MealHistorySummary(meal, copy) { selected = null }
     }
 }
 
