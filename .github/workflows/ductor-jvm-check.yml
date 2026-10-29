@@ -1,0 +1,27 @@
+name: Ductor JVM runner check
+on:
+  push:
+    branches: [mobile-unit-runner-check-20261029]
+permissions:
+  contents: read
+jobs:
+  jvm-tests:
+    runs-on: [self-hosted, ductor-mobile-unit, supernutrition]
+    timeout-minutes: 50
+    env:
+      ANDROID_HOME: /home/supernutrition/android-sdk
+      ANDROID_SDK_ROOT: /home/supernutrition/android-sdk
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@v4
+        with:
+          packages: platform-tools
+      - name: Run JVM unit coverage
+        run: >-
+          ./mobile/gradlew -p mobile mobileUnitCoverage
+          -Psupernutrition.runJvmCoverage=true
+          --dependency-verification=strict --no-daemon --max-workers=1
