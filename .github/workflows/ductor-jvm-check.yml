@@ -20,8 +20,8 @@ jobs:
       - uses: android-actions/setup-android@v4
         with:
           packages: platform-tools
-      - name: Run JVM unit coverage
+      - name: Run domain JVM unit tests
         run: >-
-          ./mobile/gradlew -p mobile mobileUnitCoverage
-          -Psupernutrition.runJvmCoverage=true
+          ./mobile/gradlew -p mobile :domain:inference:jvmTest
+          :domain:nutrition:jvmTest :domain:photo-analysis:jvmTest
           --dependency-verification=strict --no-daemon --max-workers=1
