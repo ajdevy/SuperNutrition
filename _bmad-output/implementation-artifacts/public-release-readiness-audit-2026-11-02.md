@@ -70,18 +70,45 @@ generated review metadata also records the developer's absolute machine path.
 remove the account details, fixed Team ID, physical-device UDID, simulator UDID,
 and developer home paths from current files and every reachable history.
 
-## Current status
+## Current status — 2026-11-03
 
-D-11 and D-13 record the approved privacy and license boundary. The working
+D-11 and D-13 record the approved privacy and license boundary. The prepared
 tree removes the detector path from the Android/iOS app, removes the remaining
 executable detector/FPB research integrations, the model fusion benchmark, and
 their generated outputs, removes the checked-in AAR and POM, and points Android
 builds at the private GitHub Packages repository. The private library source
 repository has the `v0.1.1` tag and its workflow published the AAR successfully;
 read access from SuperNutrition workflows and this local checkout is not
-configured yet.
+configured yet. The five user-sample photographs are absent from the prepared
+tree.
 
-The five user-sample photographs are absent from the prepared tree. The
-history rewrite, remote ref verification, current-tree/history secret scan, and
-final public-readiness review remain outstanding. The repository remains
-private throughout this work.
+The rewrite preserved the 669-commit sequence and existing author identities,
+removed the detector/runtime source and binary paths, scrubbed the exact
+machine/device identifiers, and redacted two historical credential-shaped
+benchmark assignments. An exact scan of 18,704 reachable Git objects found
+none of the nine replaced values. Gitleaks reported 91 history matches, all
+heuristic `generic-api-key` findings in reviewed design geometry, hash fields,
+deliberate scanner fixtures, and the repository file index; it found no
+benchmark assignment after redaction. The earlier current-tree scan reported
+89 reviewed heuristic findings. Repository history alone cannot establish
+whether the two removed values were live credentials; revoke them if either
+was valid.
+
+All 50 existing branch refs and both tags were atomically force-updated with
+exact leases, and `codex/public-readiness` was added. A post-push comparison
+matches all 53 branch/tag refs to the rewritten mirror. GitHub still exposes 55
+read-only `refs/pull/*/head` refs: only one matches the rewritten local PR refs
+and 54 still point at prior commit IDs. Those references may retain old PR
+views or objects, so full removal from GitHub-hosted PR history is not
+confirmed. GitHub documents that pull refs are read-only and that Support can
+purge cached views for sensitive data, while stating it will not remove
+non-sensitive data; see [Removing sensitive data from a repository](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository).
+PR #64 remains open, has no reviews, and its updated coverage run is queued.
+
+The repository remains private. Before making it public, resolve the stale PR
+refs and confirm whether the historical credential-shaped values need
+revocation. Android build access also remains unverified because the private
+package credentials are not configured locally or in SuperNutrition workflows;
+the iOS compile could not run because this host has no `xcodebuild`. GitHub
+accepted the 88.47 MB Food-101 ONNX file but warned that it exceeds its 50 MB
+recommended size. No tests were run during this preparation pass.
