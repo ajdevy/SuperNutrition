@@ -1,7 +1,7 @@
 {
   "schema": "supernutrition.android-component-mass-benchmark.v1",
   "date": "2026-08-02",
-  "scope": "physical Android research candidate screen; not a production component/mass G3 signature",
+  "scope": "Research-only physical Android device evidence; not a production model selection or G-3 signature. Detector model outputs excluded under release cleanup decision D-13.",
   "device": {
     "serial": "PHYSICAL_DEVICE_ENDPOINT",
     "physical": true,
@@ -61,39 +61,6 @@
         "status": "not-evaluable",
         "reason": "No mass output and no tared scale ground truth."
       }
-    },
-    {
-      "candidate": "YOLO-World v2",
-      "artifact": {
-        "model": "yolov8s-worldv2-coco.onnx",
-        "model_sha256": "ef272175d4db2216cde08082f1accf120bdf5ee03b5bc2ba5f51735cda1e9cbc",
-        "vocabulary": "embedded COCO-80 only; no custom ingredient prompts"
-      },
-      "run_dir": "/tmp/supernutrition-g3-android-yoloworld.cBToGy",
-      "execution": {
-        "fixture_successes": 5,
-        "fixture_failures": 0,
-        "confidence_floor": 0.1,
-        "session_init_ms": 215,
-        "inference_p50_ms": 563,
-        "inference_p95_ms": 670,
-        "inference_max_ms": 670,
-        "pss_before_kb": 27167,
-        "pss_after_kb": 244432,
-        "thermal_before": 0,
-        "thermal_after": 0,
-        "exact_visible_component_macro_f1": 0.2233,
-        "fixture_f1": [0.2222, 0.4444, 0.2, 0.0, 0.25]
-      },
-      "ingredient_benchmark": {
-        "status": "limited",
-        "scope": "exact labels in embedded COCO food subset only",
-        "macro_f1": 0.2233
-      },
-      "weight_benchmark": {
-        "status": "not-evaluable",
-        "reason": "No mass head and no tared scale ground truth."
-      }
     }
   ],
   "acceptance": {
@@ -106,5 +73,6 @@
       "Neither executed candidate provides a calibrated mass output.",
       "No production manifest or runtime activation was changed."
     ]
-  }
+  },
+  "overall_decision": "The retained candidate evidence does not prove visible ingredient identity plus calibrated mass. The production G-3 gate remains open."
 }

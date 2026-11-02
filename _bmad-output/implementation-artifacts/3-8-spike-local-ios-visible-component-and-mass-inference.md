@@ -32,7 +32,7 @@ so that iOS is not a semantic-only fork.
 
 This story owns the independent iOS adapter and device benchmark. It does not
 turn the existing Food-101 semantic harness, bridge fixtures, MobileSAM masks,
-YOLO-World detector, or public-photo screen into component/mass acceptance.
+research detector or public-photo screen into component/mass acceptance.
 E3.6 owns the consented weighed corpus; E3.7 owns Android; E3.9 owns staged
 wait/review UX; E5 owns catalog/serving/nutrition. Under the approved 2026-08-02
 post-release scope amendment, selected model activation and physical

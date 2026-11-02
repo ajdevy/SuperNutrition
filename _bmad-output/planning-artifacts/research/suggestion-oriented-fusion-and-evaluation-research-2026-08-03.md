@@ -207,7 +207,7 @@ accuracy. The actionable result is that all soft/late arms preserve the 200
 raw visual regions, while the hard prior removes 47. The prior-only candidates
 are explicitly separated from visual overlays and remain uncalibrated.
 
-E0 artifacts: [replay policy script](REDACTED_WORKTREE/d550/SuperNutrition/tools/nutrition5k-benchmark/replay_policy.py), [focused tests](REDACTED_WORKTREE/d550/SuperNutrition/tools/nutrition5k-benchmark/test_replay_policy.py), and [policy-replay.json](REDACTED_WORKTREE/d550/SuperNutrition/tools/nutrition5k-benchmark/data/nutrition5k-100/policy-replay.json).
+The E0 replay outputs belonged to the detector-fusion benchmark and were removed under release cleanup decision D-13.
 
 ## E1 result: visible-evidence audit
 
@@ -231,7 +231,7 @@ directional evidence for keeping raw proposals and expanding the ontology; it
 is not a measured false-negative rate until the conflict slice is human-
 adjudicated.
 
-E1 artifacts: [visible-audit.json](REDACTED_WORKTREE/d550/SuperNutrition/tools/nutrition5k-benchmark/data/nutrition5k-100/visible-audit.json), [visible-audit-reviewers.json](REDACTED_WORKTREE/d550/SuperNutrition/tools/nutrition5k-benchmark/data/nutrition5k-100/visible-audit-reviewers.json), and [selection script](REDACTED_WORKTREE/d550/SuperNutrition/tools/nutrition5k-benchmark/select_audit_cases.py).
+The E1 audit outputs belonged to the detector-fusion benchmark and were removed under release cleanup decision D-13.
 
 ## E2 result: disjoint 200-image holdout
 
@@ -256,7 +256,7 @@ That increase is a recipe hypothesis signal, not evidence that the image
 contains those ingredients. The hard prior removes 65 regions on this holdout
 and is therefore still unsuitable as a visual-evidence veto.
 
-E2 artifacts: [holdout manifest](REDACTED_WORKTREE/d550/SuperNutrition/tools/nutrition5k-benchmark/data/nutrition5k-200-holdout/manifest.json), [holdout comparison](REDACTED_WORKTREE/d550/SuperNutrition/tools/nutrition5k-benchmark/data/nutrition5k-200-holdout/comparison.json), and [holdout replay](REDACTED_WORKTREE/d550/SuperNutrition/tools/nutrition5k-benchmark/data/nutrition5k-200-holdout/policy-replay.json).
+The E2 holdout outputs belonged to the detector-fusion benchmark and were removed under release cleanup decision D-13.
 
 ## E3 result: physical Android PoC
 
@@ -281,7 +281,7 @@ not identify an ingredient. These are real device observations, not human
 labels: the five photos have no per-region adjudication in this run, dish
 scores are uncalibrated, and the detector vocabulary is limited.
 
-E3 evidence: [Android device evidence](REDACTED_WORKTREE/d550/SuperNutrition/tools/nutrition5k-benchmark/data/android-dny-nx9-20260803.json).
+The E3 physical-device evidence was recorded separately and is not retained in this repository.
 
 ## Should we add other models?
 

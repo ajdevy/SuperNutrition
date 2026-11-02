@@ -159,7 +159,7 @@ and `devicectl` only to install, launch, and copy the app-owned result file.
 
 ### Research-only Android candidate activities
 
-`MobileSamActivity` and `YoloWorldActivity` are separate from the G-3
+`MobileSamActivity` and `YoloXNanoActivity` are separate from the G-3
 Food-101 runner. They are manual, research-only activities that write an
 app-owned JSON record after local ONNX Runtime CPU inference; they do not call
 an API or run UI automation. Their non-production model assets are deliberately
@@ -168,7 +168,6 @@ not the selected runtime:
 | Activity | Asset contract | Capability boundary |
 | --- | --- | --- |
 | `MobileSamActivity` | MobileSAM encoder SHA-256 `580f5fb648ea1062c0aabc26217aed56921985f03f0cbbd852bba81d760cc749`; decoder SHA-256 `8976b90a87ba50a6a72217a5ff994f7d25ce16f2229fcc1ed259e1294c622ffe` | Point-prompted class-agnostic masks only; no ingredient identity or mass |
-| `YoloWorldActivity` | 640 px current PoC YOLO-World v2 ONNX SHA-256 `d27ac81640ca470cc7e42edd638b6626ac6b4f4dcce74aabb6e09cd02a13c84f`; embedded COCO-80 vocabulary | Detector-only; no complete ingredient vocabulary, normalization, or mass |
 | `YoloXNanoActivity` | official YOLOX-Nano 416 px COCO ONNX SHA-256 `c789161ed43c8269fcd4e67c67eeeb4e80c622da2eb296a20bc6007bd18a0b7d`; BGR letterbox preprocessing | Detector-only; no complete ingredient vocabulary, normalization, or mass |
 
 For an explicit connected device, launch one activity and retrieve its local
@@ -182,38 +181,30 @@ adb -s "$ANDROID_DEVICE_SERIAL" exec-out run-as com.supernutrition.g3benchmark \
   cat files/mobile-sam-result.json
 ```
 
-Replace `MobileSamActivity`/`mobile-sam-result.json` with
-`YoloWorldActivity`/`yolo-world-v2-result.json` for the detector screen. The
-physical Android outcomes and the explicit unexecuted statuses for FoodSAM and
-FoodSeg103 are recorded in
+The physical Android outcome and the explicit unexecuted statuses for FoodSAM
+and FoodSeg103 are recorded in
 [`ingredient-weight-research/android-candidate-device-evidence-2026-08-01.json`](../../ingredient-weight-research/android-candidate-device-evidence-2026-08-01.json).
 
 Use `YoloXNanoActivity`/`yolox-nano-result.json` for the official YOLOX-Nano
 COCO screen. The model is downloaded by `download-assets.sh` and is never a
 product activation: the test is a five-fixture deployment comparison only.
-The 2026-08-11 physical comparison with the current YOLO-World artifact is in
+The 2026-08-11 physical device record is in
 [`ingredient-weight-research/yolox-nano-android-evidence-2026-08-11.json`](../../ingredient-weight-research/yolox-nano-android-evidence-2026-08-11.json).
 
-### Full photo-to-grid research PoC
+### Dish-classification research PoC
 
 The standalone runner also contains `PocActivity`, a manual, research-only
-vertical slice:
+dish-classification screen:
 
-`camera photo -> dish top-5 -> 3x3 grid hints -> bounded region proposals -> prompted mask overlay`.
+`camera photo -> Food-101 dish candidates`.
 
 It deliberately keeps the model capabilities visible in the UI:
 
-- Food-101 supplies a single dish classification, not a decomposition of the
-  dish into ingredients.
-- YOLO-World uses its embedded COCO-80 vocabulary, filtered to a small set of
-  component-like labels such as `carrot` and `broccoli`; composite labels such
-  as `pizza` and `sandwich` are excluded and the result is still not a
-  complete ingredient inventory.
-- MobileSAM refines a selected proposal or grid cell into a class-agnostic
-  mask; the mask does not prove the ingredient identity.
-- No model in this PoC estimates grams. The mass state is explicitly
-  `unavailable` until a calibrated/tared weighing protocol and a selected mass
-  model exist.
+- Food-101 returns dish candidates only; it does not identify meal components.
+- Ingredient regions and masks are unavailable in this build.
+- No model in this PoC estimates grams. The mass state remains
+  `unavailable` until a cleared model and calibrated/tared weighing protocol
+  exist.
 
 Build and launch it on an unlocked Android device:
 
@@ -327,7 +318,7 @@ comparison budgets.
 
 G-3 remains `engineering-approved-pending-product`. Recognition quality,
 multi-object recognition, nutrition accuracy, and production readiness are
-separate decisions. The approval does not select FPB/YOLOv12 for mobile,
+separate decisions. The approval does not select a component model for mobile,
 approve ingredient/grams capability, or apply to unmeasured devices.
 
 Before final product sign-off, the product owner must accept or reject the

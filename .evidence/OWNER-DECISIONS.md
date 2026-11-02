@@ -687,3 +687,18 @@ Replace physical-device and workstation-created simulator UDIDs in committed
 documentation and evidence with placeholders. Preserve general device model,
 OS, and test results when useful, but do not publish device identifiers. Apply
 the same replacements to reachable Git history.
+
+## D-13 — remove AGPL-dependent model integrations and generated outputs
+
+Decided on: 2026-11-02
+Decided by: ajdevy (repository owner, direct instruction in this Codex chat)
+Channel: Codex chat request to rewrite GitHub history to remove AGPL material
+
+Remove the remaining runnable FPB/Ultralytics integration, its tests and
+generated predictions/evidence, the standalone detector Android benchmark,
+and the Nutrition5k detector-fusion harness, outputs, and presentations from
+SuperNutrition. Remove these artifacts from every reachable branch and tag
+while retaining the project's commit sequence and linked author identities.
+Keep any necessary license/provenance discussion as plain research
+documentation only; it must not imply these models or runners are part of the
+app or distributable runtime.

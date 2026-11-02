@@ -9,17 +9,19 @@ this work.
 
 ## Findings and acceptance conditions
 
-### PRR-1 — AGPL-bound region model is still part of the app
+### PRR-1 — detector and AGPL-dependent research artifacts remain in the tree/history
 
-`mobile/inference/local-android-poc` verifies and uses the YOLO-World ONNX
-asset, and the iOS PoC also requires it. The model binary is 51 MB and appears
-in repository history. The Android private runtime contains the matching region
-inference path.
+In addition to the production integration, research tooling still includes an
+FPB/Ultralytics runner and generated predictions, a standalone Android
+detector activity, and a Nutrition5k detector-fusion harness with generated
+outputs and presentations. These are outside the selected dish-classification
+runtime but would remain part of the public repository and its history.
 
-**Acceptance:** the SuperNutrition app no longer packages or requires the
-YOLO-World asset or region inference path; Food-101 dish classification remains
-usable; the AGPL-bound model binary is absent from every GitHub branch and tag
-history.
+**Acceptance:** the app and benchmark harness contain no executable
+AGPL-dependent integration or detector model assets; the FPB runner/tests,
+fusion harness, and generated model outputs are removed; Food-101 dish
+classification remains usable; all removed source, predictions, and model
+binaries are absent from every authorized GitHub branch and tag history.
 
 ### PRR-2 — private runtime source remains in public-project history
 
@@ -70,12 +72,14 @@ and developer home paths from current files and every reachable history.
 
 ## Current status
 
-D-11 records the approved privacy and license boundary. The working tree now
-removes the YOLO-World model from the Android/iOS app path, removes the checked-
-in AAR and POM, points Android builds at the private GitHub Packages repository,
-and updates the runtime and fixture documentation. The private library source
-repository has a publishing workflow and the `v0.1.1` tag; package publication
-and access from this repository still need confirmation.
+D-11 and D-13 record the approved privacy and license boundary. The working
+tree removes the detector path from the Android/iOS app, removes the remaining
+executable detector/FPB research integrations, the model fusion benchmark, and
+their generated outputs, removes the checked-in AAR and POM, and points Android
+builds at the private GitHub Packages repository. The private library source
+repository has the `v0.1.1` tag and its workflow published the AAR successfully;
+read access from SuperNutrition workflows and this local checkout is not
+configured yet.
 
 The five user-sample photographs are absent from the prepared tree. The
 history rewrite, remote ref verification, current-tree/history secret scan, and
