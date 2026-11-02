@@ -46,8 +46,8 @@ import com.supernutrition.inference.localshared.LocalPhotoInferenceRuntime
 import com.supernutrition.inference.localshared.LocalRuntimeCandidate
 import com.supernutrition.inference.localshared.LocalRuntimeCapability
 import com.supernutrition.inference.localshared.LocalRuntimeOutcome
-import com.supernutrition.inference.localandroidpoc.runtime.PocAnalysis
-import com.supernutrition.inference.localandroidpoc.runtime.PocInferenceEngine
+import com.supernutrition.foodidentification.runtime.PocAnalysis
+import com.supernutrition.foodidentification.runtime.PocInferenceEngine
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.IOException

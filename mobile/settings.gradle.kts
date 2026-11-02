@@ -21,6 +21,10 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
+        maven {
+            name = "supernutritionLocalArtifacts"
+            url = uri(rootDir.resolve("local-maven"))
+        }
         google {
             content {
                 excludeGroupByRegex("app\\.cash\\..*")

@@ -7,12 +7,14 @@ not require access to that private repository.
 
 | Field | Value |
 | --- | --- |
-| Library version | `0.1.0` |
-| Source commit | [`e9d65cfee31d015708c1988c82269658e7bc1534`](https://github.com/flexsent-labs/supernutrition-food-identification-android/commit/e9d65cfee31d015708c1988c82269658e7bc1534) |
+| Library version | `0.1.1` |
+| Source commit | [`9b7df3d91ac6d9a86957688c97a69ba739635d9c`](https://github.com/flexsent-labs/supernutrition-food-identification-android/commit/9b7df3d91ac6d9a86957688c97a69ba739635d9c) |
 | Build command | `./gradlew assembleRelease` in the private source repository |
-| AAR | `libs/food-identification-runtime-0.1.0.aar` |
-| AAR SHA-256 | `dbe9631a58daef59ce2b17c15cf0f1133feaef167340a94ecec96a647d7575f3` |
-| AAR size | 25,167 bytes |
+| Maven coordinate | `com.supernutrition.inference:food-identification-runtime:0.1.1` |
+| Android namespace | `com.supernutrition.foodidentification.runtime` |
+| AAR and POM | `mobile/local-maven/com/supernutrition/inference/food-identification-runtime/0.1.1/` |
+| AAR SHA-256 | `36cec9481a84ff939ea05c17c4b1b246f6146f8b4889ac14d7e26842b488abf0` |
+| AAR size | 25,083 bytes |
 
 The AAR contains runtime code only. The host app packages ONNX Runtime Android
 `1.28.0` and the following assets in `src/main/assets/`:
@@ -24,4 +26,6 @@ The AAR contains runtime code only. The host app packages ONNX Runtime Android
 | `food101-labels.txt` | `eb6b396455a281445a698d8af22b2142be9a6eb9401520ee702746545f1c8820` |
 
 The Kotlin host adapter verifies these asset digests before inference. The
-source-only private repository does not contain model weights.
+local Maven repository includes a POM so Gradle resolves the imported AAR as a
+normal library dependency. The source-only private repository does not contain
+model weights.
