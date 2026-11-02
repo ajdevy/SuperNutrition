@@ -4504,7 +4504,10 @@
             <sha256 value="36cec9481a84ff939ea05c17c4b1b246f6146f8b4889ac14d7e26842b488abf0" origin="Built from private source commit 9b7df3d91ac6d9a86957688c97a69ba739635d9c"/>
          </artifact>
          <artifact name="food-identification-runtime-0.1.1.pom">
-            <sha256 value="895365cbcf2377e8ec61871d2d10f47b11a0b72eb9cddc424450852e80465a64" origin="Maintained in the public app repository"/>
+            <sha256 value="3ee3cec8b33a9fa010ecee0d04e98107b9aba4f925b562b47c0e8d1271cf8b3d" origin="Built from private source commit 9b7df3d91ac6d9a86957688c97a69ba739635d9c"/>
+         </artifact>
+         <artifact name="food-identification-runtime-0.1.1.module">
+            <sha256 value="7d659979548ca37370ac76130ee3e34a32e7a0d57cdbd9f1339225376edf153e" origin="Built from private source commit 9b7df3d91ac6d9a86957688c97a69ba739635d9c"/>
          </artifact>
       </component>
       <component group="commons-codec" name="commons-codec" version="1.17.1">

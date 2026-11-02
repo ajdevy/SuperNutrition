@@ -654,3 +654,36 @@ evidence, production model approval, or any separate submission approval
 required by upstream terms. Existing SuperNutrition history and commit IDs are
 preserved; prior copies of this source and the model assets remain reachable in
 that history.
+
+## D-11 — remove AGPL-bound model material and personal sample data before public release
+
+Decided on: 2026-11-02
+Decided by: ajdevy (repository owner, direct instruction in this Codex chat)
+Channel: Codex chat request to remove AGPL material from GitHub history and public-release checklist requirements
+
+Remove the YOLO-World region model and its app integration from the SuperNutrition
+repository, retaining Food-101 dish classification until a separately cleared
+replacement is selected. Remove the real meal photographs stored as user samples
+and use made-up fixtures instead. Keep the canonical Android runtime source and
+AAR in the private library repository, and remove their historical copies from
+SuperNutrition. Remove the Apple developer account name/email and fixed team ID
+from setup docs and project defaults; contributors supply their own signing
+identity. Redact developer-machine absolute paths from generated repository
+metadata. Rewrite reachable GitHub history so these model, source, binary,
+personal-sample, and machine-identity details are absent from all branches and
+tags, while preserving the remaining commit sequence and author identities where
+possible. Keep the SuperNutrition repository private; this decision does not
+authorize making it public. The private runtime AAR must not carry a LICENSE file
+or publish a license entry in its Maven metadata; the source repository retains
+its own license.
+
+## D-12 — redact local physical-device identifiers before public release
+
+Decided on: 2026-11-02
+Decided by: ajdevy (repository owner, direct instruction in this Codex chat)
+Channel: Codex chat request to remove real personal or customer data before public release
+
+Replace physical-device and workstation-created simulator UDIDs in committed
+documentation and evidence with placeholders. Preserve general device model,
+OS, and test results when useful, but do not publish device identifiers. Apply
+the same replacements to reachable Git history.

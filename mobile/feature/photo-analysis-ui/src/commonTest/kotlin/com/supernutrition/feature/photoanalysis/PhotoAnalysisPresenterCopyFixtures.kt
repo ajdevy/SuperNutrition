@@ -32,7 +32,7 @@ object PhotoAnalysisPresenterCopyFixtures {
         preparingPhoto = "Preparazione foto",
         photoReady = "Foto pronta",
         analyzingPhoto = "Analisi foto",
-        findingVisibleFoods = "Ricerca cibi visibili",
+        findingVisibleFoods = "Analisi del pasto",
         identifyingDish = "Identificazione piatto",
         estimatingPortions = "Stima porzioni",
         checkingResults = "Verifica risultati",

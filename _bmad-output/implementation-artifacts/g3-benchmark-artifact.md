@@ -406,7 +406,7 @@ iPhone 14 Pro (`REDACTED_PHYSICAL_DEVICE_UDID`) with local identity
 or provisioning profile exists for that team and bundle `com.supernutrition.g3`.
 That research-only `com.supernutrition.g3` attempt produced no benchmark result
 and is not counted. The separate product physical acceptance path was then
-rerun with the configured Team `REDACTED_TEAM_ID`: Xcode UI acceptance completed
+rerun with the configured Apple developer team: Xcode UI acceptance completed
 `5/5`, and the binary-bound `iosArm64` fixture lane completed `5/5` (3
 normalization, 2 bridge) on iPhone 14 Pro / iOS 26.5.2. The emitted bundle is
 `/tmp/supernutrition-ios-evidence-20260802/bundle/`, with status
@@ -435,7 +435,7 @@ model resource/rollback metrics remain `not-evaluable`.
 The paired iPhone 14 Pro is booted, unlocked, in Developer Mode, and available
 over the local CoreDevice tunnel (iOS `26.5.2`, build `23F84`; UDID
 `REDACTED_PHYSICAL_DEVICE_UDID`). The physical Xcode acceptance command built and
-signed with Team `REDACTED_TEAM_ID`, but it did not begin XCTest: Xcode reported it
+signed with the configured Apple developer team, but it did not begin XCTest: Xcode reported it
 could not locate DeviceSupport for `arm64`/`arm64e` while installing or
 launching the test host. The installed Xcode is `26.0.1` (`17A400`) and its
 local iPhoneOS DeviceSupport directories stop at `16.4`. This host cannot

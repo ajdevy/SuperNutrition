@@ -32,9 +32,20 @@ published as a production release.
 - TypeScript, Node.js 22, Fastify, PostgreSQL, and Redis for the API.
 - Versioned JSON contracts and reproducible evaluation fixtures.
 
-The Android food-identification runtime is imported as a small prebuilt AAR;
-its source repository is private, while the AAR and model assets are included
-here. A public checkout can build without private-repository credentials. See
+The Android food-identification runtime is imported as a prebuilt AAR from a
+private GitHub Packages repository. Both its source and binary are private;
+the Food-101 classifier weights remain in this project, and component
+detection is disabled until a separately cleared model is selected. Android
+contributors need read access to the private package. Add a GitHub classic
+personal access token with `read:packages` to `~/.gradle/gradle.properties`:
+
+```properties
+gpr.user=YOUR_GITHUB_USERNAME
+gpr.key=YOUR_READ_PACKAGES_TOKEN
+```
+
+Do not commit these credentials. A public checkout without private package
+access cannot resolve the Android runtime dependency. See
 [`mobile/inference/local-android-poc/THIRD-PARTY-NOTICES.md`](mobile/inference/local-android-poc/THIRD-PARTY-NOTICES.md)
 and [`mobile/inference/local-android-poc/LIBRARY-PROVENANCE.md`](mobile/inference/local-android-poc/LIBRARY-PROVENANCE.md)
 for upstream terms, source revision, and artifact digests.

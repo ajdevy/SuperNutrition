@@ -22,8 +22,17 @@ dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         maven {
-            name = "supernutritionLocalArtifacts"
-            url = uri(rootDir.resolve("local-maven"))
+            name = "foodIdentificationPrivate"
+            url = uri("https://maven.pkg.github.com/flexsent-labs/supernutrition-food-identification-android")
+            credentials {
+                username = providers.gradleProperty("gpr.user").orNull
+                    ?: System.getenv("GITHUB_ACTOR").orEmpty()
+                password = providers.gradleProperty("gpr.key").orNull
+                    ?: System.getenv("GITHUB_TOKEN").orEmpty()
+            }
+            content {
+                includeGroup("com.supernutrition.inference")
+            }
         }
         google {
             content {

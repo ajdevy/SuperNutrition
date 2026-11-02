@@ -148,8 +148,8 @@ iOS requires the physical UDID and a locally configured Apple development
 account/team in Xcode:
 
 ```bash
-DEVELOPMENT_TEAM=REDACTED_TEAM_ID \
-IOS_DEVICE_UDID=REDACTED_PHYSICAL_DEVICE_UDID \
+DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
+IOS_DEVICE_UDID="<physical-iphone-udid>" \
   tools/g3-benchmark/run-ios.sh
 ```
 

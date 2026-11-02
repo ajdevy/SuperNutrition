@@ -149,7 +149,7 @@ requires the fixture XML as well as the physical xcresult, so a UI-only run
 cannot accidentally close the normalization gap:
 
 ```bash
-export APPLE_TEAM_ID="${APPLE_TEAM_ID:-REDACTED_TEAM_ID}"
+export APPLE_TEAM_ID="${APPLE_TEAM_ID:?Set APPLE_TEAM_ID to your development team}"
 export IOS_CODE_SIGN_IDENTITY="Apple Development: <name> (<certificate-id>)"
 export IOS_UDID="<physical-iphone-udid>"
 xcodebuild test -quiet \
