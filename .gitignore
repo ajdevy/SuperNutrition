@@ -2,6 +2,21 @@
 __pycache__/
 *.py[cod]
 
+# Local environment and credential files. Keep only explicit examples tracked.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p8
+*.p12
+*.pfx
+*.keystore
+*.jks
+*.mobileprovision
+credentials*.json
+service-account*.json
+
 # Machine-local Android/Gradle SDK location.
 mobile/local.properties
 

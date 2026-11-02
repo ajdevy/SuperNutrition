@@ -141,7 +141,7 @@
   "capture_command_timings": [
     {
       "command": [
-        "/Users/REDACTED/Library/Android/sdk/platform-tools/adb",
+        "~/Library/Android/sdk/platform-tools/adb",
         "-P",
         "5041",
         "devices",
@@ -151,7 +151,7 @@
     },
     {
       "command": [
-        "/Users/REDACTED/Library/Android/sdk/platform-tools/adb",
+        "~/Library/Android/sdk/platform-tools/adb",
         "-P",
         "5041",
         "-s",
@@ -163,7 +163,7 @@
     },
     {
       "command": [
-        "/Users/REDACTED/Library/Android/sdk/platform-tools/adb",
+        "~/Library/Android/sdk/platform-tools/adb",
         "-P",
         "5041",
         "-s",
@@ -176,7 +176,7 @@
     },
     {
       "command": [
-        "/Users/REDACTED/Library/Android/sdk/platform-tools/adb",
+        "~/Library/Android/sdk/platform-tools/adb",
         "-P",
         "5041",
         "-s",
@@ -188,7 +188,7 @@
     },
     {
       "command": [
-        "/Users/REDACTED/Library/Android/sdk/platform-tools/adb",
+        "~/Library/Android/sdk/platform-tools/adb",
         "-P",
         "5041",
         "-s",
@@ -206,7 +206,7 @@
     },
     {
       "command": [
-        "/Users/REDACTED/Library/Android/sdk/platform-tools/adb",
+        "~/Library/Android/sdk/platform-tools/adb",
         "-P",
         "5041",
         "-s",
@@ -219,7 +219,7 @@
     },
     {
       "command": [
-        "/Users/REDACTED/Library/Android/sdk/platform-tools/adb",
+        "~/Library/Android/sdk/platform-tools/adb",
         "-P",
         "5041",
         "-s",
@@ -231,7 +231,7 @@
     },
     {
       "command": [
-        "/Users/REDACTED/Library/Android/sdk/platform-tools/adb",
+        "~/Library/Android/sdk/platform-tools/adb",
         "-P",
         "5041",
         "-s",
@@ -244,7 +244,7 @@
     },
     {
       "command": [
-        "/Users/REDACTED/Library/Android/sdk/platform-tools/adb",
+        "~/Library/Android/sdk/platform-tools/adb",
         "-P",
         "5041",
         "-s",
@@ -258,7 +258,7 @@
     },
     {
       "command": [
-        "/Users/REDACTED/Library/Android/sdk/platform-tools/adb",
+        "~/Library/Android/sdk/platform-tools/adb",
         "-P",
         "5041",
         "-s",
@@ -273,7 +273,7 @@
     },
     {
       "command": [
-        "/Users/REDACTED/Library/Android/sdk/platform-tools/adb",
+        "~/Library/Android/sdk/platform-tools/adb",
         "-P",
         "5041",
         "-s",

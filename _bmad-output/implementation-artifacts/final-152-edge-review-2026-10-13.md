@@ -1,6 +1,6 @@
 # Final 152-food Edge Case Hunter review
 
-Date: 2026-10-13. Worktree: `/Users/REDACTED/.codex/worktrees/a704/SuperNutrition`.
+Date: 2026-10-13. Worktree: `REDACTED_WORKTREE/a704/SuperNutrition`.
 Branch: `codex/figma-camera-flow`; HEAD and review baseline:
 `5ee5de077866feed70b418ee2760af24322b1d22`. Existing tracked and untracked WIP
 was preserved. This review did not edit production source or run builds/devices.

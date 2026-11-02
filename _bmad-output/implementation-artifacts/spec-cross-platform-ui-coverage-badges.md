@@ -6,8 +6,8 @@ status: 'done'
 baseline_commit: 'dd614e6f6b0387bc7a464b3c59bc1bf13bdd8516'
 review_loop_iteration: 0
 context:
-  - '/Users/aj/.codex/worktrees/7479/SuperNutrition/_bmad-output/planning-artifacts/architecture/architecture-SuperNutrition-2026-07-26/ARCHITECTURE-SPINE.md'
-  - '/Users/aj/.codex/worktrees/7479/SuperNutrition/_bmad-output/planning-artifacts/architecture/architecture-SuperNutrition-2026-07-26/reviews/review-ui-test-final.md'
+  - 'REDACTED_WORKTREE/7479/SuperNutrition/_bmad-output/planning-artifacts/architecture/architecture-SuperNutrition-2026-07-26/ARCHITECTURE-SPINE.md'
+  - 'REDACTED_WORKTREE/7479/SuperNutrition/_bmad-output/planning-artifacts/architecture/architecture-SuperNutrition-2026-07-26/reviews/review-ui-test-final.md'
 ---
 
 <frozen-after-approval reason="human-owned intent — do not modify unless human renegotiates">

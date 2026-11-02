@@ -1,6 +1,6 @@
 # Rewards iOS adapter cleanup — 2026-10-18
 
-Recorded before production edits in the shared worktree `/Users/REDACTED/.codex/worktrees/a704/SuperNutrition`, branch `codex/figma-camera-flow`, HEAD `7ec615063ac166d69e7f4a81495e20098f25be3c`. The parent owns the pending approved Rewards integration, all Gradle/device verification, graph refresh, and Git mutations. Existing staged Rewards localization and unrelated Home/Rewards work are preserved.
+Recorded before production edits in the shared worktree `REDACTED_WORKTREE/a704/SuperNutrition`, branch `codex/figma-camera-flow`, HEAD `7ec615063ac166d69e7f4a81495e20098f25be3c`. The parent owns the pending approved Rewards integration, all Gradle/device verification, graph refresh, and Git mutations. Existing staged Rewards localization and unrelated Home/Rewards work are preserved.
 
 ## Findings and acceptance
 

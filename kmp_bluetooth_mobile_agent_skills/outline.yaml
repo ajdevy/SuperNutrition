@@ -13,4 +13,4 @@ items:
 execution:
   batch_size: 3
   items_per_agent: 1
-  output_dir: "/Users/REDACTED/workspace_ai/SuperNutrition/kmp_bluetooth_mobile_agent_skills/research_results"
+  output_dir: "./research_results"

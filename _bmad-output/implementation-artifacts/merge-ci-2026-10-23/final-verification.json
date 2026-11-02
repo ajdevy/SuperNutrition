@@ -1,7 +1,7 @@
 {
   "tested_main": "35023601c35a427afae0dfade83f8b11e2039154",
   "source_head": "4cf07733b196fcb2d0fc9791d5111416edf5ab67",
-  "worktree": "/Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition",
+  "worktree": "REDACTED_WORKTREE/f2ff/SuperNutrition",
   "source_branch": "codex/android-ci-window-focus",
   "integrated_prs": [
     55,

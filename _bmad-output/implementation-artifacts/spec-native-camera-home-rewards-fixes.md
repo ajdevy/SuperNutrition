@@ -76,7 +76,7 @@ context:
 - `./mobile/gradlew -p mobile :feature:photo-analysis-ui:jvmTest :feature:photo-analysis:jvmTest --continue --no-configuration-cache --console=plain` — fresh relevant module XML reports, zero failures/errors/skips.
 - `./mobile/gradlew -p mobile qualityCheckJvmAndroid :apps:androidApp:assembleProductionDebug --continue --no-configuration-cache --console=plain` — current clean JVM/Android checks and installable APK.
 - `./mobile/gradlew -p mobile :feature:photo-analysis-ui:compileKotlinIosArm64 -Psupernutrition.enableIosDeviceTarget=true --continue --no-configuration-cache --console=plain` — shared UI Apple source compilation; not Apple execution/lint evidence.
-- `./mobile/gradlew -p mobile :apps:androidApp:connectedAndroidTest -Pandroid.testInstrumentationRunnerArguments.deviceSerial=adb-AU3N025429006787-97BOdK._adb-tls-connect._tcp --no-configuration-cache --console=plain` — exact productionDebug/uiAcceptanceDebug report counts on the physical phone.
+- `./mobile/gradlew -p mobile :apps:androidApp:connectedAndroidTest -Pandroid.testInstrumentationRunnerArguments.deviceSerial=adb-PHYSICAL_DEVICE_SERIAL-97BOdK._adb-tls-connect._tcp --no-configuration-cache --console=plain` — exact productionDebug/uiAcceptanceDebug report counts on the physical phone.
 - `git diff --check` and `graphify update .` — clean whitespace and refreshed graph inventory.
 
 Inspect the installed production app with fresh native hierarchy/screenshots: Home, Rewards, camera permission recovery/live preview, capture/review, plus, Retake, and return navigation. Keep device execution and blocked prerequisites separate from build results.

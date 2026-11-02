@@ -480,7 +480,7 @@ Finished 50 tests on SN_Screenshots_20261023(AVD) - 15
 
 > Task :apps:androidApp:connectedAndroidTest UP-TO-DATE
 
-[Incubating] Problems report is available at: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/build/reports/problems/problems-report.html
+[Incubating] Problems report is available at: file://REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/build/reports/problems/problems-report.html
 
 BUILD SUCCESSFUL in 8m 3s
 321 actionable tasks: 16 executed, 1 from cache, 304 up-to-date

@@ -5,7 +5,7 @@ dependencies remain below;no physical-device or iOS-execution claim.
 
 ## Source and environment
 
-- Worktree:`/Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition`.
+- Worktree:`REDACTED_WORKTREE/f2ff/SuperNutrition`.
 - Branch:`codex/mvp-completion`; baseline:`0f1fbb4e599e0a71accaef5c074466436b9e8e0b`.
 - Reference:Figma Screens MVP604:293; individual contexts are in the gap audit.
 - Android:`emulator-5554`,Android15/API35,x86_64,720×1560 at320dpi (360×780dp).
@@ -142,12 +142,12 @@ physical-performance evidence. The owned gallery copy/row1000000021 was removed;
 pre-existing chicken-salad row1000000019 was preserved.
 
 Visually inspected,unedited final screenshots:
-- [Home](/Users/REDACTED/.codex/visualizations/2026/10/22/01a16557-276b-7002-b45e-4a79f11f1c89/mvp-20261024/home-final.png)
-- [Profile](/Users/REDACTED/.codex/visualizations/2026/10/22/01a16557-276b-7002-b45e-4a79f11f1c89/mvp-20261024/profile-final.png)
-- [Meal history](/Users/REDACTED/.codex/visualizations/2026/10/22/01a16557-276b-7002-b45e-4a79f11f1c89/mvp-20261024/meal-history-final.png)
-- [Add by text](/Users/REDACTED/.codex/visualizations/2026/10/22/01a16557-276b-7002-b45e-4a79f11f1c89/mvp-20261024/add-by-text-final.png)
-- [Editor with note](/Users/REDACTED/.codex/visualizations/2026/10/22/01a16557-276b-7002-b45e-4a79f11f1c89/mvp-20261024/meal-edit-final.png)
-- [Rhythm detail](/Users/REDACTED/.codex/visualizations/2026/10/22/01a16557-276b-7002-b45e-4a79f11f1c89/mvp-20261024/rhythm-final.png)
+- [Home](~/.codex/visualizations/2026/10/22/01a16557-276b-7002-b45e-4a79f11f1c89/mvp-20261024/home-final.png)
+- [Profile](~/.codex/visualizations/2026/10/22/01a16557-276b-7002-b45e-4a79f11f1c89/mvp-20261024/profile-final.png)
+- [Meal history](~/.codex/visualizations/2026/10/22/01a16557-276b-7002-b45e-4a79f11f1c89/mvp-20261024/meal-history-final.png)
+- [Add by text](~/.codex/visualizations/2026/10/22/01a16557-276b-7002-b45e-4a79f11f1c89/mvp-20261024/add-by-text-final.png)
+- [Editor with note](~/.codex/visualizations/2026/10/22/01a16557-276b-7002-b45e-4a79f11f1c89/mvp-20261024/meal-edit-final.png)
+- [Rhythm detail](~/.codex/visualizations/2026/10/22/01a16557-276b-7002-b45e-4a79f11f1c89/mvp-20261024/rhythm-final.png)
 
 ## Remaining owner/release dependencies
 
@@ -218,17 +218,17 @@ done
 
 Native XML reports:
 
-- [poc XML](</Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/androidApp/build/outputs/androidTest-results/connected/debug/flavors/poc/TEST-SN_Screenshots_20261023(AVD) - 15-_apps_androidApp-poc.xml>)
+- [poc XML](<REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/apps/androidApp/build/outputs/androidTest-results/connected/debug/flavors/poc/TEST-SN_Screenshots_20261023(AVD) - 15-_apps_androidApp-poc.xml>)
 
-- [production XML](</Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/androidApp/build/outputs/androidTest-results/connected/debug/flavors/production/TEST-SN_Screenshots_20261023(AVD) - 15-_apps_androidApp-production.xml>)
+- [production XML](<REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/apps/androidApp/build/outputs/androidTest-results/connected/debug/flavors/production/TEST-SN_Screenshots_20261023(AVD) - 15-_apps_androidApp-production.xml>)
 
-- [uiAcceptance XML](</Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/androidApp/build/outputs/androidTest-results/connected/debug/flavors/uiAcceptance/TEST-SN_Screenshots_20261023(AVD) - 15-_apps_androidApp-uiAcceptance.xml>)
+- [uiAcceptance XML](<REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/apps/androidApp/build/outputs/androidTest-results/connected/debug/flavors/uiAcceptance/TEST-SN_Screenshots_20261023(AVD) - 15-_apps_androidApp-uiAcceptance.xml>)
 
 ## Delivery state
 
 After AGP removed its test targets,Android CLI reinstalled and activated production
 successfully. Fresh device base.apk SHA256 matches d5b3705e072559421656eebebdd6c0e3d2faf6a9094403901b67ec95f67f38ce.
 Font scale1.0;Home reports0 records in a fresh session,without QA entries.
-[Final installed Home screenshot](/Users/REDACTED/.codex/visualizations/2026/10/22/01a16557-276b-7002-b45e-4a79f11f1c89/mvp-20261024/home-installed-final.png)
+[Final installed Home screenshot](~/.codex/visualizations/2026/10/22/01a16557-276b-7002-b45e-4a79f11f1c89/mvp-20261024/home-installed-final.png)
 was visually inspected. Earlier populated screenshots demonstrate manually entered
 QA records on this identical APK;they are not seeded production data.

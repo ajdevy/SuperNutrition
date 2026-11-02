@@ -2,7 +2,7 @@
   "key": "hazelnuts",
   "generator": "built-in image_gen",
   "prompt": "Use case: product-mockup\nAsset type: one food-selection sticker for the Super Nutrition mobile app.\nPrimary request: HAZELNUTS only: four small round-to-oval brown hazelnuts, one opened hard brown hazelnut shell, and one pale peeled hazelnut kernel with a pointed round shape. Distinct compact round hazelnut silhouettes. No walnuts or other nut species.\nStyle/medium: crisp photorealistic food cutout with natural texture and gentle soft studio lighting, matching the existing mixed-nuts, rice and peeled-banana stickers with a thin clean white die-cut outline around the food silhouette.\nComposition/framing: one coherent centered three-quarter food cluster on a square transparent canvas, complete food and outline visible inside the central 78 percent. Keep clear transparent padding on every edge.\nConstraints: genuine transparent alpha background, no scene or cast shadow. No plate, bowl, board, table, utensils, packaging, unrelated ingredients, green backing, text, letters, badges, checkmarks, faces, watermark or UI.\n",
-  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12ec2-311b-7691-96d6-9634b2fa56d6/exec-8c6634f4-a455-46dc-9d19-68a8ac7405b2.png",
+  "generated_path": "~/.codex/generated_images/01a12ec2-311b-7691-96d6-9634b2fa56d6/exec-8c6634f4-a455-46dc-9d19-68a8ac7405b2.png",
   "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-staples/food_sticker_hazelnuts.png",
   "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_hazelnuts.png",
   "saved_at_utc": "2026-10-12T08:16:42.484325+00:00",

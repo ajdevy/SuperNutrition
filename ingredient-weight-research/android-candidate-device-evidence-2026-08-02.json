@@ -3,7 +3,7 @@
   "date": "2026-08-02",
   "scope": "fresh research-only physical Android v2 candidate execution; not a production model selection or G-3 signature",
   "device": {
-    "serial": "AU3N025429006787",
+    "serial": "PHYSICAL_DEVICE_SERIAL",
     "physical": true,
     "model": "DNY-NX9",
     "os": "Android 16 / API 36",

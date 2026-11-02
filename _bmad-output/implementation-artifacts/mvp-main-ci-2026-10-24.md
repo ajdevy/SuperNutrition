@@ -7,7 +7,7 @@ merging into `main`, waiting for main CI and repairing every failure except
 expired device checks. This authorizes the remote phase after the completed
 local-only implementation workflow; its frozen specification remains historical.
 
-- Worktree: `/Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition`.
+- Worktree: `REDACTED_WORKTREE/f2ff/SuperNutrition`.
 - Initial clean branch/head: `codex/mvp-completion` at
   `509da213ae6e962c470539f7a6e5912999a2af66`.
 - Refreshed `origin/main`: `0f1fbb4e599e0a71accaef5c074466436b9e8e0b`;

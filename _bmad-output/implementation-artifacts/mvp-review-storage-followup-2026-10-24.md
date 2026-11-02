@@ -2,7 +2,7 @@
 
 This is a focused follow-up of the storage and instrumentation-isolation repairs for the existing R1/R2/R4/R5 triage. It is not another independent review of the original 185-file change.
 
-The real working directory was confirmed as `/Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition`. The parent supplied branch `codex/mvp-completion`; Git inspection was deliberately not repeated because this follow-up expressly prohibited Git operations while parent verification session 86124 was active.
+The real working directory was confirmed as `REDACTED_WORKTREE/f2ff/SuperNutrition`. The parent supplied branch `codex/mvp-completion`; Git inspection was deliberately not repeated because this follow-up expressly prohibited Git operations while parent verification session 86124 was active.
 
 ## New findings
 

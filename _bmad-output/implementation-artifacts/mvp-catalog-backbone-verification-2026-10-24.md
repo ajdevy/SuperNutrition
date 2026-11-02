@@ -3,7 +3,7 @@
 Scope: domain partial nutrition v2, immutable SQLDelight data adapter, source/package
 reproduction, integrity and dependency provenance. Branch `codex/mvp-completion`,
 baseline `7309e140b9cf12c6acf5733cfdcec00ce5912f1b`, worktree
-`/Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition`. No commit or remote operation
+`REDACTED_WORKTREE/f2ff/SuperNutrition`. No commit or remote operation
 was performed for this slice. Host/UI integration belongs to the parent task.
 
 ## Red evidence

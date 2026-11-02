@@ -72,8 +72,8 @@ constraint.
 
 ## Evidence Provenance — Non-Normative
 
-- `/Users/aj/Downloads/NutriArch/` — historical NutriArch concept, prototype, and planning
+- `~/Downloads/NutriArch/` — historical NutriArch concept, prototype, and planning
   material. React Native/Expo decisions are historical input, not the selected
   implementation stack.
-- `/Users/aj/Downloads/report.md` — food-photo recognition market, model,
+- `~/Downloads/report.md` — food-photo recognition market, model,
   privacy, cost, and evaluation research current as of 2026-07-26.

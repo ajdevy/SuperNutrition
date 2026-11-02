@@ -130,7 +130,7 @@ See https://kotl.in/connecting-source-sets
 > Task :feature:photo-analysis-ui:koverGenerateArtifactJvm
 > Task :feature:photo-analysis-ui:koverXmlReportJvm
 
-[Incubating] Problems report is available at: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/build/reports/problems/problems-report.html
+[Incubating] Problems report is available at: file://REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/build/reports/problems/problems-report.html
 
 BUILD SUCCESSFUL in 2m 58s
 45 actionable tasks: 15 executed, 30 up-to-date

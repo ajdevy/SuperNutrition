@@ -2,7 +2,7 @@
 
 Home now renders through the safe viewport beneath the floating navigation, matching Rewards. The blank canvas strip is removed; scroll-end padding raises the whole helpful-step card and Do it above the controls. The former compact breakpoint and content spacing remain stable. The illustrated navigation pill and its targets are preserved.
 
-Worktree: `/Users/REDACTED/.codex/worktrees/a704/SuperNutrition`; branch `codex/figma-camera-flow`; HEAD `5ee5de077866feed70b418ee2760af24322b1d22`. Prior tracked and untracked changes remain. No files were staged, committed, pushed or merged.
+Worktree: `REDACTED_WORKTREE/a704/SuperNutrition`; branch `codex/figma-camera-flow`; HEAD `5ee5de077866feed70b418ee2760af24322b1d22`. Prior tracked and untracked changes remain. No files were staged, committed, pushed or merged.
 
 ## Verified source and build
 

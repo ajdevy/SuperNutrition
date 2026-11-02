@@ -303,7 +303,7 @@ Warning: SDK processing. This version only understands SDK XML versions up to 3 
 > Task :apps:androidApp:createProductionDebugApkListingFileRedirect UP-TO-DATE
 > Task :apps:androidApp:assembleProductionDebug
 
-[Incubating] Problems report is available at: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/build/reports/problems/problems-report.html
+[Incubating] Problems report is available at: file://REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/build/reports/problems/problems-report.html
 
 BUILD SUCCESSFUL in 7m 59s
 173 actionable tasks: 18 executed, 155 up-to-date

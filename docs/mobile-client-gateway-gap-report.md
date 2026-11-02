@@ -1,8 +1,8 @@
 # Mobile client ↔ backend gateway: connection status and gap report
 
 Date: 2026-08-04
-Worktree: `/Users/jj/Work/SuperNutrition-integration` (branch `integration-test`)
-Primary working copy `/Users/jj/Work/SuperNutrition`: **untouched, clean**
+Worktree: `~/Work/SuperNutrition-integration` (branch `integration-test`)
+Primary working copy `~/Work/SuperNutrition`: **untouched, clean**
 Nothing pushed; no remote PR created, updated or closed.
 
 ---

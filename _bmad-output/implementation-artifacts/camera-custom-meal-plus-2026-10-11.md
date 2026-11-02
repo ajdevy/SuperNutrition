@@ -23,7 +23,7 @@ Final commands, all exit 0:
 ./mobile/gradlew -p mobile :feature:photo-analysis-ui:compileKotlinIosArm64 -Psupernutrition.enableIosDeviceTarget=true --continue --no-configuration-cache --console=plain
 graphify update .
 git diff --check
-/Users/REDACTED/Library/Android/sdk/platform-tools/adb devices -l
+~/Library/Android/sdk/platform-tools/adb devices -l
 ```
 
 The full UI suite passes in 51s: 50 tests, 0 failures/errors/skips. XML timestamps range from `2026-10-11T08:36:06.113Z` to `2026-10-11T08:36:40.555Z`. This includes the updated visual regression at three viewport/text-size combinations, in both selected and unselected states, and the existing custom meal text-entry/confirmation test. Log: `/tmp/supernutrition-custom-meal-plus-ui.log`.
@@ -47,4 +47,4 @@ Full review preview: `mobile/feature/photo-analysis-ui/build/reports/camera-desi
 
 Graphify updated the code graph successfully: 20,248 nodes, 26,897 edges, 1,937 communities. Existing empty-JSON and missing-SQL-parser warnings remain; HTML visualization is skipped above its 5,000-node limit. Log: `/tmp/supernutrition-custom-meal-plus-graphify.log`. All 17 source links in the Home/Rewards spacing spec resolve, and `git diff --check` passes.
 
-Worktree: `/Users/REDACTED/.codex/worktrees/a704/SuperNutrition`. Branch: `codex/figma-camera-flow`, tracking `origin/main`; HEAD/base: `5ee5de077866feed70b418ee2760af24322b1d22`. The camera, Home/Rewards, and follow-up changes remain local and uncommitted: 91 dirty entries, 0 staged entries. No commit or push was requested. Full status is saved at `/tmp/supernutrition-custom-meal-plus-git-status.txt`.
+Worktree: `REDACTED_WORKTREE/a704/SuperNutrition`. Branch: `codex/figma-camera-flow`, tracking `origin/main`; HEAD/base: `5ee5de077866feed70b418ee2760af24322b1d22`. The camera, Home/Rewards, and follow-up changes remain local and uncommitted: 91 dirty entries, 0 staged entries. No commit or push was requested. Full status is saved at `/tmp/supernutrition-custom-meal-plus-git-status.txt`.

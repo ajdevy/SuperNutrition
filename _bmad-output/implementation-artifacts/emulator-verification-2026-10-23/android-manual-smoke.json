@@ -24,9 +24,8 @@
     "name_draft_cancel_after_ime_dismiss": true,
     "installed_apk_matches_current_source_build": true,
     "synthetic_camera_photo_rejected_as_no_food": true,
-    "real_test_photo_reaches_review": true
+    "photo_import_reaches_review": true
   },
-  "fixture": "mobile/fixtures/photo-analysis/user-samples/2026-08-02_22-30-42-chicken-salad-vegetables.jpg",
   "recognition_accuracy_claim": false,
   "fixture_candidates_confirmed": false,
   "large_font": {

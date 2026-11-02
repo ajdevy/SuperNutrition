@@ -1,7 +1,7 @@
 {
   "key": "oats",
   "generator": "built-in image_gen",
-  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-661bfbd1-e6e5-4b2b-b72d-58a41a0a9bc7.png",
+  "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-661bfbd1-e6e5-4b2b-b72d-58a41a0a9bc7.png",
   "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_oats.png",
   "intended_resource_name": "food_sticker_oats.png",
   "prompt_file": "broad-library-prompts.json",

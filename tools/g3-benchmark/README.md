@@ -140,7 +140,7 @@ tools/g3-benchmark/download-assets.sh
 Android requires an explicit serial and a connected, unlocked device:
 
 ```bash
-ANDROID_DEVICE_SERIAL=AU3N025429006787 \
+ANDROID_DEVICE_SERIAL=PHYSICAL_DEVICE_SERIAL \
   tools/g3-benchmark/run-android.sh
 ```
 

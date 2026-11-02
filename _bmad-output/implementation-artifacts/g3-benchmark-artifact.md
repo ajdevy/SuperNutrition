@@ -156,7 +156,7 @@ checksums, and fixture outputs are in
 [`ingredient-weight-research/android-candidate-device-evidence-2026-08-01.json`](../../ingredient-weight-research/android-candidate-device-evidence-2026-08-01.json).
 
 On 2026-08-02, the two Android research activities were rerun on the connected
-physical Honor DNY-NX9 (`AU3N025429006787`). MobileSAM completed `5/5`
+physical Honor DNY-NX9 (`PHYSICAL_DEVICE_SERIAL`). MobileSAM completed `5/5`
 prompted mask runs with p95 `1,891 ms` and PSS `735,484 KB`, but remains
 `unsupported` for ingredient identity and `not-evaluable` for mass. YOLO-World
 v2 completed `5/5` runs with exact visible-component macro F1 `0.2233`, p95
@@ -167,7 +167,7 @@ This is fresh deployment/candidate evidence only; it does not select a v2
 production model or close the Product/Engineering G-3 gate.
 
 The latest component-candidate rerun used the same physical device through the
-explicit ADB mDNS serial `192.168.0.150:37613` and the installed
+explicit ADB mDNS serial `PHYSICAL_DEVICE_ENDPOINT` and the installed
 `com.supernutrition.g3benchmark` APK (SHA-256
 `e584f14a0bc007d31893e5d22fdf65d2e5d423b1f77609e40a0e9ee609e27fc7`).
 MobileSAM completed `5/5` prompted mask runs with p95 `2,003 ms` and PSS
@@ -205,7 +205,7 @@ and
 
 | OS/device tier | Physical device | Runtime and execution provider | Semantic result | Ingredient / weight result | Runtime/resource result |
 | --- | --- | --- | --- | --- |
-| Android broad-tier candidate | Honor DNY-NX9; Android 16/API 36; `arm64-v8a`; explicit ADB mDNS serial `adb-AU3N025429006787-97BOdK._adb-tls-connect._tcp` | ONNX Runtime Android `1.28.0`; CPU; available processor threads | fresh `5/5`, accuracy `1.0` under current `0.55` floor | visible ingredients `unsupported`; plated weight `not-evaluable` | latest fresh run: init `2,611 ms`; p50 `182 ms`; p95 `279 ms`; max `334 ms`; PSS `27,520 -> 273,547 KB`; battery current `-1,355 -> -1,543 µA`; thermal `0 -> 0` |
+| Android broad-tier candidate | Honor DNY-NX9; Android 16/API 36; `arm64-v8a`; explicit ADB mDNS serial `adb-PHYSICAL_DEVICE_SERIAL-97BOdK._adb-tls-connect._tcp` | ONNX Runtime Android `1.28.0`; CPU; available processor threads | fresh `5/5`, accuracy `1.0` under current `0.55` floor | visible ingredients `unsupported`; plated weight `not-evaluable` | latest fresh run: init `2,611 ms`; p50 `182 ms`; p95 `279 ms`; max `334 ms`; PSS `27,520 -> 273,547 KB`; battery current `-1,355 -> -1,543 µA`; thermal `0 -> 0` |
 | iOS high-tier candidate | iPhone 14 Pro; iOS 26.5.2; `arm64e`; UDID `REDACTED_PHYSICAL_DEVICE_UDID` | Historical evidence: ONNX Runtime Objective-C `1.27.0`; XNNPACK; 2 threads. Current source pins `1.28.0`. | historical fresh `5/5`, accuracy `1.0` | visible ingredients `unsupported`; plated weight `not-evaluable` | historical run: init `560 ms`; p50 `83 ms`; p95 `85 ms`; max `85 ms`; resident `261,360 -> 253,008 KB`; thermal `0 -> 0`; battery level `1 -> 1` |
 
 The Android run above is the latest fresh physical run after the device was
@@ -391,7 +391,7 @@ attempt, but the successful unlocked rerun completed semantic `5/5`, init
 `261,360 -> 253,008 KB`, thermal `0 -> 0`, and battery level `1 -> 1`.
 
 The 2026-08-02 current-worktree Android research rerun used the physical Honor
-DNY-NX9 through `192.168.0.150:37613` and the pinned Food-101 artifact. It
+DNY-NX9 through `PHYSICAL_DEVICE_ENDPOINT` and the pinned Food-101 artifact. It
 completed semantic `5/5`, init `2,150 ms`, p50/p95/max `187/218/335 ms`, PSS
 `26,350 -> 270,889 KB`, battery current `-253 -> -1,674 µA`, and thermal
 `0 -> 0`. The result explicitly reports ingredient capability `unsupported`
@@ -421,7 +421,7 @@ component identity, calibrated mass quality, or production G-3 approval.
 
 The clean worktree at `39c45216` ran the complete Android connected suite on
 the physical Honor DNY-NX9 / Android 16 (API 36), USB serial
-`AU3N025429006787`. `pocDebug`, `productionDebug`, and `uiAcceptanceDebug`
+`PHYSICAL_DEVICE_SERIAL`. `pocDebug`, `productionDebug`, and `uiAcceptanceDebug`
 each completed `16/16` instrumentation tests with zero failures, errors, or
 skips. The clean, digest-bound platform-evidence bundle is
 `/tmp/supernutrition-android-g3-baseline-2026-08-11`.

@@ -1,6 +1,6 @@
 # Gallery photo fitting: verified checkpoint
 
-Worktree: `/Users/REDACTED/.codex/worktrees/a704/SuperNutrition`.
+Worktree: `REDACTED_WORKTREE/a704/SuperNutrition`.
 Branch: `codex/figma-camera-flow`; HEAD `5ee5de077866feed70b418ee2760af24322b1d22`.
 Changes are local and uncommitted; unrelated WIP is preserved.
 
@@ -60,7 +60,7 @@ The earlier combined command (owned session 50272) ran:
   -Psupernutrition.enableIosDeviceTarget=true \
   -Pandroid.experimental.testOptions.installApkTimeout=900 \
   -Pandroid.injected.androidTest.leaveApksInstalledAfterRun=true \
-  -Pandroid.testInstrumentationRunnerArguments.deviceSerial=adb-AU3N025429006787-97BOdK._adb-tls-connect._tcp \
+  -Pandroid.testInstrumentationRunnerArguments.deviceSerial=adb-PHYSICAL_DEVICE_SERIAL-97BOdK._adb-tls-connect._tcp \
   -Pkotlin.compiler.execution.strategy=in-process \
   --dependency-verification strict --no-watch-fs --continue \
   --no-configuration-cache --console=plain
@@ -83,7 +83,7 @@ as evidence for these new APKs or run the emitter against those stale reports.
 ## Completed physical-device run
 
 The October 15 user enabled wireless debugging again. Discovery outside the
-restricted sandbox found `192.168.0.150:38107`; ADB's default sandbox attempt
+restricted sandbox found `PHYSICAL_DEVICE_ENDPOINT`; ADB's default sandbox attempt
 could not start its localhost listener (`Operation not permitted`). The
 approved external ADB connection restored the physical endpoint. The duplicate
 IP endpoint was disconnected, preserving the single mDNS device identity.
@@ -216,7 +216,7 @@ Before the current retry, the user explicitly made the HONOR DNY-NX9 available i
 conversation for approximately 35 minutes. This is a bounded window, not
 standing phone-control permission for later hourly runs. ADB initially showed
 one endpoint but disconnected before tests. Subsequent device/mDNS lists are
-empty and the then-last-known `192.168.0.150:43037` timed out. The current
+empty and the then-last-known `PHYSICAL_DEVICE_ENDPOINT` timed out. The current
 retry above supersedes that interruption; it does not change the earlier
 zero-test command result.
 

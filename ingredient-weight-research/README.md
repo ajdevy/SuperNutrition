@@ -234,7 +234,7 @@ The reproducible Android result and its explicit non-execution reasons are in
 ## Fresh physical v2 candidate screen — 2026-08-02
 
 The Android candidate activities were rerun on the connected physical Honor
-DNY-NX9 (`192.168.0.150:37613`, Android 16/API 36) with ONNX Runtime Android
+DNY-NX9 (`PHYSICAL_DEVICE_ENDPOINT`, Android 16/API 36) with ONNX Runtime Android
 `1.28.0` CPU. The latest complete result, including artifact digests and
 fixture outcomes, is in
 [`android-component-mass-benchmark-2026-08-02.json`](android-component-mass-benchmark-2026-08-02.json).

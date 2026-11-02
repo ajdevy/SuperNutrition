@@ -378,7 +378,7 @@ Run detekt CLI with --debug or set `detekt { debug = true }` in Gradle to see th
 > Task :apps:androidApp:createProductionDebugApkListingFileRedirect UP-TO-DATE
 > Task :apps:androidApp:assembleProductionDebug
 
-[Incubating] Problems report is available at: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/build/reports/problems/problems-report.html
+[Incubating] Problems report is available at: file://REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/build/reports/problems/problems-report.html
 
 BUILD SUCCESSFUL in 8m 56s
 193 actionable tasks: 34 executed, 159 up-to-date

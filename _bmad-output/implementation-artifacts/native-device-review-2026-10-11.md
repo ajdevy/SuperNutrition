@@ -2,7 +2,7 @@
 
 ## Device and build
 
-Physical HONOR DNY-NX9, Android 16 / API 36, arm64-v8a, 1264 × 2736 pixels at 560 dpi. A single authenticated Wi-Fi ADB transport is used: `adb-AU3N025429006787-97BOdK._adb-tls-connect._tcp`. Initial ADB discovery found the service but authentication failed; after the user reconnected Wi-Fi debugging, installation and activity launch succeeded.
+Physical HONOR DNY-NX9, Android 16 / API 36, arm64-v8a, 1264 × 2736 pixels at 560 dpi. A single authenticated Wi-Fi ADB transport is used: `adb-PHYSICAL_DEVICE_SERIAL-97BOdK._adb-tls-connect._tcp`. Initial ADB discovery found the service but authentication failed; after the user reconnected Wi-Fi debugging, installation and activity launch succeeded.
 
 Production APK: `mobile/apps/androidApp/build/outputs/apk/production/debug/androidApp-production-debug.apk`, SHA-256 `6e68b53baba01d48c27a482503926f1d9561ea31ae9c8ddb0464b5562bf6905c`.
 
@@ -26,7 +26,7 @@ These findings expand the earlier manual review: merely scrolling to the clipped
 
 Verify final reward scrolling, native camera/shutter/retained-photo review, updated instruction, custom-plus selection, deselection, text entry/keyboard, Retake, and return navigation. Then fix N-01 and rerun the relevant build and device checks. This is manual physical-device evidence, not an instrumentation-suite result.
 
-Screenshots and hierarchy dumps are stored under `mobile/apps/androidApp/build/reports/manual-device-review-2026-10-11/`. Worktree: `/Users/REDACTED/.codex/worktrees/a704/SuperNutrition`; branch `codex/figma-camera-flow`; HEAD/base `5ee5de077866feed70b418ee2760af24322b1d22`. Existing changes remain local and uncommitted.
+Screenshots and hierarchy dumps are stored under `mobile/apps/androidApp/build/reports/manual-device-review-2026-10-11/`. Worktree: `REDACTED_WORKTREE/a704/SuperNutrition`; branch `codex/figma-camera-flow`; HEAD/base `5ee5de077866feed70b418ee2760af24322b1d22`. Existing changes remain local and uncommitted.
 
 ## Upstream Rewards investigation
 

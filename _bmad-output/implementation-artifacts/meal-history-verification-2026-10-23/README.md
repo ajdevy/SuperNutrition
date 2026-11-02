@@ -1,6 +1,6 @@
 # Profile → Meal history verification
 
-Worktree: `/Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition`
+Worktree: `REDACTED_WORKTREE/f2ff/SuperNutrition`
 Branch: `codex/home-profile`
 Baseline: `527e08d08d5cfa35cde0529e3412812d3a5ca7f9`
 Design: Figma file `08zQiW2IIHfQUBN3JDRUcZ`, node `604:893`.
@@ -58,7 +58,7 @@ The ledger does not retain photos, times or authored dish titles. Runtime rows u
 
 ## Local artifacts
 
-Visualizations directory: `/Users/REDACTED/.codex/visualizations/2026/10/22/01a16557-276b-7002-b45e-4a79f11f1c89/`:
+Visualizations directory: `~/.codex/visualizations/2026/10/22/01a16557-276b-7002-b45e-4a79f11f1c89/`:
 
 - `meal-history-375x812.png`: explicitly synthetic Figma fixture.
 - `meal-history-360x780-200-top.png`, `meal-history-360x780-200-bottom.png`: synthetic enlarged-text fixture.

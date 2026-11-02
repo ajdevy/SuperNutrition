@@ -119,7 +119,7 @@ See https://kotl.in/connecting-source-sets
 > Task :feature:photo-analysis-ui:compileKotlinIosArm64
 > Task :feature:photo-analysis:compileKotlinIosArm64
 
-[Incubating] Problems report is available at: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/build/reports/problems/problems-report.html
+[Incubating] Problems report is available at: file://REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/build/reports/problems/problems-report.html
 
 BUILD SUCCESSFUL in 14m 24s
 43 actionable tasks: 12 executed, 31 up-to-date

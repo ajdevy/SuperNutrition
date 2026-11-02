@@ -8,7 +8,7 @@ app is left on Home. Root policy expiry and full Apple host build limitations
 remain separate from this Android result.
 
 Recorded before any production correction. Worktree
-`/Users/REDACTED/.codex/worktrees/a704/SuperNutrition`, branch
+`REDACTED_WORKTREE/a704/SuperNutrition`, branch
 `codex/figma-camera-flow`, HEAD `5ee5de077866feed70b418ee2760af24322b1d22`.
 
 ## Observation

@@ -3,7 +3,7 @@
 Reviewed `mobile/build/review-focused-resize-scoped.diff` only, with referenced
 layout/relocation functions inspected to validate the reachable path. Scoped
 diff SHA-256: `9e3b94fe572fe1df57d195ec6ee2d119a4294ac62cdd2c5c9b913723df9f9d60`.
-Worktree: `/Users/REDACTED/.codex/worktrees/a704/SuperNutrition`; branch:
+Worktree: `REDACTED_WORKTREE/a704/SuperNutrition`; branch:
 `codex/figma-camera-flow`; starting HEAD:
 `5ee5de077866feed70b418ee2760af24322b1d22`. The checkout contained unrelated
 tracked and untracked WIP.

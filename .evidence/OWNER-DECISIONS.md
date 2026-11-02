@@ -1,5 +1,17 @@
 # Deferred owner decisions
 
+## D-09 — license project-owned material under MIT
+
+Decided on: 2026-11-02
+Decided by: ajdevy (repository owner, who delegated the choice in this Codex chat)
+Channel: Codex chat request to prepare the repository for public submission and select an accepted license
+
+Select MIT from the accepted licenses in the submission checklist. Apply it to
+project-owned material in this repository. Third-party dependencies, datasets,
+and vendored material retain any applicable upstream terms. This decision
+selects a source license; it does not change repository visibility or authorize
+a repository publication.
+
 ## D-07 — retain the local meal diary and profile name until user deletion
 
 Decided on: 2026-10-24
@@ -626,3 +638,19 @@ record.
 #45 (server-side market binding) and #46 (consent-receipt persistence) remain
 the owner's; #47 expires 2026-09-30. G-4 continues to block production market,
 production authentication, and provider/DPA terms. None of these is touched.
+
+## D-10 — private source repository for Android food-identification runtime
+
+Decided on: 2026-11-02
+Decided by: ajdevy (repository owner)
+Channel: Codex chat request to prepare the public repository and extract the Android food-identification library
+
+Place the existing Android Food-101/YOLO-World runtime source in a separate
+private repository and import its compiled runtime-only AAR into the public
+SuperNutrition project. Keep the existing model weights as separately tracked
+assets in the public project. The owner confirms redistribution under the
+applicable upstream terms. This packaging decision does not close G-3 device
+evidence, production model approval, or any separate submission approval
+required by upstream terms. Existing SuperNutrition history and commit IDs are
+preserved; prior copies of this source and the model assets remain reachable in
+that history.

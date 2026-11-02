@@ -72,7 +72,7 @@ mandatory before any component/mass claim or `activation = production`.
 ## Current external state
 
 - Earlier physical Android runs used Honor DNY-NX9 serial
-  `AU3N025429006787`; the explicit mDNS serial `192.168.0.150:37613` belongs
+  `PHYSICAL_DEVICE_SERIAL`; the explicit mDNS serial `PHYSICAL_DEVICE_ENDPOINT` belongs
   to the previous physical evidence. The current `adb devices -l` is empty;
   the physical rerun after adding `UiDevice.wakeUp()` is pending reconnection.
   The historical Gradle run passed the isolated local-Android adapter `4/4`,
@@ -176,7 +176,7 @@ recognition `5/5` with init `2,150 ms`, p50/p95/max `187/218/335 ms`, PSS
   passed `10/10` tests, and `git diff --check` passed.
 - Re-ran `qualityCheckJvmAndroid` and `qualityCheckApple`; both completed with
   `BUILD SUCCESSFUL`. Current JVM coverage is `97.98%` line / `85.84%` branch.
-- Historical physical Android evidence on `192.168.0.150:37613` / Honor
+- Historical physical Android evidence on `PHYSICAL_DEVICE_ENDPOINT` / Honor
   DNY-NX9 recorded local adapter `4/4`, production `15/15`, and UI acceptance
   `15/15`, all with zero failures, errors, or skips.
 - After adding `UiDevice.wakeUp()`, the physical rerun was not completed because

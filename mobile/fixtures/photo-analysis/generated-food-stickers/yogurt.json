@@ -1,7 +1,7 @@
 {
   "key": "yogurt",
   "generator": "built-in image_gen",
-  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-e3358541-12ab-4f20-b54c-e0d47f4e8fa4.png",
+  "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-e3358541-12ab-4f20-b54c-e0d47f4e8fa4.png",
   "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_yogurt.png",
   "intended_resource_name": "food_sticker_yogurt.png",
   "prompt_file": "broad-library-prompts.json",

@@ -1,5 +1,88 @@
 # SuperNutrition
 
+SuperNutrition is an in-development meal diary and nutrition app. It helps
+people record meals, search a bundled nutrition catalog, and explore
+photo-based food identification. Nutrition values come from sourced catalog
+data; photo recognition is still being evaluated and is not a medical or
+nutrition-advice service.
+
+## Who this is for
+
+- People who want to keep a simple meal diary and review sourced nutrition
+  information.
+- Developers interested in a Kotlin Multiplatform nutrition app, its first-
+  party API, and the versioned contracts between them.
+
+This repository is under active development. The mobile app and API are not
+published as a production release.
+
+## What's in the repository
+
+- `mobile/` — Android and iOS app, shared Kotlin Multiplatform domain and UI,
+  local nutrition catalog, and photo-analysis flows.
+- `backend/mobile-api/` — TypeScript/Fastify API and inference gateway.
+- `contracts/` — versioned mobile and inference contracts and fixtures.
+- `tools/` — evaluation and benchmark tooling.
+
+## Built with
+
+- Kotlin 2.4, Kotlin Multiplatform, Compose Multiplatform, Gradle 9.5, and
+  SQLDelight for mobile.
+- ONNX Runtime for the staged Android food-identification proof of concept.
+- TypeScript, Node.js 22, Fastify, PostgreSQL, and Redis for the API.
+- Versioned JSON contracts and reproducible evaluation fixtures.
+
+The Android food-identification runtime is imported as a small prebuilt AAR;
+its source repository is private, while the AAR and model assets are included
+here. A public checkout can build without private-repository credentials. See
+[`mobile/inference/local-android-poc/THIRD-PARTY-NOTICES.md`](mobile/inference/local-android-poc/THIRD-PARTY-NOTICES.md)
+and [`mobile/inference/local-android-poc/LIBRARY-PROVENANCE.md`](mobile/inference/local-android-poc/LIBRARY-PROVENANCE.md)
+for upstream terms, source revision, and artifact digests.
+
+## Run locally
+
+### Android app
+
+Prerequisites: JDK 21, Android SDK 36, and an Android emulator or connected
+device. Set `sdk.dir` in the ignored `mobile/local.properties` file to your
+Android SDK directory, then run:
+
+```bash
+./mobile/gradlew -p mobile :apps:androidApp:installProductionDebug
+```
+
+To build the APK without installing it:
+
+```bash
+./mobile/gradlew -p mobile :apps:androidApp:assembleProductionDebug
+```
+
+### Mobile API
+
+Prerequisites: Node.js 22.11–24, npm 10+, and Docker Compose. From the
+repository root:
+
+```bash
+cd backend/mobile-api
+npm ci
+docker compose up -d postgres redis
+# Set the local environment and generate a throwaway RS256 keypair as described
+# in docs/12-api-testing-guide.md; keep the key files in ignored .local/.
+npm run dev --workspace @supernutrition/api
+```
+
+The local API requires test-mode environment variables and a throwaway RS256
+keypair. The `.env.example` values are placeholders, and no provider
+credentials are required for local startup. See the
+[API testing guide](backend/mobile-api/docs/12-api-testing-guide.md) for the
+full setup, [`backend/mobile-api/docs/README.md`](backend/mobile-api/docs/README.md)
+for API docs, and [`backend/mobile-api/deploy/README.md`](backend/mobile-api/deploy/README.md)
+for deployment constraints.
+
+See [ROADMAP.md](ROADMAP.md) for current work and [LICENSE](LICENSE) for the
+project license. Third-party data, dependencies, and vendored material may
+carry their own terms.
+
 <!-- coverage-report:start -->
 ## Quality snapshot
 

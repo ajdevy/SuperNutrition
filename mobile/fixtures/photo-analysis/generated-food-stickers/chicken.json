@@ -1,7 +1,7 @@
 {
   "key": "chicken",
   "generator": "built-in image_gen",
-  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-c4b1cbe9-a3d7-4cd1-8513-6b82da0084a3.png",
+  "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-c4b1cbe9-a3d7-4cd1-8513-6b82da0084a3.png",
   "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_chicken.png",
   "intended_resource_name": "food_sticker_chicken.png",
   "prompt_file": "broad-library-prompts.json",

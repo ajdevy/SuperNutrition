@@ -404,7 +404,7 @@ Warning: SDK processing. This version only understands SDK XML versions up to 3 
 > Task :apps:androidApp:createUiAcceptanceDebugAndroidTestApkListingFileRedirect UP-TO-DATE
 > Task :apps:androidApp:assembleUiAcceptanceDebugAndroidTest UP-TO-DATE
 
-[Incubating] Problems report is available at: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/build/reports/problems/problems-report.html
+[Incubating] Problems report is available at: file://REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/build/reports/problems/problems-report.html
 
 BUILD SUCCESSFUL in 49s
 287 actionable tasks: 12 executed, 275 up-to-date

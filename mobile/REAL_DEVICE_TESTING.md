@@ -106,10 +106,9 @@ xcrun xctrace list devices
 ```
 
 The iOS device framework is built with the `iosArm64` target, then the Xcode
-acceptance scheme is invoked with `-destination 'id=<UDID>'`. Signing/team
-selection is configured in the Xcode project for the local Apple account
-`REDACTED_EMAIL` (Team `Contributor`, Team ID
-`REDACTED_TEAM_ID`). Signing certificates, private keys, and generated provisioning
+acceptance scheme is invoked with `-destination 'id=<UDID>'`. Configure a local
+Apple account with access to the development team referenced by the Xcode
+project. Signing certificates, private keys, and generated provisioning
 profiles remain local machine inputs and must not be committed. The checked-in
 Intel fallback is an executable x64 simulator compatibility lane for shared
 presenter/reducer and bridge acceptance; it is never substituted for iPhone

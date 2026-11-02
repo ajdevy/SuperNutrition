@@ -4,8 +4,8 @@ status: final
 created: 2026-07-26
 updated: 2026-07-26
 sources:
-  - /Users/aj/Downloads/NutriArch
-  - /Users/aj/Downloads/report.md
+  - ~/Downloads/NutriArch
+  - ~/Downloads/report.md
 ---
 
 # Product Brief: SuperNutrition

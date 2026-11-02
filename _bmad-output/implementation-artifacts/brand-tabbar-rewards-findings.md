@@ -33,7 +33,7 @@ The RTL concern was reproduced: the first-i glyph was at x=221.9..228.5px, but n
 
 Recorded before adding follow-up tests. Fresh UI XML from the managed worktree reports 3,353 covered / 85 missed lines and 541 covered / 362 missed branches. HomeBrand has 100% lines and branches; remaining misses are spread across existing composables and their generated recomposition guards. Static render cases do not establish correctness after a model/selection/callback changes in an existing composition. Acceptance: assert live updates, unchanged sibling state, callback freshness, recovery/diagnostic transitions and empty/nonempty evidence with the production composables; reach the unchanged 85% floor without policy changes or coverage exclusions.
 
-Physical acceptance is still unverified for this correction. The currently connected single endpoint is `adb-AU3N025429006787-97BOdK._adb-tls-connect._tcp` (DNY_NX9, API 36, Wi-Fi). Acceptance: install the worktree's compatible build without wiping data, inspect real Home/Rewards screens, verify tab selection and held press appearance, and scroll the final reward clear of navigation. Host-render evidence must remain separate from this new device evidence.
+Physical acceptance is still unverified for this correction. The currently connected single endpoint is `adb-PHYSICAL_DEVICE_SERIAL-97BOdK._adb-tls-connect._tcp` (DNY_NX9, API 36, Wi-Fi). Acceptance: install the worktree's compatible build without wiping data, inspect real Home/Rewards screens, verify tab selection and held press appearance, and scroll the final reward clear of navigation. Host-render evidence must remain separate from this new device evidence.
 
 ## Follow-up verification closed — 2026-10-14
 

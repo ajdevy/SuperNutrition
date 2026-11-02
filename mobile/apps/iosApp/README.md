@@ -113,12 +113,11 @@ xcrun xctrace list devices
 
 ### Apple account and provisioning
 
-The checked-in Xcode targets use the Apple Developer Team available in the
-local Xcode account `REDACTED_EMAIL`:
+The checked-in Xcode targets reference a development team. Configure a local
+Apple account with access to that team before signing:
 
 ```text
-Team: Contributor
-Team ID: REDACTED_TEAM_ID
+DEVELOPMENT_TEAM: configured in Xcode project build settings
 ```
 
 `DEVELOPMENT_TEAM` is set for the production, acceptance-host, and acceptance-

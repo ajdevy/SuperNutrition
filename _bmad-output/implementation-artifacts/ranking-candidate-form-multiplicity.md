@@ -1,6 +1,6 @@
 # Ranking candidate: FORM MULTIPLICITY
 
-Worktree `/Users/aj/workspace_ai/SuperNutrition/.claude/worktrees/e7-meal-search-ui`, branch
+Worktree `~/workspace_ai/SuperNutrition/.claude/worktrees/e7-meal-search-ui`, branch
 `feat/e7-meal-search-ui`, HEAD `2dea4187`. No Kotlin, Gradle or `scripts/` file was touched;
 everything below is measured in Python against the committed data files.
 

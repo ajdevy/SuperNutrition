@@ -7,7 +7,7 @@
     {
       "key": "tomato",
       "generator": "built-in image_gen",
-      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-97531e76-066e-4d7f-889b-563041f73145.png",
+      "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-97531e76-066e-4d7f-889b-563041f73145.png",
       "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_tomato.png",
       "intended_resource_name": "food_sticker_tomato.png",
       "prompt_file": "broad-library-prompts.json",
@@ -50,7 +50,7 @@
     {
       "key": "potato",
       "generator": "built-in image_gen",
-      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-c9e65c6c-d578-4b4e-8ffa-c8f68469a425.png",
+      "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-c9e65c6c-d578-4b4e-8ffa-c8f68469a425.png",
       "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_potato.png",
       "intended_resource_name": "food_sticker_potato.png",
       "prompt_file": "broad-library-prompts.json",
@@ -93,7 +93,7 @@
     {
       "key": "rice",
       "generator": "built-in image_gen",
-      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-bb8e16f6-3e5d-41c0-b3a1-8906428c9955.png",
+      "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-bb8e16f6-3e5d-41c0-b3a1-8906428c9955.png",
       "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_rice.png",
       "intended_resource_name": "food_sticker_rice.png",
       "prompt_file": "broad-library-prompts.json",
@@ -136,7 +136,7 @@
     {
       "key": "chicken",
       "generator": "built-in image_gen",
-      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-c4b1cbe9-a3d7-4cd1-8513-6b82da0084a3.png",
+      "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-c4b1cbe9-a3d7-4cd1-8513-6b82da0084a3.png",
       "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_chicken.png",
       "intended_resource_name": "food_sticker_chicken.png",
       "prompt_file": "broad-library-prompts.json",
@@ -179,7 +179,7 @@
     {
       "key": "egg",
       "generator": "built-in image_gen",
-      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-30026fb6-9fb2-4dc5-a354-c0967268b824.png",
+      "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-30026fb6-9fb2-4dc5-a354-c0967268b824.png",
       "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_egg.png",
       "intended_resource_name": "food_sticker_egg.png",
       "prompt_file": "broad-library-prompts.json",
@@ -222,7 +222,7 @@
     {
       "key": "cheese",
       "generator": "built-in image_gen",
-      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-6b4d463e-c6b1-4ce5-a2bd-b9a75d6bc3c0.png",
+      "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-6b4d463e-c6b1-4ce5-a2bd-b9a75d6bc3c0.png",
       "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_cheese.png",
       "intended_resource_name": "food_sticker_cheese.png",
       "prompt_file": "broad-library-prompts.json",
@@ -265,7 +265,7 @@
     {
       "key": "yogurt",
       "generator": "built-in image_gen",
-      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-e3358541-12ab-4f20-b54c-e0d47f4e8fa4.png",
+      "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-e3358541-12ab-4f20-b54c-e0d47f4e8fa4.png",
       "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_yogurt.png",
       "intended_resource_name": "food_sticker_yogurt.png",
       "prompt_file": "broad-library-prompts.json",
@@ -308,7 +308,7 @@
     {
       "key": "strawberry",
       "generator": "built-in image_gen",
-      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-6f850997-6d00-441d-b27f-4d1f2fd3ddf2.png",
+      "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-6f850997-6d00-441d-b27f-4d1f2fd3ddf2.png",
       "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_strawberry.png",
       "intended_resource_name": "food_sticker_strawberry.png",
       "prompt_file": "broad-library-prompts.json",
@@ -351,7 +351,7 @@
     {
       "key": "grapes",
       "generator": "built-in image_gen",
-      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-3b3ecb27-9e1a-4d78-9d4b-961092a105fa.png",
+      "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-3b3ecb27-9e1a-4d78-9d4b-961092a105fa.png",
       "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_grapes.png",
       "intended_resource_name": "food_sticker_grapes.png",
       "prompt_file": "broad-library-prompts.json",
@@ -394,7 +394,7 @@
     {
       "key": "beans",
       "generator": "built-in image_gen",
-      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-1aafedda-8f6c-4d56-aa40-99a595105519.png",
+      "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-1aafedda-8f6c-4d56-aa40-99a595105519.png",
       "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_beans.png",
       "intended_resource_name": "food_sticker_beans.png",
       "prompt_file": "broad-library-prompts.json",
@@ -437,7 +437,7 @@
     {
       "key": "mushroom",
       "generator": "built-in image_gen",
-      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-35b65df0-d837-4649-bd99-32caf7618289.png",
+      "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-35b65df0-d837-4649-bd99-32caf7618289.png",
       "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_mushroom.png",
       "intended_resource_name": "food_sticker_mushroom.png",
       "prompt_file": "broad-library-prompts.json",
@@ -480,7 +480,7 @@
     {
       "key": "bread",
       "generator": "built-in image_gen",
-      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-f689d6b3-83e6-4c45-af3c-d7d66f0085ab.png",
+      "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-f689d6b3-83e6-4c45-af3c-d7d66f0085ab.png",
       "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_bread.png",
       "intended_resource_name": "food_sticker_bread.png",
       "prompt_file": "broad-library-prompts.json",
@@ -523,7 +523,7 @@
     {
       "key": "beef",
       "generator": "built-in image_gen",
-      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-70443d1a-4c26-42dc-a7eb-2ba1ec52299c.png",
+      "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-70443d1a-4c26-42dc-a7eb-2ba1ec52299c.png",
       "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_beef.png",
       "intended_resource_name": "food_sticker_beef.png",
       "prompt_file": "broad-library-prompts.json",
@@ -566,7 +566,7 @@
     {
       "key": "lentils",
       "generator": "built-in image_gen",
-      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-f12cc0ab-e9c6-4786-99e3-a813225237c5.png",
+      "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-f12cc0ab-e9c6-4786-99e3-a813225237c5.png",
       "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_lentils.png",
       "intended_resource_name": "food_sticker_lentils.png",
       "prompt_file": "broad-library-prompts.json",
@@ -609,7 +609,7 @@
     {
       "key": "pear",
       "generator": "built-in image_gen",
-      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-96fcc9bd-b798-4c5a-8a0d-317d26c7fe41.png",
+      "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-96fcc9bd-b798-4c5a-8a0d-317d26c7fe41.png",
       "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_pear.png",
       "intended_resource_name": "food_sticker_pear.png",
       "prompt_file": "broad-library-prompts.json",
@@ -652,7 +652,7 @@
     {
       "key": "oats",
       "generator": "built-in image_gen",
-      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-661bfbd1-e6e5-4b2b-b72d-58a41a0a9bc7.png",
+      "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-661bfbd1-e6e5-4b2b-b72d-58a41a0a9bc7.png",
       "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_oats.png",
       "intended_resource_name": "food_sticker_oats.png",
       "prompt_file": "broad-library-prompts.json",
@@ -695,7 +695,7 @@
     {
       "key": "pasta",
       "generator": "built-in image_gen",
-      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-d96c76ee-01bc-4ba0-933d-7cb70214d959.png",
+      "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-d96c76ee-01bc-4ba0-933d-7cb70214d959.png",
       "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_pasta.png",
       "intended_resource_name": "food_sticker_pasta.png",
       "prompt_file": "broad-library-prompts.json",
@@ -738,7 +738,7 @@
     {
       "key": "milk",
       "generator": "built-in image_gen",
-      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-ee1e22cb-964b-4dba-aa56-894300f44f50.png",
+      "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-ee1e22cb-964b-4dba-aa56-894300f44f50.png",
       "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_milk.png",
       "intended_resource_name": "food_sticker_milk.png",
       "prompt_file": "broad-library-prompts.json",
@@ -781,7 +781,7 @@
     {
       "key": "watermelon",
       "generator": "built-in image_gen",
-      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-160f3eea-4b04-4ab7-92a6-6ea1c86051df.png",
+      "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-160f3eea-4b04-4ab7-92a6-6ea1c86051df.png",
       "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_watermelon.png",
       "intended_resource_name": "food_sticker_watermelon.png",
       "prompt_file": "broad-library-prompts.json",
@@ -824,7 +824,7 @@
     {
       "key": "lemon",
       "generator": "built-in image_gen",
-      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-b382575a-ea47-43ed-9e6b-e66e278d83fd.png",
+      "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-b382575a-ea47-43ed-9e6b-e66e278d83fd.png",
       "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_lemon.png",
       "intended_resource_name": "food_sticker_lemon.png",
       "prompt_file": "broad-library-prompts.json",
@@ -867,7 +867,7 @@
     {
       "key": "nuts",
       "generator": "built-in image_gen",
-      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-89f8c8e7-27f6-4c68-8c0f-930ab498b37e.png",
+      "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-89f8c8e7-27f6-4c68-8c0f-930ab498b37e.png",
       "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_nuts.png",
       "intended_resource_name": "food_sticker_nuts.png",
       "prompt_file": "broad-library-prompts.json",
@@ -910,7 +910,7 @@
     {
       "key": "fish",
       "generator": "built-in image_gen",
-      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-a4d942ba-2806-4845-8e13-3f08ab99d84c.png",
+      "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-a4d942ba-2806-4845-8e13-3f08ab99d84c.png",
       "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_fish.png",
       "intended_resource_name": "food_sticker_fish.png",
       "prompt_file": "broad-library-prompts.json",
@@ -953,7 +953,7 @@
     {
       "key": "onion",
       "generator": "built-in image_gen",
-      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-66c1e245-ea0c-4bfa-8c58-df5143c29770.png",
+      "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-66c1e245-ea0c-4bfa-8c58-df5143c29770.png",
       "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_onion.png",
       "intended_resource_name": "food_sticker_onion.png",
       "prompt_file": "broad-library-prompts.json",
@@ -996,7 +996,7 @@
     {
       "key": "peach",
       "generator": "built-in image_gen",
-      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-1b0e840a-f5ab-4b15-a986-0bf2040a9616.png",
+      "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-1b0e840a-f5ab-4b15-a986-0bf2040a9616.png",
       "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_peach.png",
       "intended_resource_name": "food_sticker_peach.png",
       "prompt_file": "broad-library-prompts.json",
@@ -1039,7 +1039,7 @@
     {
       "key": "mango",
       "generator": "built-in image_gen",
-      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-9ca420c1-ab8d-44c8-b26f-f66ee60fe4d4.png",
+      "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-9ca420c1-ab8d-44c8-b26f-f66ee60fe4d4.png",
       "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_mango.png",
       "intended_resource_name": "food_sticker_mango.png",
       "prompt_file": "broad-library-prompts.json",
@@ -1082,7 +1082,7 @@
     {
       "key": "pineapple",
       "generator": "built-in image_gen",
-      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-8f3229fa-09c0-48e7-b431-d686ac92af1b.png",
+      "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-8f3229fa-09c0-48e7-b431-d686ac92af1b.png",
       "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_pineapple.png",
       "intended_resource_name": "food_sticker_pineapple.png",
       "prompt_file": "broad-library-prompts.json",
@@ -1125,7 +1125,7 @@
     {
       "key": "kiwi",
       "generator": "built-in image_gen",
-      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-9c769299-e9d1-4085-8b2b-5f29479244ab.png",
+      "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-9c769299-e9d1-4085-8b2b-5f29479244ab.png",
       "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_kiwi.png",
       "intended_resource_name": "food_sticker_kiwi.png",
       "prompt_file": "broad-library-prompts.json",

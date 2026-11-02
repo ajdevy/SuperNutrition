@@ -3,7 +3,7 @@
   "date": "2026-08-02",
   "scope": "physical Android research candidate screen; not a production component/mass G3 signature",
   "device": {
-    "serial": "192.168.0.150:37613",
+    "serial": "PHYSICAL_DEVICE_ENDPOINT",
     "physical": true,
     "model": "DNY-NX9",
     "os": "Android 16 / API 36",

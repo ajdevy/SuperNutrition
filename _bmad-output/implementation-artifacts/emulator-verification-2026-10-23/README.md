@@ -2,7 +2,7 @@
 
 Android verification is complete on final UI source `3d54a716730858a313ac54ba943675251d10852a`. iOS simulator execution is unavailable on this Intel host; the user explicitly accepted that limitation. The full iPhone arm64 SharedKit framework build passed with strict dependency verification; The unsigned Xcode production target now also compiles and links; package inspection found a separate, pre-existing omission of Compose resources.
 
-Worktree: `/Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition`
+Worktree: `REDACTED_WORKTREE/f2ff/SuperNutrition`
 Branch: `codex/home-profile`; starting HEAD `779fc327405b19f6301874edc79d5f5c6536b15e`.
 Host: Intel x86_64, macOS15.8; JDK from Android Studio. Xcode16.4 (16F6) and26.6 (17F113) are installed. Global `xcode-select` remains unchanged.
 

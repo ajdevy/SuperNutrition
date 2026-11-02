@@ -8,8 +8,8 @@ final_revision: '1c12dd4'
 review_loop_iteration: 1
 followup_review_recommended: true
 context:
-  - /Users/aj/workspace_ai/SuperNutrition/_bmad-output/planning-artifacts/architecture/architecture-SuperNutrition-2026-07-26/ARCHITECTURE-SPINE.md
-  - /Users/aj/workspace_ai/SuperNutrition/mobile/config/quality/coverage.toml
+  - ~/workspace_ai/SuperNutrition/_bmad-output/planning-artifacts/architecture/architecture-SuperNutrition-2026-07-26/ARCHITECTURE-SPINE.md
+  - ~/workspace_ai/SuperNutrition/mobile/config/quality/coverage.toml
 warnings: []
 ---
 
@@ -71,7 +71,7 @@ The implementation intentionally uses per-module Kover JVM XML reports rather th
 **Commands:**
 - `cd mobile && ./gradlew :build-logic:test verifyMobilePolicy qualityCheckJvmAndroid qualityCheckApple --dependency-verification=strict --configuration-cache --console=plain` -- expected: successful scaffold quality run.
 - `cd mobile && ./gradlew qualityCoverageJvm --dependency-verification=strict --configuration-cache --console=plain` with a temporary local audit fixture -- expected: JVM aggregate passes at 97.87% line / 93.09% branch across the five `jvm` denominators; synthetic local attestation is not activation evidence and is reverted after the audit.
-- `cd mobile && ADB_MDNS_AUTO_CONNECT=0 ANDROID_SERIAL=192.168.0.225:40531 ./gradlew :apps:androidApp:connectedUiAcceptanceDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.deviceSerial=192.168.0.225:40531 --dependency-verification=strict --configuration-cache --console=plain` -- expected: 10/10 physical Android acceptance tests pass.
+- `cd mobile && ADB_MDNS_AUTO_CONNECT=0 ANDROID_SERIAL=PHYSICAL_DEVICE_ENDPOINT ./gradlew :apps:androidApp:connectedUiAcceptanceDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.deviceSerial=PHYSICAL_DEVICE_ENDPOINT --dependency-verification=strict --configuration-cache --console=plain` -- expected: 10/10 physical Android acceptance tests pass.
 
 ## Review Triage Log
 

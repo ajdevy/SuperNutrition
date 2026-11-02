@@ -24,7 +24,7 @@ camera verification notes. Observe the regression fail before changing the
 layout, then run the full shared UI suite, JVM/Android quality and APK checks,
 and changed shared UI iosArm64 compilation. Inspect the rendered review.
 
-Worktree: `/Users/REDACTED/.codex/worktrees/a704/SuperNutrition`, branch
+Worktree: `REDACTED_WORKTREE/a704/SuperNutrition`, branch
 `codex/figma-camera-flow`, HEAD/base
 `5ee5de077866feed70b418ee2760af24322b1d22`. Existing camera and layout work is
 local and uncommitted. No commit, push, or remote changes are requested.
@@ -94,7 +94,7 @@ same geometry and interactions after the extraction.
 ./mobile/gradlew -p mobile :feature:photo-analysis-ui:compileKotlinIosArm64 -Psupernutrition.enableIosDeviceTarget=true --continue --no-configuration-cache --console=plain
 graphify update .
 git diff --check
-/Users/REDACTED/Library/Android/sdk/platform-tools/adb devices -l
+~/Library/Android/sdk/platform-tools/adb devices -l
 ```
 
 The final JVM/Android quality and APK run succeeds (exit 0, 1m30s).

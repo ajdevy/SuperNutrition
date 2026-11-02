@@ -3,7 +3,7 @@
 Reviewed the frozen full diff `/tmp/supernutrition-final-review.patch` and code
 diff `/tmp/supernutrition-final-review-code.patch` against
 `5ee5de077866feed70b418ee2760af24322b1d22`, in worktree
-`/Users/REDACTED/.codex/worktrees/a704/SuperNutrition`, branch
+`REDACTED_WORKTREE/a704/SuperNutrition`, branch
 `codex/figma-camera-flow`.
 
 Applied `bmad-review-edge-case-hunter`: received the text diffs, traced changed

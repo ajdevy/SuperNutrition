@@ -97,7 +97,7 @@ The three corrections and authorized follow-up are complete. Fresh UI evidence h
 
 ## Worktree Handoff
 
-2026-10-14: The original repository worktree is now writable. The verified baseline and correction delta have been transferred to `/Users/REDACTED/.codex/worktrees/brand-tabs-rewards/SuperNutrition`, branch `codex/brand-tabs-rewards`. Source is identical to the prior tested checkout; earlier test execution paths remain documented truthfully in the evidence report.
+2026-10-14: The original repository worktree is now writable. The verified baseline and correction delta have been transferred to `REDACTED_WORKTREE/brand-tabs-rewards/SuperNutrition`, branch `codex/brand-tabs-rewards`. Source is identical to the prior tested checkout; earlier test execution paths remain documented truthfully in the evidence report.
 
 ## Authorized Follow-up — 2026-10-14
 

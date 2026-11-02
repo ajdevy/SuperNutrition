@@ -6,7 +6,7 @@ of `CatalogSearch.kt` / `TextFragments.kt` / `TextIdentification.kt`. Nothing is
 taken from either candidate report on trust; where I could not reproduce a
 claim, it is listed as a finding.
 
-Worktree `/Users/aj/workspace_ai/SuperNutrition/.claude/worktrees/e7-meal-search-ui`,
+Worktree `~/workspace_ai/SuperNutrition/.claude/worktrees/e7-meal-search-ui`,
 branch `feat/e7-meal-search-ui`, HEAD `2dea4187`. No Gradle ran, no Kotlin
 compiled, nothing under `mobile/` or `scripts/` was edited.
 

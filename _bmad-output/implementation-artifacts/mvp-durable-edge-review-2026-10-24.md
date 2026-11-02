@@ -4,7 +4,7 @@ Reviewer role: independent Edge Case Hunter, using `.agents/skills/bmad-review-e
 
 ## Input and checkout
 
-- Worktree: `/Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition`.
+- Worktree: `REDACTED_WORKTREE/f2ff/SuperNutrition`.
 - Branch: `codex/mvp-completion`; candidate HEAD: `137293faec3e2003df72fb571dfa2fe92179037f`.
 - Baseline: `7309e140b9cf12c6acf5733cfdcec00ce5912f1b`.
 - Supplied complete input: `mobile/build/verification/mvp-audit/review.diff`, 185 file sections, 33,335 lines, 2,683,114 bytes; SHA-256 `b5ce0e8a8fbe1f07510ae134b353134dc57f6661157a7a3e13ffe577be23f667`.
@@ -32,7 +32,7 @@ Reviewer role: independent Edge Case Hunter, using `.agents/skills/bmad-review-e
 
 ### Backup-directory read path
 
-`load()` invokes `AtomicFile.openRead()` at line 22 without first applying the backup-directory guard that `save()` already applies at line 32. The installed SDK's primary implementation at `/Users/REDACTED/Library/Android/sdk/sources/android-29/android/util/AtomicFile.java:224-229` calls `mBaseName.delete()` whenever `.bak` exists, then renames that backup to the base path. If `.bak` is a directory, a previously valid regular base file is deleted before opening fails. `LocalProfile`/`MealDiary` can surface a load failure afterward, but they cannot preserve bytes already deleted by this read. Android 29 is inside the currently declared supported range (`mobile/gradle/libs.versions.toml:10`, `minSdk = "24"`). This is a static source trace; no Android execution is claimed.
+`load()` invokes `AtomicFile.openRead()` at line 22 without first applying the backup-directory guard that `save()` already applies at line 32. The installed SDK's primary implementation at `~/Library/Android/sdk/sources/android-29/android/util/AtomicFile.java:224-229` calls `mBaseName.delete()` whenever `.bak` exists, then renames that backup to the base path. If `.bak` is a directory, a previously valid regular base file is deleted before opening fails. `LocalProfile`/`MealDiary` can surface a load failure afterward, but they cannot preserve bytes already deleted by this read. Android 29 is inside the currently declared supported range (`mobile/gradle/libs.versions.toml:10`, `minSdk = "24"`). This is a static source trace; no Android execution is claimed.
 
 Testable condition: on API 29, create a fixture regular base file containing valid prior bytes and a nonempty sibling `.bak` directory. Call `load()` through a fresh `AndroidPrivateDocumentStore`. The operation must report failure while leaving the base file's bytes and the backup-directory contents untouched. Run the same fixture for `MEAL_DIARY` and `PROFILE_NAME`. Existing `PrivateDocumentStoreInstrumentationTest.anObstructedLegacyBackupCannotReplaceThePreviousValue` exercises only `save()`, so it does not traverse the destructive read.
 

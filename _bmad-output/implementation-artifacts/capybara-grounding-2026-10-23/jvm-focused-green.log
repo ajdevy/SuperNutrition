@@ -100,7 +100,7 @@ See https://kotl.in/connecting-source-sets
 > Task :feature:photo-analysis-ui:jvmTestClasses
 > Task :feature:photo-analysis-ui:jvmTest
 
-[Incubating] Problems report is available at: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/build/reports/problems/problems-report.html
+[Incubating] Problems report is available at: file://REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/build/reports/problems/problems-report.html
 
 BUILD SUCCESSFUL in 1m 51s
 41 actionable tasks: 13 executed, 28 up-to-date

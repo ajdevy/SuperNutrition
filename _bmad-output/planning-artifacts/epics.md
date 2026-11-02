@@ -13,8 +13,8 @@ inputDocuments:
   - ux-designs/ux-SuperNutrition-2026-07-26/DESIGN.md
   - ux-designs/ux-SuperNutrition-2026-07-26/EXPERIENCE.md
   - docs/food-photo-recognition-report.md
-  - /Users/aj/Downloads/NutriArch
-  - /Users/aj/Downloads/report.md
+  - ~/Downloads/NutriArch
+  - ~/Downloads/report.md
   - ../specs/spec-text-meal-identification/SPEC.md
   - ../specs/spec-text-meal-identification/search-mechanics.md
   - ../specs/spec-text-meal-identification/contract-v2.md

@@ -1,7 +1,7 @@
 {
   "key": "watermelon",
   "generator": "built-in image_gen",
-  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-160f3eea-4b04-4ab7-92a6-6ea1c86051df.png",
+  "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-160f3eea-4b04-4ab7-92a6-6ea1c86051df.png",
   "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_watermelon.png",
   "intended_resource_name": "food_sticker_watermelon.png",
   "prompt_file": "broad-library-prompts.json",

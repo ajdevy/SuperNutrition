@@ -777,7 +777,7 @@ Run detekt CLI with --debug or set `detekt { debug = true }` in Gradle to see th
 > Task :apps:androidApp:detektUiAcceptanceRelease UP-TO-DATE
 > Task :feature:photo-analysis:detektMainAndroid
 
-[Incubating] Problems report is available at: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/build/reports/problems/problems-report.html
+[Incubating] Problems report is available at: file://REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/build/reports/problems/problems-report.html
 
 FAILURE: Build failed with an exception.
 

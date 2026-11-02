@@ -2,7 +2,7 @@
 
 Read-only review using the project `bmad-review-adversarial-general` skill. Compared the explicit `HomeRhythmCard.before.kt` snapshot with the current `HomeRhythmCard.kt`, and reviewed the new `large Home metrics keep their standard titles whole` case in `AdditionalInteractionLayoutsTest.kt:62–87`. Related existing layout assertions were inspected only to identify regressions caused by this change. No source/test edits, Gradle execution, or device interaction were performed.
 
-Worktree: `/Users/REDACTED/.codex/worktrees/a704/SuperNutrition`; branch `codex/figma-camera-flow`; HEAD `5ee5de077866feed70b418ee2760af24322b1d22`. Unrelated dirty work was excluded.
+Worktree: `REDACTED_WORKTREE/a704/SuperNutrition`; branch `codex/figma-camera-flow`; HEAD `5ee5de077866feed70b418ee2760af24322b1d22`. Unrelated dirty work was excluded.
 
 ## Findings
 

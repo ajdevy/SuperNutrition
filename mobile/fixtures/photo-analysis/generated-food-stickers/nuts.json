@@ -1,7 +1,7 @@
 {
   "key": "nuts",
   "generator": "built-in image_gen",
-  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-89f8c8e7-27f6-4c68-8c0f-930ab498b37e.png",
+  "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-89f8c8e7-27f6-4c68-8c0f-930ab498b37e.png",
   "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_nuts.png",
   "intended_resource_name": "food_sticker_nuts.png",
   "prompt_file": "broad-library-prompts.json",

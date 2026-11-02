@@ -59,7 +59,7 @@ remains available to the separate research renderer.
 
 ## Validation
 
-Worktree: `/Users/REDACTED/.codex/worktrees/a704/SuperNutrition`.
+Worktree: `REDACTED_WORKTREE/a704/SuperNutrition`.
 Branch: `codex/figma-camera-flow`, based on
 `5ee5de077866feed70b418ee2760af24322b1d22`. Changes remain local and uncommitted.
 `git pull --ff-only origin main` completed successfully before implementation.

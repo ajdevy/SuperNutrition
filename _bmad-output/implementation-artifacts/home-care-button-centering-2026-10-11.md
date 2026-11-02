@@ -18,7 +18,7 @@ spec/evidence. Observe the new regression fail before changing production
 layout, then run the full shared UI suite, JVM/Android quality and package
 checks, and the changed shared UI's iosArm64 compilation.
 
-Worktree: `/Users/REDACTED/.codex/worktrees/a704/SuperNutrition`, branch
+Worktree: `REDACTED_WORKTREE/a704/SuperNutrition`, branch
 `codex/figma-camera-flow`, HEAD/base
 `5ee5de077866feed70b418ee2760af24322b1d22`. Existing camera and layout work
 is local and uncommitted. No commit or push is requested.
@@ -76,7 +76,7 @@ These are JVM/Skiko production-composable renders, not device screenshots.
 ./mobile/gradlew -p mobile :feature:photo-analysis-ui:compileKotlinIosArm64 -Psupernutrition.enableIosDeviceTarget=true --continue --no-configuration-cache --console=plain
 graphify update .
 git diff --check
-/Users/REDACTED/Library/Android/sdk/platform-tools/adb devices -l
+~/Library/Android/sdk/platform-tools/adb devices -l
 ```
 
 The JVM/Android quality gate and production APK build succeed (exit 0,

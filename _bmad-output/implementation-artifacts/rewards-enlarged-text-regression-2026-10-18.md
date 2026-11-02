@@ -70,9 +70,9 @@ pre-change source hashes are archived in
 ./mobile/gradlew -p mobile :feature:photo-analysis-ui:jvmTest \
   --tests '*RewardsTextReadabilityTest*' \
   --tests '*PhotoAnalysisLayoutVisualTest*' \
-  --init-script /Users/REDACTED/.codex/worktrees/a704/SuperNutrition/mobile/build/agent-ui-runtime.gradle \
+  --init-script REDACTED_WORKTREE/a704/SuperNutrition/mobile/build/agent-ui-runtime.gradle \
   -Psupernutrition.enableIosDeviceTarget=true \
-  -Pkotlin.native.home=/Users/REDACTED/.codex/worktrees/a704/SuperNutrition/mobile/build/agent-konan/kotlin-native-prebuilt-macos-x86_64-2.4.10 \
+  -Pkotlin.native.home=REDACTED_WORKTREE/a704/SuperNutrition/mobile/build/agent-konan/kotlin-native-prebuilt-macos-x86_64-2.4.10 \
   -Pkotlin.compiler.execution.strategy=in-process \
   '-Dorg.gradle.jvmargs=-Xms256m -Xmx2g -XX:MaxMetaspaceSize=1g -XX:+UseG1GC -Dfile.encoding=UTF-8' \
   --max-workers=1 --dependency-verification strict --no-watch-fs --continue \

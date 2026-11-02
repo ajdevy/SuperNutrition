@@ -1,6 +1,6 @@
 # Coverage-formula redesign candidate: FUZZY tier, `chiken`/`yogert`/`sammon`/`cafe`
 
-Worktree `/Users/aj/workspace_ai/SuperNutrition/.claude/worktrees/e7-meal-search-ui`, branch
+Worktree `~/workspace_ai/SuperNutrition/.claude/worktrees/e7-meal-search-ui`, branch
 `feat/e7-meal-search-ui`, HEAD `22832480`. No Gradle ran, no Kotlin compiled, nothing under
 `mobile/` or `scripts/` was touched. Everything below is a Python model, validated against the
 real committed data and the real Gradle-measured numbers stated in the brief, before anything

@@ -1,12 +1,12 @@
 from pathlib import Path
-import os,subprocess,xml.etree.ElementTree as ET,re,json,datetime,yaml,time
+import os,shutil,subprocess,xml.etree.ElementTree as ET,re,json,datetime,yaml,time
 root=Path.cwd();base=root/'mobile/build/home-no-scroll-2026-10-17/native-ci-journey';flow=root/'mobile/.maestro/photo-analysis/photo-analysis-capture-recovery.yaml'
 header,steps=list(yaml.safe_load_all(flow.read_text()));assert header=={'appId':'${APP_ID}'}
 locators={}
 for line in (flow.parent/'photo-analysis-locators.js').read_text().splitlines():
  if not line.strip() or line.startswith('//'):continue
  match=re.fullmatch(r'output\.(\w+) = "([\w_]+)";',line);assert match,line;locators[match[1]]=match[2]
-env=os.environ|{'ADB_SERVER_SOCKET':'tcp:localhost:5041','ANDROID_ADB_SERVER_PORT':'5041','ADB_MDNS_AUTO_CONNECT':'0','ADB_LOCAL_TRANSPORT_MAX_PORT':'5591'};adb=['/Users/REDACTED/Library/Android/sdk/platform-tools/adb','-P','5041','-s','emulator-5590'];package='app.supernutrition.uiAcceptance';activity='com.supernutrition.feature.photoanalysis.PhotoAnalysisComposeActivity'
+env=os.environ|{'ADB_SERVER_SOCKET':'tcp:localhost:5041','ANDROID_ADB_SERVER_PORT':'5041','ADB_MDNS_AUTO_CONNECT':'0','ADB_LOCAL_TRANSPORT_MAX_PORT':'5591'};adb_bin=shutil.which('adb') or str(Path.home()/'Library/Android/sdk/platform-tools/adb');android_bin=shutil.which('android') or str(Path.home()/'.local/bin/android');adb=[adb_bin,'-P','5041','-s','emulator-5590'];package='app.supernutrition.uiAcceptance';activity='com.supernutrition.feature.photoanalysis.PhotoAnalysisComposeActivity'
 def call(*args,timeout=30):return subprocess.check_output(adb+list(args),env=env,timeout=timeout)
 def guard(expected):
  win=call('shell','dumpsys','window').decode();focus=[line for line in win.splitlines() if 'mCurrentFocus=' in line];assert len(focus)==1 and any(p+'/'+activity in focus[0] for p in expected),focus
@@ -50,7 +50,7 @@ def execute(step):
 try:
  for step in steps:execute(step)
  record.update(exit_code=0,assertions=sum(s['action']=='assertVisible' for s in record['steps']),taps=sum(s['action']=='tapOn' for s in record['steps']));guard([package])
- subprocess.run(['/Users/REDACTED/.local/bin/android','screen','capture','--device','emulator-5590','-o',str(base/'home-after-journey.png')],env=env,check=True,timeout=45);print('NATIVE_JOURNEY_PASSED',record['assertions'],'assertions',record['taps'],'taps',flush=True)
+ subprocess.run([android_bin,'screen','capture','--device','emulator-5590','-o',str(base/'home-after-journey.png')],env=env,check=True,timeout=45);print('NATIVE_JOURNEY_PASSED',record['assertions'],'assertions',record['taps'],'taps',flush=True)
 except Exception as failure:
  record.update(exit_code=1,error=str(failure));raise
 finally:

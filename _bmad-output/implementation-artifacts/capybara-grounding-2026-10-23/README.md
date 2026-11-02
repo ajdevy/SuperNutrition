@@ -2,7 +2,7 @@
 
 The capybara now sits on the existing garden floor, with a restrained contact shadow. Foreground content positions, text, card spacing, actions and sprite timing are unchanged. The full garden and frosted card use one measured cover/crop transform; the scene follows the paws when scrolling.
 
-Worktree: `/Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition`.
+Worktree: `REDACTED_WORKTREE/f2ff/SuperNutrition`.
 Branch: `codex/home-profile`; baseline `465f1933f36f4b8631fa923c8d299f693b2da1a7`.
 Host: Intel x86_64 macOS15.8, Android Studio JBR; process-local Xcode26.6 for shared arm64 compilation.
 

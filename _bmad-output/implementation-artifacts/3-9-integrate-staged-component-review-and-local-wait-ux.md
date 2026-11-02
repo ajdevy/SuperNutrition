@@ -265,7 +265,7 @@ GPT-5 Codex
   compilation passed, `qualityCheckJvmAndroid` passed, and `qualityCheckApple`
   passed. These results do not establish physical staged-runtime evidence.
 - On 2026-08-02 the current dirty worktree was exercised on physical Honor
-  DNY-NX9 through `192.168.0.150:37613`: the isolated local-Android adapter
+  DNY-NX9 through `PHYSICAL_DEVICE_ENDPOINT`: the isolated local-Android adapter
   passed `4/4`, production packaged acceptance passed `15/15`, and
   `uiAcceptance` passed `15/15`, all with zero failures, errors, or skips.
   This is capture/adapter correctness evidence only; the launcher still binds

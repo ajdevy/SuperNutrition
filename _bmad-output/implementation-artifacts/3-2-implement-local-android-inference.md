@@ -317,7 +317,7 @@ GPT-5 / Codex
   `qualityCheckJvmAndroid` gate passes with 98.01% line and 88.03% branch across
   8 production modules.
 - The physical Android acceptance task completed 15/15 tests on the explicit
-  `AU3N025429006787` serial after fixing ViewModel reflection visibility and
+  `PHYSICAL_DEVICE_SERIAL` serial after fixing ViewModel reflection visibility and
   the Compose resource-ID assertion helper. Clean current-commit Android
   evidence is now emitted and bound in `mobile/config/quality/evidence-bindings.toml`;
   signed G-3 evidence remains outstanding, so this story is not
@@ -336,13 +336,13 @@ GPT-5 / Codex
   Strict dependency verification also required the checked-in SHA-256 for
   Gradle's `org.junit:junit-bom:5.9.2` module metadata.
 - 2026-07-31 latest explicit-serial UI rerun: `connectedUiAcceptanceDebugAndroidTest`
-  completed on `AU3N025429006787` (`DNY-NX9`, Android 16 / API 36) at
+  completed on `PHYSICAL_DEVICE_SERIAL` (`DNY-NX9`, Android 16 / API 36) at
   `2026-07-31T13:56:12Z`, with 15 tests, 0 failures, 0 errors, and 0 skips.
   The result XML is
   `mobile/apps/androidApp/build/outputs/androidTest-results/connected/debug/flavors/uiAcceptance/TEST-DNY-NX9 - 16-_apps_androidApp-uiAcceptance.xml`.
 - 2026-07-31 dedicated local-Android adapter device rerun: committed
   `connectedAndroidDeviceTest` for the isolated `androidDeviceTest` source set,
-  ran it on `AU3N025429006787` (`DNY-NX9`, Android 16 / API 36), and completed
+  ran it on `PHYSICAL_DEVICE_SERIAL` (`DNY-NX9`, Android 16 / API 36), and completed
   4/4 tests with 0 failures, errors, or skips. The test APK digest is
   `952dfdb5f77fa58caebb121917b089a6c224fd94468d87d3eca7f2b679fdcb9a`; the
   run timestamp is `2026-07-31T10:30:39Z`. The physical scenario now covers
@@ -378,7 +378,7 @@ GPT-5 / Codex
   `unsupported` and weight remains `not-evaluable`.
 - 2026-07-31 physical device acceptance on code commit `5f6c8772` (the FPB
   research baseline): the explicit wireless serial
-  `adb-AU3N025429006787-97BOdK._adb-tls-connect._tcp` passed the isolated local
+  `adb-PHYSICAL_DEVICE_SERIAL-97BOdK._adb-tls-connect._tcp` passed the isolated local
   adapter suite `4/4` and the UI/capture/semantics suite `15/15` on Honor
   DNY-NX9 / Android 16 (API 36), with zero failures, errors, and skips. The
   result XML is
@@ -400,7 +400,7 @@ GPT-5 / Codex
   capability remains `unsupported` and weight capability remains
   `not-evaluable`; this does not select FPB for production or sign G-3.
 - 2026-08-02 current-worktree physical rerun on Honor DNY-NX9 through
-  `192.168.0.150:37613` passed the isolated adapter `4/4`, production app
+  `PHYSICAL_DEVICE_ENDPOINT` passed the isolated adapter `4/4`, production app
   `15/15`, and `uiAcceptance` `15/15`, all with zero failures, errors, or
   skips. The separate research-only Food-101 runner returned semantic `5/5`,
   init `2,150 ms`, p50/p95/max `187/218/335 ms`, PSS
