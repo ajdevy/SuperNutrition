@@ -730,3 +730,30 @@ user meal photographs and removed model and benchmark artifacts. This decision
 does not authorize making the repository public while the photographs remain
 reachable; revisit public release only after the owner makes a separate,
 informed decision about the retained personal data.
+
+## D-16 — make the private Android food model an optional local build input
+
+Decided on: 2026-11-03
+Decided by: ajdevy (repository owner, direct instruction in this Codex chat)
+Channel: Codex chat request to assemble the private AAR locally and keep the app usable without it
+
+Default and hosted builds must not resolve or fetch the private food-identification
+AAR. Contributors may build the AAR locally from the private source repository
+and opt into attaching it to a local app build. Without the AAR, the Android app
+remains usable and explains in a dialog that local food identification is not
+attached when that feature is requested. The private AAR repository README must
+document complete local assembly and integration instructions.
+
+## D-17 — classify the retained meal photographs as public
+
+Decided on: 2026-11-03
+Decided by: ajdevy (repository owner, direct instruction in this Codex chat)
+Channel: Codex chat clarification that the retained photographs are public, not private
+
+The five meal photographs discussed in D-15 are public and are not private
+photos. Leave the existing GitHub pull-request refs unchanged as previously
+directed. This clarification supersedes D-15's characterization of those
+photographs as retained private personal data. It does not authorize changing
+the repository's visibility; public-release readiness must still be assessed
+against the submission's real-data requirement and the other artifacts retained
+in pull-request history.

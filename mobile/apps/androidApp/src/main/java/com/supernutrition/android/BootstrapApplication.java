@@ -13,6 +13,8 @@ public class BootstrapApplication extends Application
     private final com.supernutrition.feature.photoanalysis.PhotoAnalysisAndroidRuntimeFactory
             photoAnalysisRuntimeFactory = new AndroidPocRuntimeFactory();
     private final CoroutineDispatcher photoAnalysisBackgroundDispatcher = Dispatchers.getDefault();
+    private final boolean localFoodIdentificationAttached =
+            BuildConfig.LOCAL_FOOD_IDENTIFICATION_ATTACHED;
     private final MealCatalogFactory photoAnalysisCatalogFactory = "production".equals(BuildConfig.FLAVOR)
             ? new AndroidBundledUsdaCatalogFactory(this) : () -> null;
     private final CoroutineDispatcher photoAnalysisCatalogBackgroundDispatcher = Dispatchers.getIO();
@@ -26,6 +28,11 @@ public class BootstrapApplication extends Application
     @Override
     public CoroutineDispatcher getPhotoAnalysisBackgroundDispatcher() {
         return photoAnalysisBackgroundDispatcher;
+    }
+
+    @Override
+    public boolean getLocalFoodIdentificationAttached() {
+        return localFoodIdentificationAttached;
     }
 
     @Override

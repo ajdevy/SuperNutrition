@@ -28,27 +28,43 @@ published as a production release.
 
 - Kotlin 2.4, Kotlin Multiplatform, Compose Multiplatform, Gradle 9.5, and
   SQLDelight for mobile.
-- ONNX Runtime for the staged Android food-identification proof of concept.
+- Optional ONNX Runtime and a locally assembled private AAR for Android food
+  identification.
 - TypeScript, Node.js 22, Fastify, PostgreSQL, and Redis for the API.
 - Versioned JSON contracts and reproducible evaluation fixtures.
 
-The Android food-identification runtime is imported as a prebuilt AAR from a
-private GitHub Packages repository. Both its source and binary are private;
-the Food-101 classifier weights remain in this project, and component
-detection is disabled until a separately cleared model is selected. Android
-contributors need read access to the private package. Add a GitHub classic
-personal access token with `read:packages` to `~/.gradle/gradle.properties`:
+The Android food-identification runtime is optional. Its source is in the
+private `flexsent-labs/supernutrition-food-identification-android` repository;
+the public project does not fetch or check in its AAR. Standard Android builds
+work without private-repository access. In those builds, opening photo
+identification shows a dialog explaining that the local model is not attached;
+the diary, meal search, and other app areas remain available. Component
+detection is disabled until a separately cleared model is selected.
 
-```properties
-gpr.user=YOUR_GITHUB_USERNAME
-gpr.key=YOUR_READ_PACKAGES_TOKEN
+To build the optional runtime locally, first clone the private source
+repository:
+
+```bash
+cd /path/to/supernutrition-food-identification-android
+./gradlew testDebugUnitTest assembleRelease
 ```
 
-Do not commit these credentials. A public checkout without private package
-access cannot resolve the Android runtime dependency. See
+Then, from a SuperNutrition checkout, opt into it for that local build:
+
+```bash
+ANDROID_HOME=/absolute/path/to/Android/Sdk \
+  ./mobile/gradlew -p mobile :apps:androidApp:assembleProductionDebug \
+  -Psupernutrition.attachLocalFoodModel=true \
+  -Psupernutrition.foodModelSource=/absolute/path/to/supernutrition-food-identification-android
+```
+
+The properties are local to that invocation. Gradle builds the AAR from that
+local private-source checkout; without them, it does not include the private
+build or resolve the AAR. See
 [`mobile/inference/local-android-poc/THIRD-PARTY-NOTICES.md`](mobile/inference/local-android-poc/THIRD-PARTY-NOTICES.md)
 and [`mobile/inference/local-android-poc/LIBRARY-PROVENANCE.md`](mobile/inference/local-android-poc/LIBRARY-PROVENANCE.md)
-for upstream terms, source revision, and artifact digests.
+for third-party terms, the source revision, and artifact digests. The private
+repository README contains the complete local assembly steps.
 
 ## Run locally
 

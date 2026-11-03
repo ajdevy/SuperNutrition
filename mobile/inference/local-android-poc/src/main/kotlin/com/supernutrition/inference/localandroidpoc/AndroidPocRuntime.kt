@@ -1,6 +1,7 @@
 package com.supernutrition.inference.localandroidpoc
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import com.supernutrition.domain.inference.AssumptionCode
 import com.supernutrition.domain.inference.CapabilityReason
@@ -30,11 +31,10 @@ import com.supernutrition.inference.localshared.LocalPhotoInferenceRuntime
 import com.supernutrition.inference.localshared.LocalRuntimeCandidate
 import com.supernutrition.inference.localshared.LocalRuntimeCapability
 import com.supernutrition.inference.localshared.LocalRuntimeOutcome
-import com.supernutrition.foodidentification.runtime.PocAnalysis
-import com.supernutrition.foodidentification.runtime.PocInferenceEngine
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.IOException
+import java.lang.reflect.InvocationTargetException
 import java.security.MessageDigest
 
 private const val DISH_ASSET = "swin-finetuned-food101-matmul-int8.onnx"
@@ -68,30 +68,28 @@ class AndroidPocRuntimeEngines(
 
 private class AndroidPocRuntimeCore(context: Context) : AutoCloseable {
     private val appContext = context.applicationContext ?: context
-    private val engine = PocInferenceEngine(appContext, false)
+    private val engine = OptionalFoodIdentificationEngine.attach(appContext)
     private val assetsVerified = verifyAssets()
 
-    suspend fun analyze(input: NormalizedPhotoInput, gridCellIndex: Int? = null): PocAnalysis =
+    suspend fun analyze(input: NormalizedPhotoInput, gridCellIndex: Int? = null): List<FoodDishCandidate> =
         withContext(Dispatchers.Default) {
-        if (!assetsVerified) throw IOException("PoC model assets are missing or failed integrity verification")
-        // Do not cache PocAnalysis: its optional region masks are owned by the
-        // result and caching them makes a later request either leak or reuse a
-        // closed bitmap. The bounded Android app path can afford a fresh run.
-        runAnalysis(input, gridCellIndex)
+            if (!engine.isAttached) throw IOException("Private local food-identification runtime is not attached")
+            if (!assetsVerified) throw IOException("PoC model assets are missing or failed integrity verification")
+            val bitmap = BitmapFactory.decodeByteArray(input.bytes, 0, input.bytes.size)
+                ?: throw IOException("Normalized photo bytes could not be decoded")
+            try {
+                engine.analyze(bitmap, gridCellIndex ?: -1)
+            } finally {
+                bitmap.recycle()
+            }
     }
 
-    fun isReady(): Boolean = assetsVerified
+    fun isReady(): Boolean = engine.isAttached && assetsVerified
 
-    private suspend fun runAnalysis(input: NormalizedPhotoInput, gridCellIndex: Int?): PocAnalysis =
-        withContext(Dispatchers.Default) {
-        val bitmap = BitmapFactory.decodeByteArray(input.bytes, 0, input.bytes.size)
-            ?: throw IOException("Normalized photo bytes could not be decoded")
-        try {
-            val result = engine.analyze(bitmap, gridCellIndex ?: -1)
-            result
-        } finally {
-            bitmap.recycle()
-        }
+    fun unavailableMessageKey(): String = if (engine.isAttached) {
+        "inference.capability.poc-assets-missing"
+    } else {
+        "inference.capability.local-model-not-attached"
     }
 
     private fun verifyAssets(): Boolean = listOf(
@@ -119,6 +117,66 @@ private class AndroidPocRuntimeCore(context: Context) : AutoCloseable {
     }
 }
 
+private data class FoodDishCandidate(val label: String, val confidence: Float)
+
+/** The AAR is loaded only in local builds; default builds report it as unattached. */
+private class OptionalFoodIdentificationEngine private constructor(private val engine: Any?) : AutoCloseable {
+    val isAttached: Boolean get() = engine != null
+
+    fun analyze(bitmap: Bitmap, gridCellIndex: Int): List<FoodDishCandidate> {
+        val attachedEngine = engine ?: throw IOException("Private local food-identification runtime is not attached")
+        val analysis = invokePublic(
+            attachedEngine,
+            "analyze",
+            arrayOf(Bitmap::class.java, Int::class.javaPrimitiveType!!),
+            bitmap,
+            gridCellIndex,
+        ) ?: throw IOException("Food-identification runtime returned no analysis")
+        return try {
+            val candidates = invokePublic(analysis, "getDishCandidates", emptyArray()) as? List<*>
+                ?: throw IOException("Food-identification runtime returned invalid dish candidates")
+            candidates.map { candidate ->
+                val value = candidate ?: throw IOException("Food-identification runtime returned an empty candidate")
+                val label = invokePublic(value, "getLabel", emptyArray()) as? String
+                    ?: throw IOException("Food-identification runtime returned a candidate without a label")
+                val confidence = invokePublic(value, "getConfidence", emptyArray()) as? Number
+                    ?: throw IOException("Food-identification runtime returned a candidate without confidence")
+                FoodDishCandidate(label, confidence.toFloat())
+            }
+        } finally {
+            (analysis as? AutoCloseable)?.close()
+        }
+    }
+
+    override fun close() {
+        (engine as? AutoCloseable)?.close()
+    }
+
+    companion object {
+        fun attach(context: Context): OptionalFoodIdentificationEngine {
+            val engine = try {
+                val type = Class.forName("com.supernutrition.foodidentification.runtime.PocInferenceEngine")
+                type.getConstructor(Context::class.java, Boolean::class.javaPrimitiveType)
+                    .newInstance(context, false)
+            } catch (_: ClassNotFoundException) {
+                null
+            }
+            return OptionalFoodIdentificationEngine(engine)
+        }
+
+        private fun invokePublic(
+            target: Any,
+            methodName: String,
+            parameterTypes: Array<Class<*>>,
+            vararg arguments: Any,
+        ): Any? = try {
+            target.javaClass.getMethod(methodName, *parameterTypes).invoke(target, *arguments)
+        } catch (error: InvocationTargetException) {
+            throw error.targetException ?: error
+        }
+    }
+}
+
 private class AndroidPocDishRuntime(private val core: AndroidPocRuntimeCore) : LocalPhotoInferenceRuntime {
     private val model = LocalModelProvenance(
         modelVersion = DISH_MODEL_VERSION,
@@ -135,7 +193,7 @@ private class AndroidPocDishRuntime(private val core: AndroidPocRuntimeCore) : L
         LocalRuntimeCapability.Unavailable(
             state = CapabilityState.MODEL_REQUIRED,
             reason = CapabilityReason.MODEL_MISSING,
-            userMessageKey = "inference.capability.poc-assets-missing",
+            userMessageKey = core.unavailableMessageKey(),
         )
     }
 
@@ -144,7 +202,7 @@ private class AndroidPocDishRuntime(private val core: AndroidPocRuntimeCore) : L
         token: LocalInferenceAttemptToken,
     ): LocalRuntimeOutcome {
         val analysis = core.analyze(input, token.gridCellIndex)
-        val candidates = analysis.dishCandidates.take(5).mapIndexed { index, candidate ->
+        val candidates = analysis.take(5).mapIndexed { index, candidate ->
             LocalRuntimeCandidate(
                 candidateId = "food101:${candidate.label}",
                 label = candidate.label,

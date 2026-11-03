@@ -167,3 +167,67 @@ are reachable in GitHub pull-request history. The two credential-shaped
 benchmark values are redacted from the rewritten history; no live credential
 was confirmed, and their original validity cannot be established from the
 retained data.
+
+## Updated status — 2026-11-03 after D-16 and D-17
+
+D-17 records the owner's clarification that the five retained meal photographs
+are public, not private. The earlier D-15 description of them as private
+personal data is superseded. The owner still directed that GitHub pull-request
+refs remain unchanged; this clarification does not change repository
+visibility. The current SuperNutrition repository is still private.
+
+D-16 is implemented in the SuperNutrition working branch
+`codex/local-inference-optional`. Default and hosted builds no longer resolve
+or fetch the private AAR. A contributor with access to the private source can
+opt into a local Gradle composite build using
+`-Psupernutrition.attachLocalFoodModel=true` and
+`-Psupernutrition.foodModelSource=/absolute/path/to/private/repository`. Without
+the AAR, the app remains usable; requesting photo identification shows a
+dismissible unavailable-model dialog, and manual meal entry remains available.
+The root README documents the optional build. These SuperNutrition changes are
+not yet merged as of this status update.
+
+The private AAR repository README now contains full local assembly and
+integration steps. Its GitHub Packages publishing workflow and Maven publication
+configuration were removed. PR #1 was merged with a merge commit, preserving the
+new commit and prior history: `b3b85a3` is the feature commit and `c86621f` is
+the merge commit on private-repository `main`. The source repository remains
+MIT-licensed; the locally generated AAR contains no license file or metadata.
+
+Validation for the optional local-model change:
+
+- Default `productionDebug` assembly passed without private source access.
+- Opt-in `productionDebug` assembly passed using the private source checkout.
+- Private AAR `clean testDebugUnitTest assembleRelease` passed; all 5 tests
+  passed. The AAR SHA-256 is
+  `36cec9481a84ff939ea05c17c4b1b246f6146f8b4889ac14d7e26842b488abf0`.
+- Android emulator instrumentation passed in `production`, `poc`, and
+  `uiAcceptance`: 65 tests each, 0 failures, 0 errors, 0 skipped (195 total).
+  Reports are under
+  `mobile/apps/androidApp/build/outputs/androidTest-results/connected/debug/flavors/`.
+- Emulator smoke confirmed the missing-model dialog appears on photo action and
+  manual text entry remains usable after dismissing it.
+- `git diff --check` and `scripts/verify-owner-decisions.sh --strict` passed;
+  the owner-decision validator reports 17 valid entries.
+
+Secret-scan evidence:
+
+- A fresh Gitleaks scan of the current default branch scanned 319 commits and
+  reported 91 `generic-api-key` heuristic matches. Manual review found these to
+  be screen-size labels in generated UI review JSON, generated hash metadata,
+  the `key-screens` repository file-index row, and deliberate fake values in
+  `scripts/secret-scan-fixtures.sh`. No credential was confirmed.
+- Gitleaks reported no findings in the current SuperNutrition working diff or
+  the untracked UX finding. The private AAR repository scan covered its 5
+  commits and current diff with no findings.
+- The prior complete scan at `db953b5c` covered 1,227 commits reachable from
+  the then-current branches, tags, and fetched PR heads; its 185 heuristic
+  matches were reviewed with no confirmed credential. The current `pull/65`
+  head is identical to the already-scanned `codex/public-readiness` branch.
+- A supplementary scan over all local refs timed out after 1,264 of 1,383
+  commits. Its partial report contained 265 generic matches in the same known
+  generated metadata, intentional scanner fixtures, file index, and redacted
+  benchmark examples. It is not represented as a complete all-local-ref scan;
+  the earlier complete GitHub-ref scan and the fresh current-default-branch and
+  working-diff scans are the applicable evidence for the repository being
+  prepared.
