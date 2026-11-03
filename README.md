@@ -45,7 +45,8 @@ To build the optional runtime locally, first clone the private source
 repository:
 
 ```bash
-cd /path/to/supernutrition-food-identification-android
+git clone https://github.com/flexsent-labs/supernutrition-food-identification-android.git
+cd supernutrition-food-identification-android
 ./gradlew testDebugUnitTest assembleRelease
 ```
 

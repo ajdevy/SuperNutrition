@@ -251,3 +251,23 @@ the README metrics were regenerated from this run's uploaded dashboard data to
 1,182 tracked source files and 212,273 code lines. The local check against that
 artifact passes. The PR remains open and must not be merged while its required
 policy check is failing.
+
+## Optional private food-model follow-up — 2026-11-03
+
+The owner clarified that the private food-identification source and its AAR
+must stay out of the public project tree. Contributors assemble and integrate
+the library locally from the private source repository. The root README now
+includes the private-repository clone and build commands, and `.gitignore`
+excludes `*.aar`. A current tracked-file check found no AAR binary in the
+SuperNutrition checkout.
+
+A read-only audit of 58 fetched GitHub pull-request refs found no AAR binaries,
+but 16 PR heads still contain the earlier runtime implementation source
+(`PocInferenceEngine.java`, `PocInferenceMath.java`, or
+`PocYoloWorldContract.java`). These refs remain unchanged under D-15. Making
+SuperNutrition public would make that source reachable alongside the PR
+history, contrary to the private-source requirement. Keep the repository
+private unless the owner separately authorizes exposing that source or changes
+the decision to leave the old refs untouched. The source repository is
+[`flexsent-labs/supernutrition-food-identification-android`](https://github.com/flexsent-labs/supernutrition-food-identification-android);
+its README has the full assembly and integration procedure.
