@@ -702,3 +702,17 @@ while retaining the project's commit sequence and linked author identities.
 Keep any necessary license/provenance discussion as plain research
 documentation only; it must not imply these models or runners are part of the
 app or distributable runtime.
+
+## D-14 — use MPL 2.0 for the SuperNutrition project
+
+Decided on: 2026-11-03
+Decided by: ajdevy (repository owner, direct instruction in this Codex chat)
+Channel: Codex chat request to select a copyleft license from the accepted list
+
+License the SuperNutrition project under the Mozilla Public License 2.0, an
+accepted copyleft option that does not require the additional approval listed
+for GPL and AGPL. Under MPL 2.0, modifications to covered files must remain
+available under MPL when distributed, with source made available to recipients.
+Private use does not require public source publication, and independent files
+in a larger work are not automatically covered. This license does not replace
+the separate terms for the private inference AAR or third-party materials.

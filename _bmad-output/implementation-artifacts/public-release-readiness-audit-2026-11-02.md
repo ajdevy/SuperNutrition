@@ -98,7 +98,7 @@ in `poc`, `production`, and `uiAcceptance` flavors.
 
 ## Current status — 2026-11-03 follow-up
 
-The public-readiness files are present: root README, MIT LICENSE, and ROADMAP
+The public-readiness files are present: root README, MPL-2.0 LICENSE, and ROADMAP
 with currently open issues. README covers purpose, audience, stack, and run
 instructions. `backend/mobile-api/.env.example` uses example values, and
 `.gitignore` excludes `.env` and local credential/config files. The current
@@ -121,7 +121,8 @@ rewritten to remove paths, not intentionally squashed. Five pairs of commits
 became identical Git objects after their changed trees and ancestry converged.
 
 GitHub exposes 55 read-only `refs/pull/*/head` refs and one additional
-`refs/pull/64/merge` ref. Only one head has the same tip as a rewritten branch
+`refs/pull/64/merge` ref. The rewrite's `changed-refs` report lists all 55 PR
+head refs as affected. Only one head has the same tip as a rewritten branch
 or tag; the other 54 heads are stale. Fetching the pull refs confirmed that
 they still reach six user-sample paths (including the five meal photos), the
 YOLO-World ONNX model, three YoloX Nano files, five FPB files, and 28
@@ -131,7 +132,13 @@ GitHub documents that `refs/pull/` is read-only and that Support can remove
 affected PR references for qualifying sensitive data; Support will not remove
 non-sensitive data. See [Removing sensitive data from a
 repository](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository).
-The repository was not made public.
+The repository has zero forks. The filter-repo output did not report orphaned
+LFS objects. A Support request is prepared but not submitted: it would ask
+GitHub to remove retained refs/cached views for the five real user meal photos.
+If accepted, this may make the diffs for all 55 affected PRs inaccessible.
+Support may decline the request if it determines the photos are not sensitive;
+it will not remove the other non-sensitive model or benchmark content. The
+repository was not made public.
 
 At pushed commit `db953b5c`, Gitleaks scanned 1,227 commits reachable from the
 branches, tags, and fetched pull-request refs and reported 185 heuristic `generic-api-key`
@@ -152,7 +159,12 @@ x86_64). The XML reports show 65 tests, 0 failures, 0 errors, and 0 skipped in
 each of `poc`, `production`, and `uiAcceptance` at
 `mobile/apps/androidApp/build/outputs/androidTest-results/connected/debug/flavors/`.
 
-Before making the repository public, the owner still needs to resolve the 54
-stale pull-request head refs and determine whether the two previously redacted
-benchmark values need revocation. The repository remains private until those
-items are resolved.
+The root LICENSE now contains the official MPL 2.0 text, selected as an
+accepted copyleft license. Its source-sharing obligation applies when covered
+files are distributed; it does not require public release of private
+modifications. See owner decision D-14. Before making the repository public,
+the owner must approve submission of the Support request or accept that the
+five user meal photos remain reachable through GitHub PR history. The two
+credential-shaped benchmark values are redacted from the rewritten history;
+no live credential was confirmed, and their original validity cannot be
+established from the retained data.

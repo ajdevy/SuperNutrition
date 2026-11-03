@@ -91,8 +91,12 @@ for API docs, and [`backend/mobile-api/deploy/README.md`](backend/mobile-api/dep
 for deployment constraints.
 
 See [ROADMAP.md](ROADMAP.md) for current work and [LICENSE](LICENSE) for the
-project license. Third-party data, dependencies, and vendored material may
-carry their own terms.
+project's Mozilla Public License 2.0 terms. If someone distributes modified
+MPL-covered files, they must keep those files under MPL and make their source
+available to recipients. MPL does not require public release of private
+modifications, and independent files in a larger work may use other licenses.
+The private inference AAR, third-party data, dependencies, and vendored
+material carry separate terms.
 
 <!-- coverage-report:start -->
 ## Quality snapshot
