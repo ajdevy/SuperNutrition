@@ -4501,13 +4501,13 @@
       </component>
       <component group="com.supernutrition.inference" name="food-identification-runtime" version="0.1.1">
          <artifact name="food-identification-runtime-0.1.1.aar">
-            <sha256 value="36cec9481a84ff939ea05c17c4b1b246f6146f8b4889ac14d7e26842b488abf0" origin="Built from private source commit 9b7df3d91ac6d9a86957688c97a69ba739635d9c"/>
+            <sha256 value="1c613cc78ccd90a4e57a287b69855381a0e1d081d2e09630bcd347314c116ad0" origin="Rebuilt from private source commit 56f847d with Temurin 21.0.13+9; matched package from Actions run 41520886958"/>
          </artifact>
          <artifact name="food-identification-runtime-0.1.1.pom">
-            <sha256 value="3ee3cec8b33a9fa010ecee0d04e98107b9aba4f925b562b47c0e8d1271cf8b3d" origin="Built from private source commit 9b7df3d91ac6d9a86957688c97a69ba739635d9c"/>
+            <sha256 value="3ee3cec8b33a9fa010ecee0d04e98107b9aba4f925b562b47c0e8d1271cf8b3d" origin="Rebuilt from private source commit 56f847d with Temurin 21.0.13+9; matched package from Actions run 41520886958"/>
          </artifact>
          <artifact name="food-identification-runtime-0.1.1.module">
-            <sha256 value="7d659979548ca37370ac76130ee3e34a32e7a0d57cdbd9f1339225376edf153e" origin="Built from private source commit 9b7df3d91ac6d9a86957688c97a69ba739635d9c"/>
+            <sha256 value="1ab6a40147619bd2090802e50fbdedf0fd3b892d9bf87eaa8eae680cc36b9b83" origin="Rebuilt from private source commit 56f847d with Temurin 21.0.13+9; matched package from Actions run 41520886958"/>
          </artifact>
       </component>
       <component group="commons-codec" name="commons-codec" version="1.17.1">

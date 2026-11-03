@@ -159,16 +159,14 @@ and `devicectl` only to install, launch, and copy the app-owned result file.
 
 ### Research-only Android candidate activities
 
-`MobileSamActivity` and `YoloXNanoActivity` are separate from the G-3
-Food-101 runner. They are manual, research-only activities that write an
-app-owned JSON record after local ONNX Runtime CPU inference; they do not call
-an API or run UI automation. Their non-production model assets are deliberately
-not the selected runtime:
+`MobileSamActivity` is separate from the G-3 Food-101 runner. It is a manual,
+research-only activity that writes an app-owned JSON record after local ONNX
+Runtime CPU inference; it does not call an API or run UI automation. Its
+non-production model assets are deliberately not the selected runtime:
 
 | Activity | Asset contract | Capability boundary |
 | --- | --- | --- |
 | `MobileSamActivity` | MobileSAM encoder SHA-256 `580f5fb648ea1062c0aabc26217aed56921985f03f0cbbd852bba81d760cc749`; decoder SHA-256 `8976b90a87ba50a6a72217a5ff994f7d25ce16f2229fcc1ed259e1294c622ffe` | Point-prompted class-agnostic masks only; no ingredient identity or mass |
-| `YoloXNanoActivity` | official YOLOX-Nano 416 px COCO ONNX SHA-256 `c789161ed43c8269fcd4e67c67eeeb4e80c622da2eb296a20bc6007bd18a0b7d`; BGR letterbox preprocessing | Detector-only; no complete ingredient vocabulary, normalization, or mass |
 
 For an explicit connected device, launch one activity and retrieve its local
 record with an ADB serial supplied by the operator:
@@ -184,12 +182,6 @@ adb -s "$ANDROID_DEVICE_SERIAL" exec-out run-as com.supernutrition.g3benchmark \
 The physical Android outcome and the explicit unexecuted statuses for FoodSAM
 and FoodSeg103 are recorded in
 [`ingredient-weight-research/android-candidate-device-evidence-2026-08-01.json`](../../ingredient-weight-research/android-candidate-device-evidence-2026-08-01.json).
-
-Use `YoloXNanoActivity`/`yolox-nano-result.json` for the official YOLOX-Nano
-COCO screen. The model is downloaded by `download-assets.sh` and is never a
-product activation: the test is a five-fixture deployment comparison only.
-The 2026-08-11 physical device record is in
-[`ingredient-weight-research/yolox-nano-android-evidence-2026-08-11.json`](../../ingredient-weight-research/yolox-nano-android-evidence-2026-08-11.json).
 
 ### Dish-classification research PoC
 

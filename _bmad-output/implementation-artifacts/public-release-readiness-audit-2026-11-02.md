@@ -70,6 +70,32 @@ generated review metadata also records the developer's absolute machine path.
 remove the account details, fixed Team ID, physical-device UDID, simulator UDID,
 and developer home paths from current files and every reachable history.
 
+### PRR-7 — YoloX Nano benchmark remains after D-13
+
+The prepared `codex/public-readiness` tree still tracks
+`tools/g3-benchmark/android-runner/.../YoloXNanoActivity.java` and the generated
+`ingredient-weight-research/yolox-nano-*` evidence. The activity remains
+reachable from public branch history, including `main` and
+`codex/public-readiness`; the evidence remains reachable from
+`codex/public-readiness`, despite D-13's removal decision for the standalone
+Android detector benchmark and generated outputs.
+
+**Acceptance:** remove the standalone YoloX Nano activity and its generated
+evidence from the current tree and every reachable GitHub branch and tag, while
+preserving the remaining commit sequence, author identities, and Food-101
+classification integration.
+
+### PRR-8 — reward cards show through the floating navigation side gaps
+
+The Android screenshot test `BrandNavigationVisualInstrumentationTest` fails
+at the right-edge backdrop check in all three app flavors. The captured Rewards
+screen shows a white card behind the bottom bar's right side gap, where the
+backdrop should remain `#F6F7F5`.
+
+**Acceptance:** cover the full-width bottom-bar area with the selected screen
+backdrop before drawing the floating pill, and pass the instrumentation check
+in `poc`, `production`, and `uiAcceptance` flavors.
+
 ## Current status — 2026-11-03
 
 D-11 and D-13 record the approved privacy and license boundary. The prepared
