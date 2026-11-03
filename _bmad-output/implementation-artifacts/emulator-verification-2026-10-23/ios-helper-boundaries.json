@@ -179,7 +179,7 @@
     {
       "name": "missing_project_dir",
       "exit_code": 1,
-      "stderr": "/Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/iosApp/build-sharedkit-framework.sh: line 31: PROJECT_DIR: error: PROJECT_DIR must point to mobile/apps/iosApp",
+      "stderr": "REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/apps/iosApp/build-sharedkit-framework.sh: line 31: PROJECT_DIR: error: PROJECT_DIR must point to mobile/apps/iosApp",
       "called_wrapper": false,
       "passed": true
     }

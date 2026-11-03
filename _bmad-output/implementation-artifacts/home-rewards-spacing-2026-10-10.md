@@ -1,6 +1,6 @@
 # Home and Rewards spacing — 2026-10-10
 
-Worktree: `/Users/REDACTED/.codex/worktrees/a704/SuperNutrition`; branch
+Worktree: `REDACTED_WORKTREE/a704/SuperNutrition`; branch
 `codex/figma-camera-flow`; base `5ee5de077866feed70b418ee2760af24322b1d22`.
 Existing camera/review work remains part of this local, uncommitted branch.
 
@@ -418,6 +418,6 @@ The JSON and graph report update correctly. Log:
 All 16 spec source links resolve, and final whitespace checks pass. Work
 remains local and uncommitted on `codex/figma-camera-flow`, base
 `5ee5de077866feed70b418ee2760af24322b1d22`, in
-`/Users/REDACTED/.codex/worktrees/a704/SuperNutrition`. This follow-up changes
+`REDACTED_WORKTREE/a704/SuperNutrition`. This follow-up changes
 only the Home composition, its visual regression, and the two layout
 spec/evidence documents, preserving the existing camera/Rewards work.

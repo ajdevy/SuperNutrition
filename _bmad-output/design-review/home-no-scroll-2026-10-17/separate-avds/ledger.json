@@ -8,7 +8,7 @@
     "system_image": "android35/default/x86_64",
     "status": "tested100/200 and deleted",
     "command": [
-      "/Users/REDACTED/Library/Android/sdk/cmdline-tools/latest/bin/avdmanager",
+      "~/Library/Android/sdk/cmdline-tools/latest/bin/avdmanager",
       "create",
       "avd",
       "-n",
@@ -34,7 +34,7 @@
     "system_image": "android35/default/x86_64",
     "status": "tested100/200 and deleted",
     "command": [
-      "/Users/REDACTED/Library/Android/sdk/cmdline-tools/latest/bin/avdmanager",
+      "~/Library/Android/sdk/cmdline-tools/latest/bin/avdmanager",
       "create",
       "avd",
       "-n",
@@ -59,7 +59,7 @@
     "system_image": "android35/default/x86_64",
     "status": "tested100/200 and deleted",
     "command": [
-      "/Users/REDACTED/Library/Android/sdk/cmdline-tools/latest/bin/avdmanager",
+      "~/Library/Android/sdk/cmdline-tools/latest/bin/avdmanager",
       "create",
       "avd",
       "-n",

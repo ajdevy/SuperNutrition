@@ -1,7 +1,7 @@
 {
   "key": "potato",
   "generator": "built-in image_gen",
-  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-c9e65c6c-d578-4b4e-8ffa-c8f68469a425.png",
+  "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-c9e65c6c-d578-4b4e-8ffa-c8f68469a425.png",
   "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_potato.png",
   "intended_resource_name": "food_sticker_potato.png",
   "prompt_file": "broad-library-prompts.json",

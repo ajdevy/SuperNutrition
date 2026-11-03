@@ -48,7 +48,7 @@ Review method: focused code/path inspection and executable desktop Compose tests
 
 ## Final verification
 
-Host: Intel `x86_64` macOS. Worktree remains `/Users/REDACTED/.codex/worktrees/a704/SuperNutrition`, branch `codex/figma-camera-flow`, HEAD `5ee5de077866feed70b418ee2760af24322b1d22`. Changes are local, unstaged and uncommitted; unrelated work/assets were preserved.
+Host: Intel `x86_64` macOS. Worktree remains `REDACTED_WORKTREE/a704/SuperNutrition`, branch `codex/figma-camera-flow`, HEAD `5ee5de077866feed70b418ee2760af24322b1d22`. Changes are local, unstaged and uncommitted; unrelated work/assets were preserved.
 
 | Module / check | Tests / failures / errors / skipped | Execution |
 | --- | --- | --- |
@@ -87,7 +87,7 @@ Final screenshots were visually inspected: `mobile/feature/photo-analysis-ui/bui
 
 ## Physical follow-up checkpoint
 
-User authorized device checks and renewed availability for 20–25 minutes. Physical HONOR DNY-NX9, hardware serial `AU3N025429006787`, Android 16/API 36, arm64-v8a. A separate task-owned ADB server on port 5041 restored the Wi-Fi connection without restarting the user's global ADB server. Exactly one canonical endpoint remains on that server: `adb-AU3N025429006787-97BOdK._adb-tls-connect._tcp`.
+User authorized device checks and renewed availability for 20–25 minutes. Physical HONOR DNY-NX9, hardware serial `PHYSICAL_DEVICE_SERIAL`, Android 16/API 36, arm64-v8a. A separate task-owned ADB server on port 5041 restored the Wi-Fi connection without restarting the user's global ADB server. Exactly one canonical endpoint remains on that server: `adb-PHYSICAL_DEVICE_SERIAL-97BOdK._adb-tls-connect._tcp`.
 
 All six APKs were assembled from the current inputs in one successful preparation build. The canonical `connectedAndroidTest` was then attempted twice with strict dependency verification, a 900-second installation timeout and foreground guards. Both attempts stopped **before any fresh native test result**:
 

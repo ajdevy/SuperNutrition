@@ -102,110 +102,20 @@ quality/release gate: the checked-in corpus, physical component/mass evidence,
 legal/rollback evidence, and replacement Product/Engineering approval bundle
 remain absent.
 
-### FPB research baseline for ingredient and weight work
+### Component-candidate research status
 
-FPB/YOLOv12-FoodWeight was the first research baseline for the
-multi-component experiment. Its pinned repository/checkpoint/dataset
-provenance, AGPL-3.0 repository boundary, adapter, and smoke evidence are
-recorded in
-[`ingredient-weight-research/README.md`](../../ingredient-weight-research/README.md),
-[`fpb-yolov12-foodweight-manifest.json`](../../ingredient-weight-research/fpb-yolov12-foodweight-manifest.json),
-and [`fpb-smoke-evidence.json`](../../ingredient-weight-research/fpb-smoke-evidence.json).
-The five-image CPU smoke produced detections on `5/5` cases, class accuracy
-`0.60`, mean box IoU `0.805`, weight MAE `48.54 g`, and p90 absolute error
-`110.48 g`. The published checkpoint required a temporary compatibility shim
-with current Ultralytics because the pinned repository cannot load its
-`C3k2` layer; this is not a production mobile integration.
-
-The follow-up five-complex-meal CPU screen is recorded in
-[`ingredient-weight-research/fpb-yolov12-foodweight-composite-evidence.json`](../../ingredient-weight-research/fpb-yolov12-foodweight-composite-evidence.json).
-At confidence `0.25` it emitted eight raw FPB boxes, but no label matched a
-conservative visible-component annotation; macro component F1 is `0.0` across
-all five meals. The public fixtures have no tared mass record, so the raw grams
-head remains `not-evaluable` for mass MAE. FPB is consequently **not a current
-v2 runtime candidate**. Its repository/data license boundary and phone-photo
-generalization remain unresolved, and no G-3 signature or production runtime
-selection is implied by the research artifacts.
-
-### Android research-candidate screen (not a G-3 selection)
-
-On 2026-08-01, two additional candidates were exercised on the physical Android
-research device through ONNX Runtime Android CPU. This is a deployment screen,
-not a shared acceptance test and does not change the signed Food-101 model,
-the G-3 state, or the product runtime.
-
-| Candidate | Actual Android result | Ingredient conclusion | Weight conclusion |
-| --- | --- | --- | --- |
-| MobileSAM | encoder and prompted decoder completed all five complex fixtures; p95 `2,060 ms`; PSS `729,305 KB` | `unsupported`: four masks/fixture are class-agnostic and prompt-dependent | `not-evaluable`: no mass output and no tared public-photo ground truth |
-| YOLO-World v2 | exported `640 x 640` ONNX completed all five fixtures; p95 `581 ms`; PSS `245,411 KB` | COCO-80 exact-label subset macro F1 `0.2233`; it found some carrots/broccoli but also false food labels | `not-evaluable`: no mass head and no tared public-photo ground truth |
-
-The YOLO-World measurements in this historical table are bound to the
-benchmark artifact SHA-256 `ef272175d4db2216cde08082f1accf120bdf5ee03b5bc2ba5f51735cda1e9cbc`.
-The production PoC runtime now pins the re-exported region artifact
-`d27ac81640ca470cc7e42edd638b6626ac6b4f4dcce74aabb6e09cd02a13c84f`.
-Therefore the `0.2233` macro-F1 and associated latency/resource numbers are
-historical evidence only; they are not a quality claim for the shipped
-runtime until the benchmark is rerun against the pinned production artifact.
-
-FoodSAM and FoodSeg103/ReLeM were not run on the phone: their released research
-implementations do not supply a complete Android-compatible artifact in this
-checkout. FoodSAM is a SAM + semantic-segmenter + detector stack; FoodSeg103 is
-semantic segmentation and does not yield separate repeated components or mass.
-Neither omission receives an invented device metric. Full candidate provenance,
-checksums, and fixture outputs are in
-[`ingredient-weight-research/android-candidate-device-evidence-2026-08-01.json`](../../ingredient-weight-research/android-candidate-device-evidence-2026-08-01.json).
-
-On 2026-08-02, the two Android research activities were rerun on the connected
-physical Honor DNY-NX9 (`AU3N025429006787`). MobileSAM completed `5/5`
-prompted mask runs with p95 `1,891 ms` and PSS `735,484 KB`, but remains
-`unsupported` for ingredient identity and `not-evaluable` for mass. YOLO-World
-v2 completed `5/5` runs with exact visible-component macro F1 `0.2233`, p95
-`594 ms`, and PSS `245,274 KB`; it remains limited to the embedded COCO-80
-vocabulary and has no mass head. The fresh record is
-[`ingredient-weight-research/android-candidate-device-evidence-2026-08-02.json`](../../ingredient-weight-research/android-candidate-device-evidence-2026-08-02.json).
-This is fresh deployment/candidate evidence only; it does not select a v2
-production model or close the Product/Engineering G-3 gate.
-
-The latest component-candidate rerun used the same physical device through the
-explicit ADB mDNS serial `192.168.0.150:37613` and the installed
-`com.supernutrition.g3benchmark` APK (SHA-256
-`e584f14a0bc007d31893e5d22fdf65d2e5d423b1f77609e40a0e9ee609e27fc7`).
-MobileSAM completed `5/5` prompted mask runs with p95 `2,003 ms` and PSS
-`733,237 KB`; YOLO-World v2 completed `5/5` runs with exact visible-component
-macro F1 `0.2233`, p95 `670 ms`, and PSS `244,432 KB`. Both stayed thermally
-stable at `0 -> 0`. This is now a fresh physical Android component-candidate
-screen, but it is **not** a component/mass G-3 pass: MobileSAM remains
-class-agnostic, YOLO-World is limited to COCO-80, and both mass results are
-`not-evaluable` because the fixtures have no calibrated/tared scale truth and
-neither model emits calibrated mass. The complete record is
-[`ingredient-weight-research/android-component-mass-benchmark-2026-08-02.json`](../../ingredient-weight-research/android-component-mass-benchmark-2026-08-02.json).
-
-### 2026-08-11 current-artifact detector comparison
-
-The current PoC YOLO-World asset was rerun on the physical Honor through its
-explicit USB serial, rather than reusing the historical `ef272…` export. The
-current artifact is `d27ac81640ca470cc7e42edd638b6626ac6b4f4dcce74aabb6e09cd02a13c84f`.
-On the same five fixtures and ONNX Runtime Android 1.28.0 CPU, it reached
-limited COCO-food macro F1 `0.2164`, p50/p95 `652/1117 ms`, and PSS
-`52,498 -> 244,210 KB`. Official YOLOX-Nano COCO ONNX artifact
-`c789161ed43c8269fcd4e67c67eeeb4e80c622da2eb296a20bc6007bd18a0b7d`
-reached limited macro F1 `0.1500`, p50/p95 `174/468 ms`, and PSS
-`23,684 -> 133,318 KB`.
-
-This is a comparative deployment screen, not a G-3 pass: each detector retains
-its upstream preprocessing/NMS, both remain COCO-limited, neither returns
-calibrated mass, and five timings make p95 equal to the maximum. It does not
-select, legally clear, activate, or replace a production model. The immutable
-record and comparison are
-[`ingredient-weight-research/yolox-nano-android-evidence-2026-08-11.json`](../../ingredient-weight-research/yolox-nano-android-evidence-2026-08-11.json)
-and
-[`ingredient-weight-research/yolox-nano-comparison-2026-08-11.md`](../../ingredient-weight-research/yolox-nano-comparison-2026-08-11.md).
+Detector-specific research integrations and their generated outputs were
+removed under release cleanup decision D-13. The remaining device records are
+historical deployment observations only. They do not select a component model,
+prove ingredient identity, or establish calibrated mass quality. The current
+Food-101 runtime remains dish-only; G-3 still requires a cleared model, a
+consented weighed corpus, and the full approval bundle.
 
 ## Device matrix and measured evidence
 
 | OS/device tier | Physical device | Runtime and execution provider | Semantic result | Ingredient / weight result | Runtime/resource result |
 | --- | --- | --- | --- | --- |
-| Android broad-tier candidate | Honor DNY-NX9; Android 16/API 36; `arm64-v8a`; explicit ADB mDNS serial `adb-AU3N025429006787-97BOdK._adb-tls-connect._tcp` | ONNX Runtime Android `1.28.0`; CPU; available processor threads | fresh `5/5`, accuracy `1.0` under current `0.55` floor | visible ingredients `unsupported`; plated weight `not-evaluable` | latest fresh run: init `2,611 ms`; p50 `182 ms`; p95 `279 ms`; max `334 ms`; PSS `27,520 -> 273,547 KB`; battery current `-1,355 -> -1,543 µA`; thermal `0 -> 0` |
+| Android broad-tier candidate | Honor DNY-NX9; Android 16/API 36; `arm64-v8a`; explicit ADB mDNS serial `adb-PHYSICAL_DEVICE_SERIAL-97BOdK._adb-tls-connect._tcp` | ONNX Runtime Android `1.28.0`; CPU; available processor threads | fresh `5/5`, accuracy `1.0` under current `0.55` floor | visible ingredients `unsupported`; plated weight `not-evaluable` | latest fresh run: init `2,611 ms`; p50 `182 ms`; p95 `279 ms`; max `334 ms`; PSS `27,520 -> 273,547 KB`; battery current `-1,355 -> -1,543 µA`; thermal `0 -> 0` |
 | iOS high-tier candidate | iPhone 14 Pro; iOS 26.5.2; `arm64e`; UDID `REDACTED_PHYSICAL_DEVICE_UDID` | Historical evidence: ONNX Runtime Objective-C `1.27.0`; XNNPACK; 2 threads. Current source pins `1.28.0`. | historical fresh `5/5`, accuracy `1.0` | visible ingredients `unsupported`; plated weight `not-evaluable` | historical run: init `560 ms`; p50 `83 ms`; p95 `85 ms`; max `85 ms`; resident `261,360 -> 253,008 KB`; thermal `0 -> 0`; battery level `1 -> 1` |
 
 The Android run above is the latest fresh physical run after the device was
@@ -311,8 +221,7 @@ they do not by themselves activate a production G-3 runtime:
 
 The current Food-101 semantic runner fits the exploratory High resource
 envelope on both measured devices, but it does not emit ingredients or grams.
-FPB/YOLOv12-FoodWeight has not yet been measured on either phone, so these
-tiers must not be treated as FPB device acceptance.
+These device-tier estimates are not component-model acceptance evidence.
 
 ### Engineering-approved G-3 budget
 
@@ -331,7 +240,7 @@ and iOS candidate devices:
 The approval is intentionally narrow: it accepts a staged, cancellable local
 wait for the **dish-only** v1 semantic capability. Product integration must
 show stage copy and Cancel before it can rely on this envelope. It does not
-approve the failed strict budget, a production FPB/YOLOv12 integration,
+approve the failed strict budget, a production component-model integration,
 ingredient-set extraction, gram estimation, nutrition output, or a device tier
 outside the measured matrix.
 
@@ -391,7 +300,7 @@ attempt, but the successful unlocked rerun completed semantic `5/5`, init
 `261,360 -> 253,008 KB`, thermal `0 -> 0`, and battery level `1 -> 1`.
 
 The 2026-08-02 current-worktree Android research rerun used the physical Honor
-DNY-NX9 through `192.168.0.150:37613` and the pinned Food-101 artifact. It
+DNY-NX9 through `PHYSICAL_DEVICE_ENDPOINT` and the pinned Food-101 artifact. It
 completed semantic `5/5`, init `2,150 ms`, p50/p95/max `187/218/335 ms`, PSS
 `26,350 -> 270,889 KB`, battery current `-253 -> -1,674 µA`, and thermal
 `0 -> 0`. The result explicitly reports ingredient capability `unsupported`
@@ -406,7 +315,7 @@ iPhone 14 Pro (`REDACTED_PHYSICAL_DEVICE_UDID`) with local identity
 or provisioning profile exists for that team and bundle `com.supernutrition.g3`.
 That research-only `com.supernutrition.g3` attempt produced no benchmark result
 and is not counted. The separate product physical acceptance path was then
-rerun with the configured Team `REDACTED_TEAM_ID`: Xcode UI acceptance completed
+rerun with the configured Apple developer team: Xcode UI acceptance completed
 `5/5`, and the binary-bound `iosArm64` fixture lane completed `5/5` (3
 normalization, 2 bridge) on iPhone 14 Pro / iOS 26.5.2. The emitted bundle is
 `/tmp/supernutrition-ios-evidence-20260802/bundle/`, with status
@@ -421,7 +330,7 @@ component identity, calibrated mass quality, or production G-3 approval.
 
 The clean worktree at `39c45216` ran the complete Android connected suite on
 the physical Honor DNY-NX9 / Android 16 (API 36), USB serial
-`AU3N025429006787`. `pocDebug`, `productionDebug`, and `uiAcceptanceDebug`
+`PHYSICAL_DEVICE_SERIAL`. `pocDebug`, `productionDebug`, and `uiAcceptanceDebug`
 each completed `16/16` instrumentation tests with zero failures, errors, or
 skips. The clean, digest-bound platform-evidence bundle is
 `/tmp/supernutrition-android-g3-baseline-2026-08-11`.
@@ -435,7 +344,7 @@ model resource/rollback metrics remain `not-evaluable`.
 The paired iPhone 14 Pro is booted, unlocked, in Developer Mode, and available
 over the local CoreDevice tunnel (iOS `26.5.2`, build `23F84`; UDID
 `REDACTED_PHYSICAL_DEVICE_UDID`). The physical Xcode acceptance command built and
-signed with Team `REDACTED_TEAM_ID`, but it did not begin XCTest: Xcode reported it
+signed with the configured Apple developer team, but it did not begin XCTest: Xcode reported it
 could not locate DeviceSupport for `arm64`/`arm64e` while installing or
 launching the test host. The installed Xcode is `26.0.1` (`17A400`) and its
 local iPhoneOS DeviceSupport directories stop at `16.4`. This host cannot

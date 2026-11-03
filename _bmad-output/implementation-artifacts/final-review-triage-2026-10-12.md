@@ -100,7 +100,7 @@ inventory is 152 food identities (47 existing plus 105 additions).
 ## Native shutter accessible name regression (2026-10-13)
 
 Physical HONOR DNY-NX9, Android16/API36, sole mDNS ADB transport:
-`adb-AU3N025429006787-97BOdK._adb-tls-connect._tcp`. Full suite production
+`adb-PHYSICAL_DEVICE_SERIAL-97BOdK._adb-tls-connect._tcp`. Full suite production
 flavor completed36tests with1failure.
 `centerCameraActionKeepsCaptureSurfaceAvailable` found resource ID
 `capture_shutter` but its text/contentDescription was null instead of

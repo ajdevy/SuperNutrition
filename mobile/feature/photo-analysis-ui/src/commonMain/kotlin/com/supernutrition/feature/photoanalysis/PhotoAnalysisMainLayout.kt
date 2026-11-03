@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -50,6 +51,10 @@ fun PhotoAnalysisMainLayout(
                 ) {
                     if (overlaysNavigation) {
                         content()
+                        Box(
+                            Modifier.fillMaxWidth().height(navigationHeight).align(Alignment.BottomCenter)
+                                .background(if (state.selectedTab == 0) HomeBackgroundColor else RewardsPaper),
+                        )
                         PhotoAnalysisMainBottomBar(
                             state = state,
                             actions = actions,

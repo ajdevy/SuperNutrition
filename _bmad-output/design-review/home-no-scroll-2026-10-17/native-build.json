@@ -1,7 +1,7 @@
 {
   "installed_at": "2026-10-17T23:58:57.734637+00:00",
   "apk_sha256": "7f7296bd7282a86dc63fe4feaad0d4a19706c8b4ca231c39607ff0e3abc1f26c",
-  "apk_build_path": "/Users/REDACTED/.codex/worktrees/a704/SuperNutrition/mobile/apps/androidApp/build/outputs/apk/production/debug/androidApp-production-debug.apk",
+  "apk_build_path": "REDACTED_WORKTREE/a704/SuperNutrition/mobile/apps/androidApp/build/outputs/apk/production/debug/androidApp-production-debug.apk",
   "source_head": "7ec615063ac166d69e7f4a81495e20098f25be3c",
   "pending_rewards_merge": "7d5971c0d87e3a2c87b8ab35b86628f0ce7a17f9",
   "home_source_hashes": {

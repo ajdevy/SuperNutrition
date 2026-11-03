@@ -14,7 +14,7 @@ The selected sizes come from worldwide StatCounter web-resolution observations f
 
 ## Environment and commands
 
-Worktree: `/Users/REDACTED/.codex/worktrees/a704/SuperNutrition`.
+Worktree: `REDACTED_WORKTREE/a704/SuperNutrition`.
 Branch: `codex/figma-camera-flow`; unchanged product HEAD: `262811616f9a2415c5135c23b74597033d788120`.
 This documentation slice is uncommitted. It adds the new gallery/generator and an optional output-directory argument to the shared capture helper; it changes no app sources. Unrelated primary-checkout Rewards staging remains untouched.
 

@@ -1,6 +1,6 @@
 # Existing-screen Figma refresh verification
 
-Worktree: `/Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition`
+Worktree: `REDACTED_WORKTREE/f2ff/SuperNutrition`
 Branch: `codex/home-profile`
 Baseline: `7a141facbd0ec0b4fc86efce4948fdfd3b2ce660`
 Status: implementation, shared UI and fresh final-source Android native verification passed. Required physical policy evidence remains unavailable. iOS runtime is unavailable on this Intel host.

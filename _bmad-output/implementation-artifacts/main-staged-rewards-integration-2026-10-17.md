@@ -7,7 +7,7 @@ explicitly retained ten medals and prototype levels; See all remains an
 unresolved nonfunctional prototype action. Details and exact evidence follow
 the integration history below.
 
-The human explicitly selected “Include also uncommitted Rewards from main in the push” after the first main publication. Preserve the exact 26-file staged slice from `/Users/REDACTED/workspace_ai/SuperNutrition` at e1271c6 and integrate it into the owned current branch without altering that dirty checkout. The source is a previously prepared ten-card Rewards redesign, with copied native/iOS labels, medals/background, section headers and Back action.
+The human explicitly selected “Include also uncommitted Rewards from main in the push” after the first main publication. Preserve the exact 26-file staged slice from `~/workspace_ai/SuperNutrition` at e1271c6 and integrate it into the owned current branch without altering that dirty checkout. The source is a previously prepared ten-card Rewards redesign, with copied native/iOS labels, medals/background, section headers and Back action.
 
 ## Findings and acceptance before integration
 

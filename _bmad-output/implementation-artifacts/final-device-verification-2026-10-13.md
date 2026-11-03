@@ -13,7 +13,7 @@ pass is implied.
 
 ## Identity and implementation
 
-- Worktree: `/Users/REDACTED/.codex/worktrees/a704/SuperNutrition`.
+- Worktree: `REDACTED_WORKTREE/a704/SuperNutrition`.
 - Branch: `codex/figma-camera-flow`.
 - HEAD and refreshed `origin/main`: `5ee5de077866feed70b418ee2760af24322b1d22`.
 - Intended changes remain local and uncommitted; unrelated WIP is preserved.
@@ -74,7 +74,7 @@ Logs: `/tmp/supernutrition-final-device-ready-build.log`,
 
 Physical HONOR DNY-NX9, Android 16/API 36, arm64, 1264x2736 at 560 dpi.
 Exactly one Wi-Fi ADB endpoint:
-`adb-AU3N025429006787-97BOdK._adb-tls-connect._tcp`.
+`adb-PHYSICAL_DEVICE_SERIAL-97BOdK._adb-tls-connect._tcp`.
 
 Four focused native lifecycle regressions reproduced three failures before
 the fix, then all four passed after the corrected production APK was installed.
@@ -135,7 +135,7 @@ with no unsupported installation options:
   --init-script "$PWD/mobile/build/agent-ui-runtime.gradle" \
   -Pandroid.experimental.testOptions.installApkTimeout=900 \
   -Pandroid.injected.androidTest.leaveApksInstalledAfterRun=true \
-  -Pandroid.testInstrumentationRunnerArguments.deviceSerial=adb-AU3N025429006787-97BOdK._adb-tls-connect._tcp \
+  -Pandroid.testInstrumentationRunnerArguments.deviceSerial=adb-PHYSICAL_DEVICE_SERIAL-97BOdK._adb-tls-connect._tcp \
   -Pkotlin.compiler.execution.strategy=in-process \
   --dependency-verification strict --no-watch-fs --continue \
   --no-configuration-cache --console=plain

@@ -1,7 +1,7 @@
 {
   "key": "lentils",
   "generator": "built-in image_gen",
-  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-f12cc0ab-e9c6-4786-99e3-a813225237c5.png",
+  "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-f12cc0ab-e9c6-4786-99e3-a813225237c5.png",
   "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_lentils.png",
   "intended_resource_name": "food_sticker_lentils.png",
   "prompt_file": "broad-library-prompts.json",

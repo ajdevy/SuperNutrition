@@ -1,7 +1,7 @@
 Source: GitHub Actions39863651736, ios-ui-reports-39863651736-1, xcresult exported diagnostics.
 
 Error was captured in composition.
-org.jetbrains.compose.resources.MissingResourceException: Missing resource with path: /Users/runner/Library/Developer/CoreSimulator/Devices/C2230D24-4B10-47F8-BB96-F7F15488C903/data/Containers/Bundle/Application/ED5316DB-25A6-4227-933A-32118056A7A9/SuperNutritionUIAcceptance.app/compose-resources/composeResources/com.supernutrition.feature.photoanalysis.resources/drawable/capture_close.png
+org.jetbrains.compose.resources.MissingResourceException: Missing resource with path: ~/Library/Developer/CoreSimulator/Devices/C2230D24-4B10-47F8-BB96-F7F15488C903/data/Containers/Bundle/Application/ED5316DB-25A6-4227-933A-32118056A7A9/SuperNutritionUIAcceptance.app/compose-resources/composeResources/com.supernutrition.feature.photoanalysis.resources/drawable/capture_close.png
     at 0   SuperNutritionUIAcceptance          0x102d1c9cb        kfun:kotlin.Throwable#<init>(kotlin.String?){} + 99 
     at 1   SuperNutritionUIAcceptance          0x102d17bdf        kfun:kotlin.Exception#<init>(kotlin.String?){} + 95 
     at 2   SuperNutritionUIAcceptance          0x1037b13f3        kfun:org.jetbrains.compose.resources.MissingResourceException#<init>(kotlin.String){} + 175 

@@ -1,6 +1,6 @@
 # Independent blind review of the durable catalog diary
 
-Reviewed on 2026-10-24 in `/Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition`, branch `codex/mvp-completion`, HEAD `137293faec3e2003df72fb571dfa2fe92179037f`, against baseline `7309e140b9cf12c6acf5733cfdcec00ce5912f1b` and the supplied spec review-status change. Inputs were `mobile/build/verification/mvp-audit/review.diff` (33,335 lines) and its complete 185-file inventory. Applied `.agents/skills/bmad-review-adversarial-general/SKILL.md`, the repository guide, and the architecture spine. This report contains descriptions without severity or ranking, as required by that skill.
+Reviewed on 2026-10-24 in `REDACTED_WORKTREE/f2ff/SuperNutrition`, branch `codex/mvp-completion`, HEAD `137293faec3e2003df72fb571dfa2fe92179037f`, against baseline `7309e140b9cf12c6acf5733cfdcec00ce5912f1b` and the supplied spec review-status change. Inputs were `mobile/build/verification/mvp-audit/review.diff` (33,335 lines) and its complete 185-file inventory. Applied `.agents/skills/bmad-review-adversarial-general/SKILL.md`, the repository guide, and the architecture spine. This report contains descriptions without severity or ranking, as required by that skill.
 
 ## Findings
 

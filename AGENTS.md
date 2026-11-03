@@ -72,10 +72,10 @@ Gradle reports are the most common source of confident wrong conclusions here. E
 - Moving a declaration out of a class drops the class-level `@OptIn`. A cinterop call that compiled inside an annotated class fails at file level, and nothing in the diff shows it — only the compiler does.
 ## Apple/iOS device evidence
 
-- The configured Xcode Apple Account is `REDACTED_EMAIL`,
-  exposing the `Contributor` team with Team ID `REDACTED_TEAM_ID`. The
-  `DEVELOPMENT_TEAM` setting is checked into the iOS project for the production,
-  acceptance-host, and acceptance-test configurations.
+- The Xcode project carries a development-team setting for the production,
+  acceptance-host, and acceptance-test configurations. Apple account details,
+  certificates, private keys, and generated provisioning profiles are local
+  machine inputs and must not be recorded in the public repository.
 - Certificates, private keys, and generated provisioning profiles are local
   machine inputs and must never be committed. Run `pod install` in
   `mobile/apps/iosApp` and use

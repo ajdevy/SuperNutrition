@@ -1,7 +1,7 @@
 {
   "key": "pineapple",
   "generator": "built-in image_gen",
-  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-8f3229fa-09c0-48e7-b431-d686ac92af1b.png",
+  "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-8f3229fa-09c0-48e7-b431-d686ac92af1b.png",
   "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_pineapple.png",
   "intended_resource_name": "food_sticker_pineapple.png",
   "prompt_file": "broad-library-prompts.json",

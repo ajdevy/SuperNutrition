@@ -1,7 +1,7 @@
 {
   "key": "fish",
   "generator": "built-in image_gen",
-  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-a4d942ba-2806-4845-8e13-3f08ab99d84c.png",
+  "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-a4d942ba-2806-4845-8e13-3f08ab99d84c.png",
   "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_fish.png",
   "intended_resource_name": "food_sticker_fish.png",
   "prompt_file": "broad-library-prompts.json",

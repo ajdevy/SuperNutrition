@@ -1,23 +1,13 @@
 package com.supernutrition.sharedkit
 
 import com.supernutrition.domain.inference.AssumptionCode
-import com.supernutrition.domain.inference.CalibratedConfidence
-import com.supernutrition.domain.inference.ComponentAmbiguity
-import com.supernutrition.domain.inference.ComponentVisibility
 import com.supernutrition.domain.inference.Confidence
 import com.supernutrition.domain.inference.ConfidenceBand
-import com.supernutrition.domain.inference.INFERENCE_EVIDENCE_CONTRACT_V2
 import com.supernutrition.domain.inference.InferenceAssumption
 import com.supernutrition.domain.inference.InferenceCandidate
 import com.supernutrition.domain.inference.InferenceProvenance
 import com.supernutrition.domain.inference.InferenceRoute
-import com.supernutrition.domain.inference.InferenceV2Provenance
-import com.supernutrition.domain.inference.LocalizedCandidateIdentity
-import com.supernutrition.domain.inference.MassEvidence
-import com.supernutrition.domain.inference.MassNotEvaluableReason
-import com.supernutrition.domain.inference.NormalizedVisibleRegion
 import com.supernutrition.domain.inference.PHOTO_INFERENCE_CONTRACT_V1
-import com.supernutrition.domain.inference.VisibleComponent
 import com.supernutrition.domain.photoanalysis.AttemptId
 import com.supernutrition.domain.photoanalysis.BoundedDishIngredientFusion
 import com.supernutrition.domain.photoanalysis.LocalAnalysisStage
@@ -152,8 +142,8 @@ public class SharedKitPhotoAnalysisSession internal constructor(
         normalizedInferenceData?.takeIf { normalizedInferenceOpaqueId == opaqueId }
 
     /**
-     * Completes the shared review flow with results produced by the native iOS
-     * PoC runner. The opaque photo identity is checked before any event is
+     * Completes the shared review flow with Food-101 dish candidates from the
+     * native iOS PoC runner. The photo identity is checked before any event is
      * accepted so a late native result cannot replace a newer photo.
      */
     public fun applyNativePocAnalysis(
@@ -161,51 +151,26 @@ public class SharedKitPhotoAnalysisSession internal constructor(
         requestId: String,
         dishLabels: List<String>,
         dishConfidences: List<Double>,
-        regionLabels: List<String>,
-        regionConfidences: List<Double>,
-        regionLefts: List<Double>,
-        regionTops: List<Double>,
-        regionRights: List<Double>,
-        regionBottoms: List<Double>,
     ) {
         val ready = feature.currentWorkState() as? PhotoAnalysisState.Ready ?: return
         if (ready.input.ref.opaqueId != opaqueId) return
         require(dishLabels.size == dishConfidences.size) { "Dish labels and confidences must have equal sizes" }
-        require(
-            regionLabels.size == regionConfidences.size &&
-                regionLabels.size == regionLefts.size &&
-                regionLabels.size == regionTops.size &&
-                regionLabels.size == regionRights.size &&
-                regionLabels.size == regionBottoms.size,
-        ) { "Region result arrays must have equal sizes" }
 
         val request = RequestId(requestId)
         feature.dispatch(PhotoAnalysisEvent.AnalysisStarted(request))
         if ((feature.currentWorkState() as? PhotoAnalysisState.Analyzing)?.requestId != request) return
 
-        feature.dispatch(
-            PhotoAnalysisEvent.LocalAnalysisStageChanged(request, LocalAnalysisStage.FINDING_VISIBLE_FOODS),
-        )
-        if (regionLabels.isEmpty()) {
+        feature.dispatch(PhotoAnalysisEvent.LocalAnalysisStageChanged(request, LocalAnalysisStage.IDENTIFYING_DISH))
+        val dishes = nativePocDishes(dishLabels, dishConfidences)
+        if (dishes.isEmpty()) {
             feature.dispatch(PhotoAnalysisEvent.ReviewEvidenceUnavailable(request, RecoveryReason.NO_FOOD))
             return
         }
-
-        feature.dispatch(PhotoAnalysisEvent.LocalAnalysisStageChanged(request, LocalAnalysisStage.IDENTIFYING_DISH))
-        val dishes = nativePocDishes(dishLabels, dishConfidences)
-        val components = nativePocComponents(
-            regionLabels,
-            regionConfidences,
-            regionLefts,
-            regionTops,
-            regionRights,
-            regionBottoms,
-        )
         feature.dispatch(PhotoAnalysisEvent.LocalAnalysisStageChanged(request, LocalAnalysisStage.CHECKING_RESULTS))
         feature.dispatch(
             PhotoAnalysisEvent.ReviewEvidenceAvailable(
                 request,
-                BoundedDishIngredientFusion.merge(dishes, components),
+                BoundedDishIngredientFusion.merge(dishes, emptyList()),
             ),
         )
     }
@@ -234,53 +199,6 @@ public class SharedKitPhotoAnalysisSession internal constructor(
                     ),
                 ),
                 provenance = dishProvenance,
-            )
-        }
-    }
-
-    private fun nativePocComponents(
-        regionLabels: List<String>,
-        regionConfidences: List<Double>,
-        regionLefts: List<Double>,
-        regionTops: List<Double>,
-        regionRights: List<Double>,
-        regionBottoms: List<Double>,
-    ): List<VisibleComponent> {
-        val componentProvenance = InferenceV2Provenance(
-            route = InferenceRoute.LOCAL,
-            engineId = IOS_POC_COMPONENT_ENGINE_ID,
-            modelVersion = IOS_POC_COMPONENT_MODEL_VERSION,
-            taxonomyVersion = IOS_POC_COMPONENT_TAXONOMY_VERSION,
-            calibrationVersion = IOS_POC_COMPONENT_CALIBRATION_VERSION,
-            contractVersion = INFERENCE_EVIDENCE_CONTRACT_V2,
-        )
-        return regionLabels.mapIndexed { index, label ->
-            val score = regionConfidences[index]
-            val left = regionLefts[index]
-            val top = regionTops[index]
-            val right = regionRights[index]
-            val bottom = regionBottoms[index]
-            require(listOf(score, left, top, right, bottom).all { it.isFinite() }) {
-                "Region output must be finite"
-            }
-            require(
-                score in 0.0..1.0 && left in 0.0..1.0 && top in 0.0..1.0 &&
-                    right in left..1.0 && bottom in top..1.0 && right > left && bottom > top,
-            ) {
-                "Region output must be bounded and non-degenerate"
-            }
-            VisibleComponent(
-                componentId = "region-${index + 1}-$label",
-                candidate = LocalizedCandidateIdentity("coco:$label", label, "en"),
-                confidence = CalibratedConfidence(score, ConfidenceBand.fromScore(score)),
-                visibility = ComponentVisibility.VISIBLE,
-                ambiguity = ComponentAmbiguity.NONE,
-                region = NormalizedVisibleRegion(left, top, right - left, bottom - top),
-                mass = MassEvidence.NotEvaluable(
-                    MassNotEvaluableReason.MISSING_CALIBRATION,
-                    "inference.mass.not-evaluable",
-                ),
-                provenance = componentProvenance,
             )
         }
     }
@@ -326,12 +244,8 @@ public class SharedKitPhotoAnalysisSession internal constructor(
     private companion object {
         const val MAX_DISH_PROPOSALS = 3
         const val IOS_POC_DISH_ENGINE_ID = "local-ios-poc-dish"
-        const val IOS_POC_COMPONENT_ENGINE_ID = "local-ios-poc-component"
         const val IOS_POC_DISH_MODEL_VERSION = "poc-food101-swin-int8-v1"
-        const val IOS_POC_COMPONENT_MODEL_VERSION = "poc-yolo-food-components-v1"
-        const val IOS_POC_COMPONENT_TAXONOMY_VERSION = "supernutrition-visible-food-v1"
         const val IOS_POC_DISH_CALIBRATION_VERSION = "softmax-proxy-v1"
-        const val IOS_POC_COMPONENT_CALIBRATION_VERSION = "uncalibrated-proxy-v1"
     }
 }
 

@@ -178,12 +178,12 @@ Research пропущен. Задача не требует:
 
 | Файл | Назначение |
 |------|-----------|
-| `/Users/neuradev/Documents/AI/agents/claude-code-agents/config/university.yaml` | YAML source-of-truth с 4-уровневой структурой |
-| `/Users/neuradev/Documents/AI/agents/claude-code-agents/scripts/generate-harness.sh` | Bash-генератор для 5 AI harness |
-| `/Users/neuradev/Documents/AI/agents/claude-code-agents/agents/education/rector.md` | Ректор-агент (полный оркестратор) |
-| `/Users/neuradev/Documents/AI/agents/claude-code-agents/agents/education/biology/department-head.md` | Department-head (обновлён) |
-| `/Users/neuradev/Documents/AI/agents/claude-code-agents/.specs/university-memory.md` | Спецификация фичи |
-| `/Users/neuradev/Documents/AI/agents/claude-code-agents/README.md` | Документация (обновлена) |
+| `~/Documents/AI/agents/claude-code-agents/config/university.yaml` | YAML source-of-truth с 4-уровневой структурой |
+| `~/Documents/AI/agents/claude-code-agents/scripts/generate-harness.sh` | Bash-генератор для 5 AI harness |
+| `~/Documents/AI/agents/claude-code-agents/agents/education/rector.md` | Ректор-агент (полный оркестратор) |
+| `~/Documents/AI/agents/claude-code-agents/agents/education/biology/department-head.md` | Department-head (обновлён) |
+| `~/Documents/AI/agents/claude-code-agents/.specs/university-memory.md` | Спецификация фичи |
+| `~/Documents/AI/agents/claude-code-agents/README.md` | Документация (обновлена) |
 
 ## Открытые вопросы / нюансы
 

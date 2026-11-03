@@ -4,13 +4,13 @@ Implemented the three requested Compose UI corrections in an isolated worktree, 
 
 ## Completed follow-up — 2026-10-14
 
-Current worktree: `/Users/REDACTED/.codex/worktrees/brand-tabs-rewards/SuperNutrition`, branch `codex/brand-tabs-rewards`, HEAD/base `5ee5de077866feed70b418ee2760af24322b1d22`. No new commit was created. The staged index retains the 558-file imported parent baseline; the correction and test delta are unstaged (new files use intent-to-add). Do not blanket-commit that index. A fresh SHA-256 comparison confirms all 211 imported parent UI module files remain unchanged.
+Current worktree: `REDACTED_WORKTREE/brand-tabs-rewards/SuperNutrition`, branch `codex/brand-tabs-rewards`, HEAD/base `5ee5de077866feed70b418ee2760af24322b1d22`. No new commit was created. The staged index retains the 558-file imported parent baseline; the correction and test delta are unstaged (new files use intent-to-add). Do not blanket-commit that index. A fresh SHA-256 comparison confirms all 211 imported parent UI module files remain unchanged.
 
 - Full UI suite: **117 tests, 0 failures, 0 errors, 0 skipped**, 23 XML suites. Execution timestamps: `2026-10-14T06:29:50.841Z` through `2026-10-14T06:31:03.855Z`.
 - Kover: **3,422 / 3,438 lines = 99.5346%; 768 / 903 branches = 85.0498%**. This closes the earlier module branch gap. All **58 added executable correction lines** and their branch outcomes are covered. No exclusions, suppressions, baselines or coverage policy changes were introduced.
 - Current full module Detekt reports: **zero findings**. Formatting used the explicit `qualityFormat` entrypoint scoped to the six new test files; read-only check tasks retained their complete source scope.
 - Production debug app and instrumentation APKs built successfully. The app certificate SHA-256 is `d3d9dcfb73aa1f7dfc8e96f25646f3678dcaf712bb96a9e727833a8d6184f0ec`, matching the installed signature. App APK SHA-256: `075255c17520283a7e5a5e20a2ea872397e099d3ee723d6c5339b14ef673244c`. Updating the 464,951,979-byte APK over Wi-Fi took 509.33 seconds and preserved app data.
-- Physical device: **HONOR DNY_NX9**, Android API **36**, ABI **arm64-v8a**, 1264×2736 px, density 560, font scale 1.0. Serial: `adb-AU3N025429006787-97BOdK._adb-tls-connect._tcp`.
+- Physical device: **HONOR DNY_NX9**, Android API **36**, ABI **arm64-v8a**, 1264×2736 px, density 560, font scale 1.0. Serial: `adb-PHYSICAL_DEVICE_SERIAL-97BOdK._adb-tls-connect._tcp`.
 - Focused native execution: **2 existing launch/navigation tests + 3 new visual tests = 5 passed**. The visual suite ran for 25.816 seconds and compared label/icon pixels, injected an actual touchscreen press/release, checked unchanged press pixels, sampled Rewards paper beside the pill, and scrolled the final reward above the camera. Home/sprout, Rewards and final-card PNGs were visually inspected.
 
 Host commands (using the build environment below; UI test runs use the runtime init script):
@@ -46,10 +46,10 @@ This is full UI module host evidence and focused physical **productionDebug** ev
 
 ## Worktree and scope
 
-- Parent source: `/Users/REDACTED/.codex/worktrees/a704/SuperNutrition`, branch `codex/figma-camera-flow`.
+- Parent source: `REDACTED_WORKTREE/a704/SuperNutrition`, branch `codex/figma-camera-flow`.
 - Isolated worktree: `/private/tmp/supernutrition-brand-tabs-rewards`, branch `codex/brand-tabs-rewards`.
 - HEAD/base: `5ee5de077866feed70b418ee2760af24322b1d22`; no new commits or remote operations.
-- The desktop created `/Users/REDACTED/.codex/worktrees/brand-tabs-rewards/SuperNutrition` but could not attach it to this side conversation (`thread not found`). Its shared Git metadata was read-only. The implemented checkout is therefore a real worktree of a separate local clone under `/private/tmp`, with its own writable metadata and build caches.
+- The desktop created `REDACTED_WORKTREE/brand-tabs-rewards/SuperNutrition` but could not attach it to this side conversation (`thread not found`). Its shared Git metadata was read-only. The implemented checkout is therefore a real worktree of a separate local clone under `/private/tmp`, with its own writable metadata and build caches.
 - The index contains an exact import of 558 existing parent WIP files. This task's corrections remain unstaged; `git diff` shows only the correction delta. Do not blanket-commit the index. The immutable import is `/private/tmp/supernutrition-brand-tabs-baseline`; its SHA-256 manifest is ignored `mobile/build/side-conversation-baseline.json`.
 - A final hash comparison found all 210 imported parent UI source/resource files unchanged. The correction patch targets that current parent working copy, including its existing untracked Home helpers; it is not a patch against bare main.
 
@@ -94,7 +94,7 @@ The exported `corrections.patch` contains only this task's delta, leaving import
 
 ## Worktree handoff — 2026-10-14
 
-After write access became available, the checked correction was copied into the existing, clean worktree of the original repository at `/Users/REDACTED/.codex/worktrees/brand-tabs-rewards/SuperNutrition`. Its branch is now `codex/brand-tabs-rewards`, based on the same `5ee5de077866feed70b418ee2760af24322b1d22`. All nine correction files were byte-identical to the previously verified temporary checkout before this documentation update. The copied parent baseline remains staged separately from the unstaged corrections. The parent's 210 UI source/resource files still match the original snapshot. No parent code, install, device state, commit or remote operation changed.
+After write access became available, the checked correction was copied into the existing, clean worktree of the original repository at `REDACTED_WORKTREE/brand-tabs-rewards/SuperNutrition`. Its branch is now `codex/brand-tabs-rewards`, based on the same `5ee5de077866feed70b418ee2760af24322b1d22`. All nine correction files were byte-identical to the previously verified temporary checkout before this documentation update. The copied parent baseline remains staged separately from the unstaged corrections. The parent's 210 UI source/resource files still match the original snapshot. No parent code, install, device state, commit or remote operation changed.
 
 The 2026-10-13 test evidence above was executed in the temporary checkout, not in the destination. A provenance-marked copy is retained in ignored `mobile/build/brand-navigation-proof-from-temporary-worktree`. The working copy under the regular repository is now the handoff destination; the temporary copy is retained as verification history.
 

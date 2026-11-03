@@ -1,7 +1,7 @@
 # Adversarial review: the Russian lemma fold (bcf034fd) and the quantity fold (2dea4187)
 
 Branch `feat/e7-meal-search-ui`, HEAD `2dea4187`, worktree
-`/Users/aj/workspace_ai/SuperNutrition/.claude/worktrees/e7-meal-search-ui`.
+`~/workspace_ai/SuperNutrition/.claude/worktrees/e7-meal-search-ui`.
 
 Brief: try to refute the two commits. Default to suspicion; a finding that cannot be
 demonstrated with a concrete input is not a finding.

@@ -14,7 +14,7 @@
     "2",
     "SYMROOT=/tmp/supernutrition-merge-ci-20261023/ios-host/Products",
     "OBJROOT=/tmp/supernutrition-merge-ci-20261023/ios-host/Intermediates",
-    "SHARED_KIT_FRAMEWORK_DIR=/Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/sharedKit/build/bin/iosArm64/debugFramework",
+    "SHARED_KIT_FRAMEWORK_DIR=REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/apps/sharedKit/build/bin/iosArm64/debugFramework",
     "ARCHS=arm64",
     "ONLY_ACTIVE_ARCH=YES",
     "CODE_SIGNING_ALLOWED=NO",

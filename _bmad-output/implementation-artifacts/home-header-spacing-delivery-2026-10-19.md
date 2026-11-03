@@ -1,6 +1,6 @@
 # Home compact header and spacing — delivery evidence
 
-Branch: `codex/figma-camera-flow`. Worktree: `/Users/REDACTED/.codex/worktrees/a704/SuperNutrition`. Source baseline: `262811616f9a2415c5135c23b74597033d788120` plus this slice, with source hashes recorded and matched after all application checks. The preceding focused gallery/generator WIP is retained as an immutable dependency of the new comparison; the primary main checkout was not edited.
+Branch: `codex/figma-camera-flow`. Worktree: `REDACTED_WORKTREE/a704/SuperNutrition`. Source baseline: `262811616f9a2415c5135c23b74597033d788120` plus this slice, with source hashes recorded and matched after all application checks. The preceding focused gallery/generator WIP is retained as an immutable dependency of the new comparison; the primary main checkout was not edited.
 
 ## Result
 

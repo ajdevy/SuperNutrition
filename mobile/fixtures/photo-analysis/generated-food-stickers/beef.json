@@ -1,7 +1,7 @@
 {
   "key": "beef",
   "generator": "built-in image_gen",
-  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-70443d1a-4c26-42dc-a7eb-2ba1ec52299c.png",
+  "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-70443d1a-4c26-42dc-a7eb-2ba1ec52299c.png",
   "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_beef.png",
   "intended_resource_name": "food_sticker_beef.png",
   "prompt_file": "broad-library-prompts.json",

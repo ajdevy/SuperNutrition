@@ -4,7 +4,7 @@ Reviewed on 2026-10-17 using `.agents/skills/bmad-review-adversarial-general/SKI
 
 ## Scope and identity
 
-- Worktree: `/Users/REDACTED/.codex/worktrees/a704/SuperNutrition`.
+- Worktree: `REDACTED_WORKTREE/a704/SuperNutrition`.
 - Branch: `codex/figma-camera-flow`.
 - HEAD: `5ee5de077866feed70b418ee2760af24322b1d22`.
 - Checkout state: extensive pre-existing tracked and untracked WIP. That WIP is outside this review except where current surrounding source explains the scoped patch.

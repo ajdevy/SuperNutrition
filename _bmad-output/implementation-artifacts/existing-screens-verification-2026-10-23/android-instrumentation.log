@@ -232,9 +232,9 @@ See https://kotl.in/connecting-source-sets
 > Task :apps:androidApp:mergePocDebugAssets
 
 > Task :feature:photo-analysis:compileAndroidMain
-w: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/feature/photo-analysis/src/androidMain/kotlin/com/supernutrition/feature/photoanalysis/PhotoAnalysisComposeActivity.kt:277:73 'static field SOFT_INPUT_ADJUST_RESIZE: Int' is deprecated. Deprecated in Java.
-w: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/feature/photo-analysis/src/androidMain/kotlin/com/supernutrition/feature/photoanalysis/PhotoAnalysisComposeActivity.kt:278:16 'var statusBarColor: Int' is deprecated. Deprecated in Java.
-w: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/feature/photo-analysis/src/androidMain/kotlin/com/supernutrition/feature/photoanalysis/PhotoAnalysisComposeActivity.kt:279:16 'var navigationBarColor: Int' is deprecated. Deprecated in Java.
+w: file://REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/feature/photo-analysis/src/androidMain/kotlin/com/supernutrition/feature/photoanalysis/PhotoAnalysisComposeActivity.kt:277:73 'static field SOFT_INPUT_ADJUST_RESIZE: Int' is deprecated. Deprecated in Java.
+w: file://REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/feature/photo-analysis/src/androidMain/kotlin/com/supernutrition/feature/photoanalysis/PhotoAnalysisComposeActivity.kt:278:16 'var statusBarColor: Int' is deprecated. Deprecated in Java.
+w: file://REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/feature/photo-analysis/src/androidMain/kotlin/com/supernutrition/feature/photoanalysis/PhotoAnalysisComposeActivity.kt:279:16 'var navigationBarColor: Int' is deprecated. Deprecated in Java.
 
 > Task :apps:androidApp:mergePocDebugResources
 > Task :apps:androidApp:compressPocDebugAssets FROM-CACHE
@@ -363,7 +363,7 @@ w: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/feature/ph
 > Task :apps:androidApp:mergePocDebugJavaResource
 
 > Task :apps:androidApp:compilePocDebugAndroidTestJavaWithJavac
-Note: /Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/androidApp/src/androidTest/java/com/supernutrition/android/PhotoAnalysisComposeSemanticsInstrumentationTest.java uses or overrides a deprecated API.
+Note: REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/apps/androidApp/src/androidTest/java/com/supernutrition/android/PhotoAnalysisComposeSemanticsInstrumentationTest.java uses or overrides a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
 
 > Task :apps:androidApp:dexBuilderPocDebug
@@ -390,7 +390,7 @@ Note: Recompile with -Xlint:deprecation for details.
 > Task :apps:androidApp:mergeLibDexPocDebug
 
 > Task :apps:androidApp:compileUiAcceptanceDebugAndroidTestJavaWithJavac
-Note: /Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/androidApp/src/androidTest/java/com/supernutrition/android/PhotoAnalysisComposeSemanticsInstrumentationTest.java uses or overrides a deprecated API.
+Note: REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/apps/androidApp/src/androidTest/java/com/supernutrition/android/PhotoAnalysisComposeSemanticsInstrumentationTest.java uses or overrides a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
 
 > Task :apps:androidApp:generateUiAcceptanceDebugAssets UP-TO-DATE
@@ -496,7 +496,7 @@ Finished 50 tests on SN_Final_Verification_35_20261018(AVD) - 15
 
 > Task :apps:androidApp:connectedAndroidTest UP-TO-DATE
 
-[Incubating] Problems report is available at: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/build/reports/problems/problems-report.html
+[Incubating] Problems report is available at: file://REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/build/reports/problems/problems-report.html
 
 BUILD SUCCESSFUL in 10m 8s
 321 actionable tasks: 45 executed, 3 from cache, 273 up-to-date

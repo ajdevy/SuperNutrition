@@ -1,7 +1,7 @@
 {
   "key": "egg",
   "generator": "built-in image_gen",
-  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-30026fb6-9fb2-4dc5-a354-c0967268b824.png",
+  "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-30026fb6-9fb2-4dc5-a354-c0967268b824.png",
   "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_egg.png",
   "intended_resource_name": "food_sticker_egg.png",
   "prompt_file": "broad-library-prompts.json",

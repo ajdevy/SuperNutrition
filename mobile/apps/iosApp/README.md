@@ -113,12 +113,11 @@ xcrun xctrace list devices
 
 ### Apple account and provisioning
 
-The checked-in Xcode targets use the Apple Developer Team available in the
-local Xcode account `REDACTED_EMAIL`:
+The checked-in Xcode targets reference a development team. Configure a local
+Apple account with access to that team before signing:
 
 ```text
-Team: Contributor
-Team ID: REDACTED_TEAM_ID
+DEVELOPMENT_TEAM: configured in Xcode project build settings
 ```
 
 `DEVELOPMENT_TEAM` is set for the production, acceptance-host, and acceptance-
@@ -135,13 +134,13 @@ cd ../../..
 ```
 
 Use `APPLE_TEAM_ID` only when intentionally testing with a different local
-team; the default checked-in team is `REDACTED_TEAM_ID`.
+team; set the team ID to one you own before signing.
 
 Run the physical acceptance lane with the paired device unlocked:
 
 ```text
 export IOS_UDID="<physical-udid>"
-export APPLE_TEAM_ID="${APPLE_TEAM_ID:-REDACTED_TEAM_ID}"
+export APPLE_TEAM_ID="${APPLE_TEAM_ID:?Set APPLE_TEAM_ID to your development team}"
 export IOS_CODE_SIGN_IDENTITY="Apple Development: <name> (<certificate-id>)"
 
 ./mobile/gradlew -p mobile :apps:sharedKit:linkDebugFrameworkIosArm64 \

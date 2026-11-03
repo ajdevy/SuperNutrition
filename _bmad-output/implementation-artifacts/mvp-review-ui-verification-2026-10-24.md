@@ -2,7 +2,7 @@
 
 Scope: bounded quick-dev step04 PATCH invocation for R3 and R6 only, against
 `137293faec3e2003df72fb571dfa2fe92179037f` on `codex/mvp-completion`, worktree
-`/Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition`. Existing parent-owned
+`REDACTED_WORKTREE/f2ff/SuperNutrition`. Existing parent-owned
 findings and approved frozen spec are unchanged. Source/test ownership is
 `mobile/feature/photo-analysis-ui/`; no policy, host, dependency or lock changes.
 

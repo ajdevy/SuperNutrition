@@ -2,7 +2,7 @@
 
 The finite screen review is complete. The measured Home layout fits feasible viewports without reducing font tokens or system text scaling. **40 of 100 final captured cases fit; 60 deliberately stop for a designer decision.** The universal no-scroll requirement is not passed. The user's explicit fallback is fulfilled by preserving readable overflow and full-resolution screenshots rather than making text smaller or hiding content.
 
-Worktree: `/Users/REDACTED/.codex/worktrees/a704/SuperNutrition`, branch `codex/figma-camera-flow`, source baseline `7ec615063ac166d69e7f4a81495e20098f25be3c`. The approved 26-file Rewards snapshot is merge parent `7d5971c0d87e3a2c87b8ab35b86628f0ce7a17f9`. The current source and exact native command are bound by the portable verification records under `home-no-scroll-verification-2026-10-18/`. The explicitly requested normal main publication is recorded separately in `mobile/build/main-merge-2026-10-17/home-final-publication.json`; this report does not treat failed hosted/root checks as green.
+Worktree: `REDACTED_WORKTREE/a704/SuperNutrition`, branch `codex/figma-camera-flow`, source baseline `7ec615063ac166d69e7f4a81495e20098f25be3c`. The approved 26-file Rewards snapshot is merge parent `7d5971c0d87e3a2c87b8ab35b86628f0ce7a17f9`. The current source and exact native command are bound by the portable verification records under `home-no-scroll-verification-2026-10-18/`. The explicitly requested normal main publication is recorded separately in `mobile/build/main-merge-2026-10-17/home-final-publication.json`; this report does not treat failed hosted/root checks as green.
 
 ## Designer handoff
 
@@ -49,7 +49,7 @@ See all remains a nonfunctional prototype label (R06). Level/points, index-based
 
 ## Git, graph and hosted checks
 
-The primary checkout `/Users/REDACTED/workspace_ai/SuperNutrition` remains at `e1271c6` with its original 26 staged Rewards files. Its HEAD, every index mode/blob pair, all 26 source/asset digests, and its empty unstaged patch were rechecked unchanged. The staged patch matches its original digest with explicit `--abbrev=7`; Git’s automatic abbreviated object IDs grew to eight digits as objects were added, changing only the default diff rendering. The exact staged tree is preserved on `codex/rewards-main-staged` at `7d5971c`; the approved snapshot is integrated without unresolved conflicts. No reset, branch switch, blanket staging or destructive cleanup was used.
+The primary checkout `~/workspace_ai/SuperNutrition` remains at `e1271c6` with its original 26 staged Rewards files. Its HEAD, every index mode/blob pair, all 26 source/asset digests, and its empty unstaged patch were rechecked unchanged. The staged patch matches its original digest with explicit `--abbrev=7`; Git’s automatic abbreviated object IDs grew to eight digits as objects were added, changing only the default diff rendering. The exact staged tree is preserved on `codex/rewards-main-staged` at `7d5971c`; the approved snapshot is integrated without unresolved conflicts. No reset, branch switch, blanket staging or destructive cleanup was used.
 
 `graphify update .` completed after the final code changes: 21,138 nodes, 28,631 edges, 2,005 communities. Its code graph was updated; large HTML visualization was skipped by the existing node limit and two SQL inputs remain unparsed because the optional parser is absent. This is not a full semantic-document refresh. Python capture/gallery helpers compile, and `git diff --check` passes.
 

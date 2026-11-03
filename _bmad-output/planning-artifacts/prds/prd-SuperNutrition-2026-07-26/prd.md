@@ -6,8 +6,8 @@ updated: 2026-08-01
 sources:
   - ../../briefs/brief-SuperNutrition-2026-07-26/brief.md
   - ../../briefs/brief-SuperNutrition-2026-07-26/addendum.md
-  - /Users/aj/Downloads/NutriArch
-  - /Users/aj/Downloads/report.md
+  - ~/Downloads/NutriArch
+  - ~/Downloads/report.md
 ---
 
 # PRD: SuperNutrition

@@ -7,8 +7,6 @@ SOURCE_MODEL_SHA='f79aefaa7af43b7a11ae47267a8f733cb1152dec223d4d3db8fc95ab5dc44a
 MODEL_SHA='9070f8097cda88923f77774d93d9fead7cee344486521c7fc5142806642061df'
 MODEL_NAME='swin-finetuned-food101-matmul-int8.onnx'
 LABELS_SHA='eb6b396455a281445a698d8af22b2142be9a6eb9401520ee702746545f1c8820'
-YOLOX_NANO_URL='https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_nano.onnx'
-YOLOX_NANO_SHA='c789161ed43c8269fcd4e67c67eeeb4e80c622da2eb296a20bc6007bd18a0b7d'
 
 sha256() {
   if command -v shasum >/dev/null 2>&1; then
@@ -53,9 +51,6 @@ fi
 mkdir -p "$ROOT_DIR/android-runner/app/src/main/assets"
 cp "$MODEL_PATH" "$ROOT_DIR/android-runner/app/src/main/assets/$MODEL_NAME"
 cp "$LABELS_PATH" "$ROOT_DIR/android-runner/app/src/main/assets/food101-labels.txt"
-download_verified "$YOLOX_NANO_URL" \
-  "$ROOT_DIR/android-runner/app/src/main/assets/yolox_nano.onnx" \
-  "$YOLOX_NANO_SHA"
 
 declare -a NAMES=(
   'steak-side-plate'

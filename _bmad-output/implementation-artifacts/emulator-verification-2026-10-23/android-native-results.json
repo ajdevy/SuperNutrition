@@ -12,7 +12,7 @@
       "failures": 0,
       "errors": 0,
       "skipped": 0,
-      "report": "/Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/androidApp/build/outputs/androidTest-results/connected/debug/flavors/poc/TEST-SN_Screenshots_20261023(AVD) - 15-_apps_androidApp-poc.xml"
+      "report": "REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/apps/androidApp/build/outputs/androidTest-results/connected/debug/flavors/poc/TEST-SN_Screenshots_20261023(AVD) - 15-_apps_androidApp-poc.xml"
     },
     {
       "variant": "production",
@@ -20,7 +20,7 @@
       "failures": 0,
       "errors": 0,
       "skipped": 0,
-      "report": "/Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/androidApp/build/outputs/androidTest-results/connected/debug/flavors/production/TEST-SN_Screenshots_20261023(AVD) - 15-_apps_androidApp-production.xml"
+      "report": "REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/apps/androidApp/build/outputs/androidTest-results/connected/debug/flavors/production/TEST-SN_Screenshots_20261023(AVD) - 15-_apps_androidApp-production.xml"
     },
     {
       "variant": "uiAcceptance",
@@ -28,7 +28,7 @@
       "failures": 0,
       "errors": 0,
       "skipped": 0,
-      "report": "/Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/androidApp/build/outputs/androidTest-results/connected/debug/flavors/uiAcceptance/TEST-SN_Screenshots_20261023(AVD) - 15-_apps_androidApp-uiAcceptance.xml"
+      "report": "REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/apps/androidApp/build/outputs/androidTest-results/connected/debug/flavors/uiAcceptance/TEST-SN_Screenshots_20261023(AVD) - 15-_apps_androidApp-uiAcceptance.xml"
     }
   ],
   "total_tests": 150,

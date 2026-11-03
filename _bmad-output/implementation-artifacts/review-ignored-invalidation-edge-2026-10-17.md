@@ -1,6 +1,6 @@
 # N-28 ignored invalidation — Edge Case Hunter
 
-Reviewed on 2026-10-17 in `/Users/REDACTED/.codex/worktrees/a704/SuperNutrition`, branch `codex/figma-camera-flow`, HEAD `5ee5de077866feed70b418ee2760af24322b1d22`. The checkout contained unrelated tracked and untracked work before this review. This reviewer changed only this report.
+Reviewed on 2026-10-17 in `REDACTED_WORKTREE/a704/SuperNutrition`, branch `codex/figma-camera-flow`, HEAD `5ee5de077866feed70b418ee2760af24322b1d22`. The checkout contained unrelated tracked and untracked work before this review. This reviewer changed only this report.
 
 Input: `mobile/build/review-ignored-invalidation-scoped.diff`, SHA-256 `5faf5e422d50f036c3245ae2b7b16ba90ed441aab103bfc1b77e5bad2a65f9a8`.
 

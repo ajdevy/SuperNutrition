@@ -1,5 +1,5 @@
 {
-  "sdk_jar": "/Users/REDACTED/Library/Android/sdk/cmdline-tools/latest/lib/sdklib/tools.sdklib.jar",
+  "sdk_jar": "~/Library/Android/sdk/cmdline-tools/latest/lib/sdklib/tools.sdklib.jar",
   "sdk_jar_sha256": "d0bbe0e03155a7bdd9bac03567b6b26797f81a778f55d5eadc3e71e7a0a27434",
   "devices": [
     {

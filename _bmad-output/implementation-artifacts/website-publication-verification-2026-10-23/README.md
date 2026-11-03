@@ -23,6 +23,6 @@ The saved production configuration uses `npm run cloudflare:build`, `npm run clo
 
 ## Remaining app verification
 
-The app source remains commit3d54a716 on `codex/home-profile` in `/Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition`. The final shared UI JVM run passed230/230; affected Core UI, Presenter and Feature suites passed4/4,19/19 and25/25. Production-debug assembly and explicit iOS arm64 compilation passed.
+The app source remains commit3d54a716 on `codex/home-profile` in `REDACTED_WORKTREE/f2ff/SuperNutrition`. The final shared UI JVM run passed230/230; affected Core UI, Presenter and Feature suites passed4/4,19/19 and25/25. Production-debug assembly and explicit iOS arm64 compilation passed.
 
 Final native acceptance is unresolved: the new unchanged full-suite invocation was interrupted after36 completed POC runner records (29 passed,7 Activity-launch failures); Production and UI Acceptance were not reached. The bounded renderer recovery displayed a Launcher Quickstep ANR before app launch. The earlier150/150 native result predates the last signature/SAM cleanup. Physical Android evidence is unavailable under the user's emulator-only constraint; the policy gate still rejects expired physical evidence. Typed Detekt also retains its documented frontend-analysis limitation. See the [app verification report](../existing-screens-verification-2026-10-23/README.md) for exact commands, host, XML provenance and diagnostics. App native/visual/hash acceptance remains in-review.

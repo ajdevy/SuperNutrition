@@ -21,8 +21,8 @@
 "photo_analysis.status.preparing_photo" = "Preparing photo";
 "photo_analysis.status.photo_ready" = "Photo ready";
 "photo_analysis.status.analyzing_photo" = "Analyzing photo";
-"photo_analysis.status.finding_visible_foods" = "Finding visible foods";
-"photo_analysis.status.identifying_dish" = "Identifying visible foods";
+"photo_analysis.status.finding_visible_foods" = "Analyzing meal";
+"photo_analysis.status.identifying_dish" = "Identifying dish";
 "photo_analysis.status.estimating_portions" = "Preparing results";
 "photo_analysis.status.checking_results" = "Checking results";
 "photo_analysis.status.review_candidate" = "Review candidate";

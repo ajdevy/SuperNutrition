@@ -1,6 +1,6 @@
 # Ranking candidate: the literal reading ranks first, and the fold never silences it
 
-Worktree `/Users/aj/workspace_ai/SuperNutrition/.claude/worktrees/e7-meal-search-ui`, branch
+Worktree `~/workspace_ai/SuperNutrition/.claude/worktrees/e7-meal-search-ui`, branch
 `feat/e7-meal-search-ui`, HEAD `2dea4187`. No Gradle was run, nothing under `mobile/` or
 `scripts/` was touched. Everything below was measured in Python against the real committed
 data by a model whose validation is stated first, because a candidate scored by an

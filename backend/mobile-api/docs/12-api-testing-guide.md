@@ -4,8 +4,7 @@
 
 ```bash
 cd backend/mobile-api
-npm install
-# or if lock changed: npm ci
+npm ci
 ```
 
 ## Unit tests
@@ -20,23 +19,36 @@ npm run lint          # eslint
 ## Start server locally
 
 ```bash
-# env (one time)
-export APP_ENVIRONMENT=development
-export DATABASE_URL=postgresql://localhost:5432/db
-export REDIS_URL=redis://localhost:6380/0
-export JWT_PRIVATE_KEY="dev-key-at-least-32-chars-here!!!!"
-export JWT_PUBLIC_KEY="dev-key-at-least-32-chars-here!!!!!"
-export JWT_ISSUER=supernutrition-dev
-export TEST_MODE=true
+# Local dependencies
+docker compose up -d postgres redis
+
+# Copy the sample environment, then make a throwaway local signing keypair.
+cp .env.example .env
+mkdir -p .local
+openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out .local/jwt-private.pem
+openssl pkey -in .local/jwt-private.pem -pubout -out .local/jwt-public.pem
+
+# Load the local defaults and override the empty key placeholders.
+set -a
+source .env
+set +a
+export JWT_PRIVATE_KEY="$(cat .local/jwt-private.pem)"
+export JWT_PUBLIC_KEY="$(cat .local/jwt-public.pem)"
 
 # start
-npm run dev
+npm run dev --workspace @supernutrition/api
 ```
+
+The environment template defaults to the in-memory gateway state backend, so
+Redis is optional for this single-process development run. If you select the
+Redis backend, use `REDIS_URL=redis://localhost:6380` to match the local
+Compose port mapping. The generated key files are local-only and ignored by
+Git.
 
 OpenRouter key is optional (without it inference returns `provider-unavailable`):
 
 ```bash
-export OPENROUTER_API_KEY="sk-..."
+export OPENROUTER_API_KEY="your-local-provider-key"
 ```
 
 ## Health

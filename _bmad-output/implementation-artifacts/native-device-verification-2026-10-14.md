@@ -9,7 +9,7 @@ for that correction.
 Status: all three Android flavor suites now pass; final manual checks remain
 in progress. No root quality or complete Apple build pass is claimed.
 
-Worktree `/Users/REDACTED/.codex/worktrees/a704/SuperNutrition`, branch
+Worktree `REDACTED_WORKTREE/a704/SuperNutrition`, branch
 `codex/figma-camera-flow`, HEAD `5ee5de077866feed70b418ee2760af24322b1d22`.
 The intended changes remain local and uncommitted. Existing unrelated WIP is
 preserved. The October 13 final device report remains the source for implementation,
@@ -20,7 +20,7 @@ review, JVM test counts, asset provenance and earlier red/green regressions.
 The user explicitly made the physical HONOR DNY-NX9 available for the current
 verification window on October 14 and continues to prefer Wi-Fi. Exactly one
 ADB endpoint was used:
-`adb-AU3N025429006787-97BOdK._adb-tls-connect._tcp`.
+`adb-PHYSICAL_DEVICE_SERIAL-97BOdK._adb-tls-connect._tcp`.
 
 The initial USB-mode dialog obscured the app. A Back command did not dismiss it;
 no transfer mode was selected. A later fresh hierarchy showed Home after the
@@ -77,7 +77,7 @@ installation: 1800000. The owned shell has an EXIT cleanup that restores the
 original value if it is still 1800000, preserving any independently changed
 value. Its completion log confirms restoration to 600000. A later device
 disconnect prevented a second readback; after the user re-enabled wireless
-debugging the same sole endpoint was discovered again at 192.168.0.150:43037.
+debugging the same sole endpoint was discovered again at PHYSICAL_DEVICE_ENDPOINT.
 The readback then confirmed 600000.
 
 ## New finding recorded before correction

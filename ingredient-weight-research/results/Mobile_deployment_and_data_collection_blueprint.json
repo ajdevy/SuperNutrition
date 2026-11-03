@@ -190,9 +190,9 @@
         "type": "repository-local research and benchmark artifacts",
         "platforms": ["Android", "iOS"],
         "paths": [
-          "/Users/aj/.codex/worktrees/d550/SuperNutrition/docs/research/epic-3-food-recognition-preprocessing-camera.md",
-          "/Users/aj/.codex/worktrees/d550/SuperNutrition/tools/g3-benchmark/README.md",
-          "/Users/aj/.codex/worktrees/d550/SuperNutrition/tools/g3-benchmark/meal-benchmark-manifest.json"
+          "REDACTED_WORKTREE/d550/SuperNutrition/docs/research/epic-3-food-recognition-preprocessing-camera.md",
+          "REDACTED_WORKTREE/d550/SuperNutrition/tools/g3-benchmark/README.md",
+          "REDACTED_WORKTREE/d550/SuperNutrition/tools/g3-benchmark/meal-benchmark-manifest.json"
         ],
         "relevance": "Defines the current G-3 boundary: Food-101/Swin classification proves five single-dish labels on physical devices but does not establish multi-ingredient detection, segmentation, mass, or nutrition correctness.",
         "deployment_anchor": "Use the existing physical-device runner and manifest as the baseline harness, then add a consented weighed component corpus before signing a mass-capable G-3 exit."
@@ -280,7 +280,7 @@
       "current_labels": "The meal manifest labels only visible separable components and excludes hidden recipe ingredients, oil, salt, dressing composition, and nutrition values.",
       "current_weight_status": "The public composite photos have no calibrated scale readings, so their plated weight is not-evaluable rather than zero or estimated.",
       "current_device_evidence": "The local README reports a physical Honor Android API 36 run with ONNX Runtime Android 1.28.0 CPU and an iPhone 14 Pro run with ONNX Runtime Objective-C 1.27.0/XNNPACK. The classifier achieved 5/5 single-dish labels, but the candidate is not a detector/segmenter and exceeds proposed memory or cold-start budgets.",
-      "source": "/Users/aj/.codex/worktrees/d550/SuperNutrition/tools/g3-benchmark/README.md"
+      "source": "REDACTED_WORKTREE/d550/SuperNutrition/tools/g3-benchmark/README.md"
     },
     "proposed_corpus": {
       "initial_scale": "Start with approximately 300-500 consented meal sessions [uncertain], then expand by error strata rather than treating the first sample as a general accuracy proof.",

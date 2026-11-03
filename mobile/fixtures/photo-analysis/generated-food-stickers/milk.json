@@ -1,7 +1,7 @@
 {
   "key": "milk",
   "generator": "built-in image_gen",
-  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-ee1e22cb-964b-4dba-aa56-894300f44f50.png",
+  "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-ee1e22cb-964b-4dba-aa56-894300f44f50.png",
   "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_milk.png",
   "intended_resource_name": "food_sticker_milk.png",
   "prompt_file": "broad-library-prompts.json",

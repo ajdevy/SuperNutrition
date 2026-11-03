@@ -1,6 +1,6 @@
 # Home no-scroll findings — 2026-10-17
 
-Checkpoint: owned clean worktree `/Users/REDACTED/.codex/worktrees/a704/SuperNutrition`, branch `codex/figma-camera-flow`, HEAD `7ec6150`. The separate primary main checkout remains unrelated and preserved.
+Checkpoint: owned clean worktree `REDACTED_WORKTREE/a704/SuperNutrition`, branch `codex/figma-camera-flow`, HEAD `7ec6150`. The separate primary main checkout remains unrelated and preserved.
 
 ## Finding recorded before edits
 

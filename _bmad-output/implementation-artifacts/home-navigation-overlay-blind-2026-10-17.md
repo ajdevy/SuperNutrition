@@ -2,7 +2,7 @@
 
 Reviewed the baseline-relative patch `mobile/build/home-navigation-overlay.diff`, SHA-256 `f68d96a229ab43b925e2e608c81e4bbfb4d3be204406cf0a7033a6b846335774`, using `.agents/skills/bmad-review-adversarial-general/SKILL.md`. The review was independent of earlier conversation and other reviewer results. The scope was the five files in this patch, with immediate source context and the Home overlay spec. The skill's zero-findings outcome was re-examined; the scoped instruction to report only concrete introduced defects takes precedence over its issue quota.
 
-The checked worktree is `/Users/REDACTED/.codex/worktrees/a704/SuperNutrition`, branch `codex/figma-camera-flow`, HEAD `5ee5de077866feed70b418ee2760af24322b1d22`. It contains prior tracked and untracked WIP. All four archived baseline files match `mobile/build/home-navigation-overlay-baseline/manifest.json`; the new test is absent from that baseline. Reconstructing the diff from the archived baseline and the current five slice files reproduced the supplied patch exactly.
+The checked worktree is `REDACTED_WORKTREE/a704/SuperNutrition`, branch `codex/figma-camera-flow`, HEAD `5ee5de077866feed70b418ee2760af24322b1d22`. It contains prior tracked and untracked WIP. All four archived baseline files match `mobile/build/home-navigation-overlay-baseline/manifest.json`; the new test is absent from that baseline. Reconstructing the diff from the archived baseline and the current five slice files reproduced the supplied patch exactly.
 
 - **No actionable introduced findings.** The production changes implement the requested full safe Home viewport while retaining scroll-end clearance and the former compact layout decision. I found no source-supported introduced defect in the scoped patch.
 

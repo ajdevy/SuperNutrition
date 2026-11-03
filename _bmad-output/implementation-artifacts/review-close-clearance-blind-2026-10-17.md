@@ -1,6 +1,6 @@
 # N-29 independent adversarial static review
 
-Re-reviewed the viewport-cap patch in `mobile/build/review-close-clearance-scoped.diff` against the preserved pre-N-29 snapshots. Current diff SHA-256: `910268ede6d32b778c8bfb9c1314ab5ce2a11044419a866cdae4e8166bbaf3bf`. Worktree: `/Users/REDACTED/.codex/worktrees/a704/SuperNutrition`; branch: `codex/figma-camera-flow`; HEAD: `5ee5de077866feed70b418ee2760af24322b1d22`; extensive unrelated WIP was present and preserved.
+Re-reviewed the viewport-cap patch in `mobile/build/review-close-clearance-scoped.diff` against the preserved pre-N-29 snapshots. Current diff SHA-256: `910268ede6d32b778c8bfb9c1314ab5ce2a11044419a866cdae4e8166bbaf3bf`. Worktree: `REDACTED_WORKTREE/a704/SuperNutrition`; branch: `codex/figma-camera-flow`; HEAD: `5ee5de077866feed70b418ee2760af24322b1d22`; extensive unrelated WIP was present and preserved.
 
 Applied `.agents/skills/bmad-review-adversarial-general/SKILL.md`. Read the three complete touched files, unchanged focus helper, action sizing, required N-29 spec and architecture spine. Graph navigation was read-only. The re-review also inspected cached Compose 1.11.1 `PaddingNode` and `Density` bytecode with `javap` and checked the boundary arithmetic using Float32 values. No Gradle build, UI test, device or emulator operation ran. Only this report was written.
 

@@ -2,7 +2,7 @@
 
 Read-only adversarial review of N-25 using the project `bmad-review-adversarial-general` skill. Compared `mobile/feature/photo-analysis-ui/build/reports/review-compact-footer/PhotoAnalysisMealReview.before.kt` with the current source and reviewed `PhotoReviewCompactViewportTest.kt`. No production/test edits, Gradle runs, or device interaction were performed.
 
-Worktree `/Users/REDACTED/.codex/worktrees/a704/SuperNutrition`; branch `codex/figma-camera-flow`; HEAD `5ee5de077866feed70b418ee2760af24322b1d22`. Unrelated changes are excluded.
+Worktree `REDACTED_WORKTREE/a704/SuperNutrition`; branch `codex/figma-camera-flow`; HEAD `5ee5de077866feed70b418ee2760af24322b1d22`. Unrelated changes are excluded.
 
 ## Findings
 

@@ -2,7 +2,7 @@
 
 Review performed with the project `bmad-review-adversarial-general` skill, restricted to the requested two changed slices. No production or test files were edited. No Gradle build, emulator, or physical-device interaction was performed by this reviewer.
 
-Worktree: `/Users/REDACTED/.codex/worktrees/a704/SuperNutrition`; branch `codex/figma-camera-flow`; HEAD `5ee5de077866feed70b418ee2760af24322b1d22`. The worktree contains unrelated modified and untracked work, which was excluded from this review.
+Worktree: `REDACTED_WORKTREE/a704/SuperNutrition`; branch `codex/figma-camera-flow`; HEAD `5ee5de077866feed70b418ee2760af24322b1d22`. The worktree contains unrelated modified and untracked work, which was excluded from this review.
 
 ## Scope and acceptance
 

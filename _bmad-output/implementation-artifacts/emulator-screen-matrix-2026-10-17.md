@@ -4,7 +4,7 @@ Scope: continue the existing camera, gallery, permission, Home and Rewards work.
 
 ## Current source checkpoint
 
-Worktree: `/Users/REDACTED/.codex/worktrees/a704/SuperNutrition`; branch `codex/figma-camera-flow`; HEAD `5ee5de077866feed70b418ee2760af24322b1d22`. Preserve the existing dirty working tree and generated food assets. No commit, push or merge is authorized.
+Worktree: `REDACTED_WORKTREE/a704/SuperNutrition`; branch `codex/figma-camera-flow`; HEAD `5ee5de077866feed70b418ee2760af24322b1d22`. Preserve the existing dirty working tree and generated food assets. No commit, push or merge is authorized.
 
 Current N-30 source removes the reserved blank Rewards canvas: content renders beneath floating navigation and its final scroll padding keeps the last reward clear. Production SHA-256 is `90c2c7fadb809e84a08b5e97b8179e240f65952ee1931258d864a345906ad400`. Full shared UI replay passes **114/0/0/0** across 20 fresh suites; six scoped lint reports are clean and explicit iOS Arm64 compilation executed. All six Android app/test artifacts are hashed. Domain **115/0/0/0** and Feature **25/0/0/0** evidence was not rerun in N-30; their complete source hashes are verified unchanged. Independent Blind/Edge static reviews found no introduced defect. The N-30 native replay and four-size Rewards manual matrix are complete; current Large/tablet photo/IME replay also passed. N-29 keyboard/retention and earlier results below are historical checkpoints, not current whole-build evidence.
 
@@ -155,7 +155,7 @@ Current Rewards navigation was manually verified at **320×568, 360×780, 412×9
 - Domain **115/0/0/0** and Feature **25/0/0/0** are retained prior-module results with unchanged source hashes, not new N-30 executions. Their eight scoped lint reports are likewise retained; the six current UI reports are separate.
 - The full root quality gate remains blocked by the previously recorded expired `bootstrap-android-host` evidence. This patch does not refresh physical-host evidence or weaken policy. Scoped validation above is the evidence claimed.
 - Emulator ML/harness timing is not real-phone performance evidence. The built-in recognizer remains limited to its verified five-class allowlist; 152 food sticker identities do not imply 152 recognized classes.
-- Branch `codex/figma-camera-flow`, HEAD `5ee5de077866feed70b418ee2760af24322b1d22`, worktree `/Users/REDACTED/.codex/worktrees/a704/SuperNutrition`, existing tracked/untracked WIP preserved. No stage, commit, push or merge.
+- Branch `codex/figma-camera-flow`, HEAD `5ee5de077866feed70b418ee2760af24322b1d22`, worktree `REDACTED_WORKTREE/a704/SuperNutrition`, existing tracked/untracked WIP preserved. No stage, commit, push or merge.
 
 ## Completion and repository state
 

@@ -32,7 +32,7 @@ See https://kotl.in/connecting-source-sets
 > Task :core:ui:downloadKotlinNativeDistribution FAILED
 > Task :apps:sharedKit:kmpPartiallyResolvedDependenciesChecker
 
-[Incubating] Problems report is available at: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/build/reports/problems/problems-report.html
+[Incubating] Problems report is available at: file://REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/build/reports/problems/problems-report.html
 
 FAILURE: Build failed with an exception.
 
@@ -50,7 +50,7 @@ Execution failed for task ':core:ui:downloadKotlinNativeDistribution' (registere
           - ui-util-1.9.1.module (org.jetbrains.compose.ui:ui-util:1.9.1) from repository MavenRepo
         If the artifacts are trustworthy, you will need to update the gradle/verification-metadata.xml file. For more on how to do this, please refer to https://docs.gradle.org/9.5.0/userguide/dependency_verification.html#sec:troubleshooting-verification in the Gradle documentation.
 
-        Open this report for more details: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/build/reports/dependency-verification/at-1792757905559/dependency-verification-report.html
+        Open this report for more details: file://REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/build/reports/dependency-verification/at-1792757905559/dependency-verification-report.html
 
 * Try:
 > Run with --stacktrace option to get the stack trace.

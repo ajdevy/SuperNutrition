@@ -15,7 +15,7 @@
     "2",
     "SYMROOT=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Products",
     "OBJROOT=/var/folders/7m/wh6ds9t911sdflt8jm49hrjh0000gn/T/supernutrition-ios-target-fixed-20261023-2zg4wf3l/Intermediates",
-    "SHARED_KIT_FRAMEWORK_DIR=/Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/sharedKit/build/bin/iosArm64/debugFramework",
+    "SHARED_KIT_FRAMEWORK_DIR=REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/apps/sharedKit/build/bin/iosArm64/debugFramework",
     "ARCHS=arm64",
     "ONLY_ACTIVE_ARCH=YES",
     "CODE_SIGNING_ALLOWED=NO",

@@ -1,7 +1,7 @@
 # Retained review recreation — Edge Case Hunter
 
 Reviewed at 2026-10-17T05:09:58Z on the x86_64 host. Worktree:
-`/Users/REDACTED/.codex/worktrees/a704/SuperNutrition`; branch:
+`REDACTED_WORKTREE/a704/SuperNutrition`; branch:
 `codex/figma-camera-flow`; HEAD: `5ee5de077866feed70b418ee2760af24322b1d22`.
 The checkout contains unrelated modified and untracked work. This reviewer wrote only this report.
 

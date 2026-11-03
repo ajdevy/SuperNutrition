@@ -16,18 +16,18 @@ Learn more about Kotlin/Native target support and migration: https://kotl.in/nat
 
 
 > Configure project :feature:photo-analysis
-w: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/feature/photo-analysis/build.gradle.kts:56:36: 'val runtime: String' is deprecated. Specify dependency directly.
-w: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/feature/photo-analysis/build.gradle.kts:78:36: 'val runtime: String' is deprecated. Specify dependency directly.
-w: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/feature/photo-analysis/build.gradle.kts:79:36: 'val foundation: String' is deprecated. Specify dependency directly.
-w: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/feature/photo-analysis/build.gradle.kts:80:36: 'val material3: String' is deprecated. Specify dependency directly.
-w: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/feature/photo-analysis/build.gradle.kts:81:36: 'val ui: String' is deprecated. Specify dependency directly.
+w: file://REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/feature/photo-analysis/build.gradle.kts:56:36: 'val runtime: String' is deprecated. Specify dependency directly.
+w: file://REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/feature/photo-analysis/build.gradle.kts:78:36: 'val runtime: String' is deprecated. Specify dependency directly.
+w: file://REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/feature/photo-analysis/build.gradle.kts:79:36: 'val foundation: String' is deprecated. Specify dependency directly.
+w: file://REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/feature/photo-analysis/build.gradle.kts:80:36: 'val material3: String' is deprecated. Specify dependency directly.
+w: file://REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/feature/photo-analysis/build.gradle.kts:81:36: 'val ui: String' is deprecated. Specify dependency directly.
 
-[Incubating] Problems report is available at: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/build/reports/problems/problems-report.html
+[Incubating] Problems report is available at: file://REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/build/reports/problems/problems-report.html
 
 FAILURE: Build failed with an exception.
 
 * Where:
-Build file '/Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/feature/photo-analysis/build.gradle.kts' line: 42
+Build file 'REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/feature/photo-analysis/build.gradle.kts' line: 42
 
 * What went wrong:
 Project with path ':domain:nutrition' could not be found.

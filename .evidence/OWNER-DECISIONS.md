@@ -1,5 +1,17 @@
 # Deferred owner decisions
 
+## D-09 — license project-owned material under MIT
+
+Decided on: 2026-11-02
+Decided by: ajdevy (repository owner, who delegated the choice in this Codex chat)
+Channel: Codex chat request to prepare the repository for public submission and select an accepted license
+
+Select MIT from the accepted licenses in the submission checklist. Apply it to
+project-owned material in this repository. Third-party dependencies, datasets,
+and vendored material retain any applicable upstream terms. This decision
+selects a source license; it does not change repository visibility or authorize
+a repository publication.
+
 ## D-07 — retain the local meal diary and profile name until user deletion
 
 Decided on: 2026-10-24
@@ -626,3 +638,95 @@ record.
 #45 (server-side market binding) and #46 (consent-receipt persistence) remain
 the owner's; #47 expires 2026-09-30. G-4 continues to block production market,
 production authentication, and provider/DPA terms. None of these is touched.
+
+## D-10 — private source repository for Android food-identification runtime
+
+Decided on: 2026-11-02
+Decided by: ajdevy (repository owner)
+Channel: Codex chat request to prepare the public repository and extract the Android food-identification library
+
+Place the existing Android Food-101/YOLO-World runtime source in a separate
+private repository and import its compiled runtime-only AAR into the public
+SuperNutrition project. Keep the existing model weights as separately tracked
+assets in the public project. The owner confirms redistribution under the
+applicable upstream terms. This packaging decision does not close G-3 device
+evidence, production model approval, or any separate submission approval
+required by upstream terms. Existing SuperNutrition history and commit IDs are
+preserved; prior copies of this source and the model assets remain reachable in
+that history.
+
+## D-11 — remove AGPL-bound model material and personal sample data before public release
+
+Decided on: 2026-11-02
+Decided by: ajdevy (repository owner, direct instruction in this Codex chat)
+Channel: Codex chat request to remove AGPL material from GitHub history and public-release checklist requirements
+
+Remove the YOLO-World region model and its app integration from the SuperNutrition
+repository, retaining Food-101 dish classification until a separately cleared
+replacement is selected. Remove the real meal photographs stored as user samples
+and use made-up fixtures instead. Keep the canonical Android runtime source and
+AAR in the private library repository, and remove their historical copies from
+SuperNutrition. Remove the Apple developer account name/email and fixed team ID
+from setup docs and project defaults; contributors supply their own signing
+identity. Redact developer-machine absolute paths from generated repository
+metadata. Rewrite reachable GitHub history so these model, source, binary,
+personal-sample, and machine-identity details are absent from all branches and
+tags, while preserving the remaining commit sequence and author identities where
+possible. Keep the SuperNutrition repository private; this decision does not
+authorize making it public. The private runtime AAR must not carry a LICENSE file
+or publish a license entry in its Maven metadata; the source repository retains
+its own license.
+
+## D-12 — redact local physical-device identifiers before public release
+
+Decided on: 2026-11-02
+Decided by: ajdevy (repository owner, direct instruction in this Codex chat)
+Channel: Codex chat request to remove real personal or customer data before public release
+
+Replace physical-device and workstation-created simulator UDIDs in committed
+documentation and evidence with placeholders. Preserve general device model,
+OS, and test results when useful, but do not publish device identifiers. Apply
+the same replacements to reachable Git history.
+
+## D-13 — remove AGPL-dependent model integrations and generated outputs
+
+Decided on: 2026-11-02
+Decided by: ajdevy (repository owner, direct instruction in this Codex chat)
+Channel: Codex chat request to rewrite GitHub history to remove AGPL material
+
+Remove the remaining runnable FPB/Ultralytics integration, its tests and
+generated predictions/evidence, the standalone detector Android benchmark,
+and the Nutrition5k detector-fusion harness, outputs, and presentations from
+SuperNutrition. Remove these artifacts from every reachable branch and tag
+while retaining the project's commit sequence and linked author identities.
+Keep any necessary license/provenance discussion as plain research
+documentation only; it must not imply these models or runners are part of the
+app or distributable runtime.
+
+## D-14 — use MPL 2.0 for the SuperNutrition project
+
+Decided on: 2026-11-03
+Decided by: ajdevy (repository owner, direct instruction in this Codex chat)
+Channel: Codex chat request to select a copyleft license from the accepted list
+
+License the SuperNutrition project under the Mozilla Public License 2.0, an
+accepted copyleft option that does not require the additional approval listed
+for GPL and AGPL. Under MPL 2.0, modifications to covered files must remain
+available under MPL when distributed, with source made available to recipients.
+Private use does not require public source publication, and independent files
+in a larger work are not automatically covered. This license does not replace
+the separate terms for the private inference AAR or third-party materials.
+
+## D-15 — leave GitHub pull-request refs unchanged
+
+Decided on: 2026-11-03
+Decided by: ajdevy (repository owner, direct instruction in this Codex chat)
+Channel: Codex chat reply declining a GitHub Support request
+
+Do not submit a GitHub Support request to remove or rewrite the retained
+pull-request refs or cached views. Leave those refs unchanged. Keep the
+SuperNutrition repository private while those refs still expose the five real
+user meal photographs and removed model and benchmark artifacts. This decision
+does not authorize making the repository public while the photographs remain
+reachable; revisit public release only after the owner makes a separate,
+informed decision about the retained personal data.

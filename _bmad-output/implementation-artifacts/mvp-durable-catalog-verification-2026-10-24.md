@@ -6,7 +6,7 @@ hosted-CI success claim.
 
 ## Candidate and authority
 
-- Worktree: `/Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition`.
+- Worktree: `REDACTED_WORKTREE/f2ff/SuperNutrition`.
 - Branch: `codex/mvp-completion`; baseline `7309e140b9cf12c6acf5733cfdcec00ce5912f1b`.
 - D-07 explicitly approves private local meals/name across launches until user
   deletion; D-08 explicitly approves USDA SR Legacy 2018-04, US coverage, exact
@@ -626,7 +626,7 @@ Installed productionDebug APK with android CLI; local and installed base.apk SHA
 
 Through the UI only, saved name MVP QA, explicitly selected `food:usda-srl-01227` / Cheese, dry white, queso seco from the ready 7,793-food USDA2018-04 US catalog, entered 50 g and saved. First force-stop killed PID 14017; fresh process 14611 restored exact name, one meal and its binding. Source initialization initially showed unknown numeric values; after source Ready, history/details showed 162.5 kcal, protein 12.26 g, carbs 1.02 g, fat 12.18 g, sugar 0.28 g and sodium 904 mg; fiber remained unknown. Per 100 g showed 325 kcal, protein 24.51 g / carbs 2.04 g / fat 24.35 g/fiber unknown. Edited portion to 100 g and observed the selected portion 100 g / 325 kcal, then restored 50 g / 162.5 kcal without losing the binding.
 
-Captured and immediately visually inspected real PNGs under /Users/REDACTED/.codex/visualizations/2026/10/22/01a16557-276b-7002-b45e-4a79f11f1c89/mvp-durable-20261024/: home.png (capybara seated on the room floor), profile.png, meal-history.png and meal-detail-50g.png. These screenshots contain explicitly authored synthetic QA data, subsequently removed. No generated mockup is presented as device evidence.
+Captured and immediately visually inspected real PNGs under ~/.codex/visualizations/2026/10/22/01a16557-276b-7002-b45e-4a79f11f1c89/mvp-durable-20261024/: home.png (capybara seated on the room floor), profile.png, meal-history.png and meal-detail-50g.png. These screenshots contain explicitly authored synthetic QA data, subsequently removed. No generated mockup is presented as device evidence.
 
 At 360×780 dp / font 2.0, the existing Home fallback is one column and scrolls. A real initial and scrolled screenshot confirmed all four metrics reachable and clear of the bottom navigation; this is not a no-scroll acceptance claim. Screenshots home-200-percent.png and home-200-percent-scrolled.png preserve both states. A temporary unsaved text draft at 200% with IME open scrolled its Add meal button fully above the keyboard (meal-form-200-percent-ime.png); the draft was discarded, leaving one saved record. Font scale restored and read back as 1.0.
 
@@ -683,7 +683,7 @@ JAVA_HOME='/Applications/Android Studio.app/Contents/jbr/Contents/Home' \
 xcodebuild -project mobile/apps/iosApp/SuperNutritionUIAcceptance.xcodeproj \
   -target SuperNutrition -configuration Debug -sdk iphoneos \
   ARCHS=arm64 CODE_SIGNING_ALLOWED=NO \
-  SYMROOT=/Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/apps/iosApp/build/MvpProducts \
+  SYMROOT=REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/apps/iosApp/build/MvpProducts \
   -jobs 1 -hideShellScriptEnvironment build
 ```
 
@@ -801,9 +801,9 @@ were absent after restart.
 All three new720×1560 PNGs were captured from the installed final APK and
 visually inspected immediately, before the next device action:
 
-- `/Users/REDACTED/.codex/visualizations/2026/10/22/01a16557-276b-7002-b45e-4a79f11f1c89/mvp-durable-20261024/review-final/home.png`
-- `/Users/REDACTED/.codex/visualizations/2026/10/22/01a16557-276b-7002-b45e-4a79f11f1c89/mvp-durable-20261024/review-final/profile.png`
-- `/Users/REDACTED/.codex/visualizations/2026/10/22/01a16557-276b-7002-b45e-4a79f11f1c89/mvp-durable-20261024/review-final/meal-history.png`
+- `~/.codex/visualizations/2026/10/22/01a16557-276b-7002-b45e-4a79f11f1c89/mvp-durable-20261024/review-final/home.png`
+- `~/.codex/visualizations/2026/10/22/01a16557-276b-7002-b45e-4a79f11f1c89/mvp-durable-20261024/review-final/profile.png`
+- `~/.codex/visualizations/2026/10/22/01a16557-276b-7002-b45e-4a79f11f1c89/mvp-durable-20261024/review-final/meal-history.png`
 
 Home's capybara is visibly seated on the room floor; all metric cards are above
 the bottom navigation. At360dp the protein unit wraps within its card without
@@ -971,7 +971,7 @@ unknown fiber and904mgsodium. No stale draft appeared. UI cleanup is in progress
 
 The approved local D-07/D-08 implementation is complete on
 `codex/mvp-completion` in worktree
-`/Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition`. The seven reviewed
+`REDACTED_WORKTREE/f2ff/SuperNutrition`. The seven reviewed
 patch conditions are repaired and verified; the preexisting native invalidation
 glob enforcement gap remains explicitly deferred. No frozen intent changed.
 All eight dated owner decisions passed strict verification again before handoff.

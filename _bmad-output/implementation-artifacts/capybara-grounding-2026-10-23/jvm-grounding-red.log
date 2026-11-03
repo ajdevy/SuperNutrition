@@ -109,13 +109,13 @@ HomeGardenGroundingTest[jvm] > tall native phone has sand beside the paws instea
 
 > Task :feature:photo-analysis-ui:jvmTest FAILED
 
-[Incubating] Problems report is available at: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/build/reports/problems/problems-report.html
+[Incubating] Problems report is available at: file://REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/build/reports/problems/problems-report.html
 
 FAILURE: Build failed with an exception.
 
 * What went wrong:
 Execution failed for task ':feature:photo-analysis-ui:jvmTest'.
-> There were failing tests. See the report at: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/feature/photo-analysis-ui/build/reports/tests/jvmTest/index.html
+> There were failing tests. See the report at: file://REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/feature/photo-analysis-ui/build/reports/tests/jvmTest/index.html
 
 * Try:
 > Run with --scan to get full insights from a Build Scan (powered by Develocity).

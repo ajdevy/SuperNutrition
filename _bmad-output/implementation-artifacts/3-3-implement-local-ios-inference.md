@@ -164,7 +164,7 @@ GPT-5 / Codex
   the signed G-3 runtime/model gate.
 - 2026-07-31 physical rerun on code commit `5f6c8772` (the FPB research
   baseline): automatic signing with the local Apple Development team
-  `REDACTED_TEAM_ID` passed the Xcode acceptance scheme `5/5` on the paired iPhone
+  the configured Apple developer team passed the Xcode acceptance scheme `5/5` on the paired iPhone
   14 Pro (`REDACTED_PHYSICAL_DEVICE_UDID`, iOS 26.5.2), and
   `scripts/run-physical-ios-fixtures.sh` passed `5/5` arm64 fixture tests
   (3 normalization, 2 bridge). The result bundle is

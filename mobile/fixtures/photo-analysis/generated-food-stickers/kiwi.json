@@ -1,7 +1,7 @@
 {
   "key": "kiwi",
   "generator": "built-in image_gen",
-  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-9c769299-e9d1-4085-8b2b-5f29479244ab.png",
+  "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-9c769299-e9d1-4085-8b2b-5f29479244ab.png",
   "staged_path": "mobile/fixtures/photo-analysis/generated-food-stickers/staged/food_sticker_kiwi.png",
   "intended_resource_name": "food_sticker_kiwi.png",
   "prompt_file": "broad-library-prompts.json",

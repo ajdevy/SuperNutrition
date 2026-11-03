@@ -25,7 +25,7 @@ independently confirmed).
 
 | Field | Value |
 | --- | --- |
-| Worktree | `/Users/aj/.codex/worktrees/d550/SuperNutrition` |
+| Worktree | `REDACTED_WORKTREE/d550/SuperNutrition` |
 | Branch | `codex/epic-3` |
 | HEAD at review time | `d1357b4fdef9b6cd9671fda9b196116e3dc27938` |
 | Working tree state | **dirty** — 30+ modified tracked files, including the inference v2 contract and its domain models |

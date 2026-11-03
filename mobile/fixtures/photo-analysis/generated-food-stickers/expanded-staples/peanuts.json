@@ -2,7 +2,7 @@
   "key": "peanuts",
   "generator": "built-in image_gen",
   "prompt": "Use case: product-mockup\nAsset type: one food-selection sticker for the Super Nutrition mobile app.\nPrimary request: PEANUTS only: a compact cluster of shelled peanuts with reddish-brown skins and two pale peanut kernel halves beside one opened tan peanut shell. Peanuts must have recognizable smaller oblong kernel shapes and the coarse double-lobed shell. No almonds or other nuts.\nStyle/medium: crisp photorealistic food cutout with natural texture and gentle soft studio lighting, matching the existing mixed-nuts, rice and peeled-banana stickers with a thin clean white die-cut outline around the food silhouette.\nComposition/framing: one coherent centered three-quarter food cluster on a square transparent canvas, complete food and outline visible inside the central 78 percent. Keep clear transparent padding on every edge.\nConstraints: genuine transparent alpha background, no scene or cast shadow. No plate, bowl, board, table, utensils, packaging, unrelated ingredients, green backing, text, letters, badges, checkmarks, faces, watermark or UI.\n",
-  "generated_path": "/Users/REDACTED/.codex/generated_images/01a12ec2-311b-7691-96d6-9634b2fa56d6/exec-4e85716a-13db-4064-8098-4b8e78b53bbc.png",
+  "generated_path": "~/.codex/generated_images/01a12ec2-311b-7691-96d6-9634b2fa56d6/exec-4e85716a-13db-4064-8098-4b8e78b53bbc.png",
   "output_path": "mobile/fixtures/photo-analysis/generated-food-stickers/expanded-staples/food_sticker_peanuts.png",
   "intended_resource_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_peanuts.png",
   "saved_at_utc": "2026-10-12T07:39:45.294331+00:00",

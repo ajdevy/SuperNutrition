@@ -8,7 +8,7 @@
     {
       "key": "banana",
       "prompt": "Use case: product-mockup\nAsset type: a transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: one recognizable ripe yellow banana, partly peeled so the cream fruit and folded yellow peel are visible. This is an individual food icon, not a sheet.\nStyle/medium: realistic crisp product photograph, natural food texture and subtle soft studio light. Match the visual language of small photorealistic food cutout stickers: a clean thin white die-cut outline follows the complete banana silhouette.\nComposition/framing: banana gently curves from lower left to upper right, centered on a square transparent canvas, entire fruit and peel visible with modest even padding; subject fills around 80% of image. No plate or table.\nColor palette: natural yellow peel, cream banana, tiny natural brown stem.\nConstraints: real transparent alpha background; white outline only around the food; no shadow/background slab, no other food, no green backing, no text, faces, checkmarks, badges, labels, watermarks or UI.",
-      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-0a8ad74c-5e2b-4a64-a515-0348f78e334d.png",
+      "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-0a8ad74c-5e2b-4a64-a515-0348f78e334d.png",
       "output_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_banana.png",
       "generator": "built-in image_gen",
       "generated_on": "2026-10-11",
@@ -34,7 +34,7 @@
     {
       "key": "apple",
       "prompt": "Use case: product-mockup\nAsset type: a transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: one recognizable fresh red apple with a short natural brown stem and a small green leaf. This is an individual food icon, not a sheet.\nStyle/medium: realistic crisp product photograph, natural apple skin texture and subtle soft studio light. Match the visual language of small photorealistic food cutout stickers: a clean thin white die-cut outline follows the complete apple silhouette.\nComposition/framing: centered three-quarter view on a square transparent canvas, entire apple visible with modest even padding; subject fills around 80% of image. No plate or table.\nColor palette: natural red apple with warm yellow skin variation, brown stem, green leaf.\nConstraints: real transparent alpha background; white outline only around the food; no shadow/background slab, no other food, no green backing, no text, faces, checkmarks, badges, labels, watermarks or UI.",
-      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-31b9137a-6fc9-4de2-8ae5-43a392c305e2.png",
+      "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-31b9137a-6fc9-4de2-8ae5-43a392c305e2.png",
       "output_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_apple.png",
       "generator": "built-in image_gen",
       "generated_on": "2026-10-11",
@@ -60,7 +60,7 @@
     {
       "key": "orange",
       "prompt": "Use case: product-mockup\nAsset type: a transparent food selection sticker for the Super Nutrition mobile app.\nPrimary request: one recognizable fresh orange with a cut orange half positioned just in front so juicy citrus segments are visible. Both pieces are the same food: orange. This is an individual food icon, not a sheet.\nStyle/medium: realistic crisp product photograph, natural citrus skin and flesh texture and subtle soft studio light. Match the visual language of small photorealistic food cutout stickers: a clean thin white die-cut outline follows the combined food silhouette.\nComposition/framing: centered three-quarter view on a square transparent canvas, entire whole fruit and half visible with modest even padding; subject fills around 80% of image. No plate or table.\nColor palette: natural vivid orange peel and flesh, cream-white pith.\nConstraints: real transparent alpha background; white outline only around the food; no shadow/background slab, no other food, no green backing, no text, faces, checkmarks, badges, labels, watermarks or UI.",
-      "generated_path": "/Users/REDACTED/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-ad7902ce-f021-4434-8a6d-f6989a7369cb.png",
+      "generated_path": "~/.codex/generated_images/01a12bc0-9613-7e52-817b-10204fc3263e/exec-ad7902ce-f021-4434-8a6d-f6989a7369cb.png",
       "output_path": "mobile/feature/photo-analysis-ui/src/commonMain/composeResources/drawable/food_sticker_orange.png",
       "generator": "built-in image_gen",
       "generated_on": "2026-10-11",

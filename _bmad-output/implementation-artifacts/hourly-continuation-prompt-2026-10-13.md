@@ -33,7 +33,7 @@ Updated October 16 (Europe/Moscow). No Android device check, unanswered phone
 question, active Gradle build or device-setting restoration remains pending.
 Do not start unrelated work or restart the deleted heartbeat.
 
-- Worktree `/Users/REDACTED/.codex/worktrees/a704/SuperNutrition`, branch
+- Worktree `REDACTED_WORKTREE/a704/SuperNutrition`, branch
   `codex/figma-camera-flow`, HEAD
   `5ee5de077866feed70b418ee2760af24322b1d22`. All edits remain local and
   uncommitted; unrelated WIP and the separate local main checkout were

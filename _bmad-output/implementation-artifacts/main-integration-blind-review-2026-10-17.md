@@ -1,6 +1,6 @@
 # Main integration blind adversarial review — 2026-10-17
 
-Reviewed `mobile/build/main-merge-2026-10-17/final-resolution.diff`, SHA-256 `95504418c1a63dd660a7aa1cedb10bcd858078799dc7979236b581f640b35b2a`, in `/Users/REDACTED/.codex/worktrees/a704/SuperNutrition`. The observed branch was `codex/figma-camera-flow`, HEAD `47e57e6074f80e622fbcc98033f41dc7839f98a1`, with merge-resolution files staged. Review scope was the completed current branch integrated with committed main `e1271c6`; the separately staged Rewards redesign in the other checkout was excluded.
+Reviewed `mobile/build/main-merge-2026-10-17/final-resolution.diff`, SHA-256 `95504418c1a63dd660a7aa1cedb10bcd858078799dc7979236b581f640b35b2a`, in `REDACTED_WORKTREE/a704/SuperNutrition`. The observed branch was `codex/figma-camera-flow`, HEAD `47e57e6074f80e622fbcc98033f41dc7839f98a1`, with merge-resolution files staged. Review scope was the completed current branch integrated with committed main `e1271c6`; the separately staged Rewards redesign in the other checkout was excluded.
 
 Applied `.agents/skills/bmad-review-adversarial-general/SKILL.md` with the assigned concrete-regression scope overriding its finding quota and zero-finding halt. This was an independent static review of the supplied diff, immediate neighboring source, both archived conflict sides, the integration spec and architecture guidance. Graph navigation used a read-only `graphify query`. No Gradle invocation, device interaction, source/test edit, staging or Git mutation was performed by this reviewer.
 
@@ -20,10 +20,10 @@ This review does not establish current compilation, test success, physical-devic
 
 ## Runtime addendum — isolation concern refuted
 
-The integration owner subsequently ran the unchanged three-method class together using the actual `AndroidJUnitRunner` on `SuperNutrition_API_35_x86_64`, `emulator-5554`, ADB server port `5041`. I inspected [run.json](/Users/REDACTED/.codex/worktrees/a704/SuperNutrition/mobile/build/main-merge-2026-10-17/native-brand-triage/run.json) and [instrumentation.log](/Users/REDACTED/.codex/worktrees/a704/SuperNutrition/mobile/build/main-merge-2026-10-17/native-brand-triage/instrumentation.log). The production APK SHA-256 was `8a0036005de47648ff26871304a5e821606af1eb0e20790204d399e48c707e41`.
+The integration owner subsequently ran the unchanged three-method class together using the actual `AndroidJUnitRunner` on `SuperNutrition_API_35_x86_64`, `emulator-5554`, ADB server port `5041`. I inspected [run.json](REDACTED_WORKTREE/a704/SuperNutrition/mobile/build/main-merge-2026-10-17/native-brand-triage/run.json) and [instrumentation.log](REDACTED_WORKTREE/a704/SuperNutrition/mobile/build/main-merge-2026-10-17/native-brand-triage/instrumentation.log). The production APK SHA-256 was `8a0036005de47648ff26871304a5e821606af1eb0e20790204d399e48c707e41`.
 
 ```sh
-/Users/REDACTED/Library/Android/sdk/platform-tools/adb -P 5041 -s emulator-5554 shell am instrument -w -r -e class com.supernutrition.android.BrandNavigationVisualInstrumentationTest app.supernutrition.test/androidx.test.runner.AndroidJUnitRunner
+~/Library/Android/sdk/platform-tools/adb -P 5041 -s emulator-5554 shell am instrument -w -r -e class com.supernutrition.android.BrandNavigationVisualInstrumentationTest app.supernutrition.test/androidx.test.runner.AndroidJUnitRunner
 ```
 
 Order was `rewardsBackdropAndFinalCardClearFloatingNavigation`, `heldTabKeepsItsTouchSurfaceTransparent`, then `selectionChangesIconsAndKeepsLabels`. Each method completed with status code `0`; the runner reported `OK (3 tests)` in `39.302` seconds, and ADB exited `0`. The third method successfully established Home after the second ended on Rewards. The earlier static inference that the retained Activity state would cross these runner-managed method boundaries did not hold. This result supersedes the inherited-caveat conclusion above: there is **no actionable inherited isolation finding for this integration**, and no test-helper or production change was needed. This is emulator evidence; the reviewer only inspected the saved result and performed no build or device action.

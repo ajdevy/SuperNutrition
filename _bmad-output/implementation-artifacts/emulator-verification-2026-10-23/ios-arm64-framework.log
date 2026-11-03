@@ -135,12 +135,12 @@ See https://kotl.in/connecting-source-sets
 > Task :platform:photo-ios:exportCrossCompilationMetadataForIosArm64ApiElements UP-TO-DATE
 > Task :apps:sharedKit:compileKotlinIosArm64
 > Task :apps:sharedKit:linkDebugFrameworkIosArm64
-w: Interop library /Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/platform/photo-ios/build/classes/kotlin/iosArm64/main/cinterop/photo-ios-cinterop-photoFixture can't be exported with -Xexport-library
-w: Interop library /Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/platform/photo-ios/build/classes/kotlin/iosArm64/main/cinterop/photo-ios-cinterop-photoPermission can't be exported with -Xexport-library
-w: Interop library /Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/platform/photo-ios/build/classes/kotlin/iosArm64/main/cinterop/photo-ios-cinterop-photoCapture can't be exported with -Xexport-library
-w: Interop library /Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/platform/photo-ios/build/classes/kotlin/iosArm64/main/cinterop/photo-ios-cinterop-commonCrypto can't be exported with -Xexport-library
+w: Interop library REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/platform/photo-ios/build/classes/kotlin/iosArm64/main/cinterop/photo-ios-cinterop-photoFixture can't be exported with -Xexport-library
+w: Interop library REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/platform/photo-ios/build/classes/kotlin/iosArm64/main/cinterop/photo-ios-cinterop-photoPermission can't be exported with -Xexport-library
+w: Interop library REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/platform/photo-ios/build/classes/kotlin/iosArm64/main/cinterop/photo-ios-cinterop-photoCapture can't be exported with -Xexport-library
+w: Interop library REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/platform/photo-ios/build/classes/kotlin/iosArm64/main/cinterop/photo-ios-cinterop-commonCrypto can't be exported with -Xexport-library
 
-[Incubating] Problems report is available at: file:///Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition/mobile/build/reports/problems/problems-report.html
+[Incubating] Problems report is available at: file://REDACTED_WORKTREE/f2ff/SuperNutrition/mobile/build/reports/problems/problems-report.html
 
 BUILD SUCCESSFUL in 9m 21s
 56 actionable tasks: 15 executed, 41 up-to-date

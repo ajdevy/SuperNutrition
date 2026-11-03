@@ -47,12 +47,9 @@ mandatory before any component/mass claim or `activation = production`.
   binary-bound `iosArm64` fixture lane `5/5` (3 normalization, 2 bridge). This
   is correctness/platform evidence, not selected-model G3 evidence; the Apple
   quality gate remains good-to-have under the current lifecycle policy.
-- The fresh Android v2 candidate screen completed MobileSAM and YOLO-World
-  runs on five complex fixtures. The latest physical rerun is recorded in
-  `android-component-mass-benchmark-2026-08-02.json`; neither candidate
-  supplies accepted ingredient-plus-grams quality evidence, because MobileSAM
-  is class-agnostic and both mass outputs are `not-evaluable` without tared
-  scale truth.
+- The fresh Android v2 candidate screen ran on five complex fixtures. The
+  detector-specific evidence was later removed under D-13; the retained record
+  does not supply accepted ingredient-plus-grams quality evidence.
 - A public research cache now contains 300 FoodSeg103 image/mask pairs and 300
   Nutrition5k RGB-D/mass plates. These samples are explicitly research-only and
   do not satisfy the consent, phone-capture, or split-isolation contract.
@@ -62,9 +59,9 @@ mandatory before any component/mass claim or `activation = production`.
 
 | Requirement | Current evidence | Closure condition |
 | --- | --- | --- |
-| Cleared production component/mass model | No model artifact exists under the searched product/research trees; candidate screening rejected classification-only and research/AGPL options | Legal clearance, artifact digest, calibration, mobile runtime, and rollback manifest |
+| Cleared production component/mass model | No model artifact exists under the searched product/research trees; candidate screening rejected classification-only and uncleared research options | Legal clearance, artifact digest, calibration, mobile runtime, and rollback manifest |
 | Consented weighed corpus | Schema, validator, collection runbook, and separate public research cache are ready; no consented corpus manifest exists | At least 300 consented cases with opaque references, masks, tared readings, QC, and train/calibration/held-out isolation |
-| Android v2 G3 | Physical Android is now available, but MobileSAM is `unsupported` for identity and YOLO-World v2 scores only `0.2233` exact visible-component macro F1; both have `not-evaluable` mass and neither is selected | Selected, legally cleared model run on a physical Android device with component quality, grams, latency, memory, thermal, battery, privacy, and rollback evidence |
+| Android v2 G3 | Physical Android evidence exists, but no retained candidate proves visible ingredient identity and calibrated grams | Selected, legally cleared model run on a physical Android device with component quality, grams, latency, memory, thermal, battery, privacy, and rollback evidence |
 | iOS v2 G3 | Physical iOS correctness evidence is locally recorded on iPhone 14 Pro / iOS 26.5.2 with the configured Apple team: UI acceptance `5/5` and binary-bound `iosArm64` fixtures `5/5` (3 normalization, 2 bridge). This is not selected-model G3 evidence. | Same selected model and corpus benchmark on the physical iPhone with iOS-specific runtime/resource evidence |
 | E3.9 story implementation | Coordinator, typed UI, host lifecycle seam, and focused tests are complete under the approved pre-release scope; both hosts intentionally bind `PhotoAnalysisAnalysisLauncher.None` because no production runtime is approved | No story-level code blocker remains. At Epic 3 G3 exit, bind the selected runtime only after `ComponentModelManifest` has `APP_MANAGED` ownership, rollback target, and product/engineering/legal/corpus/benchmark/rollback refs; then execute staged/review/Cancel/recovery on a physical device and record that production-bound evidence |
 | Product/Engineering G3 signoff | Engineering conditional GO is recorded in `g3-signoff-decision-2026-08-02.md`; Product final release sign-off is pending | Bind the complete model/legal/corpus/benchmark/rollback bundle, attach Product sign-off, and have Engineering verify the manifest references |
@@ -72,7 +69,7 @@ mandatory before any component/mass claim or `activation = production`.
 ## Current external state
 
 - Earlier physical Android runs used Honor DNY-NX9 serial
-  `AU3N025429006787`; the explicit mDNS serial `192.168.0.150:37613` belongs
+  `PHYSICAL_DEVICE_SERIAL`; the explicit mDNS serial `PHYSICAL_DEVICE_ENDPOINT` belongs
   to the previous physical evidence. The current `adb devices -l` is empty;
   the physical rerun after adding `UiDevice.wakeUp()` is pending reconnection.
   The historical Gradle run passed the isolated local-Android adapter `4/4`,
@@ -176,7 +173,7 @@ recognition `5/5` with init `2,150 ms`, p50/p95/max `187/218/335 ms`, PSS
   passed `10/10` tests, and `git diff --check` passed.
 - Re-ran `qualityCheckJvmAndroid` and `qualityCheckApple`; both completed with
   `BUILD SUCCESSFUL`. Current JVM coverage is `97.98%` line / `85.84%` branch.
-- Historical physical Android evidence on `192.168.0.150:37613` / Honor
+- Historical physical Android evidence on `PHYSICAL_DEVICE_ENDPOINT` / Honor
   DNY-NX9 recorded local adapter `4/4`, production `15/15`, and UI acceptance
   `15/15`, all with zero failures, errors, or skips.
 - After adding `UiDevice.wakeUp()`, the physical rerun was not completed because

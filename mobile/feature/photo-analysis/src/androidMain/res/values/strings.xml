@@ -11,8 +11,8 @@
     <string name="capture_status_preparing">Preparing photo</string>
     <string name="capture_status_ready_photo">Photo ready</string>
     <string name="capture_status_analyzing">Analyzing photo</string>
-    <string name="capture_status_finding_visible_foods">Finding visible foods</string>
-    <string name="capture_status_identifying_dish">Identifying visible foods</string>
+    <string name="capture_status_finding_visible_foods">Analyzing meal</string>
+    <string name="capture_status_identifying_dish">Identifying dish</string>
     <string name="capture_status_estimating_portions">Preparing results</string>
     <string name="capture_status_checking_results">Checking results</string>
     <string name="capture_status_review">Review candidate</string>

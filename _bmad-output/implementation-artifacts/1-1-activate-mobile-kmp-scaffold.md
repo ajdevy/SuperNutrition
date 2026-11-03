@@ -113,7 +113,7 @@ Use the exact tuple in AD-16/AR-1: Kotlin/KMP 2.4.10, Compose Multiplatform 1.11
 - [Source: `_bmad-output/planning-artifacts/architecture/architecture-SuperNutrition-2026-07-26/implementation-agent-guide.md` — Sections 3, 4, 5, 7.0b through 7.0d]
 - [Source: `_bmad-output/planning-artifacts/prds/prd-SuperNutrition-2026-07-26/prd.md` — NFR-9, NFR-10, NFR-17 through NFR-23]
 - [Source: `_bmad-output/planning-artifacts/ux-designs/ux-SuperNutrition-2026-07-26/EXPERIENCE.md` — Foundation, Accessibility Floor]
-- [Source: `/Users/aj/workspace_ai/SuperNutrition/AGENTS.md` — SuperNutrition monorepo and KMP engineering baseline]
+- [Source: `~/workspace_ai/SuperNutrition/AGENTS.md` — SuperNutrition monorepo and KMP engineering baseline]
 
 ## Dev Agent Record
 
@@ -239,7 +239,7 @@ GPT-5 / Codex
 - 2026-07-27: Implemented and verified the bounded `mobile-build-policy` slice; left remaining scaffold slices pending.
 - 2026-07-27: Added and strictly verified the first bounded Compose acceptance-support substrate; left the full v2 host/robot, platform execution, and artifact-writer slices pending.
 - 2026-07-27: Added separate E1.2–E1.5 policy handoffs and E2.1–E2.3 ready-for-dev stories; kept E2 production implementation behind scaffold activation as required by AD-15/AD-37.
-- 2026-07-27: Physical Android retry passed on serial `adb-AU3N025429006787-97BOdK._adb-tls-connect._tcp` (DNY-NX9, Android 16/API 36): acceptance APK and test APK installed, `Bootstrap ready` observed, and `BootstrapHostInstrumentationTest` completed `OK (1 test)`. This supersedes the earlier no-device observation; no emulator was used.
+- 2026-07-27: Physical Android retry passed on serial `adb-PHYSICAL_DEVICE_SERIAL-97BOdK._adb-tls-connect._tcp` (DNY-NX9, Android 16/API 36): acceptance APK and test APK installed, `Bootstrap ready` observed, and `BootstrapHostInstrumentationTest` completed `OK (1 test)`. This supersedes the earlier no-device observation; no emulator was used.
 - 2026-07-27: Created iOS simulator `SuperNutrition iPhone 17 Pro` (UDID `REDACTED_SIMULATOR_UDID`, iOS 26.0) for the requested simulator lane; Xcode test evidence remains pending until that lane reports a successful run.
 - 2026-07-27: iOS simulator retry passed on UDID `REDACTED_SIMULATOR_UDID`: `SharedKit iosX64` build succeeded and `xcodebuild test` completed `1 test, 0 failures` (`TEST SUCCEEDED`). The first retry exposed and fixed the missing `CFBundleExecutable`; the second exposed and fixed the test's incorrect first-bootstrap expectation.
 - 2026-07-27: Final Android physical instrumentation on Honor DNY-NX9/API 36 passed `OK (7 tests)`, including the process-safe snapshot codec, URI/thumbnail byte extraction, EXIF orientation fixture, packaged bootstrap, and scaffold dependency probe. Final iOS x64 simulator acceptance passed `2 tests, 0 failures`, including capture actions and idempotent SharedKit bootstrap.

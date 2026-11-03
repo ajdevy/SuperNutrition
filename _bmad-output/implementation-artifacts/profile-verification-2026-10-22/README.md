@@ -1,6 +1,6 @@
 # Home → Profile verification
 
-Worktree: `/Users/REDACTED/.codex/worktrees/f2ff/SuperNutrition`
+Worktree: `REDACTED_WORKTREE/f2ff/SuperNutrition`
 Branch: `codex/home-profile`
 Integration baseline: `8062c3f66efd8f749ac7041b6ac97c29b8a0d9dc`
 
@@ -47,7 +47,7 @@ The first full check found style issues and the two review regressions above. Th
 
 ## Legal website
 
-Separate repository: `/Users/REDACTED/workspace_ai/supernutrition.app`. Legal source was committed as `d433ff9957665ecc24adca32a002b64b4b239d28`; reproducible publication tooling is on `origin/main` at `533b956102c9c80b10cc4d7554d896d1bad044aa`.
+Separate repository: `~/workspace_ai/supernutrition.app`. Legal source was committed as `d433ff9957665ecc24adca32a002b64b4b239d28`; reproducible publication tooling is on `origin/main` at `533b956102c9c80b10cc4d7554d896d1bad044aa`.
 
 - EN/RU/ES app policies at `/privacy-policy/`; app and website terms at `/terms/`.
 - Operator supplied by the human: Flexsent labs SIA, Latvia; existing public contact `hello@supernutrition.app`.
@@ -72,7 +72,7 @@ Fresh Android XML: poc 44/0/0/0, production 44/0/0/0, uiAcceptance 44/0/0/0 (tes
 
 `JAVA_HOME='/Applications/Android Studio.app/Contents/jbr/Contents/Home' ./mobile/gradlew -p mobile :apps:sharedKit:jvmTest :feature:meal-search-presenter:jvmTest --write-locks --dependency-verification=strict --continue --no-parallel --max-workers=2 --no-configuration-cache --console=plain` completed successfully in 4m22s; log `/tmp/supernutrition-profile-evidence/lock-refresh.log`. The subsequent complete read-only gate/report run uses `qualityCheckJvmAndroid qualityCheckApple mobileUnitCoverage mobileCoverageReports -Psupernutrition.runJvmCoverage=true --dependency-verification=strict --continue --no-parallel --max-workers=2 --no-configuration-cache --console=plain`; log `/tmp/supernutrition-profile-evidence/quality-after-locks.log`. It does not repeat unchanged native instrumentation or Apple compilation. The explicit coverage opt-in is included; the earlier complete run omitted it and did not establish an aggregate coverage pass.
 
-The exact stable production APK was installed after instrumentation cleanup. Manual Home-avatar activation opened Profile with the unknown-name placeholder and zero real session meals. Native screenshots were captured at 100% and 200% font scale on 360x780dp; text wrapped and controls stayed reachable. The emulator font scale was restored to 1.0. Screenshots are in `/Users/REDACTED/.codex/visualizations/2026/10/22/01a16557-276b-7002-b45e-4a79f11f1c89/profile-android-native*.png`.
+The exact stable production APK was installed after instrumentation cleanup. Manual Home-avatar activation opened Profile with the unknown-name placeholder and zero real session meals. Native screenshots were captured at 100% and 200% font scale on 360x780dp; text wrapped and controls stayed reachable. The emulator font scale was restored to 1.0. Screenshots are in `~/.codex/visualizations/2026/10/22/01a16557-276b-7002-b45e-4a79f11f1c89/profile-android-native*.png`.
 
 
 ## Completed read-only follow-up

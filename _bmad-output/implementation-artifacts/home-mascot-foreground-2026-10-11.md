@@ -20,7 +20,7 @@ Scope: HomeScreen.kt, its existing layout visual regression, and layout
 spec/evidence documents. Preserve the earlier camera, Rewards, and native
 work. No commit or push is requested.
 
-Worktree: `/Users/REDACTED/.codex/worktrees/a704/SuperNutrition`, branch
+Worktree: `REDACTED_WORKTREE/a704/SuperNutrition`, branch
 `codex/figma-camera-flow`, base commit
 `5ee5de077866feed70b418ee2760af24322b1d22`; existing local work is dirty and
 uncommitted.
@@ -63,7 +63,7 @@ These are production-composable renders on JVM/Skiko, not device screenshots.
 ./mobile/gradlew -p mobile :feature:photo-analysis-ui:compileKotlinIosArm64 -Psupernutrition.enableIosDeviceTarget=true --continue --no-configuration-cache --console=plain
 graphify update .
 git diff --check
-/Users/REDACTED/Library/Android/sdk/platform-tools/adb devices -l
+~/Library/Android/sdk/platform-tools/adb devices -l
 ```
 
 The JVM/Android quality gate and production APK build succeed (exit 0,
