@@ -96,45 +96,56 @@ backdrop should remain `#F6F7F5`.
 backdrop before drawing the floating pill, and pass the instrumentation check
 in `poc`, `production`, and `uiAcceptance` flavors.
 
-## Current status — 2026-11-03
+## Current status — 2026-11-03 follow-up
 
-D-11 and D-13 record the approved privacy and license boundary. The prepared
-tree removes the detector path from the Android/iOS app, removes the remaining
-executable detector/FPB research integrations, the model fusion benchmark, and
-their generated outputs, removes the checked-in AAR and POM, and points Android
-builds at the private GitHub Packages repository. The private library source
-repository has the `v0.1.1` tag and its workflow published the AAR successfully;
-read access from SuperNutrition workflows and this local checkout is not
-configured yet. The five user-sample photographs are absent from the prepared
-tree.
+The public-readiness files are present: root README, MIT LICENSE, and ROADMAP
+with currently open issues. README covers purpose, audience, stack, and run
+instructions. `backend/mobile-api/.env.example` uses example values, and
+`.gitignore` excludes `.env` and local credential/config files. The current
+commit uses the GitHub-linked `ajdevy` noreply address.
 
-The rewrite preserved the 669-commit sequence and existing author identities,
-removed the detector/runtime source and binary paths, scrubbed the exact
-machine/device identifiers, and redacted two historical credential-shaped
-benchmark assignments. An exact scan of 18,704 reachable Git objects found
-none of the nine replaced values. Gitleaks reported 91 history matches, all
-heuristic `generic-api-key` findings in reviewed design geometry, hash fields,
-deliberate scanner fixtures, and the repository file index; it found no
-benchmark assignment after redaction. The earlier current-tree scan reported
-89 reviewed heuristic findings. Repository history alone cannot establish
-whether the two removed values were live credentials; revoke them if either
-was valid.
+The Android app now resolves the inference AAR from the private GitHub Packages
+repository, with credentials kept outside the checkout. `read:packages` access
+was authorized for this local build. The AAR and its POM contain no license
+metadata, as requested. Contributors still need access to the private package
+to build the app.
 
-All 50 existing branch refs and both tags were atomically force-updated with
-exact leases, and `codex/public-readiness` was added. A post-push comparison
-matches all 53 branch/tag refs to the rewritten mirror. GitHub still exposes 55
-read-only `refs/pull/*/head` refs: only one matches the rewritten local PR refs
-and 54 still point at prior commit IDs. Those references may retain old PR
-views or objects, so full removal from GitHub-hosted PR history is not
-confirmed. GitHub documents that pull refs are read-only and that Support can
-purge cached views for sensitive data, while stating it will not remove
-non-sensitive data; see [Removing sensitive data from a repository](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository).
-PR #64 remains open, has no reviews, and its updated coverage run is queued.
+The rewrite removed the YOLO-World/AGPL detector assets and integrations,
+YoloX Nano and FPB detector research artifacts, Nutrition5k fusion benchmark
+outputs, the five user meal photographs, and the recorded machine/device
+identifiers from reachable branch and tag history. All 51 branches and 2 tags
+were updated atomically with exact leases; a post-push comparison confirms all
+53 refs match the rewritten mirror. The repository remains the existing
+GitHub repository; no fork or replacement repository was used. History was
+rewritten to remove paths, not intentionally squashed. Five pairs of commits
+became identical Git objects after their changed trees and ancestry converged.
 
-The repository remains private. Before making it public, resolve the stale PR
-refs and confirm whether the historical credential-shaped values need
-revocation. Android build access also remains unverified because the private
-package credentials are not configured locally or in SuperNutrition workflows;
-the iOS compile could not run because this host has no `xcodebuild`. GitHub
-accepted the 88.47 MB Food-101 ONNX file but warned that it exceeds its 50 MB
-recommended size. No tests were run during this preparation pass.
+GitHub still exposes 55 read-only `refs/pull/*/head` refs; 54 point at old
+commit IDs. These GitHub-managed refs may retain old PR views or objects, so a
+complete purge from GitHub-hosted history is not confirmed. GitHub documents
+the restrictions and support process in [Removing sensitive data from a
+repository](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository).
+The repository was not made public.
+
+Gitleaks scanned 1,221 reachable commits and reported 184 heuristic
+`generic-api-key` matches. Review classified them as generated UI key/hash
+metadata, intentional fake secret-scanner fixtures, the repository file index,
+and the literal `REDACTED` placeholder in historical benchmark examples. No
+confirmed credential was found. Two older credential-shaped benchmark values
+had already been replaced by `REDACTED`; their original validity cannot be
+established from this history, so revoke them if either was a live key. The
+only secret-like filename in reachable history is the placeholder
+`backend/mobile-api/.env.example`; no private-key or non-example `.env` file
+was found.
+
+The full command
+`./mobile/gradlew -p mobile :apps:androidApp:connectedAndroidTest --no-configuration-cache --console=plain`
+completed successfully on `SuperNutrition_API_35_x86_64(AVD) - 15` (API 35,
+x86_64). The XML reports show 65 tests, 0 failures, 0 errors, and 0 skipped in
+each of `poc`, `production`, and `uiAcceptance` at
+`mobile/apps/androidApp/build/outputs/androidTest-results/connected/debug/flavors/`.
+
+Before making the repository public, the owner still needs to resolve the 54
+stale pull-request refs and determine whether the two previously redacted
+benchmark values need revocation. The repository remains private until those
+items are resolved.
