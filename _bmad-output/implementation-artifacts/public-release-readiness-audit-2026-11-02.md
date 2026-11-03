@@ -231,3 +231,23 @@ Secret-scan evidence:
   the earlier complete GitHub-ref scan and the fresh current-default-branch and
   working-diff scans are the applicable evidence for the repository being
   prepared.
+
+## Hosted PR validation — 2026-11-03
+
+PR #66 is open at `14126892893575e5f50b091d5386fd55a9b2463a`, authored with
+the GitHub-linked `ajdevy` noreply address. The required
+`mobile-unit-coverage` run `41686335941` failed at `:verifyMobilePolicy` because
+the committed `bootstrap-android-host` evidence was executed on
+2026-09-12 and exceeded its configured 30-day age. The CI checkout had no
+physical Android device attached; the earlier API 35 emulator pass does not
+renew physical-device evidence. Do not refresh this evidence with emulator
+results or weaken its age policy.
+
+The workflow uses `--continue`, so module tests and report generation continued
+after the policy task failed. Uploaded JUnit XML contains 1,178 tests across 12
+modules, with 0 failures, 0 errors, and 0 skipped. The coverage dashboard
+generation passed. A separate README snapshot check found stale source counts;
+the README metrics were regenerated from this run's uploaded dashboard data to
+1,182 tracked source files and 212,273 code lines. The local check against that
+artifact passes. The PR remains open and must not be merged while its required
+policy check is failing.
