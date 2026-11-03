@@ -132,7 +132,7 @@ non-sensitive data. See [Removing sensitive data from a
 repository](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository).
 The repository was not made public.
 
-Gitleaks scanned 1,225 commits reachable from the current branches, tags, and
+Gitleaks scanned 1,227 commits reachable from the current branches, tags, and
 fetched pull-request refs and reported 185 heuristic `generic-api-key`
 matches. Review classified them as generated UI key/hash metadata, intentional
 fake secret-scanner fixtures, the repository file index, and the literal
