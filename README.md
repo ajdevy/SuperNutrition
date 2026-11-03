@@ -83,9 +83,9 @@ npm run dev --workspace @supernutrition/api
 ```
 
 The local API requires test-mode environment variables and a throwaway RS256
-keypair. The `.env.example` values are placeholders, and no provider
-credentials are required for local startup. See the
-[API testing guide](backend/mobile-api/docs/12-api-testing-guide.md) for the
+keypair. Values in [`backend/mobile-api/.env.example`](backend/mobile-api/.env.example)
+are placeholders, and no provider credentials are required for local startup.
+See the [API testing guide](backend/mobile-api/docs/12-api-testing-guide.md) for the
 full setup, [`backend/mobile-api/docs/README.md`](backend/mobile-api/docs/README.md)
 for API docs, and [`backend/mobile-api/deploy/README.md`](backend/mobile-api/deploy/README.md)
 for deployment constraints.

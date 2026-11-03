@@ -133,12 +133,11 @@ affected PR references for qualifying sensitive data; Support will not remove
 non-sensitive data. See [Removing sensitive data from a
 repository](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository).
 The repository has zero forks. The filter-repo output did not report orphaned
-LFS objects. A Support request is prepared but not submitted: it would ask
-GitHub to remove retained refs/cached views for the five real user meal photos.
-If accepted, this may make the diffs for all 55 affected PRs inaccessible.
-Support may decline the request if it determines the photos are not sensitive;
-it will not remove the other non-sensitive model or benchmark content. The
-repository was not made public.
+LFS objects. A Support request was prepared but not submitted. On 2026-11-03,
+the owner declined the request and instructed that the existing pull-request
+refs remain unchanged. Keep the repository private while those refs still
+expose the five real user meal photos and removed model and benchmark artifacts;
+this is not approval to make the repository public with those photos reachable.
 
 At pushed commit `db953b5c`, Gitleaks scanned 1,227 commits reachable from the
 branches, tags, and fetched pull-request refs and reported 185 heuristic `generic-api-key`
@@ -162,9 +161,9 @@ each of `poc`, `production`, and `uiAcceptance` at
 The root LICENSE now contains the official MPL 2.0 text, selected as an
 accepted copyleft license. Its source-sharing obligation applies when covered
 files are distributed; it does not require public release of private
-modifications. See owner decision D-14. Before making the repository public,
-the owner must approve submission of the Support request or accept that the
-five user meal photos remain reachable through GitHub PR history. The two
-credential-shaped benchmark values are redacted from the rewritten history;
-no live credential was confirmed, and their original validity cannot be
-established from the retained data.
+modifications. See owner decision D-14. The owner declined GitHub Support
+cleanup in D-15, so public release remains blocked while real user meal photos
+are reachable in GitHub pull-request history. The two credential-shaped
+benchmark values are redacted from the rewritten history; no live credential
+was confirmed, and their original validity cannot be established from the
+retained data.

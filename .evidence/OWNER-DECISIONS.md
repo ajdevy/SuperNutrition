@@ -716,3 +716,17 @@ available under MPL when distributed, with source made available to recipients.
 Private use does not require public source publication, and independent files
 in a larger work are not automatically covered. This license does not replace
 the separate terms for the private inference AAR or third-party materials.
+
+## D-15 — leave GitHub pull-request refs unchanged
+
+Decided on: 2026-11-03
+Decided by: ajdevy (repository owner, direct instruction in this Codex chat)
+Channel: Codex chat reply declining a GitHub Support request
+
+Do not submit a GitHub Support request to remove or rewrite the retained
+pull-request refs or cached views. Leave those refs unchanged. Keep the
+SuperNutrition repository private while those refs still expose the five real
+user meal photographs and removed model and benchmark artifacts. This decision
+does not authorize making the repository public while the photographs remain
+reachable; revisit public release only after the owner makes a separate,
+informed decision about the retained personal data.
