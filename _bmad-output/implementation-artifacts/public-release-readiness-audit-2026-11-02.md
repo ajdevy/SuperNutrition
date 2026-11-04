@@ -340,3 +340,14 @@ branch overall, with `domain:nutrition` at 99.99% line and 100.00% branch.
 These source findings are outside the PR's optional local AAR and Android test
 fixes. A new hosted PR run is still needed to establish current required-check
 status before merging.
+
+## Hosted README snapshot follow-up — 2026-11-04
+
+Hosted run `41783419003` passed mobile JVM coverage and the refreshed mobile
+policy, then failed only the README snapshot check: the committed code-line
+count was 212,273 while the uploaded dashboard reported 212,281. The tracked
+source-file count and coverage percentages matched. The README metrics were
+regenerated from that exact run artifact's `_site/loc.json` and
+`_site/coverage.json`; a second `--check` with the same artifact passed locally.
+Commit `2cf75c70` contains the corrected 212,281 count. The required hosted
+check must run again on the new head before merging PR #66.
