@@ -30,16 +30,19 @@ setting cannot silently return to the scaffold.
    adb devices -l
    ```
 
-3. Build and run every instrumented app variant on the explicit physical serial:
+3. Build and run every instrumented app variant on the attached Android
+   device(s):
 
    ```bash
    ./mobile/gradlew -p mobile \
      :apps:androidApp:connectedAndroidTest \
-     -Pandroid.testInstrumentationRunnerArguments.deviceSerial=<physical-serial> \
      --no-configuration-cache --console=plain
    ```
 
    This runs the `pocDebug`, `productionDebug`, and `uiAcceptanceDebug` lanes.
+   Gradle runs them on every ADB-connected device. The runner argument
+   `deviceSerial` does not select a Gradle device. To get single-device
+   evidence, disconnect other devices before running the task.
    Keep their XML reports: the evidence emitter requires both the UI-acceptance
    and PoC result, so a successful UI-only run cannot close the PoC inference
    coverage gap.
@@ -82,7 +85,6 @@ ADB_MDNS_AUTO_CONNECT=0 adb start-server
 ADB_MDNS_AUTO_CONNECT=0 adb devices -l
 ADB_MDNS_AUTO_CONNECT=0 ./mobile/gradlew -p mobile \
   :apps:androidApp:connectedAndroidTest \
-  -Pandroid.testInstrumentationRunnerArguments.deviceSerial=<physical-serial> \
   --no-configuration-cache --console=plain
 ```
 

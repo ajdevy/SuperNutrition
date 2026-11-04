@@ -7,6 +7,7 @@ import android.os.SystemClock;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.uiautomator.By;
+import androidx.test.uiautomator.Direction;
 import androidx.test.uiautomator.StaleObjectException;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject2;
@@ -93,19 +94,25 @@ public final class MealDiaryJourneyInstrumentationTest {
 
     private static UiObject2 scrollTo(UiDevice device, String id, boolean downThePage) {
         device.waitForIdle();
+        Direction direction = downThePage ? Direction.DOWN : Direction.UP;
         int minimumHeight = id.equals(UiAutomationIds.INSTANCE.getMEAL_DETAILS_TITLE().getValue()) ? 1
-                : Math.round(48 * InstrumentationRegistry.getInstrumentation().getTargetContext()
+                : Math.round(24 * InstrumentationRegistry.getInstrumentation().getTargetContext()
                         .getResources().getDisplayMetrics().density);
-        for (int attempt = 0; attempt < 10; attempt++) {
+        for (int attempt = 0; attempt < 64; attempt++) {
             UiObject2 found = device.findObject(By.res(id));
             if (found != null && found.getVisibleBounds().height() >= minimumHeight) {
                 UiObject2 settled = settledNode(device, id, minimumHeight);
                 if (settled != null) return settled;
             }
-            int x = device.getDisplayWidth() / 2;
-            int top = device.getDisplayHeight() / 4;
-            int bottom = device.getDisplayHeight() * 3 / 4;
-            device.swipe(x, downThePage ? bottom : top, x, downThePage ? top : bottom, 90);
+            UiObject2 scrollView = device.findObject(By.clazz("android.widget.ScrollView"));
+            if (scrollView != null && scrollView.isScrollable()) {
+                scrollView.scroll(direction, 0.15f, 1_200);
+            } else {
+                int x = device.getDisplayWidth() / 2;
+                int top = device.getDisplayHeight() * 2 / 5;
+                int bottom = device.getDisplayHeight() * 3 / 5;
+                device.swipe(x, downThePage ? bottom : top, x, downThePage ? top : bottom, 90);
+            }
             device.waitForIdle();
         }
         NativeUiSemanticDiagnostics.dump(device, id);

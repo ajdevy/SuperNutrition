@@ -60,7 +60,7 @@ Gradle reports are the most common source of confident wrong conclusions here. E
 
   `./mobile/gradlew -p mobile :apps:androidApp:connectedAndroidTest --no-configuration-cache --console=plain`
 
-- Disconnect duplicate ADB endpoints before evidence runs. With multiple devices, pass `-Pandroid.testInstrumentationRunnerArguments.deviceSerial=<serial>` and use strict dependency verification when the evidence command requires it. Confirm both `productionDebug` and `uiAcceptanceDebug` ran. Verify the XML reports under `mobile/apps/androidApp/build/outputs/androidTest-results/connected/` show exact `tests`, `failures`, `errors`, and `skipped` counts.
+- Disconnect duplicate ADB endpoints before evidence runs. `connectedAndroidTest` runs on every ADB-connected device; `-Pandroid.testInstrumentationRunnerArguments.deviceSerial` is only a runner argument and does not filter Gradle's device set. The pinned Android Gradle Plugin 9.1 also throws `UnsupportedOperationException` when its `--serial` task option is used for this task, so ensure only the intended target is connected when single-device evidence is required. Use strict dependency verification when the evidence command requires it. Confirm both `productionDebug` and `uiAcceptanceDebug` ran. Verify the XML reports under `mobile/apps/androidApp/build/outputs/androidTest-results/connected/` show exact `tests`, `failures`, `errors`, and `skipped` counts.
 - Treat ABI/API, lifecycle reflection, permission, camera, UI semantics, and accessibility failures as product failures to fix—not as device noise. When Compose sets `testTagsAsResourceId`, UI Automator must query resource IDs (`By.res`), not descriptions (`By.desc`).
 
 ## Apple targets

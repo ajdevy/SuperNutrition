@@ -291,3 +291,30 @@ older than the configured 30-day limit. The connected host currently has only
 an emulator, which cannot refresh that physical-device evidence. Do not merge
 PR #66 until the required policy check passes; do not substitute emulator
 results for physical-device evidence.
+
+## Android device verification follow-up — 2026-11-04
+
+The owner connected a physical device and requested device verification. The
+full Gradle task
+`./mobile/gradlew -p mobile :apps:androidApp:connectedAndroidTest --no-configuration-cache --console=plain`
+completed successfully in 14m17s on both attached targets: Samsung SM-F946B
+(Android 17/API 37) and the Android 15/API 35 x86_64 emulator. The `pocDebug`,
+`productionDebug`, and `uiAcceptanceDebug` lanes each ran 65 tests on each
+target: 390 tests total, with 0 failures, 0 errors, and 0 skipped. All six XML
+reports under
+`mobile/apps/androidApp/build/outputs/androidTest-results/connected/debug/flavors/`
+were fresh for this run. This includes the Samsung Rewards carousel regression
+and the meal-diary save/edit/delete journey. No screenshots were captured.
+
+The Android device guidance was corrected to state that Gradle runs on every
+connected ADB device; the `deviceSerial` runner property does not filter the
+task. The physical-evidence emitter records the device serial. Keep that
+serial out of the public repository and store only sanitized attestation
+fields in the policy binding.
+
+At verification time GitHub still reported PR #66 open at
+`3b1cb2614594dbc9dbb5abcefc88efdefb929b1b`; its required
+`mobile-unit-coverage` run from 2026-11-03 remained failed because the committed
+physical evidence had expired. The passing local run above is not a hosted CI
+result. Refreshing sanitized evidence and pushing the validated changes is
+required before the PR can be merged.
