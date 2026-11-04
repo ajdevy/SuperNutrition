@@ -1,5 +1,6 @@
 package com.supernutrition.domain.inference
 
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 object InferenceContractJson {
@@ -11,22 +12,16 @@ object InferenceContractJson {
     }
 
     fun encode(result: PhotoInferenceResult): String = json.encodeToString(
-        PhotoInferenceResult.serializer(),
         result,
     )
 
-    fun encodeCapability(capability: EngineCapability): String =
-        json.encodeToString(EngineCapability.serializer(), capability)
+    fun encodeCapability(capability: EngineCapability): String = json.encodeToString(capability)
 
-    fun decodeCapability(payload: String): EngineCapability =
-        json.decodeFromString(EngineCapability.serializer(), payload)
+    fun decodeCapability(payload: String): EngineCapability = json.decodeFromString(payload)
 
-    fun decode(payload: String): PhotoInferenceResult =
-        json.decodeFromString(PhotoInferenceResult.serializer(), payload)
+    fun decode(payload: String): PhotoInferenceResult = json.decodeFromString(payload)
 
-    fun encodeTelemetry(event: InferenceTelemetryEvent): String =
-        json.encodeToString(InferenceTelemetryEvent.serializer(), event)
+    fun encodeTelemetry(event: InferenceTelemetryEvent): String = json.encodeToString(event)
 
-    fun decodeTelemetry(payload: String): InferenceTelemetryEvent =
-        json.decodeFromString(InferenceTelemetryEvent.serializer(), payload)
+    fun decodeTelemetry(payload: String): InferenceTelemetryEvent = json.decodeFromString(payload)
 }
