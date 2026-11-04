@@ -701,8 +701,7 @@ private fun PhotoAnalysisTabs(
         captureReturnTab = selectedTab
         captureVisible = true
     }
-    val darkSystemBarIcons = profileVisible || (!captureVisible && selectedTab != 0)
-    SideEffect { shell.onSystemBarAppearanceChanged(darkSystemBarIcons) }
+    PhotoAnalysisSystemBarEffect(shell, profileVisible, captureVisible, selectedTab)
     BackHandler(enabled = profileVisible, onBack = { profileVisible = false })
     BackHandler(enabled = captureVisible, onBack = closeCapture)
     BackHandler(enabled = !profileVisible && !captureVisible && selectedTab == 1 && rewardsFlow.canGoBack) {
@@ -741,18 +740,34 @@ private fun PhotoAnalysisTabs(
         }
     }
     if (showLocalModelMissingDialog) {
-        AlertDialog(
-            onDismissRequest = { showLocalModelMissingDialog = false },
-            title = { Text(stringResource(R.string.local_food_model_missing_title)) },
-            text = { Text(stringResource(R.string.local_food_model_missing_message)) },
-            confirmButton = {
-                TextButton(onClick = { showLocalModelMissingDialog = false }) {
-                    Text(stringResource(R.string.local_food_model_missing_dismiss))
-                }
-            },
-            modifier = Modifier.testTag("localFoodModelMissingDialog"),
-        )
+        LocalFoodModelMissingDialog { showLocalModelMissingDialog = false }
     }
+}
+
+@Composable
+private fun PhotoAnalysisSystemBarEffect(
+    shell: PhotoAnalysisTabShell,
+    profileVisible: Boolean,
+    captureVisible: Boolean,
+    selectedTab: Int,
+) {
+    val darkSystemBarIcons = profileVisible || (!captureVisible && selectedTab != 0)
+    SideEffect { shell.onSystemBarAppearanceChanged(darkSystemBarIcons) }
+}
+
+@Composable
+private fun LocalFoodModelMissingDialog(onDismissRequested: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismissRequested,
+        title = { Text(stringResource(R.string.local_food_model_missing_title)) },
+        text = { Text(stringResource(R.string.local_food_model_missing_message)) },
+        confirmButton = {
+            TextButton(onClick = onDismissRequested) {
+                Text(stringResource(R.string.local_food_model_missing_dismiss))
+            }
+        },
+        modifier = Modifier.testTag("localFoodModelMissingDialog"),
+    )
 }
 
 @Composable
@@ -854,16 +869,7 @@ private fun PhotoAnalysisCaptureTab(state: PhotoAnalysisCaptureTabState) {
     }
     PhotoAnalysisCaptureContent(
         stateFlow = feature.stateFlow,
-        onAction = { action ->
-            val photoAction = action == PhotoAnalysisPresenterAction.TakePhoto ||
-                action == PhotoAnalysisPresenterAction.ImportPhoto ||
-                action == PhotoAnalysisPresenterAction.ScanAgain
-            if (!state.localFoodModelAttached && photoAction) {
-                state.onLocalModelMissingRequested()
-            } else {
-                host.handleAction(action)
-            }
-        },
+        onAction = { action -> state.handleAction(action) },
         surface = PhotoAnalysisCaptureSurface(
             catalog = MealCatalogContext(catalogState, feature.mealDiary.catalogSession::retry),
             presenterCopy = presentationCopy,
@@ -904,6 +910,17 @@ private fun PhotoAnalysisCaptureTab(state: PhotoAnalysisCaptureTabState) {
             },
         ),
     )
+}
+
+private fun PhotoAnalysisCaptureTabState.handleAction(action: PhotoAnalysisPresenterAction) {
+    val photoAction = action == PhotoAnalysisPresenterAction.TakePhoto ||
+        action == PhotoAnalysisPresenterAction.ImportPhoto ||
+        action == PhotoAnalysisPresenterAction.ScanAgain
+    if (!localFoodModelAttached && photoAction) {
+        onLocalModelMissingRequested()
+    } else {
+        host.handleAction(action)
+    }
 }
 
 private fun captureLiveCamera(
