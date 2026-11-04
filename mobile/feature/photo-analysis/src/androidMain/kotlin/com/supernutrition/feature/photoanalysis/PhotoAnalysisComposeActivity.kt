@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -77,6 +78,8 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
     private var analysisLauncher: PhotoAnalysisAnalysisLauncher? = null
     private var runtimeBinding: PhotoAnalysisAndroidRuntimeBinding? = null
     private var runtimeReady by mutableStateOf(false)
+    private val localFoodModelAttached: Boolean
+        get() = (application as? PhotoAnalysisAndroidRuntimeProvider)?.localFoodIdentificationAttached == true
     private var homeClock by mutableStateOf(currentAndroidHomeClock())
     private val inlineCameraController = PhotoAnalysisInlineCameraController()
     private var cameraPermissionState by mutableStateOf(CameraPermissionState.NOT_DETERMINED)
@@ -461,9 +464,14 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
                             retainedState.localData.profileSnapshot(),
                             MealCatalogContext(catalogState, feature.mealDiary.catalogSession::retry),
                         ),
-                        captureContent = { onCloseRequested ->
+                        captureContent = { onCloseRequested, onLocalModelMissingRequested ->
                             PhotoAnalysisCaptureTab(
-                                captureTabState(onCloseRequested, preview, manualIngredientState),
+                                captureTabState(
+                                    onCloseRequested,
+                                    preview,
+                                    manualIngredientState,
+                                    onLocalModelMissingRequested,
+                                ),
                             )
                         },
                     )
@@ -476,6 +484,7 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
         onCloseRequested: () -> Unit,
         preview: AndroidRetainedPhotoPreview?,
         manualIngredientState: PhotoAnalysisManualIngredientState,
+        onLocalModelMissingRequested: () -> Unit,
     ) = PhotoAnalysisCaptureTabState(
         feature = feature,
         host = host,
@@ -495,7 +504,9 @@ class PhotoAnalysisComposeActivity : ComponentActivity() {
             cameraPermissionState = host.onCameraPreviewEntered()
         },
         inlineCameraController = inlineCameraController,
-        gridHintsEnabled = runtimeReady,
+        gridHintsEnabled = runtimeReady && localFoodModelAttached,
+        localFoodModelAttached = localFoodModelAttached,
+        onLocalModelMissingRequested = onLocalModelMissingRequested,
     )
 
     private fun rewardsScreenCopy() = RewardsScreenCopy(
@@ -668,12 +679,16 @@ private fun HomeProfileDestination(shell: PhotoAnalysisTabShell, onBackRequested
 @Composable
 private fun PhotoAnalysisTabs(
     shell: PhotoAnalysisTabShell,
-    captureContent: @Composable (onCloseRequested: () -> Unit) -> Unit,
+    captureContent: @Composable (
+        onCloseRequested: () -> Unit,
+        onLocalModelMissingRequested: () -> Unit,
+    ) -> Unit,
 ) {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
     var captureVisible by rememberSaveable { mutableStateOf(false) }
     var captureReturnTab by rememberSaveable { mutableIntStateOf(0) }
     var profileVisible by rememberSaveable { mutableStateOf(false) }
+    var showLocalModelMissingDialog by rememberSaveable { mutableStateOf(false) }
     val mainState = rememberSaveableStateHolder()
     val rewardsFlow = rememberRewardsFlowState()
     val closeCapture: () -> Unit = {
@@ -697,7 +712,7 @@ private fun PhotoAnalysisTabs(
         if (profileVisible) {
             HomeProfileDestination(shell) { profileVisible = false }
         } else if (captureVisible) {
-            captureContent(closeCapture)
+            captureContent(closeCapture) { showLocalModelMissingDialog = true }
         } else if (selectedTab == 1 && rewardsFlow.canGoBack) {
             RewardsScreen(
                 shell.rewardsModel,
@@ -724,6 +739,19 @@ private fun PhotoAnalysisTabs(
                 )
             }
         }
+    }
+    if (showLocalModelMissingDialog) {
+        AlertDialog(
+            onDismissRequest = { showLocalModelMissingDialog = false },
+            title = { Text(stringResource(R.string.local_food_model_missing_title)) },
+            text = { Text(stringResource(R.string.local_food_model_missing_message)) },
+            confirmButton = {
+                TextButton(onClick = { showLocalModelMissingDialog = false }) {
+                    Text(stringResource(R.string.local_food_model_missing_dismiss))
+                }
+            },
+            modifier = Modifier.testTag("localFoodModelMissingDialog"),
+        )
     }
 }
 
@@ -826,7 +854,16 @@ private fun PhotoAnalysisCaptureTab(state: PhotoAnalysisCaptureTabState) {
     }
     PhotoAnalysisCaptureContent(
         stateFlow = feature.stateFlow,
-        onAction = host::handleAction,
+        onAction = { action ->
+            val photoAction = action == PhotoAnalysisPresenterAction.TakePhoto ||
+                action == PhotoAnalysisPresenterAction.ImportPhoto ||
+                action == PhotoAnalysisPresenterAction.ScanAgain
+            if (!state.localFoodModelAttached && photoAction) {
+                state.onLocalModelMissingRequested()
+            } else {
+                host.handleAction(action)
+            }
+        },
         surface = PhotoAnalysisCaptureSurface(
             catalog = MealCatalogContext(catalogState, feature.mealDiary.catalogSession::retry),
             presenterCopy = presentationCopy,
@@ -898,4 +935,6 @@ private data class PhotoAnalysisCaptureTabState(
     val onCameraPreviewEntered: () -> Unit,
     val inlineCameraController: PhotoAnalysisInlineCameraController,
     val gridHintsEnabled: Boolean,
+    val localFoodModelAttached: Boolean,
+    val onLocalModelMissingRequested: () -> Unit,
 )

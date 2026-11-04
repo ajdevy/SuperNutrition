@@ -32,6 +32,7 @@ graphify-out/
 **/.gradle/
 **/.kotlin/
 **/build/
+*.aar
 _site/
 **/DerivedData/
 *.xcresult/

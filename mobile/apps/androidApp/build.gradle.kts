@@ -2,6 +2,10 @@ plugins {
     alias(libs.plugins.android.application)
 }
 
+val localFoodModelAttached = providers.gradleProperty("supernutrition.attachLocalFoodModel")
+    .map(String::toBoolean)
+    .getOrElse(false)
+
 android {
     namespace = "com.supernutrition.android"
     compileSdk = libs.versions.compileSdk.get().toInt()
@@ -13,6 +17,7 @@ android {
         versionCode = 1
         versionName = "0.0.0-scaffold"
         testInstrumentationRunner = "com.supernutrition.android.IsolatedPrivateDataTestRunner"
+        buildConfigField("boolean", "LOCAL_FOOD_IDENTIFICATION_ATTACHED", localFoodModelAttached.toString())
     }
 
     buildFeatures {

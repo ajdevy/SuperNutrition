@@ -28,6 +28,9 @@ not include the original Food-101 image set.
 
 The first-party Android runtime source and built AAR are maintained in the
 private [food-identification Android repository](https://github.com/flexsent-labs/supernutrition-food-identification-android).
-The public SuperNutrition project consumes the private Maven package and does
-not include the AAR or its source. Access credentials are local build inputs
-and must not be committed.
+Default and hosted SuperNutrition builds do not resolve or download the AAR.
+Contributors with source-repository access may assemble it locally; the
+SuperNutrition build includes the local source checkout only when explicitly
+invoked with `-Psupernutrition.attachLocalFoodModel=true` and
+`-Psupernutrition.foodModelSource=/absolute/path/to/private/repository`. The AAR
+and its source are not checked into this repository.

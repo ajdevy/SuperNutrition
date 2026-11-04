@@ -18,22 +18,31 @@ pluginManagement {
     includeBuild("build-logic")
 }
 
+val attachLocalFoodModel = providers.gradleProperty("supernutrition.attachLocalFoodModel")
+    .map(String::toBoolean)
+    .getOrElse(false)
+
+if (attachLocalFoodModel) {
+    val privateFoodModelSource = providers.gradleProperty("supernutrition.foodModelSource").orNull
+        ?: error(
+            "Set -Psupernutrition.foodModelSource to the local " +
+                "supernutrition-food-identification-android checkout when attaching the private model.",
+        )
+    val privateFoodModelDirectory = file(privateFoodModelSource)
+    require(privateFoodModelDirectory.resolve("settings.gradle.kts").isFile) {
+        "The private food-identification source checkout was not found at $privateFoodModelDirectory"
+    }
+    includeBuild(privateFoodModelDirectory) {
+        dependencySubstitution {
+            substitute(module("com.supernutrition.inference:food-identification-runtime"))
+                .using(project(":"))
+        }
+    }
+}
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        maven {
-            name = "foodIdentificationPrivate"
-            url = uri("https://maven.pkg.github.com/flexsent-labs/supernutrition-food-identification-android")
-            credentials {
-                username = providers.gradleProperty("gpr.user").orNull
-                    ?: System.getenv("GITHUB_ACTOR").orEmpty()
-                password = providers.gradleProperty("gpr.key").orNull
-                    ?: System.getenv("GITHUB_TOKEN").orEmpty()
-            }
-            content {
-                includeGroup("com.supernutrition.inference")
-            }
-        }
         google {
             content {
                 excludeGroupByRegex("app\\.cash\\..*")

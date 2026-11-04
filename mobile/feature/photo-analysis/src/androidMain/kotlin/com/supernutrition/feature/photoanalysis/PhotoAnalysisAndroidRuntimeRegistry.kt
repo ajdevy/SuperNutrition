@@ -25,6 +25,7 @@ fun interface PhotoAnalysisAndroidRuntimeFactory {
 interface PhotoAnalysisAndroidRuntimeProvider {
     val photoAnalysisRuntimeFactory: PhotoAnalysisAndroidRuntimeFactory
     val photoAnalysisBackgroundDispatcher: CoroutineDispatcher
+    val localFoodIdentificationAttached: Boolean
 }
 
 fun interface PhotoAnalysisAndroidRuntimeCloseAction {

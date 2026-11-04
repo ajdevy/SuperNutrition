@@ -96,11 +96,12 @@ public final class BrandNavigationVisualInstrumentationTest {
             device.waitForIdle();
         }
         Rect weeklyCard = node(device, "rewards_row_4").getVisibleBounds();
+        Rect rewardsViewport = node(device, "rewards_list").getVisibleBounds();
         for (int attempt = 0; attempt < 4; attempt++) {
             UiObject2 card = device.findObject(By.res("rewards_row_6"));
             if (card != null && card.getVisibleBounds().width() >= Math.round(145 * density)) break;
-            device.swipe(device.getDisplayWidth() - Math.round(32 * density), weeklyCard.centerY(),
-                    Math.round(24 * density), weeklyCard.centerY(), 90);
+            device.swipe(rewardsViewport.centerX() + rewardsViewport.width() / 4, weeklyCard.centerY(),
+                    rewardsViewport.centerX() - rewardsViewport.width() / 4, weeklyCard.centerY(), 90);
             device.waitForIdle();
         }
         Rect finalCard = node(device, "rewards_row_6").getVisibleBounds();
