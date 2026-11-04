@@ -271,3 +271,23 @@ private unless the owner separately authorizes exposing that source or changes
 the decision to leave the old refs untouched. The source repository is
 [`flexsent-labs/supernutrition-food-identification-android`](https://github.com/flexsent-labs/supernutrition-food-identification-android);
 its README has the full assembly and integration procedure.
+
+## Public visibility follow-up — 2026-11-04
+
+The owner authorized public visibility after reviewing the retained PR-source
+exposure (D-18). GitHub now reports
+[`flexsent-labs/SuperNutrition`](https://github.com/flexsent-labs/SuperNutrition)
+as public; an unauthenticated GitHub API request returned HTTP 200. No branch,
+tag, or pull-request history was rewritten. The 58 fetched PR refs still
+contain no AAR binaries; 16 still expose the earlier Java runtime source, as
+accepted by D-18. The built AAR remains outside the SuperNutrition repository.
+
+PR #66 (`codex/local-inference-optional`) remains open at
+`3b1cb2614594dbc9dbb5abcefc88efdefb929b1b`. It contains the updated README
+instructions for local-only AAR assembly and the app's no-model behavior, but
+those updates are not on `main` yet. Its required `mobile-unit-coverage` check
+failed at `:verifyMobilePolicy` because `bootstrap-android-host` evidence is
+older than the configured 30-day limit. The connected host currently has only
+an emulator, which cannot refresh that physical-device evidence. Do not merge
+PR #66 until the required policy check passes; do not substitute emulator
+results for physical-device evidence.

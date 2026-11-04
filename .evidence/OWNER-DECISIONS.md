@@ -757,3 +757,18 @@ photographs as retained private personal data. It does not authorize changing
 the repository's visibility; public-release readiness must still be assessed
 against the submission's real-data requirement and the other artifacts retained
 in pull-request history.
+
+## D-18 — make SuperNutrition public with retained pull-request refs
+
+Decided on: 2026-11-04
+Decided by: ajdevy (repository owner, direct instruction in this Codex chat)
+Channel: Direct instruction to make the repository public after reviewing the retained PR-source exposure
+
+Set the existing `flexsent-labs/SuperNutrition` repository to public and leave
+its commit history and GitHub pull-request refs unchanged. The owner accepts
+that the retained PR heads make earlier Android food-identification runtime
+source publicly reachable. Keep the built AAR out of the SuperNutrition tree;
+assemble and integrate it locally from the separate private source repository
+under D-16. This decision supersedes D-15's visibility hold and D-17's statement
+that public visibility was not authorized. It does not authorize rewriting
+history or submitting a GitHub Support request.
