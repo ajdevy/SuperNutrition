@@ -318,3 +318,25 @@ At verification time GitHub still reported PR #66 open at
 physical evidence had expired. The passing local run above is not a hosted CI
 result. Refreshing sanitized evidence and pushing the validated changes is
 required before the PR can be merged.
+
+## Sanitized physical evidence refresh — 2026-11-04
+
+After commit `20920de28681e3c609a88638f52888b28aacac88`, the physical evidence
+emitter completed with a clean worktree using the passing Samsung run. The
+six Android attestations now use the fresh Android 17/API 37 device model,
+Gradle 9.5.0 task versions, current artifact/fixture digests, and the
+2026-11-04 execution time. The physical device serial from the emitter output
+was deliberately omitted from the committed policy binding. Android emulator
+reports remain available for local verification, but the binding uses the
+physical-device attestation.
+
+`verifyMobilePolicy` passed with these refreshed records. The complete local
+`qualityCheckJvmAndroid --continue --no-configuration-cache` run still exits
+with two Detekt task failures for three existing findings in
+`PhotoAnalysisComposeActivity.kt`: `PhotoAnalysisTabs` is 71 lines (limit 60),
+and `PhotoAnalysisCaptureTab` has complexity 17 (limit 14) and 67 lines (limit
+60). All other tasks continued. JVM coverage passed at 99.50% line and 90.56%
+branch overall, with `domain:nutrition` at 99.99% line and 100.00% branch.
+These source findings are outside the PR's optional local AAR and Android test
+fixes. A new hosted PR run is still needed to establish current required-check
+status before merging.
